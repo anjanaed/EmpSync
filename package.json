@@ -1,0 +1,13 @@
+{
+  "devDependencies": {
+    "turbo": "^2.3.3"
+  },
+  "scripts":{
+    "dev":"turbo run dev"
+  },
+  "packageManager": "npm@8.19.4", 
+  "workspaces":[
+    "server/",
+    "client/"
+  ]
+}
