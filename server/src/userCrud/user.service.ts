@@ -1,34 +1,41 @@
 import { Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { User } from "./user.entity";
-import {Repository} from "typeorm";
-import { CreateUserDto } from "./dtos/cretae-user.dto";
+import { DatabaseService } from "src/database/database.service";
+import {Prisma } from '@prisma/client';
 
 @Injectable()
 export class UserService{
-    constructor(@InjectRepository(User) private readonly userRepository:Repository<User>){}
+    constructor(private readonly databaseService:DatabaseService){}
 
 
-    async create(dto:CreateUserDto){
-        const user=this.userRepository.create(dto);
-        return await this.userRepository.save(user);
+    async create(dto:Prisma.UserCreateInput){
+        return this.databaseService.user.create({data:dto})
     }
 
-    findMany(){
-        return this.userRepository.find()
+    async findAll(){
+        return this.databaseService.user.findMany();
     }
 
-    async update(id:number,dto:CreateUserDto){
-        const user=await this.userRepository.findOne({where:{id}});
-        Object.assign(user,dto);
-        return await this.userRepository.save(user);
+    async findOne(id:string){
+        return this.databaseService.user.findUnique({
+            where:{
+                id,
+            }
+        })
     }
 
-    async delete(id:number){
-        const user= await this.userRepository.findOne({where:{id}});
-        return await this.userRepository.remove(user);
+    async update(id:string,dto:Prisma.UserUpdateInput){
+        return await this.databaseService.user.update({
+            where:{
+                id,
+            },
+            data:dto,
+        })
+    }
 
-
+    async delete(id:string){
+        return await this.databaseService.user.delete({
+            where:{id}
+        });
     }
 
 }
