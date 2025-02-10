@@ -26,3 +26,11 @@ model User{
   createdAt DateTime @default(now())
 }
 
+model Ingredient {
+  id String @id @unique
+  name String 
+  price_per_unit Decimal @db.Decimal(10, 2)
+  quantity Decimal @db.Decimal(10, 2)
+  priority Int
+  createdAt DateTime @default(now())
+}
