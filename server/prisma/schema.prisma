@@ -17,9 +17,9 @@ model User{
   id String @id
   name String @unique
   role String 
-  dob DateTime
-  telephone String
-  address String
+  dob DateTime?
+  telephone String?
+  address String?
   email String @unique
   password String
   thumbId Bytes @unique
@@ -33,4 +33,22 @@ model Ingredient {
   quantity Decimal @db.Decimal(10, 2)
   priority Int
   createdAt DateTime @default(now())
+}
+
+
+
+
+
+
+
+
+
+
+model Payroll{
+  id String @id @unique
+  empId String 
+  month String
+  payrollPdf Bytes
+  createdAt DateTime @default(now())
+
 }
