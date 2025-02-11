@@ -5,10 +5,11 @@ import { DatabaseModule } from './database/database.module';
 import { UserModule } from './user/user.module';
 import { MealModule } from './meal/meal.module';
 import { IngredientsModule } from './ingredients/ingredients.module';
+import { PayrollModule } from './payroll/payroll.module';
 
 
 @Module({
-  imports: [DatabaseModule, UserModule, IngredientsModule, MealModule],
+  imports: [DatabaseModule, UserModule, IngredientsModule, MealModule, PayrollModule],
   controllers: [AppController],
   providers: [AppService],
 })
