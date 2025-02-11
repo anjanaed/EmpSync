@@ -25,7 +25,6 @@ model User{
   thumbId Bytes @unique
   createdAt DateTime @default(now())
 }
-
 model Ingredient {
   id String @id @unique
   name String 
@@ -35,15 +34,6 @@ model Ingredient {
   createdAt DateTime @default(now())
 }
 
-
-
-
-
-
-
-
-
-
 model Payroll{
   id String @id @unique
   empId String 
@@ -52,3 +42,14 @@ model Payroll{
   createdAt DateTime @default(now())
 
 }
+
+  model Meal {
+  id        Int      @id @default(autoincrement())
+  name      String           
+  description String?                        
+  price       Float                          
+  category    String                           
+  imageUrl    String?                          
+  createdAt   DateTime @default(now())                   
+}
+
