@@ -1,6 +1,6 @@
 .navbar_base{
     height: 100vh;
-    width: 15%;
+    width: 100%;
     background-color: #5D071C;
     display: flex;
     flex-direction: column;
