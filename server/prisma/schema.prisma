@@ -53,3 +53,10 @@ model Payroll{
   createdAt   DateTime @default(now())                   
 }
 
+
+model Attendance{
+  id String @id
+  empId String
+  dateTime DateTime
+  status String
+}
