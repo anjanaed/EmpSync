@@ -6,10 +6,11 @@ import { UserModule } from './user/user.module';
 import { MealModule } from './meal/meal.module';
 import { IngredientsModule } from './ingredients/ingredients.module';
 import { PayrollModule } from './payroll/payroll.module';
+import {OrdersModule} from './orders/orders.module'
 
 
 @Module({
-  imports: [DatabaseModule, UserModule, IngredientsModule, MealModule, PayrollModule],
+  imports: [DatabaseModule, UserModule, IngredientsModule, MealModule, PayrollModule,OrdersModule],
   controllers: [AppController],
   providers: [AppService],
 })
