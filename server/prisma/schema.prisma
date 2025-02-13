@@ -53,6 +53,7 @@ model Payroll{
   createdAt   DateTime @default(now())                   
 }
 
+
 model Order {
   id Int @default(autoincrement()) @id
   orderNumber String @unique
@@ -61,5 +62,13 @@ model Order {
   employeeId String
   serve Boolean @default(false)
 
+}
+
+
+model Attendance{
+  id String @id
+  empId String
+  dateTime DateTime
+  status String
 }
 
