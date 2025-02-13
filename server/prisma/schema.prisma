@@ -54,9 +54,21 @@ model Payroll{
 }
 
 
+model Order {
+  id Int @default(autoincrement()) @id
+  orderNumber String @unique
+  orderDate DateTime @default(now())
+  price Float
+  employeeId String
+  serve Boolean @default(false)
+
+}
+
+
 model Attendance{
   id String @id
   empId String
   dateTime DateTime
   status String
 }
+
