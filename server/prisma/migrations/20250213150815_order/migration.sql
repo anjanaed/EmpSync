@@ -50,6 +50,28 @@ CREATE TABLE "Meal" (
     CONSTRAINT "Meal_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "Order" (
+    "id" SERIAL NOT NULL,
+    "orderNumber" TEXT NOT NULL,
+    "orderDate" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "price" DOUBLE PRECISION NOT NULL,
+    "employeeId" TEXT NOT NULL,
+    "serve" BOOLEAN NOT NULL DEFAULT false,
+
+    CONSTRAINT "Order_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Attendance" (
+    "id" TEXT NOT NULL,
+    "empId" TEXT NOT NULL,
+    "dateTime" TIMESTAMP(3) NOT NULL,
+    "status" TEXT NOT NULL,
+
+    CONSTRAINT "Attendance_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "User_name_key" ON "User"("name");
 
@@ -64,3 +86,6 @@ CREATE UNIQUE INDEX "Ingredient_id_key" ON "Ingredient"("id");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Payroll_id_key" ON "Payroll"("id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Order_orderNumber_key" ON "Order"("orderNumber");
