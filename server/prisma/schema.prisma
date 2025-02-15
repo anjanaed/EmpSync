@@ -72,3 +72,14 @@ model Attendance{
   status String
 }
 
+model ScheduledMeal {
+  id         Int      @id @default(autoincrement()) 
+  date       DateTime @unique @db.Date  // Store as DATE (without time)
+  breakfast  String[]
+  lunch      String[]
+  dinner     String[]
+  createdAt  DateTime @default(now())
+}
+
+
+
