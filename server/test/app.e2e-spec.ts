@@ -21,4 +21,10 @@ describe('AppController (e2e)', () => {
       .expect(200)
       .expect('Hello World!');
   });
+  it('/leaveApplication (GET)', () => {
+    return request(app.getHttpServer())
+      .get('/leaveApplication')
+      .expect(200)
+      .expect({ message: 'List of leave applications' });
+  });
 });

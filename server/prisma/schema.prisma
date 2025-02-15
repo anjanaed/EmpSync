@@ -72,3 +72,13 @@ model Attendance{
   status String
 }
 
+model LeaveApplication{
+  id Int @default(autoincrement()) @id
+  appliedDate DateTime @default(now())
+  duration Float
+  empId String
+  reason String
+  status Boolean @default(false)
+  reviewedBy String
+}
+
