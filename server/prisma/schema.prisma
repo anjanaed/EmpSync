@@ -25,23 +25,6 @@ model User{
   thumbId Bytes @unique
   createdAt DateTime @default(now())
 }
-model Ingredient {
-  id String @id @unique
-  name String 
-  price_per_unit Decimal @db.Decimal(10, 2)
-  quantity Decimal @db.Decimal(10, 2)
-  priority Int
-  createdAt DateTime @default(now())
-}
-
-model Payroll{
-  id String @id @unique
-  empId String 
-  month String
-  payrollPdf Bytes
-  createdAt DateTime @default(now())
-
-}
 
   model Meal {
   id        Int      @id @default(autoincrement())
@@ -65,23 +48,6 @@ model Order {
 }
 
 
-model Attendance{
-  id String @id
-  empId String
-  dateTime DateTime
-  status String
-}
-
-
-model LeaveApplication{
-  id Int @default(autoincrement()) @id
-  appliedDate DateTime @default(now())
-  duration Float
-  empId String
-  reason String
-  status Boolean @default(false)
-  reviewedBy String
-}
 
 
 model ScheduledMeal {

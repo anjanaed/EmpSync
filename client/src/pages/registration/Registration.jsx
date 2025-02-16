@@ -100,11 +100,6 @@ function Register() {
                     <br></br>
                     <input type="textbox"></input>
                   </div>
-                  <div className={styles.inputsBox}>
-                    <label>Password (For Portal Access):</label>
-                    <br></br>
-                    <input type="textbox"></input>
-                  </div>
                 </div>
               </div>
               <div className={styles.inputRow}>
@@ -157,9 +152,6 @@ function Register() {
                       <option value="HR Manager">HR Manager</option>
                       <option value="Kitchen Admin">Kitchen Admin</option>
                       <option value="Kitchen Staff">Kitchen Staff</option>
-                      <option value="Inventory Manager">
-                        Inventory Manager
-                      </option>
                       <option value="Other">Other</option>
                     </select>
                     {jobRole === "Other" && (
@@ -171,11 +163,6 @@ function Register() {
                         placeholder="Enter Job Role"
                       />
                     )}
-                  </div>
-                  <div className={styles.inputsBox}>
-                    <label>Basic Salary:</label>
-                    <br></br>
-                    <input type="textbox"></input>
                   </div>
                 </div>
               </div>
