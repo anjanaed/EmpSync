@@ -72,6 +72,7 @@ model Attendance{
   status String
 }
 
+
 model LeaveApplication{
   id Int @default(autoincrement()) @id
   appliedDate DateTime @default(now())
@@ -81,4 +82,16 @@ model LeaveApplication{
   status Boolean @default(false)
   reviewedBy String
 }
+
+
+model ScheduledMeal {
+  id         Int      @id @default(autoincrement()) 
+  date       DateTime @unique @db.Date  // Store as DATE (without time)
+  breakfast  String[]
+  lunch      String[]
+  dinner     String[]
+  createdAt  DateTime @default(now())
+}
+
+
 
