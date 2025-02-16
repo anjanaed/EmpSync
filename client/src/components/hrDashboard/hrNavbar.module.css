@@ -1,48 +1,64 @@
-.navbar_base{
-    height: 100vh;
-    width: 100%;
-    background-color: #5D071C;
-    display: flex;
-    flex-direction: column;
-    margin: 0;
-    padding: 0;
-    color: #F5F5F5;
-    
-  }
+.navbar_base {
+  height: 100vh;
+  width: 100%;
+  background-color: #5d071c;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  color: #f5f5f5;
+}
 
+.logo {
+  width: 100%;
 
-  .navbar{
-    margin-top: 20vh;
-    width: 100%;
-    font-family: Arial, Helvetica, sans-serif;
-    margin-left: auto;
-    display: flex;
-    line-height: 10vh;
-    flex-direction: column;
-    font-size: 1.2vw;
+  text-align: center;
+  margin-top: 5%;
+}
 
-  }
+.navbar {
+  margin: auto;
+  width: 100%;
+  font-family: Arial, Helvetica, sans-serif;
+  display: flex;
+  line-height: 10vh;
+  flex-direction: column;
+  font-size: 1.2vw;
+}
 
-  .navbarItems{
-    padding-left: 20%;
-    margin: 0.2vw;
-    border-radius: 10px;
-    cursor: pointer;
-    transition-duration: 0.2s;
-  }
+.navbarItems {
+  padding-left: 20%;
+  margin: 0.2vw;
+  border-radius: 10px;
+  cursor: pointer;
+  transition-duration: 0.2s;
+}
 
+.navbarItemsSelected {
+  padding-left: 20%;
+  margin: 0.2vw;
+  border-radius: 10px;
+  cursor: pointer;
+  transition-duration: 0.2s;
+  font-weight: 600;
+  background-color: brown;
+}
 
-  .navbarItems:hover{
-    background-color: brown;
-    
-  }
+.navbarItems:hover {
+  background-color: brown;
+}
 
-  .logout{
-    margin-top: auto;
-    font-family: Arial, Helvetica, sans-serif;
-    text-align: center;
-    padding-bottom: 1vw;
-    font-size: 1.2vw;
+.logout {
+  margin-top: auto;
+  font-family: Arial, Helvetica, sans-serif;
+  text-align: center;
+  margin: 1vw;
+  font-size: 1.2vw;
+  overflow: hidden;
+  transition-duration: 0.5s;
+}
 
-  }
-  
+.logout:hover {
+  transform: scale(1.1);
+  font-weight: 600;
+}

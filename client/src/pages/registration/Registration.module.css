@@ -1,93 +1,160 @@
-.home{
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-    height: 100vh;
+.home {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 100vh;
 }
 
-.homeNavbar{
-    flex: 1;
+.homeNavbar {
+  flex: 1;
 }
 
-.homeContent{
-    flex: 5;
-    padding: 1vw;
-    background-color: rgb(229, 200, 200);
-    display: flex;
+.homeContent {
+  flex: 5;
+  padding: 1vw;
+  background-color: rgb(229, 200, 200);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
 }
 
-.rBox{
-    padding: 1vw;
-    border: 1px solid black;
-    background-color: white;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-
+.rBox {
+  padding: 1vw;
+  border: 1px solid black;
+  background-color: white;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
-.rTable{
-    display: flex;
-    cursor: pointer;
-    flex-direction: row;
-    background-color: rgb(182, 106, 106);
-    border-radius: 20px;
-
+.rTable {
+  display: flex;
+  cursor: pointer;
+  flex-direction: row;
+  background-color: rgb(182, 106, 106);
+  border-radius: 20px;
 }
 
-.rTableContent{
-    flex: 1;
-    font-size: 2vw;
-    font-family: Arial, Helvetica, sans-serif;
-    padding: 1vw;
-    text-align: center;
-
+.rTableContent {
+  flex: 1;
+  font-size: 2vw;
+  font-family: Arial, Helvetica, sans-serif;
+  padding: 1vw;
+  text-align: center;
 }
-.rTableContentSelected{
-    flex: 1;
-    font-size: 2vw;
-    font-family: Arial, Helvetica, sans-serif;
-    padding: 1vw;
-    border-radius: 20px;
-    color: white;
-    background-color: brown;
-    text-align: center;
-
+.rTableContentSelected {
+  flex: 1;
+  font-size: 2vw;
+  font-family: Arial, Helvetica, sans-serif;
+  padding: 1vw;
+  border-radius: 20px;
+  color: white;
+  background-color: brown;
+  text-align: center;
 }
 
-.mid{
-    font-family: Arial, Helvetica, sans-serif;
-    text-align: center;
+.mid {
+  font-family: Arial, Helvetica, sans-serif;
+  text-align: center;
+  margin-bottom: 2vw;
 }
 
-.mid h1{
-    color: rgb(165, 58, 58);
+.mid h1 {
+  color: rgb(165, 58, 58);
 }
 
-.inputs{
-    font-family: Arial, Helvetica, sans-serif;
-    margin: 4vw 6vw 2vw 8vw;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    font-size: 1.2vw;
+.inputs {
+  font-family: Arial, Helvetica, sans-serif;
+  margin: 0.1vw 6vw 1.8vw 8vw;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  font-size: 1.2vw;
 }
 
+.inputsBox {
+  padding-left: 5%;
 
-.inputsBox{
-    padding-left: 5%;
-    
-    width: 100%;
-
-    
-
+  width: 100%;
 }
 
+.options {
+  width: 50%;
+  font-size: 2vw;
+  padding: 3vw;
+}
 
-.inputs input{
-    padding: 0.6vw;
-    border: 2px solid black;
-    width: 75%;
-    justify-content: space-between;
-    
+.selects {
+  width: 50%;
+  padding: 0.6vw;
+  font-size: 1vw;
+  border: 0.15vw solid black;
+  border-radius: 0.6vw;
+  transition-duration: 0.3s;
+}
+
+.selects:hover {
+  border: 0.15vw solid #4096ff;
+}
+
+.customInput {
+  margin-top: 1vh;
+}
+
+.inputs input {
+  padding: 0.6vw;
+  font-size: 1vw;
+  border: 0.15vw solid black;
+  width: 75%;
+  justify-content: space-between;
+  transition-duration: 0.3s;
+  border-radius: 0.6vw;
+}
+
+.inputs input:hover {
+  border: 0.15vw solid #4096ff;
+}
+
+.picker {
+  padding: 0.6vw;
+  font-size: 1vw;
+  border: 0.15vw solid black;
+  width: 50%;
+  justify-content: space-between;
+  border-radius: 0.6vw;
+}
+
+.inputRow {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+}
+
+.btn {
+  width: 100%;
+  text-align: center;
+  margin-top: auto;
+}
+
+.fingerBio {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 1.3vw;
+  font-weight: 600;
+}
+.fingerIcon {
+  max-width: 100%;
+}
+
+.bio {
+  text-align: center;
+  border: 3px solid black;
+  width: 40%;
+  padding: 1vw;
+  overflow: hidden;
+}
+
+.bioSec {
+  justify-content: center;
+  display: flex;
+  margin-bottom: 1vh;
 }
