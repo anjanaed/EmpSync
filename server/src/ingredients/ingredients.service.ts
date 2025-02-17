@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { DatabaseService } from 'src/database/database.service';
 
@@ -7,35 +7,53 @@ export class IngredientsService {
   constructor(private readonly databaseServices: DatabaseService) {}
 
   async create(createIngredientDto: Prisma.IngredientCreateInput) {
-    return this.databaseServices.ingredient.create({ data: createIngredientDto })
+    try {
+      return await this.databaseServices.ingredient.create({ data: createIngredientDto });
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   async findAll() {
-    return this.databaseServices.ingredient.findMany({});
+    try {
+      return await this.databaseServices.ingredient.findMany({});
+    } catch (error) {
+      throw new BadRequestException('Failed to retrieve ingredients');
+    }
   }
 
   async findOne(id: string) {
-    return this.databaseServices.ingredient.findUnique({
-      where:{
-        id,
-      },
-    });
+    try {
+      const ingredient = await this.databaseServices.ingredient.findUnique({
+        where: { id },
+      });
+      if (!ingredient) {
+        throw new NotFoundException('Ingredient not found');
+      }
+      return ingredient;
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   async update(id: string, updateIngredientDto: Prisma.IngredientUpdateInput) {
-    return this.databaseServices.ingredient.update({
-      where: {
-        id,
-      },
-      data: updateIngredientDto,
-    })
+    try {
+      return await this.databaseServices.ingredient.update({
+        where: { id },
+        data: updateIngredientDto,
+      });
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   async remove(id: string) {
-    return this.databaseServices.ingredient.delete({
-      where:{
-        id,
-      },
-    })
+    try {
+      return await this.databaseServices.ingredient.delete({
+        where: { id },
+      });
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 }
