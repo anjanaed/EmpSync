@@ -4,10 +4,14 @@ import { OrdersService } from './orders.service';
 describe('OrdersService', () => {
   let service: OrdersService;
 
+  const mockOrder={
+
+  }
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [OrdersService],
-    }).compile();
+    }).overrideProvider(OrdersService).useValue(mockOrder).compile();
 
     service = module.get<OrdersService>(OrdersService);
   });

@@ -15,29 +15,6 @@ CREATE TABLE "User" (
 );
 
 -- CreateTable
-CREATE TABLE "Ingredient" (
-    "id" TEXT NOT NULL,
-    "name" TEXT NOT NULL,
-    "price_per_unit" DECIMAL(10,2) NOT NULL,
-    "quantity" DECIMAL(10,2) NOT NULL,
-    "priority" INTEGER NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT "Ingredient_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "Payroll" (
-    "id" TEXT NOT NULL,
-    "empId" TEXT NOT NULL,
-    "month" TEXT NOT NULL,
-    "payrollPdf" BYTEA NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT "Payroll_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
 CREATE TABLE "Meal" (
     "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
@@ -63,19 +40,9 @@ CREATE TABLE "Order" (
 );
 
 -- CreateTable
-CREATE TABLE "Attendance" (
-    "id" TEXT NOT NULL,
-    "empId" TEXT NOT NULL,
-    "dateTime" TIMESTAMP(3) NOT NULL,
-    "status" TEXT NOT NULL,
-
-    CONSTRAINT "Attendance_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
 CREATE TABLE "ScheduledMeal" (
     "id" SERIAL NOT NULL,
-    "date" TIMESTAMP(3) NOT NULL,
+    "date" DATE NOT NULL,
     "breakfast" TEXT[],
     "lunch" TEXT[],
     "dinner" TEXT[],
@@ -94,10 +61,7 @@ CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 CREATE UNIQUE INDEX "User_thumbId_key" ON "User"("thumbId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Ingredient_id_key" ON "Ingredient"("id");
-
--- CreateIndex
-CREATE UNIQUE INDEX "Payroll_id_key" ON "Payroll"("id");
-
--- CreateIndex
 CREATE UNIQUE INDEX "Order_orderNumber_key" ON "Order"("orderNumber");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "ScheduledMeal_date_key" ON "ScheduledMeal"("date");

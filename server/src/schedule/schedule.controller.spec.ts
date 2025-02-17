@@ -5,11 +5,15 @@ import { ScheduleService } from './schedule.service';
 describe('ScheduleController', () => {
   let controller: ScheduleController;
 
+  const mockSche={
+
+  }
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [ScheduleController],
       providers: [ScheduleService],
-    }).compile();
+    }).overrideProvider(ScheduleService).useValue(mockSche).compile();
 
     controller = module.get<ScheduleController>(ScheduleController);
   });

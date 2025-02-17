@@ -4,10 +4,14 @@ import { ScheduleService } from './schedule.service';
 describe('ScheduleService', () => {
   let service: ScheduleService;
 
+  const mockSche={
+
+  }
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [ScheduleService],
-    }).compile();
+    }).overrideProvider(ScheduleService).useValue(mockSche).compile();
 
     service = module.get<ScheduleService>(ScheduleService);
   });

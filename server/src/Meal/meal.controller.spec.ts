@@ -5,11 +5,15 @@ import { MealService } from './meal.service';
 describe('MealController', () => {
   let controller: MealController;
 
+  const mockMeal={
+
+  }
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [MealController],
       providers: [MealService],
-    }).compile();
+    }).overrideProvider(MealService).useValue(mockMeal).compile();
 
     controller = module.get<MealController>(MealController);
   });
