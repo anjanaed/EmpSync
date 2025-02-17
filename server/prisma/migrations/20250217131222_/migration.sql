@@ -73,9 +73,22 @@ CREATE TABLE "Attendance" (
 );
 
 -- CreateTable
+CREATE TABLE "LeaveApplication" (
+    "id" SERIAL NOT NULL,
+    "appliedDate" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "duration" DOUBLE PRECISION NOT NULL,
+    "empId" TEXT NOT NULL,
+    "reason" TEXT NOT NULL,
+    "status" BOOLEAN NOT NULL DEFAULT false,
+    "reviewedBy" TEXT NOT NULL,
+
+    CONSTRAINT "LeaveApplication_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "ScheduledMeal" (
     "id" SERIAL NOT NULL,
-    "date" TIMESTAMP(3) NOT NULL,
+    "date" DATE NOT NULL,
     "breakfast" TEXT[],
     "lunch" TEXT[],
     "dinner" TEXT[],
@@ -101,3 +114,6 @@ CREATE UNIQUE INDEX "Payroll_id_key" ON "Payroll"("id");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Order_orderNumber_key" ON "Order"("orderNumber");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "ScheduledMeal_date_key" ON "ScheduledMeal"("date");
