@@ -9,7 +9,6 @@ export class UserService {
   async create(dto: Prisma.UserCreateInput) {
     try {
       await this.databaseService.user.create({ data: dto });
-      return ("User Registered")
     } catch (err) {
       if (err.code === 'P2002') {
         throw new HttpException('Id, Name must be unique', HttpStatus.CONFLICT);
