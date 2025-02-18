@@ -91,4 +91,16 @@ export class IngredientsController {
       );
     }
   }
+
+  @Get('price/low')
+  async findLowPriceIngredients() {
+    console.log('Received request for low price ingredients');
+    return this.ingredientsService.findLowPriceIngredients();
+  }
+
+  @Get('price/high')
+  async findHighPriceIngredients() {
+    console.log('Received request for high price ingredients');
+    return this.ingredientsService.findHighPriceIngredients();
+  }
 }
