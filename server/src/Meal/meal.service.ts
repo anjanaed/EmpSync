@@ -1,39 +1,59 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { DatabaseService } from 'src/database/database.service';
 
 @Injectable()
 export class MealService {
-  constructor(private  readonly databaseService : DatabaseService){}
+  constructor(private readonly databaseService: DatabaseService) {}
 
   async create(createMealDto: Prisma.MealCreateInput) {
-    return this.databaseService.meal.create({data: createMealDto})
+    try {
+      return await this.databaseService.meal.create({ data: createMealDto });
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   async findAll() {
-    return this.databaseService.meal.findMany({});
+    try {
+      return await this.databaseService.meal.findMany({});
+    } catch (error) {
+      throw new BadRequestException('Failed to retrieve meals');
+    }
   }
 
-  async findOne(id: number) {
-    return this.databaseService.meal.findUnique({
-      where:{
-        id,
+  async findOne(id: string) {
+    try {
+      const meal = await this.databaseService.meal.findUnique({
+        where: { id },
+      });
+      if (!meal) {
+        throw new NotFoundException('Meal not found');
       }
-    });
+      return meal;
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
-  async update(id: number, UpdateMealDto: Prisma.MealUpdateInput) {
-    return this.databaseService.meal.update({
-      where:{
-        id,
-      },
-      data: UpdateMealDto,
-    });
+  async update(id: string, updateMealDto: Prisma.MealUpdateInput) {
+    try {
+      return await this.databaseService.meal.update({
+        where: { id },
+        data: updateMealDto,
+      });
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
-  async remove(id: number) {
-    return this.databaseService.meal.delete({
-      where:{id},
-    });
+  async remove(id: string) { // Change id type to string
+    try {
+      return await this.databaseService.meal.delete({
+        where: { id },
+      });
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 }
