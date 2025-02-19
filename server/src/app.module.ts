@@ -3,7 +3,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { DatabaseModule } from './database/database.module';
 import { UserModule } from './user/user.module';
-import { MealModule } from './meal/meal.module';
+import { MealModule } from './Meal/meal.module';
 import { IngredientsModule } from './ingredients/ingredients.module';
 import { PayrollModule } from './payroll/payroll.module';
 import { AttendanceModule } from './attendance/attendance.module';

@@ -1,72 +1,83 @@
-import { Injectable } from '@nestjs/common';
-import { DatabaseService } from 'src/database/database.service';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
+import { DatabaseService } from 'src/database/database.service';
 
 @Injectable()
 export class ScheduleService {
   constructor(private readonly databaseService: DatabaseService) {}
 
   async create(createScheduleDto: Prisma.ScheduledMealCreateInput) {
-    // Ensure date is only 'YYYY-MM-DD'
-    const formattedDate = new Date(createScheduleDto.date).toISOString().split('T')[0];
-
-    return this.databaseService.scheduledMeal.create({
-      data: {
-        ...createScheduleDto,
-        date: new Date(formattedDate), // Store as DATE
-        breakfast: createScheduleDto.breakfast || [],
-        lunch: createScheduleDto.lunch || [],
-        dinner: createScheduleDto.dinner || [],
-      },
-    });
+    try {
+      const formattedDate = new Date(createScheduleDto.date).toISOString().split('T')[0];
+      return await this.databaseService.scheduledMeal.create({
+        data: {
+          ...createScheduleDto,
+          date: new Date(formattedDate),
+          breakfast: createScheduleDto.breakfast || [],
+          lunch: createScheduleDto.lunch || [],
+          dinner: createScheduleDto.dinner || [],
+        },
+      });
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   async findAll() {
-    return this.databaseService.scheduledMeal.findMany();
+    try {
+      return await this.databaseService.scheduledMeal.findMany();
+    } catch (error) {
+      throw new BadRequestException('Failed to retrieve scheduled meals');
+    }
   }
 
   async findOne(date: string) {
-    return this.databaseService.scheduledMeal.findUnique({
-      where: { date: new Date(date) }, // Search by date only
-    });
-  }
-
-  async update(date: string, updateScheduleDto: Prisma.ScheduledMealUpdateInput) {
     try {
-      // Convert date string to a Date object (force time to 00:00:00)
-      const formattedDate = new Date(date + "T00:00:00.000Z");
-  
-      // Check if the record exists for the given date
-      const existingRecord = await this.databaseService.scheduledMeal.findUnique({
+      const formattedDate = new Date(date);
+      const scheduledMeal = await this.databaseService.scheduledMeal.findUnique({
         where: { date: formattedDate },
       });
-  
-      if (!existingRecord) {
-        throw new Error(`Scheduled meal not found for date: ${date}`);
+      
+      if (!scheduledMeal) {
+        throw new NotFoundException(`Scheduled meal not found for date: ${date}`);
       }
-  
-      // Prepare the update data, making sure arrays are properly handled
-      const updateData: Prisma.ScheduledMealUpdateInput = {
-        breakfast: updateScheduleDto.breakfast || [], // Ensure array is not null or undefined
-        lunch: updateScheduleDto.lunch || [], // Same for lunch
-        dinner: updateScheduleDto.dinner || [], // Same for dinner
-      };
-  
-      // Perform the update
-      return this.databaseService.scheduledMeal.update({
-        where: { date: formattedDate },
-        data: updateData,
-      });
+      
+      return scheduledMeal;
     } catch (error) {
-      console.error("Error updating scheduled meal:", error.message);
-      throw new Error("Failed to update the scheduled meal");
+      throw new BadRequestException(error.message);
     }
   }
   
 
+  async update(date: string, updateScheduleDto: Prisma.ScheduledMealUpdateInput) {
+    try {
+      const formattedDate = new Date(date + "T00:00:00.000Z");
+      const existingRecord = await this.databaseService.scheduledMeal.findUnique({
+        where: { date: formattedDate },
+      });
+      if (!existingRecord) {
+        throw new NotFoundException(`Scheduled meal not found for date: ${date}`);
+      }
+      return await this.databaseService.scheduledMeal.update({
+        where: { date: formattedDate },
+        data: {
+          breakfast: updateScheduleDto.breakfast || [],
+          lunch: updateScheduleDto.lunch || [],
+          dinner: updateScheduleDto.dinner || [],
+        },
+      });
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
+
   async remove(date: string) {
-    return this.databaseService.scheduledMeal.delete({
-      where: { date: new Date(date) }, // Delete by date
-    });
+    try {
+      return await this.databaseService.scheduledMeal.delete({
+        where: { date: new Date(date) },
+      });
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 }
