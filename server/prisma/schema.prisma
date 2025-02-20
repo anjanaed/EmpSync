@@ -26,6 +26,7 @@ model User{
   thumbId Bytes @unique
   createdAt DateTime @default(now())
 }
+
 model Ingredient {
   id String @id @unique
   name String 
@@ -64,7 +65,6 @@ model Order {
   serve Boolean @default(false)
 
 }
-
 
 model Attendance{
   id String @id
