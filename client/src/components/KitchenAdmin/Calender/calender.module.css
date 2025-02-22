@@ -4,7 +4,7 @@
     max-width: 1750px; /* Set a maximum width for large screens */
     margin: 0 auto 0 auto;
     gap: 2rem;
-    /* padding: 1rem; */
+    padding: 20px; 
     background-color: white;
     border-radius: 10px;
     border: 1px solid black; /* Dark red border */
@@ -12,23 +12,15 @@
   }
   
   .calendarSection {
-    width: 18rem;
+    width: 22rem;
     border: 1px solid #e5e7eb;
-    border-radius: 0.5rem;
-    padding: 1rem;
+    border-radius: 10px;
+    padding:2rem;
+    border: 1px solid #5D071C; /* Dark red border */
+    background-color:#FFFDED ;
+    
   }
   
-  .calendarHeader {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 1rem;
-  }
-  
-  .calendarTitle {
-    font-size: 1.125rem;
-    font-weight: 600;
-  }
   
   .selectedDate {
     font-size: 1.25rem;
@@ -41,8 +33,8 @@
   }
   
   .mealsTitle {
-    font-size: 1.25rem;
-    font-weight: 600;
+    font-size: 26px;
+    font-weight: bold;
     margin-bottom: 1rem;
   }
   
@@ -57,8 +49,9 @@
     align-items: center;
     justify-content: space-between;
     padding: 0.75rem;
-    border: 1px solid #e5e7eb;
-    border-radius: 0.5rem;
+    border: 1px solid black;
+    border-radius: 10px;
+    font-size: 20px;
   }
   
   .mealActions {
@@ -67,25 +60,31 @@
   }
   
   .iconButton {
-    color: #6b7280;
+    color: #5D071C;
     cursor: pointer;
     padding: 0.25rem;
     transition: color 0.2s;
+    background-color: transparent;
+    border: transparent;
+    font-size: 22px;
+    width:50px;
+    font-weight: bold;
   }
   
   .iconButton:hover {
-    color: #374151;
+    color:black;
   }
   
   .addButton {
     width: 100%;
     margin-top: 1rem;
     padding: 0.75rem;
-    background-color: #8B1F41;
+    background-color:#5D071C;
     color: white;
     border: none;
-    border-radius: 0.5rem;
+    border-radius: 10px;
     cursor: pointer;
+    font-size: 20px;
     transition: background-color 0.2s;
   }
   

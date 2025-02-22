@@ -1,9 +1,9 @@
 .menuContainer {
-    width: 90%; /* Adjust width as needed (90% of the screen width) */
+    width: 91%; /* Adjust width as needed (90% of the screen width) */
     max-width: 1750px; /* Set a maximum width for large screens */
     margin: 0 auto 0 auto;
     background-color:white; /* Keep background style */
-    padding: 20px; /* Add padding for spacing */
+    padding: 25px; /* Add padding for spacing */
     border-radius: 10px; /* Rounded edges */
     border: 1px solid black; /* Dark red border */
   }
@@ -37,7 +37,7 @@
     padding: 10px;
     border-radius: 5px;
     text-align: center;
-    /* margin-top: 100px; */
+    font-size: 25px;
   }
   
   .buttonGroup {
@@ -51,7 +51,7 @@
   }
   ul{
     color: black;
-    font-size: 20px;
+    font-size: 24px;
   }
   
   .updateBtn, .removeBtn, .confirmBtn {

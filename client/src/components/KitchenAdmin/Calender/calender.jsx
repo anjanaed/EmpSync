@@ -15,15 +15,7 @@ const MenuCalendar = () => {
     <div className={styles.container}>
       {/* Calendar Section */}
       <div className={styles.calendarSection}>
-        <div className={styles.calendarHeader}>
-          <h2 className={styles.calendarTitle}>Select date</h2>
-          <button className={styles.iconButton}>
-            <EditOutlined />
-          </button>
-        </div>
-        
         <div className={styles.selectedDate}>{selectedDate}</div>
-        
         <div className={styles.calendar}>
           <Calendar
             fullscreen={false}
