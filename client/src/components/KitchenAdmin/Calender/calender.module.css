@@ -4,10 +4,11 @@
     max-width: 1750px; /* Set a maximum width for large screens */
     margin: 0 auto 0 auto;
     gap: 2rem;
-    padding: 1rem;
+    /* padding: 1rem; */
     background-color: white;
-    border-radius: 0.5rem;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    border: 1px solid black; /* Dark red border */
+    
   }
   
   .calendarSection {
