@@ -1,0 +1,66 @@
+.menuContainer {
+    width: 90%; /* Adjust width as needed (90% of the screen width) */
+    max-width: 1750px; /* Set a maximum width for large screens */
+    margin: 0 auto 0 auto;
+    background-color:white; /* Keep background style */
+    padding: 20px; /* Add padding for spacing */
+    border-radius: 10px; /* Rounded edges */
+    border: 1px solid black; /* Dark red border */
+  }
+  
+  
+  .menuTitle {
+    font-size: 26px;
+    color:BLACK;
+    font-weight: 300px;
+    margin-bottom: 15px;
+  }
+  
+  .menuGrid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+  }
+  
+  .menuCard {
+    background:#FFFDED;
+    /* padding: 10px; */
+    border-radius: 10px;
+    border: 1px solid black;
+  }
+ 
+  
+  
+  .cardHeader {
+    background-color: #AC0C2E;
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    text-align: center;
+    /* margin-top: 100px; */
+  }
+  
+  .buttonGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-top: 50px;
+    width: 300px;
+    justify-content: center;
+    margin-left: 50px;
+  }
+  ul{
+    color: black;
+    font-size: 20px;
+  }
+  
+  .updateBtn, .removeBtn, .confirmBtn {
+    padding: 10px;
+    border-radius: 20px;
+    font-size: 20px;
+    cursor: pointer;
+    background-color: #FFFDED;
+  }
+  
+  
+  

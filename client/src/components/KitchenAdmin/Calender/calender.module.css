@@ -1,0 +1,102 @@
+.container {
+    display: flex;
+    width: 90%; /* Adjust width as needed (90% of the screen width) */
+    max-width: 1750px; /* Set a maximum width for large screens */
+    margin: 0 auto 0 auto;
+    gap: 2rem;
+    padding: 1rem;
+    background-color: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+  
+  .calendarSection {
+    width: 18rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    padding: 1rem;
+  }
+  
+  .calendarHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+  }
+  
+  .calendarTitle {
+    font-size: 1.125rem;
+    font-weight: 600;
+  }
+  
+  .selectedDate {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+  }
+  
+  .mealsSection {
+    flex: 1;
+  }
+  
+  .mealsTitle {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+  }
+  
+  .mealsList {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .mealItem {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+  }
+  
+  .mealActions {
+    display: flex;
+    gap: 0.5rem;
+  }
+  
+  .iconButton {
+    color: #6b7280;
+    cursor: pointer;
+    padding: 0.25rem;
+    transition: color 0.2s;
+  }
+  
+  .iconButton:hover {
+    color: #374151;
+  }
+  
+  .addButton {
+    width: 100%;
+    margin-top: 1rem;
+    padding: 0.75rem;
+    background-color: #8B1F41;
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .addButton:hover {
+    background-color: #731835;
+  }
+  
+  /* Custom styles for ant-design calendar */
+  .calendar :global(.ant-picker-calendar-header) {
+    padding: 8px;
+  }
+  
+  .calendar :global(.ant-picker-calendar) {
+    border-radius: 8px;
+  }
