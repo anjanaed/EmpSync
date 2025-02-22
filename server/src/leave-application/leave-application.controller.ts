@@ -57,7 +57,8 @@ export class LeaveApplicationController {
   @Patch(':id')
   async update(@Param('id') id: string, @Body() updateLeaveApplicationDto: Prisma.LeaveApplicationUpdateInput) {
     try {
-      return await this.leaveApplicationService.update(+id, updateLeaveApplicationDto);
+       await this.leaveApplicationService.update(+id, updateLeaveApplicationDto);
+       return( `Leave Application ${id} Updated Successfully`);
     } catch (err) {
       throw new HttpException(
         {
