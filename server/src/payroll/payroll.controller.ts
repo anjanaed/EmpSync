@@ -16,9 +16,9 @@ export class PayrollController{
         return this.payrollService.findAll();
     }
 
-    @Get(':id/:month')
-    findOne(@Param('id') id:string, @Param('month') month:string){
-        return this.payrollService.findOne(id,month);
+    @Get(':empId/:month')
+    findOne(@Param('empId') empId:string, @Param('month') month:string){
+        return this.payrollService.findOne(empId,month);
 
     }
 
