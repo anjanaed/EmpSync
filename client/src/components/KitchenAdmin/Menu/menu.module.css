@@ -6,6 +6,7 @@
     padding: 25px; /* Add padding for spacing */
     border-radius: 10px; /* Rounded edges */
     border: 1px solid black; /* Dark red border */
+    
   }
   
   
@@ -35,9 +36,11 @@
     background-color: #AC0C2E;
     color: white;
     padding: 10px;
-    border-radius: 5px;
+    border-radius: 5px 5px 0 0; /* Rounded corners only at the top */
     text-align: center;
     font-size: 25px;
+    margin: 0; /* Remove any gap */
+
   }
   
   .buttonGroup {
@@ -61,6 +64,25 @@
     cursor: pointer;
     background-color: #FFFDED;
   }
+
+  .scroll{
+    height:300px;
+    overflow-y: auto; 
+    resize: none;
+  }
+
+  /* Optional: Customize scrollbar */
+.scroll::-webkit-scrollbar {
+  width: 7px;
+
+}
+
+/* .scroll::-webkit-scrollbar-thumb {
+  background-color:  #660e1e;
+  border-radius: 6px;
+} */
+
+
   
   
   

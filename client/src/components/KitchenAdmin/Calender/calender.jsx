@@ -8,6 +8,9 @@ const MenuCalendar = () => {
   const [meals, setMeals] = useState([
     { id: 1, name: 'Rice & Curry' },
     { id: 2, name: 'Hoppers' },
+    { id: 2, name: 'Hoppers' },
+    { id: 2, name: 'Hoppers' },
+    { id: 2, name: 'Hoppers' },
     { id: 3, name: 'Noodles' }
   ]);
 

@@ -12,14 +12,27 @@ const TodayMenu = () => {
         <div className={styles.menutop}>
           <h3 className={styles.cardHeader}>Breakfast Sets</h3>
         </div>
-          <ul>
+        <div className={styles.scroll}>
+        <ul>
             <li>Rice & Curry</li>
             <li>String Hoppers</li>
             <li>Noodles</li>
             <li>Hoppers</li>
+            <li>Hoppers</li>
+            <li>Hoppers</li>
+            <li>Hoppers</li>
+            <li>Hoppers</li>
+            <li>Hoppers</li>
+            <li>Hoppers</li>
+            <li>Hoppers</li>
+
+            
+
             
 
           </ul>
+        </div>
+          
         </div>
 
         {/* Lunch Section */}
