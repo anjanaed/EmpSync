@@ -7,7 +7,6 @@ import { Prisma } from '@prisma/client';
 describe('PayrollService', () => {
   let payrollService: PayrollService;
   let databaseService: DatabaseService;
-
   const mockDatabaseService = {
     payroll: {
       create: jest.fn(),
