@@ -45,14 +45,14 @@ model Payroll{
 
 }
 
-  model Meal {
-  id        Int      @id @default(autoincrement())
-  name      String           
+model Meal {
+  id Int @id @default(autoincrement())
+  name String           
   description String?                        
-  price       Float                          
-  category    String                           
-  imageUrl    String?                          
-  createdAt   DateTime @default(now())                   
+  price Float                          
+  category String                           
+  imageUrl String?                          
+  createdAt DateTime @default(now())                   
 }
 
 
