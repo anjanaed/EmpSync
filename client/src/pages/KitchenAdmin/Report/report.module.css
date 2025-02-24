@@ -1,0 +1,111 @@
+/* CSS Module (report.module.css) */
+.container {
+  padding: 20px;
+  background-color: #F8F4DA;
+  min-height: 100vh;
+}
+
+.sectionContainer {
+  width: 90%;
+  margin: 20px auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-top: 100px; 
+
+}
+
+/* Common Card Styles */
+.sectionCard {
+  background: white;
+  padding: 5px;
+  border-radius: 10px;
+  border: 1px solid black;
+}
+
+/* Section Titles */
+.sectionTitle {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 25px;
+}
+
+/* Analysis Section */
+.analysisContainer {
+  display: flex;
+  justify-content: space-between;
+  gap: 200px;
+}
+
+.analysisCard {
+  background-color: #F8F4DA;
+  /* padding: 15px; */
+  width: 48%;
+  text-align: center;
+  border-radius: 5px;
+  border: 1px solid black;
+  font-size: 18px;
+  
+}
+
+/* Card Header */
+.analysisCard :global(.ant-card-head) {
+  background-color:#AC0C2E !important; /* Red background */
+  color: white !important; /* White text */
+  text-align: center;
+  border-radius: 5px 5px 0 0; /* Rounded corners only at the top */
+  /* border :1px solid black; */
+  padding: 5px;
+  margin: 0; /* Remove any gap */
+  font-size: 20px;
+}
+
+
+/* Reports Section */
+.reportBox {
+  width: 100%;
+  height: 500px;
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid black;
+  overflow-y: auto; /* Enables vertical scrolling */
+  resize: none;
+}
+
+/* Button */
+.buttonContainer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
+.downloadBtn {
+  background: #660e1e !important;
+  border: none;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+/* Meal Name Styling */
+.mealName {
+  font-size: 18px;
+  font-weight: bold;
+  /* margin-top: 10px;  */
+}
+
+/* Optional: Customize scrollbar */
+.reportBox::-webkit-scrollbar {
+  width: 6px;
+}
+
+.reportBox::-webkit-scrollbar-thumb {
+  background-color:  #660e1e;
+  border-radius: 3px;
+}
+
+.reportBox::-webkit-scrollbar-track {
+  background-color:white;
+  /* border: 1px solid black; */
+  
+}

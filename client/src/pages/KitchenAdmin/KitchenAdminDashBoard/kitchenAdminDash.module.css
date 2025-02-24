@@ -1,0 +1,31 @@
+.container {
+  background-color: #F8F4DA;
+  min-height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+  padding: 20px;
+
+}
+
+.mainContent {
+  flex: 1;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-top: 100px; /* Add space below navbar */
+  overflow-y: auto;
+}
+
+
+
+/* Ensure navbar stays on top */
+:global(.navbar) {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+}

@@ -1,0 +1,201 @@
+.container {
+  display: flex;
+  width: 90%; /* Adjust width as needed (90% of the screen width) */
+  max-width: 1750px; /* Set a maximum width for large screens */
+  margin: 0 auto 0 auto;
+  gap: 2rem;
+  padding: 20px; 
+  background-color: white;
+  border-radius: 10px;
+  border: 1px solid black; /* Dark red border */
+}
+
+.calendarSection {
+  width: 22rem;
+  border: 1px solid #5D071C; /* Dark red border */
+  border-radius: 10px;
+  padding: 2rem;
+  background-color: #FFFDED;
+}
+
+.selectedDate {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.mealsSection {
+  flex: 1;
+}
+
+.mealsTitle {
+  font-size: 26px;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.mealsList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  height: 300px;
+  overflow-y: auto; 
+  resize: none;
+}
+
+.mealItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem;
+  border: 1px solid black;
+  border-radius: 10px;
+  font-size: 20px;
+}
+
+.mealActions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.iconButton {
+  color: #5D071C;
+  cursor: pointer;
+  padding: 0.25rem;
+  transition: color 0.2s;
+  background-color: transparent;
+  border: transparent;
+  font-size: 22px;
+  width: 50px;
+  font-weight: bold;
+}
+
+.iconButton:hover {
+  color: black;
+}
+
+.addButton {
+  width: 100%;
+  margin-top: 1rem;
+  padding: 0.75rem;
+  background-color: #5D071C;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 20px;
+  transition: background-color 0.2s;
+}
+
+.addButton:hover {
+  background-color: #731835;
+}
+
+
+/* Previous styles remain the same until calendar styles */
+
+/* Updated and new Ant Design calendar styles */
+:global(.ant-picker-calendar) {
+  background-color: #FFFDED !important;
+}
+
+:global(.ant-picker-calendar-header) {
+  padding: 8px !important;
+  background-color: #FFFDED !important;
+}
+
+/* Year and Month selector styles */
+:global(.ant-select-selector) {
+  background-color: #FFFDED !important;
+  border-color: #5D071C !important;
+  font-size: 16px;
+}
+
+:global(.ant-select:hover .ant-select-selector) {
+  border-color: black !important;
+}
+
+/* Selected date styles (blue box) */
+:global(.ant-picker-cell-selected .ant-picker-calendar-date) {
+  background-color: #5D071C !important;
+  color: white !important;
+  
+}
+
+:global(.ant-picker-cell-selected:hover .ant-picker-calendar-date) {
+  background-color: #731835 !important;
+}
+
+/* Today's date border */
+:global(.ant-picker-calendar-date-today) {
+  border-color: #5D071C !important;
+}
+
+/* Date hover effect */
+:global(.ant-picker-calendar-date:hover) {
+  background-color: rgba(93, 7, 28, 0.1) !important;
+}
+
+/* Month/Year text color */
+:global(.ant-select-selection-item) {
+  color: black !important;
+  font-size: 16px;
+}
+
+/* Dropdown background */
+:global(.ant-select-dropdown) {
+  background-color: #FFFDED !important;
+}
+
+:global(.ant-select-item) {
+  background-color: #FFFDED !important;
+}
+
+:global(.ant-select-item:hover) {
+  background-color: rgba(93, 7, 28, 0.1) !important;
+}
+
+:global(.ant-select-item-option-selected) {
+  background-color: rgba(93, 7, 28, 0.2) !important;
+}
+
+/* Calendar cell backgrounds */
+:global(.ant-picker-calendar-date) {
+  background-color: #FFFDED !important;
+  font-size: 18px;
+}
+
+:global(.ant-picker-cell) {
+  background-color: #FFFDED !important;
+  
+}
+
+:global(.ant-picker-calendar-header .ant-picker-calendar-mode-switch) {
+  background-color: #FFFDED !important;
+}
+
+:global(.ant-picker-cell-in-view) {
+  color: black !important;
+}
+
+:global(.ant-picker-calendar-header .ant-radio-button-wrapper) {
+  background-color: #FFFDED !important;
+  border-color: #5D071C !important;
+}
+
+:global(.ant-picker-calendar-header .ant-radio-button-wrapper-checked) {
+  background-color: #5D071C !important;
+  color:white !important;
+}
+
+/* Optional: Customize scrollbar */
+.mealsList::-webkit-scrollbar {
+  width: 7px;
+
+}
+
+.mealsList::-webkit-scrollbar-thumb {
+  background-color:  #660e1e;
+  border-radius: 6px;
+}
+
