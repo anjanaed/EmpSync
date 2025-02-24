@@ -4,6 +4,7 @@ on:
   pull_request:
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
   build-and-test:
@@ -38,16 +39,19 @@ jobs:
           node-version: '18'
 
       - name: Install Dependencies
-        run: /
+        run: |
           cd server
           npm install
 
       - name: Prisma Generate & Run Migrations 
-        run: /
+        run: |
           cd server
           make migrate   
 
       - name: Run test
-        run: /
+        run: |
           cd server
           make test
+
+ 
+       
