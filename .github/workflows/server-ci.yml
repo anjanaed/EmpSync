@@ -1,10 +1,6 @@
 name: Server Testing
 
-on:
-  pull_request:
-    branches:
-      - main
-  workflow_dispatch:
+on: [pull_request, workflow_dispatch]
 
 jobs:
   build-and-test:
