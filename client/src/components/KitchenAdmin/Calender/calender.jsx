@@ -2,8 +2,15 @@ import React, { useState } from 'react';
 import { Calendar } from 'antd';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import styles from './calender.module.css';
+import { useNavigate } from 'react-router-dom';
 
 const MenuCalendar = () => {
+  const navigate = useNavigate(); 
+
+  const addMeal = () => {
+    navigate('/meal-details');
+  };
+
   const [selectedDate, setSelectedDate] = useState('Thursday, Feb 17');
   const [meals, setMeals] = useState([
     { id: 1, name: 'Rice & Curry' },
@@ -48,7 +55,7 @@ const MenuCalendar = () => {
           ))}
         </div>
         
-        <button className={styles.addButton}>
+        <button className={styles.addButton} onClick={addMeal}>
           Add new Meal
         </button>
       </div>

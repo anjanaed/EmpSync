@@ -79,80 +79,125 @@ export class IngredientsService {
 
   async findLowPriceIngredients() {
     console.log('Fetching low price ingredients...');
+
+    // Fetch ingredients from database
     const ingredients = await this.databaseServices.ingredient.findMany({
-      select: {
-        id: true,
-        name: true,
-        price_per_unit: true,
-        quantity: true,
-      },
+        select: {
+            id: true,
+            name: true,
+            price_per_unit: true,
+            quantity: true,
+        },
     });
 
-    // Group ingredients by name
-    const groupedIngredients = ingredients.reduce((acc, curr) => {
-      if (!acc[curr.name]) {
-        acc[curr.name] = {
-          lowest: curr,
-          items: [curr]
-        };
-      } else {
-        acc[curr.name].items.push(curr);
-        if (curr.price_per_unit < acc[curr.name].lowest.price_per_unit) {
-          acc[curr.name].lowest = curr;
-        }
-      }
-      return acc;
-    }, {} as Record<string, { lowest: any; items: any[] }>);
+    // Step 1: Sort ingredients by name first, then by price_per_unit in ascending order
+    ingredients.sort((a, b) => {
+      const nameComparison = a.name.localeCompare(b.name);
+      return nameComparison !== 0 ? nameComparison : Number(a.price_per_unit) - Number(b.price_per_unit);
+    });
 
-    const lowPriceIngredients = Object.values(groupedIngredients).map(group => ({
-      ...group.lowest,
-      priceComparison: {
-        lowestPrice: group.lowest.price_per_unit,
-        highestPrice: Math.max(...group.items.map(item => item.price_per_unit)),
-        priceDifference: Math.max(...group.items.map(item => item.price_per_unit)) - group.lowest.price_per_unit,
-        totalVariants: group.items.length
-      }
-    }));
+    // Step 2: Group ingredients by name
+    const groupedIngredients: Record<string, any[]> = {};
+    for (const ingredient of ingredients) {
+        if (!groupedIngredients[ingredient.name]) {
+            groupedIngredients[ingredient.name] = [];
+        }
+        groupedIngredients[ingredient.name].push(ingredient);
+    }
+
+    // Step 3: Use Binary Search to find the lowest price variant in each group
+    function binarySearchLowest(items: any[]): any {
+        let left = 0;
+        let right = items.length - 1;
+        let lowest = items[0]; // Since array is sorted, first element is the lowest
+
+        while (left <= right) {
+            let mid = Math.floor((left + right) / 2);
+            if (items[mid].price_per_unit < lowest.price_per_unit) {
+                lowest = items[mid];
+            }
+            right = mid - 1; // Keep searching in the left half for a lower price
+        }
+
+        return lowest;
+    }
+
+    // Step 4: Construct the final list with price comparisons
+    const lowPriceIngredients = Object.entries(groupedIngredients).map(([name, items]) => {
+        const lowest = binarySearchLowest(items);
+        const highestPrice = items[items.length - 1].price_per_unit; // Since array is sorted, last element has the highest price
+
+        return {
+            ...lowest,
+            priceComparison: {
+                lowestPrice: lowest.price_per_unit,
+                highestPrice: highestPrice,
+                priceDifference: highestPrice - lowest.price_per_unit,
+                totalVariants: items.length
+            }
+        };
+    });
 
     return lowPriceIngredients;
   }
 
   async findHighPriceIngredients() {
     console.log('Fetching high price ingredients...');
+
+    // Fetch ingredients from database
     const ingredients = await this.databaseServices.ingredient.findMany({
-      select: {
-        id: true,
-        name: true,
-        price_per_unit: true,
-        quantity: true,
-      },
+        select: {
+            id: true,
+            name: true,
+            price_per_unit: true,
+            quantity: true,
+        },
     });
 
-    // Group ingredients by name
-    const groupedIngredients = ingredients.reduce((acc, curr) => {
-      if (!acc[curr.name]) {
-        acc[curr.name] = {
-          highest: curr,
-          items: [curr]
-        };
-      } else {
-        acc[curr.name].items.push(curr);
-        if (curr.price_per_unit > acc[curr.name].highest.price_per_unit) {
-          acc[curr.name].highest = curr;
-        }
-      }
-      return acc;
-    }, {} as Record<string, { highest: any; items: any[] }>);
+    // Step 1: Sort ingredients by name first, then by price_per_unit in descending order
+    ingredients.sort((a, b) => a.name.localeCompare(b.name) || Number(b.price_per_unit) - Number(a.price_per_unit));
 
-    const highPriceIngredients = Object.values(groupedIngredients).map(group => ({
-      ...group.highest,
-      priceComparison: {
-        lowestPrice: Math.min(...group.items.map(item => item.price_per_unit)),
-        highestPrice: group.highest.price_per_unit,
-        priceDifference: group.highest.price_per_unit - Math.min(...group.items.map(item => item.price_per_unit)),
-        totalVariants: group.items.length
-      }
-    }));
+    // Step 2: Group ingredients by name
+    const groupedIngredients: Record<string, any[]> = {};
+    for (const ingredient of ingredients) {
+        if (!groupedIngredients[ingredient.name]) {
+            groupedIngredients[ingredient.name] = [];
+        }
+        groupedIngredients[ingredient.name].push(ingredient);
+    }
+
+    // Step 3: Use Binary Search to find the highest price variant in each group
+    function binarySearchHighest(items: any[]): any {
+        let left = 0;
+        let right = items.length - 1;
+        let highest = items[0]; // Since array is sorted, first element is the highest
+
+        while (left <= right) {
+            let mid = Math.floor((left + right) / 2);
+            if (items[mid].price_per_unit > highest.price_per_unit) {
+                highest = items[mid];
+            }
+            left = mid + 1; // Keep searching in the right half for a higher price
+        }
+
+        return highest;
+    }
+
+    // Step 4: Construct the final list with price comparisons
+    const highPriceIngredients = Object.entries(groupedIngredients).map(([name, items]) => {
+        const highest = binarySearchHighest(items);
+        const lowestPrice = items[items.length - 1].price_per_unit; // Since sorted, last element is the lowest
+
+        return {
+            ...highest,
+            priceComparison: {
+                lowestPrice: lowestPrice,
+                highestPrice: highest.price_per_unit,
+                priceDifference: highest.price_per_unit - lowestPrice,
+                totalVariants: items.length
+            }
+        };
+    });
 
     return highPriceIngredients;
   }
