@@ -1,29 +1,22 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { IngredientsService } from './ingredients.service';
-import { getRepositoryToken } from '@nestjs/typeorm';
-import { Ingredient } from './entities/ingredient.entity';
-import { Repository } from 'typeorm';
+import { DatabaseService } from '../database/database.service';
+import { HttpException } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 
 describe('IngredientsService', () => {
   let service: IngredientsService;
-  let repository: Repository<Ingredient>;
+  let databaseService: DatabaseService;
 
-  const mockRepository = {
-    create: jest.fn(),
-    save: jest.fn(),
-    find: jest.fn(),
-    findOne: jest.fn(),
-    delete: jest.fn(),
-    update: jest.fn(),
-  };
-
-  const mockIngredient = {
-    id: '1',
-    name: 'Test Ingredient',
-    price_per_unit: 10.50,
-    quantity: 100.00,
-    priority: 1,
-    createdAt: new Date(),
+  const mockDatabaseService = {
+    ingredient: {
+      create: jest.fn(),
+      createMany: jest.fn(),
+      findMany: jest.fn(),
+      findUnique: jest.fn(),
+      update: jest.fn(),
+      delete: jest.fn(),
+    },
   };
 
   beforeEach(async () => {
@@ -31,91 +24,149 @@ describe('IngredientsService', () => {
       providers: [
         IngredientsService,
         {
-          provide: getRepositoryToken(Ingredient),
-          useValue: mockRepository,
+          provide: DatabaseService,
+          useValue: mockDatabaseService,
         },
       ],
     }).compile();
 
     service = module.get<IngredientsService>(IngredientsService);
-    repository = module.get<Repository<Ingredient>>(getRepositoryToken(Ingredient));
+    databaseService = module.get<DatabaseService>(DatabaseService);
   });
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   describe('create', () => {
-    it('should create a new ingredient', async () => {
-      mockRepository.create.mockReturnValue(mockIngredient);
-      mockRepository.save.mockResolvedValue(mockIngredient);
-
-      const result = await service.create({
+    it('should create an ingredient successfully', async () => {
+      const dto: Prisma.IngredientCreateInput = {
         id: '1',
-        name: 'Test Ingredient',
-        price_per_unit: 10.50,
-        quantity: 100.00,
-        priority: 1,
-      });
+        name: 'Sugar',
+        price_per_unit: 2.5,
+        quantity: 100,
+        priority: 1
+      };
+      mockDatabaseService.ingredient.create.mockResolvedValue(dto);
 
-      expect(result).toEqual(mockIngredient);
-      expect(mockRepository.create).toHaveBeenCalled();
-      expect(mockRepository.save).toHaveBeenCalled();
+      await expect(service.create(dto)).resolves.not.toThrow();
+      expect(mockDatabaseService.ingredient.create).toHaveBeenCalledWith({
+        data: {
+          ...dto,
+          price_per_unit: 2.5,
+          quantity: 100
+        }
+      });
+    });
+
+    it('should throw conflict error if ingredient ID or Name is not unique', async () => {
+      mockDatabaseService.ingredient.create.mockRejectedValue({ code: 'P2002' });
+
+      await expect(service.create({
+        id: '1',
+        name: 'Sugar',
+        price_per_unit: 2.5,
+        quantity: 100,
+        priority: 1
+      })).rejects.toThrow(HttpException);
+      expect(mockDatabaseService.ingredient.create).toHaveBeenCalled();
     });
   });
 
   describe('findAll', () => {
-    it('should return an array of ingredients', async () => {
-      mockRepository.find.mockResolvedValue([mockIngredient]);
+    it('should return array of ingredients', async () => {
+      const mockIngredients = [{
+        id: '1',
+        name: 'Sugar',
+        price_per_unit: 2.5,
+        quantity: 100,
+        priority: 1
+      }];
+      mockDatabaseService.ingredient.findMany.mockResolvedValue(mockIngredients);
 
-      const result = await service.findAll();
+      await expect(service.findAll()).resolves.toEqual(mockIngredients);
+      expect(mockDatabaseService.ingredient.findMany).toHaveBeenCalled();
+    });
 
-      expect(result).toEqual([mockIngredient]);
-      expect(mockRepository.find).toHaveBeenCalled();
+    it('should throw an error if no ingredients are found', async () => {
+      mockDatabaseService.ingredient.findMany.mockResolvedValue(null);
+
+      await expect(service.findAll()).rejects.toThrow('No Ingredients');
     });
   });
 
   describe('findOne', () => {
-    it('should return a single ingredient', async () => {
-      mockRepository.findOne.mockResolvedValue(mockIngredient);
+    it('should return an ingredient by ID', async () => {
+      const mockIngredient = {
+        id: '1',
+        name: 'Sugar',
+        price_per_unit: 2.5,
+        quantity: 100,
+        priority: 1
+      };
+      mockDatabaseService.ingredient.findUnique.mockResolvedValue(mockIngredient);
 
-      const result = await service.findOne('1');
+      await expect(service.findOne('1')).resolves.toEqual(mockIngredient);
+    });
 
-      expect(result).toEqual(mockIngredient);
-      expect(mockRepository.findOne).toHaveBeenCalledWith({ where: { id: 1 } });
+    it('should throw an error if ingredient is not found', async () => {
+      mockDatabaseService.ingredient.findUnique.mockResolvedValue(null);
+
+      await expect(service.findOne('1')).rejects.toThrow('Ingredient Not found');
     });
   });
 
   describe('update', () => {
-    it('should update an ingredient', async () => {
-      const updatedIngredient = {
-        ...mockIngredient,
-        price_per_unit: 12.50,
-        quantity: 200.00,
+    it('should update an ingredient successfully', async () => {
+      const mockIngredient = {
+        id: '1',
+        name: 'Sugar',
+        price_per_unit: 2.5,
+        quantity: 100,
+        priority: 1
       };
-      mockRepository.update.mockResolvedValue({ affected: 1 });
-      mockRepository.findOne.mockResolvedValue(updatedIngredient);
+      const updateData: Prisma.IngredientUpdateInput = { name: 'Brown Sugar' };
 
-      const result = await service.update('1', {
-        price_per_unit: 12.50,
-        quantity: 200.00,
+      mockDatabaseService.ingredient.findUnique.mockResolvedValue(mockIngredient);
+      mockDatabaseService.ingredient.update.mockResolvedValue({ ...mockIngredient, ...updateData });
+
+      await expect(service.update('1', updateData)).resolves.not.toThrow();
+      expect(mockDatabaseService.ingredient.update).toHaveBeenCalledWith({
+        where: { id: '1' },
+        data: updateData,
       });
+    });
 
-      expect(result.price_per_unit).toBe(12.50);
-      expect(result.quantity).toBe(200.00);
-      expect(mockRepository.update).toHaveBeenCalled();
+    it('should throw an error if ingredient is not found', async () => {
+      mockDatabaseService.ingredient.findUnique.mockResolvedValue(null);
+
+      await expect(service.update('1', { name: 'Brown Sugar' }))
+        .rejects.toThrow('Ingredient Not found');
     });
   });
 
   describe('remove', () => {
-    it('should delete an ingredient', async () => {
-      mockRepository.delete.mockResolvedValue({ affected: 1 });
-      mockRepository.findOne.mockResolvedValue(mockIngredient);
+    it('should delete an ingredient successfully', async () => {
+      const mockIngredient = {
+        id: '1',
+        name: 'Sugar',
+        price_per_unit: 2.5,
+        quantity: 100,
+        priority: 1
+      };
+      mockDatabaseService.ingredient.findUnique.mockResolvedValue(mockIngredient);
+      mockDatabaseService.ingredient.delete.mockResolvedValue(mockIngredient);
 
-      const result = await service.remove('1');
+      await expect(service.remove('1')).resolves.not.toThrow();
+      expect(mockDatabaseService.ingredient.delete).toHaveBeenCalledWith({
+        where: { id: '1' },
+      });
+    });
 
-      expect(result).toEqual(mockIngredient);
-      expect(mockRepository.delete).toHaveBeenCalledWith(1);
+    it('should throw an error if ingredient is not found', async () => {
+      mockDatabaseService.ingredient.findUnique.mockResolvedValue(null);
+
+      await expect(service.remove('1')).rejects.toThrow('Ingredient Not found');
     });
   });
 });

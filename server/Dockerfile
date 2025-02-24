@@ -4,13 +4,13 @@ FROM node:18 AS builder
 
 WORKDIR /app
 
-COPY package*.json ./
+COPY package.json package-lock.json ./
 
-RUN npm install --legacy-peer-deps
+RUN npm install 
 
 COPY . .
 
-ENV DATABASE_URL=postgresql://postgres:anjana@postgres:5432/demo
+ENV DATABASE_URL=postgresql://postgres:anjana@postgres:5433/demo
 
 
 RUN npx prisma generate

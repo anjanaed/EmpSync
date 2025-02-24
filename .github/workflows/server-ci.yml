@@ -1,0 +1,53 @@
+name: Server Testing
+
+on: [pull_request, workflow_dispatch]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:latest
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: mysecretpassword
+          POSTGRES_DB: mydatabase
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DATABASE_URL: postgresql://postgres:mysecretpassword@localhost:5432/mydatabase
+
+
+    steps:
+      - name: CheckOut Code
+        uses: actions/checkout@v2
+
+      - name: Setup NodeJs
+        uses: actions/setup-node@v2
+        with:
+          node-version: '18'
+
+      - name: Install Dependencies
+        run: |
+          cd server
+          npm install
+
+      - name: Prisma Generate & Run Migrations 
+        run: |
+          cd server
+          make migrate   
+
+      - name: Run test
+        run: |
+          cd server
+          make test
+
+ 
+       

@@ -1,59 +1,80 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
-import { DatabaseService } from 'src/database/database.service';
+import { DatabaseService } from '../database/database.service';
 
 @Injectable()
 export class IngredientsService {
   constructor(private readonly databaseServices: DatabaseService) {}
 
   async create(createIngredientDto: Prisma.IngredientCreateInput | Prisma.IngredientCreateInput[]) {
-    if (Array.isArray(createIngredientDto)) {
-      // Handle bulk creation
-      return this.databaseServices.ingredient.createMany({
-        data: createIngredientDto.map(ingredient => ({
-          ...ingredient,
-          price_per_unit: parseFloat(ingredient.price_per_unit.toString()),
-          quantity: parseInt(ingredient.quantity.toString())
-        }))
+    try {
+      if (Array.isArray(createIngredientDto)) {
+        return await this.databaseServices.ingredient.createMany({
+          data: createIngredientDto.map(ingredient => ({
+            ...ingredient,
+            price_per_unit: parseFloat(ingredient.price_per_unit.toString()),
+            quantity: parseInt(ingredient.quantity.toString())
+          }))
+        });
+      }
+      return await this.databaseServices.ingredient.create({ 
+        data: {
+          ...createIngredientDto,
+          price_per_unit: parseFloat(createIngredientDto.price_per_unit.toString()),
+          quantity: parseInt(createIngredientDto.quantity.toString())
+        } 
       });
+    } catch (error) {
+      if (error?.code === 'P2002') {
+        throw new HttpException(
+          'Ingredient with this ID or Name already exists',
+          HttpStatus.CONFLICT
+        );
+      }
+      throw new HttpException(
+        'Failed to create ingredient',
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
     }
-    // Handle single creation
-    return this.databaseServices.ingredient.create({ 
-      data: {
-        ...createIngredientDto,
-        price_per_unit: parseFloat(createIngredientDto.price_per_unit.toString()),
-        quantity: parseInt(createIngredientDto.quantity.toString())
-      } 
-    });
   }
 
   async findAll() {
-    return this.databaseServices.ingredient.findMany({});
+    const ingredients = await this.databaseServices.ingredient.findMany({});
+    if (!ingredients || ingredients.length === 0) {
+      throw new HttpException('No Ingredients', HttpStatus.NOT_FOUND);
+    }
+    return ingredients;
   }
 
   async findOne(id: string) {
-    return this.databaseServices.ingredient.findUnique({
-      where:{
-        id,
-      },
+    const ingredient = await this.databaseServices.ingredient.findUnique({
+      where: { id }
     });
+    if (!ingredient) {
+      throw new HttpException('Ingredient Not found', HttpStatus.NOT_FOUND);
+    }
+    return ingredient;
   }
 
   async update(id: string, updateIngredientDto: Prisma.IngredientUpdateInput) {
+    const ingredient = await this.findOne(id);
+    if (!ingredient) {
+      throw new HttpException('Ingredient Not found', HttpStatus.NOT_FOUND);
+    }
     return this.databaseServices.ingredient.update({
-      where: {
-        id,
-      },
+      where: { id },
       data: updateIngredientDto,
-    })
+    });
   }
 
   async remove(id: string) {
+    const ingredient = await this.findOne(id);
+    if (!ingredient) {
+      throw new HttpException('Ingredient Not found', HttpStatus.NOT_FOUND);
+    }
     return this.databaseServices.ingredient.delete({
-      where:{
-        id,
-      },
-    })
+      where: { id },
+    });
   }
 
   async findLowPriceIngredients() {

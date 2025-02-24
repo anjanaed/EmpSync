@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
-import { DatabaseService } from 'src/database/database.service';
+import { DatabaseService } from '../database/database.service';
 
 @Injectable()
 export class MealService {
@@ -22,7 +22,7 @@ export class MealService {
     }
   }
 
-  async findOne(id: string) {
+  async findOne(id: number ) {
     try {
       const meal = await this.databaseService.meal.findUnique({
         where: { id },
@@ -32,11 +32,14 @@ export class MealService {
       }
       return meal;
     } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
       throw new BadRequestException(error.message);
     }
   }
 
-  async update(id: string, updateMealDto: Prisma.MealUpdateInput) {
+  async update(id: number, updateMealDto: Prisma.MealUpdateInput) {
     try {
       return await this.databaseService.meal.update({
         where: { id },
@@ -47,7 +50,7 @@ export class MealService {
     }
   }
 
-  async remove(id: string) { // Change id type to string
+  async remove(id: number) { // Change id type to string
     try {
       return await this.databaseService.meal.delete({
         where: { id },

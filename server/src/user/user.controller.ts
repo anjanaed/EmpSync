@@ -20,7 +20,7 @@ import {
     async create(@Body() dto: Prisma.UserCreateInput) {
       try {
         await this.userService.create(dto);
-        return 'User Registerd Successfully';
+        return 'User Registered Successfully';
       } catch (err) {
         throw new HttpException(
           {
