@@ -16,7 +16,7 @@ jobs:
                     POSTGRES_PASSWORD: mysecretpassword
                     POSTGRES_DB: mydatabase
 
-         steps: 
+        steps: 
             - name: Checkout Code
               uses: actions/checkout@v2
 
