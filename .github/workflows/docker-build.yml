@@ -57,7 +57,7 @@ jobs:
         run: docker-compose -f ./server/docker-compose.yml up --build -d
 
       - name: Run tests
-        run: docker-compose -f ./server/docker-compose.yml exec nestjs npm test
+        run: docker-compose -f ./server/docker-compose.yml exec -T nestjs npm test
 
 
 
