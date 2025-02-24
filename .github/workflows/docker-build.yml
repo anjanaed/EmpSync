@@ -43,7 +43,7 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v2
         with:
-          context: .
+          context: ./server
           file: ./server/Dockerfile
           push: false
           tags: user/repository:latest
