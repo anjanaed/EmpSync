@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "./index.css";
-import Register from "./pages/registration/Registration";
+import Register from "./pages/HRManager/Registration/Registration";
 import KitchenAdmin from "./pages/KitchenAdmin/KitchenAdminDashBoard/kitchenAdminDash"; 
 import Reports from "./pages/KitchenAdmin/Report/report"; 
 import MealDetailsForm from "./pages/KitchenAdmin/MealDetails/MealDetailsForm";

@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import styles from "./Registration.module.css";
-import Navbar from "../../components/hrDashboard/hrNavbar";
+import Navbar from "../../../components/hrDashboard/hrNavbar";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFingerprint } from "@fortawesome/free-solid-svg-icons";
-import Loading from "../../components/loading/loading";
+import Loading from "../../../components/loading/loading";
 import { DatePicker } from "antd";
-import GButton from "../../components/button/Button";
+import GButton from "../../../components/button/Button";
 import GradientButton from "react-linear-gradient-button";
 import { IoMdFingerPrint } from "react-icons/io";
 
