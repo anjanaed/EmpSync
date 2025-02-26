@@ -1,6 +1,7 @@
 import React from "react";
 import { Form, Input, Button, Checkbox } from "antd";
 import "./Login.css";
+import illustration from "../../assets/illustration.png";
 
 const LoginPage = () => {
   return (
@@ -8,8 +9,9 @@ const LoginPage = () => {
       <div className="login-box">
         {/* Left Section */}
         <div className="login-left">
+          
           <img
-            src="./assets/illustration.png"
+            src={illustration}
             alt="Illustration"
             className="login-illustration"
           />
