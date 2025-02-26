@@ -1,15 +1,14 @@
-import { useState } from 'react'
-import './index.css'
-import Register from './pages/registration/Registration'
+import { useState } from 'react';
+import './index.css';
+import Login from './pages/Login/Login';
+import './pages/Login/login.css';
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
     <>
-      <Register/>
+      <Login />
     </>
-  )
+  );
 }
 
-export default App
+export default App;
