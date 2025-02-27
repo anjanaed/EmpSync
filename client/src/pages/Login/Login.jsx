@@ -1,23 +1,28 @@
 import React from "react";
-import { Form, Input,Button, Checkbox } from "antd";
+import { Form, Input, Checkbox } from "antd";
+import { useNavigate } from "react-router-dom";
 import "./Login.css";
 import illustration from "../../assets/illustration.png";
 
 const LoginPage = () => {
+  const navigate = useNavigate();
+
+  const handleLogin = () => {
+
+    navigate("/");
+  };
+
   return (
     <div className="login-container">
       <div className="login-box">
-        {/* Left Section */}
+       
         <div className="login-left">
-          
           <img
             src={illustration}
             alt="Illustration"
             className="login-illustration"
           />
-        </div>
-
-        {/* Right Section */}
+        </div>     
         <div className="login-right">
           <h2 className="login-title">WELCOME BACK</h2>
           <p className="login-subtitle">Please enter your details.</p>
@@ -37,7 +42,7 @@ const LoginPage = () => {
             </div>
             
             <Form.Item>
-              <button type="submit" className="login-button">Login</button>
+              <button type="submit" className="login-button" onClick={handleLogin}>Login</button>
             </Form.Item>
           </Form>
         </div>
