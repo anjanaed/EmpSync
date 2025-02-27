@@ -24,12 +24,12 @@ const LoginPage = () => {
           />
         </div>     
         <div className="login-right">
-          <h2 className="login-title">WELCOME BACK</h2>
-          <p className="login-subtitle">Please enter your details.</p>
+          <h2 className="login-title">Welcome Back !</h2>
+          <p className="login-subtitle">Please Enter Your Credentials.</p>
           
           <Form layout="vertical" className="login-form">
             <Form.Item label="Employee ID" name="employeeID" rules={[{ required: true, message: 'Please input your Employee ID!' }]}> 
-              <Input placeholder="Enter your Employee ID" />
+              <Input placeholder="Enter Employee ID" />
             </Form.Item>
             
             <Form.Item label="Password" name="password" rules={[{ required: true, message: 'Please input your password!' }]}> 
@@ -38,7 +38,7 @@ const LoginPage = () => {
             
             <div className="login-options">
               <Checkbox>Remember me</Checkbox>
-              <a href="#" className="forgot-password">Forgot password</a>
+              <a href="#" className="forgot-password">Forgot Password</a>
             </div>
             
             <Form.Item>
