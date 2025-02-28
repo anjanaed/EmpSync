@@ -1,30 +1,31 @@
 import React from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation,useNavigate } from "react-router-dom";
 import styles from "./Navbar.module.css"; // Import CSS module
 
 const Navbar = () => {
   const location = useLocation(); // Get current path
+  const navigate=useNavigate();
 
   return (
     <nav className={styles.navbar}>
       {/* Left Side: Button Group */}
       <div className={styles.buttonGroup}>
-        <Link
-          to="/kitchen-admin"
+        <button
+          onClick={() => navigate("/kitchen-admin")}
           className={`${styles.navButton} ${location.pathname === "/kitchen-admin" ? styles.active : styles.defaultActive}`}
         >
           Schedule
-        </Link>
-        <Link
-          to="/report"
+        </button>
+        <button
+          onClick={()=>navigate("/report")}
           className={`${styles.navButton} ${location.pathname === "/report" ? styles.active : ""}`}
         >
           Reports & Analysis
-        </Link>
+        </button>
       </div>
 
       {/* Right Side: Logout Button */}
-      <button className={styles.logoutButton}>LOG OUT</button>
+      <button onClick={()=>navigate("/login")} className={styles.logoutButton}>Logout</button>
     </nav>
   );
 };
