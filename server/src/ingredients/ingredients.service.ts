@@ -201,4 +201,126 @@ export class IngredientsService {
 
     return highPriceIngredients;
   }
+
+  async findOptimalIngredients(budget: number) {
+    console.log(`Finding optimal ingredients for budget: ${budget}...`);
+  
+    // Fetch ingredients from database (using the lowest price variant of each)
+    const lowPriceIngredients = await this.findLowPriceIngredients();
+  
+    // Create a list of all available ingredients with their lowest prices
+    const availableIngredients = lowPriceIngredients.map(item => ({
+      id: item.id,
+      name: item.name,
+      price: Number(item.price_per_unit),
+      quantity: Number(item.quantity),
+      valueRatio: Number(item.quantity) / Number(item.price_per_unit) // Higher ratio = better value
+    }));
+  
+    // Configuration for diversity
+    const MAX_BUDGET_PER_INGREDIENT_TYPE = 0.15; // 15% max for any one ingredient 
+    
+    // Sort ingredients by value ratio (quantity/price) in descending order
+    availableIngredients.sort((a, b) => b.valueRatio - a.valueRatio);
+  
+    const optimalList = [];
+    let remainingBudget = budget;
+    
+    // First pass: Try to include ALL ingredients with at least one unit
+    for (const ingredient of availableIngredients) {
+      if (ingredient.price <= remainingBudget) {
+        // Add one unit of this ingredient
+        optimalList.push({
+          id: ingredient.id,
+          name: ingredient.name,
+          pricePerUnit: ingredient.price,
+          quantityPerUnit: ingredient.quantity,
+          units: 1,
+          totalPrice: ingredient.price,
+          totalQuantity: ingredient.quantity
+        });
+        
+        remainingBudget -= ingredient.price;
+      }
+    }
+  
+    // Second pass: Distribute remaining budget among ingredients with a cap per ingredient type
+    // Use a round-robin approach to ensure fair distribution
+    let continueDistributing = true;
+    while (continueDistributing && remainingBudget > 0) {
+      continueDistributing = false;
+      
+      // Create a sorted copy of our existing ingredients list by value ratio
+      const currentIngredients = [...optimalList].sort((a, b) => 
+        (b.quantityPerUnit / b.pricePerUnit) - (a.quantityPerUnit / a.pricePerUnit)
+      );
+      
+      for (const item of currentIngredients) {
+        // Check if we've hit the budget cap for this ingredient
+        const maxBudgetForIngredient = budget * MAX_BUDGET_PER_INGREDIENT_TYPE;
+        const currentSpendOnIngredient = item.totalPrice;
+        
+        // Can we add more of this ingredient?
+        if (currentSpendOnIngredient < maxBudgetForIngredient && 
+            item.pricePerUnit <= remainingBudget) {
+          // Add one more unit
+          item.units += 1;
+          item.totalPrice += item.pricePerUnit;
+          item.totalQuantity += item.quantityPerUnit;
+          
+          remainingBudget -= item.pricePerUnit;
+          continueDistributing = true;
+          
+          // Break after adding one item to give other ingredients a chance in the next round
+          break;
+        }
+      }
+    }
+  
+    // Third pass: Remove the cap and distribute any remaining budget
+    // to get as close to 100% utilization as possible
+    if (remainingBudget > 0) {
+      let canContinue = true;
+      while (canContinue && remainingBudget > 0) {
+        canContinue = false;
+        
+        // Sort our current items by price (lowest first) to maximize units
+        const sortedByPrice = [...optimalList].sort((a, b) => a.pricePerUnit - b.pricePerUnit);
+        
+        for (const item of sortedByPrice) {
+          if (item.pricePerUnit <= remainingBudget) {
+            // Add one more unit
+            item.units += 1;
+            item.totalPrice += item.pricePerUnit;
+            item.totalQuantity += item.quantityPerUnit;
+            
+            remainingBudget -= item.pricePerUnit;
+            canContinue = true;
+            break;
+          }
+        }
+      }
+    }
+  
+    // Sort the optimal list by total quantity (highest first) for presentation
+    optimalList.sort((a, b) => b.totalQuantity - a.totalQuantity);
+  
+    // Calculate total quantities and cost
+    const totalQuantity = optimalList.reduce((sum, item) => sum + item.totalQuantity, 0);
+    const totalCost = budget - remainingBudget;
+    
+    return {
+      ingredients: optimalList,
+      summary: {
+        totalIngredients: optimalList.length,
+        totalUnits: optimalList.reduce((sum, item) => sum + item.units, 0),
+        totalQuantity: totalQuantity,
+        totalCost: totalCost,
+        remainingBudget: remainingBudget,
+        originalBudget: budget,
+        budgetUtilizationPercentage: ((totalCost / budget) * 100).toFixed(2) + '%'
+      }
+    };
+  }
+  
 }

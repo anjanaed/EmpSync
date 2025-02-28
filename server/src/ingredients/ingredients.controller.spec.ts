@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { IngredientsController } from './ingredients.controller';
 import { IngredientsService } from './ingredients.service';
 import { Prisma } from '@prisma/client';
@@ -15,6 +16,7 @@ describe('IngredientsController', () => {
     remove: jest.fn(),
     findLowPriceIngredients: jest.fn(),
     findHighPriceIngredients: jest.fn(),
+    findOptimalIngredients: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -190,6 +192,37 @@ describe('IngredientsController', () => {
 
       expect(await controller.remove('1')).toBe(result);
       expect(service.remove).toHaveBeenCalledWith('1');
+    });
+  });
+
+  describe('getOptimalIngredients', () => {
+    beforeEach(() => {
+      mockIngredientsService.findOptimalIngredients = jest.fn();
+    });
+
+    it('should return optimal ingredients within budget', async () => {
+      const result = [
+        {
+          id: '1',
+          name: 'Sugar',
+          price_per_unit: 2.5,
+          quantity: 100,
+          priority: 1
+        }
+      ];
+      mockIngredientsService.findOptimalIngredients.mockResolvedValue(result);
+
+      expect(await controller.getOptimalIngredients(1000)).toBe(result);
+      expect(service.findOptimalIngredients).toHaveBeenCalledWith(1000);
+    });
+
+    it('should throw BadRequestException for invalid budget', async () => {
+      await expect(controller.getOptimalIngredients(-100)).rejects.toThrow(BadRequestException);
+    });
+
+    it('should throw NotFoundException when no ingredients found', async () => {
+      mockIngredientsService.findOptimalIngredients.mockResolvedValue([]);
+      await expect(controller.getOptimalIngredients(1000)).rejects.toThrow(NotFoundException);
     });
   });
 });
