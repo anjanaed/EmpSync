@@ -111,9 +111,10 @@
   border-radius: 0.6vw;
 }
 
-.inputs input:hover {
+.inputs input:hover{
   border: 0.15vw solid #4096ff;
 }
+
 
 .picker {
   padding: 0.6vw;
@@ -123,6 +124,7 @@
   justify-content: space-between;
   border-radius: 0.6vw;
 }
+
 
 .inputRow {
   display: flex;
