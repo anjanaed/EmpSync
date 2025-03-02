@@ -7,6 +7,17 @@ import { Prisma } from '@prisma/client';
 describe('UserService', () => {
   let userService: UserService;
   let databaseService: DatabaseService;
+  const dto: Prisma.UserCreateInput = {
+    id: '1',
+    name: 'Alice Johnson',
+    role: 'admin',
+    dob: '1990-05-14',
+    telephone: '1234567890',
+    address: '123 Main St, NY',
+    email: 'alice@example.com',
+    password: 'hashedpassword1',
+    thumbId: Buffer.from('b3f8a1d2', 'hex'),
+  };
   const mockDatabaseService = {
     user: {
       create: jest.fn(),
@@ -37,17 +48,7 @@ describe('UserService', () => {
 
   describe('create', () => {
     it('should create a user successfully', async () => {
-      const dto: Prisma.UserCreateInput = {
-        id: '1',
-        name: 'Alice Johnson',
-        role: 'admin',
-        dob: new Date('1990-05-14'),
-        telephone: '1234567890',
-        address: '123 Main St, NY',
-        email: 'alice@example.com',
-        password: 'hashedpassword1',
-        thumbId: Buffer.from('b3f8a1d2', 'hex'),
-      };
+
       mockDatabaseService.user.create.mockResolvedValue(dto);
 
       await expect(userService.create(dto)).resolves.not.toThrow();
@@ -59,17 +60,7 @@ describe('UserService', () => {
       mockDatabaseService.user.create.mockRejectedValue({ code: 'P2002' });
 
       await expect(
-        userService.create({
-          id: '1',
-          name: 'Alice Johnson',
-          role: 'admin',
-          dob: new Date('1990-05-14'),
-          telephone: '1234567890',
-          address: '123 Main St, NY',
-          email: 'alice@example.com',
-          password: 'hashedpassword1',
-          thumbId: Buffer.from('b3f8a1d2', 'hex'),
-        }),
+        userService.create(dto),
       ).rejects.toThrow(HttpException);
       expect(mockDatabaseService.user.create).toHaveBeenCalled();
     });
@@ -77,20 +68,10 @@ describe('UserService', () => {
 
   describe('findAll',()=>{
     it('should return array of users',async()=>{
-        const mockUsers={
-            id: '1',
-            name: 'Alice Johnson',
-            role: 'admin',
-            dob: new Date('1990-05-14'),
-            telephone: '1234567890',
-            address: '123 Main St, NY',
-            email: 'alice@example.com',
-            password: 'hashedpassword1',
-            thumbId: Buffer.from('b3f8a1d2', 'hex'),
-          };
-        mockDatabaseService.user.findMany.mockResolvedValue(mockUsers);
 
-        await expect(userService.findAll()).resolves.toEqual(mockUsers);
+        mockDatabaseService.user.findMany.mockResolvedValue(dto);
+
+        await expect(userService.findAll()).resolves.toEqual(dto);
         expect (mockDatabaseService.user.findMany).toHaveBeenCalled();
     })
     it('should throw an error if no users are found', async () => {
@@ -102,20 +83,10 @@ describe('UserService', () => {
 
   describe('findOne', () => {
     it('should return a user by ID', async () => {
-        const mockUsers={
-            id: '1',
-            name: 'Alice Johnson',
-            role: 'admin',
-            dob: new Date('1990-05-14'),
-            telephone: '1234567890',
-            address: '123 Main St, NY',
-            email: 'alice@example.com',
-            password: 'hashedpassword1',
-            thumbId: Buffer.from('b3f8a1d2', 'hex'),
-          };
-      mockDatabaseService.user.findUnique.mockResolvedValue(mockUsers);
 
-      await expect(userService.findOne('1')).resolves.toEqual(mockUsers);
+      mockDatabaseService.user.findUnique.mockResolvedValue(dto);
+
+      await expect(userService.findOne('1')).resolves.toEqual(dto);
     });
 
     it('should throw an error if user is not found', async () => {
@@ -127,21 +98,11 @@ describe('UserService', () => {
 
   describe('update', () => {
     it('should update a user if found', async () => {
-        const mockUsers={
-            id: '1',
-            name: 'Alice Johnson',
-            role: 'admin',
-            dob: new Date('1990-05-14'),
-            telephone: '1234567890',
-            address: '123 Main St, NY',
-            email: 'alice@example.com',
-            password: 'hashedpassword1',
-            thumbId: Buffer.from('b3f8a1d2', 'hex'),
-          };
+
       const updateData: Prisma.UserUpdateInput = { name: 'Jane Doe' };
 
-      mockDatabaseService.user.findUnique.mockResolvedValue(mockUsers);
-      mockDatabaseService.user.update.mockResolvedValue({ ...mockUsers, ...updateData });
+      mockDatabaseService.user.findUnique.mockResolvedValue(dto);
+      mockDatabaseService.user.update.mockResolvedValue({ ...dto, ...updateData });
 
       await expect(userService.update('1', updateData)).resolves.not.toThrow();
       expect(mockDatabaseService.user.update).toHaveBeenCalledWith({
@@ -159,19 +120,9 @@ describe('UserService', () => {
 
   describe('delete', () => {
     it('should delete a user if found', async () => {
-        const mockUsers={
-            id: '1',
-            name: 'Alice Johnson',
-            role: 'admin',
-            dob: new Date('1990-05-14'),
-            telephone: '1234567890',
-            address: '123 Main St, NY',
-            email: 'alice@example.com',
-            password: 'hashedpassword1',
-            thumbId: Buffer.from('b3f8a1d2', 'hex'),
-          };
-      mockDatabaseService.user.findUnique.mockResolvedValue(mockUsers);
-      mockDatabaseService.user.delete.mockResolvedValue(mockUsers);
+
+      mockDatabaseService.user.findUnique.mockResolvedValue(dto);
+      mockDatabaseService.user.delete.mockResolvedValue(dto);
 
       await expect(userService.delete('1')).resolves.not.toThrow();
       expect(mockDatabaseService.user.delete).toHaveBeenCalledWith({ where: { id: '1' } });

@@ -18,12 +18,18 @@ model User{
   id String @id
   name String @unique
   role String 
-  dob DateTime?
+  dob String?
   telephone String?
+  gender String?
   address String?
   email String @unique
   password String
-  thumbId Bytes @unique
+  salary Int?
+  thumbId Bytes? @unique
+  supId String?
+  language String?
+  height Int?
+  weight Int?
   createdAt DateTime @default(now())
 }
 

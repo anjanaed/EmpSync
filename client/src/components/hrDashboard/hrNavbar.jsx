@@ -10,22 +10,31 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
 import styles from "./hrNavbar.module.css";
+import { useNavigate } from "react-router-dom";
 import img from "../../assets/logo.png.png";
 
 function Navbar({ selected }) {
+  const navigate=useNavigate();
+
+  const handleLogOut=()=>{
+    navigate("/login");
+  }
+
+
+
   return (
     <div>
       <div className={styles.navbar_base}>
         <img className={styles.logo} src={img}></img>
         <div className={styles.navbar}>
-          <div
+          <div onClick={()=>navigate("/")}
             className={
               selected === "E" ? styles.navbarItemsSelected : styles.navbarItems
             }
           >
             <FontAwesomeIcon icon={faUsers} /> Employees
           </div>
-          <div
+          <div onClick={()=>navigate("/reg")}
             className={
               selected === "R" ? styles.navbarItemsSelected : styles.navbarItems
             }
@@ -60,7 +69,7 @@ function Navbar({ selected }) {
             <FontAwesomeIcon icon={faFileInvoice} /> Reports
           </div>
         </div>
-        <div className={styles.logout}>
+        <div className={styles.logout} onClick={handleLogOut}>
           <FontAwesomeIcon icon={faArrowRightFromBracket} /> Log Out
         </div>
       </div>
