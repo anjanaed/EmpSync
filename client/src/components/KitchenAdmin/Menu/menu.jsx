@@ -1,8 +1,16 @@
 import React from "react";
 import styles from "./menu.module.css"; 
+import { useNavigate } from 'react-router-dom';
+
 
 
 const TodayMenu = () => {
+  const navigate = useNavigate();
+  
+    const update = () => {
+      navigate('/meal-plan');
+    };
+
   return (
     <div className={styles.menuContainer}>
       <h2 className={styles.menuTitle}>Today Menu</h2>
@@ -63,7 +71,7 @@ const TodayMenu = () => {
         {/* button Section */}
         
         <div className={styles.buttonGroup}>
-          <button className={styles.updateBtn}>Update Menu</button>
+          <button className={styles.updateBtn} onClick={update}>Update Menu</button>
           <button className={styles.removeBtn}>Remove Schedule</button>
           <button className={styles.confirmBtn}>Confirm Schedule</button>
         </div>

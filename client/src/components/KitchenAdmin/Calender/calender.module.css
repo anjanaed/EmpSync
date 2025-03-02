@@ -47,7 +47,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.75rem;
+  padding: 0.85rem;
   border: 1px solid black;
   border-radius: 10px;
   font-size: 20px;
@@ -72,6 +72,13 @@
 
 .iconButton:hover {
   color: black;
+  transform: scale(1.15);
+
+}
+.mealItem:hover{
+  border-color: #5D071C;
+    font-size: 21px;
+
 }
 
 .addButton {

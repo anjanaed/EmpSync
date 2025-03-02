@@ -4,12 +4,12 @@ import Header from '../../../components/KitchenAdmin/MealDetails/Header';
 import ImageUpload from '../../../components/KitchenAdmin/MealDetails/ImageUpload';
 import MealForm from '../../../components/KitchenAdmin/MealDetails/MealForm';
 import FormFooter from '../../../components/KitchenAdmin/MealDetails/FormFooter';
-import styles from './MealDetailsForm.module.css';
+import styles from './editMeal.module.css';
 
 const { Content } = Layout;
 const { Title } = Typography;
 
-const MealDetailsForm = () => {
+const EditMeal = () => {
   const [imageUrl, setImageUrl] = useState('');
 
   const onFinish = (values) => {
@@ -21,7 +21,7 @@ const MealDetailsForm = () => {
       <Header />
       <Content className={styles.content}>
         <div className={styles.formContainer}>
-          <Title level={2} className={styles.title}>Add Meal Details</Title>
+          <Title level={2} className={styles.title}>Edit Meal Details</Title>
           
           <Form
             layout="vertical"
@@ -39,4 +39,4 @@ const MealDetailsForm = () => {
   );
 };
 
-export default MealDetailsForm;
+export default EditMeal;

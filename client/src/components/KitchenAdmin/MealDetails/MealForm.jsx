@@ -1,10 +1,19 @@
 import React from 'react';
 import { Form, Input, Button } from 'antd';
+import { useNavigate } from 'react-router-dom';
+
 
 const { TextArea } = Input;
 
-const MealForm = () => (
-  <div>
+const MealForm = () => {
+  const navigate = useNavigate();
+
+  const selectIngredient = () => {
+    navigate('/select-ingredients');
+  };
+
+  return(
+    <div>
     <Form.Item
       label={<span>Name <span style={{ color: '#ff4d4f' }}>*</span></span>}
       name="name"
@@ -41,10 +50,14 @@ const MealForm = () => (
         backgroundColor: '#800020',
         color: 'white'
       }}
+      onClick={selectIngredient}
     >
       Choose Ingredients
     </Button>
   </div>
-);
+  );
 
+  
+
+};
 export default MealForm;

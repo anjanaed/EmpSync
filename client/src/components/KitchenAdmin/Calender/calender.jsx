@@ -10,6 +10,11 @@ const MenuCalendar = () => {
   const addMeal = () => {
     navigate('/meal-details');
   };
+  const editMeal = () => {
+    navigate('/edit-meal');
+  };
+
+
 
   const [selectedDate, setSelectedDate] = useState('Thursday, Feb 17');
   const [meals, setMeals] = useState([
@@ -44,7 +49,7 @@ const MenuCalendar = () => {
             <div key={meal.id} className={styles.mealItem}>
               <span>{meal.name}</span>
               <div className={styles.mealActions}>
-                <button className={styles.iconButton}>
+                <button className={styles.iconButton} onClick={editMeal}>
                   <EditOutlined />
                 </button>
                 <button className={styles.iconButton}>

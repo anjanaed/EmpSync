@@ -77,10 +77,24 @@
 
 }
 
-/* .scroll::-webkit-scrollbar-thumb {
-  background-color:  #660e1e;
-  border-radius: 6px;
-} */
+/* Hover Effects */
+.updateBtn:hover {
+  background-color:#F8F4DA;
+  /* border-color: #F8F4DA; */
+  transform: scale(1.05);
+}
+
+.removeBtn:hover {
+  background-color:#F8F4DA;
+  /* background-color: #a71d2a; */
+  transform: scale(1.05);
+}
+
+.confirmBtn:hover {
+  background-color:#F8F4DA;
+  /* background-color: #1e7e34; */
+  transform: scale(1.05);
+}
 
 
   
