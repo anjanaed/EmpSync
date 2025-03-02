@@ -13,24 +13,23 @@ const SelectIngredient= () => {
   const [ingredients, setIngredients] = useState([
     { name: 'Rice', isSelected: false, amount: '' },
     { name: 'Tomato', isSelected: true, amount: '100g' },
-    { name: 'Oil', isSelected: false, amount: '' },
-    { name: 'Oil', isSelected: false, amount: '' },
-    { name: 'Oil', isSelected: false, amount: '' },
-    { name: 'Oil', isSelected: false, amount: '' },
-    { name: 'Oil', isSelected: false, amount: '' },
-    { name: 'Oil', isSelected: false, amount: '' },
-    { name: 'Oil', isSelected: false, amount: '' },
-    { name: 'Oil', isSelected: false, amount: '' },
-    { name: 'Oil', isSelected: false, amount: '' },
-    { name: 'Oil', isSelected: false, amount: '' },
-    { name: 'Oil', isSelected: false, amount: '' },
-    { name: 'Oil', isSelected: false, amount: '' },
-    { name: 'Oil', isSelected: false, amount: '' },
-    { name: 'Oil', isSelected: false, amount: '' },
-    { name: 'Oil', isSelected: false, amount: '' },
-    { name: 'Oil', isSelected: false, amount: '' },
-    { name: 'Oil', isSelected: false, amount: '' },
-    { name: 'Dhal', isSelected: true, amount: '1000g' }
+    { name: 'Tomato', isSelected: true, amount: '100g' },
+    { name: 'Tomato', isSelected: true, amount: '100g' },
+    { name: 'Tomato', isSelected: true, amount: '100g' },
+    { name: 'Tomato', isSelected: true, amount: '100g' },
+    { name: 'Tomato', isSelected: true, amount: '100g' },
+    { name: 'Tomato', isSelected: true, amount: '100g' },
+    { name: 'Tomato', isSelected: true, amount: '100g' },
+    { name: 'Tomato', isSelected: true, amount: '100g' },
+    { name: 'Tomato', isSelected: true, amount: '100g' },
+    { name: 'Tomato', isSelected: true, amount: '100g' },
+    { name: 'Tomato', isSelected: true, amount: '100g' },
+    { name: 'Tomato', isSelected: true, amount: '100g' },
+    { name: 'Tomato', isSelected: true, amount: '100g' },
+    { name: 'Tomato', isSelected: true, amount: '100g' },
+    { name: 'Tomato', isSelected: true, amount: '100g' },
+
+   
     
 
   ]);
