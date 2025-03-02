@@ -3,6 +3,7 @@
   flex-direction: row;
   width: 100%;
   height: 100vh;
+  overflow: hidden;
 }
 
 .homeNavbar {
@@ -20,8 +21,9 @@
 
 .rBox {
   padding: 1vw;
-  border: 1px solid black;
+  border: 2px solid #b90000;
   background-color: white;
+  border-radius: 10px;
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -74,7 +76,6 @@
 
 .inputsBox {
   padding-left: 5%;
-
   width: 100%;
 }
 
@@ -88,38 +89,60 @@
   width: 50%;
   padding: 0.6vw;
   font-size: 1vw;
-  border: 0.15vw solid black;
+  border: 2.2px solid black;
   border-radius: 0.6vw;
   transition-duration: 0.3s;
 }
+
+
 
 .selects:hover {
   border: 0.15vw solid #4096ff;
 }
 
 .customInput {
+  padding: 0.6vw;
+  font-size: 1vw;
+  border: 2.2px solid black;
+  width: 75%;
+  justify-content: space-between;
+  transition: all 0.3s ease-in-out;
+  border-radius: 0.6vw;
   margin-top: 1vh;
 }
 
-.inputs input {
+
+.normalInput {
   padding: 0.6vw;
   font-size: 1vw;
-  border: 0.15vw solid black;
+  border: 2.2px solid black;
   width: 75%;
   justify-content: space-between;
-  transition-duration: 0.3s;
+  transition: all 0.3s ease-in-out;
   border-radius: 0.6vw;
 }
 
+.misInput {
+  padding: 0.6vw;
+  font-size: 1vw;
+  border: 2.2px solid red;
+  width: 75%;
+  justify-content: space-between;
+  transition: all 0.3s ease-in-out;
+  border-radius: 0.6vw;
+}
+
+
+
 .inputs input:hover{
-  border: 0.15vw solid #4096ff;
+  border: 2.2px solid #4096ff;
 }
 
 
 .picker {
   padding: 0.6vw;
   font-size: 1vw;
-  border: 0.15vw solid black;
+  border: 2.2px solid black;
   width: 50%;
   justify-content: space-between;
   border-radius: 0.6vw;

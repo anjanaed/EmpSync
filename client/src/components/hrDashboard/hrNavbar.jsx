@@ -27,14 +27,14 @@ function Navbar({ selected }) {
       <div className={styles.navbar_base}>
         <img className={styles.logo} src={img}></img>
         <div className={styles.navbar}>
-          <div
+          <div onClick={()=>navigate("/")}
             className={
               selected === "E" ? styles.navbarItemsSelected : styles.navbarItems
             }
           >
             <FontAwesomeIcon icon={faUsers} /> Employees
           </div>
-          <div
+          <div onClick={()=>navigate("/reg")}
             className={
               selected === "R" ? styles.navbarItemsSelected : styles.navbarItems
             }

@@ -22,9 +22,11 @@ function Register() {
   const [dob, setDob] = useState(null);
   const [address, setAddress] = useState(null);
   const [tel, setTel] = useState(null);
+  const [required, setRequired]=useState(false)
   const [salary, setSalary] = useState(null);
   const [name, setName] = useState(null);
   const [jobRole, setJobRole] = useState("");
+  const [customJobRole,setCustomJobRole]=useState(null)
   const [gender, setGender] = useState("");
   const [lang,setLang]=useState("");
   const [supId,setSupId]=useState(null);
@@ -35,12 +37,15 @@ function Register() {
 
   const handleRegister = async() => {
     setLoading(true);
-    console.log(dob);
+    let role=jobRole
+    if (role==="Other"){
+      role=customJobRole;
+    }  
     try {
       const payload = {
         id: id,
         name: name,
-        role: jobRole,
+        role: role,
         dob: dob,
         telephone: tel,
         gender: gender,
@@ -58,7 +63,12 @@ function Register() {
           navigate("/login");
         })
         .catch((err) => {
-          console.log(err);
+          if (err.response.data.message=="Id, Name, Email, Password must be filled"){
+            setMenu(1);
+            setRequired(true);
+          }else{
+            setRequired(false);
+          }
         });
       setLoading(false);
     } catch (err) {
@@ -67,15 +77,15 @@ function Register() {
     }
   };
 
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 2000);
+  // useEffect(() => {
+  //   const timer = setTimeout(() => {
+  //     setLoading(false);
+  //   }, 2000);
 
-    return () => clearTimeout(timer);
-  }, []);
+  //   return () => clearTimeout(timer);
+  // }, []);
 
   if (loading) {
     return <Loading />;
@@ -95,14 +105,14 @@ function Register() {
               }
               onClick={() => switchMenu(1)}
             >
-              1 User Profile
+              User Profile
             </div>
             <div
               className={
                 menu === 2 ? styles.rTableContentSelected : styles.rTableContent
               }
             >
-              2 Bio Data
+              Bio Data
             </div>
           </div>
 
@@ -122,6 +132,7 @@ function Register() {
                     <label>Employee ID:</label>
                     <br></br>
                     <input
+                      className={required?styles.misInput:styles.normalInput}
                       onChange={(e) => setId(e.target.value)}
                       placeholder="Enter Employee ID"
                       type="textbox"
@@ -131,6 +142,7 @@ function Register() {
                     <label>Full Name:</label>
                     <br></br>
                     <input
+                      className={required?styles.misInput:styles.normalInput}
                       onChange={(e) => setName(e.target.value)}
                       placeholder="Enter Name"
                       type="textbox"
@@ -144,6 +156,7 @@ function Register() {
                     <label>Email:</label>
                     <br></br>
                     <input
+                      className={required?styles.misInput:styles.normalInput}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="Enter Email Address"
                       type="email"
@@ -153,6 +166,7 @@ function Register() {
                     <label>Password (For Portal Access):</label>
                     <br></br>
                     <input
+                      className={required?styles.misInput:styles.normalInput}
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="Enter Password"
                       type="password"
@@ -175,6 +189,7 @@ function Register() {
                     <label>Residential Address:</label>
                     <br></br>
                     <input
+                      className={styles.normalInput}
                       onChange={(e) => setAddress(e.target.value)}
                       placeholder="Enter Address"
                       type="textbox"
@@ -201,6 +216,7 @@ function Register() {
                     <label>Telephone Number:</label>
                     <br></br>
                     <input
+                    className={styles.normalInput}
                       onChange={(e) => setTel(e.target.value)}
                       placeholder="Enter Mobile Number"
                       type="textbox"
@@ -227,6 +243,7 @@ function Register() {
                     <label> Supervisor's Employee ID:</label>
                     <br></br>
                     <input
+                    className={styles.normalInput}
                       onChange={(e) => setSupId(e.target.value)}
                       placeholder="Enter Supervisor ID"
                       type="textbox"
@@ -257,7 +274,7 @@ function Register() {
                       <input
                         className={styles.customInput}
                         type="textbox"
-                        onChange={(e) => setJobRole(e.target.value)}
+                        onChange={(e) => setCustomJobRole(e.target.value)}
                         placeholder="Enter Job Role"
                       />
                     )}
@@ -266,6 +283,7 @@ function Register() {
                     <label>Basic Salary:</label>
                     <br></br>
                     <input
+                    className={styles.normalInput}
                       onChange={(e) => setSalary(e.target.value)}
                       placeholder="Enter Basic Salary"
                       type="number"
