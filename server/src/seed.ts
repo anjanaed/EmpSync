@@ -1,4 +1,4 @@
-import { PrismaClient, Prisma } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import { UserService } from './user/user.service';
 import { DatabaseService } from './database/database.service';
 

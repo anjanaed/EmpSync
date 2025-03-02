@@ -29,6 +29,22 @@ const Employees = () => {
     }
   };
 
+  const handleDelete = async (id) => {
+    try {
+      await axios
+        .delete(`${urL}/user/${id}`)
+        .then(() => {
+          console.log("User Deleted");
+          fetchEmployee();
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   useEffect(() => {
     fetchEmployee();
   }, []);
@@ -78,6 +94,7 @@ const Employees = () => {
                   <td>
                     <FiEdit className={styles.icons} size="20px" />
                     <MdOutlineDeleteOutline
+                      onClick={() => handleDelete(emp.id)}
                       className={styles.icons}
                       size="20px"
                     />

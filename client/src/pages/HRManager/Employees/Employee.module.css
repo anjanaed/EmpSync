@@ -37,8 +37,7 @@
 .headRight input {
   font-size: 1vw;
   padding: 10px;
-
-  border-radius: 50px;
+  border-radius: 10px;
   border: 2px solid rgb(134, 0, 0);
 }
 
@@ -47,7 +46,7 @@
   padding: 9px;
   width: 120px;
   text-align: center;
-  border-radius: 50px;
+  border-radius: 10px;
   border: 2px solid rgb(134, 0, 0);
 }
 
