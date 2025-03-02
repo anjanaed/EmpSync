@@ -1,7 +1,7 @@
 .linearGradientButton {
     position: relative;
-    background-color: #b06500;
-    background-image: linear-gradient(315deg, #5D071C 0%, #5A321A 74%);
+    background-color: #ffffff;
+    background-image: linear-gradient(315deg, #5D071C 0%, #a13f02 74%);
     border-radius: 10px;
     transition: all 0.3s;
     text-align: center;

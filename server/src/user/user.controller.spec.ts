@@ -8,6 +8,18 @@ describe('UserController', () => {
   let userController: UserController;
   let userService: UserService;
 
+  const dto: Prisma.UserCreateInput = {
+    id: '1',
+    name: 'Alice Johnson',
+    role: 'admin',
+    dob: '1990-05-14',
+    telephone: '1234567890',
+    address: '123 Main St, NY',
+    email: 'alice@example.com',
+    password: 'hashedpassword1',
+    thumbId: Buffer.from('b3f8a1d2', 'hex'),
+  };
+
   const mockUserService = {
     create: jest.fn(),
     findAll: jest.fn(),
@@ -37,17 +49,7 @@ describe('UserController', () => {
 
   describe('create', () => {
     it('should create a user successfully', async () => {
-      const dto: Prisma.UserCreateInput = {
-        id: '1',
-        name: 'Alice Johnson',
-        role: 'admin',
-        dob: new Date('1990-05-14'),
-        telephone: '1234567890',
-        address: '123 Main St, NY',
-        email: 'alice@example.com',
-        password: 'hashedpassword1',
-        thumbId: Buffer.from('b3f8a1d2', 'hex'),
-      };
+
       mockUserService.create.mockResolvedValue(dto);
 
       await expect(userController.create(dto)).resolves.toEqual('User Registered Successfully');
@@ -57,17 +59,6 @@ describe('UserController', () => {
     it('should throw an error if user creation fails', async () => {
       mockUserService.create.mockRejectedValue(new HttpException('Bad Request', HttpStatus.BAD_REQUEST));
 
-      const dto: Prisma.UserCreateInput = {
-        id: '1',
-        name: 'Alice Johnson',
-        role: 'admin',
-        dob: new Date('1990-05-14'),
-        telephone: '1234567890',
-        address: '123 Main St, NY',
-        email: 'alice@example.com',
-        password: 'hashedpassword1',
-        thumbId: Buffer.from('b3f8a1d2', 'hex'),
-      };
 
       await expect(userController.create(dto)).rejects.toThrow(HttpException);
       expect(mockUserService.create).toHaveBeenCalledWith(dto);
@@ -76,22 +67,10 @@ describe('UserController', () => {
 
   describe('findAll', () => {
     it('should return an array of users', async () => {
-      const mockUsers = [
-        {
-          id: '1',
-          name: 'Alice Johnson',
-          role: 'admin',
-          dob: new Date('1990-05-14'),
-          telephone: '1234567890',
-          address: '123 Main St, NY',
-          email: 'alice@example.com',
-          password: 'hashedpassword1',
-          thumbId: Buffer.from('b3f8a1d2', 'hex'),
-        },
-      ];
-      mockUserService.findAll.mockResolvedValue(mockUsers);
 
-      await expect(userController.findAll()).resolves.toEqual(mockUsers);
+      mockUserService.findAll.mockResolvedValue(dto);
+
+      await expect(userController.findAll()).resolves.toEqual(dto);
       expect(mockUserService.findAll).toHaveBeenCalled();
     });
 
@@ -105,20 +84,10 @@ describe('UserController', () => {
 
   describe('findOne', () => {
     it('should return a user by ID', async () => {
-      const mockUser = {
-        id: '1',
-        name: 'Alice Johnson',
-        role: 'admin',
-        dob: new Date('1990-05-14'),
-        telephone: '1234567890',
-        address: '123 Main St, NY',
-        email: 'alice@example.com',
-        password: 'hashedpassword1',
-        thumbId: Buffer.from('b3f8a1d2', 'hex'),
-      };
-      mockUserService.findOne.mockResolvedValue(mockUser);
 
-      await expect(userController.findOne('1')).resolves.toEqual(mockUser);
+      mockUserService.findOne.mockResolvedValue(dto);
+
+      await expect(userController.findOne('1')).resolves.toEqual(dto);
       expect(mockUserService.findOne).toHaveBeenCalledWith('1');
     });
 

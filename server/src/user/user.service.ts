@@ -8,10 +8,14 @@ export class UserService {
 
   async create(dto: Prisma.UserCreateInput) {
     try {
+      if(dto.id==null||dto.name==null||dto.email==null||dto.password==null){
+        throw new HttpException('Id, Name, Email, Password must be filled',HttpStatus.BAD_REQUEST);
+        
+      }
       await this.databaseService.user.create({ data: dto });
     } catch (err) {
       if (err.code === 'P2002') {
-        throw new HttpException('Id, Name must be unique', HttpStatus.CONFLICT);
+        throw new HttpException(`Id, Name must be unique - ${err}` , HttpStatus.CONFLICT);
       }
       throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
     }
