@@ -1,0 +1,16 @@
+.welcome-container {
+    margin-bottom: 20px;
+}
+  
+.welcome-title {
+    color: #f0f0d8 !important;
+    font-size: 42px !important;
+    font-weight: 600 !important;
+    margin-bottom: 8px !important;
+}
+  
+.date-time {
+    color: #ffffff;
+    font-size: 18px;
+    display: block;
+}
