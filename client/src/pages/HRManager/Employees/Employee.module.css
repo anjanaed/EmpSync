@@ -5,6 +5,13 @@
   height: 100vh;
 }
 
+.empty{
+  font-family: Arial, sans-serif;
+  font-weight: 650;
+  font-size: 1.2vw;
+
+}
+
 .homeNav {
   flex: 1;
 }
@@ -26,6 +33,7 @@
 
 .headLeft {
   margin-right: auto;
+  font-family: Arial, sans-serif;
   font-size: 2vw;
   font-weight: 650;
   color: rgb(135, 1, 1);
@@ -79,6 +87,7 @@
 .tableHeadContainer {
   margin: 1vw 0.5vw;
   padding: 0.5vw 2vw;
+  font-family: Arial, sans-serif;
   background-color: rgb(255, 234, 206);
 }
 tbody tr {

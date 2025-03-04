@@ -1,17 +1,16 @@
-Body {
-    /* background-color: #8b0000; */
-    font-family: Arial, sans-serif;
-  }
-  
-  .login-container {
+
+    
+   .loginContainer {
     display: flex;
+    background-color: #8b0000;
+    font-family: Arial, sans-serif;
     justify-content: center;
     align-items: center;
     height: 100vh;
     padding: 20px;
   }
   
-  .login-box {
+  .loginBox {
     display: flex;
     width: 800px;
     height: 500px;
@@ -21,7 +20,7 @@ Body {
     overflow: hidden;
   }
   
-  .login-left {
+  .loginLeft {
     flex: 1;
     background-color: #FFFDED;
     display: flex;
@@ -30,45 +29,44 @@ Body {
     padding: 20px;
   }
   
-  .login-illustration {
+  .loginIllustration {
     width: 110%;
   }
   
-  .login-right {
+  .loginRight {
     flex: 1;
     padding: 40px;
   }
   
-  .login-title {
+  .loginTitle {
     font-size: 24px;
     font-weight: bold;
     color: #000;
   }
   
-  .login-subtitle {
+  .loginSubtitle {
     color: #8b0000;
     margin-bottom: 20px;
   }
   
-  .login-form .ant-form-item {
+  .loginForm .ant-form-item {
     margin-bottom: 15px;
   }
   
-  .login-options {
+  .loginOptions {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
   }
   
-  .forgot-password {
+  .forgotPassword {
     color: #8b0000;
   }
   
-  .login-button {
+  .loginButton {
     margin-top: 10px;
     padding-top: 10px;
-  
     padding-bottom: 10px;
     width: 100%;
     background-color: #a52a2a;
@@ -79,8 +77,8 @@ Body {
     cursor: pointer;
     border-radius: 5px; 
   }
-
-  .login-button:hover {
+  
+  .loginButton:hover {
     background-color: #8b0000;
     transform: scale(1.05); 
   }
