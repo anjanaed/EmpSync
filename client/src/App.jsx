@@ -6,12 +6,14 @@ import Reports from "./pages/KitchenAdmin/Report/report";
 import MealDetailsForm from "./pages/KitchenAdmin/MealDetails/MealDetailsForm";
 import Login from "./pages/Login/Login";
 import Employees from "./pages/HRManager/Employees/Employees";
+import LoginRole from "./pages/LoginRole/LoginRole";
 
 function App() {
   return (
     <Router>
       <Routes>
         <Route path="/login" element={<Login />} />
+        <Route path="/LoginRole" element={<LoginRole />} />
         <Route path="/" element={<Employees />} />
         <Route path="/reg" element={<Register />} />
         <Route path="/kitchen-admin" element={<KitchenAdmin />} />

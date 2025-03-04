@@ -1,0 +1,88 @@
+
+    
+  .loginContainer {
+        display: flex;
+        background-color: #272626;
+        min-height: 100vh;
+        background:url('../../assets/loginbackground.png') center/cover no-repeat;
+        font-family: Arial, sans-serif;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+  
+  .loginBox {
+    display: flex;
+    width: 800px;
+    height: 500px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+  }
+  
+  .loginLeft {
+    flex: 1;
+    background-color: #FFFDED;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  
+  .loginIllustration {
+    width: 90%;
+  }
+  
+  .loginRight {
+    flex: 1;
+    padding: 20px;
+  }
+  
+  .loginTitle {
+    font-size: 35px;
+    font-weight: bold;
+    color: #000;
+  }
+  
+  .loginSubtitle {
+    color: #8b0000;
+    margin-bottom: 10px;
+  }
+  
+  .loginButton {
+    margin-top: 10px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    width: 100%;
+    background-color: #a52a2a;
+    transition-duration: 0.5s;
+    border: none;
+    font-size: 16px;
+    color: white; 
+    cursor: pointer;
+    border-radius: 5px; 
+  }
+  
+  .loginButton:hover {
+    background-color: #8b0000;
+    transform: scale(1.05); 
+  }
+
+  .logindetails{
+    flex: 1;
+    display: flex;
+  }
+
+  .loginname{
+    margin-left: 10px;
+    
+  }
+  .loginavatar{
+    margin-top: 20px;
+  }
+
+  .username{
+    font-size: 20px;
+    font-weight: bold;
+  }
