@@ -1,0 +1,106 @@
+.app-container-conform {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+    background: linear-gradient(rgba(255, 234, 167, 0.6), rgba(255, 249, 226, 0.6)), 
+                url('background-meal-conform.jpg') center/cover no-repeat;
+}
+  
+.meal-confirmation-card {
+    width: 100vw;
+    max-width: 600px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    background-color: rgb(252, 235, 215);
+    font-weight: 600;
+    font-size: 16px;
+    border-radius: 12px;
+    padding: 24px;
+    transition: transform 0.2s ease;
+}
+
+.meal-confirmation-card:hover {
+    transform: translateY(-5px);
+}
+  
+.meal-content {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+  
+.meal-image {
+    flex: 1;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.meal-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.meal-image img:hover {
+    transform: scale(1.05);
+}
+  
+.meal-details {
+    flex: 2;
+    padding: 16px;
+    border-radius: 8px;
+    backdrop-filter: blur(5px);
+}
+
+.meal-details .ant-typography {
+    font-size: 18px;
+}
+
+.meal-details strong {
+    font-size: 20px;
+}
+  
+.meal-actions {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+  
+.meal-actions .ant-btn {
+    min-width: 120px;
+    font-size: 16px;
+    border-radius: 6px;
+    margin: 0 8px;
+    transition: all 0.3s ease;
+}
+
+.meal-actions .ant-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.meal-header {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.meal-header .ant-typography {
+    font-size: 60px;
+    background: linear-gradient(45deg, #a55b0b, #a55b0b);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.date-time-black {
+    color: black;
+    font-size: 18px;
+    padding: 8px;
+    background-color: rgba(255, 255, 255, 0.7);
+    border-radius: 4px;
+    display: inline-block;
+    margin-top: 8px;
+}

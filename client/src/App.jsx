@@ -6,7 +6,8 @@ import Reports from "./pages/KitchenAdmin/Report/report";
 import MealDetailsForm from "./pages/KitchenAdmin/MealDetails/MealDetailsForm";
 import Login from "./pages/Login/Login";
 import Employees from "./pages/HRManager/Employees/Employees";
-import Serving from "./pages/Serving staff/Serving";
+import Serving from "./pages/Serving staff/Barcode Scan/Serving";
+import MealConform from "./pages/Serving staff/Meal Conform/MealConform";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         <Route path="/report" element={<Reports/>} />
         <Route path="/meal-details" element={<MealDetailsForm />} />
         <Route path="/serving" element={<Serving />} />
+        <Route path="/meal-conform/:orderid" element={<MealConform />} />
       </Routes>
     </Router>
   );
