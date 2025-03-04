@@ -1,10 +1,9 @@
-body {
+
+    
+   .loginContainer {
+    display: flex;
     background-color: #8b0000;
     font-family: Arial, sans-serif;
-  }
-  
-  .loginContainer {
-    display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
