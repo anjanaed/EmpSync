@@ -8,13 +8,15 @@ import MealPlan from "./pages/KitchenAdmin/MealPlan/mealPlan";
 import SelectIngredients from "./pages/KitchenAdmin/SelectIngredients/ingredients";
 import EditMeal from "./pages/KitchenAdmin/EditMeal/editMeal";
 import Login from "./pages/Login/Login";
+import Employees from "./pages/HRManager/Employees/Employees";
 
 function App() {
   return (
     <Router>
       <Routes>
         <Route path="/login" element={<Login />} />
-        <Route path="/" element={<Register />} />
+        <Route path="/" element={<Employees />} />
+        <Route path="/reg" element={<Register />} />
         <Route path="/kitchen-admin" element={<KitchenAdmin />} />
         <Route path="/report" element={<Reports/>} />
         <Route path="/meal-details" element={<MealDetailsForm />} />
