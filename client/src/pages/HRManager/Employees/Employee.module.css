@@ -9,7 +9,7 @@
 .empty{
   font-family: Arial, sans-serif;
   font-weight: 650;
-  font-size: 1.2vw;
+  font-size: 1vw;
 
 }
 
@@ -36,7 +36,7 @@
 .headLeft {
   margin-right: auto;
   font-family: Arial, sans-serif;
-  font-size: 2vw;
+  font-size: 1.5vw;
   font-weight: 650;
   color: rgb(135, 1, 1);
 }

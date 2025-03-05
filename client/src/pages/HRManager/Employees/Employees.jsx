@@ -73,7 +73,7 @@ const Employees = () => {
       <Modal
         open={isModalOpen}
         footer={null}
-        width={"55vw"}
+        width={"53vw"}
         onCancel={handleCancel}
       >
         <EditModal
