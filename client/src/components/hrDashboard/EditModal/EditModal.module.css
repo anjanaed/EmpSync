@@ -20,3 +20,43 @@
     font-size: 1vw;
 }
 
+.inputSide label{
+    font-size: 1.2vw;
+    
+}
+
+.inputSide input{
+    font-size: 0.9vw;
+    padding: 0.5vw;
+    margin-bottom: 1.05vw;
+    width: 80%;
+    border: 2px solid black;
+    border-radius: 10px;
+}
+
+.selects {
+    width: 50%;
+    margin-bottom: 1.05vw;
+    padding: 0.6vw;
+    font-size: 1vw;
+    border: 2.2px solid black;
+    border-radius: 0.6vw;
+    transition-duration: 0.3s;
+  }
+
+  .customJob{
+    margin-top: 1vw;
+  }
+
+  .btnSection{
+    text-align: center;
+  }
+
+  .picker {
+    padding: 0.6vw;
+    border: 2.2px solid black;
+    width: 50%;
+    margin: 0 !important;
+    justify-content: space-between;
+    border-radius: 0.6vw;
+  }

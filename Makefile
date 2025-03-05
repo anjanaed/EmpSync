@@ -1,3 +1,5 @@
+.PHONY: server
+
 site:
 	cd client && npm run dev
 

@@ -74,8 +74,8 @@ const Employees = () => {
 
   return (
     <>
-    <Modal open={isModalOpen} footer={null} width={"60vw"} onCancel={handleCancel}>
-      <EditModal empId={selectEmployee}/>
+    <Modal open={isModalOpen} footer={null} width={"55vw"} onCancel={handleCancel}>
+      <EditModal empId={selectEmployee} handleCancel={handleCancel} fetchEmployee={fetchEmployee}/>
       </Modal>
     
 
