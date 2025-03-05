@@ -7,7 +7,7 @@ import illustration from "../../assets/illustration.png";
 const LoginPage = () => {
   const navigate = useNavigate();
   const handleLogin = () => {
-    navigate("/reg"); 
+    navigate("/LoginRole"); 
   };
 
   return (
