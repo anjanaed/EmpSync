@@ -12,23 +12,19 @@ const Employees = () => {
   const [loading, setLoading] = useState(true);
   const [employee, setEmployee] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectEmployee,setSelectEmployee]= useState(null);
+  const [selectEmployee, setSelectEmployee] = useState(null);
 
   const urL = import.meta.env.VITE_BASE_URL;
 
-  
   const openModal = (empId) => {
-    setSelectEmployee(empId)
+    setSelectEmployee(empId);
     setIsModalOpen(true);
   };
 
-
-
-  const handleCancel=()=>{
-    setIsModalOpen(false)
+  const handleCancel = () => {
+    setIsModalOpen(false);
     setSelectEmployee(null);
-
-  }
+  };
 
   const fetchEmployee = async () => {
     try {
@@ -74,70 +70,83 @@ const Employees = () => {
 
   return (
     <>
-    <Modal open={isModalOpen} footer={null} width={"55vw"} onCancel={handleCancel}>
-      <EditModal empId={selectEmployee} handleCancel={handleCancel} fetchEmployee={fetchEmployee}/>
+      <Modal
+        open={isModalOpen}
+        footer={null}
+        width={"55vw"}
+        onCancel={handleCancel}
+      >
+        <EditModal
+          empId={selectEmployee}
+          handleCancel={handleCancel}
+          fetchEmployee={fetchEmployee}
+        />
       </Modal>
-    
 
-
-    <div className={styles.home}>
-      <div className={styles.homeNav}>
-        <Navbar selected={"E"} />
-      </div>
-      <div className={styles.homeContent}>
-        <div className={styles.homeHead}>
-          <div className={styles.headLeft}>Registered Employee Details</div>
-          <div className={styles.headRight}>
-            <input placeholder="Search Employee" type="textbox"></input>
-            <select>
-              <option value="">All Roles</option>
-              <option value="HR Manager">HR Manager</option>
-              <option value="Kitchen Admin">Kitchen Admin</option>
-              <option value="Kitchen Staff">Kitchen Staff</option>
-              <option value="Inventory Manager">Inventory Manager</option>
-              <option value="Other">Other</option>
-            </select>
-          </div>
+      <div className={styles.home}>
+        <div className={styles.homeNav}>
+          <Navbar selected={"E"} />
         </div>
-        <table className={styles.contentBox}>
-          <thead>
-            <tr className={styles.tableHeadContainer}>
-              <th className={styles.tableHead}>ID</th>
-              <th className={styles.tableHead}>Name</th>
-              <th className={styles.tableHead}>Job Role</th>
-              <th className={styles.tableHead}>Email</th>
-              <th className={styles.tableHead}>Actions</th>
-            </tr>
-          </thead>
-          <tbody className={styles.tableContent}>
-            {employee.length > 0 ? (
-              employee.map((emp) => (
-                <tr key={emp.id}>
-                  <td>{emp.id}</td>
-                  <td>{emp.name}</td>
-                  <td>{emp.role}</td>
-                  <td>{emp.email}</td>
-                  <td>
-                    <FiEdit onClick={()=>{openModal(emp.id)}}  className={styles.icons} size="20px" />
-                    <MdOutlineDeleteOutline
-                      onClick={() => handleDelete(emp.id)}
-                      className={styles.icons}
-                      size="20px"
-                    />
+        <div className={styles.homeContent}>
+          <div className={styles.homeHead}>
+            <div className={styles.headLeft}>Registered Employee Details</div>
+            <div className={styles.headRight}>
+              <input placeholder="Search Employee" type="textbox"></input>
+              <select>
+                <option value="">All Roles</option>
+                <option value="HR Manager">HR Manager</option>
+                <option value="Kitchen Admin">Kitchen Admin</option>
+                <option value="Kitchen Staff">Kitchen Staff</option>
+                <option value="Inventory Manager">Inventory Manager</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+          </div>
+          <table className={styles.contentBox}>
+            <thead>
+              <tr className={styles.tableHeadContainer}>
+                <th className={styles.tableHead}>ID</th>
+                <th className={styles.tableHead}>Name</th>
+                <th className={styles.tableHead}>Job Role</th>
+                <th className={styles.tableHead}>Email</th>
+                <th className={styles.tableHead}>Actions</th>
+              </tr>
+            </thead>
+            <tbody className={styles.tableContent}>
+              {employee.length > 0 ? (
+                employee.map((emp) => (
+                  <tr key={emp.id}>
+                    <td>{emp.id}</td>
+                    <td>{emp.name}</td>
+                    <td>{emp.role}</td>
+                    <td>{emp.email}</td>
+                    <td>
+                      <FiEdit
+                        onClick={() => {
+                          openModal(emp.id);
+                        }}
+                        className={styles.icons}
+                        size="20px"
+                      />
+                      <MdOutlineDeleteOutline
+                        onClick={() => handleDelete(emp.id)}
+                        className={styles.icons}
+                        size="20px"
+                      />
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="5" className={styles.empty}>
+                    No Registered Employees to Display
                   </td>
                 </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="5" className={styles.empty}>
-                  No Registered Employees to Display
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
-    </div>
     </>
   );
 };

@@ -6,8 +6,7 @@ import GButton from "../../../components/button/Button";
 import { DatePicker } from "antd";
 import { useNavigate } from "react-router-dom";
 
-
-const EditModal = ({ empId,handleCancel,fetchEmployee }) => {
+const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
   const [currentEmployee, setCurrentEmployee] = useState({
     id: "",
     name: "",
@@ -26,7 +25,7 @@ const EditModal = ({ empId,handleCancel,fetchEmployee }) => {
     weight: "",
   });
   const [loading, setLoading] = useState(true);
-  const navigate=useNavigate();
+  const navigate = useNavigate();
   const urL = import.meta.env.VITE_BASE_URL;
   const getEmployee = async () => {
     try {
@@ -43,26 +42,22 @@ const EditModal = ({ empId,handleCancel,fetchEmployee }) => {
   }, [empId]);
 
   if (loading) {
-    return <Loading />
+    return <Loading />;
   }
 
-  const handleUpdate=async()=>{
+  const handleUpdate = async () => {
     setLoading(true);
-    try{
-      await axios.put(`${urL}/user/${empId}`,currentEmployee);
-      console.log("User Updated")
+    try {
+      await axios.put(`${urL}/user/${empId}`, currentEmployee);
+      console.log("User Updated");
       handleCancel();
       fetchEmployee();
       setLoading(false);
-
-  
-    }catch(err){
+    } catch (err) {
       console.log(err);
       setLoading(false);
-
     }
-
-  }
+  };
 
   return (
     <div className={styles.modalWrap}>
@@ -93,7 +88,7 @@ const EditModal = ({ empId,handleCancel,fetchEmployee }) => {
           ></input>
           <br />
           <label>Email</label>
-          <br/>
+          <br />
           <input
             type="email"
             value={currentEmployee.email}
@@ -106,12 +101,15 @@ const EditModal = ({ empId,handleCancel,fetchEmployee }) => {
           <label>Date of Birth</label>
           <br />
           <DatePicker
-                      onChange={(date) =>
-                        setCurrentEmployee(({...currentEmployee, dob:moment(date).format("YYYY-MM-DD")}))
-                      }
-                      placeholder="Select a Date"
-                      className={styles.picker}
-                    />
+            onChange={(date) =>
+              setCurrentEmployee({
+                ...currentEmployee,
+                dob: moment(date).format("YYYY-MM-DD"),
+              })
+            }
+            placeholder="Select a Date"
+            className={styles.picker}
+          />
           <br />
           <label>Job Role:</label>
           <br></br>
@@ -137,12 +135,14 @@ const EditModal = ({ empId,handleCancel,fetchEmployee }) => {
               }
               placeholder="Enter Job Role"
             />
-          )}<br/>
-          <label>Finger Print</label><br/>
+          )}
+          <br />
+          <label>Finger Print</label>
+          <br />
           <button className={styles.rescanBtn}>Rescan</button>
         </div>
         <div className={styles.inputSide}>
-        <label>Residential Address</label>
+          <label>Residential Address</label>
           <br />
           <input
             type="textbox"
@@ -188,9 +188,9 @@ const EditModal = ({ empId,handleCancel,fetchEmployee }) => {
             }
             placeholder="Enter Salary"
           ></input>
-          <br/>
+          <br />
           <label>Preferred Language</label>
-          <br/>
+          <br />
           <select
             className={styles.selects}
             value={currentEmployee.language}
@@ -207,7 +207,7 @@ const EditModal = ({ empId,handleCancel,fetchEmployee }) => {
             <option value="Sinhala"> Sinhala </option>
             <option value="Tamil"> Tamil </option>
           </select>
-          <br/>
+          <br />
           <label>Gender</label>
           <br />
           <select
@@ -220,14 +220,13 @@ const EditModal = ({ empId,handleCancel,fetchEmployee }) => {
             <option value="Male">Male</option>
             <option value="Female">Female</option>
           </select>
-          <br/>
-          
+          <br />
         </div>
       </div>
       <div className={styles.btnSection}>
-      <GButton onClick={handleUpdate} padding="0.4vw 2vw">
-                  Update
-                </GButton>
+        <GButton onClick={handleUpdate} padding="0.4vw 2vw">
+          Update
+        </GButton>
       </div>
     </div>
   );
