@@ -168,11 +168,12 @@
 }
 .fingerIcon {
   max-width: 100%;
+  
 }
 
 .bio {
   text-align: center;
-  border: 3px solid black;
+ 
   width: 40%;
   padding: 1vw;
   overflow: hidden;

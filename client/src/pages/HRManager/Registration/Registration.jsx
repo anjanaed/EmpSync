@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styles from "./Registration.module.css";
-import Navbar from "../../../components/hrDashboard/hrNavbar";
+import Navbar from "../../../components/hrDashboard/NavBar/hrNavbar";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFingerprint } from "@fortawesome/free-solid-svg-icons";
 import Loading from "../../../components/loading/loading";
@@ -30,15 +30,11 @@ function Register() {
   const [gender, setGender] = useState("");
   const [lang, setLang] = useState("");
   const [supId, setSupId] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   function switchMenu(menu) {
     setMenu(menu);
   }
 
-  const openModal = () => {
-    setIsModalOpen(true);
-  };
 
   
 
