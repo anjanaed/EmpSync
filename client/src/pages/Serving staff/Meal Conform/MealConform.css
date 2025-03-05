@@ -4,7 +4,7 @@
     align-items: center;
     min-height: 100vh;
     padding: 20px;
-    background: linear-gradient(rgba(255, 234, 167, 0.6), rgba(255, 249, 226, 0.6)), 
+    background: linear-gradient(rgba(255, 248, 225, 0.6), rgba(255, 248, 225, 0.6)), 
                 url('background-meal-conform.jpg') center/cover no-repeat;
 }
   
@@ -12,7 +12,7 @@
     width: 100vw;
     max-width: 600px;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
-    background-color: rgb(252, 235, 215);
+    background-color: rgb(255, 255, 255);
     font-weight: 600;
     font-size: 16px;
     border-radius: 12px;
@@ -96,11 +96,5 @@
 }
 
 .date-time-black {
-    color: black;
-    font-size: 18px;
-    padding: 8px;
-    background-color: rgba(255, 255, 255, 0.7);
-    border-radius: 4px;
-    display: inline-block;
-    margin-top: 8px;
+    text-align: center;
 }

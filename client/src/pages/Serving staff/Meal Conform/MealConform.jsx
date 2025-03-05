@@ -20,6 +20,9 @@ const MealConform = () => {
           <div className="meal-header">
             <Typography.Title level={3}>Breakfast Meal</Typography.Title>
           </div>
+          <div className="date-time-black">
+            <DateTime style={{ color: 'black' }}/>
+          </div>
         </div>  
       <Card className="meal-confirmation-card">
         <div className="meal-content">
@@ -48,8 +51,8 @@ const MealConform = () => {
             </Space>
           </div>
         </div>
-
-        <div className="meal-actions">
+      </Card>
+      <div className="meal-actions">
           <Space>
             <Button 
               type="default" 
@@ -67,7 +70,6 @@ const MealConform = () => {
             </Button>
           </Space>
         </div>
-      </Card>
     </Layout>
   );
 };
