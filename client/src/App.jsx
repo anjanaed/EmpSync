@@ -7,6 +7,7 @@ import MealDetailsForm from "./pages/KitchenAdmin/MealDetails/MealDetailsForm";
 import Login from "./pages/Login/Login";
 import Employees from "./pages/HRManager/Employees/Employees";
 import LoginRole from "./pages/LoginRole/LoginRole";
+import PasswordReset from "./pages/PasswordReset/PasswordReset"; 
 
 function App() {
   return (
@@ -19,8 +20,10 @@ function App() {
         <Route path="/kitchen-admin" element={<KitchenAdmin />} />
         <Route path="/report" element={<Reports/>} />
         <Route path="/meal-details" element={<MealDetailsForm />} />
+        <Route path="/passwordReset" element={<PasswordReset />} /> 
       </Routes>
     </Router>
   );
 }
+
 export default App;
