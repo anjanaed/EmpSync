@@ -1,5 +1,6 @@
 .home {
   display: flex;
+  font-family: Arial, sans-serif;
   flex-direction: row;
   width: 100vw;
   height: 100vh;
@@ -19,6 +20,7 @@
 .homeContent {
   flex: 5;
   padding: 1vw;
+  overflow: hidden;
   background-color: rgb(255, 234, 206);
   display: flex;
   flex-direction: column;

@@ -11,7 +11,7 @@ import {
 import { Link } from "react-router-dom";
 import styles from "./hrNavbar.module.css";
 import { useNavigate } from "react-router-dom";
-import img from "../../assets/logo.png.png";
+import img from "../../../assets/logo.png.png";
 
 function Navbar({ selected }) {
   const navigate=useNavigate();

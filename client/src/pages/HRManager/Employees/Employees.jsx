@@ -1,15 +1,34 @@
 import { useState, React, useEffect } from "react";
 import axios from "axios";
 import styles from "./Employee.module.css";
-import Navbar from "../../../components/hrDashboard/hrNavbar";
+import Navbar from "../../../components/hrDashboard/NavBar/hrNavbar";
 import Loading from "../../../components/loading/loading";
 import { FiEdit } from "react-icons/fi";
+import { Modal } from "antd";
 import { MdOutlineDeleteOutline } from "react-icons/md";
+import EditModal from "../../../components/hrDashboard/EditModal/EditModal";
 
 const Employees = () => {
   const [loading, setLoading] = useState(true);
   const [employee, setEmployee] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectEmployee,setSelectEmployee]= useState(null);
+
   const urL = import.meta.env.VITE_BASE_URL;
+
+  
+  const openModal = (empId) => {
+    setSelectEmployee(empId)
+    setIsModalOpen(true);
+  };
+
+
+
+  const handleCancel=()=>{
+    setIsModalOpen(false)
+    setSelectEmployee(null);
+
+  }
 
   const fetchEmployee = async () => {
     try {
@@ -54,6 +73,13 @@ const Employees = () => {
   }
 
   return (
+    <>
+    <Modal open={isModalOpen} footer={null} width={"60vw"} onCancel={handleCancel}>
+      <EditModal empId={selectEmployee}/>
+      </Modal>
+    
+
+
     <div className={styles.home}>
       <div className={styles.homeNav}>
         <Navbar selected={"E"} />
@@ -92,7 +118,7 @@ const Employees = () => {
                   <td>{emp.role}</td>
                   <td>{emp.email}</td>
                   <td>
-                    <FiEdit className={styles.icons} size="20px" />
+                    <FiEdit onClick={()=>{openModal(emp.id)}}  className={styles.icons} size="20px" />
                     <MdOutlineDeleteOutline
                       onClick={() => handleDelete(emp.id)}
                       className={styles.icons}
@@ -112,6 +138,7 @@ const Employees = () => {
         </table>
       </div>
     </div>
+    </>
   );
 };
 

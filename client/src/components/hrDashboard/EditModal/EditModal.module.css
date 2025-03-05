@@ -1,0 +1,22 @@
+.modalWrap{
+    width: 50vw;
+}
+
+
+.modalHeader{
+    font-size: 1.5vw;
+    font-weight: 600;
+}
+
+.inputWrap{
+    display: flex;
+    width: 100%;
+    flex-direction: row;
+}
+
+.inputSide {
+    flex:1;
+    padding: 1vw;
+    font-size: 1vw;
+}
+
