@@ -1,6 +1,8 @@
 import React from "react";
 import { Layout, Typography, Card, Button, Space } from 'antd';
 import DateTime from "../../../components/Serving/DateAndTime/DateTime";
+import mealImage from './image.png';
+import additional from './second.png'
 import './MealConform.css';
   
 const MealConform = () => {
@@ -20,18 +22,26 @@ const MealConform = () => {
           <div className="meal-header">
             <Typography.Title level={3}>Breakfast Meal</Typography.Title>
           </div>
-          <div className="date-time-black">
-            <DateTime style={{ color: 'black' }}/>
+          <div className="date-time">
+            <DateTime color="#5D071C"/>
           </div>
         </div>  
       <Card className="meal-confirmation-card">
+        
         <div className="meal-content">
           <div className="meal-image">
             <img 
-              src="/api/placeholder/300/300" 
+              src={mealImage}
               alt="Meal" 
               style={{ maxWidth: '100%', borderRadius: '8px' }}
             />
+            <div className="additional-container">
+              <img 
+                src={additional} 
+                alt="Egg" 
+                className="additional-image"
+              />
+            </div>
           </div>
           
           <div className="meal-details">
@@ -58,6 +68,7 @@ const MealConform = () => {
               type="default" 
               onClick={handleCancel}
               size="large"
+              style={{ borderColor: '#5D071C' }}
             >
               Cancel
             </Button>
@@ -65,6 +76,7 @@ const MealConform = () => {
               type="primary" 
               onClick={handleConfirm}
               size="large"
+              style={{ backgroundColor: '#5D071C', borderColor: '#5D071C' }}
             >
               Confirm
             </Button>

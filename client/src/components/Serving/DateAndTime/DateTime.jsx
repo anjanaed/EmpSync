@@ -4,7 +4,7 @@ import './DateTime.css';
 
 const { Text } = Typography;
 
-const DateTime = () => {
+const DateTime = ({ color }) => {
   const [dateTime, setDateTime] = useState(new Date());
 
   useEffect(() => {
@@ -28,7 +28,7 @@ const DateTime = () => {
   };
 
   return (
-    <Text className="date-time">
+    <Text className="date-time" style={{ color: color }}>
       {formatDateTime(dateTime)}
     </Text>
   );

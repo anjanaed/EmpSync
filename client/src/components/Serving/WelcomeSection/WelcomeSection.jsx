@@ -11,7 +11,9 @@ const WelcomeSection = () => {
       <Title level={1} className="welcome-title">
         Welcome to Helix Food Serving
       </Title>
-      <DateTime className="date-time"/>
+      <div className="date-time">
+        <DateTime color="#ffffff" />
+      </div>
     </div>
   );
 };
