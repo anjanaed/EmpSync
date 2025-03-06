@@ -1,6 +1,6 @@
 .container {
   display: flex;
-  width: 90%; /* Adjust width as needed (90% of the screen width) */
+  width: 91%; /* Adjust width as needed (90% of the screen width) */
   max-width: 1750px; /* Set a maximum width for large screens */
   margin: 0 auto 0 auto;
   gap: 2rem;

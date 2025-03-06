@@ -11,9 +11,9 @@
   
   
   .menuTitle {
-    font-size: 26px;
+    font-size: 20px;
     color:BLACK;
-    font-weight: 300px;
+    font-weight: 300;
     margin-bottom: 15px;
   }
   
@@ -35,10 +35,10 @@
   .cardHeader {
     background-color: #AC0C2E;
     color: white;
-    padding: 10px;
+    padding: 8px;
     border-radius: 5px 5px 0 0; /* Rounded corners only at the top */
     text-align: center;
-    font-size: 25px;
+    font-size: 20px;
     margin: 0; /* Remove any gap */
 
   }
@@ -66,7 +66,7 @@
   }
 
   .scroll{
-    height:300px;
+    height:200px;
     overflow-y: auto; 
     resize: none;
   }

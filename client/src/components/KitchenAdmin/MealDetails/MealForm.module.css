@@ -1,0 +1,28 @@
+.ingredientRow {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  gap: 16px;
+}
+
+.ingredientInput {
+  flex: 1;
+}
+
+.amountInput {
+  width: 120px;
+}
+
+/* Customize scrollbar */
+div::-webkit-scrollbar {
+  width: 6px;
+}
+
+div::-webkit-scrollbar-thumb {
+  background-color: #800020;
+  border-radius: 3px;
+}
+
+div::-webkit-scrollbar-track {
+  background-color: #f0f0f0;
+}
