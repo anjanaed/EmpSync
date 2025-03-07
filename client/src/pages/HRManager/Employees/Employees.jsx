@@ -84,9 +84,7 @@ const Employees = () => {
       </Modal>
 
       <div className={styles.home}>
-        <div className={styles.homeNav}>
-          <Navbar selected={"E"} />
-        </div>
+
         <div className={styles.homeContent}>
           <div className={styles.homeHead}>
             <div className={styles.headLeft}>Registered Employee Details</div>

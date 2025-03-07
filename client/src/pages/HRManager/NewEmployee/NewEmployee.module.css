@@ -1,0 +1,38 @@
+.sider{
+    background-color: white;
+}
+
+  
+  .ant-menu-item-selected .anticon {
+    color: #d10000 !important; /* Change this to your desired icon color */
+  }
+
+.menu{
+    font-size: 1vw;
+    padding-bottom: 10vw;
+  }
+
+  .navHeader{
+    text-align: center;
+    font-size: 1.6vw;
+    transition: opacity 0.3s ease-in-out;
+    
+
+  }
+  .navHeader.collapsed {
+    opacity: 0;
+}
+
+  .line{
+    width: 85%;
+    margin-bottom: 2vw;
+    
+  }
+
+  .headerText{
+    margin: 43%;
+    font-size: 1.3vw;
+    font-weight: 650;
+    font-family: 4;
+    
+      }

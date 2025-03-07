@@ -1,0 +1,45 @@
+.sider {
+  background-color: white;
+}
+
+
+
+.menu {
+  font-size: 1vw;
+  padding-bottom: 10vw;
+}
+
+.navHeader {
+  text-align: center;
+  font-size: 1.6vw;
+  transition: opacity 0.3s ease-in-out;
+}
+.navHeader.collapsed {
+  opacity: 0;
+}
+
+.line {
+  width: 85%;
+  margin-bottom: 2vw;
+}
+
+.headerText {
+  margin: 43%;
+  font-size: 1.3vw;
+  font-weight: 650;
+  font-family: 4;
+}
+
+img {
+  width: 23%;
+  padding-left: 17%;
+  margin: auto;
+}
+
+.logo{
+  margin: auto;
+}
+.headerContent{
+  width: 100%;
+  background-color: red;
+}
