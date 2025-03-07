@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { Carousel } from 'antd';
-import { Typography } from 'antd';
+import { Carousel, Typography, Button, Card, Flex } from 'antd';
 import styles from './OrderTab.module.css';
 
 const OrderTab = () => {
+
     const carouselRef = React.useRef();
+
 
     const next = () => {
         carouselRef.current.next();
     };
+
+
 
     const getGreeting = () => {
         const currentHour = new Date().getHours();
@@ -20,6 +23,8 @@ const OrderTab = () => {
             return "Good Evening සුභ සන්ධ්‍යාවක් වේවා மலை வணக்கம்";
         }
     };
+
+
 
     const getCurrentDateTime = () => {
         const now = new Date();
@@ -38,11 +43,10 @@ const OrderTab = () => {
         }, 1000);
         return () => clearInterval(intervalId);
     }, []);
+    
 
     return (
         <>
-            
-            
             <Carousel ref={carouselRef} infinite={false} dots={true}>
                 <div>
                     <div className={styles.contentStyle1}>
@@ -50,30 +54,41 @@ const OrderTab = () => {
                         <div><Typography.Title level={2} className={styles.getGreeting}>{getGreeting() }</Typography.Title></div>
                         <div><Typography.Title level={1} className={styles.mainTitle}>Welcome to Helix Food Ordering</Typography.Title></div>
                         <div><Typography.Title level={2} className={styles.getGreeting}>{currentDateTime}</Typography.Title></div>
+                        <div>
+                        <Card className={styles.cardStyle}>
+                            <Flex justify="center" align="center" direction="column">
+                                <div className={styles.cardPart1}>
+                                <Typography.Title level={2} className={styles.getGreeting}><div className={styles.cardPart}>Place Your Finger on Fingerprint Scanner</div></Typography.Title>
+                                </div>
+                                <div className={styles.cardPart2}>
+                                    <Typography.Title level={2} className={styles.getGreeting}>Select your language | භාෂාව තෝරන්න | <br />மொழியை தேர்ந்தெடுக்கவும்</Typography.Title>
+                                    <Button className={styles.languageButton} onClick={() => console.log('English selected')}>English</Button><br />
+                                    <Button className={styles.languageButton} onClick={() => console.log('Sinhala selected')}>සිංහල</Button><br />
+                                    <Button className={styles.languageButton} onClick={() => console.log('Tamil selected')}>தமிழ்</Button><br />
+                                </div>
+                            </Flex>
+                        </Card>
+                        </div>
                         <button onClick={next}>Move 1 to 2</button>
                     </div>
                 </div>
                 <div>
                     <div className={styles.contentStyle2}>
-                      
-                         <button onClick={next}>Move 2 to 3</button>
+                        
+                        <button onClick={next}>Move 2 to 3</button>
                     </div>
                 </div>
                 <div>
                     <div className={styles.contentStyle3}>
-                        
-                         <button onClick={next}>Move 3 to 4</button>
+                        <button onClick={next}>Move 3 to 4</button>
                     </div>
                 </div>
                 <div>
-                <div className={styles.contentStyle}>
-                        
+                    <div className={styles.contentStyle}>
                         <button onClick={next}>Move 4 to 1</button>
-                   </div>
+                    </div>
                 </div>
             </Carousel>
-          
-           
         </>
     );
 };
