@@ -1,0 +1,44 @@
+
+
+
+.contentStyle1 {
+    margin: 0;
+    height: 100vh; /* Full viewport height */
+    width: 100vw;  /* Full viewport width */
+    color: #fff;
+
+    text-align: center;
+    background: linear-gradient(rgba(83, 83, 83, 0.5), rgba(80, 80, 80, 0.5)), url('../../assets/otb4.jpg') no-repeat center center;
+    background-size: cover;
+    
+}
+.contentStyle2 {
+    margin: 0;
+    height: 100vh; /* Full viewport height */
+    width: 100vw;  /* Full viewport width */
+    color: #fff;
+    line-height: 160px;
+    text-align: center;
+    background: url('../../assets/otb3.jpg') no-repeat center center;
+    background-size: cover;
+}
+.contentStyle3 {
+    margin: 0;
+    height: 100vh; /* Full viewport height */
+    width: 100vw;  /* Full viewport width */
+    color: #fff;
+    line-height: 160px;
+    text-align: center;
+    background: url('../../assets/otb1.jpg') no-repeat center center;
+    background-size: cover;
+}
+.contentStyle {
+    margin: 0;
+    height: 100vh; /* Full viewport height */
+    width: 100vw;  /* Full viewport width */
+    color: #fff;
+    line-height: 160px;
+    text-align: center;
+    background: brown;
+    
+}

@@ -1,11 +1,11 @@
+import React from 'react'
+
 const ReOrder = () => {
-    return (
-        <div>
-            <h1>This is ReOrder Component.</h1>
-        </div>
-    );
+  return (
+    <div>ReOrder</div>
+  )
 }
 
-export default ReOrder;
+export default ReOrder
 
 //look at how to set props in the component
