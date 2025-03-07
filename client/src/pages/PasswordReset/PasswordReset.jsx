@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Form, Input, Card, Alert } from "antd";
 import { LoadingOutlined, ArrowRightOutlined, CheckCircleOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
 import styles from "./PasswordReset.module.css";
-import illustration from "../../assets/illustration.png";
+import illustration from "../../assets/illustration3.png";
 
 const PasswordReset = () => {
   const navigate = useNavigate();
@@ -99,13 +99,12 @@ const PasswordReset = () => {
                 )}
               </div>
               <div className={styles.footer}>
-                <button
-                  type="button"
+              <a
+                  href="/login"
                   className={styles.backButton}
-                  onClick={() => navigate("/login")}
                 >
                   Back to Login
-                </button>
+                </a>
               </div>
             </Card>
           </div>
