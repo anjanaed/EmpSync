@@ -1,3 +1,4 @@
+// filepath: c:\Users\hasha\Documents\GitHub\EmpSync\client\src\pages\OrderTab\OrderTab.jsx
 import React, { useEffect, useState } from 'react';
 import { Carousel, Typography, Button, Card, Flex } from 'antd';
 import styles from './OrderTab.module.css';
@@ -6,12 +7,9 @@ const OrderTab = () => {
 
     const carouselRef = React.useRef();
 
-
     const next = () => {
         carouselRef.current.next();
     };
-
-
 
     const getGreeting = () => {
         const currentHour = new Date().getHours();
@@ -23,8 +21,6 @@ const OrderTab = () => {
             return "Good Evening සුභ සන්ධ්‍යාවක් වේවා மலை வணக்கம்";
         }
     };
-
-
 
     const getCurrentDateTime = () => {
         const now = new Date();
@@ -43,7 +39,6 @@ const OrderTab = () => {
         }, 1000);
         return () => clearInterval(intervalId);
     }, []);
-    
 
     return (
         <>
@@ -58,13 +53,27 @@ const OrderTab = () => {
                         <Card className={styles.cardStyle}>
                             <Flex justify="center" align="center" direction="column">
                                 <div className={styles.cardPart1}>
-                                <Typography.Title level={2} className={styles.getGreeting}><div className={styles.cardPart}>Place Your Finger on Fingerprint Scanner</div></Typography.Title>
+                                <Typography.Title level={2} className={styles.getGreeting}>
+                                    <div className={styles.cardPart}>
+                                        
+                                        Place Your Finger on Fingerprint Scanner
+                                    </div>
+                                    <div>
+                                        <br />
+                                    <Card className={styles.cardStyle}>
+                                    <i className={`material-icons ${styles.fingerprintIcon}`}>fingerprint</i>
+                                    </Card>
+                                    </div>
+                                </Typography.Title>
+                                <div>
+                                    
+                                </div>
                                 </div>
                                 <div className={styles.cardPart2}>
                                     <Typography.Title level={2} className={styles.getGreeting}>Select your language | භාෂාව තෝරන්න | <br />மொழியை தேர்ந்தெடுக்கவும்</Typography.Title>
-                                    <Button className={styles.languageButton} onClick={() => console.log('English selected')}>English</Button><br />
-                                    <Button className={styles.languageButton} onClick={() => console.log('Sinhala selected')}>සිංහල</Button><br />
-                                    <Button className={styles.languageButton} onClick={() => console.log('Tamil selected')}>தமிழ்</Button><br />
+                                    <button className={styles.languageButton} onClick={() => console.log('English selected')}>English Language</button><br />
+                                    <button className={styles.languageButton} onClick={() => console.log('Sinhala selected')}>සිංහල භාෂාව</button><br />
+                                    <button className={styles.languageButton} onClick={() => console.log('Tamil selected')}>தமிழ் மொழி</button><br />
                                 </div>
                             </Flex>
                         </Card>
