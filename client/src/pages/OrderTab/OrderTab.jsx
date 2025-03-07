@@ -6,6 +6,8 @@ import styles from './OrderTab.module.css';
 const OrderTab = () => {
 
     const carouselRef = React.useRef();
+    const [animate, setAnimate] = useState(false);
+    const [fingerprintColor, setFingerprintColor] = useState('red');
 
     const next = () => {
         carouselRef.current.next();
@@ -40,6 +42,11 @@ const OrderTab = () => {
         return () => clearInterval(intervalId);
     }, []);
 
+    const handleLanguageSelect = (language) => {
+        console.log(`${language} selected`);
+        setFingerprintColor('green');
+    };
+
     return (
         <>
             <Carousel ref={carouselRef} infinite={false} dots={true}>
@@ -49,6 +56,7 @@ const OrderTab = () => {
                         <div><Typography.Title level={2} className={styles.getGreeting}>{getGreeting() }</Typography.Title></div>
                         <div><Typography.Title level={1} className={styles.mainTitle}>Welcome to Helix Food Ordering</Typography.Title></div>
                         <div><Typography.Title level={2} className={styles.getGreeting}>{currentDateTime}</Typography.Title></div>
+                        <br />
                         <div>
                         <Card className={styles.cardStyle}>
                             <Flex justify="center" align="center" direction="column">
@@ -61,24 +69,25 @@ const OrderTab = () => {
                                     <div>
                                         <br />
                                     <Card className={styles.cardStyle}>
-                                    <i className={`material-icons ${styles.fingerprintIcon}`}>fingerprint</i>
+                                    <i className={`material-icons ${styles.fingerprintIcon} ${animate ? 'animate' : ''}`} style={{ color: fingerprintColor }}>fingerprint</i>
                                     </Card>
                                     </div>
                                 </Typography.Title>
-                                <div>
-                                    
-                                </div>
+                                
                                 </div>
                                 <div className={styles.cardPart2}>
                                     <Typography.Title level={2} className={styles.getGreeting}>Select your language | භාෂාව තෝරන්න | <br />மொழியை தேர்ந்தெடுக்கவும்</Typography.Title>
-                                    <button className={styles.languageButton} onClick={() => console.log('English selected')}>English Language</button><br />
-                                    <button className={styles.languageButton} onClick={() => console.log('Sinhala selected')}>සිංහල භාෂාව</button><br />
-                                    <button className={styles.languageButton} onClick={() => console.log('Tamil selected')}>தமிழ் மொழி</button><br />
+                                    <button className={styles.languageButton} onClick={() => { handleLanguageSelect('English'); next(); }} >English Language</button><br />
+                                    <button className={styles.languageButton} onClick={() => handleLanguageSelect('Sinhala')}>සිංහල භාෂාව</button><br />
+                                    <button className={styles.languageButton} onClick={() => handleLanguageSelect('Tamil')}>தமிழ் மொழி</button><br />
                                 </div>
+                                
                             </Flex>
+                            <div><Typography.Title level={4} className={styles.getGreeting}>Secure & Quick Access — Scan your fingerprint to continue
+                            ordering your favorite meals!</Typography.Title></div>
                         </Card>
                         </div>
-                        <button onClick={next}>Move 1 to 2</button>
+                        
                     </div>
                 </div>
                 <div>
