@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Form, Input, Card, Alert } from "antd";
+import { Form, Input, Alert } from "antd";
 import { LoadingOutlined, ArrowRightOutlined, CheckCircleOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
 import styles from "./PasswordReset.module.css";
 import illustration from "../../assets/illustration3.png";
@@ -16,9 +16,8 @@ const PasswordReset = () => {
     e.preventDefault();
     setError("");
     setIsSubmitting(true);
-    // Simulate API call for password reset
+    
     try {
-      // Replace with actual API call
       await new Promise((resolve) => setTimeout(resolve, 1500));
       setIsSuccess(true);
     } catch (err) {
@@ -40,11 +39,13 @@ const PasswordReset = () => {
         </div>
         <div className={styles.loginRight}>
           <div className={styles.container}>
-            <Card className={styles.card}>
-              <Card.Meta
-                title={<div className={styles.title}>Forgot Password</div>}
-                description="Enter your email address and we'll send you a link to reset your password."
-              />
+            <div className={styles.card}>
+              <div className={styles.cardHeader}>
+                <div className={styles.title}>Forgot Password</div>
+                <div className={styles.description}>
+                  Enter your email address and we'll send you a link to reset your password.
+                </div>
+              </div>
               <div className={styles.cardContent}>
                 {isSuccess ? (
                   <Alert
@@ -99,14 +100,14 @@ const PasswordReset = () => {
                 )}
               </div>
               <div className={styles.footer}>
-              <a
+                <a
                   href="/login"
                   className={styles.backButton}
                 >
                   Back to Login
                 </a>
               </div>
-            </Card>
+            </div>
           </div>
         </div>
       </div>
