@@ -1,6 +1,3 @@
-
-
-
 .contentStyle1 {
     margin: 0;
     height: 100vh; /* Full viewport height */
@@ -41,4 +38,11 @@
     text-align: center;
     background: brown;
     
+}
+
+.getGreeting {
+    font-size: 2em;
+    font-weight: 600;
+    color: #ffffff !important;
+    text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
 }
