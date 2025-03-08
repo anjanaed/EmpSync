@@ -1,0 +1,167 @@
+import React, { useState } from "react";
+import styles from "./NavBar.module.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faUsers,
+  faUserPlus,
+  faFileInvoice,
+  faDollarSign,
+} from "@fortawesome/free-solid-svg-icons";
+import { MenuOutlined, LogoutOutlined } from "@ant-design/icons";
+import { UserOutlined } from "@ant-design/icons";
+import {
+  Button,
+  Layout,
+  Menu,
+  theme,
+  ConfigProvider,
+  Space,
+  Dropdown,
+  Avatar,
+} from "antd";
+import img from "../../../assets/logo.png";
+import { useNavigate } from "react-router-dom";
+
+const { Sider } = Layout;
+
+const customTheme = {
+  token: {
+    colorText: "rgb(80, 80, 80)",
+  },
+  components: {
+    Menu: {
+      itemHeight: 50,
+      itemSelectedColor: "rgb(224, 0, 0)",
+      itemSelectedBg: "rgb(230, 230, 230)",
+      itemActiveBg: "rgba(255, 120, 120, 0.53)",
+      itemMarginInline: 10,
+      itemMarginBlock: 14,
+      iconMarginInlineEnd: 16,
+    },
+  },
+};
+
+const NewNavBar = ({ Comp }) => {
+  const items = [
+    {
+      key: "1",
+      label: (
+        <div className={styles.logout}>
+          Logout <t /> <LogoutOutlined />
+        </div>
+      ),
+      onClick: () => navigate("/login"),
+    },
+  ];
+  const [collapsed, setCollapsed] = useState(false);
+  const navigate = useNavigate();
+  return (
+    <div className={styles.main}>
+      <ConfigProvider theme={customTheme}>
+        <Sider
+          className={styles.sider}
+          trigger={null}
+          width={"15vw"}
+          collapsible
+          collapsed={collapsed}
+        >
+          {!collapsed && (
+            <>
+              <h1 className={styles.navHeader}>
+                <div className={styles.red}>
+                  Human <br /> Resource
+                </div>
+                Management
+              </h1>
+              <hr className={styles.line} />
+            </>
+          )}
+          {collapsed && (
+            <>
+              <h1 className={styles.navHeader}>
+                <div className={styles.red}>
+                  H <br /> R
+                </div>
+                M
+              </h1>
+              <hr className={styles.line} />
+            </>
+          )}
+          <Menu
+            className={styles.menu}
+            theme="light"
+            mode="inline"
+            defaultSelectedKeys={["1"]}
+            items={[
+              {
+                key: "1",
+                icon: <FontAwesomeIcon icon={faUsers} />,
+                label: "Employees",
+                onClick: () => navigate("/"),
+              },
+              {
+                key: "2",
+                icon: <FontAwesomeIcon icon={faUserPlus} />,
+                label: "Registration",
+                onClick: () => navigate("/reg"),
+              },
+              {
+                key: "3",
+                icon: <FontAwesomeIcon icon={faDollarSign} />,
+                label: "Payrolls",
+                onClick: () => navigate("/"),
+              },
+              {
+                key: "4",
+                icon: <FontAwesomeIcon icon={faFileInvoice} />,
+                label: "Reports",
+                onClick: () => navigate("/"),
+              },
+            ]}
+          />
+        </Sider>
+      </ConfigProvider>
+      <div className={styles.homeContent}>
+        <div className={styles.headerContent}>
+          <Button
+            type="text"
+            icon={collapsed ? <MenuOutlined /> : <MenuOutlined />}
+            onClick={() => setCollapsed(!collapsed)}
+            style={{
+              fontSize: "16px",
+              width: 64,
+              height: 64,
+            }}
+          />
+          <img className={styles.logo} src={img}></img>
+          <div className={styles.userDropdown}>
+            <Space direction="vertical">
+              <Space wrap>
+                <Dropdown
+                  menu={{
+                    items,
+                  }}
+                  placement="bottomLeft"
+                >
+                  <Button className={styles.dropButton}>
+                    <Avatar
+                      style={{ backgroundColor: "#d10000" }}
+                      size={38}
+                      icon={<UserOutlined />}
+                    />
+                    Anjana Edirisinghe
+                  </Button>
+                </Dropdown>
+              </Space>
+            </Space>
+          </div>
+        </div>
+        <div className={styles.content}>
+          <Comp />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default NewNavBar;
