@@ -7,58 +7,92 @@ import {
   DatePicker,
   Col,
   Form,
+  Space,
   Input,
   InputNumber,
   Row,
   Select,
 } from "antd";
 import styles from "./Register.module.css";
+import { IoIosArrowBack } from "react-icons/io";
+import FingerPrint from "../FingerPrint/FingerPrint";
+import Loading from "../../loading/loading";
+import { useNavigate } from "react-router-dom";
+import moment from "moment";
+import axios from "axios";
 
 const Register = () => {
   const { RangePicker } = DatePicker;
-
+  const [menu, setMenu] = useState(1);
+  const urL = import.meta.env.VITE_BASE_URL;
+  const navigate = useNavigate();
+  const [id, setId] = useState(null);
   const [email, setEmail] = useState(null);
+  const [password, setPassword] = useState(null);
+  const [dob, setDob] = useState(null);
+  const [address, setAddress] = useState(null);
+  const [tel, setTel] = useState(null);
+  const [salary, setSalary] = useState(null);
+  const [name, setName] = useState(null);
+  const [jobRole, setJobRole] = useState("");
+  const [customJobRole, setCustomJobRole] = useState(null);
+  const [gender, setGender] = useState("");
+  const [lang, setLang] = useState("");
+  const [supId, setSupId] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  const handleChange = (e) => {
-    setEmail(e.target.value);
-    console.log(email);
+  const handleRegister = async () => {
+    setLoading(true);
+    let role = jobRole;
+    if (role === "Other") {
+      role = customJobRole;
+    }
+    try {
+      const payload = {
+        id: id,
+        name: name,
+        role: role,
+        dob: dob,
+        telephone: tel,
+        gender: gender,
+        address: address,
+        email: email,
+        password: password,
+        supId: supId,
+        language: lang,
+        salary: parseInt(salary),
+      };
+      await axios
+        .post(`${urL}/user`, payload)
+        .then((res) => {
+          console.log(res);
+          navigate("/");
+        })
+        .catch((err) => {
+          if (
+            err.response.data.message ==
+            "Id, Name, Email, Password must be filled"
+          ) {
+            setMenu(1);
+            setRequired(true);
+          } else {
+            setRequired(false);
+          }
+        });
+      setLoading(false);
+    } catch (err) {
+      console.log(err);
+      setLoading(false);
+    }
+  };
+
+  const handleNext = async () => {
+    await form.validateFields();
+    setMenu(2);
   };
 
   const { Option } = Select;
-  const residences = [
-    {
-      value: "zhejiang",
-      label: "Zhejiang",
-      children: [
-        {
-          value: "hangzhou",
-          label: "Hangzhou",
-          children: [
-            {
-              value: "xihu",
-              label: "West Lake",
-            },
-          ],
-        },
-      ],
-    },
-    {
-      value: "jiangsu",
-      label: "Jiangsu",
-      children: [
-        {
-          value: "nanjing",
-          label: "Nanjing",
-          children: [
-            {
-              value: "zhonghuamen",
-              label: "Zhong Hua Men",
-            },
-          ],
-        },
-      ],
-    },
-  ];
+
   const formItemLayout = {
     labelCol: {
       xs: {
@@ -77,23 +111,9 @@ const Register = () => {
       },
     },
   };
-  const tailFormItemLayout = {
-    wrapperCol: {
-      xs: {
-        span: 24,
-        offset: 0,
-      },
-      sm: {
-        span: 16,
-        offset: 8,
-      },
-    },
-  };
 
   const [form] = Form.useForm();
-  const onFinish = (values) => {
-    console.log("Received values of form: ", values);
-  };
+
   const prefixSelector = (
     <Form.Item name="prefix" noStyle>
       <Select
@@ -105,226 +125,254 @@ const Register = () => {
       </Select>
     </Form.Item>
   );
-  const suffixSelector = (
-    <Form.Item name="suffix" noStyle>
-      <Select
-        style={{
-          width: 70,
-        }}
-      >
-        <Option value="USD">$</Option>
-        <Option value="CNY">¥</Option>
-      </Select>
-    </Form.Item>
-  );
-  const [autoCompleteResult, setAutoCompleteResult] = useState([]);
-  const onWebsiteChange = (value) => {
-    if (!value) {
-      setAutoCompleteResult([]);
-    } else {
-      setAutoCompleteResult(
-        [".com", ".org", ".net"].map((domain) => `${value}${domain}`)
-      );
-    }
-  };
-  const websiteOptions = autoCompleteResult.map((website) => ({
-    label: website,
-    value: website,
-  }));
-  return (
-    <>
-      <div className={styles.heading}>Employee Registration</div>
-      <Form
-        {...formItemLayout}
-        form={form}
-        name="register"
-        onFinish={onFinish}
-        initialValues={{
-          residence: ["zhejiang", "hangzhou", "xihu"],
-          prefix: "86",
-        }}
-        scrollToFirstError
-      >
-        <div className={styles.sides}>
-          <div className={styles.sideOne}>
-            <Form.Item
-              name="fullname"
-              label="Full Name"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input your Name!",
-                  whitespace: true,
-                },
-              ]}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item
-              name="email"
-              label="E-mail"
-              rules={[
-                {
-                  type: "email",
-                  message: "The input is not valid E-mail!",
-                },
-                {
-                  required: true,
-                  message: "Please input your E-mail!",
-                },
-              ]}
-            >
-              <Input onChange={(e) => handleChange(e)} />
-            </Form.Item>
-            <Form.Item
-              name="password"
-              label="Password"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input your password!",
-                },
-              ]}
-              hasFeedback
-            >
-              <Input.Password />
-            </Form.Item>
-            <Form.Item
-              name="phone"
-              label="Phone Number"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input your phone number!",
-                },
-              ]}
-            >
-              <Input
-                addonBefore={prefixSelector}
-                style={{
-                  width: "100%",
-                }}
-              />
-            </Form.Item>
-            <Form.Item
-              name="role"
-              label="Job Role"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input Intro",
-                },
-              ]}
-            >
-              <Select placeholder="Select Language">
-                <Option value="HrManager">HR Administrator</Option>
-                <Option value="kitchenAdmin">Kitchen Admin</Option>
-                <Option value="kitchenStaff">Kitchen Staff</Option>
-                <Option value="inventoryManager">Inventory Manager</Option>
-                <Option value="other">Other</Option>
 
-              </Select>
-            </Form.Item>
-            <Form.Item
-              name="gender"
-              label="Gender"
-              rules={[
-                {
-                  required: true,
-                  message: "Please select gender!",
-                },
-              ]}
-            >
-              <Select placeholder="select your gender">
-                <Option value="male">Male</Option>
-                <Option value="female">Female</Option>
-                <Option value="other">Other</Option>
-              </Select>
-            </Form.Item>
+  if (loading) {
+    return <Loading />;
+  }
+  return (
+    <div className={styles.formContainer}>
+      {menu == 1 && (
+        <>
+          <div className={styles.heading}>New Employee Onboarding</div>
+          <Form
+            {...formItemLayout}
+            form={form}
+            name="register"
+            initialValues={{
+              prefix: "+94",
+            }}
+            scrollToFirstError
+          >
+            <div className={styles.sides}>
+              <div className={styles.sideOne}>
+                <Form.Item
+                  name="fullname"
+                  label="Full Name"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please input your Name!",
+                      whitespace: true,
+                    },
+                  ]}
+                >
+                  <Input
+                    placeholder="Enter Name"
+                    onChange={(e) => setName(e.target.value)}
+                  />
+                </Form.Item>
+                <Form.Item
+                  name="email"
+                  label="E-mail"
+                  rules={[
+                    {
+                      type: "email",
+                      message: "The input is not valid E-mail!",
+                    },
+                    {
+                      required: true,
+                      message: "Please input your E-mail!",
+                    },
+                  ]}
+                >
+                  <Input
+                    placeholder="Enter Email Address"
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                </Form.Item>
+                <Form.Item
+                  name="password"
+                  label="Password (Portal Access)"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please input your password!",
+                    },
+                  ]}
+                  hasFeedback
+                >
+                  <Input.Password
+                    placeholder="Enter Password"
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                </Form.Item>
+                <Form.Item name="phone" label="Phone Number">
+                  <Input
+                    placeholder="Enter Mobile Number"
+                    onChange={(e) => setTel(e.target.value)}
+                    addonBefore={prefixSelector}
+                    style={{
+                      width: "100%",
+                    }}
+                  />
+                </Form.Item>
+
+                <Form.Item
+                  name="gender"
+                  label="Gender"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please select gender!",
+                    },
+                  ]}
+                >
+                  <Select
+                    placeholder="Select Gender"
+                    onChange={(value) => setGender(value)}
+                  >
+                    <Option value="Male">Male</Option>
+                    <Option value="Female">Female</Option>
+                    <Option value="Other">Other</Option>
+                  </Select>
+                </Form.Item>
+                <Form.Item label={<><p style={{color:"red"}}>* </p>&#8201; Job Role</>} name="role">
+                  <Space.Compact style={{ display: "flex", width: "100%" }}>
+                    <Form.Item
+                      noStyle
+                      name="selectRole"
+                      style={{ flex: "1" }}
+                      rules={[
+                        {
+                          required: true,
+                          message: "Please Enter Role!",
+                        },
+                      ]}
+                    >
+                      <Select
+                        onChange={(value) => setJobRole(value)}
+                        style={{ width: "100%" }}
+                        placeholder="Select Role"
+                      >
+                        <Option value="HrManager">HR Administrator</Option>
+                        <Option value="KitchenAdmin">Kitchen Admin</Option>
+                        <Option value="KitchenStaff">Kitchen Staff</Option>
+                        <Option value="InventoryManager">
+                          Inventory Manager
+                        </Option>
+                        <Option value="Other">Other</Option>
+                      </Select>
+                    </Form.Item>
+                    <Form.Item name="customRole" noStyle style={{ flex: "2" }}>
+                      <Input
+                        style={{ width: "100%" }}
+                        onChange={(e) => setCustomJobRole(e.target.value)}
+                        placeholder="If Other, Enter Job Role"
+                        disabled={jobRole !== "Other"}
+                        required="false"
+                      />
+                    </Form.Item>
+                  </Space.Compact>
+                </Form.Item>
+              </div>
+              <div className={styles.sideOne}>
+                <Form.Item
+                  name="empId"
+                  label="Employee ID"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please Enter ID!",
+                    },
+                  ]}
+                >
+                  <Input
+                    placeholder="Enter ID"
+                    onChange={(e) => setId(e.target.value)}
+                  />
+                </Form.Item>
+                <Form.Item name="address" label="Residential Address">
+                  <Input
+                    placeholder="Enter Address"
+                    onChange={(e) => setAddress(e.target.value)}
+                  />
+                </Form.Item>
+                <Form.Item
+                  name="dob"
+                  label="Date of Birth"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please Enter Birth Date!",
+                    },
+                  ]}
+                >
+                  <DatePicker
+                    onChange={(date) =>
+                      setDob(moment(date).format("YYYY-MM-DD"))
+                    }
+                    placeholder="Select Birth Date"
+                    style={{ width: "100%" }}
+                  />
+                </Form.Item>
+                <Form.Item name="supId" label="Supervisor's ID">
+                  <Input placeholder="Enter Supervisor ID (If Available)" />
+                </Form.Item>
+                <Form.Item
+                  name="language"
+                  label="Preferred Language"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please Select Language!",
+                    },
+                  ]}
+                >
+                  <Select
+                    placeholder="Select Language"
+                    onChange={(value) => setLang(value)}
+                  >
+                    <Option value="Sinhala">Sinhala</Option>
+                    <Option value="English">English</Option>
+                    <Option value="Tamil">Tamil</Option>
+                  </Select>
+                </Form.Item>
+                <Form.Item
+                  name="salary"
+                  label="Basic Salary"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please Enter Salary!",
+                    },
+                  ]}
+                >
+                  <Input
+                    placeholder="Enter Basic Salary"
+                    onChange={(e) => setSalary(e.target.value)}
+                  />
+                </Form.Item>
+              </div>
+            </div>
+            <div className={styles.btnContainer}>
+              <Button onClick={handleNext} className={styles.btn}>
+                Next
+              </Button>
+            </div>
+          </Form>
+        </>
+      )}
+      {menu == 2 && (
+        <>
+          <div className={styles.finHeader}>
+            <div className={styles.backIcon} onClick={() => setMenu(1)}>
+              <IoIosArrowBack />
+            </div>
+            <div className={styles.head}>
+              Place Your Finger to Complete Registration
+            </div>
           </div>
-          <div className={styles.sideOne}>
-            <Form.Item
-              name="empId"
-              label="Employee ID"
-              rules={[
-                {
-                  type: "string",
-                  required: true,
-                },
-              ]}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item
-              name="address"
-              label="Residential Address"
-              rules={[
-                {
-                  required: false,
-                },
-              ]}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item
-              name="dob"
-              label="Date of Birth"
-              rules={[
-                {
-                  required: true,
-                },
-              ]}
-            >
-              <DatePicker />
-            </Form.Item>
-            <Form.Item
-              name="supId"
-              label="Supervisor's ID"
-              rules={[
-                {
-                  type: "string",
-                  required: false,
-                },
-              ]}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item
-              name="language"
-              label="Preferred Language"
-              rules={[
-                {
-                  type: "string",
-                  required: false,
-                },
-              ]}
-            >
-              <Select placeholder="Select Language">
-                <Option value="sinhala">Sinhala</Option>
-                <Option value="english">English</Option>
-                <Option value="tamil">Tamil</Option>
-              </Select>
-            </Form.Item>
-            <Form.Item
-              name="salary"
-              label="Basic Salary"
-              rules={[
-                {
-                  required: true,
-                },
-              ]}
-            >
-              <Input />
-            </Form.Item>
+          <div className={styles.fingerPrint}>
+            <FingerPrint />
           </div>
-        </div>
-        <Form.Item {...tailFormItemLayout}>
-          <Button type="primary" htmlType="submit">
-            Register
-          </Button>
-        </Form.Item>
-      </Form>
-    </>
+          <div className={styles.btnContainer}>
+            <Button onClick={handleRegister} className={styles.btn}>
+              Register Without Finger Print
+            </Button>
+          </div>
+        </>
+      )}
+    </div>
   );
 };
 
