@@ -171,7 +171,7 @@
     ; /* Apply text shadow */
     border-radius: 10px; /* Rounded corners */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-    padding: 20px; /* Padding inside the card */
+    padding: 1px; /* Padding inside the card */
     margin-left: auto;
     margin-right: auto; /* Margin outside the card */
      /* Reduce width slightly */
@@ -214,4 +214,53 @@
     text-align: center;
     
     background-size: cover;
+}
+
+.carouselItem {
+    margin: 0;
+    
+    color: #fff;
+    line-height: 160px;
+    text-align: center;
+    background: #364d79;
+}
+
+.carouselItemHeadButton {
+    background-color: white; /* White background */
+    border: 4px solid rgb(99, 5, 5); /* Red border */
+    color: rgb(99, 5, 5); /* Red text */
+    margin: 20px; /* Increase margin */
+    padding: 20px; /* Increase padding */
+    padding-top: 0%;
+    padding-bottom: 0%;
+    text-align: center; /* Centered text */
+    text-decoration: none; /* Remove underline */
+    display: inline-block; /* Make the buttons appear side by side */
+    font-size: 40px; /* Increase font size */
+    cursor: pointer; /* Pointer/hand icon */
+    border-radius: 12px; /* Rounded corners */
+    transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition for background and text color */
+    line-height: 1.5; /* Center text vertically */
+    width: 400px ; /* Adjust width automatically based on content */
+}
+
+.mealButton {
+    background-color: #f0f0f0; /* Light grey background */
+    border: 3px solid  rgb(99, 5, 5); /* Darker red border */
+    color:  rgb(99, 5, 5); /* Darker red text */
+    width: 400px; /* Fixed width */
+    margin: 5px; /* Increased margin between buttons */
+    padding: 30px; /* Increased padding inside the button */
+    text-align: center; /* Centered text */
+    text-decoration: none; /* Remove underline */
+   
+    font-size: 50px; /* Increased font size */
+    cursor: pointer; /* Pointer/hand icon */
+    border-radius: 10px; /* More rounded corners */
+    transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition for background and text color */
+}
+
+.mealButton:hover {
+    background-color: rgb(99, 5, 5); /* Darker red background on hover */
+    color: #f0f0f0; /* Light grey text on hover */
 }

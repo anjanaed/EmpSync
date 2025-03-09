@@ -6,12 +6,17 @@ import styles from './OrderTab.module.css';
 const OrderTab = () => {
 
     const carouselRef = React.useRef();
+    const innerCarouselRef = React.useRef();
     const [animate, setAnimate] = useState(false);
     const [fingerprintColor, setFingerprintColor] = useState('red');
     const [selectedLanguage, setSelectedLanguage] = useState('English');
 
     const next = () => {
         carouselRef.current.next();
+    };
+
+    const nextInner = () => {
+        innerCarouselRef.current.next();
     };
 
     const getGreeting = () => {
@@ -34,6 +39,19 @@ const OrderTab = () => {
         return `${date} | ${time}`;
     };
 
+    const getTodayDate = () => {
+        const now = new Date();
+        const options = { weekday: 'long', month: 'short', day: 'numeric' };
+        return now.toLocaleDateString('en-US', options);
+    };
+
+    const getTomorrowDate = () => {
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        const options = { weekday: 'long', month: 'short', day: 'numeric' };
+        return tomorrow.toLocaleDateString('en-US', options);
+    };
+
     const [currentDateTime, setCurrentDateTime] = useState(getCurrentDateTime());
 
     useEffect(() => {
@@ -41,6 +59,11 @@ const OrderTab = () => {
             setCurrentDateTime(getCurrentDateTime());
         }, 1000);
         return () => clearInterval(intervalId);
+    }, []);
+
+    useEffect(() => {
+        // Auto-select the "Today" button when the component mounts
+        nextInner();
     }, []);
 
     const handleLanguageSelect = (language) => {
@@ -105,24 +128,31 @@ const OrderTab = () => {
                 </div>
                 <div>
                     <div className={styles.contentStyle2}>
-                        <br />
+                       
                         <div className={styles.headerContainer}>
                             <div><Typography.Title level={1} className={styles.mainTitle2}>{getTitleText()}</Typography.Title></div>
                             <div><Typography.Title level={2} className={styles.getGreeting}><Typography.Title level={2} className={styles.mainTitle3}>John wick</Typography.Title></Typography.Title></div>
                         </div>
 
                         <Card className={styles.cardStyle2}>
-                            <Carousel afterChange={(currentSlide) => console.log(currentSlide)}>
-                                <div>
-                                    <h3 style={{ margin: 0, height: '160px', color: '#fff', lineHeight: '160px', textAlign: 'center', background: '#364d79' }}>1</h3>
+                            <Carousel ref={innerCarouselRef} afterChange={(currentSlide) => console.log(currentSlide)}>
+                                <div className={styles.carouselItem}>
+                                    <button className={styles.carouselItemHeadButton} style={{ backgroundColor: 'rgb(99, 5, 5)', color: 'white' }} >Today <br />({getTodayDate()})</button>
+                                    <button className={styles.carouselItemHeadButton} onClick={nextInner}>Tomorrow<br /> ({getTomorrowDate()})</button><br />
+                                    <button className={styles.mealButton} onClick={() => { /* handle breakfast selection */ }}>Breakfast</button><br />
+                                    <button className={styles.mealButton} onClick={() => { /* handle lunch selection */ }}>Lunch</button><br />
+                                    <button className={styles.mealButton} onClick={() => { /* handle dinner selection */ }}>Dinner</button><br />
                                 </div>
-                                <div>
-                                    <h3 style={{ margin: 0, height: '160px', color: '#fff', lineHeight: '160px', textAlign: 'center', background: '#364d79' }}>2</h3>
+                                <div className={styles.carouselItem}>
+                                    <button className={styles.carouselItemHeadButton} onClick={nextInner}>Today <br />({getTodayDate()})</button>
+                                    <button className={styles.carouselItemHeadButton} style={{ backgroundColor: 'rgb(99, 5, 5)', color: 'white' }}>Tomorrow <br /> ({getTomorrowDate()})</button><br />
+                                    <button className={styles.mealButton} onClick={() => { /* handle breakfast selection */ }}>Breakfast</button><br />
+                                    <button className={styles.mealButton} onClick={() => { /* handle lunch selection */ }}>Lunch</button><br />
+                                    <button className={styles.mealButton} onClick={() => { /* handle dinner selection */ }}>Dinner</button><br />
                                 </div>
-                                
                             </Carousel>
                         </Card>
-                        
+                        <button onClick={() => carouselRef.current.prev()}>Move 2 to 1</button>
                         <button onClick={next}>Move 2 to 3</button>
                     </div>
                 </div>
