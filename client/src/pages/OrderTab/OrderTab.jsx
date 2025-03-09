@@ -75,12 +75,39 @@ const OrderTab = () => {
     const getTitleText = () => {
         switch (selectedLanguage) {
             case 'Sinhala':
-                return 'දිනය සහ ආහාර තෝරන්න';
+                return ' දිනය සහ ආහාර වේල තෝරන්න';
             case 'Tamil':
-                return 'தேதியும் உணவுகளையும் தேர்ந்தெடுக்கவும்';
+                return 'தேதி மற்றும் உணவை தேர்ந்தெடுக்கவும்';
             default:
-                return 'Choose Date and Meals';
+                return 'Select Date and Meal Time';
         }
+    };
+
+    const getButtonText = (key) => {
+        const texts = {
+            English: {
+                today: 'Today',
+                tomorrow: 'Tomorrow',
+                breakfast: 'Breakfast',
+                lunch: 'Lunch',
+                dinner: 'Dinner',
+            },
+            Sinhala: {
+                today: 'අද',
+                tomorrow: 'හෙට',
+                breakfast: 'උදේ ආහාරය',
+                lunch: 'දවල් ආහාරය',
+                dinner: 'රාත්‍රී ආහාරය',
+            },
+            Tamil: {
+                today: 'இன்று',
+                tomorrow: 'நாளை',
+                breakfast: 'காலை உணவு',
+                lunch: 'மதிய உணவு',
+                dinner: 'இரவு உணவு',
+            },
+        };
+        return texts[selectedLanguage][key];
     };
 
     return (
@@ -128,32 +155,52 @@ const OrderTab = () => {
                 </div>
                 <div>
                     <div className={styles.contentStyle2}>
-                       
+                        <br />
                         <div className={styles.headerContainer}>
-                            <div><Typography.Title level={1} className={styles.mainTitle2}>{getTitleText()}</Typography.Title></div>
-                            <div><Typography.Title level={2} className={styles.getGreeting}><Typography.Title level={2} className={styles.mainTitle3}>John wick</Typography.Title></Typography.Title></div>
+                            <div className={styles.currentTime}>{currentDateTime}</div>
+                            <div className={styles.userName}>John Wick</div>
                         </div>
-
+                        <br />
                         <Card className={styles.cardStyle2}>
+                            <div><Typography.Title level={1} className={styles.mainTitle2}>{getTitleText()}</Typography.Title></div>
                             <Carousel ref={innerCarouselRef} afterChange={(currentSlide) => console.log(currentSlide)}>
                                 <div className={styles.carouselItem}>
-                                    <button className={styles.carouselItemHeadButton} style={{ backgroundColor: 'rgb(99, 5, 5)', color: 'white' }} >Today <br />({getTodayDate()})</button>
-                                    <button className={styles.carouselItemHeadButton} onClick={nextInner}>Tomorrow<br /> ({getTomorrowDate()})</button><br />
-                                    <button className={styles.mealButton} onClick={() => { /* handle breakfast selection */ }}>Breakfast</button><br />
-                                    <button className={styles.mealButton} onClick={() => { /* handle lunch selection */ }}>Lunch</button><br />
-                                    <button className={styles.mealButton} onClick={() => { /* handle dinner selection */ }}>Dinner</button><br />
+                                    <button className={styles.carouselItemHeadButton} style={{ backgroundColor: 'rgb(99, 5, 5)', color: 'white' }}>
+                                        {getButtonText('today')} ✅ <br />({getTodayDate()})
+                                    </button>
+                                    <button className={styles.carouselItemHeadButton} onClick={nextInner}>
+                                        {getButtonText('tomorrow')}<br /> ({getTomorrowDate()})
+                                    </button><br />
+                                    <button className={styles.mealButton} onClick={() => { /* handle breakfast selection */ }}>
+                                        {getButtonText('breakfast')}
+                                    </button><br />
+                                    <button className={styles.mealButton} onClick={() => { /* handle lunch selection */ }}>
+                                        {getButtonText('lunch')}
+                                    </button><br />
+                                    <button className={styles.mealButton} onClick={() => { /* handle dinner selection */ }}>
+                                        {getButtonText('dinner')}
+                                    </button><br />
                                 </div>
                                 <div className={styles.carouselItem}>
-                                    <button className={styles.carouselItemHeadButton} onClick={nextInner}>Today <br />({getTodayDate()})</button>
-                                    <button className={styles.carouselItemHeadButton} style={{ backgroundColor: 'rgb(99, 5, 5)', color: 'white' }}>Tomorrow <br /> ({getTomorrowDate()})</button><br />
-                                    <button className={styles.mealButton} onClick={() => { /* handle breakfast selection */ }}>Breakfast</button><br />
-                                    <button className={styles.mealButton} onClick={() => { /* handle lunch selection */ }}>Lunch</button><br />
-                                    <button className={styles.mealButton} onClick={() => { /* handle dinner selection */ }}>Dinner</button><br />
+                                    <button className={styles.carouselItemHeadButton} onClick={nextInner}>
+                                        {getButtonText('today')} <br />({getTodayDate()})
+                                    </button>
+                                    <button className={styles.carouselItemHeadButton} style={{ backgroundColor: 'rgb(99, 5, 5)', color: 'white' }}>
+                                        {getButtonText('tomorrow')} ✅ <br /> ({getTomorrowDate()})
+                                    </button><br />
+                                    <button className={styles.mealButton} onClick={() => { /* handle breakfast selection */ }}>
+                                        {getButtonText('breakfast')}
+                                    </button><br />
+                                    <button className={styles.mealButton} onClick={() => { /* handle lunch selection */ }}>
+                                        {getButtonText('lunch')}
+                                    </button><br />
+                                    <button className={styles.mealButton} onClick={() => { /* handle dinner selection */ }}>
+                                        {getButtonText('dinner')}
+                                    </button><br />
                                 </div>
                             </Carousel>
+                            <button className={styles.prevButton} onClick={() => carouselRef.current.prev()}>&lt;</button>
                         </Card>
-                        <button onClick={() => carouselRef.current.prev()}>Move 2 to 1</button>
-                        <button onClick={next}>Move 2 to 3</button>
                     </div>
                 </div>
                 <div>

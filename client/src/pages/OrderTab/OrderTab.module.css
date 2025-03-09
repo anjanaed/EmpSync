@@ -148,23 +148,33 @@
 
 .mainTitle2 {
     margin: 0%;
-    margin-left: 5%!important;
-    text-align: left!important;
-    font-size: 4em !important;
+    font-size: 3em !important;
     font-weight: 800 !important;
     color: #ffffff !important;
     text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
 }
 
-.mainTitle3 {
-    margin-top: 0%!important;
-    margin-right: 10%!important;
-    text-align: left!important;
-    font-size: 1em !important;
-    font-weight: 400 !important;
-    color: #ffffff !important;
-    text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
+.headerContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px; /* Padding around the container */
+    margin-left: 2%;
+    margin-right: 2%;
+    color: white; /* White text color */
+    font-size: 2.0em; /* Slightly larger text */
 }
+
+.currentTime {
+    flex: 1;
+    text-align: left; /* Align text to the left */
+}
+
+.userName {
+    flex: 1;
+    text-align: right; /* Align text to the right */
+}
+
 
 .cardStyle2 {
     background-color: rgba(255, 255, 255, 0.3); /* Semi-transparent white background */
@@ -175,7 +185,7 @@
     margin-left: auto;
     margin-right: auto; /* Margin outside the card */
      /* Reduce width slightly */
-    max-width: 90%; /* Ensure it doesn't exceed 90% of the viewport width */
+    max-width: 70%; /* Ensure it doesn't exceed 90% of the viewport width */
     @media (max-width: 768px) {
         width: calc(90%); /* Adjust width for smaller screens */
     }
@@ -184,14 +194,7 @@
     }
 }
 
-.headerContainer {
-    
-    display: flex;
-    justify-content:space-around;
-   
-    width: 100%;
-     /* Optional: Add some padding for spacing */
-}
+
 
 .contentStyleToday {
     margin: 0;
@@ -222,7 +225,7 @@
     color: #fff;
     line-height: 160px;
     text-align: center;
-    background: #364d79;
+    
 }
 
 .carouselItemHeadButton {
@@ -254,7 +257,8 @@
     text-align: center; /* Centered text */
     text-decoration: none; /* Remove underline */
    
-    font-size: 50px; /* Increased font size */
+    font-size: 40px; /* Increased font size */
+    font-weight: 900;
     cursor: pointer; /* Pointer/hand icon */
     border-radius: 10px; /* More rounded corners */
     transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition for background and text color */
@@ -263,4 +267,28 @@
 .mealButton:hover {
     background-color: rgb(99, 5, 5); /* Darker red background on hover */
     color: #f0f0f0; /* Light grey text on hover */
+}
+
+.prevButton {
+    position: absolute;
+    bottom: 40px;
+    left: 40px;
+    background-color: white;
+    border: 2px solid rgb(99, 5, 5);
+    color: rgb(99, 5, 5);
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+    font-size: 60px;
+    display: flex;
+    font-weight: 900;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.prevButton:hover {
+    background-color: rgb(99, 5, 5);
+    color: white;
 }
