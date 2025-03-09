@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./NavBar.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -21,6 +21,7 @@ import {
 } from "antd";
 import img from "../../../assets/logo.png";
 import { useNavigate } from "react-router-dom";
+import Loading from "../../loading/loading";
 
 const { Sider } = Layout;
 
@@ -41,7 +42,7 @@ const customTheme = {
   },
 };
 
-const NewNavBar = ({ Comp }) => {
+const NavBar = ({ Comp }) => {
   const items = [
     {
       key: "1",
@@ -54,7 +55,36 @@ const NewNavBar = ({ Comp }) => {
     },
   ];
   const [collapsed, setCollapsed] = useState(false);
+  const [selectedKey,setSelectedKey]=useState("1")
+  const [loading,setLoading]=useState(false);
   const navigate = useNavigate();
+
+  const checkPath=()=>{
+    setLoading(true)
+    const path=location.pathname;
+    if (path=="/"){
+      setSelectedKey("1");
+    }
+    if (path=="/reg"){
+      setSelectedKey("2");
+    }
+    if (path=="/payroll"){
+      setSelectedKey("3");
+    }
+    if (path=="/report"){
+      setSelectedKey("4");
+    }
+    setLoading(false)
+  }
+
+  useEffect(()=>{
+    checkPath()
+  },[location.pathname])
+
+  if (loading) {
+    return <Loading/>;
+  }
+
   return (
     <div className={styles.main}>
       <ConfigProvider theme={customTheme}>
@@ -91,7 +121,7 @@ const NewNavBar = ({ Comp }) => {
             className={styles.menu}
             theme="light"
             mode="inline"
-            defaultSelectedKeys={["1"]}
+            selectedKeys={[selectedKey]}
             items={[
               {
                 key: "1",
@@ -164,4 +194,4 @@ const NewNavBar = ({ Comp }) => {
   );
 };
 
-export default NewNavBar;
+export default NavBar;

@@ -99,9 +99,6 @@ function Register() {
 
   return (
     <div className={styles.home}>
-      {/* <div className={styles.homeNavbar}>
-        <Navbar selected={"R"} />
-      </div> */}
       <div className={styles.homeContent}>
         <div className={styles.rBox}>
           <div className={styles.rTable}>
