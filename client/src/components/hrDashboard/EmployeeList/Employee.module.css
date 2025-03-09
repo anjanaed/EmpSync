@@ -1,0 +1,122 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Itim&family=Roboto+Slab:wght@100..900&display=swap");
+
+.home {
+  display: flex;
+  font-family: Arial, sans-serif;
+  flex-direction: row;
+  width: 100%;
+}
+
+.empty {
+  font-family: Arial, sans-serif;
+  font-weight: 650;
+  font-size: 1vw;
+}
+
+.homeNav {
+  flex: 1;
+}
+
+.homeContent {
+  flex: 5;
+  padding: 1vw;
+  overflow: hidden;
+  background-color: rgb(255, 255, 255);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  background-color: rgb(216, 216, 216);
+}
+
+:global(.ant-select-selector) {
+  border: 1px solid rgb(219, 218, 218) !important; /* Very visible for testing */
+  background-color: white !important;
+}
+
+:global(.ant-select-focused .ant-select-selector) {
+  border-color: rgb(87, 99, 255) !important;
+}
+
+:global(.ant-select:hover .ant-select-selector) {
+  border-color: #1890ff !important; /* Blue hover border */
+}
+
+
+
+
+
+.homeHead {
+  display: flex;
+  flex-direction: row;
+  padding: 0.5vw;
+}
+
+.headLeft {
+  margin-right: auto;
+  font-family: "Roboto Slab", serif;
+  font-size: 1.3vw;
+  font-weight: 600;
+  margin: auto 0;
+  color: #d10000;
+}
+.headRight {
+  margin-left: auto;
+  display: flex;
+  
+}
+
+.filter{
+  width: 10vw;
+}
+
+.searchBar{
+  margin-right: 1vw;
+}
+
+
+
+.headRight select {
+  font-size: 1vw;
+  padding: 9px;
+  width: 120px;
+  text-align: center;
+  border-radius: 10px;
+  border: 2px solid rgb(0, 0, 0);
+}
+
+.empty {
+  padding: 3vw;
+}
+.icons {
+  margin: 0vw 0.5vw;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.icons:hover {
+  transform: scale(1.2);
+}
+
+.headRight select {
+  margin: 5px;
+}
+
+.contentBox {
+  background-color: white;
+  margin: 0.5vw;
+  border-radius: 10px;
+  padding: 0.5vw;
+  height: auto;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25), 0 3px 6px rgba(0, 0, 0, 0.22); /* More visible shadow with red tint */
+  overflow-y: auto;
+}
+
+Table {
+  margin-top: 1vw;
+}
+
+:global(.ant-table-wrapper) :global(.ant-table-tbody > tr:hover > td) {
+  background-color: rgba(200, 200, 200, 0.87) !important;
+  transition: background-color 0s !important; /* Remove transition delay */
+  color: black;
+}
