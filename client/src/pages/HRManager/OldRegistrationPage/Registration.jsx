@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styles from "./Registration.module.css";
-import Navbar from "../../../components/hrDashboard/NavBar/hrNavbar";
+import Navbar from "../../../components/hrDashboard/OldNavBar/hrNavbar";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFingerprint } from "@fortawesome/free-solid-svg-icons";
 import Loading from "../../../components/loading/loading";
@@ -99,9 +99,6 @@ function Register() {
 
   return (
     <div className={styles.home}>
-      <div className={styles.homeNavbar}>
-        <Navbar selected={"R"} />
-      </div>
       <div className={styles.homeContent}>
         <div className={styles.rBox}>
           <div className={styles.rTable}>
