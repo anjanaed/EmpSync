@@ -6,7 +6,10 @@ import Reports from "./pages/KitchenAdmin/Report/report";
 import MealDetailsForm from "./pages/KitchenAdmin/MealDetails/MealDetailsForm";
 import Login from "./pages/Login/Login";
 import LoginRole from "./pages/LoginRole/LoginRole";
-
+import RegisterPage from "./pages/HRManager/RegisterPage/RegisterPage";
+import EmployeePage from "./pages/HRManager/EmployeePage/EmployeePage";
+import OrderTab from "./pages/OrderTab/OrderTab";
+import React from "react";
 function App() {
   return (
     <Router>
