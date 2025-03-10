@@ -26,9 +26,9 @@
     height: 100vh; /* Full viewport height */
     width: 100vw;  /* Full viewport width */
     color: #fff;
-    line-height: 160px;
+
     text-align: center;
-    background: url('../../assets/otb1.jpg') no-repeat center center;
+    background: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), url('../../assets/otb3.jpg') no-repeat center center;
     background-size: cover;
 }
 
@@ -291,4 +291,24 @@
 .prevButton:hover {
     background-color: rgb(99, 5, 5);
     color: white;
+}
+
+
+/*--------------3rd Page-----------------------*/
+.cardStyle3 {
+    background-color: rgba(255, 255, 255, 0.3); /* Semi-transparent white background */
+    ; /* Apply text shadow */
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    padding: 1px; /* Padding inside the card */
+    margin-left: auto;
+    margin-right: auto; /* Margin outside the card */
+     /* Reduce width slightly */
+    max-width: 70%; /* Ensure it doesn't exceed 90% of the viewport width */
+    @media (max-width: 768px) {
+        width: calc(90%); /* Adjust width for smaller screens */
+    }
+    @media (max-width: 480px) {
+        width: calc(95%); /* Adjust width for very small screens */
+    }
 }

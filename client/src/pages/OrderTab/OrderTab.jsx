@@ -1,4 +1,3 @@
-// filepath: c:\Users\hasha\Documents\GitHub\EmpSync\client\src\pages\OrderTab\OrderTab.jsx
 import React, { useEffect, useState } from 'react';
 import { Carousel, Typography, Button, Card, Flex } from 'antd';
 import styles from './OrderTab.module.css';
@@ -10,6 +9,8 @@ const OrderTab = () => {
     const [animate, setAnimate] = useState(false);
     const [fingerprintColor, setFingerprintColor] = useState('red');
     const [selectedLanguage, setSelectedLanguage] = useState('English');
+    const [selectedDate, setSelectedDate] = useState('today');
+    const [selectedMeal, setSelectedMeal] = useState('breakfast');
 
     const next = () => {
         carouselRef.current.next();
@@ -22,7 +23,7 @@ const OrderTab = () => {
     const getGreeting = () => {
         const currentHour = new Date().getHours();
         if (currentHour < 12) {
-            return  "Good Morning සුභ උදෑසනක් වේවා காலை வணக்கம்";
+            return "Good Morning සුභ උදෑසනක් වේවා காலை வணக்கம்";
         } else if (currentHour < 17) {
             return "Good Afternoon සුභ දහවලක් වේවා மதிய வணக்கம்";
         } else {
@@ -83,6 +84,57 @@ const OrderTab = () => {
         }
     };
 
+    const getTitleText2 = () => {
+        switch (selectedLanguage) {
+            case 'Sinhala':
+                return ' ඇණවුම් කරන්න';
+            case 'Tamil':
+                return 'ஆர்டர் செய்யவும்';
+            default:
+                return 'Place Order';
+        }
+    };
+
+    const getOrderText = () => {
+        const texts = {
+            today: {
+                breakfast: {
+                    English: "Order for today's breakfast",
+                    Sinhala: "අද දින උදෑසන ආහාරය සඳහා ඇණවුම් කරන්න",
+                    Tamil: "இன்றைய காலை உணவுக்கு ஆர்டர் செய்யவும்"
+                },
+                lunch: {
+                    English: "Order for today's lunch",
+                    Sinhala: "අද දින දිවා ආහාරය සඳහා ඇණවුම් කරන්න",
+                    Tamil: "இன்றைய மதிய உணவுக்கு ஆர்டர் செய்யவும்"
+                },
+                dinner: {
+                    English: "Order for today's dinner",
+                    Sinhala: "අද දින රාත්‍රී ආහාරය සඳහා ඇණවුම් කරන්න",
+                    Tamil: "இன்றைய இரவு உணவுக்கு ஆர்டர் செய்யவும்"
+                }
+            },
+            tomorrow: {
+                breakfast: {
+                    English: "Order for tomorrow's breakfast",
+                    Sinhala: "හෙට දින උදෑසන ආහාරය සඳහා ඇණවුම් කරන්න",
+                    Tamil: "நாளைய காலை உணவுக்கு ஆர்டர் செய்யவும்"
+                },
+                lunch: {
+                    English: "Order for tomorrow's lunch",
+                    Sinhala: "හෙට දින දිවා ආහාරය සඳහා ඇණවුම් කරන්න",
+                    Tamil: "நாளைய மதிய உணவுக்கு ஆர்டர் செய்யவும்"
+                },
+                dinner: {
+                    English: "Order for tomorrow's dinner",
+                    Sinhala: "හෙට දින රාත්‍රී ආහාරය සඳහා ඇණවුම් කරන්න",
+                    Tamil: "நாளைய இரவு உணவுக்கு ஆர்டர் செய்யவும்"
+                }
+            }
+        };
+        return texts[selectedDate][selectedMeal][selectedLanguage];
+    };
+
     const getButtonText = (key) => {
         const texts = {
             English: {
@@ -116,41 +168,36 @@ const OrderTab = () => {
                 <div>
                     <div className={styles.contentStyle1}>
                         <br />
-                        <div><Typography.Title level={2} className={styles.getGreeting}>{getGreeting() }</Typography.Title></div>
+                        <div><Typography.Title level={2} className={styles.getGreeting}>{getGreeting()}</Typography.Title></div>
                         <div><Typography.Title level={1} className={styles.mainTitle1}>Welcome to Helix Food Ordering</Typography.Title></div>
                         <div><Typography.Title level={2} className={styles.getGreeting}>{currentDateTime}</Typography.Title></div>
                         <br />
                         <div>
-                        <Card className={styles.cardStyle}>
-                            <Flex justify="center" align="center" direction="column">
-                                <div className={styles.cardPart1}>
-                                <Typography.Title level={2} className={styles.getGreeting}>
-                                    <div className={styles.cardPart}>
-                                        
-                                        Place Your Finger on Fingerprint Scanner
+                            <Card className={styles.cardStyle}>
+                                <Flex justify="center" align="center" direction="column">
+                                    <div className={styles.cardPart1}>
+                                        <Typography.Title level={2} className={styles.getGreeting}>
+                                            <div className={styles.cardPart}>
+                                                Place Your Finger on Fingerprint Scanner
+                                            </div>
+                                            <div>
+                                                <br />
+                                                <Card className={styles.cardStyle}>
+                                                    <i className={`material-icons ${styles.fingerprintIcon} ${animate ? 'animate' : ''}`} style={{ color: fingerprintColor }}>fingerprint</i>
+                                                </Card>
+                                            </div>
+                                        </Typography.Title>
                                     </div>
-                                    <div>
-                                        <br />
-                                    <Card className={styles.cardStyle}>
-                                    <i className={`material-icons ${styles.fingerprintIcon} ${animate ? 'animate' : ''}`} style={{ color: fingerprintColor }}>fingerprint</i>
-                                    </Card>
+                                    <div className={styles.cardPart2}>
+                                        <Typography.Title level={2} className={styles.getGreeting}>Select your language | භාෂාව තෝරන්න | <br />மொழியை தேர்ந்தெடுக்கவும்</Typography.Title>
+                                        <button className={styles.languageButton} onClick={() => { handleLanguageSelect('English'); next(); }} >English Language</button><br />
+                                        <button className={styles.languageButton} onClick={() => { handleLanguageSelect('Sinhala'); next(); }}>සිංහල භාෂාව</button><br />
+                                        <button className={styles.languageButton} onClick={() => { handleLanguageSelect('Tamil'); next(); }}>தமிழ் மொழி</button><br />
                                     </div>
-                                </Typography.Title>
-                                
-                                </div>
-                                <div className={styles.cardPart2}>
-                                    <Typography.Title level={2} className={styles.getGreeting}>Select your language | භාෂාව තෝරන්න | <br />மொழியை தேர்ந்தெடுக்கவும்</Typography.Title>
-                                    <button className={styles.languageButton} onClick={() => { handleLanguageSelect('English'); next(); }} >English Language</button><br />
-                                    <button className={styles.languageButton} onClick={() => { handleLanguageSelect('Sinhala'); next(); }}>සිංහල භාෂාව</button><br />
-                                    <button className={styles.languageButton} onClick={() => { handleLanguageSelect('Tamil'); next(); }}>தமிழ் மொழி</button><br />
-                                </div>
-                                
-                            </Flex>
-                            <div><Typography.Title level={4} className={styles.getGreeting}>Secure & Quick Access — Scan your fingerprint to continue
-                            ordering your favorite meals!</Typography.Title></div>
-                        </Card>
+                                </Flex>
+                                <div><Typography.Title level={4} className={styles.getGreeting}>Secure & Quick Access — Scan your fingerprint to continue ordering your favorite meals!</Typography.Title></div>
+                            </Card>
                         </div>
-                        
                     </div>
                 </div>
                 <div>
@@ -163,38 +210,38 @@ const OrderTab = () => {
                         <br />
                         <Card className={styles.cardStyle2}>
                             <div><Typography.Title level={1} className={styles.mainTitle2}>{getTitleText()}</Typography.Title></div>
-                            <Carousel ref={innerCarouselRef} afterChange={(currentSlide) => console.log(currentSlide)}>
+                            <Carousel ref={innerCarouselRef} afterChange={(currentSlide) => console.log(currentSlide)} dots={false}>
                                 <div className={styles.carouselItem}>
-                                    <button className={styles.carouselItemHeadButton} style={{ backgroundColor: 'rgb(99, 5, 5)', color: 'white' }}>
-                                        {getButtonText('today')} ✅ <br />({getTodayDate()})
+                                    <button className={styles.carouselItemHeadButton} onClick={() => { setSelectedDate('today'); nextInner(); }}>
+                                        {getButtonText('today')} <br />({getTodayDate()})
                                     </button>
-                                    <button className={styles.carouselItemHeadButton} onClick={nextInner}>
-                                        {getButtonText('tomorrow')}<br /> ({getTomorrowDate()})
+                                    <button className={styles.carouselItemHeadButton} style={{ backgroundColor: 'rgb(99, 5, 5)', color: 'white' }} onClick={() => { setSelectedDate('tomorrow'); nextInner(); }}>
+                                        {getButtonText('tomorrow')} ✅ <br /> ({getTomorrowDate()})
                                     </button><br />
-                                    <button className={styles.mealButton} onClick={() => { /* handle breakfast selection */ }}>
+                                    <button className={styles.mealButton} onClick={() => { setSelectedMeal('breakfast'); next(); }}>
                                         {getButtonText('breakfast')}
                                     </button><br />
-                                    <button className={styles.mealButton} onClick={() => { /* handle lunch selection */ }}>
+                                    <button className={styles.mealButton} onClick={() => { setSelectedMeal('lunch'); next(); }}>
                                         {getButtonText('lunch')}
                                     </button><br />
-                                    <button className={styles.mealButton} onClick={() => { /* handle dinner selection */ }}>
+                                    <button className={styles.mealButton} onClick={() => { setSelectedMeal('dinner'); next(); }}>
                                         {getButtonText('dinner')}
                                     </button><br />
                                 </div>
                                 <div className={styles.carouselItem}>
-                                    <button className={styles.carouselItemHeadButton} onClick={nextInner}>
-                                        {getButtonText('today')} <br />({getTodayDate()})
+                                    <button className={styles.carouselItemHeadButton} style={{ backgroundColor: 'rgb(99, 5, 5)', color: 'white' }} onClick={() => { setSelectedDate('today'); nextInner(); }}>
+                                        {getButtonText('today')} ✅ <br />({getTodayDate()})
                                     </button>
-                                    <button className={styles.carouselItemHeadButton} style={{ backgroundColor: 'rgb(99, 5, 5)', color: 'white' }}>
-                                        {getButtonText('tomorrow')} ✅ <br /> ({getTomorrowDate()})
+                                    <button className={styles.carouselItemHeadButton} onClick={() => { setSelectedDate('tomorrow'); nextInner(); }}>
+                                        {getButtonText('tomorrow')}<br /> ({getTomorrowDate()})
                                     </button><br />
-                                    <button className={styles.mealButton} onClick={() => { /* handle breakfast selection */ }}>
+                                    <button className={styles.mealButton} onClick={() => { setSelectedMeal('breakfast'); next(); }}>
                                         {getButtonText('breakfast')}
                                     </button><br />
-                                    <button className={styles.mealButton} onClick={() => { /* handle lunch selection */ }}>
+                                    <button className={styles.mealButton} onClick={() => { setSelectedMeal('lunch'); next(); }}>
                                         {getButtonText('lunch')}
                                     </button><br />
-                                    <button className={styles.mealButton} onClick={() => { /* handle dinner selection */ }}>
+                                    <button className={styles.mealButton} onClick={() => { setSelectedMeal('dinner'); next(); }}>
                                         {getButtonText('dinner')}
                                     </button><br />
                                 </div>
@@ -205,7 +252,17 @@ const OrderTab = () => {
                 </div>
                 <div>
                     <div className={styles.contentStyle3}>
-                        <button onClick={next}>Move 3 to 4</button>
+                        <br />
+                        <div className={styles.headerContainer}>
+                            <div className={styles.currentTime}>{currentDateTime}</div>
+                            <div className={styles.userName}>John Wick</div>
+                        </div>
+                        <br />
+                        <Card className={styles.cardStyle2}>
+                            
+                            <div><Typography.Title level={1} className={styles.mainTitle2}>{getOrderText()}</Typography.Title></div>
+                            <button className={styles.prevButton} onClick={() => carouselRef.current.prev()}>&lt;</button>
+                        </Card>
                     </div>
                 </div>
                 <div>
@@ -217,4 +274,5 @@ const OrderTab = () => {
         </>
     );
 };
+
 export default OrderTab;
