@@ -92,6 +92,7 @@ const PasswordReset = () => {
                           <>
                             Reset Password
                             <ArrowRightOutlined className={styles.arrowIcon} />
+                            {/* //password reset link sent */}
                           </>
                         )}
                       </button>
