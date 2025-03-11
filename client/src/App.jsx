@@ -22,6 +22,7 @@ function App() {
         <Route path="/kitchen-admin" element={<KitchenAdmin />} />
         <Route path="/report" element={<Reports/>} />
         <Route path="/meal-details" element={<MealDetailsForm />} />
+        <Route path="/order-tab" element={<OrderTab />} />
       </Routes>
     </Router>
   );
