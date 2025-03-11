@@ -6,8 +6,13 @@ import illustration from "../../assets/illustration.png";
 
 const LoginPage = () => {
   const navigate = useNavigate();
+
   const handleLogin = () => {
     navigate("/LoginRole"); 
+  };
+
+  const handleForgotPassword = () => {
+    navigate("/PasswordReset"); // Navigate to the PasswordReset page
   };
 
   return (
@@ -35,7 +40,7 @@ const LoginPage = () => {
             
             <div className={styles.loginOptions}>
               <Checkbox>Remember me</Checkbox>
-              <a href="#" className={styles.forgotPassword}>Forgot Password</a>
+              <a href="#" className={styles.forgotPassword} onClick={handleForgotPassword}>Forgot Password</a>
             </div>
             
             <Form.Item>
