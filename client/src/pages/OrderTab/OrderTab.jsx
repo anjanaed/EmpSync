@@ -1,6 +1,26 @@
 import React, { useEffect, useState } from 'react';
-import { Carousel, Typography, Button, Card, Flex } from 'antd';
+import { Carousel, Typography, Button, Card, Flex, Avatar, List, Radio, Space } from 'antd';
 import styles from './OrderTab.module.css';
+import InfiniteScroll from 'react-infinite-scroll-component';
+import { Divider, Skeleton } from 'antd';
+
+const data = [
+  {
+    title: 'Ant Design Title 1',
+  },
+  {
+    title: 'Ant Design Title 2',
+  },
+  {
+    title: 'Ant Design Title 3',
+  },
+  {
+    title: 'Ant Design Title 4',
+  },
+];
+
+const positionOptions = ['top', 'bottom', 'both'];
+const alignOptions = ['start', 'center', 'end'];
 
 const OrderTab = () => {
 
@@ -11,6 +31,10 @@ const OrderTab = () => {
     const [selectedLanguage, setSelectedLanguage] = useState('English');
     const [selectedDate, setSelectedDate] = useState('today');
     const [selectedMeal, setSelectedMeal] = useState('breakfast');
+    const [position, setPosition] = useState('bottom');
+    const [align, setAlign] = useState('center');
+    const [loading, setLoading] = useState(false);
+    const [data, setData] = useState([]);
 
     const next = () => {
         carouselRef.current.next();
@@ -42,14 +66,14 @@ const OrderTab = () => {
 
     const getTodayDate = () => {
         const now = new Date();
-        const options = { weekday: 'long', month: 'short', day: 'numeric' };
+        const options = { weekday: 'short', month: 'short', day: 'numeric' };
         return now.toLocaleDateString('en-US', options);
     };
 
     const getTomorrowDate = () => {
         const tomorrow = new Date();
         tomorrow.setDate(tomorrow.getDate() + 1);
-        const options = { weekday: 'long', month: 'short', day: 'numeric' };
+        const options = { weekday: 'short', month: 'short', day: 'numeric' };
         return tomorrow.toLocaleDateString('en-US', options);
     };
 
@@ -162,6 +186,26 @@ const OrderTab = () => {
         return texts[selectedLanguage][key];
     };
 
+    const loadMoreData = () => {
+        if (loading) {
+            return;
+        }
+        setLoading(true);
+        fetch('https://randomuser.me/api/?results=10&inc=name,gender,email,nat,picture&noinfo')
+            .then((res) => res.json())
+            .then((body) => {
+                setData([...data, ...body.results]);
+                setLoading(false);
+            })
+            .catch(() => {
+                setLoading(false);
+            });
+    };
+
+    useEffect(() => {
+        loadMoreData();
+    }, []);
+
     return (
         <>
             <Carousel ref={carouselRef} infinite={false} dots={true}>
@@ -258,9 +302,49 @@ const OrderTab = () => {
                             <div className={styles.userName}>John Wick</div>
                         </div>
                         <br />
-                        <Card className={styles.cardStyle2}>
+                        <Card className={styles.cardStyle3}>
                             
                             <div><Typography.Title level={1} className={styles.mainTitle2}>{getOrderText()}</Typography.Title></div>
+                            <div>
+                            <Flex justify="center" align="center" direction="column">
+                                    <div className={styles.cardPart3}>
+                                        <div id="scrollableDiv" className={styles.scrollableDiv}>
+                                            <InfiniteScroll
+                                                dataLength={data.length}
+                                                next={loadMoreData}
+                                                hasMore={data.length < 50}
+                                                loader={
+                                                    <Skeleton
+                                                        avatar
+                                                        paragraph={{ rows: 1 }}
+                                                        active
+                                                    />
+                                                }
+                                                endMessage={<Divider plain>It is all, nothing more 🤐</Divider>}
+                                                scrollableTarget="scrollableDiv"
+                                            >
+                                                <List
+                                                    dataSource={data}
+                                                    renderItem={(item) => (
+                                                        <List.Item key={item.email}>
+                                                            <List.Item.Meta
+                                                                avatar={<Avatar src={item.picture.large} />}
+                                                                title={<a href="https://ant.design">{item.name.last}</a>}
+                                                                description={item.email}
+                                                            />
+                                                            <div>Content</div>
+                                                        </List.Item>
+                                                    )}
+                                                />
+                                            </InfiniteScroll>
+                                        </div>
+                                    </div>
+                                    <div className={styles.cardPart4}>
+                                        <Typography.Title level={2} className={styles.getGreeting}>Your Order</Typography.Title>
+                                        
+                                    </div>
+                                </Flex>
+                            </div>
                             <button className={styles.prevButton} onClick={() => carouselRef.current.prev()}>&lt;</button>
                         </Card>
                     </div>
