@@ -1,29 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Carousel, Typography, Button, Card, Flex, Avatar, List, Radio, Space } from 'antd';
 import styles from './OrderTab.module.css';
-import InfiniteScroll from 'react-infinite-scroll-component';
-import { Divider, Skeleton } from 'antd';
 
-const data = [
-  {
-    title: 'Ant Design Title 1',
-  },
-  {
-    title: 'Ant Design Title 2',
-  },
-  {
-    title: 'Ant Design Title 3',
-  },
-  {
-    title: 'Ant Design Title 4',
-  },
+const initialData = [
+  
 ];
 
-const positionOptions = ['top', 'bottom', 'both'];
-const alignOptions = ['start', 'center', 'end'];
-
 const OrderTab = () => {
-
     const carouselRef = React.useRef();
     const innerCarouselRef = React.useRef();
     const [animate, setAnimate] = useState(false);
@@ -33,8 +16,7 @@ const OrderTab = () => {
     const [selectedMeal, setSelectedMeal] = useState('breakfast');
     const [position, setPosition] = useState('bottom');
     const [align, setAlign] = useState('center');
-    const [loading, setLoading] = useState(false);
-    const [data, setData] = useState([]);
+    const [mealData, setMealData] = useState(initialData);
 
     const next = () => {
         carouselRef.current.next();
@@ -186,25 +168,10 @@ const OrderTab = () => {
         return texts[selectedLanguage][key];
     };
 
-    const loadMoreData = () => {
-        if (loading) {
-            return;
-        }
-        setLoading(true);
-        fetch('https://randomuser.me/api/?results=10&inc=name,gender,email,nat,picture&noinfo')
-            .then((res) => res.json())
-            .then((body) => {
-                setData([...data, ...body.results]);
-                setLoading(false);
-            })
-            .catch(() => {
-                setLoading(false);
-            });
+    const addMeal = () => {
+        const newMeal = { title: `Title ${mealData.length + 1}` };
+        setMealData([...mealData, newMeal]);
     };
-
-    useEffect(() => {
-        loadMoreData();
-    }, []);
 
     return (
         <>
@@ -303,45 +270,34 @@ const OrderTab = () => {
                         </div>
                         <br />
                         <Card className={styles.cardStyle3}>
-                            
-                            <div><Typography.Title level={1} className={styles.mainTitle2}>{getOrderText()}</Typography.Title></div>
+                            <button onClick={addMeal}>Add to meals</button>
                             <div>
-                            <Flex justify="center" align="center" direction="column">
+                                <br />
+                                <Typography.Title level={1} className={styles.mainTitle2}>{getOrderText()}</Typography.Title>
+                            </div>
+                            <div>
+                                <Flex justify="center" align="center" direction="column">
                                     <div className={styles.cardPart3}>
-                                        <div id="scrollableDiv" className={styles.scrollableDiv}>
-                                            <InfiniteScroll
-                                                dataLength={data.length}
-                                                next={loadMoreData}
-                                                hasMore={data.length < 50}
-                                                loader={
-                                                    <Skeleton
-                                                        avatar
-                                                        paragraph={{ rows: 1 }}
-                                                        active
-                                                    />
-                                                }
-                                                endMessage={<Divider plain>It is all, nothing more 🤐</Divider>}
-                                                scrollableTarget="scrollableDiv"
-                                            >
-                                                <List
-                                                    dataSource={data}
-                                                    renderItem={(item) => (
-                                                        <List.Item key={item.email}>
-                                                            <List.Item.Meta
-                                                                avatar={<Avatar src={item.picture.large} />}
-                                                                title={<a href="https://ant.design">{item.name.last}</a>}
-                                                                description={item.email}
-                                                            />
-                                                            <div>Content</div>
-                                                        </List.Item>
-                                                    )}
-                                                />
-                                            </InfiniteScroll>
-                                        </div>
+                                        <List
+                                            grid={{
+                                                gutter: 16,
+                                                xs: 1,
+                                                sm: 2,
+                                                md: 4,
+                                                lg: 4,
+                                                xl: 6,
+                                                xxl: 3,
+                                            }}
+                                            dataSource={mealData}
+                                            renderItem={(item) => (
+                                                <List.Item>
+                                                    <Card title={item.title}>Card content</Card>
+                                                </List.Item>
+                                            )}
+                                        />
                                     </div>
                                     <div className={styles.cardPart4}>
                                         <Typography.Title level={2} className={styles.getGreeting}>Your Order</Typography.Title>
-                                        
                                     </div>
                                 </Flex>
                             </div>
