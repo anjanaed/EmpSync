@@ -1,89 +1,153 @@
-import React from "react";
-import { Layout, Typography, Card, Button, Space } from 'antd';
-import DateTime from "../../../components/Serving/DateAndTime/DateTime";
-import mealImage from './image.png';
-import additional from './second.png'
-import './MealConform.css';
-  
+import { Button, Card, Typography, Space, Divider, notification } from 'antd';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import styles from './MealConform.module.css';
+import mealImage from './images/image.png';
+import secondary from './images/second.png';
+import DateTime from '../../../components/Serving/DateAndTime/DateTime';
+
+const { Title, Text } = Typography;
+
 const MealConform = () => {
-    const handleConfirm = () => {
-        // Add confirmation logic here
-        message.success('Meal confirmed successfully!');
+  const navigate = useNavigate();
+  const { id } = useParams();
+  const [orderDetails, setOrderDetails] = useState(null);
+
+  useEffect(() => {
+    const fetchOrderDetails = async () => {
+      try {
+        const response = await fetch(`http://localhost:3000/orders/${id}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch order details');
+        }
+        const data = await response.json();
+        setOrderDetails(data);
+      } catch (error) {
+        notification.error({
+          message: 'Error',
+          description: 'Failed to load order details',
+          duration: 3,
+        });
+      }
     };
-  
-    const handleCancel = () => {
-        // Add cancellation logic here
-        message.info('Meal order cancelled.');
-    };
-  
-    return (
-        <Layout className="app-container-conform">
-        <div>
-          <div className="meal-header">
-            <Typography.Title level={3}>Breakfast Meal</Typography.Title>
+
+    fetchOrderDetails();
+  }, [id]);
+
+  const handleCancel = () => {
+    notification.warning({
+      message: 'Order Cancelled',
+      description: `The meal order ${orderDetails?.orderNumber || id} has been cancelled.`,
+      duration: 3,
+    });
+    navigate('/serving');
+  };
+
+  const handleConfirm = async () => {
+    try {
+      const response = await fetch(`http://localhost:3000/orders/${id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ serve: true }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update order status');
+      }
+
+      notification.success({
+        message: 'Order Confirmed',
+        description: `The meal order ${orderDetails?.orderNumber || id} has been confirmed successfully.`,
+        duration: 3,
+      });
+
+      setTimeout(() => {
+        navigate('/serving');
+      }, 1000);
+    } catch (error) {
+      notification.error({
+        message: 'Error',
+        description: 'Failed to confirm order',
+        duration: 3,
+      });
+    }
+  };
+
+  if (!orderDetails) {
+    return <div>Loading...</div>;
+  }
+
+  return (
+    <div className={styles.container}>
+      <Card className={styles.card}>
+        <div className={styles.contentWrapper}>
+          <div className={styles.header}>
+            <Title level={2} className={styles.title}>Breakfast Meal</Title>
+            <Text className={styles.dateText}>
+              <DateTime color="#701c33" />
+            </Text>
           </div>
-          <div className="date-time">
-            <DateTime color="#5D071C"/>
-          </div>
-        </div>  
-      <Card className="meal-confirmation-card">
-        
-        <div className="meal-content">
-          <div className="meal-image">
-            <img 
-              src={mealImage}
-              alt="Meal" 
-              style={{ maxWidth: '100%', borderRadius: '8px' }}
-            />
-            <div className="additional-container">
-              <img 
-                src={additional} 
-                alt="Egg" 
-                className="additional-image"
+
+          <div className={styles.imageContainer}>
+            <div className={styles.mainImage}>
+              <img
+                src={mealImage}
+                alt="Breakfast meal with rice and curry"
+                className={styles.foodImage}
+              />
+            </div>
+            <div className={styles.badgeImage}>
+              <img
+                src={secondary}
+                alt="secondary item"
+                className={styles.eggImage}
               />
             </div>
           </div>
-          
-          <div className="meal-details">
-            <Space direction="vertical" size="middle">
-              <Typography.Text>
-                <strong>Mr. Saman Kumara</strong> 
-              </Typography.Text>
-              <Typography.Text>
-                <strong>Order ID:</strong> BR001236
-              </Typography.Text>
-              <Typography.Text>
-                <strong>Total Price:</strong> Rs.250.00
-              </Typography.Text>
-              <Typography.Text>
-                <strong>Meal Details:</strong> Rice & Curry, Egg
-              </Typography.Text>
+
+          <div className={styles.userDetails}>
+            <Title level={4} className={styles.userName}>Employee Name: Samankumara</Title>
+            <Space>
+              <Text type="secondary">OrderID - </Text>
+              <Text strong className={styles.orderId}>{orderDetails.orderNumber}</Text>
             </Space>
+            <div className={styles.priceContainer}>
+              <Text type="secondary">Total Price </Text>
+              <Text strong className={styles.price}>Rs.{orderDetails.price.toFixed(2)}</Text>
+            </div>
+
+            <div className={styles.mealDetails}>
+              <Text type="secondary" className={styles.mealDetailsHeader}>Meal Details</Text>
+              <Title level={3} className={styles.mealName}>Rice & Curry</Title>
+              <Title level={3} className={styles.mealName}>Egg</Title>
+            </div>
           </div>
         </div>
-      </Card>
-      <div className="meal-actions">
-          <Space>
-            <Button 
-              type="default" 
-              onClick={handleCancel}
-              size="large"
-              style={{ borderColor: '#5D071C' }}
-            >
-              Cancel
-            </Button>
-            <Button 
-              type="primary" 
-              onClick={handleConfirm}
-              size="large"
-              style={{ backgroundColor: '#5D071C', borderColor: '#5D071C' }}
-            >
-              Confirm
-            </Button>
-          </Space>
+
+        <Divider className={styles.divider} />
+
+        <div className={styles.buttonContainer}>
+          <Button 
+            size="large" 
+            className={styles.cancelButton}
+            onClick={handleCancel}
+          >
+            Cancel
+          </Button>
+          <Button 
+            type="primary" 
+            size="large"
+            className={styles.confirmButton}
+            onClick={handleConfirm}
+          >
+            Confirm
+          </Button>
         </div>
-    </Layout>
+      </Card>
+    </div>
   );
-};
+}
 
 export default MealConform;

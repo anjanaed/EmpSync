@@ -23,7 +23,7 @@ function App() {
         <Route path="/report" element={<Reports/>} />
         <Route path="/meal-details" element={<MealDetailsForm />} />
         <Route path="/serving" element={<Serving />} />
-        <Route path="/meal-conform/:orderid" element={<MealConform />} />
+        <Route path="/meal-conform/:id" element={<MealConform />} />
         <Route path="/passwordReset" element={<PasswordReset />} /> 
       </Routes>
     </Router>
