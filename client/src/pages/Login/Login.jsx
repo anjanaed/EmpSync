@@ -1,32 +1,35 @@
 import React from "react";
 import { Form, Input, Checkbox } from "antd";
 import { useNavigate } from "react-router-dom";
-import "./Login.css";
+import styles from "./Login.module.css";
 import illustration from "../../assets/illustration.png";
 
 const LoginPage = () => {
   const navigate = useNavigate();
-  const handleLogin = () => {
 
-    navigate("/");
+  const handleLogin = () => {
+    navigate("/LoginRole"); 
+  };
+
+  const handleForgotPassword = () => {
+    navigate("/PasswordReset"); // Navigate to the PasswordReset page
   };
 
   return (
-    <div className="login-container">
-      <div className="login-box">
-       
-        <div className="login-left">
+    <div className={styles.loginContainer}>
+      <div className={styles.loginBox}>
+        <div className={styles.loginLeft}>
           <img
             src={illustration}
             alt="Illustration"
-            className="login-illustration"
+            className={styles.loginIllustration}
           />
-        </div>     
-        <div className="login-right">
-          <h2 className="login-title">Welcome Back !</h2>
-          <p className="login-subtitle">Please Enter Your Credentials.</p>
+        </div>
+        <div className={styles.loginRight}>
+          <h2 className={styles.loginTitle}>Welcome Back !</h2>
+          <p className={styles.loginSubtitle}>Please Enter Your Credentials.</p>
           
-          <Form layout="vertical" className="login-form">
+          <Form layout="vertical" className={styles.loginForm}>
             <Form.Item label="Employee ID" name="employeeID" rules={[{ required: true, message: 'Please input your Employee ID!' }]}> 
               <Input placeholder="Enter Employee ID" />
             </Form.Item>
@@ -35,13 +38,13 @@ const LoginPage = () => {
               <Input.Password placeholder="**********" />
             </Form.Item>
             
-            <div className="login-options">
+            <div className={styles.loginOptions}>
               <Checkbox>Remember me</Checkbox>
-              <a href="#" className="forgot-password">Forgot Password</a>
+              <a href="#" className={styles.forgotPassword} onClick={handleForgotPassword}>Forgot Password</a>
             </div>
             
             <Form.Item>
-              <button type="submit" className="login-button" onClick={handleLogin}>Login</button>
+              <button type="submit" className={styles.loginButton} onClick={handleLogin}>Login</button>
             </Form.Item>
           </Form>
         </div>

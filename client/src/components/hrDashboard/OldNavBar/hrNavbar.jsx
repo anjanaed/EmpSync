@@ -11,9 +11,9 @@ import {
 import { Link } from "react-router-dom";
 import styles from "./hrNavbar.module.css";
 import { useNavigate } from "react-router-dom";
-import img from "../../assets/logo.png.png";
+import img from "../../../assets/logo.png.png";
 
-function Navbar({ selected }) {
+function OldNavbar({ selected }) {
   const navigate=useNavigate();
 
   const handleLogOut=()=>{
@@ -77,4 +77,4 @@ function Navbar({ selected }) {
   );
 }
 
-export default Navbar;
+export default OldNavbar;

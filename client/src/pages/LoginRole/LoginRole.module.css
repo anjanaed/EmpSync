@@ -1,0 +1,141 @@
+
+.loginContainer {
+  display: flex;
+  background-color: #272626;
+  min-height: 100vh;
+  background:url('../../assets/loginbackground.png') center/cover no-repeat;
+  font-family: Arial, sans-serif;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+.loginBox {
+  display: flex;
+  width: 800px;
+  height: 500px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.loginLeft {
+  flex: 1;
+  background-color: #FFFDED;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.loginIllustration {
+  width: 90%;
+}
+
+.loginRight {
+  flex: 1;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.loginTitle {
+  font-size: 35px;
+  font-weight: bold;
+  color: #000;
+  margin-bottom: 15px; 
+}
+
+.logindetails {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0px; 
+}
+
+.loginavatar {
+  margin-right: 10px;
+  margin-top: 20px;
+}
+
+
+
+.username {
+  font-size: 20px;
+  font-weight: bold;
+  line-height: 0;
+  padding-top: 20px;
+}
+
+.userpost {
+  font-size: 14px;
+  color: #888;
+  line-height: 0;
+
+}
+
+.divider {
+  margin: 10px 0;
+  border: 2;
+  border-top: 1px solid #676767;
+}
+
+
+
+.buttonGroup {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-direction: column;
+  align-items: center;
+}
+
+.customButton {
+  flex: 1;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  height: 40px; 
+  width: 60%;
+  font-size: 16px;
+  padding: 10px;
+  margin: 5px;
+  border-radius: 5px;
+  color: #8b0000;
+  background-color: #ffffff;
+  border: 2px solid #8b0000;
+  cursor: pointer;
+  
+}
+
+.customButton:hover,
+.selectedButton {
+  background-color: #8b0000;
+  color: white;
+  border-color: #8b0000;
+}
+
+.loginSubtitle {
+  color: #8b0000;
+  margin-bottom: 0px;
+}
+
+.loginButton {
+  margin-top: 10px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  width: 100%;
+  background-color: #a52a2a;
+  transition-duration: 0.5s;
+  border: none;
+  font-size: 16px;
+  color: white; 
+  cursor: pointer;
+  border-radius: 5px; 
+}
+
+.loginButton:hover {
+  background-color: #8b0000;
+  transform: scale(1.05); 
+}
