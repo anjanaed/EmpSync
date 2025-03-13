@@ -1,7 +1,8 @@
 /* CSS Module (report.module.css) */
 .container {
-  background-color: #F8F4DA;
+  background-color: white;
   min-height: 100vh;
+  padding-bottom: 40px;
 }
 
 .sectionContainer {
@@ -19,7 +20,8 @@
   background: white;
   padding: 5px;
   border-radius: 10px;
-  border: 1px solid black;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
 }
 
 /* Section Titles */

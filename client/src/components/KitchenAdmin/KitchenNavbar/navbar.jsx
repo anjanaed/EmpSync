@@ -1,32 +1,47 @@
-import React from "react";
-import { Link, useLocation,useNavigate } from "react-router-dom";
-import styles from "./Navbar.module.css"; // Import CSS module
+import React from 'react';
+import { Button } from 'antd';
+import { LogoutOutlined } from '@ant-design/icons';
+import styles from './navbar.module.css';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const Navbar = () => {
-  const location = useLocation(); // Get current path
-  const navigate=useNavigate();
+  const navigate = useNavigate();
+  const location = useLocation();
+  
+  const isSchedulePage = location.pathname === '/kitchen-admin' ;
+  const isReportPage = location.pathname === '/report';
+  
+  const goToSchedule = () => {
+    navigate('/kitchen-admin');
+  };
+
+  const goToReport = () => {
+    navigate('/report');
+  };
 
   return (
-    <nav className={styles.navbar}>
-      {/* Left Side: Button Group */}
-      <div className={styles.buttonGroup}>
-        <button
-          onClick={() => navigate("/kitchen-admin")}
-          className={`${styles.navButton} ${location.pathname === "/kitchen-admin" ? styles.active : styles.defaultActive}`}
-        >
-          Schedule
-        </button>
-        <button
-          onClick={()=>navigate("/report")}
-          className={`${styles.navButton} ${location.pathname === "/report" ? styles.active : ""}`}
-        >
-          Reports & Analysis
-        </button>
+    <div className={styles.navbarWrapper}>
+      <div className={styles.navbar}>
+        <div className={styles.navLinks}>
+          <Button 
+            className={isSchedulePage ? styles.activeButton : styles.inactiveButton}
+            onClick={goToSchedule}
+          >
+            Schedule
+          </Button>
+          <Button 
+            className={isReportPage ? styles.activeButton : styles.inactiveButton} 
+            onClick={goToReport}
+          >
+            Reports & Analysis
+          </Button>
+        </div>
+        <Button icon={<LogoutOutlined />} className={styles.logoutButton}>
+          Log Out
+        </Button>
       </div>
-
-      {/* Right Side: Logout Button */}
-      <button onClick={()=>navigate("/login")} className={styles.logoutButton}>Logout</button>
-    </nav>
+      <div className={styles.navbarLine}></div>
+    </div>
   );
 };
 
