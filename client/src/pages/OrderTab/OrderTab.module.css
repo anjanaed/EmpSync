@@ -1,33 +1,54 @@
 .contentStyle1 {
+    margin: 0;
     height: 100vh; /* Full viewport height */
     width: 100vw;  /* Full viewport width */
     color: #fff;
+
     text-align: center;
     background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('../../assets/otb4.jpg') no-repeat center center;
     background-size: cover;
+    
+}
+
+.contentStyle2 {
+    margin: 0;
+    height: 100vh; /* Full viewport height */
+    width: 100vw;  /* Full viewport width */
+    color: #fff;
+
+    text-align: center;
+    background: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), url('../../assets/otb1.jpg') no-repeat center center;
+    background-size: cover;
+}
+
+.contentStyle3 {
+    margin: 0;
+    height: 100vh; /* Full viewport height */
+    width: 100vw;  /* Full viewport width */
+    color: #fff;
+
+    text-align: center;
+    background: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), url('../../assets/otb3.jpg') no-repeat center center;
+    background-size: cover;
+}
+
+.contentStyle {
+    margin: 0;
+    height: 100vh; /* Full viewport height */
+    width: 100vw;  /* Full viewport width */
+    color: #fff;
+    line-height: 160px;
+    text-align: center;
+    background: brown;
+    text-align: center;
+    min-height: 120px;
+    line-height: 120px;
+    color: #fff;
+    background-color: #0958d9;
 }
 
 .getGreeting {
-    margin-top: 0%!important;
     font-size: 2em;
-    font-weight: 600;
-    color: #ffffff !important;
-    text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
-}
-
-.dateAndTime {
-    font-weight: 600;
-    color: #ffffff !important;
-    text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
-}
-
-.flexText {
-    font-weight: 600;
-    color: #ffffff !important;
-    text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
-}
-
-.t2{
     font-weight: 600;
     color: #ffffff !important;
     text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
@@ -35,160 +56,75 @@
 }
 
 .mainTitle1 {
-    margin: 0%!important;
+    margin: 0%;
     font-size: 5em !important;
     font-weight: 800 !important;
     color: #ffffff !important;
     text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
 }
 
+
+
 .cardStyle {
     background-color: rgba(255, 255, 255, 0.3); /* Semi-transparent white background */
+    ; /* Apply text shadow */
     border-radius: 10px; /* Rounded corners */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-   
-    margin: 0 auto; /* Center the card */
-    max-width: 60%; /* Ensure it doesn't exceed 60% of the viewport width */
-}
-
-@media (max-width: 1024px) {
-    .mainTitle1 {
-        font-size: 4em !important;
+    padding: 20px; /* Padding inside the card */
+    margin-left: auto;
+    margin-right: auto; /* Margin outside the card */
+     /* Reduce width slightly */
+    max-width: 60%; /* Ensure it doesn't exceed 90% of the viewport width */
+    @media (max-width: 768px) {
+        width: calc(90%); /* Adjust width for smaller screens */
     }
-    .t2 {
-        white-space:calc(100% - 10%);
-    }
-    .cardStyle {
-        max-width: 80%;
-    }
-    .flex-col-center {
-        flex-direction: column;
+    @media (max-width: 480px) {
+        width: calc(95%); /* Adjust width for very small screens */
     }
 }
 
-@media (max-width: 768px) {
-    .mainTitle1 {
-        font-size: 3em !important;
-    }
-    .cardStyle {
-        max-width: 80%;
-    }
-    .flex-col-center {
-        flex-direction: column;
-    }
+.cardPart1  {
+    margin: 10px 0; /* Vertical margin between parts */
+    font-size: 1.2em; /* Slightly larger text */
+    color: #333; /* Dark text color */
+    width: 40%; /* Each part takes up 50% of the width */
+    display: inline-block; /* Display parts side by side */
+    box-sizing: border-box; /* Ensure padding and border are included in the width */
 }
-
-@media (max-width: 480px) {
-    .mainTitle1 {
-        font-size: 2em !important;
-    }
-    .cardStyle {
-        max-width: 100%;
-    }
-    .flex-col-center {
-        flex-direction: column;
-    }
-}
-
-
-
-
 
 .cardPart2{
-     
-    margin-top: 0%;/* Vertical margin between parts */
+    margin: 10px 0; /* Vertical margin between parts */
     font-size: 1.2em; /* Slightly larger text */
-    color: #ffffff; /* Dark text color */
+    color: #333; /* Dark text color */
     width: 60%; /* Each part takes up 50% of the width */
     display: inline-block; /* Display parts side by side */
-     /* Ensure padding and border are included in the width */
+    box-sizing: border-box; /* Ensure padding and border are included in the width */
 }
 
-.flex-col-center {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .header-text {
-    font-size: 2rem;
-    font-weight: 600;
-    margin-bottom: 1rem;
-  }
-.input-container {
-    width: 100%;
-    max-width: 20rem;
-    margin-bottom: 1rem;
-    padding: 1rem;
-   background-color: #ffffff2c;
-    border-radius: 0.5rem;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.input-field {
-    width: 90%;
-    padding: 0.5rem;
-    text-align: center;
-    font-size: 2.5rem;
-    height: 4rem;
-    color: black;
-    border: 4px solid #000000a6;
-    border-radius: 0.375rem;
-    margin-bottom: 1rem;
-    transition: border-color 0.3s;
-}
-
-.input-field:focus {
-    border-color: #000000;
-    outline: none;
-}
-
-.keypad-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 0.5rem;
-    max-width: 20rem;
-}
-
-.keypad-button {
-    height: 4rem;
-    font-size: 2.5rem;
-    background-color: #0000007e;
-    color: white;
-    border: none;
-    border-radius: 0.375rem;
-    transition: background-color 0.3s, transform 0.2s;
-}
-
-.keypad-button:hover {
-    background-color: #0056b3;
-    transform: scale(1.05);
-}
-
-.keypad-button:active {
-    background-color: #004494;
-}
-
-.keypad-button-enter {
-    grid-column: span 3;
+.cardPart{
+    text-shadow: 4px 2px 2px rgba(0, 0, 0, 0.9);
+    color:white;
+    font-size: 1.2em; /* Slightly larger text */
+    font-weight: 700;
 }
 
 .languageButton {
     background-color: white; /* White background */
     border: 4px solid rgb(99, 5, 5); /* Red border */
     color: rgb(99, 5, 5); /* Red text */
-
-    font-weight: 800;
+    margin: 20px; /* Increase margin */
+    padding: 20px; /* Increase padding */
+    padding-top: 0%;
+    padding-bottom: 0%;
     text-align: center; /* Centered text */
     text-decoration: none; /* Remove underline */
     display: inline-block; /* Make the buttons appear side by side */
-    font-size:50px; /* Increase font size */
+    font-size: 40px; /* Increase font size */
     cursor: pointer; /* Pointer/hand icon */
     border-radius: 12px; /* Rounded corners */
     transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition for background and text color */
-    line-height: 1.8; /* Center text vertically */
-    width: 100%;
+    line-height: 1.5; /* Center text vertically */
+    width: 400px ; /* Adjust width automatically based on content */
     
 }
 
@@ -198,66 +134,15 @@
    
 }
 
-.language-selection-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
 
-.language-selection-header {
-    font-size: 2rem;
-    font-weight: 600;
-    margin-bottom: 1rem;
-}
 
-.language-buttons-container {
-    width: 100%;
-    max-width: 20rem;
-    margin-bottom: 1rem;
+.fingerprintIcon {
+    font-size: 8vw;
+    
+    color: red;
+    
+    
 }
-
-.language-button {
-    width: 100%;
-    padding: 1rem;
-    font-size: 1.25rem;
-    border: 2px solid white;
-    transition: background-color 0.3s, color 0.3s;
-}
-
-.language-button:hover {
-    background-color: rgb(0, 3, 48);
-    color: black;
-}
-
-.smallTamilText {
-  font-size: 1.6em; /* Adjust the size as needed */
-}
-
-.prevButton {
-    position: absolute;
-    bottom: 40px;
-    left: 40px;
-    background-color: white;
-    border: 2px solid rgb(99, 5, 5);
-    color: rgb(99, 5, 5);
-    border-radius: 50%;
-    width: 100px;
-    height: 100px;
-    font-size: 60px;
-    display: flex;
-    font-weight: 900;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-.prevButton:hover {
-    background-color: rgb(99, 5, 5);
-    color: white;
-}
-
 
 /*--------------2nd Page-----------------------*/
 
@@ -308,7 +193,6 @@
         width: calc(95%); /* Adjust width for very small screens */
     }
 }
-
 
 
 
@@ -454,6 +338,5 @@
     display: inline-block; /* Display parts side by side */
     box-sizing: border-box; /* Ensure padding and border are included in the width */
 }
-
 
 
