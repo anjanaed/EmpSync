@@ -330,11 +330,9 @@
 
 
 .cardPart4 {
-    padding: 2%;
-    border: solid 2px #fff;
-    border-radius: 10px;
-    margin: 10px;
-    height: 77vh; /* Adjust height based on viewport height */
+    
+    height: 60vh;
+    /* Adjust height based on viewport height */
     font-size: 1.2em; /* Slightly larger text */
     color: #333; /* Dark text color */
     width: 100%; /* Each part takes up 30% of the width */
@@ -343,13 +341,29 @@
     overflow-y: auto; /* Enable vertical scrolling */
 }
 
+.mainCardPart4{
+    height: 77vh;
+    margin: 10px;
+    border: solid 2px #fff;
+    border-radius: 10px;
+    
+}
 
 
 
 .gridContainer {
     
     display: grid;
-    grid-template-columns: 2fr 1fr;
+    grid-template-columns: 3fr 1fr;
+    gap: 10px;
+    justify-items: center;
+    align-items: center;
+}
+
+.gridContainer1 {
+    
+    display: grid;
+    grid-template-columns: 1fr;
     gap: 10px;
     justify-items: center;
     align-items: center;
@@ -359,6 +373,11 @@
     .gridContainer {
         grid-template-columns: 1fr;
     }
+
+    .gridContainer1 {
+        grid-template-columns: 2fr 1fr;
+    }
+
     .cardPart3 {
         padding: 2%;
         border: solid 2px #fff;
@@ -373,16 +392,15 @@
         overflow-y: auto; /* Enable vertical scrolling */
     }
     .cardPart4 {
-        padding: 2%;
-        border: solid 2px #fff;
-        border-radius: 10px;
-        margin: 10px;
-        height: 30vh; /* Adjust height based on viewport height */
-        font-size: 1.2em; /* Slightly larger text */
-        color: #333; /* Dark text color */
-        width: 90%; /* Each part takes up 30% of the width */
+         /* Each part takes up 30% of the width */
         display: inline-block; /* Display parts side by side */
         box-sizing: border-box; /* Ensure padding and border are included in the width */
         overflow-y: auto; /* Enable vertical scrolling */
+        
     }
+
+    
+
+    
 }
+

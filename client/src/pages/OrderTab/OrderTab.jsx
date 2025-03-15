@@ -17,6 +17,7 @@ const OrderTab = () => {
     const [position, setPosition] = useState('bottom');
     const [align, setAlign] = useState('center');
     const [mealData, setMealData] = useState(initialData);
+    const [cartItems, setCartItems] = useState([]); // New state for cart items
 
     const next = () => {
         carouselRef.current.next();
@@ -173,6 +174,10 @@ const OrderTab = () => {
         setMealData([...mealData, newMeal]);
     };
 
+    const addToCart = (item) => {
+        setCartItems([...cartItems, item]);
+    };
+
     return (
       <>
         <Carousel ref={carouselRef} infinite={false} dots={true}>
@@ -269,9 +274,13 @@ const OrderTab = () => {
                 <div><button onClick={addMeal}>Add to meals</button></div>
                 <div className={styles.userName}>John Wick</div>
               </div>
-              <Typography.Title level={1} className={styles.mainTitle2}>{getOrderText()}</Typography.Title>
+              
               <div className={styles.gridContainer}>
+                <div>
+                  
                 <div className={styles.cardPart3}>
+                <Typography.Title level={1} className={styles.getGreeting} style={{ marginTop: '0%' }}>{getOrderText()}</Typography.Title>
+                <hr />
                   <List 
                     grid={{
                       gutter: 16,
@@ -287,7 +296,7 @@ const OrderTab = () => {
                       <List.Item>
                         <Card title={item.title}>
                           Card content
-                          <button className={styles.addToCartButton}>Add to Cart</button>
+                          <button className={styles.addToCartButton} onClick={() => addToCart(item)}>Add to Cart</button>
                         </Card>
                       </List.Item>
                     )}
@@ -308,15 +317,43 @@ const OrderTab = () => {
                       renderItem={(item) => (
                         <List.Item>
                           <Card title={item.title}>
-                            <button className={styles.addToCartButton}>Add to Cart</button>
+                            <button className={styles.addToCartButton} onClick={() => addToCart(item)}>Add to Cart</button>
                           </Card>
                         </List.Item>
                       )}
                     />
                   </div>
                 </div>
+                </div>
+                <div className={`${styles.mainCardPart4} ${styles.gridContainer1}`}>
+                {/* <Typography.Title level={2} className={styles.getGreeting}>Your Order</Typography.Title> */}
                 <div className={styles.cardPart4}>
-                  <Typography.Title level={2} className={styles.getGreeting}>Your Order</Typography.Title>
+                
+                
+                  <List style={{ margin: '10px' }}
+                    grid={{
+                      gutter: 16,
+                      xs: 1,
+                      sm: 1,
+                      md:1,
+                      lg: 1,
+                      xl: 1,
+                      xxl: 1,
+                    }}
+                    dataSource={cartItems}
+                    renderItem={(item) => (
+                      <List.Item>
+                        <Card title={item.title}>
+                          Card content
+                        </Card>
+                      </List.Item>
+                    )}
+                  />
+                  
+                </div>
+                <div>
+                    <button>Place Order</button>
+                  </div>
                 </div>
               </div>
             </div>
