@@ -296,10 +296,10 @@
 
 /*--------------3rd Page-----------------------*/
 .cardStyle3 {
-    background-color: rgba(255, 255, 255, 0.3); /* Semi-transparent white background */
+    background-color: rgba(255, 255, 255, 0); /* Semi-transparent white background */
     ; /* Apply text shadow */
-    border-radius: 10px; /* Rounded corners */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+     /* Rounded corners */
+     border: solid 1px #fff;
     padding: 1px; /* Padding inside the card */
     margin-left: auto;
     margin-right: auto; /* Margin outside the card */
@@ -314,29 +314,75 @@
 }
 
 
-.cardPart3  {
+.cardPart3 {
     padding: 2%;
     border: solid 2px #fff;
     border-radius: 10px;
-    margin-right: 2%;
-     /* Vertical margin between parts */
+    margin: 10px;
+    height: 77vh; /* Adjust height based on viewport height */
     font-size: 1.2em; /* Slightly larger text */
     color: #333; /* Dark text color */
-    width: 70%; /* Each part takes up 50% of the width */
+    width: 100%;/* Each part takes up 70% of the width */
     display: inline-block; /* Display parts side by side */
     box-sizing: border-box; /* Ensure padding and border are included in the width */
+    overflow-y: auto; /* Enable vertical scrolling */
 }
 
-.cardPart4{
-    
+
+.cardPart4 {
+    padding: 2%;
     border: solid 2px #fff;
     border-radius: 10px;
-     /* Vertical margin between parts */
+    margin: 10px;
+    height: 77vh; /* Adjust height based on viewport height */
     font-size: 1.2em; /* Slightly larger text */
     color: #333; /* Dark text color */
-    width: 30%; /* Each part takes up 50% of the width */
+    width: 100%; /* Each part takes up 30% of the width */
     display: inline-block; /* Display parts side by side */
     box-sizing: border-box; /* Ensure padding and border are included in the width */
+    overflow-y: auto; /* Enable vertical scrolling */
 }
 
 
+
+
+.gridContainer {
+    
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 10px;
+    justify-items: center;
+    align-items: center;
+}
+
+@media (max-width: 1000px) {
+    .gridContainer {
+        grid-template-columns: 1fr;
+    }
+    .cardPart3 {
+        padding: 2%;
+        border: solid 2px #fff;
+        border-radius: 10px;
+        margin: 10px;
+        height: 40vh; /* Adjust height based on viewport height */
+        font-size: 1.2em; /* Slightly larger text */
+        color: #333; /* Dark text color */
+        width: 90%; /* Each part takes up 70% of the width */
+        display: inline-block; /* Display parts side by side */
+        box-sizing: border-box; /* Ensure padding and border are included in the width */
+        overflow-y: auto; /* Enable vertical scrolling */
+    }
+    .cardPart4 {
+        padding: 2%;
+        border: solid 2px #fff;
+        border-radius: 10px;
+        margin: 10px;
+        height: 30vh; /* Adjust height based on viewport height */
+        font-size: 1.2em; /* Slightly larger text */
+        color: #333; /* Dark text color */
+        width: 90%; /* Each part takes up 30% of the width */
+        display: inline-block; /* Display parts side by side */
+        box-sizing: border-box; /* Ensure padding and border are included in the width */
+        overflow-y: auto; /* Enable vertical scrolling */
+    }
+}

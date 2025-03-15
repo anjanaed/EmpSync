@@ -174,144 +174,160 @@ const OrderTab = () => {
     };
 
     return (
-        <>
-            <Carousel ref={carouselRef} infinite={false} dots={true}>
-                <div>
-                    <div className={styles.contentStyle1}>
-                        <br />
-                        <div><Typography.Title level={2} className={styles.getGreeting}>{getGreeting()}</Typography.Title></div>
-                        <div><Typography.Title level={1} className={styles.mainTitle1}>Welcome to Helix Food Ordering</Typography.Title></div>
-                        <div><Typography.Title level={2} className={styles.getGreeting}>{currentDateTime}</Typography.Title></div>
-                        <br />
+      <>
+        <Carousel ref={carouselRef} infinite={false} dots={true}>
+          <div>
+            <div className={styles.contentStyle1}>
+              <br />
+              <div><Typography.Title level={2} className={styles.getGreeting}>{getGreeting()}</Typography.Title></div>
+              <div><Typography.Title level={1} className={styles.mainTitle1}>Welcome to Helix Food Ordering</Typography.Title></div>
+              <div><Typography.Title level={2} className={styles.getGreeting}>{currentDateTime}</Typography.Title></div>
+              <br />
+              <div>
+                <Card className={styles.cardStyle}>
+                  <Flex justify="center" align="center" direction="column">
+                    <div className={styles.cardPart1}>
+                      <Typography.Title level={2} className={styles.getGreeting}>
+                        <div className={styles.cardPart}>
+                          Place Your Finger on Fingerprint Scanner
+                        </div>
                         <div>
-                            <Card className={styles.cardStyle}>
-                                <Flex justify="center" align="center" direction="column">
-                                    <div className={styles.cardPart1}>
-                                        <Typography.Title level={2} className={styles.getGreeting}>
-                                            <div className={styles.cardPart}>
-                                                Place Your Finger on Fingerprint Scanner
-                                            </div>
-                                            <div>
-                                                <br />
-                                                <Card className={styles.cardStyle}>
-                                                    <i className={`material-icons ${styles.fingerprintIcon} ${animate ? 'animate' : ''}`} style={{ color: fingerprintColor }}>fingerprint</i>
-                                                </Card>
-                                            </div>
-                                        </Typography.Title>
-                                    </div>
-                                    <div className={styles.cardPart2}>
-                                        <Typography.Title level={2} className={styles.getGreeting}>Select your language | භාෂාව තෝරන්න | <br />மொழியை தேர்ந்தெடுக்கவும்</Typography.Title>
-                                        <button className={styles.languageButton} onClick={() => { handleLanguageSelect('English'); next(); }} >English Language</button><br />
-                                        <button className={styles.languageButton} onClick={() => { handleLanguageSelect('Sinhala'); next(); }}>සිංහල භාෂාව</button><br />
-                                        <button className={styles.languageButton} onClick={() => { handleLanguageSelect('Tamil'); next(); }}>தமிழ் மொழி</button><br />
-                                    </div>
-                                </Flex>
-                                <div><Typography.Title level={4} className={styles.getGreeting}>Secure & Quick Access — Scan your fingerprint to continue ordering your favorite meals!</Typography.Title></div>
-                            </Card>
+                          <br />
+                          <Card className={styles.cardStyle}>
+                            <i className={`material-icons ${styles.fingerprintIcon} ${animate ? 'animate' : ''}`} style={{ color: fingerprintColor }}>fingerprint</i>
+                          </Card>
                         </div>
+                      </Typography.Title>
                     </div>
-                </div>
-                <div>
-                    <div className={styles.contentStyle2}>
-                        <br />
-                        <div className={styles.headerContainer}>
-                            <div className={styles.currentTime}>{currentDateTime}</div>
-                            <div className={styles.userName}>John Wick</div>
-                        </div>
-                        <br />
-                        <Card className={styles.cardStyle2}>
-                            <div><Typography.Title level={1} className={styles.mainTitle2}>{getTitleText()}</Typography.Title></div>
-                            <Carousel ref={innerCarouselRef} afterChange={(currentSlide) => console.log(currentSlide)} dots={false}>
-                                <div className={styles.carouselItem}>
-                                    <button className={styles.carouselItemHeadButton} onClick={() => { setSelectedDate('today'); nextInner(); }}>
-                                        {getButtonText('today')} <br />({getTodayDate()})
-                                    </button>
-                                    <button className={styles.carouselItemHeadButton} style={{ backgroundColor: 'rgb(99, 5, 5)', color: 'white' }} onClick={() => { setSelectedDate('tomorrow'); nextInner(); }}>
-                                        {getButtonText('tomorrow')} ✅ <br /> ({getTomorrowDate()})
-                                    </button><br />
-                                    <button className={styles.mealButton} onClick={() => { setSelectedMeal('breakfast'); next(); }}>
-                                        {getButtonText('breakfast')}
-                                    </button><br />
-                                    <button className={styles.mealButton} onClick={() => { setSelectedMeal('lunch'); next(); }}>
-                                        {getButtonText('lunch')}
-                                    </button><br />
-                                    <button className={styles.mealButton} onClick={() => { setSelectedMeal('dinner'); next(); }}>
-                                        {getButtonText('dinner')}
-                                    </button><br />
-                                </div>
-                                <div className={styles.carouselItem}>
-                                    <button className={styles.carouselItemHeadButton} style={{ backgroundColor: 'rgb(99, 5, 5)', color: 'white' }} onClick={() => { setSelectedDate('today'); nextInner(); }}>
-                                        {getButtonText('today')} ✅ <br />({getTodayDate()})
-                                    </button>
-                                    <button className={styles.carouselItemHeadButton} onClick={() => { setSelectedDate('tomorrow'); nextInner(); }}>
-                                        {getButtonText('tomorrow')}<br /> ({getTomorrowDate()})
-                                    </button><br />
-                                    <button className={styles.mealButton} onClick={() => { setSelectedMeal('breakfast'); next(); }}>
-                                        {getButtonText('breakfast')}
-                                    </button><br />
-                                    <button className={styles.mealButton} onClick={() => { setSelectedMeal('lunch'); next(); }}>
-                                        {getButtonText('lunch')}
-                                    </button><br />
-                                    <button className={styles.mealButton} onClick={() => { setSelectedMeal('dinner'); next(); }}>
-                                        {getButtonText('dinner')}
-                                    </button><br />
-                                </div>
-                            </Carousel>
-                            <button className={styles.prevButton} onClick={() => carouselRef.current.prev()}>&lt;</button>
+                    <div className={styles.cardPart2}>
+                      <Typography.Title level={2} className={styles.getGreeting}>Select your language | භාෂාව තෝරන්න | <br />மொழியை தேர்ந்தெடுக்கவும்</Typography.Title>
+                      <button className={styles.languageButton} onClick={() => { handleLanguageSelect('English'); next(); }} >English Language</button><br />
+                      <button className={styles.languageButton} onClick={() => { handleLanguageSelect('Sinhala'); next(); }}>සිංහල භාෂාව</button><br />
+                      <button className={styles.languageButton} onClick={() => { handleLanguageSelect('Tamil'); next(); }}>தமிழ் மொழி</button><br />
+                    </div>
+                  </Flex>
+                  <div><Typography.Title level={4} className={styles.getGreeting}>Secure & Quick Access — Scan your fingerprint to continue ordering your favorite meals!</Typography.Title></div>
+                </Card>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div className={styles.contentStyle2}>
+              <br />
+              <div className={styles.headerContainer}>
+                <div className={styles.currentTime}>{currentDateTime}</div>
+                <div className={styles.userName}>John Wick</div>
+              </div>
+              <br />
+              <Card className={styles.cardStyle2}>
+                <div><Typography.Title level={1} className={styles.mainTitle2}>{getTitleText()}</Typography.Title></div>
+                <Carousel ref={innerCarouselRef} afterChange={(currentSlide) => console.log(currentSlide)} dots={false}>
+                  <div className={styles.carouselItem}>
+                    <button className={styles.carouselItemHeadButton} onClick={() => { setSelectedDate('today'); nextInner(); }}>
+                      {getButtonText('today')} <br />({getTodayDate()})
+                    </button>
+                    <button className={styles.carouselItemHeadButton} style={{ backgroundColor: 'rgb(99, 5, 5)', color: 'white' }} onClick={() => { setSelectedDate('tomorrow'); nextInner(); }}>
+                      {getButtonText('tomorrow')} ✅ <br /> ({getTomorrowDate()})
+                    </button><br />
+                    <button className={styles.mealButton} onClick={() => { setSelectedMeal('breakfast'); next(); }}>
+                      {getButtonText('breakfast')}
+                    </button><br />
+                    <button className={styles.mealButton} onClick={() => { setSelectedMeal('lunch'); next(); }}>
+                      {getButtonText('lunch')}
+                    </button><br />
+                    <button className={styles.mealButton} onClick={() => { setSelectedMeal('dinner'); next(); }}>
+                      {getButtonText('dinner')}
+                    </button><br />
+                  </div>
+                  <div className={styles.carouselItem}>
+                    <button className={styles.carouselItemHeadButton} style={{ backgroundColor: 'rgb(99, 5, 5)', color: 'white' }} onClick={() => { setSelectedDate('today'); nextInner(); }}>
+                      {getButtonText('today')} ✅ <br />({getTodayDate()})
+                    </button>
+                    <button className={styles.carouselItemHeadButton} onClick={() => { setSelectedDate('tomorrow'); nextInner(); }}>
+                      {getButtonText('tomorrow')}<br /> ({getTomorrowDate()})
+                    </button><br />
+                    <button className={styles.mealButton} onClick={() => { setSelectedMeal('breakfast'); next(); }}>
+                      {getButtonText('breakfast')}
+                    </button><br />
+                    <button className={styles.mealButton} onClick={() => { setSelectedMeal('lunch'); next(); }}>
+                      {getButtonText('lunch')}
+                    </button><br />
+                    <button className={styles.mealButton} onClick={() => { setSelectedMeal('dinner'); next(); }}>
+                      {getButtonText('dinner')}
+                    </button><br />
+                  </div>
+                </Carousel>
+                <button className={styles.prevButton} onClick={() => carouselRef.current.prev()}>&lt;</button>
+              </Card>
+            </div>
+          </div>
+          <div>
+            <div className={styles.contentStyle3}>
+              <br />
+              <div className={styles.headerContainer}>
+                <div className={styles.currentTime}>{currentDateTime}</div>
+                <div><button onClick={addMeal}>Add to meals</button></div>
+                <div className={styles.userName}>John Wick</div>
+              </div>
+              <Typography.Title level={1} className={styles.mainTitle2}>{getOrderText()}</Typography.Title>
+              <div className={styles.gridContainer}>
+                <div className={styles.cardPart3}>
+                  <List 
+                    grid={{
+                      gutter: 16,
+                      xs: 1,
+                      sm: 2,
+                      md: 4,
+                      lg: 4,
+                      xl: 6,
+                      xxl: 3,
+                    }}
+                    dataSource={mealData}
+                    renderItem={(item) => (
+                      <List.Item>
+                        <Card title={item.title}>
+                          Card content
+                          <button className={styles.addToCartButton}>Add to Cart</button>
                         </Card>
-                    </div>
+                      </List.Item>
+                    )}
+                  />
+                  <hr />
+                  <div>
+                    <List 
+                      grid={{
+                        gutter: 16,
+                        xs: 1,
+                        sm: 2,
+                        md: 4,
+                        lg: 4,
+                        xl: 6,
+                        xxl: 3,
+                      }}
+                      dataSource={mealData}
+                      renderItem={(item) => (
+                        <List.Item>
+                          <Card title={item.title}>
+                            <button className={styles.addToCartButton}>Add to Cart</button>
+                          </Card>
+                        </List.Item>
+                      )}
+                    />
+                  </div>
                 </div>
-                <div>
-                    <div className={styles.contentStyle3}>
-                        <br />
-                        <div className={styles.headerContainer}>
-                            <div className={styles.currentTime}>{currentDateTime}</div>
-                            <div className={styles.userName}>John Wick</div>
-                        </div>
-                        <br />
-                        <Card className={styles.cardStyle3}>
-                            <button onClick={addMeal}>Add to meals</button>
-                            <div>
-                                <br />
-                                <Typography.Title level={1} className={styles.mainTitle2}>{getOrderText()}</Typography.Title>
-                            </div>
-                            <div>
-                                <Flex justify="center" align="center" direction="column">
-                                    <div className={styles.cardPart3}>
-                                        <List
-                                            grid={{
-                                                gutter: 16,
-                                                xs: 1,
-                                                sm: 2,
-                                                md: 4,
-                                                lg: 4,
-                                                xl: 6,
-                                                xxl: 3,
-                                            }}
-                                            dataSource={mealData}
-                                            renderItem={(item) => (
-                                                <List.Item>
-                                                    <Card title={item.title}>Card content</Card>
-                                                </List.Item>
-                                            )}
-                                        />
-                                    </div>
-                                    <div className={styles.cardPart4}>
-                                        <Typography.Title level={2} className={styles.getGreeting}>Your Order</Typography.Title>
-                                    </div>
-                                </Flex>
-                            </div>
-                            <button className={styles.prevButton} onClick={() => carouselRef.current.prev()}>&lt;</button>
-                        </Card>
-                    </div>
+                <div className={styles.cardPart4}>
+                  <Typography.Title level={2} className={styles.getGreeting}>Your Order</Typography.Title>
                 </div>
-                <div>
-                    <div className={styles.contentStyle}>
-                        <button onClick={next}>Move 4 to 1</button>
-                    </div>
-                </div>
-            </Carousel>
-        </>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div className={styles.contentStyle}>
+              <button onClick={next}>Move 4 to 1</button>
+            </div>
+          </div>
+        </Carousel>
+      </>
     );
 };
 
