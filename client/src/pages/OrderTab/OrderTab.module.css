@@ -401,10 +401,50 @@
 	height: 150px;
 	object-fit: cover;
 }
-
-.cardContent {
-	padding: 10px;
+.cardImage1 {
+	border-radius: 4px;
+    flex-shrink: 0;
 }
+
+.cardFlex {
+    height: 100%;
+}
+
+.cardImageLeft {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    margin-right: 16px;
+    margin-left: 0%;
+}
+
+.cardDetails {
+    flex: 1;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.cardTitle {
+    margin-bottom: 8px;
+    text-align: center;
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #333;
+}
+
+.clickCount {
+    min-width: 30px;
+    text-align: center;
+    font-size: 1.2em;
+    color: #555;
+}
+
+
+
+
 
 .checkmark {
 	position: absolute;

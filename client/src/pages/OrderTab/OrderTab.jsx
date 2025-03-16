@@ -205,15 +205,15 @@ const OrderTab = () => {
 		}
 	};
 
-	const removeFromCart = (item) => {
-		setCartItems(cartItems.filter(cartItem => cartItem.title !== item.title));
-		setClickedCards(clickedCards.filter(title => title !== item.title));
-		setClickCounts(prevCounts => {
-			const newCounts = { ...prevCounts };
-			delete newCounts[item.title];
-			return newCounts;
-		});
-	};
+  const removeFromCart = (item) => {
+    setCartItems(cartItems.filter(cartItem => cartItem.title !== item.title));
+    setClickedCards(prev => prev.filter(title => title !== item.title));
+    setClickCounts(prev => {
+        const newCounts = { ...prev };
+        delete newCounts[item.title];
+        return newCounts;
+    });
+};
 
 	const addToCart1 = (item) => {
 		if (!clickedCards.includes(item.title)) {
@@ -359,7 +359,7 @@ const OrderTab = () => {
 												<div className={styles.cardContainer} onClick={() => addToCart(item)}>
 													<Card style={{ height: '250px', cursor: 'pointer' }}>
 														<img src={otb4} alt="Meal" className={styles.cardImage} />
-														<div className={styles.cardContent}>Card content</div>
+														<div className={styles.cardTitle}>{item.title}</div>
 														{clickedCards.includes(item.title) && (
 															<div className={styles.checkmark}> ✅</div>
 														)}
@@ -378,9 +378,9 @@ const OrderTab = () => {
 											gutter: 16,
 											xs: 1,
 											sm: 2,
-											md: 4,
-											lg: 4,
-											xl: 6,
+											md: 3,
+											lg: 3,
+											xl: 4,
 											xxl: 5,
 										}}
 										dataSource={mealData1}
@@ -389,7 +389,7 @@ const OrderTab = () => {
 												<div className={styles.cardContainer} onClick={() => addToCart1(item)}>
 													<Card style={{ height: '250px', cursor: 'pointer' }}>
 														<img src={otb4} alt="Meal" className={styles.cardImage} />
-														<div className={styles.cardContent}>Card content</div>
+														<div className={styles.cardTitle}>{item.title}</div>
 														{clickedCards.includes(item.title) && (
 															<>
 																<button className={styles.removeButton} onClick={(e) => { e.stopPropagation(); removeFromCart1(item); }}>❌</button>
@@ -405,26 +405,59 @@ const OrderTab = () => {
 							<div className={`${styles.mainCardPart4} ${styles.gridContainer1}`}>
 								<Typography.Title level={2} className={styles.getGreeting} style={{ margin: '0%' }}>Your Order</Typography.Title>
 								<div className={styles.cardPart4}>
-									<List style={{ margin: '0%' }}
-										grid={{
-											gutter: 16,
-											xs: 1,
-											sm: 1,
-											md:1,
-											lg: 1,
-											xl: 1,
-											xxl: 1,
-										}}
-										dataSource={cartItems}
-										renderItem={(item) => (
-											<List.Item>
-												<Card title={item.title}>
-													Card content
-													<div>Click Count: {clickCounts[item.title]}</div>
-												</Card>
-											</List.Item>
-										)}
-									/>
+                  <List
+                      grid={{
+                          gutter: 16,
+                          xs: 1,
+                          sm: 1,
+                          md: 1,
+                          lg: 1,
+                          xl: 1,
+                          xxl: 1,
+                      }}
+                      dataSource={cartItems.filter(item => clickCounts[item.title] > 0)}
+                      renderItem={(item) => (
+                        <List.Item>
+    <Card style={{ height: '130px', cursor: 'pointer' }}>
+        <Flex align="flex-start" className={styles.cardFlex}>
+    <img 
+        src={otb4} 
+        alt="Meal" 
+        className={`${styles.cardImage1} ${styles.cardImageLeft}`} 
+    />
+    <div className={styles.cardDetails}>
+        <div className={`${styles.cardContent} ${styles.cardTitle}`}>
+            {item.title}
+        </div>
+        <Flex gap="middle" align="center">
+            <button onClick={() => {
+                const newCount = Math.max((clickCounts[item.title] || 0) - 1, 0);
+                if (newCount === 0) {
+                    removeFromCart(item);
+                    setClickedCards(prev => prev.filter(title => title !== item.title));
+                } else {
+                    setClickCounts(prev => ({
+                        ...prev,
+                        [item.title]: newCount
+                    }));
+                }
+            }}>-</button>
+            
+            <span className={styles.clickCount}>
+                {clickCounts[item.title]}
+            </span>
+            
+            <button onClick={() => setClickCounts(prev => ({
+                ...prev,
+                [item.title]: (prev[item.title] || 0) + 1
+            }))}>+</button>
+        </Flex>
+    </div>
+</Flex>
+    </Card>
+</List.Item>
+                      )}
+                  />
 								</div>
 								<div>
 									<button>{getTitleText2()}</button><br />
