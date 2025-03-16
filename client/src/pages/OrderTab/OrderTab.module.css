@@ -271,7 +271,7 @@
 .mainCardPart3 {
 	width: 98%;
 	height: 86vh;
-	margin: 10px;
+	margin-left: 10px;
 	border: solid 2px #fff;
 	border-radius: 10px;
 }
@@ -297,6 +297,7 @@
 }
 
 .mainCardPart4 {
+    margin-right: 20px;
 	width: 98%;
 	height: 86vh;
 	border: solid 2px #fff;
@@ -479,3 +480,4 @@
 	line-height: 24px;
 	text-align: center;
 }
+

@@ -418,51 +418,62 @@ const OrderTab = () => {
                       dataSource={cartItems.filter(item => clickCounts[item.title] > 0)}
                       renderItem={(item) => (
                         <List.Item>
-    <Card style={{ height: '130px', cursor: 'pointer' }}>
-        <Flex align="flex-start" className={styles.cardFlex}>
-    <img 
-        src={otb4} 
-        alt="Meal" 
-        className={`${styles.cardImage1} ${styles.cardImageLeft}`} 
-    />
-    <div className={styles.cardDetails}>
-        <div className={`${styles.cardContent} ${styles.cardTitle}`}>
-            {item.title}
-        </div>
-        <Flex gap="middle" align="center">
-            <button onClick={() => {
-                const newCount = Math.max((clickCounts[item.title] || 0) - 1, 0);
-                if (newCount === 0) {
-                    removeFromCart(item);
-                    setClickedCards(prev => prev.filter(title => title !== item.title));
-                } else {
-                    setClickCounts(prev => ({
-                        ...prev,
-                        [item.title]: newCount
-                    }));
-                }
-            }}>-</button>
-            
-            <span className={styles.clickCount}>
-                {clickCounts[item.title]}
-            </span>
-            
-            <button onClick={() => setClickCounts(prev => ({
-                ...prev,
-                [item.title]: (prev[item.title] || 0) + 1
-            }))}>+</button>
-        </Flex>
-    </div>
-</Flex>
-    </Card>
-</List.Item>
+                            <Card style={{ height: '130px',  cursor: 'pointer' }}>
+                                <Flex align="flex-start" className={styles.cardFlex}>
+                            <img 
+                                src={otb4} 
+                                alt="Meal" 
+                                className={`${styles.cardImage1} ${styles.cardImageLeft}`} 
+                            />
+                            <div className={styles.cardDetails}>
+                                <div className={`${styles.cardContent} ${styles.cardTitle}`}>
+                                    {item.title}
+                                </div>
+                                <Flex gap="middle" align="center">
+                                    <button onClick={() => {
+                                        const newCount = Math.max((clickCounts[item.title] || 0) - 1, 0);
+                                        if (newCount === 0) {
+                                            removeFromCart(item);
+                                            setClickedCards(prev => prev.filter(title => title !== item.title));
+                                        } else {
+                                            setClickCounts(prev => ({
+                                                ...prev,
+                                                [item.title]: newCount
+                                            }));
+                                        }
+                                    }}>-</button>
+                                    
+                                    <span className={styles.clickCount}>
+                                        {clickCounts[item.title]}
+                                    </span>
+                                    
+                                    <button onClick={() => setClickCounts(prev => ({
+                                        ...prev,
+                                        [item.title]: (prev[item.title] || 0) + 1
+                                    }))}>+</button>
+                                </Flex>
+                            </div>
+                        </Flex>
+                            </Card>
+                        </List.Item>
                       )}
                   />
 								</div>
 								<div>
-									<button>{getTitleText2()}</button><br />
-									<button onClick={() => carouselRef.current.prev()}>&lt;</button>
-								</div>
+    <button 
+        className={styles.placeOrderButton}
+        onClick={() => console.log('Order placed!')} // Add your order placement logic here
+    >
+        {getTitleText2()}
+    </button>
+    <br />
+    <button 
+        className={styles.backButton} 
+        onClick={() => carouselRef.current.prev()}
+    >
+        Back To Select Date
+    </button>
+</div>
 							</div>
 						</div>
 					</div>
