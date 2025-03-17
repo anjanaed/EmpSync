@@ -10,6 +10,9 @@ import LoginRole from "./pages/LoginRole/LoginRole";
 import PasswordReset from "./pages/PasswordReset/PasswordReset"; 
 import RegisterPage from "./pages/HRManager/RegisterPage/RegisterPage";
 import EmployeePage from "./pages/HRManager/EmployeePage/EmployeePage";
+import Ingredients from "./pages/Ingredients/Dashboard/Ingredients";
+import AnalysisDashboard from "./pages/Ingredients/AnalysisDashboard/AnalysisDashboard";
+import OrderReportDashboard from "./pages/Ingredients/OrderReportDashboard/OrderReportDashboard";
 
 function App() {
   return (
@@ -25,6 +28,9 @@ function App() {
         <Route path="/serving" element={<Serving />} />
         <Route path="/meal-conform/:id" element={<MealConform />} />
         <Route path="/passwordReset" element={<PasswordReset />} /> 
+        <Route path="/Ingredients" element={<Ingredients />} />
+        <Route path="/AnalysisDashboard" element={<AnalysisDashboard />} />
+        <Route path="/OrderReportDashboard" element={<OrderReportDashboard />} />
       </Routes>
     </Router>
   );
