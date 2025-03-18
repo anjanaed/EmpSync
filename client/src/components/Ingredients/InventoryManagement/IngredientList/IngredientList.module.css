@@ -1,0 +1,69 @@
+.container {
+    width: 100%;
+  }
+  
+  .header {
+    margin-bottom: 20px;
+  }
+  
+  .title {
+    font-size: 20px;
+    margin: 0;
+    font-weight: 600;
+  }
+  
+  .subtitle {
+    font-size: 14px;
+    color: #666;
+    margin: 5px 0 0 0;
+  }
+  
+  .table {
+    margin-bottom: 20px;
+  }
+  
+  .table :global(.ant-table-thead > tr > th) {
+    background-color: #fafafa;
+    font-weight: 600;
+  }
+  
+  .status {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 16px;
+    font-size: 14px;
+  }
+  
+  .lowStock {
+    background-color: #ffebe6;
+    color: #e74c3c;
+  }
+  
+  .inStock {
+    background-color: #222;
+    color: #fff;
+  }
+  
+  .actions {
+    display: flex;
+    justify-content: flex-end;
+  }
+  
+  .actionButton {
+    padding: 0 8px;
+    color: #666;
+  }
+  
+  .actionButton:hover {
+    color: #1890ff;
+  }
+  
+  .footer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+  }
+  
+  .detailsButton, .exportButton {
+    border-radius: 4px;
+  }

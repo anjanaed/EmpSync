@@ -1,0 +1,70 @@
+.item {
+    display: flex;
+    align-items: center;
+    padding: 15px 0;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  
+  .item:last-child {
+    border-bottom: none;
+  }
+  
+  .details {
+    flex: 2;
+  }
+  
+  .name {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 500;
+  }
+  
+  .category {
+    margin: 0;
+    font-size: 14px;
+    color: #666;
+  }
+  
+  .quantity {
+    flex: 1;
+    font-size: 16px;
+  }
+  
+  .statusContainer {
+    flex: 1;
+  }
+  
+  .status {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 16px;
+    font-size: 14px;
+  }
+  
+  .lowStock {
+    background-color: #ffebe6;
+    color: #e74c3c;
+  }
+  
+  .inStock {
+    background-color: #222;
+    color: #fff;
+  }
+  
+  .actions {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .actionButton {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #666;
+    font-size: 16px;
+    padding: 5px;
+  }
+  
+  .actionButton:hover {
+    color: #1890ff;
+  }
