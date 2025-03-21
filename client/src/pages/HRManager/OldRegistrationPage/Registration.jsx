@@ -6,7 +6,6 @@ import { faFingerprint } from "@fortawesome/free-solid-svg-icons";
 import Loading from "../../../components/loading/loading";
 import { DatePicker, Modal } from "antd";
 import axios from "axios";
-import GButton from "../../../components/button/Button";
 import GradientButton from "react-linear-gradient-button";
 import { IoMdFingerPrint } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
