@@ -1,10 +1,10 @@
 import { React, useState, useEffect } from "react";
 import styles from "./EditModal.module.css";
-import Loading from "../../loading/loading";
+import Loading from "../../atoms/loading/loading";
 import axios from "axios";
 import { DatePicker } from "antd";
 import { useNavigate } from "react-router-dom";
-import Gbutton from "../../button/Button";
+import Gbutton from "../../atoms/button/Button";
 
 const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
   const [currentEmployee, setCurrentEmployee] = useState({

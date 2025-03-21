@@ -1,6 +1,6 @@
 import React from "react";
-import Employees from "../../../components/hrDashboard/EmployeeList/Employees";
-import NavBar from "../../../components/hrDashboard/NavBar/NavBar";
+import Employees from "../../../organisms/EmployeeList/Employees";
+import NavBar from "../../../organisms/NavBar/NavBar";
 
 const EmployeePage = () => {
   return (

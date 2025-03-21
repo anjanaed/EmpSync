@@ -1,19 +1,24 @@
-import React from 'react';
-import { AntDesignOutlined } from '@ant-design/icons';
-import { Button, ConfigProvider, Space } from 'antd';
-import { createStyles } from 'antd-style';
+import React from "react";
+import { AntDesignOutlined } from "@ant-design/icons";
+import { Button, ConfigProvider, Space } from "antd";
+import { createStyles } from "antd-style";
 
 const useStyle = createStyles(({ prefixCls, css }) => ({
   linearGradientButton: css`
-    &.${prefixCls}-btn-primary:not([disabled]):not(.${prefixCls}-btn-dangerous) {
+    &.${prefixCls}-btn-primary:not([disabled]):not(
+        .${prefixCls}-btn-dangerous
+      ) {
       > span {
         position: relative;
-        padding: 2vw;
+        font-weight: 600;
+        padding: 50px;
+        color: rgb(107, 0, 0);
       }
 
       &::before {
-        content: '';
-        background: linear-gradient(135deg, #8B0000, #A0522D);
+        content: "";
+
+        background: rgb(255, 177, 177);
         position: absolute;
         inset: -1px;
         opacity: 1;
@@ -22,7 +27,10 @@ const useStyle = createStyles(({ prefixCls, css }) => ({
       }
 
       &:hover::before {
+
         opacity: 0.8;
+
+        background: rgb(255, 124, 124);
       }
     }
   `,
