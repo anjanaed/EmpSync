@@ -6,9 +6,8 @@ import MealDetailsForm from "./pages/KitchenAdmin/MealDetails/MealDetailsForm";
 import Login from "./pages/Login/Login";
 import LoginRole from "./pages/LoginRole/LoginRole";
 import PasswordReset from "./pages/PasswordReset/PasswordReset"; 
-import RegisterPage from "./pages/HRManager/RegisterPage/RegisterPage";
-import EmployeePage from "./pages/HRManager/EmployeePage/EmployeePage";
-
+import RegisterPage from "./components/pages/HR/RegisterPage/RegisterPage";
+import EmployeePage from "./components/pages/HR/EmployeePage/EmployeePage";
 function App() {
   return (
     <Router>

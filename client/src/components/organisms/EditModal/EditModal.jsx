@@ -1,10 +1,10 @@
 import { React, useState, useEffect } from "react";
 import styles from "./EditModal.module.css";
-import Loading from "../../loading/loading";
+import Loading from "../../atoms/loading/loading";
 import axios from "axios";
-import GButton from "../../../components/button/Button";
 import { DatePicker } from "antd";
 import { useNavigate } from "react-router-dom";
+import Gbutton from "../../atoms/button/Button";
 
 const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
   const [currentEmployee, setCurrentEmployee] = useState({
@@ -224,9 +224,9 @@ const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
         </div>
       </div>
       <div className={styles.btnSection}>
-        <GButton onClick={handleUpdate} padding="0.4vw 2vw">
+        <Gbutton onClick={handleUpdate} padding="0.4vw 2vw">
           Update
-        </GButton>
+        </Gbutton>
       </div>
     </div>
   );

@@ -15,8 +15,8 @@ import {
 } from "antd";
 import styles from "./Register.module.css";
 import { IoIosArrowBack } from "react-icons/io";
-import FingerPrint from "../FingerPrint/FingerPrint";
-import Loading from "../../loading/loading";
+import FingerPrint from "../../atoms/FingerPrint/FingerPrint";
+import Loading from "../../atoms/loading/loading";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
 import axios from "axios";

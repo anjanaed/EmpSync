@@ -4,7 +4,7 @@ import { Table, Space, Modal, ConfigProvider, Input, Select } from "antd";
 import { FiEdit } from "react-icons/fi";
 import { MdOutlineDeleteOutline } from "react-icons/md";
 import EditModal from "../EditModal/EditModal";
-import Loading from "../../loading/loading";
+import Loading from "../../atoms/loading/loading";
 import styles from "./Employee.module.css";
 
 const Employees = () => {

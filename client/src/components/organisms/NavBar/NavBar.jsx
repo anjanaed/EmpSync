@@ -21,7 +21,7 @@ import {
 } from "antd";
 import img from "../../../assets/logo.png";
 import { useNavigate } from "react-router-dom";
-import Loading from "../../loading/loading";
+import Loading from "../../atoms/loading/loading";
 
 const { Sider } = Layout;
 
