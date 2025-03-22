@@ -10,7 +10,7 @@ const useStyle = createStyles(({ prefixCls, css }) => ({
       ) {
       > span {
         position: relative;
-        font-weight: 600;
+        font-weight: 500;
         padding: 50px;
         color: rgb(107, 0, 0);
       }

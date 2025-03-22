@@ -1,5 +1,7 @@
 .modalWrap {
-  width: 50vw;
+  max-height: 90vh;
+  overflow: hidden;
+  position: relative;
 }
 
 .modalHeader {

@@ -19,6 +19,7 @@ import FingerPrint from "../../atoms/FingerPrint/FingerPrint";
 import Loading from "../../atoms/loading/loading";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
+import Gbutton from "../../atoms/button/Button";
 import axios from "axios";
 
 const Register = () => {
@@ -87,7 +88,7 @@ const Register = () => {
   };
 
   const handleNext = async () => {
-    await form.validateFields();
+    // await form.validateFields();
     setMenu(2);
   };
 
@@ -345,9 +346,9 @@ const Register = () => {
               </div>
             </div>
             <div className={styles.btnContainer}>
-              <Button onClick={handleNext} className={styles.btn}>
+              <Gbutton onClick={handleNext}>
                 Next
-              </Button>
+              </Gbutton>
             </div>
           </Form>
         </>
@@ -366,9 +367,9 @@ const Register = () => {
             <FingerPrint />
           </div>
           <div className={styles.btnContainer}>
-            <Button onClick={handleRegister} className={styles.btn}>
+            <Gbutton onClick={handleRegister} className={styles.btn}>
               Register Without Finger Print
-            </Button>
+            </Gbutton>
           </div>
         </>
       )}

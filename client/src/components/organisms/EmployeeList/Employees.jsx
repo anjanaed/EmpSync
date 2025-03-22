@@ -3,9 +3,10 @@ import axios from "axios";
 import { Table, Space, Modal, ConfigProvider, Input, Select } from "antd";
 import { FiEdit } from "react-icons/fi";
 import { MdOutlineDeleteOutline } from "react-icons/md";
-import EditModal from "../EditModal/EditModal";
+import EditModal from "../../templates/newEditModal/EditModal";
 import Loading from "../../atoms/loading/loading";
 import styles from "./Employee.module.css";
+import SearchBar from "../../molecules/SearchBar/SearchBar";
 
 const Employees = () => {
   const [loading, setLoading] = useState(true);
@@ -146,7 +147,8 @@ const Employees = () => {
       <Modal
         open={isModalOpen}
         footer={null}
-        width="53vw"
+        width="65vw"
+        
         onCancel={handleCancel}
       >
         <EditModal
@@ -161,16 +163,8 @@ const Employees = () => {
           <div className={styles.homeHead}>
             <div className={styles.headLeft}>Registered Employee Details</div>
             <div className={styles.headRight}>
-              <Space direction="vertical">
-                <Search
-                  placeholder="Search Employee"
-                  className={styles.searchBar}
-                  onSearch={handleSearch}
-                  style={{
-                    width: 200,
-                  }}
-                />
-              </Space>
+              <SearchBar placeholder={"Search Employee"} onSearch={Search} styles={{marginRight:"1vw"}}/>
+
               <Select
                 showSearch
                 allowClear
