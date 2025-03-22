@@ -25,7 +25,7 @@ const Navbar = () => {
       </div>
 
       {/* Right Side: Logout Button */}
-      <button onClick={()=>navigate("/login")} className={styles.logoutButton}>Logout</button>
+      <button onClick={()=>navigate("/")} className={styles.logoutButton}>Logout</button>
     </nav>
   );
 };

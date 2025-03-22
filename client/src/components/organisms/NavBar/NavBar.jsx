@@ -51,7 +51,7 @@ const NavBar = ({ Comp }) => {
           Logout <t /> <LogoutOutlined />
         </div>
       ),
-      onClick: () => navigate("/login"),
+      onClick: () => navigate("/"),
     },
   ];
   const [collapsed, setCollapsed] = useState(false);
@@ -62,7 +62,7 @@ const NavBar = ({ Comp }) => {
   const checkPath=()=>{
     setLoading(true)
     const path=location.pathname;
-    if (path=="/"){
+    if (path=="/emp"){
       setSelectedKey("1");
     }
     if (path=="/reg"){
