@@ -3,6 +3,7 @@ import { Form, Input, Checkbox } from "antd";
 import { useNavigate } from "react-router-dom";
 import styles from "./Login.module.css";
 import illustration from "../../assets/illustration.png";
+import Loginbutton from "../../components/atoms/button/Loginbutton/Loginbutton"; // Import the Loginbutton component
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -44,7 +45,7 @@ const LoginPage = () => {
             </div>
             
             <Form.Item>
-              <button type="submit" className={styles.loginButton} onClick={handleLogin}>Login</button>
+              <Loginbutton /> 
             </Form.Item>
           </Form>
         </div>
