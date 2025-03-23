@@ -26,7 +26,7 @@ export class UserService {
       const users = await this.databaseService.user.findMany({
         where:{
           name:search?{contains:search,mode:'insensitive'}:undefined,
-          role:role?role:undefined,
+          role:role||undefined,
         }
       });
       if (users) {

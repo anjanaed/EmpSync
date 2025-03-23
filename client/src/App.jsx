@@ -8,13 +8,11 @@ import LoginRole from "./pages/LoginRole/LoginRole";
 import PasswordReset from "./pages/PasswordReset/PasswordReset"; 
 import RegisterPage from "./components/pages/HR/RegisterPage/RegisterPage";
 import EmployeePage from "./components/pages/HR/EmployeePage/EmployeePage";
-import Test from "./components/pages/test";
 function App() {
   return (
     <Router>
       <Routes>
         <Route path="/login" element={<Login />} />
-        <Route path="/test" element={<Test />} />
         <Route path="/LoginRole" element={<LoginRole />} />
         <Route path="/" element={<EmployeePage />} />
         <Route path="/reg" element={<RegisterPage />} />

@@ -1,12 +1,18 @@
 import { React, useState, useEffect } from "react";
+import { Tabs, Form, Input, DatePicker, Select, Space } from "antd";
 import styles from "./EditModal.module.css";
 import Loading from "../../atoms/loading/loading";
+import dayjs from "dayjs";
+import { LuSave } from "react-icons/lu";
 import axios from "axios";
-import { DatePicker } from "antd";
 import { useNavigate } from "react-router-dom";
 import Gbutton from "../../atoms/button/Button";
+const dateFormat = "YYYY/MM/DD";
+import { RiFingerprintLine } from "react-icons/ri";
 
 const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
+  const [customRole, setCustomRole] = useState("");
+  const [form] = Form.useForm();
   const [currentEmployee, setCurrentEmployee] = useState({
     id: "",
     name: "",
@@ -29,6 +35,7 @@ const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
   const urL = import.meta.env.VITE_BASE_URL;
   const getEmployee = async () => {
     try {
+      setLoading(true);
       const res = await axios.get(`${urL}/user/${empId}`);
       setCurrentEmployee(res.data);
       setLoading(false);
@@ -37,21 +44,24 @@ const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
       setLoading(false);
     }
   };
+
   useEffect(() => {
     getEmployee();
   }, [empId]);
 
-  if (loading) {
-    return <Loading />;
-  }
-
   const handleUpdate = async () => {
     setLoading(true);
     try {
-      await axios.put(`${urL}/user/${empId}`, currentEmployee);
-      console.log("User Updated");
+      await axios
+        .put(`${urL}/user/${empId}`, currentEmployee)
+        .then((res) => {
+          console.log(res);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
       handleCancel();
-      fetchEmployee();
+      fetchEmployee;
       setLoading(false);
     } catch (err) {
       console.log(err);
@@ -59,176 +69,389 @@ const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
     }
   };
 
+  if (loading) {
+    return <Loading />;
+  }
+  const formItemLayout = {
+    labelCol: {
+      xs: {
+        span: 24,
+      },
+      sm: {
+        span: 7,
+      },
+    },
+    wrapperCol: {
+      xs: {
+        span: 24,
+      },
+      sm: {
+        span: 14,
+      },
+    },
+  };
   return (
-    <div className={styles.modalWrap}>
-      <div className={styles.modalHeader}>Edit Employee - {empId}</div>
-      <hr />
-      <div className={styles.inputWrap}>
-        <div className={styles.inputSide}>
-          <label>Employee Id</label>
-          <br />
-          <input
-            type="textbox"
-            value={currentEmployee.id}
-            onChange={(e) =>
-              setCurrentEmployee({ ...currentEmployee, id: e.target.value })
-            }
-            placeholder="Enter ID"
-          ></input>
-          <br />
-          <label>Name</label>
-          <br />
-          <input
-            type="textbox"
-            value={currentEmployee.name}
-            onChange={(e) =>
-              setCurrentEmployee({ ...currentEmployee, name: e.target.value })
-            }
-            placeholder="Enter Name"
-          ></input>
-          <br />
-          <label>Email</label>
-          <br />
-          <input
-            type="email"
-            value={currentEmployee.email}
-            onChange={(e) =>
-              setCurrentEmployee({ ...currentEmployee, email: e.target.value })
-            }
-            placeholder="Enter Email"
-          ></input>
-          <br />
-          <label>Date of Birth</label>
-          <br />
-          <DatePicker
-            onChange={(date) =>
-              setCurrentEmployee({
-                ...currentEmployee,
-                dob: moment(date).format("YYYY-MM-DD"),
-              })
-            }
-            placeholder="Select a Date"
-            className={styles.picker}
+    <>
+      <div className={styles.head}>Edit Employee - {currentEmployee.id}</div>
+      <div className={styles.headDes}>
+        Update Employee Information. Click Save Changes When You're Done.
+      </div>
+
+      <div className={`${styles.yo} customTabs`}>
+        <Form {...formItemLayout} form={form}>
+          <Tabs
+            className={styles.tab}
+            defaultActiveKey="personal"
+            items={[
+              {
+                key: "personal",
+                size: "large",
+                label: <span className={styles.tabHead}>Personal Details</span>,
+                children: (
+                  <>
+                    <div className={styles.con}>
+                      <Form.Item
+                        name="fullname"
+                        label="Full Name"
+                        styles={{
+                          explain: {
+                            color: "blue",
+                          },
+                        }}
+                        rules={[
+                          {
+                            required: true,
+                            message: "Please input your Name!",
+                            whitespace: true,
+                          },
+                        ]}
+                      >
+                        <Input
+                          defaultValue={currentEmployee.name}
+                          placeholder="Enter Name"
+                          onChange={(e) =>
+                            setCurrentEmployee({
+                              ...currentEmployee,
+                              name: e.target.value,
+                            })
+                          }
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        name="email"
+                        label="E-mail"
+                        rules={[
+                          {
+                            type: "email",
+                            message: "The input is not valid E-mail!",
+                          },
+                          {
+                            required: true,
+                            message: "Please input your E-mail!",
+                          },
+                        ]}
+                      >
+                        <Input
+                          defaultValue={currentEmployee.email}
+                          placeholder="Enter Email Address"
+                          onChange={(e) =>
+                            setCurrentEmployee({
+                              ...currentEmployee,
+                              email: e.target.value,
+                            })
+                          }
+                        />
+                      </Form.Item>
+                      <Form.Item name="phone" label="Phone Number">
+                        <Input
+                          defaultValue={currentEmployee.telephone}
+                          placeholder="Enter Mobile Number"
+                          onChange={(e) =>
+                            setCurrentEmployee({
+                              ...currentEmployee,
+                              telephone: e.target.value,
+                            })
+                          }
+                          style={{
+                            width: "100%",
+                          }}
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        name="gender"
+                        label="Gender"
+                        rules={[
+                          {
+                            required: true,
+                            message: "Please select gender!",
+                          },
+                        ]}
+                      >
+                        <Select
+                          placeholder="Select Gender"
+                          defaultValue={currentEmployee.gender}
+                          onChange={(value) =>
+                            setCurrentEmployee({
+                              ...currentEmployee,
+                              gender: value,
+                            })
+                          }
+                          className={styles.select}
+                        >
+                          <Select.Option value="Male">Male</Select.Option>
+                          <Select.Option value="Female">Female</Select.Option>
+                          <Select.Option value="Other">Other</Select.Option>
+                        </Select>
+                      </Form.Item>
+                      <Form.Item name="address" label="Residential Address">
+                        <Input
+                          defaultValue={currentEmployee.address}
+                          placeholder="Enter Address"
+                          onChange={(e) =>
+                            setCurrentEmployee({
+                              ...currentEmployee,
+                              address: e.target.value,
+                            })
+                          }
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        name="dob"
+                        label="Date of Birth"
+                        rules={[
+                          {
+                            required: true,
+                            message: "Please Enter Birth Date!",
+                          },
+                        ]}
+                      >
+                        <DatePicker
+                          defaultValue={dayjs(currentEmployee.dob, dateFormat)}
+                          onChange={(date) =>
+                            setCurrentEmployee({
+                              ...currentEmployee,
+                              dob: moment(date).format("YYYY-MM-DD"),
+                            })
+                          }
+                          placeholder="Select Birth Date"
+                          style={{ width: "100%" }}
+                          className={styles.select}
+                        />
+                      </Form.Item>
+                    </div>
+                  </>
+                ),
+              },
+              {
+                key: "employment",
+                label: <span className={styles.tabHead}>Employment</span>,
+                children: (
+                  <>
+                    <div className={styles.con}>
+                      <Form.Item
+                        name="empId"
+                        label="Employee ID"
+                        rules={[
+                          {
+                            required: true,
+                            message: "Please Enter ID!",
+                          },
+                        ]}
+                      >
+                        <Input
+                          defaultValue={currentEmployee.id}
+                          placeholder="Enter ID"
+                          onChange={(e) =>
+                            setCurrentEmployee({
+                              ...currentEmployee,
+                              id: e.target.value,
+                            })
+                          }
+                        />
+                      </Form.Item>
+                      <Form.Item name="supId" label="Supervisor's ID">
+                        <Input
+                          defaultValue={currentEmployee.supId}
+                          onChange={(e) =>
+                            setCurrentEmployee({
+                              ...currentEmployee,
+                              supId: e.target.value,
+                            })
+                          }
+                          placeholder="Enter Supervisor ID (If Available)"
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        label={
+                          <>
+                            <p style={{ color: "red" }}>* </p>&#8201; Job Role
+                          </>
+                        }
+                        name="role"
+                      >
+                        <Space.Compact className={styles.select}>
+                          <Form.Item
+                            noStyle
+                            name="selectRole"
+                            style={{ flex: "1" }}
+                            rules={[
+                              {
+                                required: true,
+                                message: "Please Enter Role!",
+                              },
+                            ]}
+                          >
+                            <Select
+                              defaultValue={currentEmployee.role}
+                              onChange={(value) => {
+                                setCurrentEmployee({
+                                  ...currentEmployee,
+                                  role: value,
+                                });
+                                setCustomRole(value);
+                              }}
+                              style={{ width: "100%" }}
+                              placeholder="Select Role"
+                            >
+                              <Select.Option value="HrManager">
+                                HR Administrator
+                              </Select.Option>
+                              <Select.Option value="KitchenAdmin">
+                                Kitchen Admin
+                              </Select.Option>
+                              <Select.Option value="KitchenStaff">
+                                Kitchen Staff
+                              </Select.Option>
+                              <Select.Option value="InventoryManager">
+                                Inventory Manager
+                              </Select.Option>
+                              <Select.Option value="Other">Other</Select.Option>
+                            </Select>
+                          </Form.Item>
+                          <Form.Item
+                            name="customRole"
+                            noStyle
+                            style={{ flex: "2" }}
+                          >
+                            <Input
+                              style={{ width: "100%" }}
+                              onChange={(e) => {
+                                setCurrentEmployee({
+                                  ...currentEmployee,
+                                  role: e.target.value,
+                                });
+                              }}
+                              placeholder="If Other, Enter Job Role"
+                              disabled={customRole !== "Other"}
+                              required={false}
+                            />
+                          </Form.Item>
+                        </Space.Compact>
+                      </Form.Item>
+                      <Form.Item
+                        name="salary"
+                        label="Basic Salary"
+                        rules={[
+                          {
+                            required: true,
+                            message: "Please Enter Salary!",
+                          },
+                        ]}
+                      >
+                        <Input
+                          defaultValue={currentEmployee.salary}
+                          placeholder="Enter Basic Salary"
+                          onChange={(e) =>
+                            setCurrentEmployee({
+                              ...currentEmployee,
+                              salary: e.target.value,
+                            })
+                          }
+                        />
+                      </Form.Item>
+                    </div>
+                  </>
+                ),
+              },
+              {
+                key: "additional",
+                label: <span className={styles.tabHead}>Additional</span>,
+                children: (
+                  <>
+                    <div className={styles.con}>
+                      <Form.Item
+                        name="language"
+                        label="Preferred Language"
+                        rules={[
+                          {
+                            required: true,
+                            message: "Please Select Language!",
+                          },
+                        ]}
+                      >
+                        <Select
+                          className={styles.select}
+                          defaultValue={currentEmployee.language}
+                          placeholder="Select Language"
+                          onChange={(value) =>
+                            setCurrentEmployee({
+                              ...currentEmployee,
+                              language: value,
+                            })
+                          }
+                        >
+                          <Select.Option value="Sinhala">Sinhala</Select.Option>
+                          <Select.Option value="English">English</Select.Option>
+                          <Select.Option value="Tamil">Tamil</Select.Option>
+                        </Select>
+                      </Form.Item>
+                      <Form.Item name="height" label="Height">
+                        <Input
+                          defaultValue={currentEmployee.height}
+                          onChange={(e) =>
+                            setCurrentEmployee({
+                              ...currentEmployee,
+                              height: e.target.value,
+                            })
+                          }
+                          placeholder="Enter Height (cm)"
+                        />
+                      </Form.Item>
+                      <Form.Item name="weight" label="Weight">
+                        <Input
+                          defaultValue={currentEmployee.weight}
+                          onChange={(e) =>
+                            setCurrentEmployee({
+                              ...currentEmployee,
+                              weight: e.target.value,
+                            })
+                          }
+                          placeholder="Enter Weight (Kg)"
+                        />
+                      </Form.Item>
+                      <label className={styles.fingerLabel}>
+                        Finger Print:{" "}
+                      </label>
+                      <button className={styles.rescanBtn}>
+                        <RiFingerprintLine size={20} /> &nbsp;Rescan
+                      </button>
+                    </div>
+                    <div className={styles.subBtn}>
+                      <Gbutton onClick={handleUpdate}>
+                        <>
+                          <LuSave size={16} />
+                          &nbsp;&nbsp;Save Changes
+                        </>
+                      </Gbutton>
+                    </div>
+                  </>
+                ),
+              },
+            ]}
           />
-          <br />
-          <label>Job Role:</label>
-          <br></br>
-          <select
-            className={styles.selects}
-            onChange={(e) =>
-              setCurrentEmployee({ ...currentEmployee, role: e.target.value })
-            }
-          >
-            <option value="">Select a Role</option>
-            <option value="HR Manager">HR Manager</option>
-            <option value="Kitchen Admin">Kitchen Admin</option>
-            <option value="Kitchen Staff">Kitchen Staff</option>
-            <option value="Inventory Manager">Inventory Manager</option>
-            <option value="Other">Other</option>
-          </select>
-          {currentEmployee.role === "Other" && (
-            <input
-              className={styles.customJob}
-              type="textbox"
-              onChange={(e) =>
-                setCurrentEmployee({ ...currentEmployee, role: e.target.value })
-              }
-              placeholder="Enter Job Role"
-            />
-          )}
-          <br />
-          <label>Finger Print</label>
-          <br />
-          <button className={styles.rescanBtn}>Rescan</button>
-        </div>
-        <div className={styles.inputSide}>
-          <label>Residential Address</label>
-          <br />
-          <input
-            type="textbox"
-            value={currentEmployee.supId}
-            onChange={(e) =>
-              setCurrentEmployee({ ...currentEmployee, supId: e.target.value })
-            }
-            placeholder="Enter Address"
-          ></input>
-          <br />
-          <label>Telephone</label>
-          <br />
-          <input
-            type="textbox"
-            value={currentEmployee.telephone}
-            onChange={(e) =>
-              setCurrentEmployee({
-                ...currentEmployee,
-                telephone: e.target.value,
-              })
-            }
-            placeholder="Enter Tel."
-          ></input>
-          <br />
-          <label>Supervisor's Employee Id</label>
-          <br />
-          <input
-            type="textbox"
-            value={currentEmployee.supId}
-            onChange={(e) =>
-              setCurrentEmployee({ ...currentEmployee, supId: e.target.value })
-            }
-            placeholder="Enter Supervisor's Id"
-          ></input>
-          <br />
-          <label>Salary</label>
-          <br />
-          <input
-            type="textbox"
-            value={currentEmployee.salary}
-            onChange={(e) =>
-              setCurrentEmployee({ ...currentEmployee, salary: e.target.value })
-            }
-            placeholder="Enter Salary"
-          ></input>
-          <br />
-          <label>Preferred Language</label>
-          <br />
-          <select
-            className={styles.selects}
-            value={currentEmployee.language}
-            defaultChecked={currentEmployee.language}
-            onChange={(e) =>
-              setCurrentEmployee({
-                ...currentEmployee,
-                language: e.target.value,
-              })
-            }
-          >
-            <option value="">Select Language</option>
-            <option value="English">English</option>
-            <option value="Sinhala"> Sinhala </option>
-            <option value="Tamil"> Tamil </option>
-          </select>
-          <br />
-          <label>Gender</label>
-          <br />
-          <select
-            className={styles.selects}
-            onChange={(e) =>
-              setCurrentEmployee({ ...currentEmployee, gender: e.target.value })
-            }
-          >
-            <option value="">Select Gender</option>
-            <option value="Male">Male</option>
-            <option value="Female">Female</option>
-          </select>
-          <br />
-        </div>
+        </Form>
       </div>
-      <div className={styles.btnSection}>
-        <Gbutton onClick={handleUpdate} padding="0.4vw 2vw">
-          Update
-        </Gbutton>
-      </div>
-    </div>
+    </>
   );
 };
 
