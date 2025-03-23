@@ -88,7 +88,7 @@ const Register = () => {
   };
 
   const handleNext = async () => {
-    // await form.validateFields();
+    await form.validateFields();
     setMenu(2);
   };
 

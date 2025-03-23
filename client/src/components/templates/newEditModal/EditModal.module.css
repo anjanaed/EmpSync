@@ -1,45 +1,87 @@
+.head {
+  font-size: 1.5vw;
+  font-weight: 600;
+}
+
+.headDes {
+  margin: 0.2vw 0vw 1vw 0vw;
+  font-size: 0.85vw;
+}
+
+.con {
+  padding: 2vw 13vw;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji",
+    "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+
+.customTabs {
+  width: 100%;
+}
+
+.tabHead {
+  display: flex;
+  width: 18.38vw;
+  justify-content: center;
+}
+
+.tab {
+  background-color: rgb(240, 240, 240);
+  border-radius: 10px;
+  height: 54vh;
+}
+
+/* Input {
+  display: flex !important;
+  margin-left: auto !important;
+  width: 25vw !important;
+}
+
+.select {
+  display: flex !important;
+  margin-left: auto !important;
+  width: 25vw !important;
+} */
+
+.rescanBtn {
+  display: flex;
+  padding: 0.5vw 2vw;
+  justify-content: center;
+  align-items: center;
+  margin: auto;
+  color: white;
+  font-size: 0.9vw;
+  cursor: pointer;
+  border-radius: 50px;
+  border: none;
+  transition: all 0.4s ease-in-out;
+  background-color: rgb(106, 106, 106);
+}
+
+.rescanBtn:hover {
+  font-size: 0.9vw;
+  border: none;
 
 
-  .head{
-    font-size: 1.5vw;
-    font-weight: 600;
-  }
+  background-color: rgb(255, 57, 57);
+  transform: scale(1.05);
+}
 
-  .headDes{
-    margin-bottom: 1vw;
-  }
+.fingerLabel {
+  display: flex;
+  font-size: 1vw;
+  margin-bottom: 0.5vw;
+  font-weight: 550;
+  justify-content: center;
+}
 
-  .con{
-    padding: 2vw 13vw;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
-  'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
-  'Noto Color Emoji';
-  }
-  
-  .customTabs {
-    width: 100%;
-  }
+.subBtn {
+  text-align: center;
+  margin: 0.5vw;
+}
 
-  .tabHead{
-    display: flex;
-    width: 18.38vw;
-    justify-content: center;
-    
-  }
 
-  .tab{
-    background-color: rgb(240, 240, 240);
-    border-radius: 10px;
-  }
+.icon{
+  color: black !important;
 
-  Input{
-    display: flex !important;
-    margin-left: auto !important;
-    width: 25vw !important;
-  }
-
-  .select{
-    display: flex !important;
-    margin-left: auto !important;
-    width: 25vw !important;
-  }
+}

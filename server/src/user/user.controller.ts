@@ -6,6 +6,7 @@ import {
     HttpException,
     HttpStatus,
     Param,
+    Query,
     Post,
     Put,
   } from '@nestjs/common';
@@ -34,9 +35,9 @@ import {
     }
   
     @Get()
-    async findAll() {
+    async findAll(@Query('search')search?:string, @Query ('role')role?:string) {
       try {
-        return await this.userService.findAll();
+        return await this.userService.findAll(search,role);
       } catch (err) {
         throw new HttpException(
           {
@@ -48,6 +49,9 @@ import {
         );
       }
     }
+
+
+
   
     @Get(':id')
     async findOne(@Param('id') id: string) {

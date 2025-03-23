@@ -11,14 +11,16 @@ const useStyle = createStyles(({ prefixCls, css }) => ({
       > span {
         position: relative;
         font-weight: 500;
-        padding: 50px;
+        padding: 40px;
+        display:flex;
+        align-items:center;
+        justify-content:center;
         color: rgb(107, 0, 0);
       }
 
       &::before {
         content: "";
-
-        background: rgb(255, 177, 177);
+        background-color: rgb(255, 177, 177);
         position: absolute;
         inset: -1px;
         opacity: 1;

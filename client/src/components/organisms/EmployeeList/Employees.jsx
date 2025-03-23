@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect,useCallback } from "react";
 import axios from "axios";
 import { Table, Space, Modal, ConfigProvider, Input, Select } from "antd";
 import { FiEdit } from "react-icons/fi";
@@ -7,9 +7,12 @@ import EditModal from "../../templates/newEditModal/EditModal";
 import Loading from "../../atoms/loading/loading";
 import styles from "./Employee.module.css";
 import SearchBar from "../../molecules/SearchBar/SearchBar";
+import { debounce } from "lodash";
 
 const Employees = () => {
   const [loading, setLoading] = useState(true);
+  const [search,setSearch]=useState()
+  const [role,setRole]=useState()
   const { Search } = Input;
   const [employee, setEmployee] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -26,6 +29,11 @@ const Employees = () => {
     setSelectEmployee(null);
   };
 
+
+  useEffect(() => {
+    debouncedFetch(search,role);
+  }, [search,role]);
+
   const customTheme = {
     components: {
       Table: {
@@ -41,9 +49,13 @@ const Employees = () => {
 
 
 
-  const fetchEmployee = async () => {
+  const fetchEmployee = async (searchValue,roleValue) => {
     try {
-      const response = await axios.get(`${urL}/user`);
+      const response = await axios.get(`${urL}/user`,{
+      params:{
+        search:searchValue||undefined,
+        role:roleValue||undefined,
+      }});
       const fetchedEmployee = response.data.map((emp) => ({
         key: emp.id,
         id: emp.id,
@@ -58,6 +70,14 @@ const Employees = () => {
       setLoading(false);
     }
   };
+
+  const debouncedFetch = useCallback(
+    debounce((searchValue) => {
+      fetchEmployee(searchValue);
+    }, 300),
+    []
+  );
+
 
   const handleDelete = async (id) => {
     try {
@@ -81,6 +101,10 @@ const Employees = () => {
 
   if (loading) {
     return <Loading />;
+  }
+
+  const searchEmp=()=>{
+
   }
 
   const columns = [
@@ -153,7 +177,6 @@ const Employees = () => {
       >
         <EditModal
           empId={selectEmployee}
-          handleCancel={handleCancel}
           fetchEmployee={fetchEmployee}
         />
       </Modal>
@@ -163,15 +186,15 @@ const Employees = () => {
           <div className={styles.homeHead}>
             <div className={styles.headLeft}>Registered Employee Details</div>
             <div className={styles.headRight}>
-              <SearchBar placeholder={"Search Employee"} onSearch={Search} styles={{marginRight:"1vw"}}/>
+              <SearchBar onChange={(e)=>setSearch(e.target.value)} placeholder={"Search Employee"} onSearch={Search} styles={{marginRight:"1vw"}}/>
 
               <Select
                 showSearch
                 allowClear
+                onChange={(value)=>setRole(value)}
                 placeholder="Select Role"
                 className={styles.filter}
                 optionFilterProp="label"
-                onChange={onChange}
                 options={[
                   {
                     value: "HR Manager",

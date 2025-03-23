@@ -34,15 +34,7 @@
   border-radius: 10px;
 }
 
-.selects {
-  width: 50%;
-  margin-bottom: 1.05vw;
-  padding: 0.6vw;
-  font-size: 1vw;
-  border: 2.2px solid black;
-  border-radius: 0.6vw;
-  transition-duration: 0.3s;
-}
+
 
 .customJob {
   margin-top: 1vw;

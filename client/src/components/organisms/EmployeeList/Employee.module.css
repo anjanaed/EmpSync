@@ -101,7 +101,7 @@
 }
 
 .contentBox {
-  background-color: white;
+  background-color: rgb(255, 255, 255);
   margin: 0.5vw;
   border-radius: 10px;
   padding: 0.5vw;
@@ -112,10 +112,11 @@
 
 Table {
   margin-top: 1vw;
+  background-color: rgb(245, 245, 245);
 }
 
 :global(.ant-table-wrapper) :global(.ant-table-tbody > tr:hover > td) {
-  background-color: rgba(200, 200, 200, 0.87) !important;
+  background-color: rgba(196, 196, 196, 0.87) !important;
   transition: background-color 0s !important; /* Remove transition delay */
   color: black;
 }
