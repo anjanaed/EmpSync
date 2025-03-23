@@ -28,7 +28,7 @@
 }
 
 :global(.ant-select-selector) {
-  border: 1px solid rgb(219, 218, 218) !important; /* Very visible for testing */
+  border: 1px solid rgb(219, 218, 218) !important; 
   background-color: white !important;
 }
 
@@ -37,12 +37,8 @@
 }
 
 :global(.ant-select:hover .ant-select-selector) {
-  border-color: #1890ff !important; /* Blue hover border */
+  border-color: #1890ff !important; 
 }
-
-
-
-
 
 .homeHead {
   display: flex;
@@ -61,18 +57,15 @@
 .headRight {
   margin-left: auto;
   display: flex;
-  
 }
 
-.filter{
+.filter {
   width: 10vw;
 }
 
-.searchBar{
+.searchBar {
   margin-right: 1vw;
 }
-
-
 
 .headRight select {
   font-size: 1vw;
@@ -101,21 +94,22 @@
 }
 
 .contentBox {
-  background-color: white;
+  background-color: rgb(255, 255, 255);
   margin: 0.5vw;
   border-radius: 10px;
   padding: 0.5vw;
   height: auto;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25), 0 3px 6px rgba(0, 0, 0, 0.22); /* More visible shadow with red tint */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25), 0 3px 6px rgba(0, 0, 0, 0.22); 
   overflow-y: auto;
 }
 
 Table {
   margin-top: 1vw;
+  background-color: rgb(245, 245, 245);
 }
 
 :global(.ant-table-wrapper) :global(.ant-table-tbody > tr:hover > td) {
-  background-color: rgba(200, 200, 200, 0.87) !important;
-  transition: background-color 0s !important; /* Remove transition delay */
+  background-color: rgba(196, 196, 196, 0.87) !important;
+  transition: background-color 0s !important; 
   color: black;
 }

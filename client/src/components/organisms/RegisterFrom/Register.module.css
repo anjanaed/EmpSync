@@ -3,11 +3,12 @@
 .formContainer {
   border: 2px solid rgb(207, 207, 207);
   margin: 3vw 4vw;
+  border-radius: 20px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
   overflow: hidden;
 }
 
-.heading{
+.heading {
   text-align: center;
   font-weight: 500;
   font-size: 1.5vw;
@@ -15,36 +16,33 @@
   padding: 2vw 1vw 4vw 1vw;
 }
 
-.finHeader{
-    font-weight: 500;
-    display: flex;
-    position: relative;
-    flex-direction: row;
-    font-size: 1.5vw;
-    font-family: "Ubuntu", sans-serif;
-    padding: 2vw 1vw 4vw 1vw;
+.finHeader {
+  font-weight: 500;
+  display: flex;
+  position: relative;
+  flex-direction: row;
+  font-size: 1.5vw;
+  font-family: "Ubuntu", sans-serif;
+  padding: 2vw 1vw 4vw 1vw;
 }
 
-.head{
-    
-    text-align: center;
-    width: 100%; /* Take full width of container */
-    font-weight: 500;
+.head {
+  text-align: center;
+  width: 100%;
+  font-weight: 500;
 }
 
-.backIcon{
-
-    top: 50%;
-    transform: translateY(-50%);
-    cursor: pointer;
-    font-size: 1.5vw;
-    transition: 0.2 ease-in-out;
-    z-index: 10;
+.backIcon {
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  font-size: 1.5vw;
+  transition: 0.2 ease-in-out;
+  z-index: 10;
 }
 
-.backIcon:hover{
-    color: rgb(190, 0, 0);
-
+.backIcon:hover {
+  color: rgb(190, 0, 0);
 }
 
 .fingerPrint {
@@ -59,15 +57,15 @@
   height: auto;
   overflow-x: hidden;
   flex-direction: row;
-  gap: 4vw; /* Add gap between columns */
-  margin: 0 auto; /* Center the form */
+  gap: 4vw;
+  margin: 0 auto;
 }
 
 .sideOne {
   width: 50%;
   display: flex;
   flex-direction: column;
-  padding-right: 20px; /* Add some padding */
+  padding-right: 20px;
 }
 
 :global(.ant-form-item-label) {
@@ -93,5 +91,4 @@
   background-color: rgb(221, 0, 0) !important;
   color: white !important;
   transform: scale(1.05);
-
 }

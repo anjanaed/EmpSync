@@ -13,7 +13,6 @@ import {
   Button,
   Layout,
   Menu,
-  theme,
   ConfigProvider,
   Space,
   Dropdown,
@@ -55,34 +54,34 @@ const NavBar = ({ Comp }) => {
     },
   ];
   const [collapsed, setCollapsed] = useState(false);
-  const [selectedKey,setSelectedKey]=useState("1")
-  const [loading,setLoading]=useState(false);
+  const [selectedKey, setSelectedKey] = useState("1");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const checkPath=()=>{
-    setLoading(true)
-    const path=location.pathname;
-    if (path=="/"){
+  const checkPath = () => {
+    setLoading(true);
+    const path = location.pathname;
+    if (path == "/") {
       setSelectedKey("1");
     }
-    if (path=="/reg"){
+    if (path == "/reg") {
       setSelectedKey("2");
     }
-    if (path=="/payroll"){
+    if (path == "/payroll") {
       setSelectedKey("3");
     }
-    if (path=="/report"){
+    if (path == "/report") {
       setSelectedKey("4");
     }
-    setLoading(false)
-  }
+    setLoading(false);
+  };
 
-  useEffect(()=>{
-    checkPath()
-  },[location.pathname])
+  useEffect(() => {
+    checkPath();
+  }, [location.pathname]);
 
   if (loading) {
-    return <Loading/>;
+    return <Loading />;
   }
 
   return (

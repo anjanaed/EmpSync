@@ -1,22 +1,26 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import { Table, Space, Modal, ConfigProvider, Input, Select } from "antd";
 import { FiEdit } from "react-icons/fi";
 import { MdOutlineDeleteOutline } from "react-icons/md";
-import EditModal from "../EditModal/EditModal";
+import EditModal from "../../templates/EditModal/EditModal";
 import Loading from "../../atoms/loading/loading";
 import styles from "./Employee.module.css";
+import SearchBar from "../../molecules/SearchBar/SearchBar";
+import { debounce } from "lodash";
 
 const Employees = () => {
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState();
+  const [frole, setFrole] = useState();
   const { Search } = Input;
+  const [emp, setEmp] = useState(null);
   const [employee, setEmployee] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectEmployee, setSelectEmployee] = useState(null);
   const urL = import.meta.env.VITE_BASE_URL;
 
   const openModal = (empId) => {
-    setSelectEmployee(empId);
+    setEmp(empId);
     setIsModalOpen(true);
   };
 
@@ -25,24 +29,29 @@ const Employees = () => {
     setSelectEmployee(null);
   };
 
+  useEffect(() => {
+    debouncedFetch(search, frole);
+  }, [search, frole]);
+
   const customTheme = {
     components: {
       Table: {
-        headerBg: "#d10000",
+        headerBg: "rgba(151, 0, 0, 0.78)",
         headerColor: "white",
-        headerSortActiveBg:"rgba(161, 0, 0, 0.78)",
-        headerSortHoverBg:"rgba(161, 0, 0, 0.78)",
-
-
+        headerSortActiveBg: "rgba(151, 0, 0, 0.78)",
+        headerSortHoverBg: "rgba(183, 0, 0, 0.78)",
       },
     },
   };
 
-
-
-  const fetchEmployee = async () => {
+  const fetchEmployee = async (searchValue, roleValue) => {
     try {
-      const response = await axios.get(`${urL}/user`);
+      const response = await axios.get(`${urL}/user`, {
+        params: {
+          search: searchValue || undefined,
+          role: roleValue || undefined,
+        },
+      });
       const fetchedEmployee = response.data.map((emp) => ({
         key: emp.id,
         id: emp.id,
@@ -57,6 +66,13 @@ const Employees = () => {
       setLoading(false);
     }
   };
+
+  const debouncedFetch = useCallback(
+    debounce((searchValue, roleValue) => {
+      fetchEmployee(searchValue, roleValue);
+    }, 300),
+    []
+  );
 
   const handleDelete = async (id) => {
     try {
@@ -88,7 +104,12 @@ const Employees = () => {
       dataIndex: "id",
       key: "id",
       align: "center",
-      sorter: (a, b) => parseInt(a.id) - parseInt(b.id),
+      defaultSortOrder: "ascend",
+      sorter: (a, b) => {
+        const numA = parseInt(a.id.match(/\d+/)?.[0] || "0", 10);
+        const numB = parseInt(b.id.match(/\d+/)?.[0] || "0", 10);
+        return numA - numB;
+      },
       ellipsis: true,
     },
     {
@@ -133,24 +154,16 @@ const Employees = () => {
     },
   ];
 
-  const handleTableChange = (pagination, filters, sorter) => {
-    setSortedInfo(sorter);
-  };
-
-  const handleSearch = () => {};
-
-  const onChange = () => {};
-
   return (
     <>
       <Modal
         open={isModalOpen}
         footer={null}
-        width="53vw"
+        width="65vw"
         onCancel={handleCancel}
       >
         <EditModal
-          empId={selectEmployee}
+          empId={emp}
           handleCancel={handleCancel}
           fetchEmployee={fetchEmployee}
         />
@@ -161,43 +174,36 @@ const Employees = () => {
           <div className={styles.homeHead}>
             <div className={styles.headLeft}>Registered Employee Details</div>
             <div className={styles.headRight}>
-              <Space direction="vertical">
-                <Search
-                  placeholder="Search Employee"
-                  className={styles.searchBar}
-                  onSearch={handleSearch}
-                  style={{
-                    width: 200,
-                  }}
-                />
-              </Space>
+              <SearchBar
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder={"Search Employee"}
+                onSearch={Search}
+                styles={{ marginRight: "1vw" }}
+              />
+
               <Select
                 showSearch
                 allowClear
+                onChange={(value) => setFrole(value)}
                 placeholder="Select Role"
                 className={styles.filter}
                 optionFilterProp="label"
-                onChange={onChange}
                 options={[
                   {
-                    value: "HR Manager",
+                    value: "HrManager",
                     label: "HR Manager",
                   },
                   {
-                    value: "Kitchen Admin",
+                    value: "KitchenAdmin",
                     label: "Kitchen Admin",
                   },
                   {
-                    value: "Kitchen Staff",
+                    value: "KitchenStaff",
                     label: "Kitchen Staff",
                   },
                   {
-                    value: "Inventory Manager",
+                    value: "InventoryManager",
                     label: "Inventory Manager",
-                  },
-                  {
-                    value: "Other",
-                    label: "Other",
                   },
                 ]}
               />
@@ -207,7 +213,6 @@ const Employees = () => {
             <Table
               columns={columns}
               dataSource={employee}
-              onChange={handleTableChange}
               pagination={false}
             />
           </ConfigProvider>
