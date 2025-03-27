@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import styles from "./Navbar.module.css";
+import styles from "./NavBar.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faUsers,
@@ -15,7 +15,6 @@ import {
   Button,
   Layout,
   Menu,
-  theme,
   ConfigProvider,
   Space,
   Dropdown,
@@ -23,7 +22,7 @@ import {
 } from "antd";
 import img from "../../../assets/logo.png";
 import { useNavigate } from "react-router-dom";
-import Loading from "../../loading/loading";
+import Loading from "../../atoms/loading/loading";
 
 const { Sider } = Layout;
 
@@ -44,7 +43,7 @@ const customTheme = {
   },
 };
 
-const Navbar = ({ Comp }) => {
+const NavBar = ({ Comp }) => {
   const items = [
     {
       key: "1",
@@ -57,31 +56,31 @@ const Navbar = ({ Comp }) => {
     },
   ];
   const [collapsed, setCollapsed] = useState(false);
-  const [selectedKey,setSelectedKey]=useState("1")
-  const [loading,setLoading]=useState(false);
+  const [selectedKey, setSelectedKey] = useState("1");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const checkPath=()=>{
-    setLoading(true)
-    const path=location.pathname;
-    if (path=="/Ingredients"){
+  const checkPath = () => {
+    setLoading(true);
+    const path = location.pathname;
+    if (path == "/Ingredients") {
       setSelectedKey("1");
     }
-    if (path=="/AnalysisDashboard"){
+    if (path == "/AnalysisDashboard") {
       setSelectedKey("2");
     }
-    if (path=="/OrderReportDashboard"){
+    if (path == "/OrderReportDashboard") {
       setSelectedKey("3");
     }
-    setLoading(false)
-  }
+    setLoading(false);
+  };
 
-  useEffect(()=>{
-    checkPath()
-  },[location.pathname])
+  useEffect(() => {
+    checkPath();
+  }, [location.pathname]);
 
   if (loading) {
-    return <Loading/>;
+    return <Loading />;
   }
 
   return (
@@ -98,7 +97,7 @@ const Navbar = ({ Comp }) => {
             <>
               <h1 className={styles.navHeader}>
                 <div className={styles.red}>
-                  Inventory <br /> 
+                  Inventory <br />
                 </div>
                 Management
               </h1>
@@ -109,7 +108,7 @@ const Navbar = ({ Comp }) => {
             <>
               <h1 className={styles.navHeader}>
                 <div className={styles.red}>
-                  Inv <br /> 
+                  Inv <br />
                 </div>
                 M
               </h1>
@@ -180,7 +179,6 @@ const Navbar = ({ Comp }) => {
           </div>
         </div>
         <div className={styles.content}>
-          {/* Add conditional rendering to check if Comp is defined */}
           {Comp ? <Comp /> : <div>No component provided</div>}
         </div>
       </div>
@@ -188,6 +186,4 @@ const Navbar = ({ Comp }) => {
   );
 };
 
-
-
-export default Navbar;
+export default NavBar;
