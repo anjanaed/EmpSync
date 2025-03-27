@@ -32,6 +32,14 @@
   font-weight: 600;
 }
 
+.table :global(.ant-table-tbody > tr:nth-child(odd)) {
+  background-color: #f9f9f9;
+}
+
+.table :global(.ant-table-tbody > tr:hover) {
+  background-color: #f0f7ff !important;
+}
+
 .status {
   display: inline-block;
   padding: 2px 8px;
