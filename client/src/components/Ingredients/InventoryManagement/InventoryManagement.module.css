@@ -53,7 +53,8 @@
     .header {
       flex-direction: row;
       align-items: center;
-}
+    }
+
     
 .titleContainer {
       margin-bottom: 0;
