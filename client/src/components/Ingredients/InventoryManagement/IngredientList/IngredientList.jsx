@@ -1,40 +1,63 @@
 import React from 'react';
-import { Table, Button, Dropdown } from 'antd';
-import { EditOutlined, DeleteOutlined, MoreOutlined, DownOutlined } from '@ant-design/icons';
-import IngredientItem from '../IngredientItem/IngredientItem';
+import { Table, Button, Dropdown, Empty } from 'antd';
+import { EditOutlined, DeleteOutlined, DownOutlined } from '@ant-design/icons';
 import styles from './IngredientList.module.css';
 
 const IngredientList = ({ ingredients, onEdit, onDelete }) => {
+  if (!ingredients || ingredients.length === 0) {
+    return <Empty description="No ingredients found" />;
+  }
+
+  // Function to get priority label and class
+  const getPriorityLabel = (priority) => {
+    switch(parseInt(priority)) {
+      case 1: return { label: 'High', className: styles.highPriority };
+      case 2: return { label: 'Medium', className: styles.mediumPriority };
+      case 3: return { label: 'Low', className: styles.lowPriority };
+      default: return { label: 'Normal', className: styles.normalPriority };
+    }
+  };
+
   const columns = [
     {
-      title: 'Ingredient',
+      title: 'ID',
+      dataIndex: 'id',
+      key: 'id',
+      width: 100,
+    },
+    {
+      title: 'Ingredient Name',
       dataIndex: 'name',
       key: 'name',
     },
     {
-      title: 'Category',
-      dataIndex: 'category',
-      key: 'category',
+      title: 'Price Per Unit',
+      dataIndex: 'price_per_unit',
+      key: 'price_per_unit',
+      render: (price) => `Rs. ${price}`,
     },
     {
       title: 'Quantity',
+      dataIndex: 'quantity',
       key: 'quantity',
-      render: (_, record) => `${record.quantity} ${record.unit}`,
     },
     {
-      title: 'Status',
-      dataIndex: 'status',
-      key: 'status',
-      render: (status) => (
-        <span className={`${styles.status} ${status === 'Low Stock' ? styles.lowStock : styles.inStock}`}>
-          {status}
-        </span>
-      ),
+      title: 'Priority',
+      dataIndex: 'priority',
+      key: 'priority',
+      render: (priority) => {
+        const { label, className } = getPriorityLabel(priority);
+        return (
+          <span className={`${styles.status} ${className}`}>
+            {label}
+          </span>
+        );
+      },
     },
     {
-      title: '',
+      title: 'Actions',
       key: 'actions',
-      width: 100,
+      width: 120,
       render: (_, record) => (
         <div className={styles.actions}>
           <Button 
@@ -66,6 +89,12 @@ const IngredientList = ({ ingredients, onEdit, onDelete }) => {
     },
   ];
 
+  // Convert ingredients to proper format for the table
+  const tableData = ingredients.map(ingredient => ({
+    ...ingredient,
+    key: ingredient.id,
+  }));
+
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -74,10 +103,10 @@ const IngredientList = ({ ingredients, onEdit, onDelete }) => {
       </div>
       
       <Table 
-        dataSource={ingredients} 
+        dataSource={tableData} 
         columns={columns} 
         rowKey="id" 
-        pagination={false}
+        pagination={{ pageSize: 10 }}
         className={styles.table}
       />
       
