@@ -1,28 +1,16 @@
 import React, { useState } from "react";
-import {
-  AutoComplete,
-  Button,
-  Cascader,
-  Checkbox,
-  DatePicker,
-  Col,
-  Form,
-  Space,
-  Input,
-  InputNumber,
-  Row,
-  Select,
-} from "antd";
+import { DatePicker, Form, Space, Input, Select } from "antd";
 import styles from "./Register.module.css";
 import { IoIosArrowBack } from "react-icons/io";
-import FingerPrint from "../FingerPrint/FingerPrint";
-import Loading from "../../loading/loading";
+import FingerPrint from "../../atoms/FingerPrint/FingerPrint";
+import Loading from "../../atoms/loading/loading";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
+import { AiOutlineCaretRight } from "react-icons/ai";
+import Gbutton from "../../atoms/button/Button";
 import axios from "axios";
 
 const Register = () => {
-  const { RangePicker } = DatePicker;
   const [menu, setMenu] = useState(1);
   const urL = import.meta.env.VITE_BASE_URL;
   const navigate = useNavigate();
@@ -226,7 +214,14 @@ const Register = () => {
                     <Option value="Other">Other</Option>
                   </Select>
                 </Form.Item>
-                <Form.Item label={<><p style={{color:"red"}}>* </p>&#8201; Job Role</>} name="role">
+                <Form.Item
+                  label={
+                    <>
+                      <p style={{ color: "red" }}>* </p>&#8201; Job Role
+                    </>
+                  }
+                  name="role"
+                >
                   <Space.Compact style={{ display: "flex", width: "100%" }}>
                     <Form.Item
                       noStyle
@@ -259,7 +254,7 @@ const Register = () => {
                         onChange={(e) => setCustomJobRole(e.target.value)}
                         placeholder="If Other, Enter Job Role"
                         disabled={jobRole !== "Other"}
-                        required="false"
+                        required={false}
                       />
                     </Form.Item>
                   </Space.Compact>
@@ -345,9 +340,11 @@ const Register = () => {
               </div>
             </div>
             <div className={styles.btnContainer}>
-              <Button onClick={handleNext} className={styles.btn}>
-                Next
-              </Button>
+              <Gbutton onClick={handleNext}>
+                <>
+                  Next &nbsp; <AiOutlineCaretRight />
+                </>
+              </Gbutton>
             </div>
           </Form>
         </>
@@ -366,9 +363,9 @@ const Register = () => {
             <FingerPrint />
           </div>
           <div className={styles.btnContainer}>
-            <Button onClick={handleRegister} className={styles.btn}>
+            <Gbutton onClick={handleRegister} className={styles.btn}>
               Register Without Finger Print
-            </Button>
+            </Gbutton>
           </div>
         </>
       )}
