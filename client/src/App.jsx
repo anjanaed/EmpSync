@@ -8,8 +8,12 @@ import Serving from "./pages/Serving staff/Barcode Scan/Serving";
 import MealConform from "./pages/Serving staff/Meal Conform/MealConform";
 import LoginRole from "./pages/LoginRole/LoginRole";
 import PasswordReset from "./pages/PasswordReset/PasswordReset"; 
-import RegisterPage from "./pages/HRManager/RegisterPage/RegisterPage";
-import EmployeePage from "./pages/HRManager/EmployeePage/EmployeePage";
+import RegisterPage from "./components/pages/HR/RegisterPage/RegisterPage";
+import EmployeePage from "./components/pages/HR/EmployeePage/EmployeePage";
+import Ingredients from "./pages/Ingredients/Dashboard/Ingredients";
+import AnalysisDashboard from "./pages/Ingredients/AnalysisDashboard/AnalysisDashboard";
+import OrderReportDashboard from "./pages/Ingredients/OrderReportDashboard/OrderReportDashboard";
+
 
 function App() {
   return (
