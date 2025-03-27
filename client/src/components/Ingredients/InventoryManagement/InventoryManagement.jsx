@@ -1,19 +1,34 @@
-import React, { useState } from 'react';
-import { Input, Button, Card } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { Input, Button, Card, message, Modal } from 'antd'; // Add Modal import
 import { PlusOutlined } from '@ant-design/icons';
 import IngredientList from './IngredientList/IngredientList';
 import styles from './InventoryManagement.module.css';
+import axios from 'axios';
 
 const { Search } = Input;
 
 const InventoryManagement = () => {
-  const [ingredients, setIngredients] = useState([
-    { id: 1, name: 'Olive Oil', category: 'Oils', quantity: 8, unit: 'L', status: 'Low Stock' },
-    { id: 2, name: 'Salt', category: 'Spices', quantity: 12, unit: 'kg', status: 'In Stock' },
-    { id: 3, name: 'Black Pepper', category: 'Spices', quantity: 5, unit: 'kg', status: 'In Stock' },
-  ]);
-
+  const [ingredients, setIngredients] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  // Fetch ingredients from the API
+  const fetchIngredients = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get('http://localhost:3000/ingredients');
+      setIngredients(response.data);
+    } catch (error) {
+      console.error('Error fetching ingredients:', error);
+      message.error('Failed to load ingredients');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchIngredients();
+  }, []);
 
   const handleSearch = (value) => {
     setSearchTerm(value);
@@ -28,8 +43,26 @@ const InventoryManagement = () => {
     console.log('Edit ingredient', id);
   };
 
-  const handleDeleteIngredient = (id) => {
-    setIngredients(ingredients.filter(ingredient => ingredient.id !== id));
+  const handleDeleteIngredient = async (id) => {
+    Modal.confirm({
+      title: 'Are you sure you want to delete this ingredient?',
+      content: 'This action cannot be undone.',
+      okText: 'Yes, delete it',
+      okType: 'danger',
+      cancelText: 'Cancel',
+      onOk: async () => {
+        try {
+          await axios.delete(`http://localhost:3000/ingredients/${id}`);
+          
+          // For now, just filter locally
+          setIngredients(ingredients.filter(ingredient => ingredient.id !== id));
+          message.success('Ingredient deleted successfully');
+        } catch (error) {
+          console.error('Error deleting ingredient:', error);
+          message.error('Failed to delete ingredient');
+        }
+      },
+    });
   };
 
   const filteredIngredients = ingredients.filter(ingredient => 
@@ -61,7 +94,7 @@ const InventoryManagement = () => {
         </div>
       </div>
       
-      <Card className={styles.card}>
+      <Card className={styles.card} loading={loading}>
         <IngredientList 
           ingredients={filteredIngredients} 
           onEdit={handleEditIngredient} 
