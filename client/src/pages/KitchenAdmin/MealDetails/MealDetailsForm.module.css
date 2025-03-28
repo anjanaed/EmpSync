@@ -1,32 +1,83 @@
 /* MealDetailsForm.module.css */
-.container {
-    min-height: 100vh;
-    background-color: #F8F4DA;
+.pageContainer {
+  min-height: 100vh;
+  background-color: #f5f7fa;
+}
+
+.contentWrapper {
+  padding: 24px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.formCard {
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.cardTitle {
+  margin-bottom: 24px !important;
+}
+
+.imageContainer {
+  margin-bottom: 16px;
+}
+
+.imagePlaceholder {
+  width: 100%;
+  height: 300px;
+  border: 1px dashed #d9d9d9;
+  border-radius: 4px;
+  background-color: #fafafa;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.3s;
+}
+
+.imagePlaceholder:hover {
+  border-color: #1890ff;
+}
+
+.uploadHint {
+  text-align: center;
+  color: #888;
+}
+
+.chooseImageButton {
+  margin-bottom: 24px;
+}
+
+.ingredientsButton {
+  background-color: #1a1a1a;
+  border-color: #1a1a1a;
+}
+
+.ingredientsButton:hover, 
+.ingredientsButton:focus {
+  background-color: #333;
+  border-color: #333;
+}
+
+.actionButtonsRow {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.cancelButtonCol {
+  text-align: left;
+}
+
+.confirmButtonCol {
+  text-align: right;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .cancelButtonCol,
+  .confirmButtonCol {
+    text-align: center;
+    margin-top: 12px;
   }
-  
-  .content {
-    padding: 24px;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-  }
-  
-  .formContainer {
-    background-color: white;
-    padding: 32px;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    max-width: 1000px;
-  }
-  
-  .title {
-    margin-bottom: 32px;
-  }
-  
-  .formLayout {
-    display: grid;
-    grid-template-columns: 250px 1fr;
-    gap: 32px;
-    margin-bottom: 24px;
-  }
+}

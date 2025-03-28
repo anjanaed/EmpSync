@@ -1,16 +1,24 @@
 .layout {
+  display: flex;
   min-height: 100vh;
+  background: white;
 }
 
 .content {
+  flex-grow: 1;
   padding: 24px;
   background: white;
+  margin-right: 0px;
+  width: calc(0% - 250px); /* Adjust based on your navbar width */
+  overflow-x: hidden;
 }
 
 .card {
   width: 100%;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  max-width: 1200px; /* Limit maximum width */
+  margin: 0 auto; /* Center the card */
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .titleContainer {
@@ -23,24 +31,33 @@
 .menuTitle {
   margin-bottom: 0 !important;
   font-weight: bold;
+  font-size: 1.5rem;
+  color: #333;
 }
 
 .selectDateButton {
   display: flex;
   align-items: center;
+  color: #5D071C;
+  border-color: #5D071C;
 }
 
-/* New custom tabs style to match the screenshot */
+.selectDateButton:hover {
+  color: white;
+  background-color: #5D071C;
+}
+
 .customTabsContainer {
   margin-bottom: 20px;
 }
 
 .customTabs {
   display: flex;
-  border: 1px solid #f0f0f0;
-  border-radius: 4px;
-  background-color: #f7f7f7;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background-color: #f9f9f9;
   overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .customTab {
@@ -48,52 +65,86 @@
   text-align: center;
   padding: 12px 16px;
   cursor: pointer;
-  transition: all 0.3s;
+  transition: all 0.3s ease;
   font-weight: 500;
   color: #6c6c6c;
+  position: relative;
+}
+
+.customTab:hover {
+  background-color: #f0f0f0;
 }
 
 .activeTab {
   background-color: white;
-  color: #212121;
-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.05);
+  color: #5D071C;
+  box-shadow: 0 -2px 0 #5D071C inset;
 }
 
 .menuContainer {
   display: flex;
-  margin-top: 20px;
+  gap: 20px;
+  background-color: #fafafa;
+  border-radius: 8px;
+  padding: 20px;
 }
 
 .menuList {
-  width: 50%;
-  background-color: #f9f9f9;
-  padding: 0;
-  border-radius: 4px;
+  flex: 1;
+  background-color: white;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+  overflow: hidden;
 }
 
 .menuItem {
   padding: 16px !important;
+  transition: background-color 0.2s ease;
+}
+
+.menuItem:hover {
+  background-color: #f5f5f5;
 }
 
 .divider {
   margin: 0;
+  border-top-color: #e0e0e0;
 }
 
 .actionContainer {
-  width: 50%;
-  padding-left: 20px;
+  flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 15px;
 }
 
 .updateButton, .removeButton {
-  height: 45px;
+  height: 50px;
   display: flex;
   align-items: center;
-  justify-content: flex-start;
-  padding-left: 16px;
-  border: 1px solid #e5e7eb;
+  justify-content: center;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+}
+
+.updateButton {
+  border-color: #5D071C;
+  color: #5D071C;
+}
+
+.updateButton:hover {
+  background-color: #5D071C;
+  color: white;
+}
+
+.removeButton {
+  border-color: #d32f2f;
+  color: #d32f2f;
+}
+
+.removeButton:hover {
+  background-color: #d32f2f;
+  color: white;
 }
 
 .buttonLabel {
@@ -101,31 +152,47 @@
 }
 
 .confirmButton {
-  height: 45px;
-  margin-top: 10px;
+  height: 50px;
   background: #5D071C;
   border-color: #5D071C;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  border-radius: 6px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .confirmButton:hover {
-  background: #374151;
-  border-color: #374151;
+  background: #46051a;
+  border-color: #46051a;
 }
 
-/* Date picker styles */
 .datePickerContainer {
   position: relative;
 }
 
 .datePickerDropdown {
   position: absolute;
-  top: 40px;
+  top: 100%;
   right: 0;
   z-index: 100;
-  background: white;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  border-radius: 4px;
+  margin-top: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 6px;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .content {
+    margin-left: 0;
+    width: 100%;
+    padding: 12px;
+  }
+
+  .menuContainer {
+    flex-direction: column;
+  }
+
+  .menuList, .actionContainer {
+    width: 100%;
+  }
 }

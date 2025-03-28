@@ -17,6 +17,7 @@ import moment from 'moment';
 import Navbar from "../../../components/KitchenAdmin/KitchenNavbar/navbar";
 import styles from './kitchenAdminDash.module.css';
 
+
 const { Content } = Layout;
 const { Title } = Typography;
 
@@ -72,8 +73,7 @@ const MenuManagementPage = () => {
 
   return (
     <Layout className={styles.layout}>
-      <Navbar />
-      
+      {/* <Navbar /> */}
       <Content className={styles.content}>
         <Card className={styles.card}>
           <div className={styles.titleContainer}>

@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "./index.css";
-import Register from "./pages/HRManager/Registration/Registration";
+import Register from "./pages/HRManager/RegisterPage/RegisterPage";
 import KitchenAdmin from "./pages/KitchenAdmin/KitchenAdminDashBoard/kitchenAdminDash"; 
 import Reports from "./pages/KitchenAdmin/Report/report"; 
 import MealDetailsForm from "./pages/KitchenAdmin/MealDetails/MealDetailsForm";
@@ -8,7 +8,7 @@ import MealPlan from "./pages/KitchenAdmin/MealPlan/mealPlan";
 import SelectIngredients from "./pages/KitchenAdmin/SelectIngredients/ingredients";
 import EditMeal from "./pages/KitchenAdmin/EditMeal/editMeal";
 import Login from "./pages/Login/Login";
-import Employees from "./pages/HRManager/Employees/Employees";
+import Employees from "./pages/HRManager/EmployeePage/EmployeePage";
 
 function App() {
   return (

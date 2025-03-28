@@ -1,0 +1,32 @@
+/* Navbar.module.css */
+.header {
+    padding: 0 16px;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    height: auto;
+    line-height: normal;
+  }
+  
+  .navbarContent {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+  }
+  
+  .backButton {
+    padding: 4px 0;
+  }
+  
+  .title {
+    margin: 0 !important;
+    flex-grow: 1;
+    text-align: center;
+  }
+  
+  .logoutButton {
+    min-width: 80px;
+  }
