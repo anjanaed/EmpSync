@@ -99,7 +99,6 @@ const IngredientList = ({ ingredients, onEdit, onDelete }) => {
     <div className={styles.container}>
       <div className={styles.header}>
         <h2 className={styles.title}>Ingredient List</h2>
-        <p className={styles.subtitle}>Manage your inventory of ingredients and supplies</p>
       </div>
       
       <Table 
