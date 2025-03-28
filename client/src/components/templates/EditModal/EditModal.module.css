@@ -1,0 +1,72 @@
+.head {
+  font-size: 1.5vw;
+  font-weight: 600;
+}
+
+.headDes {
+  margin: 0.2vw 0vw 1vw 0vw;
+  font-size: 0.85vw;
+}
+
+.con {
+  padding: 2vw 13vw;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji",
+    "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+
+.customTabs {
+  width: 100%;
+}
+
+.tabHead {
+  display: flex;
+  width: 19.4vw;
+  justify-content: center;
+}
+
+.tab {
+  background-color: rgb(240, 240, 240);
+  border-radius: 10px;
+  height: 54vh;
+}
+
+.rescanBtn {
+  display: flex;
+  padding: 0.5vw 2vw;
+  justify-content: center;
+  align-items: center;
+  margin: auto;
+  color: white;
+  font-size: 0.9vw;
+  cursor: pointer;
+  border-radius: 50px;
+  border: none;
+  transition: all 0.4s ease-in-out;
+  background-color: rgb(106, 106, 106);
+}
+
+.rescanBtn:hover {
+  font-size: 0.9vw;
+  border: none;
+
+  background-color: rgb(255, 57, 57);
+  transform: scale(1.05);
+}
+
+.fingerLabel {
+  display: flex;
+  font-size: 1vw;
+  margin-bottom: 0.5vw;
+  font-weight: 550;
+  justify-content: center;
+}
+
+.subBtn {
+  text-align: center;
+  margin: 0.5vw;
+}
+
+.icon {
+  color: black !important;
+}
