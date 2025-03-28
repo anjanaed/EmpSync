@@ -1,0 +1,18 @@
+.mainBox{
+    margin: 1.5vw;
+    padding: 1.5vw;
+    background-color: rgb(248, 248, 248);
+    border-radius: 10px;
+    font-family: Arial, Helvetica, sans-serif;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+
+}
+
+.mainTitle{
+    text-align: center;
+    line-height: 8px;
+}
+
+.mainTitle span{
+    color: rgb(144, 2, 2);
+}

@@ -13,6 +13,7 @@ import EmployeePage from "./components/pages/HR/EmployeePage/EmployeePage";
 import Ingredients from "./pages/Ingredients/Dashboard/Ingredients";
 import AnalysisDashboard from "./pages/Ingredients/AnalysisDashboard/AnalysisDashboard";
 import OrderReportDashboard from "./pages/Ingredients/OrderReportDashboard/OrderReportDashboard";
+import ReportPage from "./components/pages/HR/ReportPage/ReportPage";
 
 
 function App() {
@@ -32,6 +33,7 @@ function App() {
         <Route path="/Ingredients" element={<Ingredients />} />
         <Route path="/AnalysisDashboard" element={<AnalysisDashboard />} />
         <Route path="/OrderReportDashboard" element={<OrderReportDashboard />} />
+        <Route path="/reportPage" element={<ReportPage/>} /> 
       </Routes>
     </Router>
   );

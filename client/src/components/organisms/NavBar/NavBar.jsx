@@ -54,7 +54,7 @@ const NavBar = ({ Comp }) => {
     },
   ];
   const [collapsed, setCollapsed] = useState(false);
-  const [selectedKey, setSelectedKey] = useState("1");
+  const [selectedKey, setSelectedKey] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -70,7 +70,7 @@ const NavBar = ({ Comp }) => {
     if (path == "/payroll") {
       setSelectedKey("3");
     }
-    if (path == "/report") {
+    if (path == "/reportPage") {
       setSelectedKey("4");
     }
     setLoading(false);
@@ -144,7 +144,7 @@ const NavBar = ({ Comp }) => {
                 key: "4",
                 icon: <FontAwesomeIcon icon={faFileInvoice} />,
                 label: "Reports",
-                onClick: () => navigate("/"),
+                onClick: () => navigate("/reportPage"),
               },
             ]}
           />

@@ -1,0 +1,84 @@
+.card{
+    background-color: rgb(223, 223, 223);
+    margin: 3vw auto;
+    width: 70%;
+    border: 2px solid black;
+    
+    border-radius: 10px;
+    display: flex;
+}
+
+.card .left{
+    padding: 1.5vw 2vw;
+    flex: 1;
+}
+
+.card .right{
+    flex: 1;
+    display: flex;
+    padding: 1.5vw 2vw;
+    flex-direction: column;
+    gap: 33%;
+}
+
+.btn1{
+    color: rgb(150, 0, 0);
+    border: 2px solid ;
+    background-color: white;
+    transition: all 0.3s ease-in-out;
+}
+
+.btn2{
+    background-color: rgb(150, 0, 0);
+    color: white;
+    border: 2px solid rgb(150, 0, 0) ;
+    transition: all 0.3s ease-in-out;
+
+    
+}
+
+.btn1:hover{
+    background-color: rgb(150, 0, 0);
+    color: white;
+    transform: scale(1.1);
+    border: 2px solid rgb(255, 255, 255) ;
+}
+
+.btn2:hover{
+    color: rgb(150, 0, 0);
+    border: 2px solid ;
+    transform: scale(1.1);
+
+    background-color: white;
+
+
+}
+
+.right button{
+    margin-left: auto;
+    width: 40%;
+    font-size: 1.1vw;
+    padding: 5px;
+    border-radius: 10px;
+    cursor: pointer;
+
+}
+
+.cardTitle{
+    font-size: 1.2vw;
+    margin-bottom: 2.5vw;
+    line-height: 20px;
+}
+
+.cardTitle span{
+    font-size: 0.92vw !important;
+}
+
+.lastUpdate{
+    font-size: 0.95vw;
+}
+
+.lastUpdate span{
+    color: red ;
+    font-size: 1.1vw;
+}
