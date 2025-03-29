@@ -1,6 +1,7 @@
 import React from "react";
 import styles from "./ReportDashboard.module.css";
 import ReportCard from "../../templates/ReportCard/ReportCard";
+import img from "../../../assets/report.png"
 
 const ReportDashboard = () => {
 
@@ -11,6 +12,7 @@ const ReportDashboard = () => {
         console.log("Downloading")
     }
   return (
+    <div className={styles.dash}>
     <div className={styles.mainBox}>
       <div className={styles.mainTitle}>
         <h1>Report Dashboard</h1>
@@ -21,23 +23,11 @@ const ReportDashboard = () => {
         <ReportCard cardTitle={"Meal Cost Analysis Report"} cardDes={"From Kitchen"} lastUpdate={"2025/02/22"} btnView={handleView} btnDownload={handleDownload} />
 
 
-
-        {/* <div className={styles.card}>
-          <div className={styles.left}>
-            <div className={styles.cardTitle}>
-              Supply Cost Report
-              <br /> <span>From Inventory</span>
-            </div>
-            <div className={styles.lastUpdate}>
-              <span>*</span> Last Update: 2025/02/22{" "}
-            </div>
-          </div>
-          <div className={styles.right}>
-            <button className={styles.btn1}>View</button>
-            <button className={styles.btn2}>Download</button>
-          </div>
-        </div> */}
       </div>
+      <div className={styles.bottom}>
+        <img src={img}></img>
+      </div>
+    </div>
     </div>
   );
 };

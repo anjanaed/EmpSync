@@ -1,38 +1,42 @@
+@import url('https://fonts.googleapis.com/css2?family=Bree+Serif&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Itim&family=Roboto+Slab:wght@100..900&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap');
+
+
 .card{
-    background-color: rgb(223, 223, 223);
-    margin: 3vw auto;
-    width: 70%;
-    border: 2px solid black;
-    
+    background-color: rgb(235, 235, 235);
+    margin: 2vw auto;
+    font-family: "Inter", sans-serif;
+    width: 75%;
+    font-weight: 450;
+    border: 2px solid rgb(105, 0, 0);
     border-radius: 10px;
     display: flex;
 }
 
 .card .left{
-    padding: 1.5vw 2vw;
+    padding: 0.8vw 1.5vw;
     flex: 1;
 }
 
 .card .right{
     flex: 1;
     display: flex;
-    padding: 1.5vw 2vw;
+    padding: 1vw 2vw;
     flex-direction: column;
-    gap: 33%;
+    gap: 20%;
 }
 
 .btn1{
     color: rgb(150, 0, 0);
     border: 2px solid ;
     background-color: white;
-    transition: all 0.3s ease-in-out;
+    transition: all 0.4s ease-in-out;
 }
 
 .btn2{
     background-color: rgb(150, 0, 0);
     color: white;
     border: 2px solid rgb(150, 0, 0) ;
-    transition: all 0.3s ease-in-out;
+    transition: all 0.4s ease-in-out;
 
     
 }
@@ -40,15 +44,14 @@
 .btn1:hover{
     background-color: rgb(150, 0, 0);
     color: white;
-    transform: scale(1.1);
+    transform: scale(1.08);
     border: 2px solid rgb(255, 255, 255) ;
 }
 
 .btn2:hover{
     color: rgb(150, 0, 0);
     border: 2px solid ;
-    transform: scale(1.1);
-
+    transform: scale(1.08);
     background-color: white;
 
 
@@ -56,26 +59,32 @@
 
 .right button{
     margin-left: auto;
-    width: 40%;
-    font-size: 1.1vw;
+    width: 35%;
+    font-size: 0.9vw;
+    font-weight: 550;
     padding: 5px;
-    border-radius: 10px;
+    justify-content: center;
+    display: flex;
+    border-radius: 5px;
     cursor: pointer;
 
 }
 
 .cardTitle{
-    font-size: 1.2vw;
-    margin-bottom: 2.5vw;
+    font-size: 1vw;
+    margin-bottom: 1.5vw;
     line-height: 20px;
 }
 
 .cardTitle span{
-    font-size: 0.92vw !important;
+    font-size: 0.8vw !important;
+    color: rgb(88, 88, 88);
 }
 
 .lastUpdate{
-    font-size: 0.95vw;
+    font-size: 0.8vw;
+    color: rgb(88, 0, 0) ;
+
 }
 
 .lastUpdate span{

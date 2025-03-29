@@ -1,18 +1,38 @@
+@import url("https://fonts.googleapis.com/css2?family=Bree+Serif&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Itim&family=Roboto+Slab:wght@100..900&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap");
+
+
+
 .mainBox{
     margin: 1.5vw;
-    padding: 1.5vw;
+    overflow: hidden;
+    padding: 0.5vw;
     background-color: rgb(248, 248, 248);
     border-radius: 10px;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: "Ubuntu", sans-serif;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
 
 }
 
 .mainTitle{
     text-align: center;
-    line-height: 8px;
+    line-height: 6px;
+    font-weight: 500;
 }
 
 .mainTitle span{
     color: rgb(144, 2, 2);
 }
+
+
+.bottom{
+    text-align: center;
+    margin: 2vw;
+}
+
+img{
+    width: 16%;
+
+}
+
+
+
