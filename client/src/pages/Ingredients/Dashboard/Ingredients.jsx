@@ -6,7 +6,6 @@ const Ingredients = () => {
     return (
         <div>
             <Navbar Comp={InventoryManagement}/>
-
         </div>
     );
 };
