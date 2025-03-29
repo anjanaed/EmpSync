@@ -1,16 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { Input, Button, Card, message, Modal } from 'antd'; // Add Modal import
-import { PlusOutlined } from '@ant-design/icons';
+import { Input, Button, Card, message, Modal, Form, InputNumber, Select } from 'antd';
+import { PlusOutlined, FilePdfOutlined } from '@ant-design/icons';
 import IngredientList from './IngredientList/IngredientList';
 import styles from './InventoryManagement.module.css';
 import axios from 'axios';
+import { exportIngredientsToPDF } from '../InventoryManagement/pdfExport/pdfExport';
 
 const { Search } = Input;
+const { Option } = Select;
 
 const InventoryManagement = () => {
   const [ingredients, setIngredients] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(false);
+  const [isAddModalVisible, setIsAddModalVisible] = useState(false);
+  const [addIngredientForm] = Form.useForm();
+  const [addingIngredient, setAddingIngredient] = useState(false);
 
   // Fetch ingredients from the API
   const fetchIngredients = async () => {
@@ -35,8 +40,43 @@ const InventoryManagement = () => {
   };
 
   const handleAddIngredient = () => {
-    // This would typically open a modal for adding a new ingredient
-    console.log('Add ingredient clicked');
+    setIsAddModalVisible(true);
+  };
+
+  const handleAddModalCancel = () => {
+    setIsAddModalVisible(false);
+    addIngredientForm.resetFields();
+  };
+
+  const handleAddModalSubmit = async () => {
+    try {
+      const values = await addIngredientForm.validateFields();
+      setAddingIngredient(true);
+      
+      // Format the values to match the expected JSON structure
+      const newIngredient = {
+        id: values.id,
+        name: values.name,
+        price_per_unit: values.price_per_unit.toString(),
+        quantity: values.quantity.toString(),
+        priority: values.priority
+      };
+      
+      // Send POST request to add the ingredient
+      const response = await axios.post('http://localhost:3000/ingredients', newIngredient);
+      
+      // Add the new ingredient to the local state
+      setIngredients([...ingredients, response.data]);
+      
+      message.success('Ingredient added successfully');
+      setIsAddModalVisible(false);
+      addIngredientForm.resetFields();
+    } catch (error) {
+      console.error('Error adding ingredient:', error);
+      message.error('Failed to add ingredient');
+    } finally {
+      setAddingIngredient(false);
+    }
   };
 
   const handleEditIngredient = (id) => {
@@ -65,6 +105,19 @@ const InventoryManagement = () => {
     });
   };
 
+  const handleExportPDF = () => {
+    const result = exportIngredientsToPDF(filteredIngredients, {
+      title: 'Inventory Management - Ingredients List',
+      filename: 'ingredients-inventory.pdf'
+    });
+    
+    if (result.success) {
+      message.success(result.message);
+    } else {
+      message.error(result.message);
+    }
+  };
+
   const filteredIngredients = ingredients.filter(ingredient => 
     ingredient.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -84,6 +137,15 @@ const InventoryManagement = () => {
             className={styles.search} 
           />
           <Button 
+            type="default"
+            icon={<FilePdfOutlined />} 
+            onClick={handleExportPDF}
+            className={styles.exportButton}
+            style={{ marginRight: '10px' }}
+          >
+            Export PDF
+          </Button>
+          <Button 
             type="primary" 
             icon={<PlusOutlined />} 
             onClick={handleAddIngredient}
@@ -101,6 +163,87 @@ const InventoryManagement = () => {
           onDelete={handleDeleteIngredient} 
         />
       </Card>
+
+      {/* Add Ingredient Modal */}
+      <Modal
+        title="Add New Ingredient"
+        visible={isAddModalVisible}
+        onCancel={handleAddModalCancel}
+        footer={[
+          <Button key="cancel" onClick={handleAddModalCancel}>
+            Cancel
+          </Button>,
+          <Button 
+            key="submit" 
+            type="primary" 
+            loading={addingIngredient} 
+            onClick={handleAddModalSubmit}
+          >
+            Add Ingredient
+          </Button>,
+        ]}
+      >
+        <Form
+          form={addIngredientForm}
+          layout="vertical"
+          name="addIngredientForm"
+        >
+          <Form.Item
+            name="id"
+            label="Ingredient ID"
+            rules={[{ required: true, message: 'Please enter ingredient ID' }]}
+          >
+            <Input placeholder="Enter ingredient ID" />
+          </Form.Item>
+          
+          <Form.Item
+            name="name"
+            label="Ingredient Name"
+            rules={[{ required: true, message: 'Please enter ingredient name' }]}
+          >
+            <Input placeholder="Enter ingredient name" />
+          </Form.Item>
+          
+          <Form.Item
+            name="price_per_unit"
+            label="Price Per Unit"
+            rules={[{ required: true, message: 'Please enter price per unit' }]}
+          >
+            <InputNumber 
+              min={0}
+              step={0.01}
+              precision={2}
+              style={{ width: '100%' }}
+              placeholder="Enter price per unit"
+            />
+          </Form.Item>
+          
+          <Form.Item
+            name="quantity"
+            label="Quantity"
+            rules={[{ required: true, message: 'Please enter quantity' }]}
+          >
+            <InputNumber 
+              min={0}
+              style={{ width: '100%' }}
+              placeholder="Enter quantity"
+            />
+          </Form.Item>
+          
+          <Form.Item
+            name="priority"
+            label="Priority"
+            rules={[{ required: true, message: 'Please select priority' }]}
+            initialValue={3}
+          >
+            <Select placeholder="Select priority">
+              <Option value={1}>High</Option>
+              <Option value={2}>Medium</Option>
+              <Option value={3}>Low</Option>
+            </Select>
+          </Form.Item>
+        </Form>
+      </Modal>
     </div>
   );
 };
