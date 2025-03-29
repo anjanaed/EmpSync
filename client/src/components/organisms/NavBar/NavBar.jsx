@@ -138,7 +138,7 @@ const NavBar = ({ Comp }) => {
                 key: "3",
                 icon: <FontAwesomeIcon icon={faDollarSign} />,
                 label: "Payrolls",
-                onClick: () => navigate("/"),
+                onClick: () => navigate("/payroll"),
               },
               {
                 key: "4",

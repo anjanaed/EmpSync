@@ -29,14 +29,14 @@
     color: rgb(150, 0, 0);
     border: 2px solid ;
     background-color: white;
-    transition: all 0.4s ease-in-out;
+    transition: all 0.2s ease-in-out;
 }
 
 .btn2{
     background-color: rgb(150, 0, 0);
     color: white;
     border: 2px solid rgb(150, 0, 0) ;
-    transition: all 0.4s ease-in-out;
+    transition: all 0.2s ease-in-out;
 
     
 }
@@ -44,14 +44,14 @@
 .btn1:hover{
     background-color: rgb(150, 0, 0);
     color: white;
-    transform: scale(1.08);
+    transform: scale(1.05);
     border: 2px solid rgb(255, 255, 255) ;
 }
 
 .btn2:hover{
     color: rgb(150, 0, 0);
     border: 2px solid ;
-    transform: scale(1.08);
+    transform: scale(1.05);
     background-color: white;
 
 
@@ -61,7 +61,6 @@
     margin-left: auto;
     width: 35%;
     font-size: 0.9vw;
-    font-weight: 550;
     padding: 5px;
     justify-content: center;
     display: flex;
