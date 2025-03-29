@@ -1,13 +1,28 @@
 // Navbar.jsx
 import React from 'react';
-import { Layout, Button, Typography } from 'antd';
+import { Layout, Button, Typography, Avatar,Space,Dropdown } from 'antd';
 import { LeftOutlined } from '@ant-design/icons';
 import styles from './header.module.css';
+import { UserOutlined,LogoutOutlined } from "@ant-design/icons";
+
+
 
 const { Header } = Layout;
 const { Title } = Typography;
 
-const Navbar = ({ title, onBackClick, showLogout = true }) => {
+const Navbar = ({ title, onBackClick = true }) => {
+
+const items = [
+    {
+      key: "1",
+      label: (
+        <div className={styles.logout}>
+          Logout <t /> <LogoutOutlined />
+        </div>
+      ),
+      onClick: () => navigate("/login"),
+    },
+  ];
   return (
     <Header className={styles.header}>
       <div className={styles.navbarContent}>
@@ -22,15 +37,27 @@ const Navbar = ({ title, onBackClick, showLogout = true }) => {
           {title}
         </Title>
         
-        {showLogout && (
-          <Button 
-            type="primary" 
-            danger
-            className={styles.logoutButton}
-          >
-            Log Out
-          </Button>
-        )}
+        <div className={styles.userDropdown}>
+            <Space direction="vertical">
+              <Space wrap>
+                <Dropdown
+                  menu={{
+                    items,
+                  }}
+                  placement="bottomLeft"
+                >
+                  <Button className={styles.dropButton}>
+                    <Avatar
+                      style={{ backgroundColor: "#d10000" }}
+                      size={38}
+                      icon={<UserOutlined />}
+                    />
+                    Kitchen Admin
+                  </Button>
+                </Dropdown>
+              </Space>
+            </Space>
+          </div>
       </div>
     </Header>
   );

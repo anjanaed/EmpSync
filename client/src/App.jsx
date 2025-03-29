@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "./index.css";
 import KitchenAdmin from "./pages/KitchenAdmin/KitchenAdminDashBoard/kitchenAdminDash"; 
 import Reports from "./pages/KitchenAdmin/Report/report"; 
+import Meals from "./pages/KitchenAdmin/MealDash/meal"; 
 import MealDetailsForm from "./pages/KitchenAdmin/MealDetails/MealDetailsForm";
 import MealPlan from "./pages/KitchenAdmin/MealPlan/mealPlan";
 import SelectIngredients from "./pages/KitchenAdmin/SelectIngredients/ingredients";
@@ -28,6 +29,7 @@ function App() {
         <Route path="/reg" element={<RegisterPage />} />
         <Route path="/kitchen-admin" element={<KitchenAdmin />} />
         <Route path="/kitchen-report" element={<Reports/>} />
+        <Route path="/kitchen-meal" element={<Meals/>} />
         <Route path="/meal-details" element={<MealDetailsForm />} />
         <Route path="/meal-plan" element={<MealPlan/>} />
         <Route path="/select-ingredients" element={<SelectIngredients/>} />

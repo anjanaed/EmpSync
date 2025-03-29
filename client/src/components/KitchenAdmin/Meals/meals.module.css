@@ -1,0 +1,121 @@
+.container {
+  padding: 24px;
+  margin-top: 20px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.title {
+  margin: 0 !important;
+  
+}
+
+.actions {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.searchInput {
+  width: 250px;
+  border-color: rgb(224, 0, 0);
+}
+
+/* Custom red button style */
+.redButton {
+  background-color: rgb(224, 0, 0) !important;
+  border-color: rgb(224, 0, 0) !important;
+}
+
+.redButton:hover, 
+.redButton:focus {
+  background-color: rgba(224, 0, 0, 0.8) !important;
+  border-color: rgba(224, 0, 0, 0.8) !important;
+}
+
+.card {
+  height: 100%;
+  transition: box-shadow 0.3s;
+}
+
+.card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.imageContainer {
+  position: relative;
+  height: 250px;
+  overflow: hidden;
+}
+
+.imageWrapper {
+  width: 100%;
+  height: 100%;
+}
+
+.mealImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.card:hover .mealImage {
+  transform: scale(1.05);
+}
+
+.imagePlaceholder {
+  height: 200px;
+  background: #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.imagePlaceholderIcon {
+  color: #d9d9d9;
+  font-size: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.mealInfo {
+  padding: 16px;
+}
+
+.mealTitle {
+  margin: 0 !important;
+  margin-bottom: 12px !important;
+}
+
+.mealActions {
+  border-top: 1px solid #f0f0f0;
+  padding: 12px 16px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 20px;
+}
+
+/* Responsive styles */
+@media (max-width: 576px) {
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .actions {
+    width: 100%;
+  }
+  
+  .searchInput {
+    width: 100%;
+  }
+}

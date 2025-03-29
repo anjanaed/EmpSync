@@ -4,6 +4,8 @@ import { Form, Input, Button, Card, Row, Col, Typography, message } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import Navbar from "../../../components/KitchenAdmin/header/header";
 import styles from './MealDetailsForm.module.css';
+import { useNavigate } from "react-router-dom";
+
 
 const { TextArea } = Input;
 const { Title } = Typography;
@@ -12,12 +14,18 @@ const AddMealPage = () => {
   const [form] = Form.useForm();
   const [imageUrl, setImageUrl] = useState(null);
   const fileInputRef = useRef(null);
-  
+
+  const navigate = useNavigate();
+
   const handleBackClick = () => {
-    // Navigation logic to go back
-    console.log('Back button clicked');
-    // navigate(-1) or history.goBack()
+    navigate(-1); // Navigates to the Reports page
   };
+  
+  // const handleBackClick = () => {
+  //   // Navigation logic to go back
+  //   console.log('Back button clicked');
+  //   // navigate(-1) or history.goBack()
+  // };
   
   const handleCancel = () => {
     form.resetFields();

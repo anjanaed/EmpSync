@@ -9,12 +9,46 @@
     height: auto;
     line-height: normal;
   }
+
+  .logout {
+    text-align: center;
+    font-size: 0.9vw;
+    padding: 5px 10px;
+    border-radius: 50px;
+    font-weight: 600;
+    transition: 0.3s ease-in-out;
+  }
+  
+  .logout:hover {
+    background-color: #d10000;
+    color: white;
+  }
+  
+  .dropButton:hover {
+    transform: scale(1.1);
+    background-color: rgb(232, 232, 232) !important;
+    color: rgb(0, 0, 0) !important;
+  }
+  
   
   .navbarContent {
     display: flex;
     align-items: center;
     justify-content: space-between;
     height: 64px;
+  }
+
+  .userDropdown {
+    margin-right: 2vw;
+  }
+
+  .dropButton {
+    height: 5vh;
+    border-radius: 50px;
+    border: none;
+    transition: 0.5s ease-in-out;
+    font-size: 0.8vw;
+    padding: 25px 10px;
   }
   
   .backButton {

@@ -66,7 +66,7 @@ const NavBar = ({ Comp }) => {
     if (path == "/kitchen-admin") {
       setSelectedKey("1");
     }
-    if (path == "/reg") {
+    if (path == "/kitchen-meal") {
       setSelectedKey("2");
     }
     if (path == "/kitchen-report") {
@@ -98,7 +98,7 @@ const NavBar = ({ Comp }) => {
             <>
               <h1 className={styles.navHeader}>
                 <div className={styles.red}>
-                  Meal<br /> 
+                  Meal<br /> Schedule
                 </div>
                 Management
               </h1>
@@ -109,7 +109,7 @@ const NavBar = ({ Comp }) => {
             <>
               <h1 className={styles.navHeader}>
                 <div className={styles.red}>
-                  M <br /> 
+                  M <br /> S
                 </div>
                 M
               </h1>
@@ -132,7 +132,7 @@ const NavBar = ({ Comp }) => {
                 key: "2",
                 icon: <FontAwesomeIcon icon={faBowlFood} />,
                 label: "Meals",
-                onClick: () => navigate("/no"),
+                onClick: () => navigate("/kitchen-meal"),
               },
               {
                 key: "3",
