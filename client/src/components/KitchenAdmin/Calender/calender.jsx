@@ -1,71 +1,169 @@
 import React, { useState } from 'react';
-import { Calendar } from 'antd';
-import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { 
+  Layout, 
+  Button, 
+  Card, 
+  List, 
+  Typography, 
+  Divider,
+  DatePicker
+} from 'antd';
+import { 
+  PlusOutlined, 
+  DeleteOutlined,
+  CalendarOutlined
+} from '@ant-design/icons';
+import moment from 'moment';
 import styles from './calender.module.css';
-import { useNavigate } from 'react-router-dom';
 
-const MenuCalendar = () => {
-  const navigate = useNavigate(); 
 
-  const addMeal = () => {
-    navigate('/meal-details');
+const { Content } = Layout;
+const { Title } = Typography;
+
+const MenuSets = () => {
+  const [activeTab, setActiveTab] = useState('breakfast');
+  const [selectedDate, setSelectedDate] = useState(moment());
+  const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
+  
+  // Menu items for each tab
+  const menuItems = {
+    breakfast: [
+      'String Hoppers',
+      'Hoppers',
+      'Bread with Curry',
+      'Milk Rice',
+      'Egg Hoppers'
+    ],
+    lunch: [
+      'Rice & Curry',
+      'String Hoppers',
+      'Noodles',
+      'Hoppers',
+      'Bread with Curry'
+    ],
+    dinner: [
+      'Fried Rice',
+      'Kottu',
+      'Rice & Curry',
+      'Noodles',
+      'Biryani'
+    ]
   };
-  const editMeal = () => {
-    navigate('/edit-meal');
+
+  const handleDateChange = (date) => {
+    if (date) {
+      setSelectedDate(date);
+      setIsDatePickerOpen(false);
+    }
   };
 
+  const toggleDatePicker = () => {
+    setIsDatePickerOpen(!isDatePickerOpen);
+  };
 
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+  };
 
-  const [selectedDate, setSelectedDate] = useState('Thursday, Feb 17');
-  const [meals, setMeals] = useState([
-    { id: 1, name: 'Rice & Curry' },
-    { id: 2, name: 'Hoppers' },
-    { id: 2, name: 'Hoppers' },
-    { id: 2, name: 'Hoppers' },
-    { id: 2, name: 'Hoppers' },
-    { id: 3, name: 'Noodles' }
-  ]);
+  const formattedDate = selectedDate.format('MMMM D, YYYY');
+
+  // Get the current menu items based on active tab
+  const currentMenuItems = menuItems[activeTab] || [];
 
   return (
-    <div className={styles.container}>
-      {/* Calendar Section */}
-      <div className={styles.calendarSection}>
-        <div className={styles.selectedDate}>{selectedDate}</div>
-        <div className={styles.calendar}>
-          <Calendar
-            fullscreen={false}
-            onSelect={(date) => {
-              setSelectedDate(date.format('dddd, MMM D'));
-            }}
-          />
-        </div>
-      </div>
-
-      {/* Meals Section */}
-      <div className={styles.mealsSection}>
-        <h2 className={styles.mealsTitle}>Meals</h2>
-        <div className={styles.mealsList}>
-          {meals.map((meal) => (
-            <div key={meal.id} className={styles.mealItem}>
-              <span>{meal.name}</span>
-              <div className={styles.mealActions}>
-                <button className={styles.iconButton} onClick={editMeal}>
-                  <EditOutlined />
-                </button>
-                <button className={styles.iconButton}>
-                  <DeleteOutlined />
-                </button>
+    // <Layout className={styles.layout}>
+      // <Content className={styles.content}>
+        <Card className={styles.card}>
+          <div className={styles.titleContainer}>
+            <Title level={3} className={styles.menuTitle}>{formattedDate} Menu</Title>
+            <div className={styles.datePickerContainer}>
+              <Button 
+                className={styles.selectDateButton} 
+                icon={<CalendarOutlined />}
+                onClick={toggleDatePicker}
+              >
+                Select Date
+              </Button>
+              {isDatePickerOpen && (
+                <div className={styles.datePickerDropdown}>
+                  <DatePicker 
+                    open={isDatePickerOpen}
+                    value={selectedDate}
+                    onChange={handleDateChange}
+                    onOpenChange={(open) => {
+                      if (!open) setIsDatePickerOpen(false);
+                    }}
+                  />
+                </div>
+              )}
+            </div>
+          </div>
+          
+          <div className={styles.customTabsContainer}>
+            <div className={styles.customTabs}>
+              <div 
+                className={`${styles.customTab} ${activeTab === 'breakfast' ? styles.activeTab : ''}`}
+                onClick={() => handleTabChange('breakfast')}
+              >
+                Breakfast Sets
+              </div>
+              <div 
+                className={`${styles.customTab} ${activeTab === 'lunch' ? styles.activeTab : ''}`}
+                onClick={() => handleTabChange('lunch')}
+              >
+                Lunch Set
+              </div>
+              <div 
+                className={`${styles.customTab} ${activeTab === 'dinner' ? styles.activeTab : ''}`}
+                onClick={() => handleTabChange('dinner')}
+              >
+                Dinner Set
               </div>
             </div>
-          ))}
-        </div>
-        
-        <button className={styles.addButton} onClick={addMeal}>
-          Add new Meal
-        </button>
-      </div>
-    </div>
+          </div>
+          
+          <div className={styles.menuContainer}>
+            <div className={styles.menuList}>
+              <List
+                dataSource={currentMenuItems}
+                renderItem={(item, index) => (
+                  <>
+                    <List.Item className={styles.menuItem}>
+                      <Typography.Text>{item}</Typography.Text>
+                    </List.Item>
+                    {index < currentMenuItems.length - 1 && <Divider className={styles.divider} />}
+                  </>
+                )}
+              />
+            </div>
+            
+            <div className={styles.actionContainer}>
+              <Button 
+                className={styles.updateButton} 
+                icon={<PlusOutlined />}
+              >
+                <span className={styles.buttonLabel}>Update Menu</span>
+              </Button>
+              
+              <Button 
+                className={styles.removeButton} 
+                icon={<DeleteOutlined />}
+              >
+                <span className={styles.buttonLabel}>Remove Schedule</span>
+              </Button>
+              
+              <Button 
+                type="primary" 
+                className={styles.confirmButton}
+              >
+                Confirm Schedule
+              </Button>
+            </div>
+          </div>
+        </Card>
+      // </Content>
+    // </Layout>
   );
 };
 
-export default MenuCalendar;
+export default MenuSets;

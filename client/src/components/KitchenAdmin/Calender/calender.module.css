@@ -1,208 +1,200 @@
-.container {
-  display: flex;
-  width: 91%; /* Adjust width as needed (90% of the screen width) */
-  max-width: 1750px; /* Set a maximum width for large screens */
-  margin: 0 auto 0 auto;
-  gap: 2rem;
-  padding: 20px; 
-  background-color: white;
-  border-radius: 10px;
-  border: 1px solid black; /* Dark red border */
-}
-
-.calendarSection {
-  width: 22rem;
-  border: 1px solid #5D071C; /* Dark red border */
-  border-radius: 10px;
-  padding: 2rem;
-  background-color: #FFFDED;
-}
-
-.selectedDate {
-  font-size: 1.25rem;
-  font-weight: 600;
-  margin-bottom: 1rem;
-}
-
-.mealsSection {
-  flex: 1;
-}
-
-.mealsTitle {
-  font-size: 26px;
-  font-weight: bold;
-  margin-bottom: 1rem;
-}
-
-.mealsList {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  height: 300px;
-  overflow-y: auto; 
-  resize: none;
-}
-
-.mealItem {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.85rem;
-  border: 1px solid black;
-  border-radius: 10px;
-  font-size: 20px;
-}
-
-.mealActions {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.iconButton {
-  color: #5D071C;
-  cursor: pointer;
-  padding: 0.25rem;
-  transition: color 0.2s;
-  background-color: transparent;
-  border: transparent;
-  font-size: 22px;
-  width: 50px;
-  font-weight: bold;
-}
-
-.iconButton:hover {
-  color: black;
-  transform: scale(1.15);
-
-}
-.mealItem:hover{
-  border-color: #5D071C;
-    font-size: 21px;
-
-}
-
-.addButton {
-  width: 100%;
-  margin-top: 1rem;
-  padding: 0.75rem;
-  background-color: #5D071C;
-  color: white;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  font-size: 20px;
-  transition: background-color 0.2s;
-}
-
-.addButton:hover {
-  background-color: #731835;
-}
-
-
-/* Previous styles remain the same until calendar styles */
-
-/* Updated and new Ant Design calendar styles */
-:global(.ant-picker-calendar) {
-  background-color: #FFFDED !important;
-}
-
-:global(.ant-picker-calendar-header) {
-  padding: 8px !important;
-  background-color: #FFFDED !important;
-}
-
-/* Year and Month selector styles */
-:global(.ant-select-selector) {
-  background-color: #FFFDED !important;
-  border-color: #5D071C !important;
-  font-size: 16px;
-}
-
-:global(.ant-select:hover .ant-select-selector) {
-  border-color: black !important;
-}
-
-/* Selected date styles (blue box) */
-:global(.ant-picker-cell-selected .ant-picker-calendar-date) {
-  background-color: #5D071C !important;
-  color: white !important;
+/* .layout {
+    display: flex;
+    min-height: 100vh;
+    background: white;
+  }
   
-}
-
-:global(.ant-picker-cell-selected:hover .ant-picker-calendar-date) {
-  background-color: #731835 !important;
-}
-
-/* Today's date border */
-:global(.ant-picker-calendar-date-today) {
-  border-color: #5D071C !important;
-}
-
-/* Date hover effect */
-:global(.ant-picker-calendar-date:hover) {
-  background-color: rgba(93, 7, 28, 0.1) !important;
-}
-
-/* Month/Year text color */
-:global(.ant-select-selection-item) {
-  color: black !important;
-  font-size: 16px;
-}
-
-/* Dropdown background */
-:global(.ant-select-dropdown) {
-  background-color: #FFFDED !important;
-}
-
-:global(.ant-select-item) {
-  background-color: #FFFDED !important;
-}
-
-:global(.ant-select-item:hover) {
-  background-color: rgba(93, 7, 28, 0.1) !important;
-}
-
-:global(.ant-select-item-option-selected) {
-  background-color: rgba(93, 7, 28, 0.2) !important;
-}
-
-/* Calendar cell backgrounds */
-:global(.ant-picker-calendar-date) {
-  background-color: #FFFDED !important;
-  font-size: 18px;
-}
-
-:global(.ant-picker-cell) {
-  background-color: #FFFDED !important;
+  .content {
+    flex-grow: 1;
+    padding: 24px;
+    background: white;
+    margin-right: 0px;
+    width: calc(0% - 250px); 
+    overflow-x: hidden;
+  }
+   */
+  .card {
+    width: 100%;
+    max-width: 1500px; /* Limit maximum width */
+    margin: 0 auto; /* Center the card */
+    /* border-radius: 12px; */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    /* border: none; */
+    margin-top:60px;
+  }
   
-}
-
-:global(.ant-picker-calendar-header .ant-picker-calendar-mode-switch) {
-  background-color: #FFFDED !important;
-}
-
-:global(.ant-picker-cell-in-view) {
-  color: black !important;
-}
-
-:global(.ant-picker-calendar-header .ant-radio-button-wrapper) {
-  background-color: #FFFDED !important;
-  border-color: #5D071C !important;
-}
-
-:global(.ant-picker-calendar-header .ant-radio-button-wrapper-checked) {
-  background-color: #5D071C !important;
-  color:white !important;
-}
-
-/* Optional: Customize scrollbar */
-.mealsList::-webkit-scrollbar {
-  width: 7px;
-
-}
-
-.mealsList::-webkit-scrollbar-thumb {
-  background-color:  #660e1e;
-  border-radius: 6px;
-}
-
+  .titleContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+  }
+  
+  .menuTitle {
+    margin-bottom: 0 !important;
+    font-weight: bold;
+    font-size: 1.5rem;
+    color: #333;
+  }
+  
+  .selectDateButton {
+    display: flex;
+    align-items: center;
+    color: #5D071C;
+    border-color: #5D071C;
+  }
+  
+  .selectDateButton:hover {
+    color: white;
+    background-color: #5D071C;
+  }
+  
+  .customTabsContainer {
+    margin-bottom: 20px;
+  }
+  
+  .customTabs {
+    display: flex;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+  
+  .customTab {
+    flex: 1;
+    text-align: center;
+    padding: 12px 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    color: #6c6c6c;
+    position: relative;
+  }
+  
+  .customTab:hover {
+    background-color: #f0f0f0;
+  }
+  
+  .activeTab {
+    background-color: white;
+    color: #5D071C;
+    box-shadow: 0 -2px 0 #5D071C inset;
+  }
+  
+  .menuContainer {
+    display: flex;
+    gap: 20px;
+    background-color: #fafafa;
+    border-radius: 8px;
+    padding: 20px;
+  }
+  
+  .menuList {
+    flex: 1;
+    background-color: white;
+    border-radius: 6px;
+    border: 1px solid #e0e0e0;
+    overflow: hidden;
+  }
+  
+  .menuItem {
+    padding: 16px !important;
+    transition: background-color 0.2s ease;
+  }
+  
+  .menuItem:hover {
+    background-color: #f5f5f5;
+  }
+  
+  .divider {
+    margin: 0;
+    border-top-color: #e0e0e0;
+  }
+  
+  .actionContainer {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .updateButton, .removeButton {
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+  }
+  
+  .updateButton {
+    border-color: #5D071C;
+    color: #5D071C;
+  }
+  
+  .updateButton:hover {
+    background-color: #5D071C;
+    color: white;
+  }
+  
+  .removeButton {
+    border-color: #d32f2f;
+    color: #d32f2f;
+  }
+  
+  .removeButton:hover {
+    background-color: #d32f2f;
+    color: white;
+  }
+  
+  .buttonLabel {
+    margin-left: 8px;
+  }
+  
+  .confirmButton {
+    height: 50px;
+    background: #5D071C;
+    border-color: #5D071C;
+    border-radius: 6px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .confirmButton:hover {
+    background: #46051a;
+    border-color: #46051a;
+  }
+  
+  .datePickerContainer {
+    position: relative;
+  }
+  
+  .datePickerDropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    z-index: 100;
+    margin-top: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 6px;
+  }
+  
+  /* Responsive Adjustments */
+  @media (max-width: 768px) {
+    .content {
+      margin-left: 0;
+      width: 100%;
+      padding: 12px;
+    }
+  
+    .menuContainer {
+      flex-direction: column;
+    }
+  
+    .menuList, .actionContainer {
+      width: 100%;
+    }
+  }

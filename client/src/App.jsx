@@ -27,7 +27,7 @@ function App() {
         <Route path="/" element={<EmployeePage />} />
         <Route path="/reg" element={<RegisterPage />} />
         <Route path="/kitchen-admin" element={<KitchenAdmin />} />
-        <Route path="/report" element={<Reports/>} />
+        <Route path="/kitchen-report" element={<Reports/>} />
         <Route path="/meal-details" element={<MealDetailsForm />} />
         <Route path="/meal-plan" element={<MealPlan/>} />
         <Route path="/select-ingredients" element={<SelectIngredients/>} />
