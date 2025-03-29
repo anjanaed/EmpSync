@@ -108,18 +108,6 @@ const IngredientList = ({ ingredients, onEdit, onDelete }) => {
         pagination={{ pageSize: 10 }}
         className={styles.table}
       />
-      
-      <div className={styles.footer}>
-        <Button className={styles.detailsButton}>
-          Ingredient Details
-        </Button>
-        
-        <Dropdown menu={{ items }} placement="bottomRight">
-          <Button className={styles.exportButton}>
-            Export <DownOutlined />
-          </Button>
-        </Dropdown>
-      </div>
     </div>
   );
 };
