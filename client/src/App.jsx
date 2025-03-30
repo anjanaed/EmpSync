@@ -2,7 +2,11 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "./index.css";
 import KitchenAdmin from "./pages/KitchenAdmin/KitchenAdminDashBoard/kitchenAdminDash"; 
 import Reports from "./pages/KitchenAdmin/Report/report"; 
+import Meals from "./pages/KitchenAdmin/MealDash/meal"; 
 import MealDetailsForm from "./pages/KitchenAdmin/MealDetails/MealDetailsForm";
+import MealPlan from "./pages/KitchenAdmin/MealPlan/mealPlan";
+import SelectIngredients from "./pages/KitchenAdmin/SelectIngredients/ingredients";
+import EditMeal from "./pages/KitchenAdmin/EditMeal/editMeal";
 import Login from "./pages/Login/Login";
 import Serving from "./pages/Serving staff/Barcode Scan/Serving";
 import MealConform from "./pages/Serving staff/Meal Conform/MealConform";
@@ -24,8 +28,12 @@ function App() {
         <Route path="/" element={<EmployeePage />} />
         <Route path="/reg" element={<RegisterPage />} />
         <Route path="/kitchen-admin" element={<KitchenAdmin />} />
-        <Route path="/report" element={<Reports/>} />
+        <Route path="/kitchen-report" element={<Reports/>} />
+        <Route path="/kitchen-meal" element={<Meals/>} />
         <Route path="/meal-details" element={<MealDetailsForm />} />
+        <Route path="/meal-plan" element={<MealPlan/>} />
+        <Route path="/select-ingredients" element={<SelectIngredients/>} />
+        <Route path="/edit-meal" element={<EditMeal/>} />
         <Route path="/serving" element={<Serving />} />
         <Route path="/meal-conform/:id" element={<MealConform />} />
         <Route path="/passwordReset" element={<PasswordReset />} /> 

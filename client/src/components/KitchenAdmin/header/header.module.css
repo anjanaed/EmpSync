@@ -1,0 +1,84 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Itim&family=Roboto+Slab:wght@100..900&display=swap");
+/* Navbar.module.css */
+.header {
+  padding: 0 16px;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  height: 4vw;
+  line-height: normal;
+}
+
+.logo{
+  width:15%;
+  align-items: center;
+  margin-left: 800px !important;
+
+}
+
+.logout {
+  /* margin-top: 5px !important; */
+  text-align: center;
+  font-size: 0.9vw;
+  padding: 5px 9px;
+  border-radius: 50px;
+  font-weight: 600;
+  transition: 0.3s ease-in-out;
+}
+
+.logout:hover {
+  background-color: #d10000;
+  color: white;
+}
+
+.dropButton:hover {
+  transform: scale(1.1);
+  background-color: rgb(232, 232, 232) !important;
+  color: rgb(0, 0, 0) !important;
+}
+
+.navbarContent {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 64px;
+}
+
+.userDropdown {
+  margin-right: 2vw;
+}
+
+.dropButton {
+  height: 5vh;
+  border-radius: 50px;
+  border: none;
+  transition: 0.5s ease-in-out;
+  font-size: 0.8vw;
+  padding: 25px 10px;
+}
+
+.backButton {
+  padding: 4px 0;
+}
+
+.title {
+  margin: 0 !important;
+  flex-grow: 1;
+  /* text-align:center; */
+  margin-left: 800px !important;
+  font-family: "Roboto Slab", serif;
+  color: #d10000 !important;
+
+}
+
+img {
+  margin: auto;
+  width: 18%;
+}
+
+
+.logoutButton {
+  min-width: 80px;
+}
