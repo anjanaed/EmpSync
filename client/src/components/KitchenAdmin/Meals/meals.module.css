@@ -1,7 +1,10 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Itim&family=Roboto+Slab:wght@100..900&display=swap");
+
 .container {
   padding: 24px;
   margin-top: 20px;
 }
+
 
 .header {
   display: flex;
@@ -14,7 +17,11 @@
 
 .title {
   margin: 0 !important;
-  
+  font-family: "Roboto Slab", serif;
+ 
+
+
+
 }
 
 .actions {
@@ -24,20 +31,24 @@
 }
 
 .searchInput {
-  width: 250px;
-  border-color: rgb(224, 0, 0);
+  width: 300px; 
+  border-color: rgb(224, 0, 0) !important;
+  color:rgb(224, 0, 0) !important;
 }
+
 
 /* Custom red button style */
 .redButton {
   background-color: rgb(224, 0, 0) !important;
   border-color: rgb(224, 0, 0) !important;
+  color: white;
 }
 
 .redButton:hover, 
 .redButton:focus {
   background-color: rgba(224, 0, 0, 0.8) !important;
   border-color: rgba(224, 0, 0, 0.8) !important;
+  color: white !important;
 }
 
 .card {

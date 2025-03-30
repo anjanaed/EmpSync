@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Layout, Card, Input, Button, Checkbox, Space, Row, Col } from 'antd';
-import Header from '../../../components/KitchenAdmin/MealDetails/Header';
+// import Header from '../../../components/KitchenAdmin/MealDetails/Header';
 import styles from './mealPlan.module.css';
 
 const MealPlan = () => {
@@ -38,7 +38,7 @@ const MealPlan = () => {
 
   return (
     <Layout className={styles.container}>
-      <Header />
+      
 
       {/* Main Content */}
       <Layout.Content className={styles.contentContainer}>

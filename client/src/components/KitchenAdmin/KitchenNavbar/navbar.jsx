@@ -9,8 +9,7 @@ import {
   faChartLine,
   faBowlFood,
 } from "@fortawesome/free-solid-svg-icons";
-import { MenuOutlined, LogoutOutlined } from "@ant-design/icons";
-import { UserOutlined } from "@ant-design/icons";
+import { MenuOutlined, LogoutOutlined, UserOutlined } from "@ant-design/icons";
 import {
   Button,
   Layout,
@@ -44,19 +43,29 @@ const customTheme = {
 };
 
 const NavBar = ({ Comp }) => {
-  const items = [
+  const dropdownItems = [
     {
       key: "1",
       label: (
-        <div className={styles.logout}>
-          Logout <t /> <LogoutOutlined />
+        <div className={styles.profileMenuItem}>
+          <UserOutlined className={styles.menuItemIcon} /> Profile
+        </div>
+      ),
+      onClick: () => navigate("/profile"),
+    },
+    {
+      key: "2",
+      label: (
+        <div className={styles.logoutMenuItem}>
+          <LogoutOutlined className={styles.menuItemIcon} /> Log out
         </div>
       ),
       onClick: () => navigate("/login"),
     },
   ];
+
   const [collapsed, setCollapsed] = useState(false);
-  const [selectedKey, setSelectedKey] = useState("1");
+  const [selectedKey, setSelectedKey] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -137,10 +146,9 @@ const NavBar = ({ Comp }) => {
               {
                 key: "3",
                 icon: <FontAwesomeIcon icon={faChartLine} />,
-                label: "Repoerts & Analysis",
+                label: "Reports & Analysis",
                 onClick: () => navigate("/kitchen-report"),
               },
-              
             ]}
           />
         </Sider>
@@ -159,25 +167,24 @@ const NavBar = ({ Comp }) => {
           />
           <img className={styles.logo} src={img}></img>
           <div className={styles.userDropdown}>
-            <Space direction="vertical">
-              <Space wrap>
-                <Dropdown
-                  menu={{
-                    items,
-                  }}
-                  placement="bottomLeft"
-                >
-                  <Button className={styles.dropButton}>
-                    <Avatar
-                      style={{ backgroundColor: "#d10000" }}
-                      size={38}
-                      icon={<UserOutlined />}
-                    />
-                    Kitchen Admin
-                  </Button>
-                </Dropdown>
-              </Space>
-            </Space>
+            <Dropdown
+              menu={{ items: dropdownItems }}
+              placement="bottomRight"
+              trigger={["click"]}
+              overlayClassName={styles.userDropdownMenu}
+            >
+              <div className={styles.userInfo}>
+                <Avatar
+                  style={{ backgroundColor: "#d10000" }}
+                  size={36}
+                  icon={<UserOutlined />}
+                />
+                <div className={styles.userDetails}>
+                  <div className={styles.userName}>Kavindya Abeykoon</div>
+                  <div className={styles.userPosition}>kitchen Admin</div>
+                </div>
+              </div>
+            </Dropdown>
           </div>
         </div>
         <div className={styles.content}>

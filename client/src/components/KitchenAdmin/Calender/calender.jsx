@@ -32,6 +32,17 @@ const MenuSets = () => {
       'Hoppers',
       'Bread with Curry',
       'Milk Rice',
+      'Milk Rice',
+      'Milk Rice',
+      'Milk Rice',
+      'Milk Rice',
+      'Milk Rice',
+      'Milk Rice',
+      'Milk Rice',
+      'Milk Rice',
+      'Milk Rice',
+      'Milk Rice',
+      'Milk Rice',
       'Egg Hoppers'
     ],
     lunch: [
@@ -75,7 +86,7 @@ const MenuSets = () => {
       // <Content className={styles.content}>
         <Card className={styles.card}>
           <div className={styles.titleContainer}>
-            <Title level={3} className={styles.menuTitle}>{formattedDate} Menu</Title>
+            <Title level={3} className={styles.menuTitle}>Menu - {formattedDate} </Title>
             <div className={styles.datePickerContainer}>
               <Button 
                 className={styles.selectDateButton} 

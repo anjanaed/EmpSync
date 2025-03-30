@@ -4,13 +4,23 @@ import { Layout, Button, Typography, Avatar,Space,Dropdown } from 'antd';
 import { LeftOutlined } from '@ant-design/icons';
 import styles from './header.module.css';
 import { UserOutlined,LogoutOutlined } from "@ant-design/icons";
+import img from "../../../assets/logo.png";
+import { useNavigate } from "react-router-dom";
+
 
 
 
 const { Header } = Layout;
-const { Title } = Typography;
 
-const Navbar = ({ title, onBackClick = true }) => {
+
+const Navbar = () => {
+
+const navigate = useNavigate();
+  
+  const onBackClick = () => {
+    navigate("/kitchen-meal"); // Navigates to the Reports page
+  };
+  
 
 const items = [
     {
@@ -33,9 +43,10 @@ const items = [
           className={styles.backButton}
         />
         
-        <Title level={4} className={styles.title}>
-          {title}
-        </Title>
+        {/* <Title level={3} className={styles.title}>
+          
+        </Title> */}
+        <img className={styles.logo} src={img}></img>
         
         <div className={styles.userDropdown}>
             <Space direction="vertical">

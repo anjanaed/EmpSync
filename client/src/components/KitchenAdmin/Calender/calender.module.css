@@ -1,18 +1,6 @@
-/* .layout {
-    display: flex;
-    min-height: 100vh;
-    background: white;
-  }
+
+@import url("https://fonts.googleapis.com/css2?family=Bree+Serif&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Itim&family=Roboto+Slab:wght@100..900&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap");
   
-  .content {
-    flex-grow: 1;
-    padding: 24px;
-    background: white;
-    margin-right: 0px;
-    width: calc(0% - 250px); 
-    overflow-x: hidden;
-  }
-   */
   .card {
     width: 100%;
     max-width: 1500px; /* Limit maximum width */
@@ -34,23 +22,34 @@
     margin-bottom: 0 !important;
     font-weight: bold;
     font-size: 1.5rem;
-    color: #333;
+    /* color: #333; */
+     font-family: "Ubuntu", sans-serif !important;
+
   }
   
   .selectDateButton {
+    width:150px !important;
+    height:35px !important;
     display: flex;
     align-items: center;
-    color: #5D071C;
-    border-color: #5D071C;
+    color: rgb(230, 74, 74);
+    border-color: rgb(230, 74, 74);
+    font-size: 16px;
   }
   
   .selectDateButton:hover {
-    color: white;
-    background-color: #5D071C;
+    color: white !important;
+    background-color: rgb(230, 74, 74) !important;
+    border-color: rgb(230, 74, 74) !important;
+
+
   }
   
   .customTabsContainer {
     margin-bottom: 20px;
+    margin-top: 50px !important;
+    font-size: 15px !important;
+    
   }
   
   .customTabs {
@@ -79,8 +78,8 @@
   
   .activeTab {
     background-color: white;
-    color: #5D071C;
-    box-shadow: 0 -2px 0 #5D071C inset;
+    color:  rgb(190, 0, 0);
+    box-shadow: 0 -2px 0  rgb(190, 0, 0) inset;
   }
   
   .menuContainer {
@@ -89,6 +88,7 @@
     background-color: #fafafa;
     border-radius: 8px;
     padding: 20px;
+    
   }
   
   .menuList {
@@ -96,12 +96,16 @@
     background-color: white;
     border-radius: 6px;
     border: 1px solid #e0e0e0;
-    overflow: hidden;
+    max-height: 52vh !important;
+    overflow-y: auto !important;
   }
   
   .menuItem {
     padding: 16px !important;
     transition: background-color 0.2s ease;
+    font-size: 20px !important;
+
+    
   }
   
   .menuItem:hover {
@@ -121,32 +125,42 @@
   }
   
   .updateButton, .removeButton {
-    height: 50px;
+    height: 5vh;
+    width:25vw;
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 6px;
     transition: all 0.3s ease;
+    margin-left: 120px !important;
+    font-size: 15px;
   }
   
   .updateButton {
-    border-color: #5D071C;
-    color: #5D071C;
+    border-color: #5c0a1f!important;
+    color: #5c0a1f !important;
   }
   
   .updateButton:hover {
-    background-color: #5D071C;
-    color: white;
+    /* transform: scale(1.01); */
+    font-size:16px;
+
   }
   
   .removeButton {
-    border-color: #d32f2f;
-    color: #d32f2f;
+    border-color:rgb(191, 3, 3);
+    color: rgb(191, 3, 3);
   }
   
   .removeButton:hover {
-    background-color: #d32f2f;
-    color: white;
+    /* background-color: #d32f2f !important; */
+    border-color:rgb(180, 13, 13) !important;
+
+    color: rgb(180, 13, 13) !important;
+    /* transform: scale(1.01); */
+    font-size:16px;
+
+
   }
   
   .buttonLabel {
@@ -154,18 +168,26 @@
   }
   
   .confirmButton {
-    height: 50px;
-    background: #5D071C;
-    border-color: #5D071C;
+    height: 5vh;
+    width:25vw;
+    background: rgb(191, 3, 3);
+    border-color: rgb(191, 3, 3);
     border-radius: 6px;
     font-weight: 600;
-    text-transform: uppercase;
+    /* text-transform: uppercase; */
     letter-spacing: 0.5px;
+    margin-left: 120px !important;
+    font-size: 15px;
+
+
   }
   
   .confirmButton:hover {
-    background: #46051a;
-    border-color: #46051a;
+    background: rgb(151, 1, 1)!important;
+    border-color: rgb(151, 1, 1) !important;
+    /* transform: scale(1.01); */
+    font-size:16px;
+
   }
   
   .datePickerContainer {
@@ -182,6 +204,21 @@
     border-radius: 6px;
   }
   
+
+   /* Optional: Customize scrollbar */
+.menuList::-webkit-scrollbar {
+  width: 6px;
+}
+
+.menuList::-webkit-scrollbar-thumb {
+  background-color: transparent;
+  border-radius: 3px;
+}
+.menuList::-webkit-scrollbar-track {
+  background-color:white;
+  /* border: 1px solid black; */
+  
+}
   /* Responsive Adjustments */
   @media (max-width: 768px) {
     .content {

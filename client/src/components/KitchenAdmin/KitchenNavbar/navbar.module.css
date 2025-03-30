@@ -8,35 +8,57 @@
 
 .userDropdown {
   margin-right: 2vw;
+  position: relative;
+
 }
 
-.dropButton {
-  height: 5vh;
-  border-radius: 50px;
-  border: none;
-  transition: 0.5s ease-in-out;
-  font-size: 0.8vw;
-  padding: 25px 10px;
+.userInfo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+.userInfo:hover {
+  background-color: rgba(0, 0, 0, 0.04);
 }
 
-.logout {
-  text-align: center;
-  font-size: 0.9vw;
-  padding: 5px 10px;
-  border-radius: 50px;
+.userName {
   font-weight: 600;
-  transition: 0.3s ease-in-out;
+  font-size: 18px;
+  /* font-family: 'Inter', sans-serif; */
+  color: #333;
+}
+.userPosition{
+  font-size: 14px;
+  color: #666;
 }
 
-.logout:hover {
-  background-color: #d10000;
-  color: white;
+/* Dropdown menu items styling */
+.profileMenuItem,
+.logoutMenuItem {
+  display: flex;
+  align-items: center;
+  padding: 10px 14px;
+  font-size: 15px;
+  font-weight: 400;
+  border-radius: 0;
+  
 }
 
-.dropButton:hover {
-  transform: scale(1.1);
-  background-color: rgb(232, 232, 232) !important;
-  color: rgb(0, 0, 0) !important;
+.profileMenuItem {
+  color: #333;
+}
+
+.logoutMenuItem {
+  color: #f44336;
+}
+
+.menuItemIcon {
+  margin-right: 8px;
+  font-size: 16px;
 }
 
 .menu {
