@@ -18,19 +18,18 @@ const FingerPrint = () => {
 
   return (
     <div className="fingerprint-container" style={{ textAlign: "center" }}>
-      {/* Add circular border wrapper */}
-      <div 
+      <div
         style={{
-          border: "8px solid black", // Increased from 4px to 8px
+          border: "8px solid black",
           borderRadius: "50%",
-          width: "250px", // Made equal to height for perfect circle
-          height: "250px", // Made equal to width for perfect circle
+          width: "250px",
+          height: "250px",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
           position: "relative",
           zIndex: 2,
-          backgroundColor: "rgb(216, 216, 216)"
+          backgroundColor: "rgb(216, 216, 216)",
         }}
       >
         <LuFingerprint
@@ -38,12 +37,11 @@ const FingerPrint = () => {
             fontSize: 150,
             transform: `scale(${scale})`,
             transition: "transform 0.2s ease-in-out",
-            color: "#000000"
+            color: "#000000",
           }}
         />
       </div>
 
-      {/* Ripple effect */}
       <div
         className="ripple-container"
         style={{
@@ -51,8 +49,8 @@ const FingerPrint = () => {
           top: "50%",
           left: "50%",
           transform: "translate(-50%, -50%)",
-          width: "250px", // Match the container size
-          height: "250px", // Match the container size
+          width: "250px",
+          height: "250px",
           borderRadius: "50%",
         }}
       >
@@ -62,7 +60,7 @@ const FingerPrint = () => {
             width: "100%",
             height: "100%",
             borderRadius: "50%",
-            border: "3px solid black", // Made thicker
+            border: "3px solid black",
             animation: "ripple 2s infinite ease-out",
           }}
         ></div>
@@ -72,7 +70,7 @@ const FingerPrint = () => {
             width: "100%",
             height: "100%",
             borderRadius: "50%",
-            border: "3px solid black", // Made thicker
+            border: "3px solid black",
             animation: "ripple 2s infinite ease-out 0.5s",
           }}
         ></div>

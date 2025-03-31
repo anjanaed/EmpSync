@@ -1,0 +1,75 @@
+.mainBox{
+    margin: 2vw;
+    padding: 2vw;
+    font-family: Arial, Helvetica, sans-serif;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+    border-radius: 15px;
+}
+
+.topTitle{
+    text-align: center;
+    font-size: 1.5vw;
+    margin-bottom: 1.5vw;
+}
+
+Input{
+    width: 100% !important;
+}
+
+.inputLine{
+    display: flex;
+    width: 100%;
+    gap: 50px;
+    margin-bottom: 1vw;
+}
+
+.inputSet{
+    flex: 1;
+}
+
+.payee span{
+    color: red;
+}
+
+.payee{
+    margin-bottom: 1vw;
+}
+
+hr{
+    margin: 2vw 0vw;
+    opacity: 50%;
+}
+
+.btnSet{
+    text-align: center;
+}
+
+.btnSet button{
+    margin: 0 1vw;
+    padding: 0.3vw 2vw;
+    cursor: pointer;
+    text-align: center ;
+    border-radius: 5px;
+    border: 1px solid rgb(107, 0, 0);
+    color: rgb(107, 0, 0);
+    transition: all 0.2s ease-in-out;
+}
+
+
+.btnSet button:hover{
+    background-color: rgba(129, 0, 0, 0.427);
+}
+
+.genBtn{
+    text-align: center;
+    margin-top: 2vw;
+    
+}
+
+.genBtn button{
+    padding: 1vw 2vw;
+    border-radius: 10px;
+}
+
+
+
