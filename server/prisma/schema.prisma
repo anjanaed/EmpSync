@@ -52,11 +52,12 @@ model Payroll{
 }
 
 model Meal {
-  id Int @id @default(autoincrement())
-  name String           
+  id String @id @unique
+  nameEnglish String 
+  nameSinhala String           
+  nameTamil String           
   description String?                        
-  price Float                          
-  category String                           
+  price Float                                                 
   imageUrl String?                          
   createdAt DateTime @default(now())                   
 }

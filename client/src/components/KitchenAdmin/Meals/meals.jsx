@@ -201,7 +201,7 @@ const AvailableMeals = () => {
                     fontWeight: 500,
                     transition: 'color 0.3s'
                   }}
-                  onMouseOver={(e) => e.currentTarget.style.color = 'rgba(224, 0, 0, 0.8)'}
+                  onMouseOver={(e) => e.currentTarget.style.color = 'rgba(131, 76, 76, 0.8)'}
                   onMouseOut={(e) => e.currentTarget.style.color = 'rgb(158, 153, 153)'}
                 >
                   Ingredients <FontAwesomeIcon icon={faArrowUpRightFromSquare} style={{ marginLeft: '4px' }} />
