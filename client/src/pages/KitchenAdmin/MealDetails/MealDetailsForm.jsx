@@ -42,28 +42,52 @@ const AddMealPage = () => {
     // Navigate away: navigate('/meals')
   };
 
-  const handleSubmit = (values) => {
+  const handleSubmit = async (values) => {
     if (!imageUrl) {
       message.warning("Please select an image for the meal");
       return;
     }
-
+  
     if (selectedIngredients.length === 0) {
       message.warning("Please select at least one ingredient for the meal");
       return;
     }
-
-    const formData = {
-      ...values,
-      image: imageUrl,
-      ingredients: selectedIngredients
+  
+    const mealData = {
+      id: values.Id,
+      nameEnglish: values.nameEnglish,
+      nameSinhala: values.nameSinhala,
+      nameTamil: values.nameTamil,
+      description: values.description,
+      price: parseFloat(values.price),
+      imageUrl: imageUrl,
+      createdAt: new Date().toISOString(), // Auto-generate timestamp
+     
     };
-
-    console.log("Form submitted:", formData);
-    // API call to save the meal
-    // Then navigate: navigate('/meals')
+  
+    try {
+      const response = await fetch("http://localhost:3000/meal", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(mealData),
+      });
+  
+      if (!response.ok) {
+        throw new Error("Failed to add meal");
+      }
+  
+      message.success("Meal added successfully!");
+      form.resetFields();
+      setImageUrl(null);
+      setSelectedIngredients([]);
+      navigate("/kitchen-meal"); // Redirect after success
+    } catch (error) {
+      message.error(error.message);
+    }
   };
-
+  
   const handleImageClick = () => {
     fileInputRef.current.click();
   };
@@ -178,6 +202,13 @@ const AddMealPage = () => {
               </Col>
 
               <Col xs={24} md={14}>
+              <Form.Item
+                  label=" Meal ID"
+                  name="Id"
+                  rules={[{ required: true, message: "Please enter Meal Id" }]}
+                >
+                  <Input placeholder="Enter Meal ID" />
+                </Form.Item>
                 <Form.Item
                   label="Name"
                   required
