@@ -21,12 +21,16 @@ export class IngredientsController {
   async findLowPriceIngredients() {
     console.log('Received request for low price ingredients');
     return this.ingredientsService.findLowPriceIngredients();
-  }Z
+  }
 
-  @Get('price/comparison')
-  async getPriceComparison() {
-    console.log('Received request for price comparison');
-    return this.ingredientsService.getPriceComparison();
+  @Get('stats')
+  async getIngredientStats() {
+    return this.ingredientsService.getIngredientStats();
+  }
+
+  @Get('advanced-stats')
+  async getAdvancedIngredientStats() {
+    return this.ingredientsService.getAdvancedIngredientStats();
   }
 
   @Get(':id')
