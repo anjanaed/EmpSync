@@ -3,7 +3,7 @@ import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import styles from './IngredientItem.module.css';
 
 const IngredientItem = ({ ingredient, onEdit, onDelete }) => {
-  const { id, name, price_per_unit, quantity, priority } = ingredient;
+  const { id, name, price_per_unit, quantity, priority, type } = ingredient;
   
   // Determine priority level display
   const getPriorityLabel = (priority) => {
@@ -22,6 +22,7 @@ const IngredientItem = ({ ingredient, onEdit, onDelete }) => {
       <div className={styles.details}>
         <h3 className={styles.name}>{name}</h3>
         <p className={styles.id}>ID: {id}</p>
+        <p className={styles.type}>Type: {type}</p>
       </div>
       
       <div className={styles.priceInfo}>
