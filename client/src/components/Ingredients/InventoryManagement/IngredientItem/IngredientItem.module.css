@@ -25,6 +25,12 @@
   font-size: 12px;
 }
 
+.type {
+  font-size: 0.9rem;
+  color: #666;
+  margin: 4px 0;
+}
+
 .priceInfo {
   flex: 1;
   display: flex;
