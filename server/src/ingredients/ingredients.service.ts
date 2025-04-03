@@ -141,53 +141,105 @@ export class IngredientsService {
     return lowPriceIngredients;
   }
 
-  async getPriceComparison() {
-    const ingredients = await this.databaseServices.ingredient.findMany({
+  async getIngredientStats() {
+    const allIngredients = await this.databaseServices.ingredient.findMany({
       select: {
-        name: true,
-        type: true,
-        price_per_unit: true,
-      },
-    });
-
-    // Group ingredients by type
-    const groupedByType: Record<string, { name: string; price_per_unit: number }[]> = {};
-    for (const ingredient of ingredients) {
-      if (!groupedByType[ingredient.type]) {
-        groupedByType[ingredient.type] = [];
+        id: true,
+        priority: true
       }
-      groupedByType[ingredient.type].push({
-        name: ingredient.name,
-        price_per_unit: Number(ingredient.price_per_unit),
-      });
-    }
-
-    // Calculate price analysis for each type
-    const priceAnalysis = Object.entries(groupedByType).map(([type, items]) => {
-      const lowestPriceItem = items.reduce((prev, curr) =>
-        prev.price_per_unit < curr.price_per_unit ? prev : curr
-      );
-      const highestPriceItem = items.reduce((prev, curr) =>
-        prev.price_per_unit > curr.price_per_unit ? prev : curr
-      );
-
-      return {
-        type,
-        lowestPrice: {
-          name: lowestPriceItem.name,
-          price: lowestPriceItem.price_per_unit,
-        },
-        highestPrice: {
-          name: highestPriceItem.name,
-          price: highestPriceItem.price_per_unit,
-        },
-        priceDifference: highestPriceItem.price_per_unit - lowestPriceItem.price_per_unit,
-        totalItems: items.length,
-      };
     });
 
-    return priceAnalysis;
+    const totalCount = allIngredients.length;
+    
+    // Count ingredients by priority
+    const priorityCount = allIngredients.reduce((acc, ingredient) => {
+      const priority = ingredient.priority || 'NORMAL'; // Default to NORMAL if priority is null
+      acc[priority] = (acc[priority] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+
+    return {
+      totalCount,
+      priorityCount,
+      lastUpdated: new Date()
+    };
   }
 
-  
+  async getAdvancedIngredientStats() {
+    const ingredients = await this.databaseServices.ingredient.findMany({
+      select: {
+        id: true,
+        name: true,
+        priority: true,
+        type: true,
+        price_per_unit: true
+      }
+    });
+
+    // Group ingredients by priority and type
+    const groupedStats = ingredients.reduce((acc, ingredient) => {
+      const priority = ingredient.priority || 'NORMAL';
+      const type = ingredient.type || 'UNDEFINED';
+
+      if (!acc[priority]) {
+        acc[priority] = { types: {} };
+      }
+      if (!acc[priority].types[type]) {
+        acc[priority].types[type] = [];
+      }
+
+      acc[priority].types[type].push(ingredient);
+      return acc;
+    }, {} as Record<string, { types: Record<string, any[]> }>);
+
+    // Improved binary search function for finding price ranges
+    function binarySearchPriceRange(items: any[]) {
+      if (!items.length) return null;
+
+      // Sort items by price_per_unit
+      items.sort((a, b) => a.price_per_unit - b.price_per_unit);
+
+      // Binary search for lowest price
+      let low = 0, high = items.length - 1;
+      let minPrice = items[0].price_per_unit;
+      while (low < high) {
+        let mid = Math.floor((low + high) / 2);
+        if (items[mid].price_per_unit > minPrice) {
+          high = mid;
+        } else {
+          low = mid + 1;
+        }
+      }
+      let lowest = items[0].price_per_unit; // Use first item after sorting
+
+      // Binary search for highest price
+      low = 0;
+      high = items.length - 1;
+      let highest = items[items.length - 1].price_per_unit; // Use last item after sorting
+
+      return {
+        lowest,
+        highest,
+        count: items.length
+      };
+    }
+
+    // Process each group to get price statistics using the new binary search
+    const finalStats = Object.entries(groupedStats).reduce((acc, [priority, data]) => {
+      acc[priority] = {
+        types: Object.entries(data.types).reduce((typeAcc, [type, items]) => {
+          typeAcc[type] = binarySearchPriceRange(items);
+          return typeAcc;
+        }, {}),
+        totalCount: Object.values(data.types).flat().length
+      };
+      return acc;
+    }, {} as Record<string, any>);
+
+    return {
+      statistics: finalStats,
+      lastUpdated: new Date(),
+      totalIngredients: ingredients.length
+    };
+  }
 }
