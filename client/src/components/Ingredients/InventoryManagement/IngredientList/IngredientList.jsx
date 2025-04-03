@@ -31,6 +31,11 @@ const IngredientList = ({ ingredients, onEdit, onDelete }) => {
       key: 'name',
     },
     {
+      title: 'Type',
+      dataIndex: 'type',
+      key: 'type',
+    },
+    {
       title: 'Price Per Unit',
       dataIndex: 'price_per_unit',
       key: 'price_per_unit',
