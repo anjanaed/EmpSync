@@ -9,6 +9,19 @@ import { exportIngredientsToPDF } from '../InventoryManagement/pdfExport/pdfExpo
 const { Search } = Input;
 const { Option } = Select;
 
+const INGREDIENT_TYPES = [
+  'Vegetables',
+  'Fruits',
+  'Grains & Cereals',
+  'Dairy Products',
+  'Meat & Poultry',
+  'Spices & Condiments',
+  'Beverages',
+  'Oils & Fats',
+  'Bakery & Sweets',
+  'Processed & Canned'
+];
+
 const InventoryManagement = () => {
   const [ingredients, setIngredients] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -59,6 +72,7 @@ const InventoryManagement = () => {
         name: values.name,
         price_per_unit: values.price_per_unit.toString(),
         quantity: values.quantity.toString(),
+        type: values.type,
         priority: values.priority
       };
       
@@ -228,6 +242,18 @@ const InventoryManagement = () => {
               style={{ width: '100%' }}
               placeholder="Enter quantity"
             />
+          </Form.Item>
+
+          <Form.Item
+            name="type"
+            label="Type"
+            rules={[{ required: true, message: 'Please select ingredient type' }]}
+          >
+            <Select placeholder="Select ingredient type">
+              {INGREDIENT_TYPES.map(type => (
+                <Option key={type} value={type}>{type}</Option>
+              ))}
+            </Select>
           </Form.Item>
           
           <Form.Item
