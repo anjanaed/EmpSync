@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Button, Card, Table, Typography, Spin, message, Tooltip, Badge } from "antd";
-import { DownloadOutlined, LineChartOutlined, InfoCircleOutlined } from "@ant-design/icons";
+import { DownloadOutlined, LineChartOutlined, InfoCircleOutlined, UserOutlined, FireOutlined, ClockCircleOutlined, ExclamationCircleOutlined, CheckCircleOutlined } from "@ant-design/icons";
 import axios from "axios";
 import styles from "./Analysis.module.css";
 
@@ -10,36 +10,80 @@ const Analysis = () => {
   const [highCostData, setHighCostData] = useState([]);
   const [lowCostData, setLowCostData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState(null);
+  const [advancedStats, setAdvancedStats] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
         
-        // Fetch high cost data
-        const highCostResponse = await axios.get("http://localhost:3000/ingredients/price/high");
-        
-        // Fetch low cost data
-        const lowCostResponse = await axios.get("http://localhost:3000/ingredients/price/low");
-        
-        // Transform API response to table data format
+        // Fetch stats data
+        const [statsResponse, advancedStatsResponse] = await Promise.all([
+          axios.get("http://localhost:3000/ingredients/stats"),
+          axios.get("http://localhost:3000/ingredients/advanced-stats")
+        ]);
+
+        setStats(statsResponse.data);
+        setAdvancedStats(advancedStatsResponse.data);
+
+        // Process advanced stats to get high and low cost items
+        const highCostItems = [];
+        const lowCostItems = [];
+
+        Object.entries(advancedStatsResponse.data.statistics).forEach(([priority, data]) => {
+          Object.entries(data.types).forEach(([type, typeStats]) => {
+            // Create items for highest prices
+            highCostItems.push({
+              key: `${priority}-${type}-high`,
+              name: type,
+              quantity: typeStats.count,
+              price_per_unit: typeStats.highest,
+              priceComparison: {
+                priceDifference: ((typeStats.highest - typeStats.lowest) / typeStats.lowest * 100).toFixed(0),
+                highestPrice: typeStats.highest,
+                lowestPrice: typeStats.lowest,
+                totalVariants: typeStats.count
+              }
+            });
+
+            // Create items for lowest prices
+            lowCostItems.push({
+              key: `${priority}-${type}-low`,
+              name: type,
+              quantity: typeStats.count,
+              price_per_unit: typeStats.lowest,
+              priceComparison: {
+                priceDifference: ((typeStats.highest - typeStats.lowest) / typeStats.lowest * 100).toFixed(0),
+                highestPrice: typeStats.highest,
+                lowestPrice: typeStats.lowest,
+                totalVariants: typeStats.count
+              }
+            });
+          });
+        });
+
+        // Sort by price
+        highCostItems.sort((a, b) => b.price_per_unit - a.price_per_unit);
+        lowCostItems.sort((a, b) => a.price_per_unit - b.price_per_unit);
+
+        // Transform to table data format
         const formatData = (data, isHighCost) => {
-          return data.map((item, index) => ({
-            key: item.id || String(index + 1),
+          return data.map(item => ({
+            key: item.key,
             item: item.name,
             quantity: `${item.quantity}`,
             price: `Rs.${item.price_per_unit}.00`,
-            // Add additional data that might be used for details/tooltips
             priceComparison: item.priceComparison,
-            isHighCost: isHighCost
+            isHighCost
           }));
         };
-        
-        setHighCostData(formatData(highCostResponse.data, true));
-        setLowCostData(formatData(lowCostResponse.data, false));
+
+        setHighCostData(formatData(highCostItems, true));
+        setLowCostData(formatData(lowCostItems, false));
       } catch (error) {
         console.error("Error fetching data:", error);
-        message.error("Failed to load cost analysis data");
+        message.error("Failed to load analysis data");
       } finally {
         setLoading(false);
       }
@@ -47,6 +91,39 @@ const Analysis = () => {
     
     fetchData();
   }, []);
+
+  // Render statistics cards
+  const renderStatisticsCards = () => {
+    if (!stats || !advancedStats) return null;
+
+    return (
+      <div className={styles.statsContainer}>
+        <Card className={`${styles.statsCard} ${styles.totalCard}`}>
+          <UserOutlined className={styles.statIcon} />
+          <div className={styles.statValue}>{stats.totalCount}</div>
+          <div className={styles.statLabel}>Total Ingredients</div>
+        </Card>
+
+        <Card className={`${styles.statsCard} ${styles.priority1Card}`}>
+          <FireOutlined className={styles.statIcon} />
+          <div className={styles.statValue}>{stats.priorityCount["1"] || 0}</div>
+          <div className={styles.statLabel}>High Priority</div>
+        </Card>
+
+        <Card className={`${styles.statsCard} ${styles.priority2Card}`}>
+          <ExclamationCircleOutlined className={styles.statIcon} />
+          <div className={styles.statValue}>{stats.priorityCount["2"] || 0}</div>
+          <div className={styles.statLabel}>Medium Priority</div>
+        </Card>
+
+        <Card className={`${styles.statsCard} ${styles.priority3Card}`}>
+          <CheckCircleOutlined className={styles.statIcon} />
+          <div className={styles.statValue}>{stats.priorityCount["3"] || 0}</div>
+          <div className={styles.statLabel}>Low Priority</div>
+        </Card>
+      </div>
+    );
+  };
 
   // Enhanced table columns with price comparison info
   const highCostColumns = [
@@ -135,6 +212,7 @@ const Analysis = () => {
         </div>
       ) : (
         <>
+          {renderStatisticsCards()}
           <div className={styles.cardsContainer}>
             {/* High Cost Card */}
             <Card
