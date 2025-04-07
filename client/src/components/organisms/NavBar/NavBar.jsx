@@ -42,17 +42,27 @@ const customTheme = {
 };
 
 const NavBar = ({ Comp }) => {
-  const items = [
-    {
-      key: "1",
-      label: (
-        <div className={styles.logout}>
-          Logout <t /> <LogoutOutlined />
-        </div>
-      ),
-      onClick: () => navigate("/login"),
-    },
-  ];
+    const dropdownItems = [
+      {
+        key: "1",
+        label: (
+          <div className={styles.profileMenuItem}>
+            <UserOutlined className={styles.menuItemIcon} /> &nbsp;Profile
+          </div>
+        ),
+        onClick: () => navigate("/profile"),
+      },
+      {
+        key: "2",
+        label: (
+          <div className={styles.logoutMenuItem}>
+            <LogoutOutlined className={styles.menuItemIcon} />&nbsp;Log out
+          </div>
+        ),
+        onClick: () => navigate("/login"),
+      },
+    ];
+
   const [collapsed, setCollapsed] = useState(false);
   const [selectedKey, setSelectedKey] = useState("");
   const [loading, setLoading] = useState(false);
@@ -164,25 +174,24 @@ const NavBar = ({ Comp }) => {
           />
           <img className={styles.logo} src={img}></img>
           <div className={styles.userDropdown}>
-            <Space direction="vertical">
-              <Space wrap>
-                <Dropdown
-                  menu={{
-                    items,
-                  }}
-                  placement="bottomLeft"
-                >
-                  <Button className={styles.dropButton}>
-                    <Avatar
-                      style={{ backgroundColor: "#d10000" }}
-                      size={38}
-                      icon={<UserOutlined />}
-                    />
-                    Anjana Edirisinghe
-                  </Button>
-                </Dropdown>
-              </Space>
-            </Space>
+            <Dropdown
+              menu={{ items: dropdownItems }}
+              placement="bottomRight"
+              trigger={["click"]}
+              overlayClassName={styles.userDropdownMenu}
+            >
+              <div className={styles.userInfo}>
+                <Avatar
+                  style={{ backgroundColor: "#d10000" }}
+                  size={36}
+                  icon={<UserOutlined />}
+                />
+                <div className={styles.userDetails}>
+                  <div className={styles.userName}>Anjana Edirisinghe</div>
+                  <div className={styles.userPosition}>HR Manager</div>
+                </div>
+              </div>
+            </Dropdown>
           </div>
         </div>
         <div className={styles.content}>
