@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpException, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpException, HttpStatus, Query } from '@nestjs/common';
 import { IngredientsService } from './ingredients.service';
 import { Prisma } from '@prisma/client';
 import { threadId } from 'worker_threads';
@@ -17,12 +17,6 @@ export class IngredientsController {
     return this.ingredientsService.findAll();
   }
 
-  @Get('price/low')
-  async findLowPriceIngredients() {
-    console.log('Received request for low price ingredients');
-    return this.ingredientsService.findLowPriceIngredients();
-  }
-
   @Get('stats')
   async getIngredientStats() {
     return this.ingredientsService.getIngredientStats();
@@ -31,6 +25,11 @@ export class IngredientsController {
   @Get('advanced-stats')
   async getAdvancedIngredientStats() {
     return this.ingredientsService.getAdvancedIngredientStats();
+  }
+
+  @Get('stats/monthly')
+  getMonthlyStats(@Query('year') year?: string) {
+    return this.ingredientsService.getMonthlyIngredientStats(year ? parseInt(year) : undefined);
   }
 
   @Get(':id')
