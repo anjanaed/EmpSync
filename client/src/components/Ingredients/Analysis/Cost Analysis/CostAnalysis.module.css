@@ -1,0 +1,131 @@
+.dashboardContainer {
+    background: #f0f2f5;
+}
+
+.header {
+    background: white;
+    padding: 0 24px;
+    position: fixed;
+    width: 100%;
+    z-index: 1000;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.headerTitle {
+    margin: 0 0 0 16px !important;
+    display: inline-block;
+}
+
+.backButton {
+    margin-right: 16px;
+}
+
+.logoutButton {
+    margin-left: 16px;
+}
+
+.contentSection {
+    margin-top: 64px;
+    padding: 24px;
+    background: #f0f2f5;
+    min-height: calc(100vh - 64px - 69px);
+}
+
+.yearHeader {
+    margin-bottom: 24px;
+}
+
+.summaryCards {
+    margin-bottom: 24px;
+}
+
+.card {
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.chartCard {
+    margin-bottom: 24px;
+    background: white;
+    border-radius: 8px;
+}
+
+.tableCard {
+    margin-bottom: 24px;
+}
+
+.trendChart {
+    height: 300px;
+    margin: 20px 0;
+}
+
+.pieChartContainer {
+    height: 300px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .contentSection {
+        padding: 16px;
+    }
+
+    .trendChart {
+        height: 250px;
+    }
+}
+
+@media (max-width: 768px) {
+    .headerTitle {
+        font-size: 18px !important;
+    }
+
+    .contentSection {
+        padding: 12px;
+        margin-top: 56px;
+    }
+
+    .summaryCards {
+        margin-bottom: 16px;
+    }
+
+    .trendChart {
+        height: 250px;
+    }
+
+    .pieChartContainer {
+        height: 250px;
+    }
+}
+
+@media (max-width: 576px) {
+    .header {
+        padding: 0 12px;
+    }
+
+    .headerTitle {
+        font-size: 16px !important;
+    }
+
+    .backButton, .logoutButton {
+        padding: 4px 8px;
+    }
+
+    .contentSection {
+        padding: 8px;
+    }
+
+    .trendChart {
+        height: 200px;
+    }
+
+    .pieChartContainer {
+        height: 200px;
+    }
+}
