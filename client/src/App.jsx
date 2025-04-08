@@ -13,6 +13,7 @@ import EmployeePage from "./components/pages/HR/EmployeePage/EmployeePage";
 import Ingredients from "./pages/Ingredients/Dashboard/Ingredients";
 import AnalysisDashboard from "./pages/Ingredients/AnalysisDashboard/AnalysisDashboard";
 import OrderReportDashboard from "./pages/Ingredients/OrderReportDashboard/OrderReportDashboard";
+import CostAnalysis from "./components/Ingredients/Analysis/Cost Analysis/CostAnalysis";
 
 
 function App() {
@@ -30,6 +31,7 @@ function App() {
         <Route path="/meal-conform/:id" element={<MealConform />} />
         <Route path="/passwordReset" element={<PasswordReset />} /> 
         <Route path="/Ingredients" element={<Ingredients />} />
+        <Route path="/CostAnalysis" element={<CostAnalysis />} />
         <Route path="/AnalysisDashboard" element={<AnalysisDashboard />} />
         <Route path="/OrderReportDashboard" element={<OrderReportDashboard />} />
       </Routes>
