@@ -26,7 +26,7 @@ const Employees = () => {
 
   const handleCancel = () => {
     setIsModalOpen(false);
-    setSelectEmployee(null);
+    // setSelectEmployee(null);
   };
 
   useEffect(() => {
@@ -190,19 +190,19 @@ const Employees = () => {
                 optionFilterProp="label"
                 options={[
                   {
-                    value: "HrManager",
+                    value: "HR Manager",
                     label: "HR Manager",
                   },
                   {
-                    value: "KitchenAdmin",
+                    value: "Kitchen Admin",
                     label: "Kitchen Admin",
                   },
                   {
-                    value: "KitchenStaff",
+                    value: "Kitchen Staff",
                     label: "Kitchen Staff",
                   },
                   {
-                    value: "InventoryManager",
+                    value: "Inventory Manager",
                     label: "Inventory Manager",
                   },
                 ]}
@@ -213,7 +213,11 @@ const Employees = () => {
             <Table
               columns={columns}
               dataSource={employee}
-              pagination={false}
+              pagination={{position:["bottomCenter"],
+                pageSize:20,
+                showTotal: (total, range) => `${range[0]}–${range[1]} of ${total} items`,
+                showSizeChanger:false,
+              }}
             />
           </ConfigProvider>
         </div>
