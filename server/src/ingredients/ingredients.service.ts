@@ -77,70 +77,6 @@ export class IngredientsService {
     });
   }
 
-  async findLowPriceIngredients() {
-    console.log('Fetching low price ingredients...');
-
-    // Fetch ingredients from database
-    const ingredients = await this.databaseServices.ingredient.findMany({
-        select: {
-            id: true,
-            name: true,
-            price_per_unit: true,
-            quantity: true,
-        },
-    });
-
-    // Step 1: Sort ingredients by name first, then by price_per_unit in ascending order
-    ingredients.sort((a, b) => {
-      const nameComparison = a.name.localeCompare(b.name);
-      return nameComparison !== 0 ? nameComparison : Number(a.price_per_unit) - Number(b.price_per_unit);
-    });
-
-    // Step 2: Group ingredients by name
-    const groupedIngredients: Record<string, any[]> = {};
-    for (const ingredient of ingredients) {
-        if (!groupedIngredients[ingredient.name]) {
-            groupedIngredients[ingredient.name] = [];
-        }
-        groupedIngredients[ingredient.name].push(ingredient);
-    }
-
-    // Step 3: Use Binary Search to find the lowest price variant in each group
-    function binarySearchLowest(items: any[]): any {
-        let left = 0;
-        let right = items.length - 1;
-        let lowest = items[0]; // Since array is sorted, first element is the lowest
-
-        while (left <= right) {
-            let mid = Math.floor((left + right) / 2);
-            if (items[mid].price_per_unit < lowest.price_per_unit) {
-                lowest = items[mid];
-            }
-            right = mid - 1; // Keep searching in the left half for a lower price
-        }
-
-        return lowest;
-    }
-
-    // Step 4: Construct the final list with price comparisons
-    const lowPriceIngredients = Object.entries(groupedIngredients).map(([name, items]) => {
-        const lowest = binarySearchLowest(items);
-        const highestPrice = items[items.length - 1].price_per_unit; // Since array is sorted, last element has the highest price
-
-        return {
-            ...lowest,
-            priceComparison: {
-                lowestPrice: lowest.price_per_unit,
-                highestPrice: highestPrice,
-                priceDifference: highestPrice - lowest.price_per_unit,
-                totalVariants: items.length
-            }
-        };
-    });
-
-    return lowPriceIngredients;
-  }
-
   async getIngredientStats() {
     const allIngredients = await this.databaseServices.ingredient.findMany({
       select: {
@@ -240,6 +176,123 @@ export class IngredientsService {
       statistics: finalStats,
       lastUpdated: new Date(),
       totalIngredients: ingredients.length
+    };
+  }
+
+  async getMonthlyIngredientStats(year?: number) {
+    const targetYear = year || new Date().getFullYear();
+
+    const ingredients = await this.databaseServices.ingredient.findMany({
+      select: {
+        id: true,
+        name: true,
+        price_per_unit: true,
+        quantity: true,
+        priority: true,
+        type: true,          // Added type
+        createdAt: true,
+      },
+      where: {
+        createdAt: {
+          gte: new Date(targetYear, 0, 1),
+          lt: new Date(targetYear + 1, 0, 1)
+        }
+      }
+    });
+
+    const monthlyStats = Array(12).fill(null).map(() => ({
+      count: 0,
+      totalValue: 0 as number,
+      byPriority: {} as Record<string, number>,
+      byType: {} as Record<string, number>,    // Added type tracking
+      ingredients: [] as any[],                 // Will store detailed ingredient info
+      priceRange: {
+        highest: 0,
+        lowest: Infinity
+      }
+    }));
+
+    ingredients.forEach(ingredient => {
+      const month = ingredient.createdAt.getMonth();
+      const stats = monthlyStats[month];
+      const price = Number(ingredient.price_per_unit);
+
+      // Update basic stats
+      stats.count++;
+      stats.totalValue += price * Number(ingredient.quantity);
+      
+      // Update price range
+      stats.priceRange.highest = Math.max(stats.priceRange.highest, price);
+      stats.priceRange.lowest = Math.min(stats.priceRange.lowest, price);
+      
+      // Add detailed ingredient information
+      stats.ingredients.push({
+        id: ingredient.id,
+        name: ingredient.name,
+        type: ingredient.type || 'UNDEFINED',
+        price: price,
+        quantity: ingredient.quantity,
+        priority: ingredient.priority || 'NORMAL',
+        createdAt: ingredient.createdAt,
+        totalValue: price * Number(ingredient.quantity)
+      });
+
+      // Update priority counts
+      const priority = ingredient.priority || 'NORMAL';
+      stats.byPriority[priority] = (stats.byPriority[priority] || 0) + 1;
+
+      // Update type counts
+      const type = ingredient.type || 'UNDEFINED';
+      stats.byType[type] = (stats.byType[type] || 0) + 1;
+    });
+
+    const months = [
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+
+    const formattedStats = monthlyStats.map((stats, index) => ({
+      month: months[index],
+      statistics: {
+        totalIngredients: stats.count,
+        totalInventoryValue: Number(stats.totalValue.toFixed(2)),
+        priorityDistribution: stats.byPriority,
+        typeDistribution: stats.byType,
+        averageValuePerIngredient: stats.count > 0 
+          ? Number((stats.totalValue / stats.count).toFixed(2)) 
+          : 0,
+        priceRange: {
+          highest: stats.count > 0 ? Number(stats.priceRange.highest.toFixed(2)) : 0,
+          lowest: stats.count > 0 ? Number(stats.priceRange.lowest.toFixed(2)) : 0
+        }
+      },
+      ingredients: stats.ingredients.sort((a, b) => b.totalValue - a.totalValue) // Sort by total value
+    }));
+
+    // Calculate yearly price range
+    const yearlyPriceRange = ingredients.reduce((range, ingredient) => {
+      const price = Number(ingredient.price_per_unit);
+      return {
+        highest: Math.max(range.highest, price),
+        lowest: Math.min(range.lowest, price)
+      };
+    }, { highest: 0, lowest: Infinity });
+
+    return {
+      year: targetYear,
+      monthlyStatistics: formattedStats,
+      totalYearlyIngredients: ingredients.length,
+      summary: {
+        totalValue: formattedStats.reduce((sum, month) => sum + month.statistics.totalInventoryValue, 0),
+        averageMonthlyIngredients: Math.round(ingredients.length / formattedStats.filter(m => m.statistics.totalIngredients > 0).length),
+        mostActiveMonth: formattedStats.reduce((max, curr) => 
+          curr.statistics.totalIngredients > (max?.statistics.totalIngredients || 0) ? curr : max, null)?.month,
+        priceRange: {
+          highest: Number(yearlyPriceRange.highest.toFixed(2)),
+          lowest: yearlyPriceRange.lowest !== Infinity ? Number(yearlyPriceRange.lowest.toFixed(2)) : 0
+        }
+      },
+      lastUpdated: new Date()
     };
   }
 }
