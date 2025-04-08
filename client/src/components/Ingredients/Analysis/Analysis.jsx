@@ -3,10 +3,12 @@ import { Button, Card, Table, Typography, Spin, message, Tooltip, Badge } from "
 import { DownloadOutlined, LineChartOutlined, InfoCircleOutlined, UserOutlined, FireOutlined, ClockCircleOutlined, ExclamationCircleOutlined, CheckCircleOutlined } from "@ant-design/icons";
 import axios from "axios";
 import styles from "./Analysis.module.css";
+import { useNavigate } from 'react-router-dom';
 
 const { Title, Text } = Typography;
 
 const Analysis = () => {
+  const navigate = useNavigate();
   const [highCostData, setHighCostData] = useState([]);
   const [lowCostData, setLowCostData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -196,8 +198,7 @@ const Analysis = () => {
 
   // Function to handle viewing detailed analysis
   const handleViewAnalysis = () => {
-    message.info("Redirecting to detailed analysis...");
-    // Implement navigation to detailed view
+    navigate('/CostAnalysis');
   };
 
   return (
