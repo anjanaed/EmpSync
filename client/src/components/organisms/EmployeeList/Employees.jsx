@@ -26,7 +26,7 @@ const Employees = () => {
 
   const handleCancel = () => {
     setIsModalOpen(false);
-    setSelectEmployee(null);
+    // setSelectEmployee(null);
   };
 
   useEffect(() => {
@@ -216,6 +216,7 @@ const Employees = () => {
               pagination={{position:["bottomCenter"],
                 pageSize:20,
                 showTotal: (total, range) => `${range[0]}–${range[1]} of ${total} items`,
+                showSizeChanger:false,
               }}
             />
           </ConfigProvider>

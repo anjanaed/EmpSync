@@ -29,6 +29,8 @@ const Register = () => {
   const [supId, setSupId] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  const jobSalaryMap={"HR Manager":40000,"Kitchen Admin":50000,"Kitchen Staff":70000,"Inventory Manager":90000,"Other":10}
+
   const handleRegister = async () => {
     setLoading(true);
     let role = jobRole;
@@ -235,14 +237,24 @@ const Register = () => {
                       ]}
                     >
                       <Select
-                        onChange={(value) => setJobRole(value)}
+                        onChange={(value) => {setJobRole(value)
+                          var sal
+                          if (value != "Other"){
+                            sal=((jobSalaryMap[value]).toString());
+                          }else{
+                            sal="";
+                          }
+                          setSalary(sal);
+                          form.setFieldsValue({ salary: sal });
+                        }
+                        }
                         style={{ width: "100%" }}
                         placeholder="Select Role"
                       >
-                        <Option value="HrManager">HR Administrator</Option>
-                        <Option value="KitchenAdmin">Kitchen Admin</Option>
-                        <Option value="KitchenStaff">Kitchen Staff</Option>
-                        <Option value="InventoryManager">
+                        <Option value="HR Manager">HR Administrator</Option>
+                        <Option value="Kitchen Admin">Kitchen Admin</Option>
+                        <Option value="Kitchen Staff">Kitchen Staff</Option>
+                        <Option value="Inventory Manager">
                           Inventory Manager
                         </Option>
                         <Option value="Other">Other</Option>
@@ -324,12 +336,13 @@ const Register = () => {
                 </Form.Item>
                 <Form.Item
                   name="salary"
-                  label="Basic Salary"
+                  label="Basic Salary (LKR)"
                   rules={[
                     {
                       required: true,
                       message: "Please Enter Salary!",
                     },
+                    
                   ]}
                 >
                   <Input
