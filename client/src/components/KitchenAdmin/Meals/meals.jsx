@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Typography, 
   Input, 
@@ -6,18 +6,13 @@ import {
   Card, 
   Row, 
   Col, 
-  Tag, 
-  Space,
-  Modal,
+  Modal, 
   List
 } from 'antd';
 import { 
-  ClockCircleOutlined, 
-  UserOutlined, 
   DeleteOutlined, 
   EditOutlined, 
   PlusOutlined, 
-  SearchOutlined 
 } from '@ant-design/icons';
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -25,94 +20,26 @@ import { faArrowUpRightFromSquare } from "@fortawesome/free-solid-svg-icons";
 
 import styles from './meals.module.css';
 
-// Import your meal images from assets
-import riceImage from "../../../assets/rice.jpg";
-import noodlesImage from "../../../assets/noodles.jpg";
-
-const { Title, Text } = Typography;
+const { Title } = Typography;
 const { Search } = Input;
 
-// Add custom styles for the ingredients modal
-const modalStyles = {
-  ingredientsModal: {
-    '& .ant-modal-content': {
-      borderRadius: '8px',
-      overflow: 'hidden'
-    },
-    '& .ant-modal-header': {
-      background: '#fff',
-      borderBottom: '1px solid #f0f0f0',
-      padding: '16px 24px'
-    },
-    '& .ant-modal-title': {
-      fontFamily: "'Roboto Slab', serif",
-      fontWeight: 600,
-      fontSize: '18px'
-    },
-    '& .ant-modal-body': {
-      padding: '24px'
-    },
-    '& .ant-modal-footer': {
-      borderTop: '1px solid #f0f0f0',
-      padding: '12px 24px'
-    }
-  },
-  ingredientsList: {
-    '& .ant-list-item': {
-      padding: '12px 0',
-      borderBottom: '1px solid #f0f0f0'
-    },
-    '& .ant-list-item:last-child': {
-      borderBottom: 'none'
-    }
-  },
-  closeButton: {
-    backgroundColor: 'rgb(224, 0, 0)',
-    borderColor: 'rgb(224, 0, 0)',
-    color: '#fff'
-  }
-};
-
 const AvailableMeals = () => {
-  // Sample ingredients data for each meal
-  const mealIngredients = {
-    1: ['Rice', 'Chicken Curry', 'Dhal', 'Papadam', 'Pickle'],
-    2: ['Noodles', 'Vegetables', 'Soy Sauce', 'Chili Flakes'],
-    3: ['Rice Flour', 'Coconut Milk', 'Salt'],
-    4: ['Pasta', 'Tomato Sauce', 'Cheese', 'Basil'],
-    5: ['Rice Flour', 'Water', 'Salt'],
-    6: ['Rice Flour', 'Water', 'Salt'],
-    7: ['Rice Flour', 'Water', 'Salt'],
-    8: ['Rice Flour', 'Water', 'Salt'],
-    9: ['Rice Flour', 'Water', 'Salt'],
-  };
-
-  const [meals, setMeals] = useState([
-    { id: 1, name: 'Rice and Curry', price: 100, image: riceImage },
-    { id: 2, name: 'Noodles', price: 100, image: noodlesImage },
-    { id: 3, name: 'Hoppers', price: 100, image: riceImage },
-    { id: 4, name: 'Pasta', price: 100, image: noodlesImage },
-    { id: 5, name: 'String Hoppers', price: 100, image: riceImage },
-    { id: 6, name: 'String Hoppers', price: 100, image: riceImage },
-    { id: 7, name: 'String Hoppers', price: 100, image: riceImage },
-    { id: 8, name: 'String Hoppers', price: 100, image: riceImage },
-    { id: 9, name: 'String Hoppers', price: 100, image: riceImage },
-  ]);
-
-  const navigate = useNavigate();
+  const [meals, setMeals] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
-  
-  // State for the ingredients popup
   const [ingredientsModalVisible, setIngredientsModalVisible] = useState(false);
   const [selectedMeal, setSelectedMeal] = useState(null);
-
-  const handleAddMeal = () => {
-    navigate("/meal-details");
-  };
   
-  const handleEdit = () => {
-    navigate("/edit-meal");
-  };
+  const navigate = useNavigate();
+
+  // Fetch meal data from the API
+  useEffect(() => {
+    const fetchMeals = async () => {
+      const response = await fetch('http://localhost:3000/meal');
+      const data = await response.json();
+      setMeals(data);
+    };
+    fetchMeals();
+  }, []);
 
   const handleSearch = (value) => {
     setSearchTerm(value);
@@ -122,21 +49,23 @@ const AvailableMeals = () => {
     setMeals(meals.filter(meal => meal.id !== id));
   };
 
+  const handleEdit = (id) => {
+    navigate(`/edit-meal/${id}`);
+  };
 
-  // Function to show ingredients popup
+  // Function to show ingredients modal
   const showIngredientsModal = (meal) => {
     setSelectedMeal(meal);
     setIngredientsModalVisible(true);
   };
 
-  // Function to hide ingredients popup
   const closeIngredientsModal = () => {
     setIngredientsModalVisible(false);
     setSelectedMeal(null);
   };
 
   const filteredMeals = searchTerm 
-    ? meals.filter(meal => meal.name.toLowerCase().includes(searchTerm.toLowerCase()))
+    ? meals.filter(meal => meal.nameEnglish.toLowerCase().includes(searchTerm.toLowerCase()))
     : meals;
 
   return (
@@ -156,7 +85,7 @@ const AvailableMeals = () => {
           <Button 
             type="primary" 
             icon={<PlusOutlined />} 
-            onClick={handleAddMeal}
+            onClick={() => navigate("/meal-details")}
             size="large"
             className={styles.redButton}
           >
@@ -170,44 +99,30 @@ const AvailableMeals = () => {
           <Col xs={24} sm={12} md={4} key={meal.id}>
             <Card
               className={styles.card}
-              styles={{ body: { padding: "0" } }}
             >
               <div className={styles.imageContainer}>
-                {meal.image ? (
+                {meal.imageUrl ? (
                   <div className={styles.imageWrapper}>
-                    <img src={meal.image} alt={meal.name} className={styles.mealImage} />
+                    <img src={meal.imageUrl} alt={meal.nameEnglish} className={styles.mealImage} />
                   </div>
                 ) : (
-                  <div className={styles.imagePlaceholder}>
-                    <div className={styles.imagePlaceholderIcon}>
-                      <PlusOutlined />
-                    </div>
-                  </div>
+                  <div className={styles.imagePlaceholder}></div>
                 )}
               </div>
               
               <div className={styles.mealInfo}>
-                <Title level={5} className={styles.mealTitle}>{meal.name}</Title>
-                <label className={styles.mealDetails}>Meal Id : {meal.id}</label><br/>
+                <Title level={5} className={styles.mealTitle}>{meal.nameEnglish}</Title>
+                <label className={styles.mealDetails}>Meal Id: {meal.id}</label><br/>
                 <label className={styles.mealDetails}>Price: {meal.price}</label><br/>
                 <label 
                   className={styles.mealDetails} 
                   onClick={() => showIngredientsModal(meal)}
-                  style={{ 
-                    cursor: 'pointer',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    color: 'rgb(158, 153, 153)',
-                    fontWeight: 500,
-                    transition: 'color 0.3s'
-                  }}
-                  onMouseOver={(e) => e.currentTarget.style.color = 'rgba(131, 76, 76, 0.8)'}
-                  onMouseOut={(e) => e.currentTarget.style.color = 'rgb(158, 153, 153)'}
+                  style={{ cursor: 'pointer' }}
                 >
                   Ingredients <FontAwesomeIcon icon={faArrowUpRightFromSquare} style={{ marginLeft: '4px' }} />
                 </label>
               </div>
-              
+
               <div className={styles.mealActions}>
                 <Button 
                   type="text" 
@@ -232,10 +147,9 @@ const AvailableMeals = () => {
 
       {/* Ingredients Modal */}
       <Modal
-        title={selectedMeal ? `${selectedMeal.name} Ingredients` : 'Ingredients'}
+        title={selectedMeal ? `${selectedMeal.nameEnglish} Ingredients` : 'Ingredients'}
         open={ingredientsModalVisible}
         onCancel={closeIngredientsModal}
-        className={styles.ingredientsModal}
         footer={[
           <Button 
             key="close" 
@@ -245,42 +159,17 @@ const AvailableMeals = () => {
             Close
           </Button>
         ]}
-        
-       
       >
         {selectedMeal && (
           <List
-            dataSource={mealIngredients[selectedMeal.id] || ['No ingredients available']}
+            dataSource={selectedMeal.ingredients || ['No ingredients available']}
             renderItem={item => (
-              <List.Item style={{
-                padding: '12px 0',
-                borderBottom: '1px solid #f0f0f0'
-              }}>
+              <List.Item>
                 <List.Item.Meta
-                  title={
-                    <div style={{ 
-                      
-                      fontSize: '16px',
-                      display: 'flex',
-                      
-                    }}>
-                      <div style={{ 
-                        width: '8px', 
-                        height: '8px', 
-                        borderRadius: '50%', 
-                       
-                        marginRight: '12px'
-                      }}></div>
-                      {item}
-                    </div>
-                  }
+                  title={item}
                 />
               </List.Item>
             )}
-            style={{
-              maxHeight: '300px',
-              overflow: 'auto'
-            }}
           />
         )}
       </Modal>

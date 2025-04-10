@@ -4,6 +4,8 @@ import { UploadOutlined, FileImageOutlined, SearchOutlined } from "@ant-design/i
 import Navbar from "../../../components/KitchenAdmin/header/header";
 import styles from "./MealDetailsForm.module.css";
 import { useNavigate } from "react-router-dom";
+import { storage } from "../../../firebase/config"; // Import Firebase storage
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage"; // Import Firebase storage functions
 
 const { TextArea } = Input;
 const { Title } = Typography;
@@ -11,6 +13,7 @@ const { Title } = Typography;
 const AddMealPage = () => {
   const [form] = Form.useForm();
   const [imageUrl, setImageUrl] = useState(null);
+  const [imageFile, setImageFile] = useState(null); // Store the actual file
   const fileInputRef = useRef(null);
   const [isIngredientsModalVisible, setIsIngredientsModalVisible] = useState(false);
   const [ingredients, setIngredients] = useState([
@@ -21,29 +24,24 @@ const AddMealPage = () => {
     { id: 5, name: "Potato", quantity: 0, selected: false },
     { id: 6, name: "Chicken", quantity: 0, selected: false },
     { id: 7, name: "Onion", quantity: 0, selected: false },
-    { id: 7, name: "Onion", quantity: 0, selected: false },
-    { id: 7, name: "Onion", quantity: 0, selected: false },
-    { id: 7, name: "Onion", quantity: 0, selected: false },
-    { id: 7, name: "Onion", quantity: 0, selected: false },
-    { id: 7, name: "Onion", quantity: 0, selected: false },
-    { id: 7, name: "Onion", quantity: 0, selected: false },
     { id: 8, name: "Garlic", quantity: 0, selected: false }
   ]);
   const [searchIngredient, setSearchIngredient] = useState("");
   const [selectedIngredients, setSelectedIngredients] = useState([]);
+  const [uploading, setUploading] = useState(false); // Track upload status
 
   const navigate = useNavigate();
 
   const handleCancel = () => {
     form.resetFields();
     setImageUrl(null);
+    setImageFile(null);
     setSelectedIngredients([]);
     console.log("Form canceled");
-    // Navigate away: navigate('/meals')
   };
 
   const handleSubmit = async (values) => {
-    if (!imageUrl) {
+    if (!imageFile) {
       message.warning("Please select an image for the meal");
       return;
     }
@@ -52,39 +50,53 @@ const AddMealPage = () => {
       message.warning("Please select at least one ingredient for the meal");
       return;
     }
-  
-    const mealData = {
-      id: values.Id,
-      nameEnglish: values.nameEnglish,
-      nameSinhala: values.nameSinhala,
-      nameTamil: values.nameTamil,
-      description: values.description,
-      price: parseFloat(values.price),
-      imageUrl: imageUrl,
-      createdAt: new Date().toISOString(), // Auto-generate timestamp
-     
-    };
-  
+
+    setUploading(true);
+    
     try {
+      // Upload image to Firebase Storage
+      const imageRef = ref(storage, `meals/${Date.now()}-${imageFile.name}`);
+      await uploadBytes(imageRef, imageFile);
+      
+      // Get the download URL of the uploaded image
+      const downloadURL = await getDownloadURL(imageRef);
+      
+      const mealData = {
+        id: values.Id,
+        nameEnglish: values.nameEnglish,
+        nameSinhala: values.nameSinhala,
+        nameTamil: values.nameTamil,
+        description: values.description,
+        price: parseFloat(values.price),
+        imageUrl: downloadURL, // Use the Firebase Storage URL
+        createdAt: new Date().toISOString(),
+        
+      };
+    
       const response = await fetch("http://localhost:3000/meal", {
         method: "POST",
+        credentials: 'include', // Important for cookies/auth headers
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(mealData),
       });
-  
+    
       if (!response.ok) {
         throw new Error("Failed to add meal");
       }
-  
+    
       message.success("Meal added successfully!");
       form.resetFields();
       setImageUrl(null);
+      setImageFile(null);
       setSelectedIngredients([]);
       navigate("/kitchen-meal"); // Redirect after success
     } catch (error) {
-      message.error(error.message);
+      message.error(`Error: ${error.message}`);
+      console.error("Error adding meal:", error);
+    } finally {
+      setUploading(false);
     }
   };
   
@@ -101,6 +113,10 @@ const AddMealPage = () => {
       return;
     }
 
+    // Store the file object for later upload
+    setImageFile(file);
+
+    // Preview the image
     const reader = new FileReader();
     reader.onload = () => {
       setImageUrl(reader.result);
@@ -196,14 +212,15 @@ const AddMealPage = () => {
                   icon={<UploadOutlined />}
                   className={styles.chooseImageButton}
                   onClick={handleImageClick}
+                  disabled={uploading}
                 >
                   Choose Image
                 </Button>
               </Col>
 
               <Col xs={24} md={14}>
-              <Form.Item
-                  label=" Meal ID"
+                <Form.Item
+                  label="Meal ID"
                   name="Id"
                   rules={[{ required: true, message: "Please enter Meal Id" }]}
                 >
@@ -280,6 +297,7 @@ const AddMealPage = () => {
                     block
                     className={styles.ingredientsButton}
                     onClick={showIngredientsModal}
+                    disabled={uploading}
                   >
                     Choose Ingredients
                   </Button>
@@ -302,11 +320,17 @@ const AddMealPage = () => {
 
             <Row className={styles.actionButtonsRow}>
               <Col span={12} className={styles.cancelButtonCol}>
-                <Button onClick={handleCancel} className={styles.cancelButton}>Cancel</Button>
+                <Button onClick={handleCancel} className={styles.cancelButton} disabled={uploading}>Cancel</Button>
               </Col>
               <Col span={12} className={styles.confirmButtonCol}>
-                <Button type="primary" htmlType="submit" className={styles.confirmButton}>
-                  Confirm
+                <Button 
+                  type="primary" 
+                  htmlType="submit" 
+                  className={styles.confirmButton}
+                  loading={uploading}
+                  disabled={uploading}
+                >
+                  {uploading ? "Uploading..." : "Confirm"}
                 </Button>
               </Col>
             </Row>
