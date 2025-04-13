@@ -11,6 +11,7 @@ const { Title, Text } = Typography;
 
 const CostAnalysis = () => {
   const [analysisData, setAnalysisData] = useState(null);
+  const [showDistribution, setShowDistribution] = useState({});
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -45,35 +46,35 @@ const CostAnalysis = () => {
       title: 'Total Value', 
       dataIndex: ['statistics', 'totalInventoryValue'], 
       key: 'totalValue',
-      render: (value) => `$${value.toFixed(2)}` 
+      render: (value) => `Rs. ${value.toFixed(2)}` 
     },
     { 
       title: 'Avg Value/Ingredient', 
       dataIndex: ['statistics', 'averageValuePerIngredient'], 
       key: 'average',
-      render: (value) => `$${value.toFixed(2)}` 
+      render: (value) => `Rs. ${value.toFixed(2)}` 
     },
     {
       title: 'Highest Price',
       dataIndex: ['statistics', 'priceRange', 'highest'],
       key: 'highest',
-      render: (value) => `$${value.toFixed(2)}`
+      render: (value) => `Rs. ${value.toFixed(2)}`
     },
     {
       title: 'Lowest Price',
       dataIndex: ['statistics', 'priceRange', 'lowest'],
       key: 'lowest',
-      render: (value) => `$${value.toFixed(2)}`
+      render: (value) => `Rs. ${value.toFixed(2)}`
     }
   ];
 
   const detailColumns = [
     { title: 'Name', dataIndex: 'name', key: 'name' },
     { title: 'Type', dataIndex: 'type', key: 'type' },
-    { title: 'Price', dataIndex: 'price', key: 'price', render: (value) => `$${value}` },
+    { title: 'Price', dataIndex: 'price', key: 'price', render: (value) => `Rs. ${value}` },
     { title: 'Quantity', dataIndex: 'quantity', key: 'quantity' },
     { title: 'Priority', dataIndex: 'priority', key: 'priority' },
-    { title: 'Total Value', dataIndex: 'totalValue', key: 'totalValue', render: (value) => `$${value}` }
+    { title: 'Total Value', dataIndex: 'totalValue', key: 'totalValue', render: (value) => `Rs. ${value}` }
   ];
 
   return (
@@ -126,7 +127,7 @@ const CostAnalysis = () => {
                   <Statistic
                     title="Total Value"
                     value={analysisData.summary.totalValue}
-                    prefix="$"
+                    prefix="Rs. "
                   />
                 </Card>
               </Col>
@@ -218,49 +219,68 @@ const CostAnalysis = () => {
             {analysisData.monthlyStatistics.map((month) => {
               if (month.statistics.totalIngredients > 0) {
                 return (
-                  <Card key={month.month} title={`${month.month} Distribution`} className={styles.chartCard}>
-                    <Row gutter={16}>
-                      <Col xs={24} md={12}>
-                        <Card title="Type Distribution" className={styles.card}>
-                          <div className={styles.pieChartContainer}>
-                            <Pie
-                              data={Object.entries(month.statistics.typeDistribution).map(([type, count]) => ({
-                                type,
-                                value: count
-                              }))}
-                              angleField="value"
-                              colorField="type"
-                              radius={0.8}
-                              label={{
-                                type: 'outer',
-                                content: '{name} {percentage}'
-                              }}
-                              interactions={[{ type: 'element-active' }]}
-                            />
-                          </div>
-                        </Card>
-                      </Col>
-                      <Col xs={24} md={12}>
-                        <Card title="Priority Distribution" className={styles.card}>
-                          <div className={styles.pieChartContainer}>
-                            <Pie
-                              data={Object.entries(month.statistics.priorityDistribution).map(([priority, count]) => ({
-                                priority: `Priority ${priority}`,
-                                value: count
-                              }))}
-                              angleField="value"
-                              colorField="priority"
-                              radius={0.8}
-                              label={{
-                                type: 'outer',
-                                content: '{name} {percentage}'
-                              }}
-                              interactions={[{ type: 'element-active' }]}
-                            />
-                          </div>
-                        </Card>
-                      </Col>
-                    </Row>
+                  <Card 
+                    key={month.month} 
+                    title={
+                      <div className="flex justify-between items-center">
+                        <span>{month.month} Distribution</span>
+                        <Button
+                          type="link"
+                          onClick={() => setShowDistribution(prev => ({
+                            ...prev,
+                            [month.month]: !prev[month.month]
+                          }))}
+                        >
+                          {showDistribution[month.month] ? 'Hide' : 'View'} Distribution
+                        </Button>
+                      </div>
+                    } 
+                    className={styles.chartCard}
+                  >
+                    {showDistribution[month.month] && (
+                      <Row gutter={16}>
+                        <Col xs={24} md={12}>
+                          <Card title="Type Distribution" className={styles.card}>
+                            <div className={styles.pieChartContainer}>
+                              <Pie
+                                data={Object.entries(month.statistics.typeDistribution).map(([type, count]) => ({
+                                  type,
+                                  value: count
+                                }))}
+                                angleField="value"
+                                colorField="type"
+                                radius={0.8}
+                                label={{
+                                  type: 'outer',
+                                  content: '{name} {percentage}'
+                                }}
+                                interactions={[{ type: 'element-active' }]}
+                              />
+                            </div>
+                          </Card>
+                        </Col>
+                        <Col xs={24} md={12}>
+                          <Card title="Priority Distribution" className={styles.card}>
+                            <div className={styles.pieChartContainer}>
+                              <Pie
+                                data={Object.entries(month.statistics.priorityDistribution).map(([priority, count]) => ({
+                                  priority: `Priority ${priority}`,
+                                  value: count
+                                }))}
+                                angleField="value"
+                                colorField="priority"
+                                radius={0.8}
+                                label={{
+                                  type: 'outer',
+                                  content: '{name} {percentage}'
+                                }}
+                                interactions={[{ type: 'element-active' }]}
+                              />
+                            </div>
+                          </Card>
+                        </Col>
+                      </Row>
+                    )}
                   </Card>
                 );
               }
@@ -275,9 +295,9 @@ const CostAnalysis = () => {
         )}
       </Content>
 
-      <Footer className="text-center bg-white">
-        <Title level={5}>Inventory Management System</Title>
-        <Text type="secondary">Efficiently manage your inventory and track costs</Text>
+      <Footer className={`${styles.footer} bg-white`}>
+        <Title level={5} className={styles.footerTitle}>Inventory Management System</Title>
+        <Text type="secondary" className={styles.footerText}>Efficiently manage your inventory and track costs</Text>
       </Footer>
     </Layout>
   );
