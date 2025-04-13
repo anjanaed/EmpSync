@@ -295,4 +295,52 @@ export class IngredientsService {
       lastUpdated: new Date()
     };
   }
+
+  async getOptimizedIngredients() {
+    try {
+      // Get all ingredients
+      const ingredients = await this.databaseServices.ingredient.findMany({
+        select: {
+          id: true,
+          name: true,
+          price_per_unit: true,
+          quantity: true,
+          type: true,
+          priority: true
+        }
+      });
+
+      // Separate priority 1 ingredients
+      const priority1Ingredients = ingredients.filter(ing => ing.priority === 1);
+
+      // Group other priority ingredients by type
+      const otherPriorityIngredients = ingredients
+        .filter(ing => ing.priority !== 1)
+        .reduce((acc, ing) => {
+          if (!acc[ing.type]) {
+            acc[ing.type] = [];
+          }
+          acc[ing.type].push(ing);
+          return acc;
+        }, {} as Record<string, any[]>);
+
+      // Get minimum price ingredient for each type
+      const minPriceIngredients = Object.entries(otherPriorityIngredients).map(([type, ings]) => {
+        return ings.reduce((min, current) => {
+          return Number(current.price_per_unit) < Number(min.price_per_unit) ? current : min;
+        }, ings[0]);
+      });
+
+      return {
+        priority1Ingredients,
+        optimizedIngredients: minPriceIngredients,
+        lastUpdated: new Date()
+      };
+    } catch (error) {
+      throw new HttpException(
+        'Failed to get optimized ingredients',
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
 }
