@@ -1,75 +1,153 @@
-.mainBox{
-    margin: 2vw;
-    padding: 2vw;
-    font-family: Arial, Helvetica, sans-serif;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
-    border-radius: 15px;
+.mainBox {
+  margin: 2vw;
+  padding: 2vw;
+  font-family: Arial, Helvetica, sans-serif;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 15px;
 }
 
-.topTitle{
-    text-align: center;
-    font-size: 1.5vw;
-    margin-bottom: 1.5vw;
+.topTitle {
+  text-align: center;
+  font-size: 1.5vw;
+  margin-bottom: 1.5vw;
 }
 
-Input{
-    width: 100% !important;
+Input {
+  width: 100% !important;
 }
 
-.inputLine{
+.inputLine {
+  display: flex;
+  width: 100%;
+  gap: 50px;
+  margin-bottom: 1vw;
+}
+
+.bottomHalf .inputLine{
+    padding: 0.7vw 0vw;
+}
+
+.inputSet {
+  flex: 1;
+
+
+}
+
+.payee span {
+  color: red;
+}
+
+.payee {
+  margin: 1vw 0vw 2vw 0vw;
+}
+
+hr {
+  margin: 2vw 0vw;
+  opacity: 50%;
+}
+
+.btnSet {
+  text-align: center;
+}
+
+.btnSet button {
+  margin: 0 1vw;
+  padding: 0.3vw 2vw;
+  cursor: pointer;
+  text-align: center;
+  border-radius: 5px;
+  border: 1px solid rgb(107, 0, 0);
+  color: rgb(107, 0, 0);
+  transition: all 0.2s ease-in-out;
+}
+
+.btnSet button:hover {
+  background-color: rgba(129, 0, 0, 0.427);
+}
+
+.genBtn {
+  text-align: center;
+  margin-top: 2vw;
+}
+
+.genBtn button {
+  padding: 1vw 2vw;
+  border-radius: 10px;
+}
+
+.dynamicInputLine{
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap:1rem 3rem
+}
+
+.dynamicInputSet{
     display: flex;
-    width: 100%;
-    gap: 50px;
-    margin-bottom: 1vw;
+    flex-direction: column;
+    justify-content: flex-start;
 }
 
-.inputSet{
-    flex: 1;
+.inputDelete{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
 }
 
-.payee span{
-    color: red;
-}
-
-.payee{
-    margin-bottom: 1vw;
-}
-
-hr{
-    margin: 2vw 0vw;
-    opacity: 50%;
-}
-
-.btnSet{
-    text-align: center;
-}
-
-.btnSet button{
-    margin: 0 1vw;
-    padding: 0.3vw 2vw;
+.inputDelete span{
+    display: flex;
+    align-items: center;
     cursor: pointer;
-    text-align: center ;
-    border-radius: 5px;
-    border: 1px solid rgb(107, 0, 0);
-    color: rgb(107, 0, 0);
+    justify-content: right;
     transition: all 0.2s ease-in-out;
+    margin-left: 0.2vw;
 }
 
-
-.btnSet button:hover{
-    background-color: rgba(129, 0, 0, 0.427);
-}
-
-.genBtn{
-    text-align: center;
-    margin-top: 2vw;
+.inputDelete span:hover{
+    transform: scale(1.1);
     
 }
 
-.genBtn button{
-    padding: 1vw 2vw;
-    border-radius: 10px;
+.newFieldBtn{
+    margin-top: auto;
+    color: rgb(110, 0, 0);
+    font-size: 0.9vw;
+    padding: 0.45vw 2vw;
+    background-color: rgba(249, 41, 41, 0.527);
+    border: none;
+    cursor: pointer;
+    transition: all 0.4s ease-in-out;
+    border-radius: 8px;
+
 }
+
+.newFieldBtn:hover{
+    transform: scale(1.01);
+    background-color: rgba(155, 0, 0, 0.881);
+    color: white;
+
+}
+
+.checkBoxes{
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.removeBtn{
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.4s ease-in-out;
+}
+
+.removeBtn:hover{
+    transform: scale(1.1);
+}
+
+
+
+
+
 
 
 

@@ -74,6 +74,12 @@ const Employees = () => {
     []
   );
 
+  const modalStyles={
+    mask: {
+      backdropFilter: 'blur(12px)',
+    },
+  }
+
   const handleDelete = async (id) => {
     try {
       await axios
@@ -161,6 +167,7 @@ const Employees = () => {
         footer={null}
         width="65vw"
         onCancel={handleCancel}
+        styles={modalStyles}
       >
         <EditModal
           empId={emp}
