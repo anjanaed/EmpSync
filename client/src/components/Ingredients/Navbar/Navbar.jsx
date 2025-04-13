@@ -124,7 +124,7 @@ const NavBar = ({ Comp }) => {
               {
                 key: "1",
                 icon: <FontAwesomeIcon icon={faBoxes} />,
-                label: "Inventory",
+                label: "Inventory Management",
                 onClick: () => navigate("/Ingredients"),
               },
               {
@@ -136,7 +136,7 @@ const NavBar = ({ Comp }) => {
               {
                 key: "3",
                 icon: <FontAwesomeIcon icon={faFileInvoice} />,
-                label: "Order Report",
+                label: "Ingredient Selection",
                 onClick: () => navigate("/OrderReportDashboard"),
               },
             ]}
