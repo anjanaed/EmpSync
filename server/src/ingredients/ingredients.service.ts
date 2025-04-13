@@ -298,7 +298,7 @@ export class IngredientsService {
 
   async getOptimizedIngredients() {
     try {
-      // Get all ingredients
+      // Get all ingredients with createdAt field
       const ingredients = await this.databaseServices.ingredient.findMany({
         select: {
           id: true,
@@ -306,12 +306,18 @@ export class IngredientsService {
           price_per_unit: true,
           quantity: true,
           type: true,
-          priority: true
+          priority: true,
+          createdAt: true
+        },
+        orderBy: {
+          createdAt: 'desc' // Order by most recent first
         }
       });
 
       // Separate priority 1 ingredients
-      const priority1Ingredients = ingredients.filter(ing => ing.priority === 1);
+      const priority1Ingredients = ingredients
+        .filter(ing => ing.priority === 1)
+        .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 
       // Group other priority ingredients by type
       const otherPriorityIngredients = ingredients
@@ -324,11 +330,23 @@ export class IngredientsService {
           return acc;
         }, {} as Record<string, any[]>);
 
-      // Get minimum price ingredient for each type
+      // Get most recent minimum price ingredient for each type
       const minPriceIngredients = Object.entries(otherPriorityIngredients).map(([type, ings]) => {
-        return ings.reduce((min, current) => {
+        // Sort ingredients by date first (most recent first)
+        const sortedIngs = ings.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+        
+        // Get the most recent date
+        const mostRecentDate = sortedIngs[0].createdAt;
+        
+        // Filter ingredients from the most recent date
+        const mostRecentIngs = sortedIngs.filter(ing => 
+          ing.createdAt.toDateString() === mostRecentDate.toDateString()
+        );
+
+        // Find the minimum price among the most recent ingredients
+        return mostRecentIngs.reduce((min, current) => {
           return Number(current.price_per_unit) < Number(min.price_per_unit) ? current : min;
-        }, ings[0]);
+        }, mostRecentIngs[0]);
       });
 
       return {
