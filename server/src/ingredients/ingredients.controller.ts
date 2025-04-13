@@ -32,6 +32,11 @@ export class IngredientsController {
     return this.ingredientsService.getMonthlyIngredientStats(year ? parseInt(year) : undefined);
   }
 
+  @Get('optimized')
+  async getOptimizedIngredients() {
+    return this.ingredientsService.getOptimizedIngredients();
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.ingredientsService.findOne(id);
