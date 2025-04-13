@@ -1,201 +1,237 @@
-.container {
-  display: flex;
-  width: 90%; /* Adjust width as needed (90% of the screen width) */
-  max-width: 1750px; /* Set a maximum width for large screens */
-  margin: 0 auto 0 auto;
-  gap: 2rem;
-  padding: 20px; 
-  background-color: white;
-  border-radius: 10px;
-  border: 1px solid black; /* Dark red border */
+
+@import url("https://fonts.googleapis.com/css2?family=Bree+Serif&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Itim&family=Roboto+Slab:wght@100..900&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap");
+  
+  .card {
+    width: 100%;
+    max-width: 1500px; /* Limit maximum width */
+    margin: 0 auto; /* Center the card */
+    /* border-radius: 12px; */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    /* border: none; */
+    margin-top:60px;
+  }
+  
+  .titleContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+  }
+  
+  .menuTitle {
+    margin-bottom: 0 !important;
+    font-weight: bold;
+    font-size: 1.5rem;
+    /* color: #333; */
+     font-family: "Ubuntu", sans-serif !important;
+
+  }
+  
+  .selectDateButton {
+    width:150px !important;
+    height:35px !important;
+    display: flex;
+    align-items: center;
+    color: rgb(230, 74, 74);
+    border-color: rgb(230, 74, 74);
+    font-size: 16px;
+  }
+  
+  .selectDateButton:hover {
+    color: white !important;
+    background-color: rgb(230, 74, 74) !important;
+    border-color: rgb(230, 74, 74) !important;
+
+
+  }
+  
+  .customTabsContainer {
+    margin-bottom: 20px;
+    margin-top: 50px !important;
+    font-size: 15px !important;
+    
+  }
+  
+  .customTabs {
+    display: flex;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+  
+  .customTab {
+    flex: 1;
+    text-align: center;
+    padding: 12px 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    color: #6c6c6c;
+    position: relative;
+  }
+  
+  .customTab:hover {
+    background-color: #f0f0f0;
+  }
+  
+  .activeTab {
+    background-color: white;
+    color:  rgb(190, 0, 0);
+    box-shadow: 0 -2px 0  rgb(190, 0, 0) inset;
+  }
+  
+  .menuContainer {
+    display: flex;
+    gap: 20px;
+    background-color: #fafafa;
+    border-radius: 8px;
+    padding: 20px;
+    
+  }
+  
+  .menuList {
+    flex: 1;
+    background-color: white;
+    border-radius: 6px;
+    border: 1px solid #e0e0e0;
+    max-height: 52vh !important;
+    overflow-y: auto !important;
+  }
+  
+  .menuItem {
+    padding: 16px !important;
+    transition: background-color 0.2s ease;
+    font-size: 20px !important;
+
+    
+  }
+  
+  .menuItem:hover {
+    background-color: #f5f5f5;
+  }
+  
+  .divider {
+    margin: 0;
+    border-top-color: #e0e0e0;
+  }
+  
+  .actionContainer {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .updateButton, .removeButton {
+    height: 5vh;
+    width:25vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    margin-left: 120px !important;
+    font-size: 15px;
+  }
+  
+  .updateButton {
+    border-color: #5c0a1f!important;
+    color: #5c0a1f !important;
+  }
+  
+  .updateButton:hover {
+    /* transform: scale(1.01); */
+    font-size:16px;
+
+  }
+  
+  .removeButton {
+    border-color:rgb(191, 3, 3);
+    color: rgb(191, 3, 3);
+  }
+  
+  .removeButton:hover {
+    /* background-color: #d32f2f !important; */
+    border-color:rgb(180, 13, 13) !important;
+
+    color: rgb(180, 13, 13) !important;
+    /* transform: scale(1.01); */
+    font-size:16px;
+
+
+  }
+  
+  .buttonLabel {
+    margin-left: 8px;
+  }
+  
+  .confirmButton {
+    height: 5vh;
+    width:25vw;
+    background: rgb(191, 3, 3);
+    border-color: rgb(191, 3, 3);
+    border-radius: 6px;
+    font-weight: 600;
+    /* text-transform: uppercase; */
+    letter-spacing: 0.5px;
+    margin-left: 120px !important;
+    font-size: 15px;
+
+
+  }
+  
+  .confirmButton:hover {
+    background: rgb(151, 1, 1)!important;
+    border-color: rgb(151, 1, 1) !important;
+    /* transform: scale(1.01); */
+    font-size:16px;
+
+  }
+  
+  .datePickerContainer {
+    position: relative;
+  }
+  
+  .datePickerDropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    z-index: 100;
+    margin-top: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 6px;
+  }
+  
+
+   /* Optional: Customize scrollbar */
+.menuList::-webkit-scrollbar {
+  width: 6px;
 }
 
-.calendarSection {
-  width: 22rem;
-  border: 1px solid #5D071C; /* Dark red border */
-  border-radius: 10px;
-  padding: 2rem;
-  background-color: #FFFDED;
-}
-
-.selectedDate {
-  font-size: 1.25rem;
-  font-weight: 600;
-  margin-bottom: 1rem;
-}
-
-.mealsSection {
-  flex: 1;
-}
-
-.mealsTitle {
-  font-size: 26px;
-  font-weight: bold;
-  margin-bottom: 1rem;
-}
-
-.mealsList {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  height: 300px;
-  overflow-y: auto; 
-  resize: none;
-}
-
-.mealItem {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.75rem;
-  border: 1px solid black;
-  border-radius: 10px;
-  font-size: 20px;
-}
-
-.mealActions {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.iconButton {
-  color: #5D071C;
-  cursor: pointer;
-  padding: 0.25rem;
-  transition: color 0.2s;
+.menuList::-webkit-scrollbar-thumb {
   background-color: transparent;
-  border: transparent;
-  font-size: 22px;
-  width: 50px;
-  font-weight: bold;
+  border-radius: 3px;
 }
-
-.iconButton:hover {
-  color: black;
-}
-
-.addButton {
-  width: 100%;
-  margin-top: 1rem;
-  padding: 0.75rem;
-  background-color: #5D071C;
-  color: white;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  font-size: 20px;
-  transition: background-color 0.2s;
-}
-
-.addButton:hover {
-  background-color: #731835;
-}
-
-
-/* Previous styles remain the same until calendar styles */
-
-/* Updated and new Ant Design calendar styles */
-:global(.ant-picker-calendar) {
-  background-color: #FFFDED !important;
-}
-
-:global(.ant-picker-calendar-header) {
-  padding: 8px !important;
-  background-color: #FFFDED !important;
-}
-
-/* Year and Month selector styles */
-:global(.ant-select-selector) {
-  background-color: #FFFDED !important;
-  border-color: #5D071C !important;
-  font-size: 16px;
-}
-
-:global(.ant-select:hover .ant-select-selector) {
-  border-color: black !important;
-}
-
-/* Selected date styles (blue box) */
-:global(.ant-picker-cell-selected .ant-picker-calendar-date) {
-  background-color: #5D071C !important;
-  color: white !important;
+.menuList::-webkit-scrollbar-track {
+  background-color:white;
+  /* border: 1px solid black; */
   
 }
-
-:global(.ant-picker-cell-selected:hover .ant-picker-calendar-date) {
-  background-color: #731835 !important;
-}
-
-/* Today's date border */
-:global(.ant-picker-calendar-date-today) {
-  border-color: #5D071C !important;
-}
-
-/* Date hover effect */
-:global(.ant-picker-calendar-date:hover) {
-  background-color: rgba(93, 7, 28, 0.1) !important;
-}
-
-/* Month/Year text color */
-:global(.ant-select-selection-item) {
-  color: black !important;
-  font-size: 16px;
-}
-
-/* Dropdown background */
-:global(.ant-select-dropdown) {
-  background-color: #FFFDED !important;
-}
-
-:global(.ant-select-item) {
-  background-color: #FFFDED !important;
-}
-
-:global(.ant-select-item:hover) {
-  background-color: rgba(93, 7, 28, 0.1) !important;
-}
-
-:global(.ant-select-item-option-selected) {
-  background-color: rgba(93, 7, 28, 0.2) !important;
-}
-
-/* Calendar cell backgrounds */
-:global(.ant-picker-calendar-date) {
-  background-color: #FFFDED !important;
-  font-size: 18px;
-}
-
-:global(.ant-picker-cell) {
-  background-color: #FFFDED !important;
+  /* Responsive Adjustments */
+  @media (max-width: 768px) {
+    .content {
+      margin-left: 0;
+      width: 100%;
+      padding: 12px;
+    }
   
-}
-
-:global(.ant-picker-calendar-header .ant-picker-calendar-mode-switch) {
-  background-color: #FFFDED !important;
-}
-
-:global(.ant-picker-cell-in-view) {
-  color: black !important;
-}
-
-:global(.ant-picker-calendar-header .ant-radio-button-wrapper) {
-  background-color: #FFFDED !important;
-  border-color: #5D071C !important;
-}
-
-:global(.ant-picker-calendar-header .ant-radio-button-wrapper-checked) {
-  background-color: #5D071C !important;
-  color:white !important;
-}
-
-/* Optional: Customize scrollbar */
-.mealsList::-webkit-scrollbar {
-  width: 7px;
-
-}
-
-.mealsList::-webkit-scrollbar-thumb {
-  background-color:  #660e1e;
-  border-radius: 6px;
-}
-
+    .menuContainer {
+      flex-direction: column;
+    }
+  
+    .menuList, .actionContainer {
+      width: 100%;
+    }
+  }

@@ -24,9 +24,9 @@
     "react-icons": "^5.4.0",
     "react-infinite-scroll-component": "^6.1.0",
     "react-linear-gradient-button": "^1.1.1",
-    "react-router-dom": "^7.3.0",
+    "react-router-dom": "^7.2.0",
     "react-transition-group": "^4.4.5",
-    "router": "^2.1.0"
+    "sass": "^1.86.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",

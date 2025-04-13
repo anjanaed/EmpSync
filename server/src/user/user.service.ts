@@ -21,9 +21,14 @@ export class UserService {
     }
   }
 
-  async findAll() {
+  async findAll(search?:string,role?:string) {
     try {
-      const users = await this.databaseService.user.findMany();
+      const users = await this.databaseService.user.findMany({
+        where:{
+          name:search?{contains:search,mode:'insensitive'}:undefined,
+          role:role||undefined,
+        }
+      });
       if (users) {
         return users;
       } else {
