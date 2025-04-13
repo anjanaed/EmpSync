@@ -1,6 +1,22 @@
 import React, { useState, useRef } from "react";
-import { Form, Input, Button, Card, Row, Col, Typography, message, Modal, Checkbox, InputNumber } from "antd";
-import { UploadOutlined, FileImageOutlined, SearchOutlined } from "@ant-design/icons";
+import {
+  Form,
+  Input,
+  Button,
+  Card,
+  Row,
+  Col,
+  Typography,
+  message,
+  Modal,
+  Checkbox,
+  InputNumber,
+} from "antd";
+import {
+  UploadOutlined,
+  FileImageOutlined,
+  SearchOutlined,
+} from "@ant-design/icons";
 import Navbar from "../../../components/KitchenAdmin/header/header";
 import styles from "./MealDetailsForm.module.css";
 import { useNavigate } from "react-router-dom";
@@ -15,7 +31,8 @@ const AddMealPage = () => {
   const [imageUrl, setImageUrl] = useState(null);
   const [imageFile, setImageFile] = useState(null); // Store the actual file
   const fileInputRef = useRef(null);
-  const [isIngredientsModalVisible, setIsIngredientsModalVisible] = useState(false);
+  const [isIngredientsModalVisible, setIsIngredientsModalVisible] =
+    useState(false);
   const [ingredients, setIngredients] = useState([
     { id: 1, name: "Rice", quantity: 0, selected: false },
     { id: 2, name: "Tomato", quantity: 0, selected: false },
@@ -24,7 +41,7 @@ const AddMealPage = () => {
     { id: 5, name: "Potato", quantity: 0, selected: false },
     { id: 6, name: "Chicken", quantity: 0, selected: false },
     { id: 7, name: "Onion", quantity: 0, selected: false },
-    { id: 8, name: "Garlic", quantity: 0, selected: false }
+    { id: 8, name: "Garlic", quantity: 0, selected: false },
   ]);
   const [searchIngredient, setSearchIngredient] = useState("");
   const [selectedIngredients, setSelectedIngredients] = useState([]);
@@ -45,22 +62,22 @@ const AddMealPage = () => {
       message.warning("Please select an image for the meal");
       return;
     }
-  
+
     if (selectedIngredients.length === 0) {
       message.warning("Please select at least one ingredient for the meal");
       return;
     }
 
     setUploading(true);
-    
+
     try {
       // Upload image to Firebase Storage
       const imageRef = ref(storage, `meals/${Date.now()}-${imageFile.name}`);
       await uploadBytes(imageRef, imageFile);
-      
+
       // Get the download URL of the uploaded image
       const downloadURL = await getDownloadURL(imageRef);
-      
+
       const mealData = {
         id: values.Id,
         nameEnglish: values.nameEnglish,
@@ -70,22 +87,21 @@ const AddMealPage = () => {
         price: parseFloat(values.price),
         imageUrl: downloadURL, // Use the Firebase Storage URL
         createdAt: new Date().toISOString(),
-        
       };
-    
+
       const response = await fetch("http://localhost:3000/meal", {
         method: "POST",
-        credentials: 'include', // Important for cookies/auth headers
+        credentials: "include", // Important for cookies/auth headers
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(mealData),
       });
-    
+
       if (!response.ok) {
         throw new Error("Failed to add meal");
       }
-    
+
       message.success("Meal added successfully!");
       form.resetFields();
       setImageUrl(null);
@@ -99,7 +115,7 @@ const AddMealPage = () => {
       setUploading(false);
     }
   };
-  
+
   const handleImageClick = () => {
     fileInputRef.current.click();
   };
@@ -113,6 +129,12 @@ const AddMealPage = () => {
       return;
     }
 
+    // Check file size - limit to 2MB
+    if (file.size > 2 * 1024 * 1024) {
+      message.error("Image size must be less than 2MB!");
+      return;
+    }
+
     // Store the file object for later upload
     setImageFile(file);
 
@@ -123,7 +145,6 @@ const AddMealPage = () => {
     };
     reader.readAsDataURL(file);
   };
-
   const showIngredientsModal = () => {
     setIsIngredientsModalVisible(true);
   };
@@ -137,38 +158,42 @@ const AddMealPage = () => {
   };
 
   const handleIngredientSelect = (id) => {
-    setIngredients(ingredients.map(ingredient => 
-      ingredient.id === id 
-        ? { ...ingredient, selected: !ingredient.selected } 
-        : ingredient
-    ));
+    setIngredients(
+      ingredients.map((ingredient) =>
+        ingredient.id === id
+          ? { ...ingredient, selected: !ingredient.selected }
+          : ingredient
+      )
+    );
   };
 
   const handleQuantityChange = (id, value) => {
-    setIngredients(ingredients.map(ingredient => 
-      ingredient.id === id 
-        ? { ...ingredient, quantity: value } 
-        : ingredient
-    ));
+    setIngredients(
+      ingredients.map((ingredient) =>
+        ingredient.id === id ? { ...ingredient, quantity: value } : ingredient
+      )
+    );
   };
 
   const handleIngredientsConfirm = () => {
-    const selected = ingredients.filter(ingredient => ingredient.selected && ingredient.quantity > 0);
+    const selected = ingredients.filter(
+      (ingredient) => ingredient.selected && ingredient.quantity > 0
+    );
     setSelectedIngredients(selected);
     setIsIngredientsModalVisible(false);
-    
+
     if (selected.length > 0) {
       message.success(`${selected.length} ingredients selected`);
     }
   };
 
-  const filteredIngredients = ingredients.filter(ingredient => 
+  const filteredIngredients = ingredients.filter((ingredient) =>
     ingredient.name.toLowerCase().includes(searchIngredient.toLowerCase())
   );
 
   return (
     <div className={styles.pageContainer}>
-      <Navbar/>
+      <Navbar />
 
       <div className={styles.contentWrapper}>
         <Card className={styles.formCard}>
@@ -192,9 +217,19 @@ const AddMealPage = () => {
                     {!imageUrl && (
                       <div className={styles.uploadHint}>
                         <FileImageOutlined
-                          style={{ fontSize: "60px", marginBottom: "12px", color: "#d9d9d9" }}
+                          style={{
+                            fontSize: "60px",
+                            marginBottom: "12px",
+                            color: "#d9d9d9",
+                          }}
                         />
-                        <p style={{ fontFamily: "Ubuntu, sans-serif", fontSize: "16px", color: "#888" }}>
+                        <p
+                          style={{
+                            fontFamily: "Ubuntu, sans-serif",
+                            fontSize: "16px",
+                            color: "#888",
+                          }}
+                        >
                           No image selected
                         </p>
                       </div>
@@ -305,9 +340,11 @@ const AddMealPage = () => {
 
                 {selectedIngredients.length > 0 && (
                   <div className={styles.selectedIngredientsContainer}>
-                    <p className={styles.selectedIngredientsTitle}>Selected Ingredients:</p>
+                    <p className={styles.selectedIngredientsTitle}>
+                      Selected Ingredients:
+                    </p>
                     <ul className={styles.selectedIngredientsList}>
-                      {selectedIngredients.map(ingredient => (
+                      {selectedIngredients.map((ingredient) => (
                         <li key={ingredient.id}>
                           {ingredient.name} - {ingredient.quantity}g
                         </li>
@@ -320,12 +357,18 @@ const AddMealPage = () => {
 
             <Row className={styles.actionButtonsRow}>
               <Col span={12} className={styles.cancelButtonCol}>
-                <Button onClick={handleCancel} className={styles.cancelButton} disabled={uploading}>Cancel</Button>
+                <Button
+                  onClick={handleCancel}
+                  className={styles.cancelButton}
+                  disabled={uploading}
+                >
+                  Cancel
+                </Button>
               </Col>
               <Col span={12} className={styles.confirmButtonCol}>
-                <Button 
-                  type="primary" 
-                  htmlType="submit" 
+                <Button
+                  type="primary"
+                  htmlType="submit"
                   className={styles.confirmButton}
                   loading={uploading}
                   disabled={uploading}
@@ -356,9 +399,9 @@ const AddMealPage = () => {
           />
           <Button className={styles.searchButton}>Search</Button>
         </div>
-        
+
         <div className={styles.ingredientsListContainer}>
-          {filteredIngredients.map(ingredient => (
+          {filteredIngredients.map((ingredient) => (
             <div key={ingredient.id} className={styles.ingredientItem}>
               <div className={styles.ingredientNameContainer}>
                 <Checkbox
@@ -373,7 +416,9 @@ const AddMealPage = () => {
                 <InputNumber
                   min={0}
                   value={ingredient.quantity}
-                  onChange={(value) => handleQuantityChange(ingredient.id, value)}
+                  onChange={(value) =>
+                    handleQuantityChange(ingredient.id, value)
+                  }
                   className={styles.quantityInput}
                   placeholder="In Grams"
                 />
@@ -381,7 +426,7 @@ const AddMealPage = () => {
             </div>
           ))}
         </div>
-        
+
         <div className={styles.modalFooter}>
           <Button
             type="primary"
