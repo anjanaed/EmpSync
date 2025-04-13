@@ -140,7 +140,7 @@ const InventoryManagement = () => {
     <div className={styles.container}>
       <div className={styles.header}>
         <div className={styles.titleContainer}>
-          <h1 className={styles.title}>Inventory Management</h1>
+          <h1 className={styles.title}>Ingredient Management</h1>
           <p className={styles.subtitle}>Manage your ingredients and supplies</p>
         </div>
         <div className={styles.actions}>
