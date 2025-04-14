@@ -244,41 +244,31 @@ const OrderTab = () => {
 	return (
 		<>
 			<Carousel ref={carouselRef} infinite={false} dots={true}>
-				<div>
+				
 					<div className={styles.contentStyle1}>
-						<br />
-						<div><Typography.Title level={2} className={styles.getGreeting}>{getGreeting()}</Typography.Title></div>
-						<div><Typography.Title level={1} className={styles.mainTitle1}>Welcome to Helix Food Ordering</Typography.Title></div>
-						<div><Typography.Title level={2} className={styles.getGreeting}>{currentDateTime}</Typography.Title></div>
-						<br />
-						<div>
-							<Card className={styles.cardStyle}>
-								<Flex justify="center" align="center" direction="column">
-									<div className={styles.cardPart1}>
-										<Typography.Title level={2} className={styles.getGreeting}>
-											<div className={styles.cardPart}>
-												Place Your Finger on Fingerprint Scanner
+						<div className={styles.mainbox}>
+							<br />
+							<div><Typography.Title level={2} className={styles.getGreeting}>{getGreeting()}</Typography.Title></div>
+							<div><Typography.Title level={1} className={styles.mainTitle1}>Welcome to Helix Food Ordering</Typography.Title></div>
+							<div><Typography.Title level={2} className={styles.getGreeting}>{currentDateTime}</Typography.Title></div>
+							<br />
+							<br /><br />
+							<div>
+								<Card className={styles.cardStyle}>
+										<div className={styles.cardPartl}>
+											<Typography.Title level={2} className={styles.getGreeting}>Select your language | භාෂාව තෝරන්න | மொழியை தேர்ந்தெடுக்கவும்</Typography.Title>
+											<br /><br />
+											<div className={styles.languageButtonContainer}>
+												<button className={styles.languageButton} onClick={() => { handleLanguageSelect('English'); next(); }}>English</button>
+												<button className={styles.languageButton} onClick={() => { handleLanguageSelect('Sinhala'); next(); }}>සිංහල</button>
+												<button className={styles.languageButton} onClick={() => { handleLanguageSelect('Tamil'); next(); }}>தமிழ்</button>
 											</div>
-											<div>
-												<br />
-												<Card className={styles.cardStyle}>
-													<i className={`material-icons ${styles.fingerprintIcon} ${animate ? 'animate' : ''}`} style={{ color: fingerprintColor }}>fingerprint</i>
-												</Card>
-											</div>
-										</Typography.Title>
-									</div>
-									<div className={styles.cardPart2}>
-										<Typography.Title level={2} className={styles.getGreeting}>Select your language | භාෂාව තෝරන්න | <br />மொழியை தேர்ந்தெடுக்கவும்</Typography.Title>
-										<button className={styles.languageButton} onClick={() => { handleLanguageSelect('English'); next(); }} >English Language</button><br />
-										<button className={styles.languageButton} onClick={() => { handleLanguageSelect('Sinhala'); next(); }}>සිංහල භාෂාව</button><br />
-										<button className={styles.languageButton} onClick={() => { handleLanguageSelect('Tamil'); next(); }}>தமிழ் மொழி</button><br />
-									</div>
-								</Flex>
-								<div><Typography.Title level={4} className={styles.getGreeting}>Secure & Quick Access — Scan your fingerprint to continue ordering your favorite meals!</Typography.Title></div>
-							</Card>
+										</div>
+								</Card>
+							</div>
 						</div>
 					</div>
-				</div>
+				
 				<div>
 					<div className={styles.contentStyle2}>
 						<br />

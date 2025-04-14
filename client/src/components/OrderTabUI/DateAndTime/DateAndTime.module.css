@@ -1,0 +1,17 @@
+.dateTimeContainer {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    font-size: 22px;
+    font-weight: 600;
+    color: #000000;
+
+    padding: 8px 15px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15), 0 2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 1050;
+    font-family: 'Roboto', sans-serif;
+    
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
