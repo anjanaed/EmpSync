@@ -49,6 +49,7 @@ model Payroll {
   empId      String
   employee   User     @relation(fields: [empId], references: [id])
   month      String
+  netPay Float
   payrollPdf Bytes
   createdAt  DateTime @default(now())
 }

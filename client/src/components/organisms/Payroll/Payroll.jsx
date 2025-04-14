@@ -13,6 +13,8 @@ const { RangePicker } = DatePicker;
 const Payroll = () => {
   const [isAllowanceChecked, setIsAllowanceChecked] = useState(false);
   const [adjustments, setAdjustments] = useState([]);
+  const [etf,setEtf]=useState();
+  const[epf,setEpf]=useState();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const urL = import.meta.env.VITE_BASE_URL;
   const [individualAdjustment, setIndividualAdjustment] = useState([
@@ -30,6 +32,54 @@ const Payroll = () => {
       { id: "", details: "", amount: "", isAllowance: true },
     ]);
   };
+
+  const handleGenerate=async()=>{
+    setLoading(true)
+    try {
+      const payload = [{
+        label: "ETF",
+        isPercentage: true,
+        allowance: false,
+        amount:parseFloat(etf),
+      },{
+        label: "EPF",
+        isPercentage: true,
+        allowance: false,
+        amount:parseFloat(epf),
+      }];
+      for(const items of payload){
+        await axios
+        .post(`${urL}/adjustment`, items)
+        .then((res) => {
+          console.log(res);
+          fetch();
+          handleCancel();
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+      setLoading(false);
+      }
+      setEpf();
+      setEtf();
+
+    } catch (err) {
+      console.log(err);
+      setLoading(false);
+    }
+    try{
+      await axios.post(`${urL}/payroll/calculate-all`)
+      .then((res)=>{
+        console.log(res)
+      }).catch((err)=>{
+        console.log(err);
+      })
+
+    }catch(err){
+      console.log(err)
+    }
+    setLoading(false)
+  }
 
   const handleNewFields = () => {
     setIsModalOpen(true);
@@ -139,12 +189,12 @@ const Payroll = () => {
             <div className={styles.inputSet}>
               <label>Employee Trust Fund (ETF) Rate</label>
               <br />
-              <Input placeholder="ETF" />
+              <Input onChange={(e)=>setEtf(e.target.value)} placeholder="ETF" />
             </div>
             <div className={styles.inputSet}>
               <label>Employee Provident Fund (EPF) Rate</label>
               <br />
-              <Input placeholder="EPF" />
+              <Input onChange={(e)=>setEpf(e.target.value)} placeholder="EPF" />
             </div>
             <div className={styles.inputSet}>
               <label>Max Paid Leave Days Allowed</label>
@@ -292,7 +342,7 @@ const Payroll = () => {
         </div>
         <hr />
         <div className={styles.genBtn}>
-          <Gbutton>
+          <Gbutton onClick={handleGenerate}>
             <>
               <MdCalculate size={19} />
               &nbsp;Generate Payroll

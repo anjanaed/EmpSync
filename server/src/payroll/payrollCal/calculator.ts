@@ -8,19 +8,19 @@ export interface salaryData {
 
 export function calculateSalary(dto: {
   basicSalary: number;
-  allowanceP: { label: string; amount: string }[];
+  allowanceP: { label: string; amount: number }[];
   allowanceV: { label: string; amount: number }[];
-  deductionsP: { label: string; amount: string }[];
+  deductionsP: { label: string; amount: number }[];
   deductionsV: { label: string; amount: number }[];
 }): salaryData {
   const calculatedAllowance = dto.allowanceP.map((allowance) => ({
     label: allowance.label,
-    amount: parseFloat(allowance.amount) * dto.basicSalary,
+    amount: (allowance.amount)/100 * dto.basicSalary,
   }));
 
   const calculatedDeduction = dto.deductionsP.map((deduction) => ({
     label: deduction.label,
-    amount: parseFloat(deduction.amount) * dto.basicSalary,
+    amount: (deduction.amount)/100 * dto.basicSalary,
   }));
 
   const totalAllowanceArray = [...calculatedAllowance, ...dto.allowanceV];
@@ -65,12 +65,3 @@ export function calculateSalary(dto: {
 }
 
 
-const result = calculateSalary({
-    basicSalary: 1000,
-    allowanceP: [{ label: "Housing", amount: "0.2" }],
-    allowanceV: [{ label: "Bonus", amount: 100 }],
-    deductionsP: [{ label: "Tax", amount: "0.05" }],
-    deductionsV: [{ label: "Loan", amount: 50 }],
-  });
-  
-  console.log("Salary Calculation Result:", result);

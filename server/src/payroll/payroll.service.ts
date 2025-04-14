@@ -16,13 +16,148 @@ export class PayrollService {
     }
   }
 
+  async generatePayrollsForAll(): Promise<any> {
+    try {
+      const users = await this.databaseService.user.findMany({
+        select: {
+          id: true,
+          salary: true,
+        },
+      });
+
+      const allAllowancePRaw =
+        await this.databaseService.salaryAdjustments.findMany({
+          where: {
+            isPercentage: true,
+            allowance: true,
+          },
+        });
+      const allAllowanceP = allAllowancePRaw.map((items) => ({
+        label: items.label,
+        amount: items.amount,
+      }));
+      const allAllowanceVRaw =
+        await this.databaseService.salaryAdjustments.findMany({
+          where: {
+            isPercentage: false,
+            allowance: true,
+          },
+        });
+      const allAllowanceV = allAllowanceVRaw.map((items) => ({
+        label: items.label,
+        amount: items.amount,
+      }));
+      const allDeductionPRaw =
+        await this.databaseService.salaryAdjustments.findMany({
+          where: {
+            isPercentage: true,
+            allowance: false,
+          },
+        });
+      const allDeductionP = allDeductionPRaw.map((items) => ({
+        label: items.label,
+        amount: items.amount,
+      }));
+      const allDeductionVRaw =
+        await this.databaseService.salaryAdjustments.findMany({
+          where: {
+            isPercentage: false,
+            allowance: false,
+          },
+        });
+      const allDeductionV = allDeductionVRaw.map((items) => ({
+        label: items.label,
+        amount: items.amount,
+      }));
+
+      for (const user of users) {
+        const allowancePRaw =
+          await this.databaseService.individualSalaryAdjustments.findMany({
+            where: {
+              empId: user.id,
+              isPercentage: true,
+              allowance: true,
+            },
+          });
+        const indiAllowanceP = allowancePRaw.map((items) => ({
+          label: items.label,
+          amount: items.amount,
+        }));
+        const allowanceP = [...indiAllowanceP, ...allAllowanceP];
+
+        const allowanceVRaw =
+          await this.databaseService.individualSalaryAdjustments.findMany({
+            where: {
+              empId: user.id,
+              isPercentage: false,
+              allowance: true,
+            },
+          });
+
+        const indiAllowanceV = allowanceVRaw.map((items) => ({
+          label: items.label,
+          amount: items.amount,
+        }));
+
+        const allowanceV = [...indiAllowanceV, ...allAllowanceV];
+
+        const deductionPRaw =
+          await this.databaseService.individualSalaryAdjustments.findMany({
+            where: {
+              empId: user.id,
+              isPercentage: true,
+              allowance: false,
+            },
+          });
+        const indiDeductionsP = deductionPRaw.map((items) => ({
+          label: items.label,
+          amount: items.amount,
+        }));
+        const deductionsP = [...indiDeductionsP, ...allDeductionP];
+
+        const deductionVRaw =
+          await this.databaseService.individualSalaryAdjustments.findMany({
+            where: {
+              empId: user.id,
+              isPercentage: false,
+              allowance: false,
+            },
+          });
+        const indiDeductionsV = deductionVRaw.map((items) => ({
+          label: items.label,
+          amount: items.amount,
+        }));
+
+        const deductionsV = [...indiDeductionsV, ...allDeductionV];
+
+        const userDetails = await this.databaseService.user.findUnique({
+          where: {
+            id: user.id,
+          },
+        });
+
+        const values = calculateSalary({
+          basicSalary: userDetails.salary,
+          allowanceP,
+          allowanceV,
+          deductionsP,
+          deductionsV,
+        });
+
+        console.log(values);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
   async findAll() {
     try {
       const payrolls = await this.databaseService.payroll.findMany({});
       if (payrolls) {
         return payrolls;
       } else {
-        throw new HttpException('No Payrolls',HttpStatus.NOT_FOUND);
+        throw new HttpException('No Payrolls', HttpStatus.NOT_FOUND);
       }
     } catch (err) {
       throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -90,8 +225,3 @@ export class PayrollService {
     }
   }
 }
-
-
-
-
-

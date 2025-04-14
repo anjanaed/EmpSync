@@ -6,9 +6,9 @@ import { PayrollService } from "./payroll.service";
 export class PayrollController{
     constructor(private readonly payrollService:PayrollService){}
 
-    @Post()
-    create(@Body() dto:Prisma.PayrollCreateInput ){
-        return this.payrollService.create(dto);
+    @Post('calculate-all')
+    async generatePayrollsForAll(){
+        return this.payrollService.generatePayrollsForAll();
     }
 
     @Get()
