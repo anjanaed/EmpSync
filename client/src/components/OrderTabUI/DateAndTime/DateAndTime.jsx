@@ -1,30 +1,35 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { Typography, Card } from 'antd';
 import styles from './DateAndTime.module.css';
 
 const DateAndTime = () => {
-    const [currentDateTime, setCurrentDateTime] = useState('');
+   
+    const [currentDateTime, setCurrentDateTime] = useState(() => {
+        const now = new Date();
+        const options = { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' };
+        const timeOptions = { hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true };
+        const date = now.toLocaleDateString('en-US', options);
+        const time = now.toLocaleTimeString('en-US', timeOptions);
+        return `${date} | ${time}`;
+    });
 
     useEffect(() => {
-        const updateDateTime = () => {
+        const intervalId = setInterval(() => {
             const now = new Date();
-            const optionsDate = { weekday: 'long', month: 'short', day: 'numeric', year: 'numeric' };
-            const optionsTime = { hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true };
-            const formattedDate = now.toLocaleDateString('en-US', optionsDate);
-            const formattedTime = now.toLocaleTimeString('en-US', optionsTime);
-            setCurrentDateTime(`${formattedDate} | ${formattedTime}`);
-        };
-
-        updateDateTime();
-        const intervalId = setInterval(updateDateTime, 1000); // Update every second
-
-        return () => clearInterval(intervalId); // Cleanup interval on component unmount
+            const options = { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' };
+            const timeOptions = { hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true };
+            const date = now.toLocaleDateString('en-US', options);
+            const time = now.toLocaleTimeString('en-US', timeOptions);
+            setCurrentDateTime(`${date} | ${time}`);
+        }, 1000);
+        return () => clearInterval(intervalId);
     }, []);
 
-    return (
-        <div className={styles.dateTimeContainer}>
-            {currentDateTime}
+    return(
+        <div>
+            <Typography.Title level={2} className={styles.getGreeting}>{currentDateTime}</Typography.Title>
         </div>
-    );
+    )
 };
 
 export default DateAndTime;
