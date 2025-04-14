@@ -92,8 +92,6 @@ export class PayrollService {
 }
 
 
-const salaryCalcDto={
-  basic: this.DatabaseService.user.salary
-}
+
 
 
