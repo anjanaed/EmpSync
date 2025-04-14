@@ -71,6 +71,16 @@ model SalaryAdjustments {
   amount Float?
 }
 
+
+model IndividualSalaryAdjustments{
+  id Int @id @default(autoincrement())
+  empId String
+  label String
+  isPercentage Boolean
+  allowance Boolean
+  amount Float
+}
+
 model Order {
   id          Int      @id @default(autoincrement())
   orderNumber String   @unique

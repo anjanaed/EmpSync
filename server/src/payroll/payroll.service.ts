@@ -1,6 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { DatabaseService } from '../database/database.service';
+import { calculateSalary } from './payrollCal/calculator';
 
 @Injectable()
 export class PayrollService {
@@ -89,3 +90,10 @@ export class PayrollService {
     }
   }
 }
+
+
+const salaryCalcDto={
+  basic: this.DatabaseService.user.salary
+}
+
+

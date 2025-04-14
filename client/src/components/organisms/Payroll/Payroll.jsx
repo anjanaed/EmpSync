@@ -16,7 +16,7 @@ const Payroll = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const urL = import.meta.env.VITE_BASE_URL;
   const [individualAdjustment, setIndividualAdjustment] = useState([
-    { id: "", details: "", amount: "", isAllowance: true },
+    { id: "", details: "", amount: "",isPercentage:true, isAllowance: true },
   ]);
 
   const [loading, setLoading] = useState(true);
@@ -72,6 +72,41 @@ const Payroll = () => {
       backdropFilter: "blur(12px)",
     },
   };
+
+  const handleIndiAdjustmentSave=async()=>{
+    setLoading(true);
+    try{
+      for(const adj of individualAdjustment){
+        const idArray=adj.id.split(",").map((id)=>id.trim()).filter((id)=>id!=="");
+        
+        for(const ids of idArray){
+        const payload={
+          empId:ids,
+          label:adj.details,
+          allowance:adj.isAllowance,
+          isPercentage:adj.isPercentage,
+          amount:parseFloat(adj.amount)
+        };
+
+
+        await axios.post(`${urL}/indiadjustment`,payload)
+        .then((res)=>{
+          console.log(res)
+          setIndividualAdjustment([
+            { id: "", details: "", amount: "",isPercentage:true, isAllowance: true },
+          ]);
+        })
+        .catch((err)=>{
+          console.log(err);
+        })
+      }}
+
+    }catch(err){
+      console.log(err);
+    }
+    setLoading(false)
+
+  }
 
   useEffect(() => {
     fetchAdjustments();
@@ -210,6 +245,31 @@ const Payroll = () => {
                   Deduction
                 </Checkbox>
               </div>
+              <div className={styles.checkBoxes}>
+                <Checkbox
+                  checked={adj.isPercentage}
+                  onChange={() => {
+                    handleAllowanceChange;
+
+                    const newList = [...individualAdjustment];
+                    newList[index].isPercentage = true;
+                    setIndividualAdjustment(newList);
+                  }}
+                >
+                  Percentage
+                </Checkbox>
+                <Checkbox
+                  checked={!adj.isPercentage}
+                  onChange={() => {
+                    handleAllowanceChange;
+                    const newList = [...individualAdjustment];
+                    newList[index].isPercentage = false;
+                    setIndividualAdjustment(newList);
+                  }}
+                >
+                  Value
+                </Checkbox>
+              </div>
               <div className={styles.removeBtn}
                 onClick={() => {
                   const newList = individualAdjustment.filter(
@@ -226,7 +286,7 @@ const Payroll = () => {
             <button onClick={handleNewIndividualAdjustment}>
               Add Adjustment
             </button>
-            <button>Save Adjustment</button>
+            <button onClick={handleIndiAdjustmentSave}>Save Adjustment</button>
             <button>View Adjustments</button>
           </div>
         </div>
