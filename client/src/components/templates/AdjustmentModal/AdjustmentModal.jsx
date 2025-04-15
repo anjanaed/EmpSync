@@ -80,7 +80,7 @@ const AdjustmentModal = ({handleCancel, fetch}) => {
                   checked={isAllowanceChecked}
                   onChange={handleAllowanceChange}
                 >
-                  Allowance
+                  Addition
                 </Checkbox>
                 &nbsp;
                 <Checkbox

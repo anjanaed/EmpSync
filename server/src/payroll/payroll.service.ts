@@ -16,7 +16,8 @@ export class PayrollService {
     }
   }
 
-  async generatePayrollsForAll(): Promise<any> {
+  async generatePayrollsForAll(dto: Prisma.PayrollCreateInput): Promise<any> {
+    const range=dto.range
     try {
       const users = await this.databaseService.user.findMany({
         select: {
@@ -164,12 +165,11 @@ export class PayrollService {
     }
   }
 
-  async findOne(empId: string, month: string) {
+  async findOne(empId: string, range: string[]) {
     try {
       const payroll = await this.databaseService.payroll.findFirst({
         where: {
           empId,
-          month,
         },
       });
       if (payroll) {

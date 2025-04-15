@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put,HttpException,HttpStatus } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post, Put,HttpException,HttpStatus, Query } from "@nestjs/common";
 import { Prisma } from "@prisma/client";
 import { IndiAdjustmentService } from "./inAdjustment.service";
 
@@ -12,8 +12,8 @@ export class IndiAdjustmentController{
     }
 
     @Get()
-    findAll(){
-        return this.IndiAdjustmentService.findAll();
+    findAll(@Query('search')search?:string){
+        return this.IndiAdjustmentService.findAll(search);
     }
 
       @Get(':id')

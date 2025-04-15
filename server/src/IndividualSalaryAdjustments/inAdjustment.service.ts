@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { DatabaseService } from '../database/database.service';
+import { contains } from 'class-validator';
 
 @Injectable()
 export class IndiAdjustmentService {
@@ -14,9 +15,16 @@ export class IndiAdjustmentService {
     }
   }
 
-  async findAll() {
+  async findAll(search?:string) {
     try {
-      return await this.databaseService.individualSalaryAdjustments.findMany({});
+      return await this.databaseService.individualSalaryAdjustments.findMany({
+        where:search?{OR:[
+          {empId: {contains:search,mode:'insensitive'}},
+          {label: {contains: search, mode: 'insensitive'}},
+        ],
+
+        }:{},
+    });
     } catch (error) {
       throw new BadRequestException('Failed to retrieve Adjustments');
     }

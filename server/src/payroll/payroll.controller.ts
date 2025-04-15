@@ -7,8 +7,8 @@ export class PayrollController{
     constructor(private readonly payrollService:PayrollService){}
 
     @Post('calculate-all')
-    async generatePayrollsForAll(){
-        return this.payrollService.generatePayrollsForAll();
+    async generatePayrollsForAll(@Body() dto: Prisma.PayrollCreateInput){
+        return this.payrollService.generatePayrollsForAll(dto);
     }
 
     @Get()
@@ -17,8 +17,8 @@ export class PayrollController{
     }
 
     @Get(':empId/:month')
-    findOne(@Param('empId') empId:string, @Param('month') month:string){
-        return this.payrollService.findOne(empId,month);
+    findOne(@Param('empId') empId:string, @Param('range') range:string[]){
+        return this.payrollService.findOne(empId,range);
 
     }
 

@@ -1,6 +1,7 @@
 import { React, useState, useEffect } from "react";
 import { Input, DatePicker, Checkbox, Modal } from "antd";
 import styles from "./Payroll.module.css";
+import { useNavigate } from "react-router-dom";
 import Gbutton from "../../atoms/button/Button";
 import { MdCalculate } from "react-icons/md";
 import AdjustmentModal from "../../templates/AdjustmentModal/AdjustmentModal";
@@ -14,9 +15,11 @@ const Payroll = () => {
   const [isAllowanceChecked, setIsAllowanceChecked] = useState(false);
   const [adjustments, setAdjustments] = useState([]);
   const [etf,setEtf]=useState(0);
+  const [range,setRange]=useState();
   const[epf,setEpf]=useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const urL = import.meta.env.VITE_BASE_URL;
+  const navigate=useNavigate();
   const [individualAdjustment, setIndividualAdjustment] = useState([
     { id: "", details: "", amount: "",isPercentage:true, isAllowance: true },
   ]);
@@ -29,7 +32,7 @@ const Payroll = () => {
   const handleNewIndividualAdjustment = () => {
     setIndividualAdjustment([
       ...individualAdjustment,
-      { id: "", details: "", amount: "", isAllowance: true },
+      { id: "", details: "", amount: "",isPercentage:true, isAllowance: true },
     ]);
   };
 
@@ -37,7 +40,9 @@ const Payroll = () => {
     setLoading(true)
     await handleEtfEpf();
     try{
-      await axios.post(`${urL}/payroll/calculate-all`)
+      await axios.post(`${urL}/payroll/calculate-all`,{
+        range:range,
+      })
       .then((res)=>{
         console.log(res)
       }).catch((err)=>{
@@ -55,7 +60,6 @@ const Payroll = () => {
   };
   const handleAdjustmentDelete = async (id) => {
     setLoading(true);
-    console.log(id);
     setLoading(true);
     try {
       const intId = parseInt(id, 10);
@@ -80,7 +84,6 @@ const Payroll = () => {
       setEtf((res.data.find((adj)=>adj.label=="ETF").amount));
       const filteredRes=res.data.filter((adj)=>adj.label!=="ETF" && adj.label!=="EPF")
       setAdjustments(filteredRes)
-      console.log(adjustments)
     } catch (err) {
       console.log(err);
     }
@@ -232,17 +235,17 @@ const Payroll = () => {
             ))}
             <div className={styles.dynamicInputSet}>
               <button onClick={handleNewFields} className={styles.newFieldBtn}>
-                + &nbsp; Deduction / Allowance
+                + &nbsp; Addition / Deduction
               </button>
             </div>
           </div>
           <div className={styles.payee}>
-            <span>*</span> Income Payee Taxes will be applied automatically
+            <span>*</span> Income Payee Taxes will be applied automatically<br/><button>Reconfigure Payee</button>
           </div>
           <div>
             <label>Payroll Period</label>
             <br />
-            <RangePicker />
+            <RangePicker onChange={(dates)=>setRange(dates)} />
           </div>
         </div>
         <hr />
@@ -254,7 +257,6 @@ const Payroll = () => {
                 <label>Employee ID/IDs</label>
                 <Input
                   placeholder="ID"
-                  value={adj.id}
                   onChange={(e) => {
                     const newList = [...individualAdjustment];
                     newList[index].id = e.target.value;
@@ -266,7 +268,6 @@ const Payroll = () => {
                 <label>Adjustment Details</label>
                 <Input
                   placeholder="Description"
-                  value={adj.details}
                   onChange={(e) => {
                     const newList = [...individualAdjustment];
                     newList[index].details = e.target.value;
@@ -278,7 +279,6 @@ const Payroll = () => {
                 <label>Amount</label>
                 <Input
                   placeholder="Amount"
-                  value={adj.amount}
                   onChange={(e) => {
                     const newList = [...individualAdjustment];
                     newList[index].amount = e.target.value;
@@ -289,15 +289,15 @@ const Payroll = () => {
               <div className={styles.checkBoxes}>
                 <Checkbox
                   checked={adj.isAllowance}
+                  
                   onChange={() => {
                     handleAllowanceChange;
-
                     const newList = [...individualAdjustment];
                     newList[index].isAllowance = true;
                     setIndividualAdjustment(newList);
                   }}
                 >
-                  Allowance
+                  Addition
                 </Checkbox>
                 <Checkbox
                   checked={!adj.isAllowance}
@@ -326,6 +326,7 @@ const Payroll = () => {
                 </Checkbox>
                 <Checkbox
                   checked={!adj.isPercentage}
+                  defaultChecked
                   onChange={() => {
                     handleAllowanceChange;
                     const newList = [...individualAdjustment];
@@ -353,7 +354,7 @@ const Payroll = () => {
               Add Adjustment
             </button>
             <button onClick={handleIndiAdjustmentSave}>Save Adjustment</button>
-            <button>View Adjustments</button>
+            <button onClick={()=>navigate("/adjustment")} >View Adjustments</button>
           </div>
         </div>
         <hr />

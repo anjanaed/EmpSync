@@ -19,6 +19,7 @@ import AnalysisDashboard from "./pages/Ingredients/AnalysisDashboard/AnalysisDas
 import OrderReportDashboard from "./pages/Ingredients/OrderReportDashboard/OrderReportDashboard";
 import ReportPage from "./components/pages/HR/ReportPage/ReportPage";
 import PayrollPage from "./components/pages/HR/PayrollPage/PayrollPage";
+import AdjustmentPage from "./components/pages/HR/AdjustmentPage/AdjustmentPage";
 
 function App() {
   return (
@@ -44,6 +45,8 @@ function App() {
         <Route path="/OrderReportDashboard" element={<OrderReportDashboard />}/>
         <Route path="/reportPage" element={<ReportPage />} />
         <Route path="/payroll" element={<PayrollPage />} />
+        <Route path="/adjustment" element={<AdjustmentPage />} />
+
       </Routes>
     </Router>
   );
