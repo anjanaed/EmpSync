@@ -26,14 +26,18 @@ const Page2 = ({ carouselRef, language }) => { // Accept language as a prop
         setTimeout(() => {
             setScanning(false);
             localStorage.setItem("user", "John Wick");
-            // Add navigation logic here if needed
+            carouselRef.current.goTo(2); // Navigate to Page 3
         }, 2000);
     };
 
     const handlePinSubmit = () => {
         if (pin.length === 4) {
-            localStorage.setItem("user", "John Wick");
-            // Add navigation logic here if needed
+            setScanning(true);
+            setTimeout(() => {
+                setScanning(false);
+                localStorage.setItem("user", "John Wick");
+                carouselRef.current.goTo(2); // Navigate to Page 3
+            }, 2000);
         }
     };
 

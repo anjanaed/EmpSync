@@ -26,6 +26,7 @@
     "react-infinite-scroll-component": "^6.1.0",
     "react-linear-gradient-button": "^1.1.1",
     "react-router-dom": "^7.2.0",
+    "react-swipeable": "^7.0.2",
     "react-transition-group": "^4.4.5",
     "sass": "^1.86.0"
   },

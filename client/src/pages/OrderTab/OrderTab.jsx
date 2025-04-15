@@ -11,7 +11,7 @@ const OrderTab = () => {
 
     return (
         <>
-            <Carousel ref={carouselRef} infinite={false} dots={true}>
+            <Carousel ref={carouselRef} infinite={false} dots={false} accessibility={false}>
                 <div className={styles.contentStyle1}>
                     <Page1 carouselRef={carouselRef} setLanguage={setLanguage} /> {/* Pass setLanguage */}
                 </div>

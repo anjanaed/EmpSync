@@ -46,7 +46,7 @@
 
 .cardContainer {
     border-radius: 8px;
-    border: 2px solid #ffd591;
+    
     height: 85vh; /* Set a fixed height */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     background: rgba(255, 255, 255, 0.671);
@@ -80,7 +80,7 @@
     padding: 20px;
     border: 1px solid #ddd;
     border-radius: 10px;
-    background-color: #f9f9f9;
+    background-color: #f9f9f95e;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     height: 55vh; /* Set a fixed height */
     overflow-y: auto; /* Enable vertical scrolling */
@@ -94,7 +94,7 @@
     padding: 20px;
     border: 1px solid #ddd;
     border-radius: 10px;
-    background-color: #f9f9f9;
+    background-color: #f9f9f95e;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     height: 70vh; /* Set a fixed height */
     
