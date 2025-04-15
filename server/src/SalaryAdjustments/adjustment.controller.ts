@@ -37,7 +37,7 @@ export class AdjustmentController{
       }
 
     @Put(':id')
-    update(@Param('id') id:number, @Body() dto:Prisma.SalaryAdjustmentsUpdateInput){
+    update(@Param('id') id:string, @Body() dto:Prisma.SalaryAdjustmentsUpdateInput){
         return this.adjustmentService.update(id,dto);
     }
 

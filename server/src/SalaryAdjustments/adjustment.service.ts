@@ -39,10 +39,11 @@ export class AdjustmentService {
     }
   }
 
-  async update(id: number, updateAdjustmentDto: Prisma.SalaryAdjustmentsUpdateInput) {
+  async update(id: string, updateAdjustmentDto: Prisma.SalaryAdjustmentsUpdateInput) {
     try {
+      const numericId = parseInt(id, 10);
       return await this.databaseService.salaryAdjustments.update({
-        where: { id },
+        where: { id:numericId },
         data: updateAdjustmentDto,
       });
     } catch (error) {

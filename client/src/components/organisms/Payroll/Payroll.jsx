@@ -13,8 +13,8 @@ const { RangePicker } = DatePicker;
 const Payroll = () => {
   const [isAllowanceChecked, setIsAllowanceChecked] = useState(false);
   const [adjustments, setAdjustments] = useState([]);
-  const [etf,setEtf]=useState();
-  const[epf,setEpf]=useState();
+  const [etf,setEtf]=useState(0);
+  const[epf,setEpf]=useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const urL = import.meta.env.VITE_BASE_URL;
   const [individualAdjustment, setIndividualAdjustment] = useState([
@@ -35,38 +35,7 @@ const Payroll = () => {
 
   const handleGenerate=async()=>{
     setLoading(true)
-    try {
-      const payload = [{
-        label: "ETF",
-        isPercentage: true,
-        allowance: false,
-        amount:parseFloat(etf),
-      },{
-        label: "EPF",
-        isPercentage: true,
-        allowance: false,
-        amount:parseFloat(epf),
-      }];
-      for(const items of payload){
-        await axios
-        .post(`${urL}/adjustment`, items)
-        .then((res) => {
-          console.log(res);
-          fetch();
-          handleCancel();
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-      setLoading(false);
-      }
-      setEpf();
-      setEtf();
-
-    } catch (err) {
-      console.log(err);
-      setLoading(false);
-    }
+    await handleEtfEpf();
     try{
       await axios.post(`${urL}/payroll/calculate-all`)
       .then((res)=>{
@@ -107,7 +76,11 @@ const Payroll = () => {
   const fetchAdjustments = async () => {
     try {
       const res = await axios.get(`${urL}/adjustment`);
-      setAdjustments(res.data);
+      setEpf((res.data.find((adj)=>adj.label=="EPF").amount));
+      setEtf((res.data.find((adj)=>adj.label=="ETF").amount));
+      const filteredRes=res.data.filter((adj)=>adj.label!=="ETF" && adj.label!=="EPF")
+      setAdjustments(filteredRes)
+      console.log(adjustments)
     } catch (err) {
       console.log(err);
     }
@@ -158,13 +131,57 @@ const Payroll = () => {
 
   }
 
+  const handleEtfEpf=async()=>{
+    try{
+      const res = await axios.get(`${urL}/adjustment`)
+      const adjustment=res.data;
+
+      const epfRecord=adjustment.find((adj)=>adj.label=="EPF");
+      const etfRecord=adjustment.find((adj)=>adj.label=="ETF");
+
+      if (epfRecord){
+        
+        await axios.put(`${urL}/adjustment/${epfRecord.id}`,{
+          label:"EPF",
+          isPercentage:true,
+          allowance:false,
+          amount:parseFloat(epf),
+        })
+      }else{
+        await axios.post(`${urL}/adjustment`,{
+          label:"EPF",
+          isPercentage:true,
+          allowance:false,
+          amount:parseFloat(epf),
+        })
+      }
+
+      if (etfRecord){
+        await axios.put(`${urL}/adjustment/${parseInt(etfRecord.id)}`,{
+          label:"ETF",
+          isPercentage:true,
+          allowance:false,
+          amount:parseFloat(etf),
+        })
+      }else{
+        await axios.post(`${urL}/adjustment`,{
+          label:"ETF",
+          isPercentage:true,
+          allowance:false,
+          amount:parseFloat(etf),
+        })
+      }
+      fetchAdjustments();
+    }catch(err){
+      console.log(err)
+    }
+  }
+
   useEffect(() => {
     fetchAdjustments();
   }, []);
 
-  useEffect(() => {
-    console.log(adjustments);
-  }, [adjustments]);
+
 
   if (loading) {
     return <Loading />;
@@ -189,12 +206,11 @@ const Payroll = () => {
             <div className={styles.inputSet}>
               <label>Employee Trust Fund (ETF) Rate</label>
               <br />
-              <Input onChange={(e)=>setEtf(e.target.value)} placeholder="ETF" />
-            </div>
+              <Input value={etf} onChange={(e) => setEtf(e.target.value)} placeholder={"Enter Rate"} />            </div>
             <div className={styles.inputSet}>
               <label>Employee Provident Fund (EPF) Rate</label>
               <br />
-              <Input onChange={(e)=>setEpf(e.target.value)} placeholder="EPF" />
+              <Input value={epf} onChange={(e)=>setEpf(e.target.value)} placeholder={"Enter Rate"} />
             </div>
             <div className={styles.inputSet}>
               <label>Max Paid Leave Days Allowed</label>
@@ -207,7 +223,7 @@ const Payroll = () => {
               <div key={index} className={styles.dynamicInputSet}>
                 <label>{adj.label}</label>
                 <div className={styles.inputDelete}>
-                  <Input placeholder="Enter Value" value={adj.amount || ""} />
+                  <Input disabled  value={adj.isPercentage?`${adj.amount}%`:`LKR ${adj.amount}`} />
                   <span onClick={() => handleAdjustmentDelete(adj.id)}>
                     <IoMdRemoveCircleOutline size={24} color="brown" />
                   </span>

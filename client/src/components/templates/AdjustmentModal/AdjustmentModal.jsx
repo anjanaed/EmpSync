@@ -11,6 +11,7 @@ const AdjustmentModal = ({handleCancel, fetch}) => {
   const [isTypeChecked, setIsTypeChecked] = useState(true);
   const [loading, setLoading] = useState(false);
   const [description, setDescription] = useState();
+  const[amount,setAmount]=useState();
   const urL = import.meta.env.VITE_BASE_URL;
 
   const handleAllowanceChange = () => {
@@ -29,6 +30,7 @@ const AdjustmentModal = ({handleCancel, fetch}) => {
         label: description,
         isPercentage: !isTypeChecked,
         allowance: isAllowanceChecked,
+        amount:parseFloat(amount),
       };
       await axios
         .post(`${urL}/adjustment`, payload)
@@ -61,6 +63,13 @@ const AdjustmentModal = ({handleCancel, fetch}) => {
             <Input
               onChange={(e) => setDescription(e.target.value)}
               placeholder="VAT"
+            ></Input>
+          </div>
+          <div className={styles.inputLine}>
+            <label className={styles.titles}>Amount</label>
+            <Input
+              onChange={(e) => setAmount(e.target.value)}
+              placeholder="Value / Percentage"
             ></Input>
           </div>
           <div className={styles.inputLine}>
