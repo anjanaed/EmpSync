@@ -17,6 +17,7 @@
     "antd": "^5.24.6",
     "antd-style": "^3.7.1",
     "axios": "^1.8.4",
+    "firebase": "^11.6.0",
     "framer-motion": "^12.7.3",
     "jspdf": "^3.0.1",
     "jspdf-autotable": "^5.0.2",
