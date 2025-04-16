@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Layout,
   Button,
@@ -11,6 +11,9 @@ import {
   Input,
   Checkbox,
   ConfigProvider,
+  message,
+  Spin,
+  Empty,
 } from "antd";
 import {
   PlusOutlined,
@@ -53,20 +56,8 @@ const MenuSets = () => {
   const [isUpdatePopupVisible, setIsUpdatePopupVisible] = useState(false);
   const [searchText, setSearchText] = useState("");
   const [selectedMeals, setSelectedMeals] = useState([]);
-
-  // Available meals for selection
-  const availableMeals = [
-    "Rice &Curry",
-    "Noodles",
-    "Hoppers",
-    "String Hoppers",
-    "Bread with Curry",
-    "Milk Rice",
-    "Egg Hoppers",
-    "Kottu",
-    "Biryani",
-    "Fried Rice",
-  ];
+  const [availableMeals, setAvailableMeals] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   // Menu items for each tab
   const [menuItems, setMenuItems] = useState({
@@ -74,17 +65,6 @@ const MenuSets = () => {
       "String Hoppers",
       "Hoppers",
       "Bread with Curry",
-      "Milk Rice",
-      "Milk Rice",
-      "Milk Rice",
-      "Milk Rice",
-      "Milk Rice",
-      "Milk Rice",
-      "Milk Rice",
-      "Milk Rice",
-      "Milk Rice",
-      "Milk Rice",
-      "Milk Rice",
       "Milk Rice",
       "Egg Hoppers",
     ],
@@ -97,6 +77,34 @@ const MenuSets = () => {
     ],
     dinner: ["Fried Rice", "Kottu", "Rice & Curry", "Noodles", "Biryani"],
   });
+
+  // Map tab names to category names in the database
+  const tabToCategoryMap = {
+    breakfast: "Breakfast",
+    lunch: "Lunch",
+    dinner: "Dinner",
+  };
+
+  // Fetch available meals from API
+  const fetchAvailableMeals = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch('http://localhost:3000/meal');
+      if (!response.ok) {
+        throw new Error('Failed to fetch meals');
+      }
+      const data = await response.json();
+      // Store the full meal objects
+      setAvailableMeals(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error('Error fetching meals:', error);
+      message.error('Failed to load available meals');
+      // Fallback to empty array if API fails
+      setAvailableMeals([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleDateChange = (date) => {
     if (date) {
@@ -119,10 +127,17 @@ const MenuSets = () => {
     setSelectedDate(tomorrow);
   };
 
-  const openUpdatePopup = () => {
-    // Initialize selected meals with current menu items
-    setSelectedMeals([...menuItems[activeTab]]);
+  const openUpdatePopup = async () => {
+    // Clear selected meals first
+    setSelectedMeals([]);
     setIsUpdatePopupVisible(true);
+    
+    // Fetch available meals when opening the popup
+    await fetchAvailableMeals();
+    
+    // After meals are fetched, identify which ones are already in the current menu
+    // We need to wait for the API response before setting selected meals
+    setSelectedMeals(menuItems[activeTab] || []);
   };
 
   const closeUpdatePopup = () => {
@@ -136,27 +151,40 @@ const MenuSets = () => {
       ...menuItems,
       [activeTab]: selectedMeals,
     });
+    message.success(`${activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} menu updated successfully`);
     closeUpdatePopup();
   };
 
   const handleSearch = () => {
+    // Search is already implemented through filterMeals function
     console.log("Searching for:", searchText);
-    // Search implementation would go here
   };
 
-  const handleMealSelection = (meal) => {
-    if (selectedMeals.includes(meal)) {
-      setSelectedMeals(selectedMeals.filter((item) => item !== meal));
+  const handleMealSelection = (mealName) => {
+    if (selectedMeals.includes(mealName)) {
+      setSelectedMeals(selectedMeals.filter(item => item !== mealName));
     } else {
-      setSelectedMeals([...selectedMeals, meal]);
+      setSelectedMeals([...selectedMeals, mealName]);
     }
   };
 
+  // Function to filter meals based on category and search text
   const filterMeals = () => {
-    if (!searchText) return availableMeals;
-    return availableMeals.filter((meal) =>
-      meal.toLowerCase().includes(searchText.toLowerCase())
+    // First filter by category based on active tab
+    const categoryName = tabToCategoryMap[activeTab];
+    
+    let filteredByCategory = availableMeals.filter(meal => 
+      meal.category === categoryName || meal.category === "All"
     );
+    
+    // Then filter by search text if any
+    if (searchText) {
+      return filteredByCategory.filter(meal => 
+        meal.nameEnglish.toLowerCase().includes(searchText.toLowerCase())
+      );
+    }
+    
+    return filteredByCategory;
   };
 
   const formattedDate = selectedDate.format("MMMM D, YYYY");
@@ -288,7 +316,7 @@ const MenuSets = () => {
 
       {/* Meal Update Popup */}
       <Modal
-        title="Update Meal Plan"
+        title={`Update ${activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} Menu`}
         open={isUpdatePopupVisible}
         onCancel={closeUpdatePopup}
         footer={null}
@@ -297,7 +325,7 @@ const MenuSets = () => {
       >
         <div className={styles.container}>
           <div className={styles.header}>
-            <p className={styles.sectionTitle}>Available Meals</p>
+            <p className={styles.sectionTitle}>Available {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} Meals</p>
           </div>
 
           <div className={styles.searchContainer}>
@@ -306,6 +334,7 @@ const MenuSets = () => {
               value={searchText}
               onChange={(e) => setSearchText(e.target.value)}
               className={styles.searchInput}
+              prefix={<SearchOutlined />}
             />
             <Button
               className={styles.searchButton}
@@ -317,25 +346,47 @@ const MenuSets = () => {
           </div>
 
           <div className={styles.mealListContainer}>
-            <List
-              className={styles.mealList}
-              dataSource={filterMeals()}
-              renderItem={(meal) => (
-                <>
-                  <List.Item className={styles.mealItem}>
-                    <div className={styles.mealItemContent}>
-                      <span>{meal}</span>
-                      <Checkbox
-                        checked={selectedMeals.includes(meal)}
-                        onChange={() => handleMealSelection(meal)}
-                        className={styles.ModalCheckbox}
-                      />
-                    </div>
-                  </List.Item>
-                  <Divider className={styles.Modaldivider} />
-                </>
-              )}
-            />
+            {loading ? (
+              <div style={{ textAlign: 'center', padding: '20px' }}>
+                <Spin size="large" />
+                <p style={{ marginTop: '10px' }}>Loading available meals...</p>
+              </div>
+            ) : (
+              <List
+                className={styles.mealList}
+                dataSource={filterMeals()}
+                renderItem={(meal) => (
+                  <>
+                    <List.Item className={styles.mealItem}>
+                      <div className={styles.mealItemContent}>
+                        <div>
+                          {meal.nameEnglish}
+                          {/* {meal.description && (
+                            <div style={{ fontSize: '12px', color: '#777' }}>
+                              {meal.description}
+                            </div>
+                          )} */}
+                        </div>
+                        <Checkbox
+                          checked={selectedMeals.includes(meal.nameEnglish)}
+                          onChange={() => handleMealSelection(meal.nameEnglish)}
+                          className={styles.ModalCheckbox}
+                        />
+                      </div>
+                    </List.Item>
+                    <Divider className={styles.Modaldivider} />
+                  </>
+                )}
+                locale={{ 
+                  emptyText: (
+                    <Empty 
+                      description={`No ${activeTab} meals found`} 
+                      image={Empty.PRESENTED_IMAGE_SIMPLE} 
+                    />
+                  ) 
+                }}
+              />
+            )}
           </div>
 
           <div className={styles.buttonContainer}>
@@ -346,6 +397,7 @@ const MenuSets = () => {
               type="primary"
               className={styles.updateModalButton}
               onClick={handleMenuUpdate}
+              disabled={loading}
             >
               Update
             </Button>

@@ -11,6 +11,7 @@ import {
   Modal,
   Checkbox,
   InputNumber,
+  Select,
 } from "antd";
 import {
   UploadOutlined,
@@ -25,6 +26,7 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage"; // Import F
 
 const { TextArea } = Input;
 const { Title } = Typography;
+const { Option } = Select;
 
 const AddMealPage = () => {
   const [form] = Form.useForm();
@@ -84,6 +86,7 @@ const AddMealPage = () => {
         nameSinhala: values.nameSinhala,
         nameTamil: values.nameTamil,
         description: values.description,
+        category: values.category,
         price: parseFloat(values.price),
         imageUrl: downloadURL, // Use the Firebase Storage URL
         createdAt: new Date().toISOString(),
@@ -320,6 +323,21 @@ const AddMealPage = () => {
                   rules={[{ required: true, message: "Please enter price" }]}
                 >
                   <Input placeholder="Enter price" />
+                </Form.Item>
+
+                <Form.Item
+                  label="Category"
+                  name="category"
+                  rules={[
+                    { required: true, message: "Please select a category" },
+                  ]}
+                >
+                  <Select placeholder="Select a category">
+                    <Select.Option value="Breakfast">Breakfast</Select.Option>
+                    <Select.Option value="Lunch">Lunch</Select.Option>
+                    <Select.Option value="Dinner">Dinner</Select.Option>
+                    <Select.Option value="All">All</Select.Option>
+                  </Select>
                 </Form.Item>
 
                 <Form.Item label="Description" name="description">

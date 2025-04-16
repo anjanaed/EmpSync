@@ -12,6 +12,7 @@ import {
   Checkbox,
   InputNumber,
   Spin,
+  Select,
 } from "antd";
 import {
   UploadOutlined,
@@ -28,6 +29,7 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 const { TextArea } = Input;
 const { Title } = Typography;
+const { Option } = Select;
 
 const EditMealPage = () => {
   const [form] = Form.useForm();
@@ -70,6 +72,7 @@ const EditMealPage = () => {
         nameTamil: meal.nameTamil,
         price: meal.price,
         description: meal.description,
+        category: meal.category || "all", // Set default category if not present
       });
 
       // If meal has ingredients, populate the selected ingredients
@@ -164,6 +167,7 @@ const EditMealPage = () => {
         description: values.description,
         price: parseFloat(values.price), // Convert price to number
         imageUrl: finalImageUrl,
+        category: values.category, // Add category field
         // Only include ingredients if they were modified
         ...(selectedIngredients.length > 0
           ? { ingredients: selectedIngredients }
@@ -440,6 +444,22 @@ const EditMealPage = () => {
                   rules={[{ required: true, message: "Please enter price" }]}
                 >
                   <Input placeholder="Enter price" />
+                </Form.Item>
+
+                {/* Add Category Field */}
+                <Form.Item
+                  label="Category"
+                  name="category"
+                  rules={[
+                    { required: true, message: "Please select a category" },
+                  ]}
+                >
+                  <Select placeholder="Select a category">
+                    <Option value="Breakfast">Breakfast</Option>
+                    <Option value="Lunch">Lunch</Option>
+                    <Option value="Dinner">Dinner</Option>
+                    <Option value="All">All</Option>
+                  </Select>
                 </Form.Item>
 
                 <Form.Item label="Description" name="description">
