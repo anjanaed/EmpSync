@@ -6,6 +6,7 @@ import styles from './InventoryManagement.module.css';
 import axios from 'axios';
 import { exportIngredientsToPDF } from '../InventoryManagement/pdfExport/pdfExport';
 
+const urL = import.meta.env.VITE_BASE_URL;
 const { Search } = Input;
 const { Option } = Select;
 
@@ -37,7 +38,7 @@ const InventoryManagement = () => {
   const fetchIngredients = async () => {
     setLoading(true);
     try {
-      const response = await axios.get('http://localhost:3000/ingredients');
+      const response = await axios.get(`${urL}/ingredients`);
       setIngredients(response.data);
     } catch (error) {
       console.error('Error fetching ingredients:', error);
@@ -80,7 +81,7 @@ const InventoryManagement = () => {
       };
       
       // Send POST request to add the ingredient
-      const response = await axios.post('http://localhost:3000/ingredients', newIngredient);
+      const response = await axios.post(`${urL}/ingredients`, newIngredient);
       
       // Add the new ingredient to the local state
       setIngredients([...ingredients, response.data]);
@@ -139,7 +140,7 @@ const InventoryManagement = () => {
       try {
         // Updated API endpoint URL
         const response = await axios.patch(
-          `http://localhost:3000/ingredients/${editingIngredient.id}`, // Changed from 'ingredients' to 'ingredient'
+          `${urL}/ingredients/${editingIngredient.id}`, // Changed from 'ingredients' to 'ingredient'
           updatedIngredient
         );
 
@@ -181,7 +182,7 @@ const InventoryManagement = () => {
       cancelText: 'Cancel',
       onOk: async () => {
         try {
-          await axios.delete(`http://localhost:3000/ingredients/${id}`);
+          await axios.delete(`${urL}/ingredients/${id}`);
           
           // For now, just filter locally
           setIngredients(ingredients.filter(ingredient => ingredient.id !== id));
