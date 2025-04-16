@@ -45,17 +45,7 @@
     background-color: white;
     border: 1px solid #d9d9d9;
   }
-  
-  .downloadButton {
-    background-color: #800020;
-    border-color: #800020;
-  }
-  
-  .downloadButton:hover {
-    background-color: #600018 !important;
-    border-color: #600018 !important;
-  }
-  
+
   .loadingContainer {
     display: flex;
     justify-content: center;
