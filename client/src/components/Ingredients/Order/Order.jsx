@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Card, Typography, Tag, Spin, Button } from "antd";
+import { Typography, Tag, Spin, Button, Table } from "antd";
 import { useNavigate } from "react-router-dom";
 import styles from "./Order.module.css";
 
@@ -9,6 +9,39 @@ const Order = () => {
     const [ingredients, setIngredients] = useState(null);
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
+
+    const columns = [
+        {
+            title: 'Name',
+            dataIndex: 'name',
+            key: 'name',
+        },
+        {
+            title: 'Type',
+            dataIndex: 'type',
+            key: 'type',
+        },
+        {
+            title: 'Price (Rs.)',
+            dataIndex: 'price_per_unit',
+            key: 'price',
+        },
+        {
+            title: 'Quantity',
+            dataIndex: 'quantity',
+            key: 'quantity',
+        },
+        {
+            title: 'Priority',
+            dataIndex: 'priority',
+            key: 'priority',
+            render: (priority) => (
+                <Tag color={priority === 1 ? "red" : priority === 2 ? "orange" : "blue"}>
+                    Priority {priority}
+                </Tag>
+            ),
+        },
+    ];
 
     useEffect(() => {
         fetchIngredients();
@@ -26,18 +59,6 @@ const Order = () => {
         }
     };
 
-    const IngredientCard = ({ item }) => (
-        <Card className={styles.card}>
-            <Title level={4}>{item.name}</Title>
-            <p>Type: {item.type}</p>
-            <p>Price per unit: Rs. {item.price_per_unit}</p>
-            <p>Quantity: {item.quantity}</p>
-            <Tag color={item.priority === 1 ? "red" : item.priority === 2 ? "orange" : "blue"}>
-                Priority {item.priority}
-            </Tag>
-        </Card>
-    );
-
     if (loading) {
         return <Spin size="large" />;
     }
@@ -45,18 +66,30 @@ const Order = () => {
     return (
         <div className={styles.orderContainer}>
             <Title level={2} className={styles.sectionTitle}>Priority Ingredients</Title>
-            <div className={styles.cardGrid}>
-                {ingredients?.priority1Ingredients.map((item) => (
-                    <IngredientCard key={item.id} item={item} />
-                ))}
-            </div>
+            <Table 
+                dataSource={ingredients?.priority1Ingredients}
+                columns={columns}
+                className={styles.table}
+                pagination={{
+                    pageSize: 5,
+                    showSizeChanger: true,
+                    showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`
+                }}
+                rowKey="id"
+            />
 
             <Title level={2} className={styles.sectionTitle}>Optimized Ingredients</Title>
-            <div className={styles.cardGrid}>
-                {ingredients?.optimizedIngredients.map((item) => (
-                    <IngredientCard key={item.id} item={item} />
-                ))}
-            </div>
+            <Table 
+                dataSource={ingredients?.optimizedIngredients}
+                columns={columns}
+                className={styles.table}
+                pagination={{
+                    pageSize: 5,
+                    showSizeChanger: true,
+                    showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`
+                }}
+                rowKey="id"
+            />
 
             <p className={styles.lastUpdated}>
                 Last updated: {new Date(ingredients?.lastUpdated).toLocaleString()}
