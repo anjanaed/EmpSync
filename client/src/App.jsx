@@ -18,6 +18,7 @@ import Ingredients from "./pages/Ingredients/Dashboard/Ingredients";
 import AnalysisDashboard from "./pages/Ingredients/AnalysisDashboard/AnalysisDashboard";
 import OrderReportDashboard from "./pages/Ingredients/OrderReportDashboard/OrderReportDashboard";
 import CostAnalysis from "./components/Ingredients/Analysis/Cost Analysis/CostAnalysis";
+import OrderHistory from "./pages/Ingredients/OrderHistory/OrderHistory";
 import ReportPage from "./components/pages/HR/ReportPage/ReportPage";
 import PayrollPage from "./components/pages/HR/PayrollPage/PayrollPage";
 import OrderTab from "./pages/OrderTab/OrderTab";
@@ -46,6 +47,7 @@ function App() {
         <Route path="/CostAnalysis" element={<CostAnalysis />} />
         <Route path="/AnalysisDashboard" element={<AnalysisDashboard />} />
         <Route path="/OrderReportDashboard" element={<OrderReportDashboard />}/>
+        <Route path="/OrderHistory" element={<OrderHistory />} />
         <Route path="/reportPage" element={<ReportPage />} />
         <Route path="/payroll" element={<PayrollPage />} />
         <Route path="/OrderTab" element={<OrderTab />} />
