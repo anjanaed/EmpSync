@@ -29,6 +29,9 @@ const InventoryManagement = () => {
   const [isAddModalVisible, setIsAddModalVisible] = useState(false);
   const [addIngredientForm] = Form.useForm();
   const [addingIngredient, setAddingIngredient] = useState(false);
+  const [isEditModalVisible, setIsEditModalVisible] = useState(false);
+  const [editingIngredient, setEditingIngredient] = useState(null);
+  const [editIngredientForm] = Form.useForm();
 
   // Fetch ingredients from the API
   const fetchIngredients = async () => {
@@ -94,7 +97,79 @@ const InventoryManagement = () => {
   };
 
   const handleEditIngredient = (id) => {
-    console.log('Edit ingredient', id);
+    const ingredient = ingredients.find(ing => ing.id === id);
+    if (ingredient) {
+      setEditingIngredient(ingredient);
+      editIngredientForm.setFieldsValue({
+        id: ingredient.id,
+        name: ingredient.name,
+        price_per_unit: parseFloat(ingredient.price_per_unit),
+        quantity: parseInt(ingredient.quantity),
+        type: ingredient.type,
+        priority: ingredient.priority
+      });
+      setIsEditModalVisible(true);
+    }
+  };
+
+  const handleEditModalCancel = () => {
+    setIsEditModalVisible(false);
+    setEditingIngredient(null);
+    editIngredientForm.resetFields();
+  };
+
+  const handleEditModalSubmit = async () => {
+    try {
+      const values = await editIngredientForm.validateFields();
+      setLoading(true);
+      
+      const updatedIngredient = {
+        id: values.id,
+        name: values.name,
+        price_per_unit: values.price_per_unit.toString(),
+        quantity: values.quantity.toString(),
+        type: values.type,
+        priority: values.priority
+      };
+
+      if (!editingIngredient?.id) {
+        throw new Error('Invalid ingredient ID');
+      }
+
+      try {
+        // Updated API endpoint URL
+        const response = await axios.put(
+          `http://localhost:3000/ingredients/${editingIngredient.id}`, // Changed from 'ingredients' to 'ingredient'
+          updatedIngredient
+        );
+
+        if (response.data) {
+          // Update local state with the response data
+          setIngredients(prevIngredients => 
+            prevIngredients.map(ing => 
+              ing.id === editingIngredient.id ? response.data : ing
+            )
+          );
+          
+          message.success('Ingredient updated successfully');
+          setIsEditModalVisible(false);
+          setEditingIngredient(null);
+          editIngredientForm.resetFields();
+        }
+      } catch (axiosError) {
+        const errorMessage = axiosError.response?.status === 404
+          ? `Ingredient with ID ${editingIngredient.id} not found`
+          : 'Failed to update ingredient. Please try again.';
+        
+        message.error(errorMessage);
+        console.error('API Error:', axiosError.response?.data || axiosError.message);
+      }
+    } catch (validationError) {
+      message.error('Please check all required fields');
+      console.error('Validation Error:', validationError);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleDeleteIngredient = async (id) => {
@@ -208,6 +283,98 @@ const InventoryManagement = () => {
             rules={[{ required: true, message: 'Please enter ingredient ID' }]}
           >
             <Input placeholder="Enter ingredient ID" />
+          </Form.Item>
+          
+          <Form.Item
+            name="name"
+            label="Ingredient Name"
+            rules={[{ required: true, message: 'Please enter ingredient name' }]}
+          >
+            <Input placeholder="Enter ingredient name" />
+          </Form.Item>
+          
+          <Form.Item
+            name="price_per_unit"
+            label="Price Per Unit"
+            rules={[{ required: true, message: 'Please enter price per unit' }]}
+          >
+            <InputNumber 
+              min={0}
+              step={0.01}
+              precision={2}
+              style={{ width: '100%' }}
+              placeholder="Enter price per unit"
+            />
+          </Form.Item>
+          
+          <Form.Item
+            name="quantity"
+            label="Quantity"
+            rules={[{ required: true, message: 'Please enter quantity' }]}
+          >
+            <InputNumber 
+              min={0}
+              style={{ width: '100%' }}
+              placeholder="Enter quantity"
+            />
+          </Form.Item>
+
+          <Form.Item
+            name="type"
+            label="Type"
+            rules={[{ required: true, message: 'Please select ingredient type' }]}
+          >
+            <Select placeholder="Select ingredient type">
+              {INGREDIENT_TYPES.map(type => (
+                <Option key={type} value={type}>{type}</Option>
+              ))}
+            </Select>
+          </Form.Item>
+          
+          <Form.Item
+            name="priority"
+            label="Priority"
+            rules={[{ required: true, message: 'Please select priority' }]}
+            initialValue={3}
+          >
+            <Select placeholder="Select priority">
+              <Option value={1}>High</Option>
+              <Option value={2}>Medium</Option>
+              <Option value={3}>Low</Option>
+            </Select>
+          </Form.Item>
+        </Form>
+      </Modal>
+
+      {/* Edit Ingredient Modal */}
+      <Modal
+        title="Edit Ingredient"
+        visible={isEditModalVisible}
+        onCancel={handleEditModalCancel}
+        footer={[
+          <Button key="cancel" onClick={handleEditModalCancel}>
+            Cancel
+          </Button>,
+          <Button 
+            key="submit" 
+            type="primary" 
+            onClick={handleEditModalSubmit}
+          >
+            Save Changes
+          </Button>,
+        ]}
+      >
+        <Form
+          form={editIngredientForm}
+          layout="vertical"
+          name="editIngredientForm"
+        >
+          <Form.Item
+            name="id"
+            label="Ingredient ID"
+            rules={[{ required: true, message: 'Please enter ingredient ID' }]}
+          >
+            <Input disabled placeholder="Enter ingredient ID" />
           </Form.Item>
           
           <Form.Item
