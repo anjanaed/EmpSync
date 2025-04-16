@@ -17,6 +17,7 @@
     "antd": "^5.24.6",
     "antd-style": "^3.7.1",
     "axios": "^1.8.4",
+    "jspdf": "^3.0.1",
     "jspdf-autotable": "^5.0.2",
     "lucide-react": "^0.477.0",
     "moment": "^2.30.1",
