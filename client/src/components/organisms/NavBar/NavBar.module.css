@@ -109,3 +109,66 @@ img {
   overflow-x: hidden;
   flex: 1;
 }
+
+.userDropdown {
+  margin-right: 1vw;
+  position: relative;
+
+}
+
+.userInfo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+.userInfo:hover {
+  background-color: rgba(0, 0, 0, 0.126);
+}
+
+.userName {
+  font-weight: 600;
+  font-size: 18px;
+  /* font-family: 'Inter', sans-serif; */
+  color: #333;
+}
+.userPosition{
+  font-size: 14px;
+  color: #666;
+}
+
+/* Dropdown menu items styling */
+.profileMenuItem,
+.logoutMenuItem {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 14px;
+  font-size: 14px;
+  font-weight: 400;
+  border-radius: 0;
+  
+}
+
+.profileMenuItem {
+  color: #333;
+}
+
+.logoutMenuItem {
+  color: #f44336;
+}
+
+.userDetails
+.userName 
+{
+  font-family: "Inter", sans-serif;
+  font-size: 1vw;
+}
+
+.userPosition{
+  font-family: "Inter", sans-serif;
+  font-size: 0.8vw;
+}

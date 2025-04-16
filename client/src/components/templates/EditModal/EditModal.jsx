@@ -37,7 +37,10 @@ const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
     try {
       setLoading(true);
       const res = await axios.get(`${urL}/user/${empId}`);
-      setCurrentEmployee(res.data);
+      const employee=res.data;
+      employee.dob = dayjs(employee.dob);
+      setCurrentEmployee(employee);
+      form.setFieldsValue(employee);
       setLoading(false);
     } catch (err) {
       console.log(err);
@@ -50,18 +53,20 @@ const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
   }, [empId]);
 
   const handleUpdate = async () => {
+    await form.validateFields();
     setLoading(true);
     try {
       await axios
         .put(`${urL}/user/${empId}`, currentEmployee)
         .then((res) => {
           console.log(res);
+          console.log("Done");
         })
         .catch((err) => {
           console.log(err);
         });
       handleCancel();
-      fetchEmployee;
+      fetchEmployee();
       setLoading(false);
     } catch (err) {
       console.log(err);
@@ -98,7 +103,7 @@ const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
       </div>
 
       <div className={`${styles.yo} customTabs`}>
-        <Form {...formItemLayout} form={form}>
+        <Form {...formItemLayout} form={form} initialValues={currentEmployee}>
           <Tabs
             className={styles.tab}
             defaultActiveKey="personal"
@@ -111,7 +116,7 @@ const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
                   <>
                     <div className={styles.con}>
                       <Form.Item
-                        name="fullname"
+                        name="name"
                         label="Full Name"
                         styles={{
                           explain: {
@@ -127,7 +132,6 @@ const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
                         ]}
                       >
                         <Input
-                          defaultValue={currentEmployee.name}
                           placeholder="Enter Name"
                           onChange={(e) =>
                             setCurrentEmployee({
@@ -152,7 +156,6 @@ const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
                         ]}
                       >
                         <Input
-                          defaultValue={currentEmployee.email}
                           placeholder="Enter Email Address"
                           onChange={(e) =>
                             setCurrentEmployee({
@@ -162,9 +165,8 @@ const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
                           }
                         />
                       </Form.Item>
-                      <Form.Item name="phone" label="Phone Number">
+                      <Form.Item name="telephone" label="Phone Number">
                         <Input
-                          defaultValue={currentEmployee.telephone}
                           placeholder="Enter Mobile Number"
                           onChange={(e) =>
                             setCurrentEmployee({
@@ -189,7 +191,6 @@ const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
                       >
                         <Select
                           placeholder="Select Gender"
-                          defaultValue={currentEmployee.gender}
                           onChange={(value) =>
                             setCurrentEmployee({
                               ...currentEmployee,
@@ -205,7 +206,6 @@ const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
                       </Form.Item>
                       <Form.Item name="address" label="Residential Address">
                         <Input
-                          defaultValue={currentEmployee.address}
                           placeholder="Enter Address"
                           onChange={(e) =>
                             setCurrentEmployee({
@@ -226,7 +226,6 @@ const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
                         ]}
                       >
                         <DatePicker
-                          defaultValue={dayjs(currentEmployee.dob, dateFormat)}
                           onChange={(date) =>
                             setCurrentEmployee({
                               ...currentEmployee,
@@ -249,7 +248,7 @@ const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
                   <>
                     <div className={styles.con}>
                       <Form.Item
-                        name="empId"
+                        name="id"
                         label="Employee ID"
                         rules={[
                           {
@@ -258,20 +257,10 @@ const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
                           },
                         ]}
                       >
-                        <Input
-                          defaultValue={currentEmployee.id}
-                          placeholder="Enter ID"
-                          onChange={(e) =>
-                            setCurrentEmployee({
-                              ...currentEmployee,
-                              id: e.target.value,
-                            })
-                          }
-                        />
+                        <Input disabled />
                       </Form.Item>
                       <Form.Item name="supId" label="Supervisor's ID">
                         <Input
-                          defaultValue={currentEmployee.supId}
                           onChange={(e) =>
                             setCurrentEmployee({
                               ...currentEmployee,
@@ -287,12 +276,12 @@ const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
                             <p style={{ color: "red" }}>* </p>&#8201; Job Role
                           </>
                         }
-                        name="role"
+                        name="roleHold"
                       >
                         <Space.Compact className={styles.select}>
                           <Form.Item
                             noStyle
-                            name="selectRole"
+                            name="role"
                             style={{ flex: "1" }}
                             rules={[
                               {
@@ -302,7 +291,6 @@ const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
                             ]}
                           >
                             <Select
-                              defaultValue={currentEmployee.role}
                               onChange={(value) => {
                                 setCurrentEmployee({
                                   ...currentEmployee,
@@ -328,11 +316,7 @@ const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
                               <Select.Option value="Other">Other</Select.Option>
                             </Select>
                           </Form.Item>
-                          <Form.Item
-                            name="customRole"
-                            noStyle
-                            style={{ flex: "2" }}
-                          >
+                          <Form.Item noStyle style={{ flex: "2" }}>
                             <Input
                               style={{ width: "100%" }}
                               onChange={(e) => {
@@ -359,12 +343,11 @@ const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
                         ]}
                       >
                         <Input
-                          defaultValue={currentEmployee.salary}
                           placeholder="Enter Basic Salary"
                           onChange={(e) =>
                             setCurrentEmployee({
                               ...currentEmployee,
-                              salary: e.target.value,
+                              salary: parseFloat(e.target.value) || 0,
                             })
                           }
                         />
@@ -391,7 +374,6 @@ const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
                       >
                         <Select
                           className={styles.select}
-                          defaultValue={currentEmployee.language}
                           placeholder="Select Language"
                           onChange={(value) =>
                             setCurrentEmployee({
@@ -407,7 +389,6 @@ const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
                       </Form.Item>
                       <Form.Item name="height" label="Height">
                         <Input
-                          defaultValue={currentEmployee.height}
                           onChange={(e) =>
                             setCurrentEmployee({
                               ...currentEmployee,
@@ -419,7 +400,6 @@ const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
                       </Form.Item>
                       <Form.Item name="weight" label="Weight">
                         <Input
-                          defaultValue={currentEmployee.weight}
                           onChange={(e) =>
                             setCurrentEmployee({
                               ...currentEmployee,

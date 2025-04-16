@@ -5,7 +5,7 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
   binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
 }
 
@@ -14,23 +14,25 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User{
-  id String @id
-  name String @unique
-  role String 
-  dob String?
-  telephone String?
-  gender String?
-  address String?
-  email String @unique
-  password String
-  salary Int?
-  thumbId Bytes? @unique
-  supId String?
-  language String?
-  height Int?
-  weight Int?
-  createdAt DateTime @default(now())
+model User {
+  id         String       @id
+  name       String       @unique
+  role       String
+  dob        String?
+  telephone  String?
+  gender     String?
+  address    String?
+  email      String       @unique
+  password   String
+  salary     Int?
+  thumbId    Bytes?       @unique
+  supId      String?
+  language   String?
+  height     Int?
+  weight     Int?
+  payrolls   Payroll[]
+  attendance Attendance[]
+  createdAt  DateTime     @default(now())
 }
 
 model Ingredient {
@@ -43,62 +45,57 @@ model Ingredient {
   createdAt DateTime @default(now())
 }
 
-model Payroll{
-  id String @id @unique
-  empId String 
-  month String
+model Payroll {
+  id         String   @id @unique
+  empId      String
+  employee   User     @relation(fields: [empId], references: [id])
+  month      String
   payrollPdf Bytes
-  createdAt DateTime @default(now())
-}
-
-model Meal {
-  id Int @id @default(autoincrement())
-  name String           
-  description String?                        
-  price Float                          
-  category String                           
-  imageUrl String?                          
-  createdAt DateTime @default(now())                   
-}
-
-
-model Order {
-  id Int @default(autoincrement()) @id
-  orderNumber String @unique
-  orderDate DateTime @default(now())
-  price Float
-  employeeId String
-  serve Boolean @default(false)
-
-}
-
-model Attendance{
-  id String @id
-  empId String
-  dateTime DateTime
-  status String
-}
-
-
-model LeaveApplication{
-  id Int @default(autoincrement()) @id
-  appliedDate DateTime @default(now())
-  duration Float
-  empId String
-  reason String
-  status Boolean @default(false)
-  reviewedBy String
-}
-
-
-model ScheduledMeal {
-  id         Int      @id @default(autoincrement()) 
-  date       DateTime @unique @db.Date  // Store as DATE (without time)
-  breakfast  String[]
-  lunch      String[]
-  dinner     String[]
   createdAt  DateTime @default(now())
 }
 
+model Meal {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String?
+  price       Float
+  category    String
+  imageUrl    String?
+  createdAt   DateTime @default(now())
+}
 
+model Order {
+  id          Int      @id @default(autoincrement())
+  orderNumber String   @unique
+  orderDate   DateTime @default(now())
+  price       Float
+  employeeId  String
+  serve       Boolean  @default(false)
+}
 
+model Attendance {
+  id       String @id
+  empId    String
+  employee User   @relation(fields: [empId], references: [id])
+  dateTime DateTime
+  status   String
+}
+
+model LeaveApplication {
+  id          Int      @id @default(autoincrement())
+  appliedDate DateTime @default(now())
+  duration    Float
+  empId       String
+  reason      String
+  status      Boolean  @default(false)
+  reviewedBy  String
+}
+
+model ScheduledMeal {
+  id        Int      @id @default(autoincrement())
+  date      DateTime @unique @db.Date // Store as DATE (without time)
+  breakfast String[]
+  lunch     String[]
+  dinner    String[]
+  createdAt DateTime @default(now())
+}

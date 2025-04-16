@@ -7,6 +7,16 @@ import { Prisma } from '@prisma/client';
 describe('PayrollService', () => {
   let payrollService: PayrollService;
   let databaseService: DatabaseService;
+  const mockEmployee = {
+    id: 'E001',
+    name: 'John Doe',
+    role: 'Developer',
+    dob: '1990-01-01',
+    email: 'john.doe@example.com',
+    password: 'hashedpassword',
+    salary: 5000,
+    createdAt: new Date('2025-01-01T00:00:00.000Z'),
+  };
   const mockDatabaseService = {
     payroll: {
       create: jest.fn(),
@@ -40,12 +50,14 @@ describe('PayrollService', () => {
     it('should create a payroll successfully', async () => {
       const dto: Prisma.PayrollCreateInput = {
         id: '1',
-        empId: 'E001',
+        employee: {connect:{id:mockEmployee.id}},
         month: 'January',
         payrollPdf: Buffer.from('U29tZSBiaW5hcnkgZGF0YQ==', 'base64'),
         createdAt: new Date('2025-01-31T00:00:00.000Z'),
       };
-      mockDatabaseService.payroll.create.mockResolvedValue(dto);
+      mockDatabaseService.payroll.create.mockResolvedValue({...dto,
+        employee:mockEmployee,
+      });
 
       await expect(payrollService.create(dto)).resolves.toEqual('Payroll Generated');
       expect(mockDatabaseService.payroll.create).toHaveBeenCalledWith({ data: dto });
@@ -56,7 +68,7 @@ describe('PayrollService', () => {
 
       const dto: Prisma.PayrollCreateInput = {
         id: '1',
-        empId: 'E001',
+        employee: {connect:{id:mockEmployee.id}},
         month: 'January',
         payrollPdf: Buffer.from('U29tZSBiaW5hcnkgZGF0YQ==', 'base64'),
         createdAt: new Date('2025-01-31T00:00:00.000Z'),
@@ -72,7 +84,7 @@ describe('PayrollService', () => {
       const mockPayrolls = [
         {
           id: '1',
-          empId: 'E001',
+          employee: {connect:{id:mockEmployee.id}},
           month: 'January',
           payrollPdf: Buffer.from('U29tZSBiaW5hcnkgZGF0YQ==', 'base64'),
           createdAt: new Date('2025-01-31T00:00:00.000Z'),
@@ -95,7 +107,7 @@ describe('PayrollService', () => {
     it('should return a payroll by empId and month', async () => {
       const mockPayroll = {
         id: '1',
-        empId: 'E001',
+        employee: {connect:{id:mockEmployee.id}},
         month: 'January',
         payrollPdf: Buffer.from('U29tZSBiaW5hcnkgZGF0YQ==', 'base64'),
         createdAt: new Date('2025-01-31T00:00:00.000Z'),
@@ -119,7 +131,7 @@ describe('PayrollService', () => {
     it('should update a payroll if found', async () => {
       const mockPayroll = {
         id: '1',
-        empId: 'E001',
+        employee: {connect:{id:mockEmployee.id}},
         month: 'January',
         payrollPdf: Buffer.from('U29tZSBiaW5hcnkgZGF0YQ==', 'base64'),
         createdAt: new Date('2025-01-31T00:00:00.000Z'),
@@ -147,7 +159,7 @@ describe('PayrollService', () => {
     it('should delete a payroll if found', async () => {
       const mockPayroll = {
         id: '1',
-        empId: 'E001',
+        employee: {connect:{id:mockEmployee.id}},
         month: 'January',
         payrollPdf: Buffer.from('U29tZSBiaW5hcnkgZGF0YQ==', 'base64'),
         createdAt: new Date('2025-01-31T00:00:00.000Z'),

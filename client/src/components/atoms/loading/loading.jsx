@@ -3,6 +3,7 @@ import { LoadingOutlined } from '@ant-design/icons';
 import { Flex, Spin } from 'antd';
 import styles from './loading.module.css'
 
+
 const Loading = () => (
   <div className={styles.loadingWrapper}>
     <Spin
