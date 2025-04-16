@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Layout, Card, Row, Col, Statistic, Button, Typography, Table } from 'antd';
 import { Pie, Line, Column } from '@ant-design/plots';
-import { ArrowLeftOutlined, LogoutOutlined } from '@ant-design/icons';
+import { ArrowLeftOutlined, LogoutOutlined, DownloadOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import styles from './CostAnalysis.module.css';
+import { jsPDF } from "jspdf";
+import autoTable from 'jspdf-autotable';
 
 const { Header, Content, Footer } = Layout;
 const { Title, Text } = Typography;
@@ -29,6 +31,110 @@ const CostAnalysis = () => {
 
   const handleLogout = () => {
     navigate('/login');
+  };
+
+  const exportMonthlyStatistics = () => {
+    if (!analysisData) return;
+
+    const doc = new jsPDF();
+    
+    // Add title
+    doc.setFontSize(16);
+    doc.text(`Monthly Statistics Report - ${analysisData.year}`, 14, 15);
+    
+    // Format data for the table
+    const tableData = analysisData.monthlyStatistics.map(item => [
+      item.month,
+      item.statistics.totalIngredients,
+      `Rs. ${item.statistics.totalInventoryValue.toFixed(2)}`,
+      `Rs. ${item.statistics.averageValuePerIngredient.toFixed(2)}`,
+      `Rs. ${item.statistics.priceRange.highest.toFixed(2)}`,
+      `Rs. ${item.statistics.priceRange.lowest.toFixed(2)}`
+    ]);
+
+    // Define table headers
+    const headers = [
+      'Month',
+      'Total Ingredients',
+      'Total Value',
+      'Avg Value/Ingredient',
+      'Highest Price',
+      'Lowest Price'
+    ];
+
+    // Generate the table using autoTable directly
+    autoTable(doc, {
+      head: [headers],
+      body: tableData,
+      startY: 25,
+      styles: { fontSize: 8 },
+      headStyles: { fillColor: [66, 139, 202] },
+      margin: { top: 20 }
+    });
+
+    // Add footer with date
+    const date = new Date().toLocaleString();
+    doc.setFontSize(10);
+    doc.text(`Generated on: ${date}`, 14, doc.internal.pageSize.height - 10);
+
+    // Save the PDF
+    doc.save(`monthly-statistics-${analysisData.year}.pdf`);
+  };
+
+  // Add this new function after the existing exportMonthlyStatistics function
+  const exportMonthlyDetails = (monthData) => {
+    if (!monthData) return;
+  
+    const doc = new jsPDF();
+    
+    // Add title and month
+    doc.setFontSize(16);
+    doc.text(`Monthly Statistics Report - ${monthData.month} ${analysisData.year}`, 14, 15);
+    
+    // Add monthly summary
+    doc.setFontSize(12);
+    doc.text(`Summary:`, 14, 30);
+    doc.text(`Total Ingredients: ${monthData.statistics.totalIngredients}`, 14, 40);
+    doc.text(`Total Value: Rs. ${monthData.statistics.totalInventoryValue.toFixed(2)}`, 14, 47);
+    doc.text(`Average Value/Ingredient: Rs. ${monthData.statistics.averageValuePerIngredient.toFixed(2)}`, 14, 54);
+    
+    // Format ingredients data for the table
+    const ingredientsData = monthData.ingredients.map(item => [
+      item.name,
+      item.type,
+      `Rs. ${item.price}`,
+      item.quantity,
+      item.priority,
+      `Rs. ${item.totalValue}`
+    ]);
+  
+    // Define table headers
+    const headers = [
+      'Name',
+      'Type',
+      'Price',
+      'Quantity',
+      'Priority',
+      'Total Value'
+    ];
+  
+    // Generate the ingredients table
+    autoTable(doc, {
+      head: [headers],
+      body: ingredientsData,
+      startY: 65,
+      styles: { fontSize: 8 },
+      headStyles: { fillColor: [66, 139, 202] },
+      margin: { top: 20 }
+    });
+  
+    // Add footer with date
+    const date = new Date().toLocaleString();
+    doc.setFontSize(10);
+    doc.text(`Generated on: ${date}`, 14, doc.internal.pageSize.height - 10);
+  
+    // Save the PDF
+    doc.save(`${monthData.month}-${analysisData.year}-statistics.pdf`);
   };
 
   const monthlyColumns = [
@@ -195,14 +301,37 @@ const CostAnalysis = () => {
             </Row>
 
             {/* Monthly Statistics Table */}
-            <Card title="Monthly Statistics" className={`${styles.card} ${styles.tableCard}`}>
+            <Card 
+              title="Monthly Statistics" 
+              className={`${styles.card} ${styles.tableCard}`}
+              extra={
+                <Button
+                  type="primary"
+                  icon={<DownloadOutlined />}
+                  onClick={exportMonthlyStatistics}
+                >
+                  Export PDF
+                </Button>
+              }
+            >
               <Table
                 dataSource={analysisData.monthlyStatistics}
                 columns={monthlyColumns}
                 rowKey="month"
                 expandable={{
                   expandedRowRender: (record) => (
-                    <Card title="Monthly Ingredients Detail">
+                    <Card 
+                      title="Monthly Ingredients Detail"
+                      extra={
+                        <Button
+                          type="primary"
+                          icon={<DownloadOutlined />}
+                          onClick={() => exportMonthlyDetails(record)}
+                        >
+                          Export Month Details
+                        </Button>
+                      }
+                    >
                       <Table
                         dataSource={record.ingredients}
                         columns={detailColumns}
