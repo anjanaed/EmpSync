@@ -39,7 +39,7 @@ export class MealController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: number) {  
+  async findOne(@Param('id') id: string) {  
     try {
       const meal = await this.mealService.findOne(id);
       if (!meal) {
@@ -59,7 +59,7 @@ export class MealController {
   }
 
   @Patch(':id')
-  async update(@Param('id') id: number, @Body() updateMealDto: Prisma.MealUpdateInput) {  
+  async update(@Param('id') id: string, @Body() updateMealDto: Prisma.MealUpdateInput) {  
     try {
       return await this.mealService.update(id, updateMealDto);
     } catch (error) {
@@ -75,7 +75,7 @@ export class MealController {
   }
 
   @Delete(':id')
-  async remove(@Param('id') id: number) {  
+  async remove(@Param('id') id: string) {  
     try {
       return await this.mealService.remove(id);
     } catch (error) {

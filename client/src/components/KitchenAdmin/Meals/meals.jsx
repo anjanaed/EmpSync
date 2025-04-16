@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Typography, 
   Input, 
@@ -6,18 +6,17 @@ import {
   Card, 
   Row, 
   Col, 
-  Tag, 
-  Space,
-  Modal,
-  List
+  Modal, 
+  List,
+  message,
+  Select,
+  Tag
 } from 'antd';
 import { 
-  ClockCircleOutlined, 
-  UserOutlined, 
   DeleteOutlined, 
   EditOutlined, 
   PlusOutlined, 
-  SearchOutlined 
+  ExclamationCircleOutlined
 } from '@ant-design/icons';
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -25,144 +24,148 @@ import { faArrowUpRightFromSquare } from "@fortawesome/free-solid-svg-icons";
 
 import styles from './meals.module.css';
 
-// Import your meal images from assets
-import riceImage from "../../../assets/rice.jpg";
-import noodlesImage from "../../../assets/noodles.jpg";
-
-const { Title, Text } = Typography;
+const { Title } = Typography;
 const { Search } = Input;
-
-// Add custom styles for the ingredients modal
-const modalStyles = {
-  ingredientsModal: {
-    '& .ant-modal-content': {
-      borderRadius: '8px',
-      overflow: 'hidden'
-    },
-    '& .ant-modal-header': {
-      background: '#fff',
-      borderBottom: '1px solid #f0f0f0',
-      padding: '16px 24px'
-    },
-    '& .ant-modal-title': {
-      fontFamily: "'Roboto Slab', serif",
-      fontWeight: 600,
-      fontSize: '18px'
-    },
-    '& .ant-modal-body': {
-      padding: '24px'
-    },
-    '& .ant-modal-footer': {
-      borderTop: '1px solid #f0f0f0',
-      padding: '12px 24px'
-    }
-  },
-  ingredientsList: {
-    '& .ant-list-item': {
-      padding: '12px 0',
-      borderBottom: '1px solid #f0f0f0'
-    },
-    '& .ant-list-item:last-child': {
-      borderBottom: 'none'
-    }
-  },
-  closeButton: {
-    backgroundColor: 'rgb(224, 0, 0)',
-    borderColor: 'rgb(224, 0, 0)',
-    color: '#fff'
-  }
-};
+const { confirm } = Modal;
+const { Option } = Select;
 
 const AvailableMeals = () => {
-  // Sample ingredients data for each meal
-  const mealIngredients = {
-    1: ['Rice', 'Chicken Curry', 'Dhal', 'Papadam', 'Pickle'],
-    2: ['Noodles', 'Vegetables', 'Soy Sauce', 'Chili Flakes'],
-    3: ['Rice Flour', 'Coconut Milk', 'Salt'],
-    4: ['Pasta', 'Tomato Sauce', 'Cheese', 'Basil'],
-    5: ['Rice Flour', 'Water', 'Salt'],
-    6: ['Rice Flour', 'Water', 'Salt'],
-    7: ['Rice Flour', 'Water', 'Salt'],
-    8: ['Rice Flour', 'Water', 'Salt'],
-    9: ['Rice Flour', 'Water', 'Salt'],
-  };
-
-  const [meals, setMeals] = useState([
-    { id: 1, name: 'Rice and Curry', price: 100, image: riceImage },
-    { id: 2, name: 'Noodles', price: 100, image: noodlesImage },
-    { id: 3, name: 'Hoppers', price: 100, image: riceImage },
-    { id: 4, name: 'Pasta', price: 100, image: noodlesImage },
-    { id: 5, name: 'String Hoppers', price: 100, image: riceImage },
-    { id: 6, name: 'String Hoppers', price: 100, image: riceImage },
-    { id: 7, name: 'String Hoppers', price: 100, image: riceImage },
-    { id: 8, name: 'String Hoppers', price: 100, image: riceImage },
-    { id: 9, name: 'String Hoppers', price: 100, image: riceImage },
-  ]);
-
-  const navigate = useNavigate();
+  const [meals, setMeals] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
-  
-  // State for the ingredients popup
+  const [selectedCategory, setSelectedCategory] = useState('All Categories');
   const [ingredientsModalVisible, setIngredientsModalVisible] = useState(false);
   const [selectedMeal, setSelectedMeal] = useState(null);
-
-  const handleAddMeal = () => {
-    navigate("/meal-details");
-  };
+  const [loading, setLoading] = useState(false);
   
-  const handleEdit = () => {
-    navigate("/edit-meal");
+  const navigate = useNavigate();
+
+  // Fetch meal data from the API
+  useEffect(() => {
+    fetchMeals();
+  }, []);
+
+  const fetchMeals = async () => {
+    try {
+      const response = await fetch('http://localhost:3000/meal');
+      const data = await response.json();
+      setMeals(data);
+    } catch (error) {
+      console.error("Error fetching meals:", error);
+      message.error("Failed to load meals");
+    }
   };
 
   const handleSearch = (value) => {
     setSearchTerm(value);
   };
 
-  const handleDelete = (id) => {
-    setMeals(meals.filter(meal => meal.id !== id));
+  const handleCategoryChange = (value) => {
+    setSelectedCategory(value);
   };
 
+  const showDeleteConfirm = (meal) => {
+    confirm({
+      title: 'Are you sure you want to delete this meal?',
+      icon: <ExclamationCircleOutlined />,
+      content: `Meal ID: ${meal.id}`,
+      okText: 'Yes',
+      okType: 'danger',
+      cancelText: 'No',
+      onOk() {
+        deleteMeal(meal.id);
+      },
+    });
+  };
 
-  // Function to show ingredients popup
+  const deleteMeal = async (id) => {
+    setLoading(true);
+    try {
+      const response = await fetch(`http://localhost:3000/meal/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include', // Important for cookies/auth headers
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete meal');
+      }
+
+      // Remove meal from state if deletion was successful
+      setMeals(meals.filter(meal => meal.id !== id));
+      message.success('Meal deleted successfully');
+    } catch (error) {
+      console.error('Error deleting meal:', error);
+      message.error(`Failed to delete meal: ${error.message}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleEdit = (meal) => {
+    navigate('/edit-meal', { state: { meal } });
+  };
+  
+  // Function to show ingredients modal
   const showIngredientsModal = (meal) => {
     setSelectedMeal(meal);
     setIngredientsModalVisible(true);
   };
 
-  // Function to hide ingredients popup
   const closeIngredientsModal = () => {
     setIngredientsModalVisible(false);
     setSelectedMeal(null);
   };
 
-  const filteredMeals = searchTerm 
-    ? meals.filter(meal => meal.name.toLowerCase().includes(searchTerm.toLowerCase()))
-    : meals;
+  // Filter meals based on search term and selected category
+  const filteredMeals = meals.filter(meal => {
+    const matchesSearch = meal.nameEnglish.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory = selectedCategory === 'All Categories' || meal.category === selectedCategory;
+    return matchesSearch && matchesCategory;
+  });
+
+  // Get unique categories for the dropdown
+  const categories = ['All Categories', ...new Set(meals.map(meal => meal.category).filter(Boolean))];
 
   return (
     <div className={styles.container}>
       <div className={styles.header}>
         <div>
           <Title level={3} className={styles.title}>Available Meals</Title>
+          
         </div>
-        <div className={styles.actions}>
-          <Search
-            placeholder="Search meals..."
-            allowClear
-            onSearch={handleSearch}
-            className={styles.searchInput}
-            size="large"
-          />
-          <Button 
-            type="primary" 
-            icon={<PlusOutlined />} 
-            onClick={handleAddMeal}
-            size="large"
-            className={styles.redButton}
-          >
-            Add new meal
-          </Button>
-        </div>
+      </div>
+      
+      <div className={styles.filterContainer}>
+        <Search
+          placeholder="Search meals..."
+          allowClear
+          onSearch={handleSearch}
+          className={styles.searchInput}
+          size="large"
+        />
+        
+        <Select
+          defaultValue="All Categories"
+          onChange={handleCategoryChange}
+          className={styles.categorySelect}
+          size="large"
+        >
+          {categories.map(category => (
+            <Option key={category} value={category}>{category}</Option>
+          ))}
+        </Select>
+        
+        <Button 
+          type="primary" 
+          icon={<PlusOutlined />} 
+          onClick={() => navigate("/meal-details")}
+          size="large"
+          className={styles.redButton}
+        >
+          Add new meal
+        </Button>
       </div>
 
       <Row gutter={[16, 16]}>
@@ -170,57 +173,53 @@ const AvailableMeals = () => {
           <Col xs={24} sm={12} md={4} key={meal.id}>
             <Card
               className={styles.card}
-              styles={{ body: { padding: "0" } }}
             >
+              <div className={styles.categoryTag}>
+                <Tag color="blue" className={styles.tag}>
+                  {meal.category || 'Uncategorized'}
+                </Tag>
+              </div>
+              
               <div className={styles.imageContainer}>
-                {meal.image ? (
+                {meal.imageUrl ? (
                   <div className={styles.imageWrapper}>
-                    <img src={meal.image} alt={meal.name} className={styles.mealImage} />
+                    <img src={meal.imageUrl} alt={meal.nameEnglish} className={styles.mealImage} />
                   </div>
                 ) : (
                   <div className={styles.imagePlaceholder}>
-                    <div className={styles.imagePlaceholderIcon}>
-                      <PlusOutlined />
-                    </div>
+                    <span className={styles.imageIcon}>🖼️</span>
                   </div>
                 )}
               </div>
               
               <div className={styles.mealInfo}>
-                <Title level={5} className={styles.mealTitle}>{meal.name}</Title>
-                <label className={styles.mealDetails}>Meal Id : {meal.id}</label><br/>
-                <label className={styles.mealDetails}>Price: {meal.price}</label><br/>
-                <label 
-                  className={styles.mealDetails} 
-                  onClick={() => showIngredientsModal(meal)}
-                  style={{ 
-                    cursor: 'pointer',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    color: 'rgb(158, 153, 153)',
-                    fontWeight: 500,
-                    transition: 'color 0.3s'
-                  }}
-                  onMouseOver={(e) => e.currentTarget.style.color = 'rgba(224, 0, 0, 0.8)'}
-                  onMouseOut={(e) => e.currentTarget.style.color = 'rgb(158, 153, 153)'}
-                >
-                  Ingredients <FontAwesomeIcon icon={faArrowUpRightFromSquare} style={{ marginLeft: '4px' }} />
-                </label>
+                <Title level={5} className={styles.mealTitle}>{meal.nameEnglish}</Title>
+                <div className={styles.mealDetails}>
+                  <div>ID: <span className={styles.idValue}>{meal.id}</span></div>
+                  <div>Price: <span className={styles.priceValue}>Rs.{meal.price?.toFixed(2)}</span></div>
+                  <div 
+                    className={styles.ingredientsLink} 
+                    onClick={() => showIngredientsModal(meal)}
+                  >
+                    Ingredients <FontAwesomeIcon icon={faArrowUpRightFromSquare} style={{ marginLeft: '4px' }} />
+                  </div>
+                </div>
               </div>
-              
+
               <div className={styles.mealActions}>
                 <Button 
                   type="text" 
                   danger
                   icon={<DeleteOutlined />} 
-                  onClick={() => handleDelete(meal.id)}
+                  onClick={() => showDeleteConfirm(meal)}
+                  loading={loading}
                 >
                   Delete
                 </Button>
                 <Button 
                   type="text"
                   icon={<EditOutlined />} 
-                  onClick={() => handleEdit(meal.id)}
+                  onClick={() => handleEdit(meal)}
                 >
                   Edit
                 </Button>
@@ -232,10 +231,9 @@ const AvailableMeals = () => {
 
       {/* Ingredients Modal */}
       <Modal
-        title={selectedMeal ? `${selectedMeal.name} Ingredients` : 'Ingredients'}
+        title={selectedMeal ? `${selectedMeal.nameEnglish} Ingredients` : 'Ingredients'}
         open={ingredientsModalVisible}
         onCancel={closeIngredientsModal}
-        className={styles.ingredientsModal}
         footer={[
           <Button 
             key="close" 
@@ -245,42 +243,17 @@ const AvailableMeals = () => {
             Close
           </Button>
         ]}
-        
-       
       >
         {selectedMeal && (
           <List
-            dataSource={mealIngredients[selectedMeal.id] || ['No ingredients available']}
+            dataSource={selectedMeal.ingredients || ['No ingredients available']}
             renderItem={item => (
-              <List.Item style={{
-                padding: '12px 0',
-                borderBottom: '1px solid #f0f0f0'
-              }}>
+              <List.Item>
                 <List.Item.Meta
-                  title={
-                    <div style={{ 
-                      
-                      fontSize: '16px',
-                      display: 'flex',
-                      
-                    }}>
-                      <div style={{ 
-                        width: '8px', 
-                        height: '8px', 
-                        borderRadius: '50%', 
-                       
-                        marginRight: '12px'
-                      }}></div>
-                      {item}
-                    </div>
-                  }
+                  title={item.name ? `${item.name} - ${item.quantity}g` : item}
                 />
               </List.Item>
             )}
-            style={{
-              maxHeight: '300px',
-              overflow: 'auto'
-            }}
           />
         )}
       </Modal>
