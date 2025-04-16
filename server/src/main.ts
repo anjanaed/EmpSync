@@ -4,9 +4,9 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // Add this explicit CORS configuration
+  // explicit CORS configuration
   app.enableCors({
-    origin: 'http://localhost:5173', // Exact origin, not wildcard
+    origin: 'http://localhost:5173', // Exact origin
     credentials: true
   });
   
