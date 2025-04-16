@@ -12,12 +12,13 @@ import { LeaveApplicationModule } from './leave-application/leave-application.mo
 import { ScheduleModule } from './schedule/schedule.module';
 import { AdjustmentModule } from './SalaryAdjustments/adjustment.module';
 import { IndiAdjustmentModule } from './IndividualSalaryAdjustments/inAdjustment.module';
+import { PayeTaxModule } from './PayeTaxSlab/PayeTax.module';
 
 
 
 
 @Module({
-  imports: [DatabaseModule, UserModule, IngredientsModule, MealModule, PayrollModule, AttendanceModule,OrdersModule, LeaveApplicationModule,ScheduleModule,AdjustmentModule,IndiAdjustmentModule],
+  imports: [DatabaseModule, UserModule, IngredientsModule, MealModule, PayrollModule, AttendanceModule,OrdersModule, LeaveApplicationModule,ScheduleModule,AdjustmentModule,IndiAdjustmentModule,PayeTaxModule],
   controllers: [AppController],
   providers: [AppService],
 })

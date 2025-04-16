@@ -117,3 +117,11 @@ model ScheduledMeal {
   dinner    String[]
   createdAt DateTime @default(now())
 }
+
+model PayeTaxSlab{
+  id Int @id @default(autoincrement())
+  orderId Int
+  lowerLimit Float
+  upperLimit Float?
+  taxRate Float
+}

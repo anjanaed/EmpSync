@@ -137,13 +137,15 @@ export class PayrollService {
           },
         });
 
+        const payeData=await this.databaseService.payeTaxSlab.findMany()
+
         const values = calculateSalary({
           basicSalary: userDetails.salary,
           allowanceP,
           allowanceV,
           deductionsP,
           deductionsV,
-        });
+        },payeData);
 
         console.log(values);
       }
