@@ -31,6 +31,11 @@ const IngredientList = ({ ingredients, onEdit, onDelete }) => {
       key: 'name',
     },
     {
+      title: 'Type',
+      dataIndex: 'type',
+      key: 'type',
+    },
+    {
       title: 'Price Per Unit',
       dataIndex: 'price_per_unit',
       key: 'price_per_unit',
@@ -99,7 +104,6 @@ const IngredientList = ({ ingredients, onEdit, onDelete }) => {
     <div className={styles.container}>
       <div className={styles.header}>
         <h2 className={styles.title}>Ingredient List</h2>
-        <p className={styles.subtitle}>Manage your inventory of ingredients and supplies</p>
       </div>
       
       <Table 
@@ -109,18 +113,6 @@ const IngredientList = ({ ingredients, onEdit, onDelete }) => {
         pagination={{ pageSize: 10 }}
         className={styles.table}
       />
-      
-      <div className={styles.footer}>
-        <Button className={styles.detailsButton}>
-          Ingredient Details
-        </Button>
-        
-        <Dropdown menu={{ items }} placement="bottomRight">
-          <Button className={styles.exportButton}>
-            Export <DownOutlined />
-          </Button>
-        </Dropdown>
-      </div>
     </div>
   );
 };
