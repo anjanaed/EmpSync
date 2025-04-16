@@ -8,6 +8,7 @@ import styles from './CostAnalysis.module.css';
 import { jsPDF } from "jspdf";
 import autoTable from 'jspdf-autotable';
 
+const urL = import.meta.env.VITE_BASE_URL;
 const { Header, Content, Footer } = Layout;
 const { Title, Text } = Typography;
 
@@ -22,7 +23,7 @@ const CostAnalysis = () => {
 
   const fetchAnalysisData = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/ingredients/stats/monthly');
+      const response = await axios.get(`${urL}/ingredients/stats/monthly`);
       setAnalysisData(response.data);
     } catch (error) {
       console.error('Error fetching analysis data:', error);
