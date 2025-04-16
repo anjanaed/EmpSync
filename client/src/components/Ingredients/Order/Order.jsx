@@ -3,6 +3,7 @@ import { Typography, Tag, Spin, Button, Table } from "antd";
 import { useNavigate } from "react-router-dom";
 import styles from "./Order.module.css";
 
+const urL = import.meta.env.VITE_BASE_URL;
 const { Title } = Typography;
 
 const Order = () => {
@@ -49,7 +50,7 @@ const Order = () => {
 
     const fetchIngredients = async () => {
         try {
-            const response = await fetch("http://localhost:3000/ingredients/optimized");
+            const response = await fetch(`${urL}/ingredients/optimized`);
             const data = await response.json();
             setIngredients(data);
             setLoading(false);
