@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Card, Typography, Tag, Spin } from "antd";
+import { Card, Typography, Tag, Spin, Button } from "antd";
+import { useNavigate } from "react-router-dom";
 import styles from "./Order.module.css";
 
 const { Title } = Typography;
@@ -7,6 +8,7 @@ const { Title } = Typography;
 const Order = () => {
     const [ingredients, setIngredients] = useState(null);
     const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
 
     useEffect(() => {
         fetchIngredients();
@@ -28,7 +30,7 @@ const Order = () => {
         <Card className={styles.card}>
             <Title level={4}>{item.name}</Title>
             <p>Type: {item.type}</p>
-            <p>Price per unit: ${item.price_per_unit}</p>
+            <p>Price per unit: Rs. {item.price_per_unit}</p>
             <p>Quantity: {item.quantity}</p>
             <Tag color={item.priority === 1 ? "red" : item.priority === 2 ? "orange" : "blue"}>
                 Priority {item.priority}
@@ -59,6 +61,15 @@ const Order = () => {
             <p className={styles.lastUpdated}>
                 Last updated: {new Date(ingredients?.lastUpdated).toLocaleString()}
             </p>
+            
+            <Button 
+                type="primary" 
+                size="large"
+                className={styles.placeOrderBtn}
+                onClick={() => navigate('/place-order')}
+            >
+                Place the Order
+            </Button>
         </div>
     );
 };
