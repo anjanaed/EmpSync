@@ -138,7 +138,7 @@ const InventoryManagement = () => {
 
       try {
         // Updated API endpoint URL
-        const response = await axios.put(
+        const response = await axios.patch(
           `http://localhost:3000/ingredients/${editingIngredient.id}`, // Changed from 'ingredients' to 'ingredient'
           updatedIngredient
         );
