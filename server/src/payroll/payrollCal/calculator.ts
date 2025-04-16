@@ -17,7 +17,6 @@ export interface salaryData {
       break;
     }
   }
-  console.log(`Tax Level wtto :${taxLevel}`);
   var payeTax=0;
 
   for (const level in payeData){
