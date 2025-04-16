@@ -5,6 +5,8 @@ import axios from "axios";
 import styles from "./Analysis.module.css";
 import { useNavigate } from 'react-router-dom';
 
+const urL = import.meta.env.VITE_BASE_URL;
+
 const { Title, Text } = Typography;
 const Analysis = () => {
   const navigate = useNavigate();
@@ -24,8 +26,14 @@ const Analysis = () => {
         
         // Fetch stats data
         const [statsResponse, advancedStatsResponse] = await Promise.all([
-          axios.get("http://localhost:3000/ingredients/stats"),
-          axios.get("http://localhost:3000/ingredients/advanced-stats")
+          axios.get(`${urL}/ingredients/stats`).catch(error => {
+            console.error('Failed to fetch basic stats:', error);
+            return { data: { totalCount: 0, priorityCount: {} } }; // Provide default structure
+          }),
+          axios.get(`${urL}/ingredients/advanced-stats`).catch(error => {
+            console.error('Failed to fetch advanced stats:', error);
+            return { data: { statistics: {} } }; // Provide default structure
+          })
         ]);
 
         setStats(statsResponse.data);
@@ -100,29 +108,32 @@ const Analysis = () => {
   const renderStatisticsCards = () => {
     if (!stats || !advancedStats) return null;
 
+    // Safely access priorityCount with default values
+    const priorityCounts = stats.priorityCount || {};
+
     return (
       <div className={styles.statsContainer}>
         <Card className={`${styles.statsCard} ${styles.totalCard}`}>
           <UserOutlined className={styles.statIcon} />
-          <div className={styles.statValue}>{stats.totalCount}</div>
+          <div className={styles.statValue}>{stats.totalCount || 0}</div>
           <div className={styles.statLabel}>Total Ingredients</div>
         </Card>
 
         <Card className={`${styles.statsCard} ${styles.priority1Card}`}>
           <FireOutlined className={styles.statIcon} />
-          <div className={styles.statValue}>{stats.priorityCount["1"] || 0}</div>
+          <div className={styles.statValue}>{priorityCounts["1"] || 0}</div>
           <div className={styles.statLabel}>High Priority</div>
         </Card>
 
         <Card className={`${styles.statsCard} ${styles.priority2Card}`}>
           <ExclamationCircleOutlined className={styles.statIcon} />
-          <div className={styles.statValue}>{stats.priorityCount["2"] || 0}</div>
+          <div className={styles.statValue}>{priorityCounts["2"] || 0}</div>
           <div className={styles.statLabel}>Medium Priority</div>
         </Card>
 
         <Card className={`${styles.statsCard} ${styles.priority3Card}`}>
           <CheckCircleOutlined className={styles.statIcon} />
-          <div className={styles.statValue}>{stats.priorityCount["3"] || 0}</div>
+          <div className={styles.statValue}>{priorityCounts["3"] || 0}</div>
           <div className={styles.statLabel}>Low Priority</div>
         </Card>
       </div>
