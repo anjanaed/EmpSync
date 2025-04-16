@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Itim&family=Roboto+Slab:wght@100..900&display=swap");
+
 .container {
   padding: 20px;
   background-color: #fff;
@@ -18,6 +20,7 @@
   font-size: 24px;
   font-weight: bold;
   margin-bottom: 20px;
+  font-family: "Roboto Slab", serif;
 }
 
 .cardsContainer {
@@ -117,7 +120,7 @@
 }
 
 .chartIcon {
-  color: #8e1f40;
+  color: rgb(224, 0, 0);
   font-size: 28px;
 }
 
@@ -138,7 +141,7 @@
 }
 
 .downloadButton {
-  background-color: #8e1f40;
+  background-color: rgb(224, 0, 0);
   color: white;
   border: none;
   border-radius: 6px;

@@ -22,7 +22,7 @@ export class MealService {
     }
   }
 
-  async findOne(id: number ) {
+  async findOne(id: string) { // Changed id type to string
     try {
       const meal = await this.databaseService.meal.findUnique({
         where: { id },
@@ -39,7 +39,7 @@ export class MealService {
     }
   }
 
-  async update(id: number, updateMealDto: Prisma.MealUpdateInput) {
+  async update(id: string, updateMealDto: Prisma.MealUpdateInput) { // Changed id type to string
     try {
       return await this.databaseService.meal.update({
         where: { id },
@@ -50,7 +50,7 @@ export class MealService {
     }
   }
 
-  async remove(id: number) { // Change id type to string
+  async remove(id: string) { // Changed id type to string
     try {
       return await this.databaseService.meal.delete({
         where: { id },
