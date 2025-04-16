@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Button, Card, Table, Typography, Spin, message, Tooltip, Badge } from "antd";
-import { DownloadOutlined, LineChartOutlined, InfoCircleOutlined, UserOutlined, FireOutlined, ClockCircleOutlined, ExclamationCircleOutlined, CheckCircleOutlined } from "@ant-design/icons";
+import { LineChartOutlined, InfoCircleOutlined, UserOutlined, FireOutlined, ClockCircleOutlined, ExclamationCircleOutlined, CheckCircleOutlined } from "@ant-design/icons";
 import axios from "axios";
 import styles from "./Analysis.module.css";
 import { useNavigate } from 'react-router-dom';
 
 const { Title, Text } = Typography;
-
 const Analysis = () => {
   const navigate = useNavigate();
   const [highCostData, setHighCostData] = useState([]);
@@ -190,12 +189,6 @@ const Analysis = () => {
     },
   ];
 
-  // Function to handle downloading the report
-  const handleDownloadReport = () => {
-    message.info("Downloading report...");
-    // Implement actual download functionality
-  };
-
   // Function to handle viewing detailed analysis
   const handleViewAnalysis = () => {
     navigate('/CostAnalysis');
@@ -271,14 +264,6 @@ const Analysis = () => {
               onClick={handleViewAnalysis}
             >
               View Cost Analysis
-            </Button>
-            <Button 
-              type="primary" 
-              icon={<DownloadOutlined />} 
-              className={styles.downloadButton}
-              onClick={handleDownloadReport}
-            >
-              Download Report
             </Button>
           </div>
         </>
