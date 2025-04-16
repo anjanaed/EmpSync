@@ -13,6 +13,9 @@ const Analysis = () => {
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState(null);
   const [advancedStats, setAdvancedStats] = useState(null);
+  const [highCostPage, setHighCostPage] = useState(1);
+  const [lowCostPage, setLowCostPage] = useState(1);
+  const pageSize = 5; // Number of items per page
 
   useEffect(() => {
     const fetchData = async () => {
@@ -225,7 +228,14 @@ const Analysis = () => {
               <Table
                 dataSource={highCostData}
                 columns={highCostColumns}
-                pagination={false}
+                pagination={{
+                  current: highCostPage,
+                  pageSize: pageSize,
+                  onChange: (page) => setHighCostPage(page),
+                  total: highCostData.length,
+                  showSizeChanger: false,
+                  showTotal: (total) => `Total ${total} items`,
+                }}
                 className={styles.table}
                 rowClassName={(record, index) => (index % 2 === 0 ? styles.evenRow : styles.oddRow)}
                 locale={{ emptyText: "No high cost items found" }}
@@ -249,7 +259,14 @@ const Analysis = () => {
               <Table
                 dataSource={lowCostData}
                 columns={lowCostColumns}
-                pagination={false}
+                pagination={{
+                  current: lowCostPage,
+                  pageSize: pageSize,
+                  onChange: (page) => setLowCostPage(page),
+                  total: lowCostData.length,
+                  showSizeChanger: false,
+                  showTotal: (total) => `Total ${total} items`,
+                }}
                 className={styles.table}
                 rowClassName={(record, index) => (index % 2 === 0 ? styles.evenRow : styles.oddRow)}
                 locale={{ emptyText: "No low cost items found" }}
