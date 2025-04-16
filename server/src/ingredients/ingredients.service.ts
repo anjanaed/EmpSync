@@ -189,7 +189,7 @@ export class IngredientsService {
         price_per_unit: true,
         quantity: true,
         priority: true,
-        type: true,          // Added type
+        type: true,        
         createdAt: true,
       },
       where: {
