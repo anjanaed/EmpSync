@@ -2,6 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { DatabaseService } from '../database/database.service';
 import { calculateSalary } from './payrollCal/calculator';
+import { generatePayslip } from './payrollCal/pdfGen';
 
 @Injectable()
 export class PayrollService {
@@ -9,8 +10,7 @@ export class PayrollService {
 
   async create(dto: Prisma.PayrollCreateInput) {
     try {
-      await this.databaseService.payroll.create({ data: dto });
-      return 'Payroll Generated';
+      return await this.databaseService.payroll.create({ data: dto });
     } catch (err) {
       throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
     }
@@ -20,10 +20,7 @@ export class PayrollService {
     const range=dto.range
     try {
       const users = await this.databaseService.user.findMany({
-        select: {
-          id: true,
-          salary: true,
-        },
+        
       });
 
       const allAllowancePRaw =
@@ -148,6 +145,29 @@ export class PayrollService {
         },payeData);
 
         console.log(values);
+        
+
+        const payroll = await this.create({
+          employee: { connect: { id: user.id } },
+          month: "startMonth",
+          netPay: values.netSalary,
+          payrollPdf: `C:\\Users\\USER\\Downloads\\Payrolls\\${user.id}`,
+        });
+
+
+        generatePayslip({
+          employee: user,
+          values,
+          range,
+          payroll: {
+            id: payroll.id,
+            createdAt: payroll.createdAt,
+          },
+        });
+
+
+
+
       }
     } catch (err) {
       console.log(err);
@@ -184,7 +204,7 @@ export class PayrollService {
     }
   }
 
-  async update(id: string, dto: Prisma.PayrollUpdateInput) {
+  async update(id: number, dto: Prisma.PayrollUpdateInput) {
     try {
       const payroll = await this.databaseService.payroll.findUnique({
         where: {
@@ -206,7 +226,7 @@ export class PayrollService {
     }
   }
 
-  async remove(id: string) {
+  async remove(id: number) {
     try {
       const payroll = await this.databaseService.payroll.findUnique({
         where: {

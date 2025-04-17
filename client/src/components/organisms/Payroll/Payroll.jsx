@@ -30,6 +30,16 @@ const Payroll = () => {
   const handleAllowanceChange = () => {
     setIsAllowanceChecked(!isAllowanceChecked);
   };
+  const handleRangeChange = (dates) => {
+    if (dates) {
+      const formattedRange = [
+        dates[0].toISOString(), // or dates[0].format('YYYY-MM-DD')
+        dates[1].toISOString(), // or dates[1].format('YYYY-MM-DD')
+      ];
+  
+      setRange(formattedRange); // Save the formatted range to state
+    }
+  };
 
   const handleNewIndividualAdjustment = () => {
     setIndividualAdjustment([
@@ -46,6 +56,7 @@ const Payroll = () => {
 
   const handleGenerate = async () => {
     setLoading(true);
+    console.log(range)
     await handleEtfEpf();
     try {
       await axios
@@ -94,12 +105,18 @@ const Payroll = () => {
   const fetchAdjustments = async () => {
     try {
       const res = await axios.get(`${urL}/adjustment`);
-      setEpf(res.data.find((adj) => adj.label == "EPF").amount);
-      setEtf(res.data.find((adj) => adj.label == "ETF").amount);
-      const filteredRes = res.data.filter(
-        (adj) => adj.label !== "ETF" && adj.label !== "EPF"
-      );
-      setAdjustments(filteredRes);
+
+      if((res.data.find((adj) => adj.label == "EPF").amount)||(res.data.find((adj) => adj.label == "ETF").amount)){
+        setEpf(res.data.find((adj) => adj.label == "EPF").amount);
+        setEtf(res.data.find((adj) => adj.label == "ETF").amount);
+        const filteredRes = res.data.filter(
+          (adj) => adj.label !== "ETF" && adj.label !== "EPF"
+        );
+        setAdjustments(filteredRes);
+
+      }else{
+        setAdjustments(res.data)
+      }
     } catch (err) {
       console.log(err);
     }
@@ -322,7 +339,7 @@ const Payroll = () => {
           <div>
             <label>Payroll Period</label>
             <br />
-            <RangePicker onChange={(dates) => setRange(dates)} />
+            <RangePicker onChange={(dates) => handleRangeChange(dates)} />
           </div>
         </div>
         <hr />

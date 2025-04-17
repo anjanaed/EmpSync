@@ -23,12 +23,12 @@ export class PayrollController{
     }
 
     @Put(':id')
-    update(@Param('id') id:string, @Body() dto:Prisma.PayrollUpdateInput){
+    update(@Param('id') id:number, @Body() dto:Prisma.PayrollUpdateInput){
         return this.payrollService.update(id,dto);
     }
 
     @Delete(':id')
-    remove(@Param('id') id:string){
+    remove(@Param('id') id:number){
         return this.payrollService.remove(id);
     }
 }

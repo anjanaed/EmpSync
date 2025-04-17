@@ -16,7 +16,7 @@ datasource db {
 
 model User {
   id         String       @id
-  name       String       @unique
+  name       String       
   role       String
   dob        String?
   telephone  String?
@@ -45,12 +45,13 @@ model Ingredient {
 }
 
 model Payroll {
-  id         String   @id @unique
+  id         Int   @id @default(autoincrement())
   empId      String
   employee   User     @relation(fields: [empId], references: [id])
-  range      DateTime[]
+  range DateTime[]
+  month      String
   netPay Float
-  payrollPdf Bytes
+  payrollPdf String
   createdAt  DateTime @default(now())
 }
 
