@@ -45,6 +45,25 @@ model Ingredient {
   createdAt DateTime @default(now())
 }
 
+model IngredientOrder {
+  id            Int   @id @default(autoincrement())
+  lastUpdated   DateTime
+  ingredients   OrderedIngredient[]
+  createdAt     DateTime    @default(now())
+}
+
+model OrderedIngredient {
+  id              String         @id @unique
+  name            String
+  price_per_unit  Decimal       @db.Decimal(10, 2)
+  quantity        Decimal       @db.Decimal(10, 2)
+  type            String
+  priority        Int
+  createdAt       DateTime      @default(now())
+  orderId         Int
+  order           IngredientOrder @relation(fields: [orderId], references: [id])
+}
+
 model Payroll {
   id         String   @id @unique
   empId      String
