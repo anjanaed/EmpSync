@@ -361,4 +361,84 @@ export class IngredientsService {
       );
     }
   }
+
+  async storeIngredientOrder(data: {
+    lastUpdated: Date;
+    priority1Ingredients: any[];
+    optimizedIngredients: any[];
+  }) {
+    try {
+
+      const order = await this.databaseServices.ingredientOrder.create({
+        data: {
+          lastUpdated: new Date(data.lastUpdated),
+          ingredients: {
+            create: [
+              // Priority 1 ingredients
+              ...data.priority1Ingredients.map((ing) => ({
+                id: ing.id,
+                name: ing.name,
+                price_per_unit: parseFloat(ing.price_per_unit.toString()),
+                quantity: parseInt(ing.quantity.toString()),
+                type: ing.type,
+                priority: ing.priority,
+                createdAt: new Date(ing.createdAt)
+              })),
+              // Optimized ingredients
+              ...data.optimizedIngredients.map((ing) => ({
+                id: ing.id,
+                name: ing.name,
+                price_per_unit: parseFloat(ing.price_per_unit.toString()),
+                quantity: parseInt(ing.quantity.toString()),
+                type: ing.type,
+                priority: ing.priority,
+                createdAt: new Date(ing.createdAt)
+              }))
+            ]
+          }
+        }
+      });
+
+      return order;
+    } catch (error) {
+      throw new HttpException(
+        'Failed to store ingredient order',
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
+
+  async getStoredIngredientOrders() {
+    try {
+      const orders = await this.databaseServices.ingredientOrder.findMany({
+        include: {
+          ingredients: true
+        },
+        orderBy: {
+          lastUpdated: 'desc'
+        }
+      });
+
+      if (!orders || orders.length === 0) {
+        throw new HttpException('No stored ingredient orders found', HttpStatus.NOT_FOUND);
+      }
+
+      return orders.map(order => ({
+        id: order.id,
+        lastUpdated: order.lastUpdated,
+        ingredients: {
+          priority1Ingredients: order.ingredients.filter(ing => ing.priority === 1),
+          optimizedIngredients: order.ingredients.filter(ing => ing.priority !== 1)
+        }
+      }));
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(
+        'Failed to retrieve stored ingredient orders',
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
 }
