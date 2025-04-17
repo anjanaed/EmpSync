@@ -6,7 +6,6 @@ const OrderReportDashboard = () => {
     return (
         <>
             <Navbar Comp={Order}/>
-            <h1>Order Report</h1>
         </>
     );
 };
