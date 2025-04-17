@@ -54,9 +54,11 @@ const MenuSets = () => {
   const [selectedDate, setSelectedDate] = useState(moment());
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
   const [isUpdatePopupVisible, setIsUpdatePopupVisible] = useState(false);
+  const [isDeleteConfirmVisible, setIsDeleteConfirmVisible] = useState(false);
   const [searchText, setSearchText] = useState("");
   const [selectedMeals, setSelectedMeals] = useState([]);
   const [availableMeals, setAvailableMeals] = useState([]);
+  const [hasExistingSchedule, setHasExistingSchedule] = useState(false);
   const [loading, setLoading] = useState(false);
   const [fetchingSchedule, setFetchingSchedule] = useState(true);
   const [scheduleData, setScheduleData] = useState({
@@ -75,6 +77,16 @@ const MenuSets = () => {
     breakfast: "Breakfast",
     lunch: "Lunch",
     dinner: "Dinner",
+  };
+
+  // Show delete confirmation dialog
+  const showDeleteConfirmation = () => {
+    setIsDeleteConfirmVisible(true);
+  };
+
+  // Close confirmation dialog without action
+  const closeDeleteConfirmation = () => {
+    setIsDeleteConfirmVisible(false);
   };
 
   // Fetch available meals from API
@@ -110,118 +122,25 @@ const MenuSets = () => {
 
   // Fetch schedule data for the selected date
   // Fetch schedule data for the selected date
-const fetchScheduleData = async (date) => {
-  setFetchingSchedule(true);
-  try {
-    // Format date as required by your API (YYYY-MM-DD)
-    const formattedDate = date.format("YYYY-MM-DD");
-    const response = await fetch(
-      `http://localhost:3000/schedule?date=${formattedDate}`
-    );
-
-    if (!response.ok) {
-      throw new Error("Failed to fetch schedule");
-    }
-
-    const data = await response.json();
-    console.log("Raw API response:", data);
-    
-    // Process the data into our format
-    const newScheduleData = {
-      breakfast: [],
-      lunch: [],
-      dinner: [],
-    };
-    
-    // Track schedule IDs for update operations
-    const newScheduleIds = {
-      breakfast: null,
-      lunch: null,
-      dinner: null,
-    };
-
-    // Check if data exists and has the expected structure
-    if (data && typeof data === 'object') {
-      // Check for direct breakfast/lunch/dinner arrays on the response
-      if (Array.isArray(data.breakfast)) {
-        newScheduleData.breakfast = data.breakfast;
-        newScheduleIds.breakfast = data.id;
-      }
-      
-      if (Array.isArray(data.lunch)) {
-        newScheduleData.lunch = data.lunch;
-        newScheduleIds.lunch = data.id;
-      }
-      
-      if (Array.isArray(data.dinner)) {
-        newScheduleData.dinner = data.dinner;
-        newScheduleIds.dinner = data.id;
-      }
-      
-      // If data is an array (multiple schedule items)
-      if (Array.isArray(data) && data.length > 0) {
-        data.forEach(item => {
-          if (item.breakfast && Array.isArray(item.breakfast)) {
-            newScheduleData.breakfast = item.breakfast;
-            newScheduleIds.breakfast = item.id;
-          }
-          
-          if (item.lunch && Array.isArray(item.lunch)) {
-            newScheduleData.lunch = item.lunch;
-            newScheduleIds.lunch = item.id;
-          }
-          
-          if (item.dinner && Array.isArray(item.dinner)) {
-            newScheduleData.dinner = item.dinner;
-            newScheduleIds.dinner = item.id;
-          }
-          
-          // Handle legacy format with category
-          const category = item.category?.toLowerCase() || "";
-          if (category === "breakfast" && item.meals) {
-            newScheduleData.breakfast = Array.isArray(item.meals) 
-              ? item.meals.map(meal => typeof meal === 'string' ? meal : meal.nameEnglish || meal.name || meal)
-              : [];
-            newScheduleIds.breakfast = item.id || null;
-          } else if (category === "lunch" && item.meals) {
-            newScheduleData.lunch = Array.isArray(item.meals)
-              ? item.meals.map(meal => typeof meal === 'string' ? meal : meal.nameEnglish || meal.name || meal)
-              : [];
-            newScheduleIds.lunch = item.id || null;
-          } else if (category === "dinner" && item.meals) {
-            newScheduleData.dinner = Array.isArray(item.meals)
-              ? item.meals.map(meal => typeof meal === 'string' ? meal : meal.nameEnglish || meal.name || meal)
-              : [];
-            newScheduleIds.dinner = item.id || null;
-          }
-        });
-      }
-    }
-
-    setScheduleData(newScheduleData);
-    setScheduleIds(newScheduleIds);
-    console.log("Processed schedule data:", newScheduleData);
-    console.log("Schedule IDs:", newScheduleIds);
-  } catch (error) {
-    console.error("Error fetching schedule:", error);
-    message.error("Failed to load schedule data");
-  } finally {
-    setFetchingSchedule(false);
-  }
-};
 
   // Effect to fetch schedule when date changes
   useEffect(() => {
+    console.log("Date changed in effect:", selectedDate.format("YYYY-MM-DD"));
     fetchScheduleData(selectedDate);
-  }, [selectedDate]);
+  }, [selectedDate]); // Dependency array includes selectedDate
 
   const handleDateChange = (date) => {
     if (date) {
-      setSelectedDate(date);
+      // Ensure we're using the same moment/dayjs instance type everywhere
+      const newDate = moment(date);
+      console.log("Date changed to:", newDate.format("YYYY-MM-DD"));
+      setSelectedDate(newDate);
       setIsDatePickerOpen(false);
+
+      // You could also force a data refresh here if needed
+      // fetchScheduleData(newDate);
     }
   };
-
   const toggleDatePicker = () => {
     setIsDatePickerOpen(!isDatePickerOpen);
   };
@@ -250,88 +169,380 @@ const fetchScheduleData = async (date) => {
     setSearchText("");
   };
 
+  // Updated remove schedule function
+  const handleRemoveSchedule = async () => {
+    closeDeleteConfirmation(); // Close the confirmation dialog
+    setFetchingSchedule(true); // Show loading state
+
+    try {
+      const formattedDate = selectedDate.format("YYYY-MM-DD");
+      const response = await fetch(
+        `http://localhost:3000/schedule/${formattedDate}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      if (response.ok) {
+        message.success("Schedule removed successfully");
+        // Reset all states after successful deletion
+        setScheduleData({
+          breakfast: [],
+          lunch: [],
+          dinner: [],
+        });
+        setScheduleIds({
+          breakfast: null,
+          lunch: null,
+          dinner: null,
+        });
+        setHasExistingSchedule(false);
+      } else {
+        const err = await response.text();
+        message.error("Failed to remove schedule: " + err);
+      }
+    } catch (error) {
+      console.error("Error removing schedule:", error);
+      message.error("An error occurred while removing the schedule.");
+    } finally {
+      setFetchingSchedule(false);
+    }
+  };
+  // Improved fetchScheduleData function without error message for no data
+  const fetchScheduleData = async (date) => {
+    setFetchingSchedule(true);
+    try {
+      // Reset states at the beginning of fetch to avoid stale data
+      setScheduleData({
+        breakfast: [],
+        lunch: [],
+        dinner: [],
+      });
+      setScheduleIds({
+        breakfast: null,
+        lunch: null,
+        dinner: null,
+      });
+      setHasExistingSchedule(false);
+
+      // Format date as required by your API (YYYY-MM-DD)
+      const formattedDate = date.format("YYYY-MM-DD");
+      console.log("Fetching schedule for date:", formattedDate);
+
+      const response = await fetch(
+        `http://localhost:3000/schedule/${formattedDate}`
+      );
+
+      // Handle 404 (Not Found) as a normal case, not an error
+      if (response.status === 404) {
+        console.log("The meal can not found");
+        // Just return without showing an error message
+        // The empty state is already set above
+        return;
+      }
+
+      if (response.status === 400) {
+        console.log("No scheduled Data for that Day");
+        // Just return without showing an error message
+        // The empty state is already set above
+        return;
+      }
+
+      // For other non-OK responses, throw an error
+      if (!response.ok) {
+        throw new Error(`Failed to fetch schedule: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log("Schedule API response:", data);
+
+      // Process the data based on your actual API response format
+      const newScheduleData = {
+        breakfast: data.breakfast || [],
+        lunch: data.lunch || [],
+        dinner: data.dinner || [],
+      };
+
+      const newScheduleIds = {
+        breakfast: data.id,
+        lunch: data.id,
+        dinner: data.id,
+      };
+
+      const scheduleFound =
+        newScheduleData.breakfast.length > 0 ||
+        newScheduleData.lunch.length > 0 ||
+        newScheduleData.dinner.length > 0;
+
+      console.log("Processed schedule data:", newScheduleData);
+      console.log("Schedule ID:", data.id);
+
+      // Update state with the processed data
+      setScheduleData(newScheduleData);
+      setScheduleIds(newScheduleIds);
+      setHasExistingSchedule(scheduleFound);
+    } catch (error) {
+      console.error("Error fetching schedule:", error);
+      // Only show error message for genuine errors, not for "no data found"
+      message.error("Failed to load schedule data");
+    } finally {
+      setFetchingSchedule(false);
+    }
+  };
+
+  // Fully updated handleMenuUpdate function
+  // const handleMenuUpdate = async () => {
+  //   try {
+  //     if (selectedMeals.length === 0) {
+  //       message.error("Please select at least one meal");
+  //       return;
+  //     }
+
+  //     const formattedDate = selectedDate.format("YYYY-MM-DD");
+
+  //     // Prepare data for API request
+  //     const updateData = {
+  //       date: formattedDate,
+  //       breakfast:
+  //         activeTab === "breakfast"
+  //           ? selectedMeals
+  //           : scheduleData.breakfast || [],
+  //       lunch: activeTab === "lunch" ? selectedMeals : scheduleData.lunch || [],
+  //       dinner:
+  //         activeTab === "dinner" ? selectedMeals : scheduleData.dinner || [],
+  //     };
+
+  //     console.log("Sending data to API:", JSON.stringify(updateData));
+
+  //     let response;
+
+  //     // Determine if we need to create or update based on hasExistingSchedule
+  //     // and also double-check by looking at the current scheduleIds
+  //     const currentScheduleId = scheduleIds[activeTab];
+  //     const shouldUpdate = hasExistingSchedule && currentScheduleId !== null;
+
+  //     if (shouldUpdate) {
+  //       // Use PATCH to update existing schedule
+  //       console.log("Using PATCH to update existing schedule");
+  //       response = await fetch(
+  //         `http://localhost:3000/schedule/${formattedDate}`,
+  //         {
+  //           method: "PATCH",
+  //           headers: {
+  //             "Content-Type": "application/json",
+  //           },
+  //           body: JSON.stringify(updateData),
+  //         }
+  //       );
+
+  //       // If PATCH fails with 404 or 400, the schedule doesn't exist, so fall back to POST
+  //       if (
+  //         !response.ok &&
+  //         (response.status === 404 || response.status === 400)
+  //       ) {
+  //         console.log("Schedule not found, falling back to POST");
+  //         response = await fetch(`http://localhost:3000/schedule`, {
+  //           method: "POST",
+  //           headers: {
+  //             "Content-Type": "application/json",
+  //           },
+  //           body: JSON.stringify(updateData),
+  //         });
+  //       }
+  //     } else {
+  //       // Use POST to create new schedule
+  //       console.log("Using POST to create new schedule");
+  //       response = await fetch(`http://localhost:3000/schedule`, {
+  //         method: "POST",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //         body: JSON.stringify(updateData),
+  //       });
+  //     }
+
+  //     if (!response.ok) {
+  //       const errorMessage = await getErrorMessage(response);
+  //       throw new Error(`${response.status}: ${errorMessage}`);
+  //     }
+
+  //     const responseData = await response.json();
+
+  //     // Update local state
+  //     setScheduleData({
+  //       ...scheduleData,
+  //       [activeTab]: selectedMeals,
+  //     });
+
+  //     // Update schedule ID if needed
+  //     if (responseData.id) {
+  //       setScheduleIds({
+  //         ...scheduleIds,
+  //         [activeTab]: responseData.id,
+  //       });
+  //       setHasExistingSchedule(true);
+  //     }
+
+  //     message.success(
+  //       `${activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} menu ${
+  //         shouldUpdate ? "updated" : "added"
+  //       } successfully`
+  //     );
+
+  //     closeUpdatePopup();
+  //     // Refresh schedule data to ensure we have the latest
+  //     fetchScheduleData(selectedDate);
+  //   } catch (error) {
+  //     console.error("Error updating schedule:", error);
+  //     message.error(`Failed to update schedule: ${error.message}`);
+  //   }
+  // };
+
   const handleMenuUpdate = async () => {
     try {
-      // Check if any meals are selected
       if (selectedMeals.length === 0) {
         message.error("Please select at least one meal");
         return;
       }
-  
-      // Format the date properly
+
       const formattedDate = selectedDate.format("YYYY-MM-DD");
-      
-      // Create request payload with the correct structure
-      // Only include the meal IDs or names for the active tab
+
+      // Prepare data for API request
       const updateData = {
         date: formattedDate,
-        breakfast: activeTab === 'breakfast' ? selectedMeals : [],
-        lunch: activeTab === 'lunch' ? selectedMeals : [],
-        dinner: activeTab === 'dinner' ? selectedMeals : []
+        breakfast:
+          activeTab === "breakfast"
+            ? selectedMeals
+            : scheduleData.breakfast || [],
+        lunch: activeTab === "lunch" ? selectedMeals : scheduleData.lunch || [],
+        dinner:
+          activeTab === "dinner" ? selectedMeals : scheduleData.dinner || [],
       };
-  
+
       console.log("Sending data to API:", JSON.stringify(updateData));
-  
+
       let response;
-      const scheduleId = scheduleIds[activeTab];
-      
-      if (scheduleId) {
-        // Update existing schedule
-        response = await fetch(`http://localhost:3000/schedule/${scheduleId}`, {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(updateData)
-        });
+
+      if (hasExistingSchedule) {
+        // Use PATCH to update existing schedule - corrected endpoint format
+        response = await fetch(
+          `http://localhost:3000/schedule/${formattedDate}`,
+          {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(updateData),
+          }
+        );
       } else {
-        // Create new schedule
+        // Use POST to create new schedule
         response = await fetch(`http://localhost:3000/schedule`, {
-          method: 'POST',
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json'
+            "Content-Type": "application/json",
           },
-          body: JSON.stringify(updateData)
+          body: JSON.stringify(updateData),
         });
       }
-  
+
       if (!response.ok) {
         const errorMessage = await getErrorMessage(response);
         throw new Error(`${response.status}: ${errorMessage}`);
       }
-  
-      // Get the response data
+
       const responseData = await response.json();
-      
+
       // Update local state
       setScheduleData({
         ...scheduleData,
-        [activeTab]: selectedMeals
+        [activeTab]: selectedMeals,
       });
-      
+
+      // Update schedule ID if needed
       if (responseData.id) {
         setScheduleIds({
-          ...scheduleIds,
-          [activeTab]: responseData.id
+          breakfast: responseData.id,
+          lunch: responseData.id,
+          dinner: responseData.id,
         });
+        setHasExistingSchedule(true);
       }
-  
+
       message.success(
-        `${activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} menu ${scheduleId ? 'updated' : 'created'} successfully`
+        `${activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} menu ${
+          hasExistingSchedule ? "updated" : "added"
+        } successfully`
       );
+
       closeUpdatePopup();
-      
-      // Refresh the schedule data
+      // Refresh schedule data to ensure we have the latest
       fetchScheduleData(selectedDate);
     } catch (error) {
       console.error("Error updating schedule:", error);
-      message.error(`Failed to ${scheduleIds[activeTab] ? 'update' : 'create'} schedule: ${error.message}`);
+      message.error(`Failed to update schedule: ${error.message}`);
     }
   };
+
   const handleSearch = () => {
     // Search is implemented through filterMeals function
     console.log("Searching for:", searchText);
   };
+
+  // Add this new function to clear only the active tab's menu
+const handleClearActiveTabMenu = async () => {
+  try {
+    const formattedDate = selectedDate.format("YYYY-MM-DD");
+    
+    // Create update data that keeps other meals but clears the active tab
+    const updateData = {
+      date: formattedDate,
+      breakfast: activeTab === 'breakfast' ? [] : scheduleData.breakfast || [],
+      lunch: activeTab === 'lunch' ? [] : scheduleData.lunch || [],
+      dinner: activeTab === 'dinner' ? [] : scheduleData.dinner || []
+    };
+
+    console.log(`Clearing ${activeTab} menu for ${formattedDate}`);
+    
+    // Only send request if we have an existing schedule
+    if (hasExistingSchedule) {
+      const response = await fetch(`http://localhost:3000/schedule/${formattedDate}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(updateData)
+      });
+
+      if (!response.ok) {
+        const errorMessage = await getErrorMessage(response);
+        throw new Error(`${response.status}: ${errorMessage}`);
+      }
+
+      // Update local state
+      setScheduleData({
+        ...scheduleData,
+        [activeTab]: [] // Clear just the active tab
+      });
+
+      message.success(
+        `${activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} menu cleared successfully`
+      );
+      
+      // Close the modal after clearing
+      closeUpdatePopup();
+      
+      // Refresh data
+      fetchScheduleData(selectedDate);
+    } else {
+      message.info("No menu to clear for this date");
+      closeUpdatePopup();
+    }
+  } catch (error) {
+    console.error("Error clearing menu:", error);
+    message.error(`Failed to clear menu: ${error.message}`);
+  }
+};
 
   const handleMealSelection = (mealName) => {
     if (selectedMeals.includes(mealName)) {
@@ -368,19 +579,22 @@ const fetchScheduleData = async (date) => {
   const confirmSchedule = async () => {
     try {
       const scheduleId = scheduleIds[activeTab];
-      
+
       if (!scheduleId) {
         message.info("No schedule found to confirm");
         return;
       }
-      
-      const response = await fetch(`http://localhost:3000/schedule/${scheduleId}/confirm`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ confirmed: true })
-      });
+
+      const response = await fetch(
+        `http://localhost:3000/schedule/${scheduleId}/confirm`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ confirmed: true }),
+        }
+      );
 
       if (!response.ok) {
         const errorMessage = await getErrorMessage(response);
@@ -388,7 +602,9 @@ const fetchScheduleData = async (date) => {
       }
 
       message.success(
-        `${activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} schedule confirmed successfully`
+        `${
+          activeTab.charAt(0).toUpperCase() + activeTab.slice(1)
+        } schedule confirmed successfully`
       );
     } catch (error) {
       console.error("Error confirming schedule:", error);
@@ -521,17 +737,17 @@ const fetchScheduleData = async (date) => {
             </span>
           </Button>
 
-          <Button 
-            className={styles.removeButton} 
+          <Button
+            className={styles.removeButton}
             icon={<DeleteOutlined />}
-            // onClick={handleRemoveSchedule}
-            disabled={!scheduleIds[activeTab]}
+            onClick={showDeleteConfirmation}
+            disabled={!hasExistingSchedule}
           >
             <span className={styles.buttonLabel}>Remove Schedule</span>
           </Button>
 
-          <Button 
-            type="primary" 
+          <Button
+            type="primary"
             className={styles.confirmButton}
             onClick={confirmSchedule}
             disabled={!scheduleIds[activeTab]}
@@ -543,7 +759,7 @@ const fetchScheduleData = async (date) => {
 
       {/* Meal Update Popup */}
       <Modal
-        title={`${scheduleIds[activeTab] ? 'Update' : 'Add'} ${
+        title={`${scheduleIds[activeTab] ? "Update" : "Add"} ${
           activeTab.charAt(0).toUpperCase() + activeTab.slice(1)
         } Menu`}
         open={isUpdatePopupVisible}
@@ -622,9 +838,16 @@ const fetchScheduleData = async (date) => {
           </div>
 
           <div className={styles.buttonContainer}>
-            <Button className={styles.cancelButton} onClick={closeUpdatePopup}>
-              Cancel
+            {/* Changed Cancel button to Clear Menu button with onClick handler */}
+            <Button
+              className={styles.cancelButton}
+              onClick={handleClearActiveTabMenu}
+              disabled={!scheduleIds[activeTab]}
+            >
+              Clear Menu
             </Button>
+
+            
             <Button
               type="primary"
               className={styles.updateModalButton}
@@ -635,6 +858,34 @@ const fetchScheduleData = async (date) => {
             </Button>
           </div>
         </div>
+      </Modal>
+
+      {/* Delete Confirmation Modal */}
+      <Modal
+        title="Confirm Delete"
+        open={isDeleteConfirmVisible}
+        onCancel={closeDeleteConfirmation}
+        footer={[
+          <Button key="cancel" onClick={closeDeleteConfirmation}>
+            Cancel
+          </Button>,
+          <Button
+            key="delete"
+            type="primary"
+            danger
+            onClick={handleRemoveSchedule}
+          >
+            Delete
+          </Button>,
+        ]}
+      >
+        <p>
+          Are you sure you want to delete the entire menu schedule for{" "}
+          {selectedDate.format("MMMM D, YYYY")}?
+        </p>
+        <p>
+          This will remove breakfast, lunch, and dinner menus for this date.
+        </p>
       </Modal>
     </Card>
   );
