@@ -24,32 +24,38 @@ const IngredientList = ({ ingredients, onEdit, onDelete }) => {
       dataIndex: 'id',
       key: 'id',
       width: 100,
+      sorter: (a, b) => a.id - b.id,
     },
     {
       title: 'Ingredient Name',
       dataIndex: 'name',
       key: 'name',
+      sorter: (a, b) => a.name.localeCompare(b.name),
     },
     {
       title: 'Type',
       dataIndex: 'type',
       key: 'type',
+      sorter: (a, b) => a.type.localeCompare(b.type),
     },
     {
       title: 'Price Per Unit',
       dataIndex: 'price_per_unit',
       key: 'price_per_unit',
       render: (price) => `Rs. ${price}`,
+      sorter: (a, b) => a.price_per_unit - b.price_per_unit,
     },
     {
       title: 'Quantity',
       dataIndex: 'quantity',
       key: 'quantity',
+      sorter: (a, b) => a.quantity - b.quantity,
     },
     {
       title: 'Priority',
       dataIndex: 'priority',
       key: 'priority',
+      sorter: (a, b) => a.priority - b.priority,
       render: (priority) => {
         const { label, className } = getPriorityLabel(priority);
         return (
