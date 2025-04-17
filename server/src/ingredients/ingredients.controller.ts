@@ -37,6 +37,20 @@ export class IngredientsController {
     return this.ingredientsService.getOptimizedIngredients();
   }
 
+  @Post('orders/store')
+  async storeIngredientOrder(@Body() data: {
+    lastUpdated: Date;
+    priority1Ingredients: any[];
+    optimizedIngredients: any[];
+  }) {
+    return this.ingredientsService.storeIngredientOrder(data);
+  }
+
+  @Get('orders')
+  async getStoredIngredientOrders() {
+    return this.ingredientsService.getStoredIngredientOrders();
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.ingredientsService.findOne(id);
