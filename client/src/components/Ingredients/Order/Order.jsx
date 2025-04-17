@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Typography, Tag, Spin, Button, Table } from "antd";
 import { useNavigate } from "react-router-dom";
+import { jsPDF } from 'jspdf';  
+import autoTable from 'jspdf-autotable';  
 import styles from "./Order.module.css";
 
 const urL = import.meta.env.VITE_BASE_URL;
@@ -60,32 +62,97 @@ const Order = () => {
         }
     };
 
+    const exportToPDF = () => {
+        const doc = new jsPDF();
+        
+        // Add title
+        doc.setFontSize(16);
+        doc.text('Ingredients Order Report', 14, 15);
+        doc.setFontSize(10);
+        doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 25);
+
+        // Format data for PDF
+        const priority1Data = ingredients?.priority1Ingredients?.map(item => [
+            item.name,
+            item.type,
+            item.price_per_unit,
+            item.quantity,
+            `Priority ${item.priority}`
+        ]);
+
+        const optimizedData = ingredients?.optimizedIngredients?.map(item => [
+            item.name,
+            item.type,
+            item.price_per_unit,
+            item.quantity,
+            `Priority ${item.priority}`
+        ]);
+
+        // Add Priority 1 Ingredients table
+        doc.setFontSize(14);
+        doc.text('Priority Ingredients', 14, 35);
+        autoTable(doc, {  // Changed from doc.autoTable to autoTable(doc
+            head: [['Name', 'Type', 'Price (Rs.)', 'Quantity', 'Priority']],
+            body: priority1Data || [],
+            startY: 40,
+        });
+
+        const finalY = doc.lastAutoTable.finalY;
+        
+        // Add Optimized Ingredients table
+        doc.text('Optimized Ingredients', 14, finalY + 15);
+        autoTable(doc, {  // Changed from doc.autoTable to autoTable(doc
+            head: [['Name', 'Type', 'Price (Rs.)', 'Quantity', 'Priority']],
+            body: optimizedData || [],
+            startY: finalY + 20,
+        });
+
+        // Save the PDF
+        doc.save('ingredients-order.pdf');
+    };
+
     if (loading) {
-        return <Spin size="large" />;
+        return (
+            <div className={styles.loadingContainer}>
+                <Spin size="large" />
+            </div>
+        );
     }
 
     return (
         <div className={styles.orderContainer}>
-            <Title level={2} className={styles.sectionTitle}>Priority Ingredients</Title>
+            <div className={styles.headerContainer}>
+                <Title level={3} className={styles.mainTitle}>Selected Ingredients for Order</Title>
+                <Button 
+                    type="default" 
+                    size="large"
+                    onClick={exportToPDF}
+                    className={styles.exportBtn}
+                >
+                    Export to PDF
+                </Button>
+            </div>
+
+            <Title level={3} className={styles.sectionTitle}>Priority Ingredients</Title>
             <Table 
                 dataSource={ingredients?.priority1Ingredients}
                 columns={columns}
                 className={styles.table}
                 pagination={{
-                    pageSize: 5,
+                    pageSize: 10,
                     showSizeChanger: true,
                     showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`
                 }}
                 rowKey="id"
             />
 
-            <Title level={2} className={styles.sectionTitle}>Optimized Ingredients</Title>
+            <Title level={3} className={styles.sectionTitle}>Optimized Ingredients</Title>
             <Table 
                 dataSource={ingredients?.optimizedIngredients}
                 columns={columns}
                 className={styles.table}
                 pagination={{
-                    pageSize: 5,
+                    pageSize: 10,
                     showSizeChanger: true,
                     showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`
                 }}
@@ -96,14 +163,16 @@ const Order = () => {
                 Last updated: {new Date(ingredients?.lastUpdated).toLocaleString()}
             </p>
             
-            <Button 
-                type="primary" 
-                size="large"
-                className={styles.placeOrderBtn}
-                onClick={() => navigate('/place-order')}
-            >
-                Place the Order
-            </Button>
+            <div className={styles.buttonContainer}>
+                <Button 
+                    type="primary" 
+                    size="large"
+                    className={styles.placeOrderBtn}
+                    onClick={() => navigate('/place-order')}
+                >
+                    Place the Order
+                </Button>
+            </div>
         </div>
     );
 };
