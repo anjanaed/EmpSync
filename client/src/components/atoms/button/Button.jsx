@@ -2,6 +2,7 @@ import React from "react";
 import { AntDesignOutlined } from "@ant-design/icons";
 import { Button, ConfigProvider, Space } from "antd";
 import { createStyles } from "antd-style";
+import styles from "./Button.module.css"
 
 const useStyle = createStyles(({ prefixCls, css }) => ({
   linearGradientButton: css`
@@ -47,7 +48,7 @@ const Gbutton = ({ onClick, children }) => {
       }}
     >
       <Space>
-        <Button onClick={onClick} type="primary" size="large">
+        <Button className={styles.btn} onClick={onClick} type="primary" size="large">
           {children}
         </Button>
       </Space>

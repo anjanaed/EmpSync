@@ -3,8 +3,12 @@ import { Table, InputNumber, Button, ConfigProvider } from "antd";
 import axios from "axios";
 import Gbutton from "../../atoms/button/Button";
 import styles from "./PayeModal.module.css";
+import { BsPlusCircle } from "react-icons/bs";
+import { LuCircleMinus } from "react-icons/lu";
 
-const PayeModal = () => {
+
+
+const PayeModal = ({handleCancel}) => {
   const [loading, setLoading] = useState(true);
   const urL = import.meta.env.VITE_BASE_URL;
 
@@ -54,6 +58,7 @@ const PayeModal = () => {
         .put(`${urL}/paye`, dataSource)
         .then((res) => {
           console.log(res);
+          handleCancel();
         })
         .catch((err) => {
           console.log(err);
@@ -71,7 +76,7 @@ const PayeModal = () => {
         headerColor: "white",
         headerSortActiveBg: "rgba(151, 0, 0, 0.78)",
         headerSortHoverBg: "rgba(183, 0, 0, 0.78)",
-        cellPaddingBlock: 6,
+        cellPaddingBlock: 7,
       },
     },
   };
@@ -131,18 +136,19 @@ const PayeModal = () => {
   ];
 
   return (
-    <div>
+    <div className={styles.mainBox}>
       <h2>PAYE (Pay As You Earn) Tax Slabs - Yearly</h2>
       <div className={styles.des}>
         Reconfigure Annual Personal Income Tax Data Range.
-        <br /> Range Applied for Yearly Income
+        <br /> Range Applied for Yearly Income<br/>
+        Leave The Upper Limit Of Last Level As Null
       </div>
       <br />
       <Button type="primary" onClick={handleAddRow}>
-        + Add Level
+        <BsPlusCircle/>Add Level
       </Button>
       <Button type="primary" onClick={handleRemoveLastRow}>
-        - Remove Level
+      <LuCircleMinus/>Remove Level
       </Button>
       <ConfigProvider theme={customTheme}>
         <Table

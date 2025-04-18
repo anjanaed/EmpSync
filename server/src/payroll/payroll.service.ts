@@ -17,158 +17,104 @@ export class PayrollService {
   }
 
   async generatePayrollsForAll(dto: Prisma.PayrollCreateInput): Promise<any> {
-    const range=dto.range
     try {
-      const users = await this.databaseService.user.findMany({
-        
-      });
+      const users = await this.databaseService.user.findMany();
+      const payeData = await this.databaseService.payeTaxSlab.findMany();
+      const allAdjustments = await this.databaseService.salaryAdjustments.findMany();
+      const allIndividualAdjustments = await this.databaseService.individualSalaryAdjustments.findMany();
+      const employerFundRate = allAdjustments.find((adj) => adj.label == 'EmployerFund').amount;
+      const ETF = allAdjustments.find((adj) => adj.label == 'ETF').amount;
+      const range = dto.range;
+      const month=dto.month;
 
-      const allAllowancePRaw =
-        await this.databaseService.salaryAdjustments.findMany({
-          where: {
-            isPercentage: true,
-            allowance: true,
-          },
-        });
-      const allAllowanceP = allAllowancePRaw.map((items) => ({
-        label: items.label,
-        amount: items.amount,
-      }));
-      const allAllowanceVRaw =
-        await this.databaseService.salaryAdjustments.findMany({
-          where: {
-            isPercentage: false,
-            allowance: true,
-          },
-        });
-      const allAllowanceV = allAllowanceVRaw.map((items) => ({
-        label: items.label,
-        amount: items.amount,
-      }));
-      const allDeductionPRaw =
-        await this.databaseService.salaryAdjustments.findMany({
-          where: {
-            isPercentage: true,
-            allowance: false,
-          },
-        });
-      const allDeductionP = allDeductionPRaw.map((items) => ({
-        label: items.label,
-        amount: items.amount,
-      }));
-      const allDeductionVRaw =
-        await this.databaseService.salaryAdjustments.findMany({
-          where: {
-            isPercentage: false,
-            allowance: false,
-          },
-        });
-      const allDeductionV = allDeductionVRaw.map((items) => ({
-        label: items.label,
-        amount: items.amount,
-      }));
+
+      function extractAdjustments(
+        data: any,
+        allowance: boolean,
+        percentage: boolean,
+      ) {
+        return data
+          .filter(
+            (adj: any) =>
+              adj.isPercentage == percentage && adj.allowance == allowance,
+          )
+          .map((adj: any) => ({ label: adj.label, amount: adj.amount }));
+      }
+
+      function extractIndividualAdjustment(
+        data: any,
+        user: string,
+        allowance: boolean,
+        percentage: boolean,
+      ) {
+        return data
+          .filter(
+            (adj: any) =>
+              adj.empId == user &&
+              adj.allowance == allowance &&
+              adj.isPercentage == percentage,
+          )
+          .map((adj: any) => ({ label: adj.label, amount: adj.amount }));
+      }
+
+      const allAllowanceP = extractAdjustments(allAdjustments, true, true);
+      const allAllowanceV = extractAdjustments(allAdjustments, true, false);
+      const allDeductionV = extractAdjustments(allAdjustments, false, false);
+
+      const allDeductionP = allAdjustments
+        .filter(
+          (adj) =>
+            adj.isPercentage &&
+            !adj.allowance &&
+            !["ETF", "EmployerFund"].includes(adj.label),
+        )
+        .map((adj) => ({ label: adj.label, amount: adj.amount }));
+
+        console.log(allDeductionP);
 
       for (const user of users) {
-        const allowancePRaw =
-          await this.databaseService.individualSalaryAdjustments.findMany({
-            where: {
-              empId: user.id,
-              isPercentage: true,
-              allowance: true,
-            },
-          });
-        const indiAllowanceP = allowancePRaw.map((items) => ({
-          label: items.label,
-          amount: items.amount,
-        }));
+
+        const indiAllowanceP=extractIndividualAdjustment(allIndividualAdjustments,user.id,true,true);
+        const indiAllowanceV=extractIndividualAdjustment(allIndividualAdjustments,user.id,true,false);
+        const indiDeductionsP=extractIndividualAdjustment(allIndividualAdjustments,user.id,false,true);
+        const indiDeductionsV=extractIndividualAdjustment(allIndividualAdjustments,user.id,false,false);
+
         const allowanceP = [...indiAllowanceP, ...allAllowanceP];
-
-        const allowanceVRaw =
-          await this.databaseService.individualSalaryAdjustments.findMany({
-            where: {
-              empId: user.id,
-              isPercentage: false,
-              allowance: true,
-            },
-          });
-
-        const indiAllowanceV = allowanceVRaw.map((items) => ({
-          label: items.label,
-          amount: items.amount,
-        }));
-
         const allowanceV = [...indiAllowanceV, ...allAllowanceV];
-
-        const deductionPRaw =
-          await this.databaseService.individualSalaryAdjustments.findMany({
-            where: {
-              empId: user.id,
-              isPercentage: true,
-              allowance: false,
-            },
-          });
-        const indiDeductionsP = deductionPRaw.map((items) => ({
-          label: items.label,
-          amount: items.amount,
-        }));
         const deductionsP = [...indiDeductionsP, ...allDeductionP];
-
-        const deductionVRaw =
-          await this.databaseService.individualSalaryAdjustments.findMany({
-            where: {
-              empId: user.id,
-              isPercentage: false,
-              allowance: false,
-            },
-          });
-        const indiDeductionsV = deductionVRaw.map((items) => ({
-          label: items.label,
-          amount: items.amount,
-        }));
-
         const deductionsV = [...indiDeductionsV, ...allDeductionV];
 
-        const userDetails = await this.databaseService.user.findUnique({
-          where: {
-            id: user.id,
+        const values = calculateSalary(
+          {
+            basicSalary: user.salary,
+            allowanceP,
+            allowanceV,
+            deductionsP,
+            deductionsV,
           },
-        });
-
-        const payeData=await this.databaseService.payeTaxSlab.findMany()
-
-        const values = calculateSalary({
-          basicSalary: userDetails.salary,
-          allowanceP,
-          allowanceV,
-          deductionsP,
-          deductionsV,
-        },payeData);
-
-        console.log(values);
-        
+          payeData,
+        );
 
         const payroll = await this.create({
           employee: { connect: { id: user.id } },
-          month: "startMonth",
+          month: month,
           netPay: values.netSalary,
-          payrollPdf: `C:\\Users\\USER\\Downloads\\Payrolls\\${user.id}`,
+          payrollPdf: `C:\\Users\\USER\\Downloads\\Payrolls\\${user.id} - ${month}.pdf`,
         });
 
-
-        generatePayslip({
+        await generatePayslip({
           employee: user,
           values,
-          range,
           payroll: {
             id: payroll.id,
             createdAt: payroll.createdAt,
           },
+          employerFundRate,
+          ETF,
+          month,
         });
-
-
-
-
       }
+      console.log("Payrolls Generated")
     } catch (err) {
       console.log(err);
     }

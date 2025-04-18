@@ -1,41 +1,12 @@
-
 export interface salaryData {
   grossSalary: number;
   totalAllowanceArray: { label: string; amount: number }[];
   totalDeductionArray: { label: string; amount: number }[];
   totalDeduction: number;
-  paye: number;
+  payeTax: number;
   netSalary: number;
 }
 
-function calculatePaye(payeData, grossSalary: number): number {
-  var taxLevel: number;
-  for (const level in payeData) {
-    if (grossSalary * 12 < payeData[level].upperLimit) {
-      taxLevel = payeData[level].orderId;
-    }
-  }
-  var payeTax = 0;
-
-  for (const level in payeData) {
-    if (payeData[level].orderId == taxLevel) {
-      var taxableAmount =
-        ((grossSalary * 12 - payeData[level].lowerLimit) *
-          payeData[level].taxRate) /
-        100;
-      payeTax += taxableAmount;
-      break;
-    }
-    var levelTax =
-      ((payeData[level].upperLimit - payeData[level].lowerLimit) *
-        payeData[level].taxRate) /
-      100;
-    payeTax += levelTax;
-  }
-
-  console.log(`Payee Tax: ${(payeTax / 12).toFixed(2)}`);
-  return parseFloat((payeTax / 12).toFixed(2));
-}
 
 export function calculateSalary(
   dto: {
@@ -60,81 +31,48 @@ export function calculateSalary(
   const totalAllowanceArray = [...calculatedAllowance, ...dto.allowanceV];
   const totalDeductionArray = [...calculatedDeduction, ...dto.deductionsV];
 
-  const findTotals = () => {
-    var totalAllowance = 0;
-    var totalDeduction = 0;
-    for (const allow of totalAllowanceArray) {
-      totalAllowance += allow.amount;
-    }
-    for (const deduct of totalDeductionArray) {
-      totalDeduction += deduct.amount;
-    }
-    return { totalAllowance, totalDeduction };
-  };
-
-  const calculateGrossNetSal = (
-    allow: number,
-    deduct: number,
-    basicSalary: number,
-  ) => {
-    const grossSalary = basicSalary + allow;
-    const paye = calculatePaye(payeData, grossSalary);
-    const netSalary = grossSalary - (deduct + paye);
-    return { grossSalary, netSalary, paye };
-  };
-
-  const { totalAllowance, totalDeduction } = findTotals();
-  const { grossSalary, netSalary, paye } = calculateGrossNetSal(
-    totalAllowance,
-    totalDeduction,
-    dto.basicSalary,
+  const totalDeduction = totalDeductionArray.reduce(
+    (sum, d) => sum + d.amount,
+    0,
   );
+  const totalAllowance = totalAllowanceArray.reduce(
+    (sum, a) => sum + a.amount,
+    0,
+  );
+
+  const grossSalary = dto.basicSalary + totalAllowance;
+
+  let taxLevel: number;
+  for (const level of payeData) {
+    const upper = level.upperLimit ?? Infinity;
+    if (grossSalary * 12 < upper) {
+      taxLevel = level.orderId;
+    }
+  }
+  let paye = 0;
+
+  for (const level of payeData) {
+    if (level.orderId == taxLevel) {
+      var taxableAmount =
+        ((grossSalary * 12 - level.lowerLimit) * level.taxRate) / 100;
+      paye += taxableAmount;
+      break;
+    }
+    var levelTax =
+      ((level.upperLimit - level.lowerLimit) * level.taxRate) / 100;
+    paye += levelTax;
+  }
+
+  const payeTax = paye / 12;
+
+  const netSalary = grossSalary - (totalDeduction + payeTax);
 
   return {
     grossSalary,
     totalAllowanceArray,
     totalDeductionArray,
     totalDeduction,
-    paye,
+    payeTax,
     netSalary,
   };
 }
-
-// calculatePaye([
-//   { id: 8, orderId: 1, lowerLimit: 0, upperLimit: 1800000, taxRate: 0 },
-//   {
-//     id: 9,
-//     orderId: 2,
-//     lowerLimit: 1800000,
-//     upperLimit: 2800000,
-//     taxRate: 6
-//   },
-//   {
-//     id: 10,
-//     orderId: 3,
-//     lowerLimit: 2800000,
-//     upperLimit: 3300000,
-//     taxRate: 18
-//   },
-//   {
-//     id: 11,
-//     orderId: 4,
-//     lowerLimit: 3300000,
-//     upperLimit: 3800000,
-//     taxRate: 24
-//   },
-//   {
-//     id: 12,
-//     orderId: 5,
-//     lowerLimit: 3800000,
-//     upperLimit: 4300000,
-//     taxRate: 30
-//   },
-//   {
-//     id: 13,
-//     orderId: 6,
-//     lowerLimit: 4300000,
-//     upperLimit: 99999999999,
-//     taxRate: 36
-//   }
-// ],369556)
