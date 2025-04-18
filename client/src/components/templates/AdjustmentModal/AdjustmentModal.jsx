@@ -80,7 +80,7 @@ const AdjustmentModal = ({ handleCancel, fetch }) => {
                   : (value) => value
               }
               min={0}
-              max={isTypeChecked ? 100 : undefined}
+              max={!isTypeChecked ? 100 : undefined}
             ></InputNumber>
           </div>
           <div className={styles.inputLine}>
