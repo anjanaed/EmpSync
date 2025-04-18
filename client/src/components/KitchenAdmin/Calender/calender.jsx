@@ -15,7 +15,7 @@ import {
   Spin,
   Empty,
 } from "antd";
-import 'dayjs/locale/en';
+import "dayjs/locale/en";
 import {
   PlusOutlined,
   DeleteOutlined,
@@ -47,54 +47,53 @@ const DatePicker = (props) => {
         },
       }}
     >
-      <AntDatePicker 
+      <AntDatePicker
         {...props}
         // Add locale explicitly to fix the error
         locale={{
           lang: {
-            locale: 'en_US',
-            placeholder: 'Select date',
-            rangePlaceholder: ['Start date', 'End date'],
-            today: 'Today',
-            now: 'Now',
-            backToToday: 'Back to today',
-            ok: 'Ok',
-            clear: 'Clear',
-            month: 'Month',
-            year: 'Year',
-            timeSelect: 'Select time',
-            dateSelect: 'Select date',
-            monthSelect: 'Choose a month',
-            yearSelect: 'Choose a year',
-            decadeSelect: 'Choose a decade',
-            yearFormat: 'YYYY',
-            dateFormat: 'M/D/YYYY',
-            dayFormat: 'D',
-            dateTimeFormat: 'M/D/YYYY HH:mm:ss',
-            monthFormat: 'MMMM',
+            locale: "en_US",
+            placeholder: "Select date",
+            rangePlaceholder: ["Start date", "End date"],
+            today: "Today",
+            now: "Now",
+            backToToday: "Back to today",
+            ok: "Ok",
+            clear: "Clear",
+            month: "Month",
+            year: "Year",
+            timeSelect: "Select time",
+            dateSelect: "Select date",
+            monthSelect: "Choose a month",
+            yearSelect: "Choose a year",
+            decadeSelect: "Choose a decade",
+            yearFormat: "YYYY",
+            dateFormat: "M/D/YYYY",
+            dayFormat: "D",
+            dateTimeFormat: "M/D/YYYY HH:mm:ss",
+            monthFormat: "MMMM",
             monthBeforeYear: true,
-            previousMonth: 'Previous month (PageUp)',
-            nextMonth: 'Next month (PageDown)',
-            previousYear: 'Last year (Control + left)',
-            nextYear: 'Next year (Control + right)',
-            previousDecade: 'Last decade',
-            nextDecade: 'Next decade',
-            previousCentury: 'Last century',
-            nextCentury: 'Next century',
+            previousMonth: "Previous month (PageUp)",
+            nextMonth: "Next month (PageDown)",
+            previousYear: "Last year (Control + left)",
+            nextYear: "Next year (Control + right)",
+            previousDecade: "Last decade",
+            nextDecade: "Next decade",
+            previousCentury: "Last century",
+            nextCentury: "Next century",
           },
           timePickerLocale: {
-            placeholder: 'Select time',
+            placeholder: "Select time",
           },
-          dateFormat: 'YYYY-MM-DD',
-          dateTimeFormat: 'YYYY-MM-DD HH:mm:ss',
-          weekFormat: 'YYYY-wo',
-          monthFormat: 'YYYY-MM',
+          dateFormat: "YYYY-MM-DD",
+          dateTimeFormat: "YYYY-MM-DD HH:mm:ss",
+          weekFormat: "YYYY-wo",
+          monthFormat: "YYYY-MM",
         }}
       />
     </ConfigProvider>
   );
 };
-
 
 const MenuSets = () => {
   const [activeTab, setActiveTab] = useState("breakfast");
@@ -107,6 +106,7 @@ const MenuSets = () => {
   const [availableMeals, setAvailableMeals] = useState([]);
   const [hasExistingSchedule, setHasExistingSchedule] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [mealList, setMealList] = useState([]); // list of meals with { id, name }
   const [fetchingSchedule, setFetchingSchedule] = useState(true);
   const [scheduleData, setScheduleData] = useState({
     breakfast: [],
@@ -161,6 +161,17 @@ const MenuSets = () => {
     }
   };
 
+  const handleMealSelection = (meal) => {
+    // Get the meal ID (assuming meal is passed as an object with id property)
+    const mealId = typeof meal === "object" ? meal.id : meal;
+
+    if (selectedMeals.includes(mealId)) {
+      setSelectedMeals(selectedMeals.filter((item) => item !== mealId));
+    } else {
+      setSelectedMeals([...selectedMeals, mealId]);
+    }
+  };
+
   // Helper function to extract the response error message
   const getErrorMessage = async (response) => {
     try {
@@ -173,15 +184,30 @@ const MenuSets = () => {
 
   // Effect to fetch schedule when date changes
   useEffect(() => {
+    const fetchMeals = async () => {
+      try {
+        const res = await fetch("http://localhost:3000/meal"); // Update if your backend URL is different
+        const data = await res.json();
+        setMealList(data);
+      } catch (err) {
+        console.error("Failed to fetch meals", err);
+      }
+    };
+
     console.log("Date changed in effect:", selectedDate.format("YYYY-MM-DD"));
     fetchScheduleData(selectedDate);
-    // Reset confirmation status when date changes
+    fetchMeals(); // ✅ Now it's actually called
     setIsConfirmed(false);
-  }, [selectedDate]); // Dependency array includes selectedDate
+  }, [selectedDate]);
 
   const toggleDatePicker = () => {
     setIsDatePickerOpen(!isDatePickerOpen);
   };
+  const getMealNameById = (mealId) => {
+    const meal = availableMeals.find((m) => m.id === mealId);
+    return meal ? meal.nameEnglish : `Unknown Meal (ID: ${mealId})`;
+  };
+  
 
   // Modified date change handler
   const handleDateChange = (date) => {
@@ -190,7 +216,7 @@ const MenuSets = () => {
       console.log("Date changed to:", newDate.format("YYYY-MM-DD"));
       setSelectedDate(newDate);
       setIsDatePickerOpen(false);
-      
+
       // Fetch schedule data for the new date
       fetchScheduleData(newDate);
       // Reset confirmation status when date changes
@@ -213,10 +239,12 @@ const MenuSets = () => {
   const openUpdatePopup = async () => {
     // Check if schedule is confirmed before opening the popup
     if (isConfirmed) {
-      message.warning("This schedule has been confirmed and cannot be updated.");
+      message.warning(
+        "This schedule has been confirmed and cannot be updated."
+      );
       return;
     }
-    
+
     // Set currently scheduled meals as selected
     setSelectedMeals(scheduleData[activeTab] || []);
     setIsUpdatePopupVisible(true);
@@ -271,7 +299,7 @@ const MenuSets = () => {
       setFetchingSchedule(false);
     }
   };
-  
+
   const fetchScheduleData = async (date) => {
     setFetchingSchedule(true);
     try {
@@ -346,7 +374,7 @@ const MenuSets = () => {
       setScheduleData(newScheduleData);
       setScheduleIds(newScheduleIds);
       setHasExistingSchedule(scheduleFound);
-      
+
       // Check if schedule is confirmed (if your API provides this info)
       if (data.confirmed === true) {
         setIsConfirmed(true);
@@ -360,6 +388,92 @@ const MenuSets = () => {
     }
   };
 
+  // const handleMenuUpdate = async () => {
+  //   try {
+  //     if (selectedMeals.length === 0) {
+  //       message.error("Please select at least one meal");
+  //       return;
+  //     }
+
+  //     const formattedDate = selectedDate.format("YYYY-MM-DD");
+
+  //     // Prepare data for API request
+  //     const updateData = {
+  //       date: formattedDate,
+  //       breakfast:
+  //         activeTab === "breakfast"
+  //           ? selectedMeals
+  //           : scheduleData.breakfast || [],
+  //       lunch: activeTab === "lunch" ? selectedMeals : scheduleData.lunch || [],
+  //       dinner:
+  //         activeTab === "dinner" ? selectedMeals : scheduleData.dinner || [],
+  //     };
+
+  //     console.log("Sending data to API:", JSON.stringify(updateData));
+
+  //     let response;
+
+  //     if (hasExistingSchedule) {
+  //       // Use PATCH to update existing schedule - corrected endpoint format
+  //       response = await fetch(
+  //         `http://localhost:3000/schedule/${formattedDate}`,
+  //         {
+  //           method: "PATCH",
+  //           headers: {
+  //             "Content-Type": "application/json",
+  //           },
+  //           body: JSON.stringify(updateData),
+  //         }
+  //       );
+  //     } else {
+  //       // Use POST to create new schedule
+  //       response = await fetch(`http://localhost:3000/schedule`, {
+  //         method: "POST",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //         body: JSON.stringify(updateData),
+  //       });
+  //     }
+
+  //     if (!response.ok) {
+  //       const errorMessage = await getErrorMessage(response);
+  //       throw new Error(`${response.status}: ${errorMessage}`);
+  //     }
+
+  //     const responseData = await response.json();
+
+  //     // Update local state
+  //     setScheduleData({
+  //       ...scheduleData,
+  //       [activeTab]: selectedMeals,
+  //     });
+
+  //     // Update schedule ID if needed
+  //     if (responseData.id) {
+  //       setScheduleIds({
+  //         breakfast: responseData.id,
+  //         lunch: responseData.id,
+  //         dinner: responseData.id,
+  //       });
+  //       setHasExistingSchedule(true);
+  //     }
+
+  //     message.success(
+  //       `${activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} menu ${
+  //         hasExistingSchedule ? "updated" : "added"
+  //       } successfully`
+  //     );
+
+  //     closeUpdatePopup();
+  //     // Refresh schedule data to ensure we have the latest
+  //     fetchScheduleData(selectedDate);
+  //   } catch (error) {
+  //     console.error("Error updating schedule:", error);
+  //     message.error(`Failed to update schedule: ${error.message}`);
+  //   }
+  // };
+
   const handleMenuUpdate = async () => {
     try {
       if (selectedMeals.length === 0) {
@@ -369,7 +483,7 @@ const MenuSets = () => {
 
       const formattedDate = selectedDate.format("YYYY-MM-DD");
 
-      // Prepare data for API request
+      // Prepare data for API request - now selectedMeals contains meal IDs directly
       const updateData = {
         date: formattedDate,
         breakfast:
@@ -386,7 +500,7 @@ const MenuSets = () => {
       let response;
 
       if (hasExistingSchedule) {
-        // Use PATCH to update existing schedule - corrected endpoint format
+        // Use PATCH to update existing schedule
         response = await fetch(
           `http://localhost:3000/schedule/${formattedDate}`,
           {
@@ -512,13 +626,13 @@ const MenuSets = () => {
     }
   };
 
-  const handleMealSelection = (mealName) => {
-    if (selectedMeals.includes(mealName)) {
-      setSelectedMeals(selectedMeals.filter((item) => item !== mealName));
-    } else {
-      setSelectedMeals([...selectedMeals, mealName]);
-    }
-  };
+  // const handleMealSelection = (mealName) => {
+  //   if (selectedMeals.includes(mealName)) {
+  //     setSelectedMeals(selectedMeals.filter((item) => item !== mealName));
+  //   } else {
+  //     setSelectedMeals([...selectedMeals, mealName]);
+  //   }
+  // };
 
   // Function to filter meals based on category and search text
   const filterMeals = () => {
@@ -561,7 +675,7 @@ const MenuSets = () => {
   // Confirm schedule function - simplified
   const confirmSchedule = async () => {
     closeConfirmModal(); // Close the modal
-    
+
     try {
       const scheduleId = scheduleIds[activeTab];
 
@@ -595,6 +709,8 @@ const MenuSets = () => {
       message.error(`Failed to confirm schedule: ${error.message}`);
     }
   };
+
+  
 
   return (
     <Card className={styles.card}>
@@ -691,7 +807,9 @@ const MenuSets = () => {
                 renderItem={(item, index) => (
                   <>
                     <List.Item className={styles.menuItem}>
-                      <Typography.Text>{item}</Typography.Text>
+                    <Typography.Text>{getMealNameById(item)}</Typography.Text>
+
+
                     </List.Item>
                     {index < currentMenuItems.length - 1 && (
                       <Divider className={styles.divider} />
@@ -790,12 +908,11 @@ const MenuSets = () => {
                     <List.Item className={styles.mealItem}>
                       <div className={styles.mealItemContent}>
                         <div>
-                          {meal.nameEnglish}
-                          
+                          {meal.nameEnglish} ( ID : {meal.id})
                         </div>
                         <Checkbox
-                          checked={selectedMeals.includes(meal.nameEnglish)}
-                          onChange={() => handleMealSelection(meal.nameEnglish)}
+                          checked={selectedMeals.includes(meal.id)}
+                          onChange={() => handleMealSelection(meal.id)}
                           className={styles.ModalCheckbox}
                         />
                       </div>
@@ -873,11 +990,7 @@ const MenuSets = () => {
           <Button key="cancel" onClick={closeConfirmModal}>
             Cancel
           </Button>,
-          <Button
-            key="confirm"
-            type="primary"
-            onClick={confirmSchedule}
-          >
+          <Button key="confirm" type="primary" onClick={confirmSchedule}>
             Confirm
           </Button>,
         ]}
@@ -887,7 +1000,8 @@ const MenuSets = () => {
           {selectedDate.format("MMMM D, YYYY")}?
         </p>
         <p>
-          <strong>Warning:</strong> Once confirmed, you will not be able to update or modify this menu.
+          <strong>Warning:</strong> Once confirmed, you will not be able to
+          update or modify this menu.
         </p>
       </Modal>
     </Card>
