@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   Form,
   Input,
@@ -12,6 +12,7 @@ import {
   Checkbox,
   InputNumber,
   Select,
+  Spin,
 } from "antd";
 import {
   UploadOutlined,
@@ -33,23 +34,61 @@ const AddMealPage = () => {
   const [imageUrl, setImageUrl] = useState(null);
   const [imageFile, setImageFile] = useState(null); // Store the actual file
   const fileInputRef = useRef(null);
-  const [isIngredientsModalVisible, setIsIngredientsModalVisible] =
-    useState(false);
-  const [ingredients, setIngredients] = useState([
-    { id: 1, name: "Rice", quantity: 0, selected: false },
-    { id: 2, name: "Tomato", quantity: 0, selected: false },
-    { id: 3, name: "Oil", quantity: 0, selected: false },
-    { id: 4, name: "Dhal", quantity: 0, selected: false },
-    { id: 5, name: "Potato", quantity: 0, selected: false },
-    { id: 6, name: "Chicken", quantity: 0, selected: false },
-    { id: 7, name: "Onion", quantity: 0, selected: false },
-    { id: 8, name: "Garlic", quantity: 0, selected: false },
-  ]);
+  const [isIngredientsModalVisible, setIsIngredientsModalVisible] =useState(false);
+  const [ingredients, setIngredients] = useState([]);
   const [searchIngredient, setSearchIngredient] = useState("");
   const [selectedIngredients, setSelectedIngredients] = useState([]);
   const [uploading, setUploading] = useState(false); // Track upload status
+  const [loadingIngredients, setLoadingIngredients] = useState(false); // Track ingredients loading state
 
   const navigate = useNavigate();
+
+  // Fetch ingredients from API when the modal is opened
+  const fetchIngredients = async () => {
+    setLoadingIngredients(true);
+    try {
+      const response = await fetch(
+        "http://localhost:3000/Ingredients/optimized"
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch ingredients");
+      }
+
+      const data = await response.json();
+      console.log("API response:", data);
+
+      // Extract ingredients from both arrays in the response
+      const priority1Ingredients = Array.isArray(data.priority1Ingredients)
+        ? data.priority1Ingredients
+        : [];
+      const optimizedIngredients = Array.isArray(data.optimizedIngredients)
+        ? data.optimizedIngredients
+        : [];
+
+      // Combine both arrays
+      const allIngredients = [...priority1Ingredients, ...optimizedIngredients];
+
+      // Transform to our component's expected format
+      const formattedIngredients = allIngredients.map((ingredient) => ({
+        id: ingredient.id,
+        name: ingredient.name,
+        quantity: 0,
+        selected: false,
+      }));
+
+      setIngredients(formattedIngredients);
+
+      if (formattedIngredients.length === 0) {
+        message.warning("No ingredients found in the API response");
+      }
+    } catch (error) {
+      message.error(`Error fetching ingredients: ${error.message}`);
+      console.error("Error fetching ingredients:", error);
+      setIngredients([]);
+    } finally {
+      setLoadingIngredients(false);
+    }
+  };
 
   const handleCancel = () => {
     form.resetFields();
@@ -80,6 +119,12 @@ const AddMealPage = () => {
       // Get the download URL of the uploaded image
       const downloadURL = await getDownloadURL(imageRef);
 
+      // Format ingredients data for database storage
+      // Store in format: "ingredientId:quantity"
+      const ingredientsData = selectedIngredients.map(
+        (ingredient) => `${ingredient.id}:${ingredient.quantity}`
+      );
+
       const mealData = {
         id: values.Id,
         nameEnglish: values.nameEnglish,
@@ -89,8 +134,11 @@ const AddMealPage = () => {
         category: values.category,
         price: parseFloat(values.price),
         imageUrl: downloadURL, // Use the Firebase Storage URL
+        ingredients: ingredientsData, // Add formatted ingredients data
         createdAt: new Date().toISOString(),
       };
+
+      console.log("Submitting meal data:", mealData);
 
       const response = await fetch("http://localhost:3000/meal", {
         method: "POST",
@@ -148,8 +196,10 @@ const AddMealPage = () => {
     };
     reader.readAsDataURL(file);
   };
+
   const showIngredientsModal = () => {
     setIsIngredientsModalVisible(true);
+    fetchIngredients(); // Fetch ingredients when modal is opened
   };
 
   const handleIngredientsModalCancel = () => {
@@ -419,30 +469,41 @@ const AddMealPage = () => {
         </div>
 
         <div className={styles.ingredientsListContainer}>
-          {filteredIngredients.map((ingredient) => (
-            <div key={ingredient.id} className={styles.ingredientItem}>
-              <div className={styles.ingredientNameContainer}>
-                <Checkbox
-                  checked={ingredient.selected}
-                  onChange={() => handleIngredientSelect(ingredient.id)}
-                  className={styles.ingredientCheckbox}
-                >
-                  {ingredient.name}
-                </Checkbox>
-              </div>
-              {ingredient.selected && (
-                <InputNumber
-                  min={0}
-                  value={ingredient.quantity}
-                  onChange={(value) =>
-                    handleQuantityChange(ingredient.id, value)
-                  }
-                  className={styles.quantityInput}
-                  placeholder="In Grams"
-                />
-              )}
+          {loadingIngredients ? (
+            <div className={styles.loadingContainer}>
+              <Spin size="large" />
+              <p>Loading ingredients...</p>
             </div>
-          ))}
+          ) : filteredIngredients.length > 0 ? (
+            filteredIngredients.map((ingredient) => (
+              <div key={ingredient.id} className={styles.ingredientItem}>
+                <div className={styles.ingredientNameContainer}>
+                  <Checkbox
+                    checked={ingredient.selected}
+                    onChange={() => handleIngredientSelect(ingredient.id)}
+                    className={styles.ingredientCheckbox}
+                  >
+                    {ingredient.name} (ID: {ingredient.id})
+                  </Checkbox>
+                </div>
+                {ingredient.selected && (
+                  <InputNumber
+                    min={0}
+                    value={ingredient.quantity}
+                    onChange={(value) =>
+                      handleQuantityChange(ingredient.id, value)
+                    }
+                    className={styles.quantityInput}
+                    placeholder="In Grams"
+                  />
+                )}
+              </div>
+            ))
+          ) : (
+            <div className={styles.noIngredientsMessage}>
+              No ingredients found. Try adjusting your search.
+            </div>
+          )}
         </div>
 
         <div className={styles.modalFooter}>
