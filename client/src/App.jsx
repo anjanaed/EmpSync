@@ -2,6 +2,7 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "./index.css";
 import RootLayout from "./components/UserPortalUI/layout"; // Import RootLayout
+import PayrollDetails from "./components/UserPortalUI/Components/payroll-details"; // Import PayrollDetails
 import UserPortal from "./pages/UserPortal/UserPortal";
 import ProfilePage from "./components/UserPortalUI/Profile/Profile";
 import MealsPage from "./components/UserPortalUI/Meals/Meals"; // Import MealsPage
@@ -60,7 +61,7 @@ function App() {
           <Route path="/OrderReportDashboard" element={<OrderReportDashboard />} />
           <Route path="/OrderHistory" element={<OrderHistory />} />
           <Route path="/reportPage" element={<ReportPage />} />
-          <Route path="/payroll" element={<PayrollPage />} />
+          <Route path="/payroll" element={<PayrollDetails />} /> {/* Route for PayrollDetails */}
           <Route path="/OrderTab" element={<OrderTab />} />
         </Routes>
       </RootLayout>

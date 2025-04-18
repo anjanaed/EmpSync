@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { useLocation } from "react-router-dom"; // Import useLocation
 import { Sidebar } from "./sidebar";
+import { MobileNavigation } from "./mobile-navigation"; // Import MobileNavigation
 
 const SidebarContext = createContext(undefined);
 
@@ -52,7 +53,11 @@ export function SidebarProvider({ children }) {
     <SidebarContext.Provider value={{ isSidebarOpen, toggleSidebar, activeTab }}>
       {isSidebarVisible ? (
         <div style={{ display: "flex", height: "100vh" }}>
-          <Sidebar isOpen={isSidebarOpen} activeTab={activeTab} />
+          {isMobile ? (
+            <MobileNavigation activeTab={activeTab} />
+          ) : (
+            <Sidebar isOpen={isSidebarOpen} activeTab={activeTab} />
+          )}
           <main style={{ flex: 1, overflow: "auto" }}>{children}</main>
         </div>
       ) : (

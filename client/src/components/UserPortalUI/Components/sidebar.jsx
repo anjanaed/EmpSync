@@ -19,7 +19,7 @@ export function Sidebar({ isOpen, activeTab, setActiveTab }) {
 
   const navItems = [
     { name: "Profile", path: "/profile", icon: <UserOutlined /> },
-    { name: "Payroll", path: "/payroll", icon: <DollarOutlined /> },
+    { name: "Payroll", path: "/payroll", icon: <DollarOutlined /> }, // Ensure path is set to /payroll
     { name: "Attendance", path: "/attendance", icon: <CalendarOutlined /> },
     { name: "Meals", path: "/meals", icon: <CoffeeOutlined /> },
     { name: "AI Suggestions", path: "/suggestions", icon: <BulbOutlined /> },
