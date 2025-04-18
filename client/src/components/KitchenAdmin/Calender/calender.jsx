@@ -21,6 +21,7 @@ import {
   DeleteOutlined,
   CalendarOutlined,
   SearchOutlined,
+  CheckCircleOutlined,
 } from "@ant-design/icons";
 import moment from "moment";
 import styles from "./calender.module.css";
@@ -117,6 +118,10 @@ const MenuSets = () => {
     lunch: null,
     dinner: null,
   });
+  // Add a new state to track whether the schedule has been confirmed
+  const [isConfirmed, setIsConfirmed] = useState(false);
+  // Add a state for the confirmation modal
+  const [isConfirmModalVisible, setIsConfirmModalVisible] = useState(false);
 
   // Map tab names to category names in the database
   const tabToCategoryMap = {
@@ -166,13 +171,12 @@ const MenuSets = () => {
     }
   };
 
-  // Fetch schedule data for the selected date
-  // Fetch schedule data for the selected date
-
   // Effect to fetch schedule when date changes
   useEffect(() => {
     console.log("Date changed in effect:", selectedDate.format("YYYY-MM-DD"));
     fetchScheduleData(selectedDate);
+    // Reset confirmation status when date changes
+    setIsConfirmed(false);
   }, [selectedDate]); // Dependency array includes selectedDate
 
   const toggleDatePicker = () => {
@@ -189,6 +193,8 @@ const MenuSets = () => {
       
       // Fetch schedule data for the new date
       fetchScheduleData(newDate);
+      // Reset confirmation status when date changes
+      setIsConfirmed(false);
     }
   };
 
@@ -200,9 +206,17 @@ const MenuSets = () => {
   const shiftToTomorrow = () => {
     const tomorrow = moment(selectedDate).add(1, "days");
     setSelectedDate(tomorrow);
+    // Reset confirmation status when moving to next day
+    setIsConfirmed(false);
   };
 
   const openUpdatePopup = async () => {
+    // Check if schedule is confirmed before opening the popup
+    if (isConfirmed) {
+      message.warning("This schedule has been confirmed and cannot be updated.");
+      return;
+    }
+    
     // Set currently scheduled meals as selected
     setSelectedMeals(scheduleData[activeTab] || []);
     setIsUpdatePopupVisible(true);
@@ -244,6 +258,8 @@ const MenuSets = () => {
           dinner: null,
         });
         setHasExistingSchedule(false);
+        // Reset confirmed status as well
+        setIsConfirmed(false);
       } else {
         const err = await response.text();
         message.error("Failed to remove schedule: " + err);
@@ -255,7 +271,7 @@ const MenuSets = () => {
       setFetchingSchedule(false);
     }
   };
-  // Improved fetchScheduleData function without error message for no data
+  
   const fetchScheduleData = async (date) => {
     setFetchingSchedule(true);
     try {
@@ -271,6 +287,8 @@ const MenuSets = () => {
         dinner: null,
       });
       setHasExistingSchedule(false);
+      // Reset confirmation status
+      setIsConfirmed(false);
 
       // Format date as required by your API (YYYY-MM-DD)
       const formattedDate = date.format("YYYY-MM-DD");
@@ -328,6 +346,11 @@ const MenuSets = () => {
       setScheduleData(newScheduleData);
       setScheduleIds(newScheduleIds);
       setHasExistingSchedule(scheduleFound);
+      
+      // Check if schedule is confirmed (if your API provides this info)
+      if (data.confirmed === true) {
+        setIsConfirmed(true);
+      }
     } catch (error) {
       console.error("Error fetching schedule:", error);
       // Only show error message for genuine errors, not for "no data found"
@@ -521,7 +544,24 @@ const MenuSets = () => {
   // Get the current menu items based on active tab
   const currentMenuItems = scheduleData[activeTab] || [];
 
+  // Show confirmation modal before confirming schedule
+  const showConfirmModal = () => {
+    if (!scheduleIds[activeTab]) {
+      message.info("No schedule found to confirm");
+      return;
+    }
+    setIsConfirmModalVisible(true);
+  };
+
+  // Close confirm modal
+  const closeConfirmModal = () => {
+    setIsConfirmModalVisible(false);
+  };
+
+  // Confirm schedule function - simplified
   const confirmSchedule = async () => {
+    closeConfirmModal(); // Close the modal
+    
     try {
       const scheduleId = scheduleIds[activeTab];
 
@@ -546,11 +586,10 @@ const MenuSets = () => {
         throw new Error(errorMessage);
       }
 
-      message.success(
-        `${
-          activeTab.charAt(0).toUpperCase() + activeTab.slice(1)
-        } schedule confirmed successfully`
-      );
+      // Set confirmed status to true
+      setIsConfirmed(true);
+
+      message.success("Schedule confirmed successfully");
     } catch (error) {
       console.error("Error confirming schedule:", error);
       message.error(`Failed to confirm schedule: ${error.message}`);
@@ -562,6 +601,9 @@ const MenuSets = () => {
       <div className={styles.titleContainer}>
         <Title level={3} className={styles.menuTitle}>
           Menu - {formattedDate}
+          {isConfirmed && (
+            <CheckCircleOutlined style={{ color: "green", marginLeft: 10 }} />
+          )}
         </Title>
         <div className={styles.datePickerContainer}>
           <div className={styles.buttonGroup}>
@@ -595,11 +637,8 @@ const MenuSets = () => {
                   if (!open) setIsDatePickerOpen(false);
                 }}
                 style={{ width: "280px" }}
-                // Explicitly set the default date to today
                 defaultPickerValue={moment()}
-                // Explicitly set format to avoid locale issues
                 format="YYYY-MM-DD"
-                // Add an onOk handler to ensure proper closing
                 onOk={(date) => {
                   handleDateChange(date);
                 }}
@@ -673,6 +712,7 @@ const MenuSets = () => {
             className={styles.updateButton}
             icon={<PlusOutlined />}
             onClick={openUpdatePopup}
+            disabled={isConfirmed} // Disable update button if schedule is confirmed
           >
             <span className={styles.buttonLabel}>
               {scheduleIds[activeTab] ? "Update Menu" : "Add Menu"}
@@ -683,7 +723,7 @@ const MenuSets = () => {
             className={styles.removeButton}
             icon={<DeleteOutlined />}
             onClick={showDeleteConfirmation}
-            disabled={!hasExistingSchedule}
+            disabled={!hasExistingSchedule || isConfirmed} // Disable delete if confirmed
           >
             <span className={styles.buttonLabel}>Remove Schedule</span>
           </Button>
@@ -691,8 +731,8 @@ const MenuSets = () => {
           <Button
             type="primary"
             className={styles.confirmButton}
-            onClick={confirmSchedule}
-            disabled={!scheduleIds[activeTab]}
+            onClick={showConfirmModal} // Show confirmation modal first
+            disabled={!scheduleIds[activeTab] || isConfirmed} // Disable if already confirmed
           >
             Confirm Schedule
           </Button>
@@ -776,7 +816,6 @@ const MenuSets = () => {
           </div>
 
           <div className={styles.buttonContainer}>
-            {/* Changed Cancel button to Clear Menu button with onClick handler */}
             <Button
               className={styles.cancelButton}
               onClick={handleClearActiveTabMenu}
@@ -822,6 +861,33 @@ const MenuSets = () => {
         </p>
         <p>
           This will remove breakfast, lunch, and dinner menus for this date.
+        </p>
+      </Modal>
+
+      {/* Confirm Schedule Modal */}
+      <Modal
+        title="Confirm Schedule"
+        open={isConfirmModalVisible}
+        onCancel={closeConfirmModal}
+        footer={[
+          <Button key="cancel" onClick={closeConfirmModal}>
+            Cancel
+          </Button>,
+          <Button
+            key="confirm"
+            type="primary"
+            onClick={confirmSchedule}
+          >
+            Confirm
+          </Button>,
+        ]}
+      >
+        <p>
+          Are you sure you want to confirm the schedule for{" "}
+          {selectedDate.format("MMMM D, YYYY")}?
+        </p>
+        <p>
+          <strong>Warning:</strong> Once confirmed, you will not be able to update or modify this menu.
         </p>
       </Modal>
     </Card>

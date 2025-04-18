@@ -24,7 +24,7 @@ import styles from "./editMeal.module.css";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 // Import Firebase services
-import { storage } from "../../../firebase/config"; // Adjust path to your Firebase config
+import { storage } from "../../../firebase/config";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 const { TextArea } = Input;
@@ -35,20 +35,11 @@ const EditMealPage = () => {
   const [form] = Form.useForm();
   const [imageUrl, setImageUrl] = useState(null);
   const fileInputRef = useRef(null);
-  const [isIngredientsModalVisible, setIsIngredientsModalVisible] =
-    useState(false);
-  const [ingredients, setIngredients] = useState([
-    { id: 1, name: "Rice", quantity: 0, selected: false },
-    { id: 2, name: "Tomato", quantity: 0, selected: false },
-    { id: 3, name: "Oil", quantity: 0, selected: false },
-    { id: 4, name: "Dhal", quantity: 0, selected: false },
-    { id: 5, name: "Potato", quantity: 0, selected: false },
-    { id: 6, name: "Chicken", quantity: 0, selected: false },
-    { id: 7, name: "Onion", quantity: 0, selected: false },
-    { id: 8, name: "Garlic", quantity: 0, selected: false },
-  ]);
+  const [isIngredientsModalVisible, setIsIngredientsModalVisible] = useState(false);
+  const [loadingIngredients, setLoadingIngredients] = useState(false);
   const [searchIngredient, setSearchIngredient] = useState("");
   const [selectedIngredients, setSelectedIngredients] = useState([]);
+  const [ingredients, setIngredients] = useState([]);
   const [mealData, setMealData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -57,51 +48,156 @@ const EditMealPage = () => {
 
   const navigate = useNavigate();
   const location = useLocation();
+  
+  // Define parseIngredientsFromMealData function first
+  const parseIngredientsFromMealData = async (ingredientsArray) => {
+    if (!ingredientsArray || ingredientsArray.length === 0) {
+      return [];
+    }
 
-  // Effect to load meal data when component mounts
-  useEffect(() => {
-    if (location.state && location.state.meal) {
-      const meal = location.state.meal;
-      setMealData(meal);
-      setImageUrl(meal.imageUrl);
-
-      // Set form values
-      form.setFieldsValue({
-        nameEnglish: meal.nameEnglish,
-        nameSinhala: meal.nameSinhala,
-        nameTamil: meal.nameTamil,
-        price: meal.price,
-        description: meal.description,
-        category: meal.category || "all", // Set default category if not present
-      });
-
-      // If meal has ingredients, populate the selected ingredients
-      if (meal.ingredients && meal.ingredients.length > 0) {
-        setSelectedIngredients(meal.ingredients);
-
-        // Update the ingredients list to mark the selected ones
-        const updatedIngredients = [...ingredients];
-        meal.ingredients.forEach((selectedIng) => {
-          const index = updatedIngredients.findIndex(
-            (ing) => ing.id === selectedIng.id
-          );
-          if (index !== -1) {
-            updatedIngredients[index] = {
-              ...updatedIngredients[index],
-              selected: true,
-              quantity: selectedIng.quantity,
-            };
-          }
-        });
-        setIngredients(updatedIngredients);
+    try {
+      // First, fetch all ingredients to get their names
+      const response = await fetch("http://localhost:3000/Ingredients/optimized");
+      if (!response.ok) {
+        throw new Error("Failed to fetch ingredients data");
       }
 
-      setLoading(false);
-    } else {
-      message.error("No meal data found for editing");
-      navigate("/kitchen-meal"); // Redirect back to meals list
+      const data = await response.json();
+      
+      // Combine both ingredient arrays from the API
+      const priority1Ingredients = Array.isArray(data.priority1Ingredients) 
+        ? data.priority1Ingredients 
+        : [];
+      const optimizedIngredients = Array.isArray(data.optimizedIngredients) 
+        ? data.optimizedIngredients 
+        : [];
+      const allIngredients = [...priority1Ingredients, ...optimizedIngredients];
+      
+      // Create a map of ingredient IDs to their full details for quick lookup
+      const ingredientsMap = {};
+      allIngredients.forEach(ing => {
+        ingredientsMap[ing.id] = ing;
+      });
+
+      console.log("Ingredients map:", ingredientsMap);
+      console.log("Processing ingredient strings:", ingredientsArray);
+
+      // Parse the meal's ingredients which are in format "id:quantity"
+      const parsedIngredients = ingredientsArray.map(ingredientString => {
+        const [ingredientId, quantity] = ingredientString.split(':');
+        const ingredientDetails = ingredientsMap[ingredientId];
+        
+        return {
+          id: ingredientId,
+          name: ingredientDetails ? ingredientDetails.name : `Ingredient ID: ${ingredientId}`,
+          quantity: parseInt(quantity, 10) || 0
+        };
+      });
+
+      console.log("Parsed ingredients:", parsedIngredients);
+      return parsedIngredients;
+    } catch (error) {
+      console.error("Error parsing ingredients:", error);
+      // Fallback parsing if API fetch fails
+      return ingredientsArray.map(ingredientString => {
+        const [ingredientId, quantity] = ingredientString.split(':');
+        return {
+          id: ingredientId,
+          name: `Ingredient ID: ${ingredientId}`,
+          quantity: parseInt(quantity, 10) || 0
+        };
+      });
     }
-  }, [location.state, form, navigate, ingredients]);
+  };
+
+  // Now use the function in useEffect
+  useEffect(() => {
+    const fetchMealData = async () => {
+      if (location.state && location.state.meal) {
+        const meal = location.state.meal;
+        setMealData(meal);
+        setImageUrl(meal.imageUrl);
+
+        form.setFieldsValue({
+          nameEnglish: meal.nameEnglish,
+          nameSinhala: meal.nameSinhala,
+          nameTamil: meal.nameTamil,
+          price: meal.price,
+          description: meal.description,
+          category: meal.category || "All",
+        });
+
+        // Parse and set the selected ingredients
+        if (meal.ingredients && meal.ingredients.length > 0) {
+          try {
+            const parsedIngredients = await parseIngredientsFromMealData(meal.ingredients);
+            console.log("Parsed ingredients:", parsedIngredients);
+            setSelectedIngredients(parsedIngredients);
+          } catch (error) {
+            console.error("Error setting ingredients:", error);
+            message.error("Failed to load ingredient details");
+          }
+        }
+
+        setLoading(false);
+      } else {
+        message.error("No meal data found for editing");
+        navigate("/kitchen-meal");
+      }
+    };
+
+    fetchMealData();
+  }, [location.state, form, navigate]);
+
+  const fetchIngredients = async () => {
+    setLoadingIngredients(true);
+    try {
+      const response = await fetch("http://localhost:3000/Ingredients/optimized");
+      if (!response.ok) {
+        throw new Error("Failed to fetch ingredients");
+      }
+
+      const data = await response.json();
+
+      // Extract ingredients from both arrays in the response
+      const priority1Ingredients = Array.isArray(data.priority1Ingredients)
+        ? data.priority1Ingredients
+        : [];
+      const optimizedIngredients = Array.isArray(data.optimizedIngredients)
+        ? data.optimizedIngredients
+        : [];
+
+      // Combine both arrays
+      const allIngredients = [...priority1Ingredients, ...optimizedIngredients];
+
+      // Transform and mark previously selected ingredients
+      const formattedIngredients = allIngredients.map((ingredient) => {
+        // Check if this ingredient was previously selected
+        const existingIngredient = selectedIngredients.find(
+          (sel) => String(sel.id) === String(ingredient.id)
+        );
+
+        return {
+          id: ingredient.id,
+          name: ingredient.name,
+          quantity: existingIngredient ? existingIngredient.quantity : 0,
+          selected: Boolean(existingIngredient)
+        };
+      });
+
+      setIngredients(formattedIngredients);
+
+      if (formattedIngredients.length === 0) {
+        message.warning("No ingredients found in the API response");
+      }
+    } catch (error) {
+      message.error(`Error fetching ingredients: ${error.message}`);
+      console.error("Error fetching ingredients:", error);
+      setIngredients([]);
+    } finally {
+      setLoadingIngredients(false);
+    }
+  };
 
   const handleCancel = () => {
     form.resetFields();
@@ -159,25 +255,24 @@ const EditMealPage = () => {
         });
       }
 
+      // Format ingredients to match the expected format ["ingredientId:quantity"]
+      const formattedIngredients = selectedIngredients.map(
+        (ing) => `${ing.id}:${ing.quantity}`
+      );
+
       // Prepare the data to be sent to the API
       const updateData = {
         nameEnglish: values.nameEnglish,
         nameSinhala: values.nameSinhala,
         nameTamil: values.nameTamil,
         description: values.description,
-        price: parseFloat(values.price), // Convert price to number
+        price: parseFloat(values.price),
         imageUrl: finalImageUrl,
-        category: values.category, // Add category field
-        // Only include ingredients if they were modified
-        ...(selectedIngredients.length > 0
-          ? { ingredients: selectedIngredients }
-          : {}),
+        category: values.category,
+        ingredients: formattedIngredients,
       };
 
-      // Log what we're sending to the API for debugging
       console.log("Sending update data:", updateData);
-      console.log("Data size (bytes):", JSON.stringify(updateData).length);
-      console.log("To endpoint:", `http://localhost:3000/meal/${mealData.id}`);
 
       // Make the API call to update the meal
       const response = await axios.patch(
@@ -190,8 +285,6 @@ const EditMealPage = () => {
         }
       );
 
-      console.log("API response:", response);
-
       if (response.status === 200) {
         message.success("Meal updated successfully");
         navigate("/kitchen-meal");
@@ -200,15 +293,11 @@ const EditMealPage = () => {
       }
     } catch (error) {
       console.error("Error updating meal:", error);
-
-      // Enhanced error logging
+      
       if (error.response) {
-        // The request was made and the server responded with a status code
-        // that falls out of the range of 2xx
         console.error("Response data:", error.response.data);
         console.error("Response status:", error.response.status);
-        console.error("Response headers:", error.response.headers);
-
+        
         if (error.response.status === 413) {
           message.error(
             "Request entity too large. Image may be too big or data package exceeds server limits."
@@ -221,11 +310,9 @@ const EditMealPage = () => {
           );
         }
       } else if (error.request) {
-        // The request was made but no response was received
         console.error("No response received:", error.request);
         message.error("Failed to update meal: No response from server");
       } else {
-        // Something happened in setting up the request that triggered an Error
         message.error(`Failed to update meal: ${error.message}`);
       }
     } finally {
@@ -264,6 +351,7 @@ const EditMealPage = () => {
 
   const showIngredientsModal = () => {
     setIsIngredientsModalVisible(true);
+    fetchIngredients(); // Fetch ingredients when modal is opened
   };
 
   const handleIngredientsModalCancel = () => {
@@ -296,11 +384,15 @@ const EditMealPage = () => {
     const selected = ingredients.filter(
       (ingredient) => ingredient.selected && ingredient.quantity > 0
     );
+    
+    console.log("Selected ingredients from modal:", selected);
     setSelectedIngredients(selected);
     setIsIngredientsModalVisible(false);
 
     if (selected.length > 0) {
       message.success(`${selected.length} ingredients selected`);
+    } else {
+      message.warning("No ingredients selected");
     }
   };
 
@@ -446,7 +538,6 @@ const EditMealPage = () => {
                   <Input placeholder="Enter price" />
                 </Form.Item>
 
-                {/* Add Category Field */}
                 <Form.Item
                   label="Category"
                   name="category"
@@ -477,20 +568,23 @@ const EditMealPage = () => {
                   </Button>
                 </Form.Item>
 
-                {selectedIngredients.length > 0 && (
-                  <div className={styles.selectedIngredientsContainer}>
-                    <p className={styles.selectedIngredientsTitle}>
-                      Selected Ingredients:
-                    </p>
+                {/* Selected Ingredients Display */}
+                <div className={styles.selectedIngredientsContainer}>
+                  <p className={styles.selectedIngredientsTitle}>Selected Ingredients:</p>
+                  {selectedIngredients.length > 0 ? (
                     <ul className={styles.selectedIngredientsList}>
                       {selectedIngredients.map((ingredient) => (
-                        <li key={ingredient.id}>
+                        <li key={ingredient.id} className={styles.selectedIngredientItem}>
                           {ingredient.name} - {ingredient.quantity}g
                         </li>
                       ))}
                     </ul>
-                  </div>
-                )}
+                  ) : (
+                    <div className={styles.noIngredientsMessage}>
+                      No ingredients selected yet.
+                    </div>
+                  )}
+                </div>
               </Col>
             </Row>
 
@@ -519,7 +613,6 @@ const EditMealPage = () => {
           </Form>
         </Card>
       </div>
-
       <Modal
         title="Available Ingredients"
         open={isIngredientsModalVisible}
@@ -540,30 +633,41 @@ const EditMealPage = () => {
         </div>
 
         <div className={styles.ingredientsListContainer}>
-          {filteredIngredients.map((ingredient) => (
-            <div key={ingredient.id} className={styles.ingredientItem}>
-              <div className={styles.ingredientNameContainer}>
-                <Checkbox
-                  checked={ingredient.selected}
-                  onChange={() => handleIngredientSelect(ingredient.id)}
-                  className={styles.ingredientCheckbox}
-                >
-                  {ingredient.name}
-                </Checkbox>
-              </div>
-              {ingredient.selected && (
-                <InputNumber
-                  min={0}
-                  value={ingredient.quantity}
-                  onChange={(value) =>
-                    handleQuantityChange(ingredient.id, value)
-                  }
-                  className={styles.quantityInput}
-                  placeholder="In Grams"
-                />
-              )}
+          {loadingIngredients ? (
+            <div className={styles.loadingContainer}>
+              <Spin size="large" />
+              <p>Loading ingredients...</p>
             </div>
-          ))}
+          ) : filteredIngredients.length > 0 ? (
+            filteredIngredients.map((ingredient) => (
+              <div key={ingredient.id} className={styles.ingredientItem}>
+                <div className={styles.ingredientNameContainer}>
+                  <Checkbox
+                    checked={ingredient.selected}
+                    onChange={() => handleIngredientSelect(ingredient.id)}
+                    className={styles.ingredientCheckbox}
+                  >
+                    {ingredient.name} (ID: {ingredient.id})
+                  </Checkbox>
+                </div>
+                {ingredient.selected && (
+                  <InputNumber
+                    min={0}
+                    value={ingredient.quantity}
+                    onChange={(value) =>
+                      handleQuantityChange(ingredient.id, value)
+                    }
+                    className={styles.quantityInput}
+                    placeholder="In Grams"
+                  />
+                )}
+              </div>
+            ))
+          ) : (
+            <div className={styles.noIngredientsMessage}>
+              No ingredients found. Try adjusting your search.
+            </div>
+          )}
         </div>
 
         <div className={styles.modalFooter}>
