@@ -1,11 +1,13 @@
 import React from "react";
-import { Tabs, Card, Table, Badge, Button } from "antd";
+import { Tabs, Card, Table, Badge, Button, Typography } from "antd";
 import {
   DollarOutlined,
   DownloadOutlined,
   CreditCardOutlined,
   CalendarOutlined,
 } from "@ant-design/icons";
+
+const { Title, Text } = Typography;
 
 const currentPayroll = {
   salary: 85000,
@@ -54,30 +56,68 @@ const deductions = [
 
 export default function PayrollDetails() {
   return (
-    <Tabs defaultActiveKey="summary" style={{ marginTop: "20px" }}>
+    <Tabs
+      defaultActiveKey="summary"
+      style={{ margin: "20px" }}
+      tabBarStyle={{ backgroundColor: "#f5f5f5", borderRadius: "8px" }}
+    >
       <Tabs.TabPane tab="Summary" key="summary">
         <div style={{ display: "flex", gap: "20px", flexWrap: "wrap" }}>
-          <Card title="Annual Salary" bordered={false} style={{ width: 300 }}>
+          <Card
+            title={<Title level={4}>Annual Salary</Title>}
+            bordered={false}
+            style={{
+              width: 300,
+              boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+              borderRadius: "8px",
+            }}
+          >
             <DollarOutlined style={{ fontSize: "24px", color: "#08c" }} />
-            <p style={{ fontSize: "20px", fontWeight: "bold" }}>${currentPayroll.salary.toLocaleString()}</p>
-            <p>Per year</p>
+            <p style={{ fontSize: "20px", fontWeight: "bold" }}>
+              ${currentPayroll.salary.toLocaleString()}
+            </p>
+            <Text type="secondary">Per year</Text>
           </Card>
-          <Card title="Net Pay" bordered={false} style={{ width: 300 }}>
+          <Card
+            title={<Title level={4}>Net Pay</Title>}
+            bordered={false}
+            style={{
+              width: 300,
+              boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+              borderRadius: "8px",
+            }}
+          >
             <CreditCardOutlined style={{ fontSize: "24px", color: "#08c" }} />
-            <p style={{ fontSize: "20px", fontWeight: "bold" }}>${currentPayroll.netPay.toLocaleString()}</p>
-            <p>After deductions</p>
+            <p style={{ fontSize: "20px", fontWeight: "bold" }}>
+              ${currentPayroll.netPay.toLocaleString()}
+            </p>
+            <Text type="secondary">After deductions</Text>
           </Card>
-          <Card title="Next Payment" bordered={false} style={{ width: 300 }}>
+          <Card
+            title={<Title level={4}>Next Payment</Title>}
+            bordered={false}
+            style={{
+              width: 300,
+              boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+              borderRadius: "8px",
+            }}
+          >
             <CalendarOutlined style={{ fontSize: "24px", color: "#08c" }} />
-            <p style={{ fontSize: "20px", fontWeight: "bold" }}>{currentPayroll.payDate}</p>
-            <p>Direct deposit</p>
+            <p style={{ fontSize: "20px", fontWeight: "bold" }}>
+              {currentPayroll.payDate}
+            </p>
+            <Text type="secondary">Direct deposit</Text>
           </Card>
         </div>
 
         <Card
-          title="Current Pay Period"
-          style={{ marginTop: 24 }}
-          extra={<span>Details for the current month's payroll</span>}
+          title={<Title level={4}>Current Pay Period</Title>}
+          style={{
+            marginTop: 24,
+            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+            borderRadius: "8px",
+          }}
+          extra={<Text type="secondary">Details for the current month's payroll</Text>}
         >
           <div style={{ display: "flex", gap: 32, flexWrap: "wrap" }}>
             <div style={{ flex: 1 }}>
@@ -90,12 +130,20 @@ export default function PayrollDetails() {
               <p style={{ borderTop: "1px solid #eee", paddingTop: 8 }}>
                 <strong>Net Pay:</strong> ${currentPayroll.netPay.toLocaleString()}
               </p>
-              <Button icon={<DownloadOutlined />} style={{ marginTop: 16 }}>
+              <Button
+                icon={<DownloadOutlined />}
+                style={{
+                  marginTop: 16,
+                  backgroundColor: "#08c",
+                  color: "#fff",
+                  borderRadius: "4px",
+                }}
+              >
                 Download Pay Slip
               </Button>
             </div>
             <div style={{ flex: 1 }}>
-              <h4>Payment Information</h4>
+              <Title level={5}>Payment Information</Title>
               <p>Bank: National Bank</p>
               <p>Account Number: XXXX-XXXX-1234</p>
               <p>Routing Number: XXX-XXX-XXX</p>
@@ -106,7 +154,14 @@ export default function PayrollDetails() {
       </Tabs.TabPane>
 
       <Tabs.TabPane tab="Payment History" key="history">
-        <Card title="Payment History" extra={<span>View your past payments</span>}>
+        <Card
+          title={<Title level={4}>Payment History</Title>}
+          extra={<Text type="secondary">View your past payments</Text>}
+          style={{
+            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+            borderRadius: "8px",
+          }}
+        >
           <Table
             dataSource={paymentHistory}
             rowKey="id"
@@ -125,10 +180,7 @@ export default function PayrollDetails() {
                 title: "Status",
                 dataIndex: "status",
                 render: (text) => (
-                  <Badge
-                    status="success"
-                    text={text}
-                  />
+                  <Badge status="success" text={text} />
                 ),
               },
               {
@@ -136,7 +188,15 @@ export default function PayrollDetails() {
                 dataIndex: "actions",
                 align: "right",
                 render: () => (
-                  <Button icon={<DownloadOutlined />} size="small" />
+                  <Button
+                    icon={<DownloadOutlined />}
+                    size="small"
+                    style={{
+                      backgroundColor: "#08c",
+                      color: "#fff",
+                      borderRadius: "4px",
+                    }}
+                  />
                 ),
               },
             ]}
@@ -145,7 +205,14 @@ export default function PayrollDetails() {
       </Tabs.TabPane>
 
       <Tabs.TabPane tab="Deductions" key="deductions">
-        <Card title="Deductions" extra={<span>Breakdown of your monthly deductions</span>}>
+        <Card
+          title={<Title level={4}>Deductions</Title>}
+          extra={<Text type="secondary">Breakdown of your monthly deductions</Text>}
+          style={{
+            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+            borderRadius: "8px",
+          }}
+        >
           <Table
             dataSource={deductions.map((item, idx) => ({ key: idx, ...item }))}
             pagination={false}
