@@ -1,21 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import {Button,Card,Tabs,Badge,Row,Col,Typography,Layout,Alert,} from "antd";
-import {LeftOutlined,FilterOutlined,PlusOutlined,CheckCircleOutlined,} from "@ant-design/icons";
+import { Button, Card, Tabs, Badge, Row, Col, Typography, Layout, Alert, Space } from "antd";
+import { LeftOutlined, FilterOutlined, PlusOutlined, CheckCircleOutlined } from "@ant-design/icons";
 import { motion } from "framer-motion";
 import styles from "./Page3.module.css";
 import DateAndTime from "../DateAndTime/DateAndTime";
 
 const { Content } = Layout;
 const { Title, Text } = Typography;
-const { TabPane } = Tabs;
 
-// Sample translations object
 const translations = {
     english: {
         orderSuccess: "Your order has been placed successfully!",
         title: "Order Your Meal",
-        back: "Change Language", // Corrected spelling
+        back: "Change Language",
         today: "Today",
         tomorrow: "Tomorrow",
         breakfast: "Breakfast",
@@ -30,7 +28,7 @@ const translations = {
     sinhala: {
         orderSuccess: "ඔබේ ඇණවුම සාර්ථකව ඉදිරිපත් කර ඇත!",
         title: "ඔබේ ආහාරය ඇණවුම් කරන්න",
-        back: "භාෂාව වෙනස් කරන්න", // Sinhala translation
+        back: "භාෂාව වෙනස් කරන්න",
         today: "අද",
         tomorrow: "හෙට",
         breakfast: "උදේ ආහාරය",
@@ -45,7 +43,7 @@ const translations = {
     tamil: {
         orderSuccess: "உங்கள் ஆர்டர் வெற்றிகரமாக சமர்ப்பிக்கப்பட்டது!",
         title: "உங்கள் உணவை ஆர்டர் செய்யவும்",
-        back: "மொழியை மாற்றவும்", // Tamil translation
+        back: "மொழியை மாற்றவும்",
         today: "இன்று",
         tomorrow: "நாளை",
         breakfast: "காலை உணவு",
@@ -59,131 +57,6 @@ const translations = {
     },
 };
 
-import otb3Image from "../../../assets/otb3.jpg";
-
-const meals = [
-    {
-        id: 1,
-        name: "Pancakes",
-        description: "Delicious fluffy pancakes.",
-        category: "breakfast",
-        image: otb3Image,
-        price: 5.99,
-    },
-    {
-        id: 2,
-        name: "Burger",
-        description: "Juicy beef burger with cheese.",
-        category: "lunch",
-        image: otb3Image,
-        price: 8.99,
-    },
-    {
-        id: 3,
-        name: "Steak",
-        description: "Grilled steak with vegetables.",
-        category: "dinner",
-        image: otb3Image,
-        price: 14.99,
-    },
-    {
-        id: 4,
-        name: "Omelette",
-        description: "Cheese and mushroom omelette.",
-        category: "breakfast",
-        image: otb3Image,
-        price: 6.49,
-    },
-    {
-        id: 5,
-        name: "Caesar Salad",
-        description: "Fresh Caesar salad with croutons.",
-        category: "lunch",
-        image: otb3Image,
-        price: 7.99,
-    },
-    {
-        id: 6,
-        name: "Spaghetti Bolognese",
-        description: "Classic Italian pasta with meat sauce.",
-        category: "dinner",
-        image: otb3Image,
-        price: 12.99,
-    },
-    {
-        id: 7,
-        name: "French Toast",
-        description: "Golden-brown French toast with syrup.",
-        category: "breakfast",
-        image: otb3Image,
-        price: 5.49,
-    },
-    {
-        id: 8,
-        name: "Grilled Chicken Sandwich",
-        description: "Grilled chicken sandwich with lettuce and tomato.",
-        category: "lunch",
-        image: otb3Image,
-        price: 9.49,
-    },
-    {
-        id: 9,
-        name: "Salmon Fillet",
-        description: "Pan-seared salmon with lemon butter sauce.",
-        category: "dinner",
-        image: otb3Image,
-        price: 16.99,
-    },
-    {
-        id: 10,
-        name: "Avocado Toast",
-        description: "Toasted bread topped with smashed avocado.",
-        category: "breakfast",
-        image: otb3Image,
-        price: 4.99,
-    },
-    {
-        id: 11,
-        name: "Chicken Caesar Wrap",
-        description: "Grilled chicken Caesar salad in a wrap.",
-        category: "lunch",
-        image: otb3Image,
-        price: 8.49,
-    },
-    {
-        id: 12,
-        name: "Beef Stroganoff",
-        description: "Creamy beef stroganoff with mushrooms.",
-        category: "dinner",
-        image: otb3Image,
-        price: 13.99,
-    },
-    {
-        id: 13,
-        name: "Smoothie Bowl",
-        description: "Healthy smoothie bowl with fresh fruits.",
-        category: "breakfast",
-        image: otb3Image,
-        price: 6.99,
-    },
-    {
-        id: 14,
-        name: "Veggie Burger",
-        description: "Plant-based burger with fresh vegetables.",
-        category: "lunch",
-        image: otb3Image,
-        price: 7.49,
-    },
-    {
-        id: 15,
-        name: "Roast Chicken",
-        description: "Oven-roasted chicken with herbs.",
-        category: "dinner",
-        image: otb3Image,
-        price: 15.49,
-    },
-];
-
 const Page3 = ({ carouselRef, language = "english" }) => {
     const navigate = useNavigate();
     const [currentTime, setCurrentTime] = useState(new Date());
@@ -192,17 +65,77 @@ const Page3 = ({ carouselRef, language = "english" }) => {
     const [selectedMealTime, setSelectedMealTime] = useState("breakfast");
     const [orderItems, setOrderItems] = useState([]);
     const [showSuccess, setShowSuccess] = useState(false);
+    const [meals, setMeals] = useState([]);
+    const [allMeals, setAllMeals] = useState([]); // New state to store all meals
 
     useEffect(() => {
+        // Set the current time
         const timer = setInterval(() => {
             setCurrentTime(new Date());
         }, 1000);
+
+        // Determine the initial meal time based on the current time
+        const determineMealTime = () => {
+            const currentHour = new Date().getHours();
+            if (currentHour < 10) {
+                return "breakfast"; // Before 10 AM
+            } else if (currentHour < 15) {
+                return "lunch"; // Before 3 PM
+            } else if (currentHour < 22) {
+                return "dinner"; // Before 10 PM
+            } else {
+                return "breakfast"; // Default to breakfast for late-night hours
+            }
+        };
+
+        // Set the initial meal time
+        setSelectedMealTime(determineMealTime());
+
         return () => clearInterval(timer);
     }, []);
 
-    const formatDateForDisplay = (date) => {
-        return date.toLocaleDateString();
-    };
+    useEffect(() => {
+        const fetchMeals = async () => {
+            try {
+                const date = selectedDate === "today" ? new Date() : new Date(new Date().setDate(new Date().getDate() + 1));
+                const formattedDate = date.toISOString().split("T")[0];
+                const scheduleResponse = await fetch(`http://localhost:3000/schedule/${formattedDate}`);
+                
+                if (!scheduleResponse.ok) {
+                    throw new Error("Failed to fetch schedule");
+                }
+
+                const scheduleData = await scheduleResponse.json();
+                const mealIds = scheduleData[selectedMealTime] || [];
+
+                // Fetch meal details for the meal IDs
+                const mealDetailsPromises = mealIds.map((id) =>
+                    fetch(`http://localhost:3000/meal/${id}`).then((res) => {
+                        if (!res.ok) {
+                            throw new Error(`Failed to fetch meal with ID: ${id}`);
+                        }
+                        return res.json();
+                    })
+                );
+
+                const mealDetails = await Promise.all(mealDetailsPromises);
+                setMeals(mealDetails);
+
+                // Merge new meals into allMeals
+                setAllMeals((prevAllMeals) => {
+                    const newMeals = mealDetails.filter((meal) => !prevAllMeals.some((m) => m.id === meal.id));
+                    return [...prevAllMeals, ...newMeals];
+                });
+            } catch (error) {
+                console.error("Error fetching meals:", error);
+                setMeals([]);
+            }
+        };
+
+        fetchMeals();
+    }, [selectedDate, selectedMealTime]);
+
+    const formatDateForDisplay = (date) => date.toLocaleDateString();
 
     const getTomorrowDate = () => {
         const tomorrow = new Date();
@@ -211,26 +144,18 @@ const Page3 = ({ carouselRef, language = "english" }) => {
     };
 
     const isMealTimeAvailable = (mealTime, date) => {
-        if (date !== "today") return true; // No restrictions for "tomorrow"
+        if (date !== "today") return true;
 
         const currentHour = currentTime.getHours();
+        if (mealTime === "breakfast") return currentHour < 10;
+        if (mealTime === "lunch") return currentHour < 15;
+        if (mealTime === "dinner") return currentHour < 22;
 
-        if (mealTime === "breakfast") {
-            return currentHour < 10; // Breakfast ends at 10 am
-        } else if (mealTime === "lunch") {
-            return  currentHour < 15; // Lunch ends at 3 pm
-        } else if (mealTime === "dinner") {
-            return  currentHour < 22; // Dinner ends at 10 pm
-        }
-
-        return false; // Default to unavailable
+        return false;
     };
 
     const addToOrder = (mealId) => {
-        setOrderItems((prev) => [
-            ...prev,
-            { mealId, date: selectedDate, mealTime: selectedMealTime },
-        ]);
+        setOrderItems((prev) => [...prev, { mealId, date: selectedDate, mealTime: selectedMealTime }]);
     };
 
     const removeFromOrder = (index) => {
@@ -241,13 +166,9 @@ const Page3 = ({ carouselRef, language = "english" }) => {
         setShowSuccess(true);
         setTimeout(() => {
             setShowSuccess(false);
-            setOrderItems([]); // Clear order items
-            window.location.reload(); // Refresh the entire web page
+            setOrderItems([]);
+            window.location.reload();
         }, 3000);
-    };
-
-    const getMealById = (id) => {
-        return meals.find((meal) => meal.id === id);
     };
 
     const text = translations[language];
@@ -320,77 +241,80 @@ const Page3 = ({ carouselRef, language = "english" }) => {
                                 <Tabs
                                     activeKey={selectedMealTime}
                                     onChange={setSelectedMealTime}
-                                    tabBarExtraContent={
-                                        <Button icon={<FilterOutlined />}>{text.filter}</Button>
-                                    }
-                                    tabBarStyle={{ fontWeight: "bold" }}
-                                >
-                                    {["breakfast", "lunch", "dinner"].map((mealTime) => (
-                                        <TabPane
-                                            key={mealTime}
-                                            tab={text[mealTime]}
-                                            disabled={!isMealTimeAvailable(mealTime, selectedDate)}
-                                        >
+                                    tabBarStyle={{
+                                        fontWeight: "bold", // Make the font bold
+                                    }}
+                                    items={["breakfast", "lunch", "dinner"].map((mealTime) => ({
+                                        key: mealTime,
+                                        label: text[mealTime],
+                                        disabled: !isMealTimeAvailable(mealTime, selectedDate),
+                                        children: (
                                             <div className={styles.mealList}>
                                                 <Row gutter={16}>
-                                                    {meals
-                                                        .filter((meal) => meal.category === mealTime)
-                                                        .map((meal) => {
-                                                            const isAvailable = isMealTimeAvailable(mealTime, selectedDate);
-                                                            return (
-                                                                <Col
-                                                                    span={8}
-                                                                    key={meal.id}
-                                                                    className={styles.tabContent}
+                                                    {meals.map((meal) => {
+                                                        // Determine if the meal is past its due time
+                                                        const isPastDue = (() => {
+                                                            if (selectedDate === "tomorrow") return false; // Always allow meals for tomorrow
+                                                            const currentHour = currentTime.getHours();
+                                                            if (selectedMealTime === "breakfast" && currentHour >= 10) return true;
+                                                            if (selectedMealTime === "lunch" && currentHour >= 15) return true;
+                                                            if (selectedMealTime === "dinner" && currentHour >= 22) return true;
+                                                            return false;
+                                                        })();
+
+                                                        return (
+                                                            <Col span={8} key={meal.id} className={styles.tabContent}>
+                                                                <Card
+                                                                    onClick={() => !isPastDue && addToOrder(meal.id)} // Disable click if past due
+                                                                    cover={
+                                                                        <img
+                                                                            alt={meal[`name${language.charAt(0).toUpperCase() + language.slice(1)}`] || "Meal"}
+                                                                            src={meal.imageUrl || "https://via.placeholder.com/200"}
+                                                                            style={{
+                                                                                height: 200,
+                                                                                objectFit: "cover",
+                                                                                border: "1px solid rgb(0, 0, 0)",
+                                                                                borderRadius: 4,
+                                                                                filter: isPastDue ? "grayscale(100%)" : "none", // Gray out the image if past due
+                                                                            }}
+                                                                        />
+                                                                    }
                                                                     style={{
-                                                                        opacity: isAvailable ? 1 : 0.5, // Grayed-out style
-                                                                        pointerEvents: isAvailable ? "auto" : "none", // Disable interaction
+                                                                        cursor: isPastDue ? "not-allowed" : "pointer", // Change cursor if past due
+                                                                        opacity: isPastDue ? 0.5 : 1, // Reduce opacity if past due
                                                                     }}
                                                                 >
-                                                                    <Card
-                                                                        onClick={() => isAvailable && addToOrder(meal.id)}
-                                                                        cover={
-                                                                            <img
-                                                                                alt={meal.name}
-                                                                                src={meal.image}
-                                                                                style={{
-                                                                                    height: 200,
-                                                                                    objectFit: "cover",
-                                                                                    border: "1px solid rgb(0, 0, 0)",
-                                                                                    borderRadius: 4,
-                                                                                }}
-                                                                            />
+                                                                    <Card.Meta
+                                                                        title={meal[`name${language.charAt(0).toUpperCase() + language.slice(1)}`] || "Unnamed Meal"}
+                                                                        description={
+                                                                            <>
+                                                                                <Text ellipsis>{meal.description || "No description available"}</Text>
+                                                                                <div style={{ marginTop: 8 }}>
+                                                                                    <Text strong>
+                                                                                        ${meal.price ? meal.price.toFixed(2) : "0.00"}
+                                                                                    </Text>
+                                                                                </div>
+                                                                                <Button
+                                                                                    type="primary"
+                                                                                    block
+                                                                                    icon={<PlusOutlined />}
+                                                                                    style={{ marginTop: 8 }}
+                                                                                    disabled={isPastDue} // Disable button if past due
+                                                                                >
+                                                                                    {text.add}
+                                                                                </Button>
+                                                                            </>
                                                                         }
-                                                                    >
-                                                                        <Card.Meta
-                                                                            title={meal.name}
-                                                                            description={
-                                                                                <>
-                                                                                    <Text ellipsis>{meal.description}</Text>
-                                                                                    <div style={{ marginTop: 8 }}>
-                                                                                        <Text strong>${meal.price.toFixed(2)}</Text>
-                                                                                    </div>
-                                                                                    <Button
-                                                                                        type="primary"
-                                                                                        block
-                                                                                        icon={<PlusOutlined />}
-                                                                                        style={{ marginTop: 8 }}
-                                                                                        disabled={!isAvailable} // Disable button if unavailable
-                                                                                    >
-                                                                                        {text.add}
-                                                                                    </Button>
-                                                                                </>
-                                                                            }
-                                                                        />
-                                                                    </Card>
-                                                                </Col>
-                                                            );
-                                                        })}
+                                                                    />
+                                                                </Card>
+                                                            </Col>
+                                                        );
+                                                    })}
                                                 </Row>
                                             </div>
-                                        </TabPane>
-                                    ))}
-                                </Tabs>
+                                        ),
+                                    }))}
+                                />
                             </Col>
 
                             <Col span={8}>
@@ -408,12 +332,9 @@ const Page3 = ({ carouselRef, language = "english" }) => {
                                             ) : (
                                                 <>
                                                     {orderItems.map((item, index) => {
-                                                        const meal = getMealById(item.mealId);
+                                                        const meal = allMeals.find((meal) => meal.id === item.mealId); // Use allMeals instead of meals
                                                         return (
-                                                            <div
-                                                                key={index}
-                                                                className={styles.orderCard}
-                                                            >
+                                                            <div key={index} className={styles.orderCard}>
                                                                 <div className={styles.orderDetails}>
                                                                     <div>
                                                                         <Text
@@ -423,7 +344,9 @@ const Page3 = ({ carouselRef, language = "english" }) => {
                                                                                 fontSize: 20,
                                                                             }}
                                                                         >
-                                                                            {meal.name}
+                                                                            {meal
+                                                                                ? meal[`name${language.charAt(0).toUpperCase() + language.slice(1)}`] || "Unnamed Meal"
+                                                                                : "Meal not found"}
                                                                         </Text>
                                                                         <div style={{ marginTop: 8 }}>
                                                                             <Badge
@@ -444,7 +367,7 @@ const Page3 = ({ carouselRef, language = "english" }) => {
                                                                                 style={{ marginLeft: 8 }}
                                                                             />
                                                                             <Text strong>
-                                                                                ${meal.price.toFixed(2)}
+                                                                                ${meal ? meal.price.toFixed(2) : "0.00"}
                                                                             </Text>
                                                                         </div>
                                                                     </div>
@@ -486,8 +409,8 @@ const Page3 = ({ carouselRef, language = "english" }) => {
                                             Total: $
                                             {orderItems
                                                 .reduce((total, item) => {
-                                                    const meal = getMealById(item.mealId);
-                                                    return total + meal.price;
+                                                    const meal = allMeals.find((meal) => meal.id === item.mealId); // Use allMeals instead of meals
+                                                    return total + (meal ? meal.price : 0);
                                                 }, 0)
                                                 .toFixed(2)}
                                         </Text>
