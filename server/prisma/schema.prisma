@@ -16,7 +16,7 @@ datasource db {
 
 model User {
   id         String       @id
-  name       String       @unique
+  name       String       
   role       String
   dob        String?
   telephone  String?
@@ -46,11 +46,13 @@ model Ingredient {
 }
 
 model Payroll {
-  id         String   @id @unique
+  id         Int   @id @default(autoincrement())
   empId      String
   employee   User     @relation(fields: [empId], references: [id])
+  range DateTime[]
   month      String
-  payrollPdf Bytes
+  netPay Float
+  payrollPdf String
   createdAt  DateTime @default(now())
 }
 
@@ -67,6 +69,24 @@ model Meal {
   createdAt    DateTime  @default(now())
 }
 
+model SalaryAdjustments {
+  id           Int     @id @default(autoincrement())
+  label        String
+  isPercentage Boolean //Percentage or Value
+  allowance    Boolean //Allowance or Deduction
+  amount Float?
+}
+
+
+model IndividualSalaryAdjustments{
+  id Int @id @default(autoincrement())
+  empId String
+  label String
+  isPercentage Boolean
+  allowance Boolean
+  amount Float
+}
+
 model Order {
   id          Int      @id @default(autoincrement())
   orderNumber String   @unique
@@ -77,9 +97,9 @@ model Order {
 }
 
 model Attendance {
-  id       String @id
+  id       String   @id
   empId    String
-  employee User   @relation(fields: [empId], references: [id])
+  employee User     @relation(fields: [empId], references: [id])
   dateTime DateTime
   status   String
 }
@@ -101,4 +121,12 @@ model ScheduledMeal {
   lunch     String[]
   dinner    String[]
   createdAt DateTime @default(now())
+}
+
+model PayeTaxSlab{
+  id Int @id @default(autoincrement())
+  orderId Int
+  lowerLimit Float
+  upperLimit Float?
+  taxRate Float
 }

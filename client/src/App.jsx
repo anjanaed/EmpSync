@@ -29,6 +29,7 @@ import CostAnalysis from "./components/Ingredients/Analysis/Cost Analysis/CostAn
 import OrderHistory from "./pages/Ingredients/OrderHistory/OrderHistory";
 import ReportPage from "./components/pages/HR/ReportPage/ReportPage";
 import PayrollPage from "./components/pages/HR/PayrollPage/PayrollPage";
+import AdjustmentPage from "./components/pages/HR/AdjustmentPage/AdjustmentPage";
 import OrderTab from "./pages/OrderTab/OrderTab";
 
 function App() {
@@ -40,7 +41,8 @@ function App() {
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/meals" element={<MealsPage />} />
           <Route path="/suggestions" element={<SuggestionsPage />} />
-          <Route path="/attendance" element={<AttendancePage />} /> {/* Add route for AttendancePage */}
+          <Route path="/attendance" element={<AttendancePage />} />{" "}
+          {/* Add route for AttendancePage */}
           <Route path="/login" element={<Login />} />
           <Route path="/LoginRole" element={<LoginRole />} />
           <Route path="/reg" element={<RegisterPage />} />
@@ -58,11 +60,16 @@ function App() {
           <Route path="/Ingredients" element={<Ingredients />} />
           <Route path="/CostAnalysis" element={<CostAnalysis />} />
           <Route path="/AnalysisDashboard" element={<AnalysisDashboard />} />
-          <Route path="/OrderReportDashboard" element={<OrderReportDashboard />} />
+          <Route
+            path="/OrderReportDashboard"
+            element={<OrderReportDashboard />}
+          />
           <Route path="/OrderHistory" element={<OrderHistory />} />
           <Route path="/reportPage" element={<ReportPage />} />
-          <Route path="/payroll" element={<PayrollDetails />} /> {/* Route for PayrollDetails */}
+          <Route path="/payroll" element={<PayrollPage />} />
+          <Route path="/userpayroll" element={<PayrollDetails />} />
           <Route path="/OrderTab" element={<OrderTab />} />
+          <Route path="/adjustment" element={<AdjustmentPage />} />
         </Routes>
       </RootLayout>
     </Router>
@@ -70,5 +77,3 @@ function App() {
 }
 
 export default App;
-
-

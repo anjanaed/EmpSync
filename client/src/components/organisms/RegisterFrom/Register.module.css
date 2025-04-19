@@ -3,6 +3,7 @@
 .formContainer {
   border: 2px solid rgb(207, 207, 207);
   margin: 3vw 4vw;
+  font-family: "Figtree", sans-serif;
   border-radius: 20px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
   overflow: hidden;
@@ -10,19 +11,20 @@
 
 .heading {
   text-align: center;
-  font-weight: 500;
-  font-size: 1.5vw;
-  font-family: "Ubuntu", sans-serif;
+  font-weight: 550;
+  color: brown;
+  font-size: 25px;
   padding: 2vw 1vw 4vw 1vw;
 }
 
 .finHeader {
-  font-weight: 500;
+  font-weight: 600;
   display: flex;
   position: relative;
+  color: brown;
   flex-direction: row;
-  font-size: 1.5vw;
-  font-family: "Ubuntu", sans-serif;
+  font-size: 20px;
+  font-family: "Figtree", sans-serif;
   padding: 2vw 1vw 4vw 1vw;
 }
 
@@ -31,6 +33,7 @@
   width: 100%;
   font-weight: 500;
 }
+
 
 .backIcon {
   top: 50%;
@@ -70,6 +73,28 @@
 
 :global(.ant-form-item-label) {
   text-align: left !important;
+  font-weight: 600;
+  font-family: "Figtree", sans-serif;
+}
+:global(.ant-form-item-label > label) {
+  font-size: 12px !important; 
+}
+
+:global(.ant-input){
+  font-size: 12px !important;
+}
+
+:global(.ant-select-selector){
+  font-size: 12px !important;
+}
+
+:global(.ant-input-group-addon) {
+  font-size: 1px !important; /* Match the font size of the input box */
+  margin: 0px 4px !important; /* Adjust padding to align with the input box */
+}
+
+:global(.ant-form-item-explain-error){
+  font-size: 11px !important;
 }
 
 .btnContainer {

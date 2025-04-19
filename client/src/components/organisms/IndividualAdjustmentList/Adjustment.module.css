@@ -2,11 +2,13 @@
 
 .home {
   display: flex;
+  font-family: "Figtree", sans-serif;
   flex-direction: row;
   width: 100%;
 }
 
 .empty {
+  font-family: Arial, sans-serif;
   font-weight: 650;
   font-size: 1vw;
 }
@@ -21,6 +23,8 @@
   overflow: hidden;
   background-color: rgb(255, 255, 255);
   display: flex;
+  font-family: "Figtree", sans-serif !important;
+
   flex-direction: column;
   overflow-y: auto;
 }
@@ -61,15 +65,8 @@
   width: 10vw;
 }
 
-
-
 .searchBar {
   margin-right: 1vw;
-}
-:global(.ant-select-selector) {
-  font-size: 12px !important;
-  padding: 0;
-  font-family: "Figtree", sans-serif !important;
 }
 
 .headRight select {
@@ -113,4 +110,8 @@ Table {
   background-color: rgb(245, 245, 245);
 }
 
-
+:global(.ant-table-wrapper) :global(.ant-table-tbody > tr:hover > td) {
+  background-color: rgba(196, 196, 196, 0.87) !important;
+  transition: background-color 0s !important; 
+  color: black;
+}
