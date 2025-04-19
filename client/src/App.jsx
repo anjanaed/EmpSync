@@ -66,7 +66,8 @@ function App() {
           />
           <Route path="/OrderHistory" element={<OrderHistory />} />
           <Route path="/reportPage" element={<ReportPage />} />
-          <Route path="/payroll" element={<PayrollDetails />} />
+          <Route path="/payroll" element={<PayrollPage />} />
+          <Route path="/userpayroll" element={<PayrollDetails />} />
           <Route path="/OrderTab" element={<OrderTab />} />
           <Route path="/adjustment" element={<AdjustmentPage />} />
         </Routes>
