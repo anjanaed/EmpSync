@@ -6,18 +6,20 @@
 
 .btn{
     text-align: center;
-    margin: 22px 0 5px 0;
+    margin: 25px 0 5px 0;
 
 }
 
 h2{
     margin: 0;
+    font-size: 20px;
     color: brown;
 
 }
 
 .des{
     line-height: 1.2;
+    font-size: 12px;
     
 }
 
@@ -25,4 +27,9 @@ Button{
     margin-right: 1vw;
     font-family: "Figtree", sans-serif !important;
     font-weight: 500 !important;
+    font-size: 13px !important;
+}
+
+Input{
+    font-size: 12px !important;
 }

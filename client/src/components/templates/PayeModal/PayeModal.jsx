@@ -3,6 +3,7 @@ import { Table, InputNumber, Button, ConfigProvider } from "antd";
 import axios from "axios";
 import Gbutton from "../../atoms/button/Button";
 import styles from "./PayeModal.module.css";
+import { FaRegSave } from "react-icons/fa";
 import { BsPlusCircle } from "react-icons/bs";
 import { LuCircleMinus } from "react-icons/lu";
 
@@ -159,7 +160,7 @@ const PayeModal = ({handleCancel}) => {
         />
       </ConfigProvider>
       <div className={styles.btn}>
-        <Gbutton onClick={handleConfirm}>Confirm</Gbutton>
+        <Gbutton onClick={handleConfirm}><><FaRegSave/>&nbsp; Confirm</></Gbutton>
       </div>
     </div>
   );

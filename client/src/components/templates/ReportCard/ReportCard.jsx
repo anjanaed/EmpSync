@@ -31,11 +31,11 @@ const ReportCard = ({
         </div>
         <div className={styles.right}>
           <button onClick={btnView} className={styles.btn1}>
-            <HiEye size={18} />
+            <HiEye size={15} />
             &nbsp;View
           </button>
           <button onClick={btnDownload} className={styles.btn2}>
-            <HiDownload size={18} />
+            <HiDownload size={15} />
             &nbsp;Download
           </button>
         </div>
