@@ -1,23 +1,18 @@
 import { React, useState, useEffect } from "react";
-import { Input, DatePicker, Checkbox, Modal, InputNumber } from "antd";
+import { Input, DatePicker, Checkbox, Modal, InputNumber, Form } from "antd";
 import styles from "./Payroll.module.css";
 import { useNavigate } from "react-router-dom";
 import { BsPlusCircle } from "react-icons/bs";
 import { FaRegSave } from "react-icons/fa";
 import { LuEye } from "react-icons/lu";
-
-
-
 import Gbutton from "../../atoms/button/Button";
 import { MdCalculate } from "react-icons/md";
 import AdjustmentModal from "../../templates/AdjustmentModal/AdjustmentModal";
 import axios from "axios";
 import { IoOpenOutline } from "react-icons/io5";
-
 import Loading from "../../atoms/loading/loading";
 import { IoMdRemoveCircleOutline } from "react-icons/io";
 import PayeModal from "../../templates/PayeModal/PayeModal";
-
 const { RangePicker } = DatePicker;
 
 const Payroll = () => {
@@ -31,23 +26,26 @@ const Payroll = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isPayeModalOpen, setIsPayeModalOpen] = useState(false);
   const urL = import.meta.env.VITE_BASE_URL;
+  const [form] = Form.useForm();
   const navigate = useNavigate();
   const [individualAdjustment, setIndividualAdjustment] = useState([
     { id: "", details: "", amount: "", isPercentage: true, isAllowance: true },
   ]);
-
   const [loading, setLoading] = useState(true);
   const handleAllowanceChange = () => {
     setIsAllowanceChecked(!isAllowanceChecked);
   };
 
+  //Format Month
   const handleMonthChange = (value) => {
     if (value) {
       const formattedMonth = value.format("MM~YYYY");
       setMonth(formattedMonth);
-      console.log(month);
+      form.setFieldsValue({ payrollMonth: value });
     }
   };
+
+  //Format Range
   const handleRangeChange = (dates) => {
     console.log(month);
     if (dates) {
@@ -57,6 +55,7 @@ const Payroll = () => {
     }
   };
 
+  //Add New Set of Fields
   const handleNewIndividualAdjustment = () => {
     setIndividualAdjustment([
       ...individualAdjustment,
@@ -70,22 +69,18 @@ const Payroll = () => {
     ]);
   };
 
+  //Payroll Generation
   const handleGenerate = async () => {
+    await form.validateFields();
+
     setLoading(true);
-    console.log(range);
-    await handleEtfEpf();
+    //Sending ETF EPF data
     try {
-      await axios
-        .post(`${urL}/payroll/calculate-all`, {
-          range: range,
-          month: month,
-        })
-        .then((res) => {
-          console.log(res);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      await handleEtfEpf();
+      await axios.post(`${urL}/payroll/calculate-all`, {
+        range: range,
+        month: month,
+      });
     } catch (err) {
       console.log(err);
     }
@@ -100,55 +95,6 @@ const Payroll = () => {
     setIsPayeModalOpen(true);
   };
 
-  const handleAdjustmentDelete = async (id) => {
-    setLoading(true);
-    setLoading(true);
-    try {
-      const intId = parseInt(id, 10);
-      await axios
-        .delete(`${urL}/adjustment/${intId}`)
-        .then((res) => {
-          console.log(res);
-          fetchAdjustments();
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    } catch (err) {
-      console.log(err);
-    }
-    setLoading(false);
-  };
-  const fetchAdjustments = async () => {
-    try {
-      const res = await axios.get(`${urL}/adjustment`);
-
-      if (
-        res.data.find((adj) => adj.label == "EPF (Employee)") ||
-        res.data.find((adj) => adj.label == "ETF") ||
-        res.data.find((adj) => adj.label == "EmployerFund")
-      ) {
-        setEpf(res.data.find((adj) => adj.label == "EPF (Employee)").amount);
-        setEtf(res.data.find((adj) => adj.label == "ETF").amount);
-        setEmployerFund(
-          res.data.find((adj) => adj.label == "EmployerFund").amount
-        );
-        const filteredRes = res.data.filter(
-          (adj) =>
-            adj.label !== "ETF" &&
-            adj.label !== "EPF (Employee)" &&
-            adj.label !== "EmployerFund"
-        );
-        setAdjustments(filteredRes);
-      } else {
-        setAdjustments(res.data);
-      }
-    } catch (err) {
-      console.log(err);
-    }
-    setLoading(false);
-  };
-
   const handleCancel = () => {
     setIsModalOpen(false);
   };
@@ -156,16 +102,69 @@ const Payroll = () => {
   const handlePayeModalCancel = () => {
     setIsPayeModalOpen(false);
   };
+
   const modalStyles = {
     mask: {
       backdropFilter: "blur(12px)",
     },
   };
 
+  //Remove General Adjustment
+  const handleAdjustmentDelete = async (id) => {
+    setLoading(true);
+    try {
+      const intId = parseInt(id, 10);
+      await axios.delete(`${urL}/adjustment/${intId}`);
+      fetchAdjustments();
+    } catch (err) {
+      console.log(err);
+    }
+    setLoading(false);
+  };
+
+  //Fetch Data
+  const fetchAdjustments = async () => {
+    try {
+      const res = await axios.get(`${urL}/adjustment`);
+      //Check Availability of Pre defined Fields & Set their Existing Values
+      const epfValue = res.data.find((adj) => adj.label == "EPF (Employee)");
+      const etfValue = res.data.find((adj) => adj.label == "ETF");
+      console.log(epfValue);
+      const employerFundValue = res.data.find(
+        (adj) => adj.label == "EmployerFund"
+      );
+      if (epfValue) {
+        setEpf(epfValue.amount);
+        form.setFieldsValue({ epf: epfValue.amount });
+      }
+      if (etfValue) {
+        setEtf(etfValue.amount);
+        form.setFieldsValue({ etf: etfValue.amount });
+      }
+      if (employerFundValue) {
+        setEmployerFund(employerFundValue.amount);
+        form.setFieldsValue({ EmployerFund: employerFundValue.amount });
+      }
+      //Filter out pre defined fields for display
+      const filteredRes = res.data.filter(
+        (adj) =>
+          adj.label !== "ETF" &&
+          adj.label !== "EPF (Employee)" &&
+          adj.label !== "EmployerFund"
+      );
+      setAdjustments(filteredRes);
+    } catch (err) {
+      console.log(err);
+    }
+    setLoading(false);
+  };
+
+  //Submit Individual Adjustment
   const handleIndiAdjustmentSave = async () => {
     setLoading(true);
     try {
       for (const adj of individualAdjustment) {
+        //Trim & Validate fields
         const idArray = adj.id
           .split(",")
           .map((id) => id.trim())
@@ -184,6 +183,7 @@ const Payroll = () => {
             .post(`${urL}/indiadjustment`, payload)
             .then((res) => {
               console.log(res);
+              //Reset Fields
               setIndividualAdjustment([
                 {
                   id: "",
@@ -206,67 +206,69 @@ const Payroll = () => {
   };
 
   const handleEtfEpf = async () => {
+    setLoading(true);
     try {
+      //Retrieve Pre defined field values
       const res = await axios.get(`${urL}/adjustment`);
       const adjustment = res.data;
-
       const epfRecord = adjustment.find((adj) => adj.label == "EPF (Employee)");
       const etfRecord = adjustment.find((adj) => adj.label == "ETF");
       const employerFundRecord = adjustment.find(
         (adj) => adj.label == "EmployerFund"
       );
+      const epfPayload = {
+        label: "EPF (Employee)",
+        isPercentage: true,
+        allowance: false,
+        amount: parseFloat(epf),
+      };
+      const etfPayload = {
+        label: "ETF",
+        isPercentage: true,
+        allowance: false,
+        amount: parseFloat(etf),
+      };
+      const employerPayload = {
+        label: "EmployerFund",
+        isPercentage: true,
+        allowance: false,
+        amount: parseFloat(employerFund),
+      };
 
+      // Update the record if changes are detected, or create a new one if it doesn't exist
       if (epfRecord) {
-        await axios.put(`${urL}/adjustment/${epfRecord.id}`, {
-          label: "EPF (Employee)",
-          isPercentage: true,
-          allowance: false,
-          amount: parseFloat(epf),
-        });
+        if (epfRecord.amount != parseFloat(epf)) {
+          await axios.put(`${urL}/adjustment/${epfRecord.id}`, epfPayload);
+        }
       } else {
-        await axios.post(`${urL}/adjustment`, {
-          label: "EPF (Employee)",
-          isPercentage: true,
-          allowance: false,
-          amount: parseFloat(epf),
-        });
+        await axios.post(`${urL}/adjustment`, epfPayload);
       }
-
       if (employerFundRecord) {
-        await axios.put(`${urL}/adjustment/${employerFundRecord.id}`, {
-          label: "EmployerFund",
-          isPercentage: true,
-          allowance: false,
-          amount: parseFloat(employerFund),
-        });
+        if (employerFundRecord.amount != parseFloat(employerFund)) {
+          await axios.put(
+            `${urL}/adjustment/${employerFundRecord.id}`,
+            employerPayload
+          );
+        }
       } else {
-        await axios.post(`${urL}/adjustment`, {
-          label: "EmployerFund",
-          isPercentage: true,
-          allowance: false,
-          amount: parseFloat(employerFund),
-        });
+        await axios.post(`${urL}/adjustment`, employerPayload);
       }
 
       if (etfRecord) {
-        await axios.put(`${urL}/adjustment/${parseInt(etfRecord.id)}`, {
-          label: "ETF",
-          isPercentage: true,
-          allowance: false,
-          amount: parseFloat(etf),
-        });
+        if (etfRecord.amount != parseFloat(etf)) {
+          await axios.put(
+            `${urL}/adjustment/${parseInt(etfRecord.id)}`,
+            etfPayload
+          );
+        }
       } else {
-        await axios.post(`${urL}/adjustment`, {
-          label: "ETF",
-          isPercentage: true,
-          allowance: false,
-          amount: parseFloat(etf),
-        });
+        await axios.post(`${urL}/adjustment`, etfPayload);
       }
       fetchAdjustments();
     } catch (err) {
       console.log(err);
     }
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -276,8 +278,10 @@ const Payroll = () => {
   if (loading) {
     return <Loading />;
   }
+
   return (
-    <>
+    <Form form={form}>
+      {/* Modal 1 */}
       <Modal
         open={isModalOpen}
         footer={null}
@@ -287,6 +291,7 @@ const Payroll = () => {
       >
         <AdjustmentModal handleCancel={handleCancel} fetch={fetchAdjustments} />
       </Modal>
+      {/* Modal 2 */}
       <Modal
         open={isPayeModalOpen}
         footer={null}
@@ -305,53 +310,71 @@ const Payroll = () => {
             <div className={styles.inputSet}>
               <label>Employee Trust Fund (ETF) Rate</label>
               <br />
-              <InputNumber
-                min={0}
-                max={100}
-                formatter={(value) => `${value}%`}
-                parser={(value) => value.replace("%", "")}
-                value={etf}
-                onChange={(value) => setEtf(value)}
-                placeholder={"Enter Rate"}
-                style={{ width: "250px" }}
-              />
+              <Form.Item
+                name="etf"
+                rules={[{ required: true, message: "ETF Rate Required!" }]}
+              >
+                <InputNumber
+                  min={0}
+                  max={100}
+                  formatter={(value) => `${value}%`}
+                  parser={(value) => value.replace("%", "")}
+                  value={etf}
+                  onChange={(value) => setEtf(value)}
+                  placeholder={"Enter Rate"}
+                  style={{ width: "250px" }}
+                />
+              </Form.Item>
             </div>
             <div className={styles.inputSet}>
               <label>Employee Provident Fund (EPF) Rate</label>
               <br />
-              <InputNumber
-                min={0}
-                max={100}
-                formatter={(value) => `${value}%`}
-                parser={(value) => value?.replace("%", "")}
-                value={epf}
-                onChange={(value) => setEpf(value)}
-                placeholder={"Enter Rate"}
-                style={{ width: "250px" }}
-              />
+              <Form.Item
+                name="epf"
+                rules={[{ required: true, message: "EPF Rate Required!" }]}
+              >
+                <InputNumber
+                  min={0}
+                  max={100}
+                  formatter={(value) => `${value}%`}
+                  parser={(value) => value?.replace("%", "")}
+                  value={epf}
+                  onChange={(value) => setEpf(value)}
+                  placeholder={"Enter Rate"}
+                  style={{ width: "250px" }}
+                />
+              </Form.Item>
             </div>
             <div className={styles.inputSet}>
               <label>Employer Provident Fund (EPF) Rate</label>
               <br />
-              <InputNumber
-                min={0}
-                max={100}
-                formatter={(value) => `${value}%`}
-                parser={(value) => value?.replace("%", "")}
-                value={employerFund}
-                onChange={(value) => setEmployerFund(value)}
-                placeholder={"Enter Rate"}
-                style={{ width: "250px" }}
-              />
-            </div>
 
+              <Form.Item
+                name="EmployerFund"
+                rules={[{ required: true, message: "EPF Rate Required!" }]}
+              >
+                <InputNumber
+                  min={0}
+                  max={100}
+                  formatter={(value) => `${value}%`}
+                  parser={(value) => value?.replace("%", "")}
+                  value={employerFund}
+                  onChange={(value) => setEmployerFund(value)}
+                  placeholder={"Enter Rate"}
+                  style={{ width: "250px" }}
+                />
+              </Form.Item>
+            </div>
             <div className={styles.inputSet}>
               <label>Max Paid Leave Days Allowed</label>
               <br />
-              <InputNumber
-                style={{ width: "250px" }}
-                placeholder="No of Days"
-              />
+
+              <Form.Item name="leaves">
+                <InputNumber
+                  style={{ width: "250px" }}
+                  placeholder="No of Days"
+                />
+              </Form.Item>
             </div>
           </div>
           <div className={styles.dynamicInputLine}>
@@ -388,19 +411,26 @@ const Payroll = () => {
             <div>
               <label>Payroll Period</label>
               <br />
-              <RangePicker
-                style={{ width: "250px" }}
-                onChange={(dates) => handleRangeChange(dates)}
-              />
+              <Form.Item name="range">
+                <RangePicker
+                  style={{ width: "250px" }}
+                  onChange={(dates) => handleRangeChange(dates)}
+                />
+              </Form.Item>
             </div>
             <div>
-              <label>Payroll Period</label>
+              <label>Payroll Month</label>
               <br />
-              <DatePicker
-                picker="month"
-                style={{ width: "250px" }}
-                onChange={(value) => handleMonthChange(value)}
-              />
+              <Form.Item
+                name="payrollMonth"
+                rules={[{ required: true, message: "Please Fill the Month!" }]}
+              >
+                <DatePicker
+                  picker="month"
+                  style={{ width: "250px" }}
+                  onChange={(value) => handleMonthChange(value)}
+                />
+              </Form.Item>
             </div>
           </div>
         </div>
@@ -460,8 +490,7 @@ const Payroll = () => {
                   style={{ transform: "scale(0.9)" }}
                   checked={adj.isAllowance}
                   onChange={() => {
-                    handleAllowanceChange;
-
+                    handleAllowanceChange();
                     const newList = [...individualAdjustment];
                     newList[index].isAllowance = true;
                     setIndividualAdjustment(newList);
@@ -473,7 +502,7 @@ const Payroll = () => {
                   style={{ transform: "scale(0.9)" }}
                   checked={!adj.isAllowance}
                   onChange={() => {
-                    handleAllowanceChange;
+                    handleAllowanceChange();
                     const newList = [...individualAdjustment];
                     newList[index].isAllowance = false;
                     setIndividualAdjustment(newList);
@@ -487,7 +516,7 @@ const Payroll = () => {
                   style={{ transform: "scale(0.9)" }}
                   checked={adj.isPercentage}
                   onChange={() => {
-                    handleAllowanceChange;
+                    handleAllowanceChange();
 
                     const newList = [...individualAdjustment];
                     newList[index].isPercentage = true;
@@ -501,7 +530,7 @@ const Payroll = () => {
                   checked={!adj.isPercentage}
                   defaultChecked
                   onChange={() => {
-                    handleAllowanceChange;
+                    handleAllowanceChange();
                     const newList = [...individualAdjustment];
                     newList[index].isPercentage = false;
                     setIndividualAdjustment(newList);
@@ -525,15 +554,18 @@ const Payroll = () => {
           ))}
           <div className={styles.btnSet}>
             <button onClick={handleNewIndividualAdjustment}>
-            <BsPlusCircle size={13} />Add Adjustment
+              <BsPlusCircle size={13} />
+              Add Adjustment
             </button>
-            <button onClick={handleIndiAdjustmentSave}><FaRegSave size={13}/> Save Adjustment</button>
+            <button onClick={handleIndiAdjustmentSave}>
+              <FaRegSave size={13} /> Save Adjustment
+            </button>
             <button onClick={() => navigate("/adjustment")}>
-              <LuEye size={13}/>View Adjustments
+              <LuEye size={13} />
+              View Adjustments
             </button>
           </div>
         </div>
-        <hr />
         <div className={styles.genBtn}>
           <Gbutton onClick={handleGenerate}>
             <>
@@ -543,7 +575,7 @@ const Payroll = () => {
           </Gbutton>
         </div>
       </div>
-    </>
+    </Form>
   );
 };
 

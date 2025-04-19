@@ -32,7 +32,6 @@ Input {
   font-size: 13px;
 
   gap: 50px;
-  margin-bottom: 10px;
 }
 
 .bottomHalf .inputLine{
@@ -43,6 +42,7 @@ Input {
   flex: 1;
   font-weight: 450;
   font-size: 13px;
+  font-family: "Figtree", sans-serif !important;
 
 
 }
@@ -79,20 +79,26 @@ Input {
   
 }
 
-.dates{
+.dates {
   display: flex;
+  font-family: "Figtree", sans-serif ;
   gap: 65px;
   font-size: 13px;
+}
+
+.dates label{
+  font-family: "Figtree", sans-serif !important;
 
 }
 
 hr {
-  margin: 2vw 0vw;
+  margin: 15px 0vw;
   opacity: 50%;
 }
 
 .btnSet {
   text-align: center;
+  margin-bottom: 25px;
   display: flex;
 justify-content: center;}
 
