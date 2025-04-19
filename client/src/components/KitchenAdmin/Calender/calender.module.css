@@ -1,211 +1,220 @@
-
 @import url("https://fonts.googleapis.com/css2?family=Bree+Serif&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Itim&family=Roboto+Slab:wght@100..900&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap");
-  
-  .card {
-    width: 100%;
-    max-width: 1500px; /* Limit maximum width */
-    margin: 0 auto; /* Center the card */
-    /* border-radius: 12px; */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    /* border: none; */
-    margin-top:60px;
-  }
-  
-  .titleContainer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 24px;
-  }
-  
-  .menuTitle {
-    margin-bottom: 0 !important;
-    font-weight: bold;
-    font-size: 1.5rem;
-    /* color: #333; */
-     font-family: "Ubuntu", sans-serif !important;
 
-  }
-  
-  .selectDateButton {
-    width:150px !important;
-    height:35px !important;
-    display: flex;
-    align-items: center;
-    color: rgb(230, 74, 74);
-    border-color: rgb(230, 74, 74);
-    font-size: 16px;
-  }
-  
-  .selectDateButton:hover {
-    color: white !important;
-    background-color: rgb(230, 74, 74) !important;
-    border-color: rgb(230, 74, 74) !important;
+.card {
+  width: 100%;
+  max-width: 1500px; /* Limit maximum width */
+  margin: 0 auto; /* Center the card */
+  /* border-radius: 12px; */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  /* border: none; */
+  margin-top: 60px;
+}
+
+.titleContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.menuTitle {
+  margin-bottom: 0 !important;
+  font-weight: bold;
+  font-size: 1.5rem;
+  /* color: #333; */
+  font-family: "Ubuntu", sans-serif !important;
+}
 
 
-  }
-  
-  .customTabsContainer {
-    margin-bottom: 20px;
-    margin-top: 50px !important;
-    font-size: 15px !important;
-    
-  }
-  
-  .customTabs {
-    display: flex;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    background-color: #f9f9f9;
-    overflow: hidden;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  }
-  
-  .customTab {
-    flex: 1;
-    text-align: center;
-    padding: 12px 16px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-weight: 500;
-    color: #6c6c6c;
-    position: relative;
-  }
-  
-  .customTab:hover {
-    background-color: #f0f0f0;
-  }
-  
-  .activeTab {
-    background-color: white;
-    color:  rgb(190, 0, 0);
-    box-shadow: 0 -2px 0  rgb(190, 0, 0) inset;
-  }
-  
-  .menuContainer {
-    display: flex;
-    gap: 20px;
-    background-color: #fafafa;
-    border-radius: 8px;
-    padding: 20px;
-    
-  }
-  
-  .menuList {
-    flex: 1;
-    background-color: white;
-    border-radius: 6px;
-    border: 1px solid #e0e0e0;
-    max-height: 52vh !important;
-    overflow-y: auto !important;
-  }
-  
-  .menuItem {
-    padding: 16px !important;
-    transition: background-color 0.2s ease;
-    font-size: 20px !important;
 
-    
-  }
-  
-  .menuItem:hover {
-    background-color: #f5f5f5;
-  }
-  
-  .divider {
-    margin: 0;
-    border-top-color: #e0e0e0;
-  }
-  
-  .actionContainer {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-  }
-  
-  .updateButton, .removeButton {
-    height: 5vh;
-    width:25vw;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 6px;
-    transition: all 0.3s ease;
-    margin-left: 120px !important;
-    font-size: 15px;
-  }
-  
-  .updateButton {
-    border-color: #5c0a1f!important;
-    color: #5c0a1f !important;
-  }
-  
-  .updateButton:hover {
-    /* transform: scale(1.01); */
-    font-size:16px;
+.datePickerContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+.buttonGroup {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
 
-  }
-  
-  .removeButton {
-    border-color:rgb(191, 3, 3);
-    color: rgb(191, 3, 3);
-  }
-  
-  .removeButton:hover {
-    /* background-color: #d32f2f !important; */
-    border-color:rgb(180, 13, 13) !important;
+.tomorrowButton {
+  margin-right: 10px;
+}
 
-    color: rgb(180, 13, 13) !important;
-    /* transform: scale(1.01); */
-    font-size:16px;
+.selectDateButton,
+.tomorrowButton {
+  width: 150px !important;
+  height: 35px !important;
+  display: flex;
+  align-items: center;
+  color: rgb(230, 74, 74);
+  border-color: rgb(230, 74, 74);
+  font-size: 16px;
+}
 
+.selectDateButton:hover {
+  color: white !important;
+  background-color: rgb(230, 74, 74) !important;
+  border-color: rgb(230, 74, 74) !important;
+}
+.tomorrowButton:hover {
+  color: white !important;
+  background-color: rgb(230, 74, 74) !important;
+  border-color: rgb(230, 74, 74) !important;
+}
 
-  }
-  
-  .buttonLabel {
-    margin-left: 8px;
-  }
-  
-  .confirmButton {
-    height: 5vh;
-    width:25vw;
-    background: rgb(191, 3, 3);
-    border-color: rgb(191, 3, 3);
-    border-radius: 6px;
-    font-weight: 600;
-    /* text-transform: uppercase; */
-    letter-spacing: 0.5px;
-    margin-left: 120px !important;
-    font-size: 15px;
+.customTabsContainer {
+  margin-bottom: 20px;
+  margin-top: 50px !important;
+  font-size: 15px !important;
+}
 
+.customTabs {
+  display: flex;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
 
-  }
-  
-  .confirmButton:hover {
-    background: rgb(151, 1, 1)!important;
-    border-color: rgb(151, 1, 1) !important;
-    /* transform: scale(1.01); */
-    font-size:16px;
+.customTab {
+  flex: 1;
+  text-align: center;
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  color: #6c6c6c;
+  position: relative;
+}
 
-  }
-  
-  .datePickerContainer {
-    position: relative;
-  }
-  
-  .datePickerDropdown {
-    position: absolute;
-    top: 100%;
-    right: 0;
-    z-index: 100;
-    margin-top: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    border-radius: 6px;
-  }
-  
+.customTab:hover {
+  background-color: #f0f0f0;
+}
 
-   /* Optional: Customize scrollbar */
+.activeTab {
+  background-color: white;
+  color: rgb(190, 0, 0);
+  box-shadow: 0 -2px 0 rgb(190, 0, 0) inset;
+}
+
+.menuContainer {
+  display: flex;
+  gap: 20px;
+  background-color: #fafafa;
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.menuList {
+  flex: 1;
+  background-color: white;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+  max-height: 52vh !important;
+  overflow-y: auto !important;
+}
+
+.menuItem {
+  padding: 16px !important;
+  transition: background-color 0.2s ease;
+  font-size: 20px !important;
+}
+
+.menuItem:hover {
+  background-color: #f5f5f5;
+}
+
+.divider {
+  margin: 0;
+  border-top-color: #e0e0e0;
+}
+
+.actionContainer {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.updateButton,
+.removeButton {
+  height: 5vh;
+  width: 25vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  margin-left: 120px !important;
+  font-size: 15px;
+}
+
+.updateButton {
+  border-color: #5c0a1f !important;
+  color: #5c0a1f !important;
+}
+
+.updateButton:hover {
+  /* transform: scale(1.01); */
+  font-size: 16px;
+}
+
+.removeButton {
+  border-color: rgb(191, 3, 3);
+  color: rgb(191, 3, 3);
+}
+
+.removeButton:hover {
+  /* background-color: #d32f2f !important; */
+  border-color: rgb(180, 13, 13) !important;
+
+  color: rgb(180, 13, 13) !important;
+  /* transform: scale(1.01); */
+  font-size: 16px;
+}
+
+.buttonLabel {
+  margin-left: 8px;
+}
+
+.confirmButton {
+  height: 5vh;
+  width: 25vw;
+  background: rgb(191, 3, 3);
+  border-color: rgb(191, 3, 3);
+  border-radius: 6px;
+  font-weight: 600;
+  /* text-transform: uppercase; */
+  letter-spacing: 0.5px;
+  margin-left: 120px !important;
+  font-size: 15px;
+}
+
+.confirmButton:hover {
+  background: rgb(151, 1, 1) !important;
+  border-color: rgb(151, 1, 1) !important;
+  /* transform: scale(1.01); */
+  font-size: 16px;
+}
+
+.datePickerContainer {
+  position: relative;
+}
+
+.datePickerDropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  z-index: 100;
+  margin-top: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 6px;
+}
+
+/* Optional: Customize scrollbar */
 .menuList::-webkit-scrollbar {
   width: 6px;
 }
@@ -214,24 +223,218 @@
   background-color: transparent;
   border-radius: 3px;
 }
-.menuList::-webkit-scrollbar-track {
-  background-color:white;
+.menuList,
+::-webkit-scrollbar-track {
+  background-color: white;
   /* border: 1px solid black; */
-  
 }
-  /* Responsive Adjustments */
-  @media (max-width: 768px) {
-    .content {
-      margin-left: 0;
-      width: 100%;
-      padding: 12px;
-    }
-  
-    .menuContainer {
-      flex-direction: column;
-    }
-  
-    .menuList, .actionContainer {
-      width: 100%;
-    }
+/*modal*/
+.modal {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  font-size: 22px;
+  text-align: center;
+  font-weight: 500px;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.header {
+  margin-bottom: 15px;
+}
+
+.sectionTitle {
+  margin: 0;
+  font-weight: 500;
+  color: #333;
+  font-size: 16px;
+  text-align: start;
+}
+
+.searchContainer {
+  display: flex;
+  margin-bottom: 15px;
+}
+
+.searchInput {
+  flex: 1;
+  margin-right: 10px;
+  border-radius: 3px;
+}
+
+.searchButton {
+  min-width: 80px;
+  border-radius: 3px;
+  background-color: #9c0808;
+  border-color: #9c0808;
+  border-radius: 5px;
+}
+
+.ModalCheckbox {
+  width: 30px !important;
+  height: 30px !important;
+}
+
+.searchButton:hover {
+  background-color: #7e1010 !important;
+  border-color: #7e1010 !important;
+}
+
+.mealListContainer {
+  border: 1px solid #e8e8e8;
+  border-radius: 3px;
+  padding: 5px 0;
+  margin-bottom: 20px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.mealList {
+  width: 100%;
+}
+
+.mealItem {
+  padding: 8px 16px;
+  margin: 0;
+  font-size: 15px;
+}
+
+.mealItemContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 8px;
+}
+
+/* Increase checkbox size */
+.mealItemContent :global(.ant-checkbox) {
+  transform: scale(1.5);
+}
+
+.Modaldivider {
+  margin: 0;
+}
+
+.buttonContainer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.cancelButton {
+  min-width: 80px;
+  border-color: #9c0808;
+  color: #9c0808;
+}
+
+.updateModalButton {
+  min-width: 80px;
+  background-color: #b50909;
+  border-color: #b50909;
+}
+
+.updateModalButton:hover {
+  background-color: #7e1010 !important;
+  border-color: #7e1010 !important;
+}
+
+/* Optional: Customize scrollbar */
+.mealListContainer::-webkit-scrollbar {
+  width: 6px;
+}
+
+.mealListContainer::-webkit-scrollbar-thumb {
+  background-color: #7e1010;
+  border-radius: 3px;
+}
+.mealListContainer::-webkit-scrollbar-track {
+  background-color: white;
+  /* border: 1px solid black; */
+}
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .content {
+    margin-left: 0;
+    width: 100%;
+    padding: 12px;
   }
+
+  .menuContainer {
+    flex-direction: column;
+  }
+
+  .menuList,
+  .actionContainer {
+    width: 100%;
+  }
+}
+
+/* Add these styles to your CSS file */
+.datePickerDropdown {
+  position: absolute;
+  top: 40px;
+  right: 0;
+  z-index: 1000;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  padding: 0;
+  overflow: hidden;
+}
+
+/* Improve calendar styling */
+.customCalendarDropdown {
+  border-radius: 8px !important;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Style the calendar day cells */
+:global(.ant-picker-cell-in-view.ant-picker-cell-selected .ant-picker-cell-inner) {
+  background-color: #b50909 !important;
+  color: white !important;
+}
+
+:global(.ant-picker-cell-in-view.ant-picker-cell-today .ant-picker-cell-inner::before) {
+  border-color: #b50909 !important;
+}
+
+/* Style the calendar header */
+:global(.ant-picker-header) {
+  border-bottom: 1px solid #e0e0e0;
+  padding: 12px 8px;
+}
+
+:global(.ant-picker-header-view) {
+  font-weight: 500;
+  font-family: 'Ubuntu', sans-serif;
+}
+
+/* Style navigation buttons */
+:global(.ant-picker-header button) {
+  color: #666;
+}
+
+:global(.ant-picker-header button:hover) {
+  color: #b50909;
+}
+
+/* Clean up the footer */
+:global(.ant-picker-footer) {
+  border-top: 1px solid #e0e0e0;
+  padding: 8px;
+}
+
+/* Ensure clear visibility of the current month */
+:global(.ant-picker-cell-in-view) {
+  color: #333;
+}
+
+/* Fix for overcrowded calendar */
+:global(.ant-picker-cell) {
+  padding: 3px 0;
+}

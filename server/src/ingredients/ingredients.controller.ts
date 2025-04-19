@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpException, HttpStatus, Query } from '@nestjs/common';
 import { IngredientsService } from './ingredients.service';
 import { Prisma } from '@prisma/client';
 import { threadId } from 'worker_threads';
@@ -17,21 +17,29 @@ export class IngredientsController {
     return this.ingredientsService.findAll();
   }
 
+  @Get('stats')
+  async getIngredientStats() {
+    return this.ingredientsService.getIngredientStats();
+  }
+
+  @Get('advanced-stats')
+  async getAdvancedIngredientStats() {
+    return this.ingredientsService.getAdvancedIngredientStats();
+  }
+
+  @Get('stats/monthly')
+  getMonthlyStats(@Query('year') year?: string) {
+    return this.ingredientsService.getMonthlyIngredientStats(year ? parseInt(year) : undefined);
+  }
+
+  @Get('optimized')
+  async getOptimizedIngredients() {
+    return this.ingredientsService.getOptimizedIngredients();
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.ingredientsService.findOne(id);
-  }
-
-  @Get('price/low')
-  async findLowPriceIngredients() {
-    console.log('Received request for low price ingredients');
-    return this.ingredientsService.findLowPriceIngredients();
-  }
-
-  @Get('price/high')
-  async findHighPriceIngredients() {
-    console.log('Received request for high price ingredients');
-    return this.ingredientsService.findHighPriceIngredients();
   }
 
   @Patch(':id')

@@ -13,8 +13,10 @@ describe('IngredientsController', () => {
     findOne: jest.fn(),
     update: jest.fn(),
     remove: jest.fn(),
-    findLowPriceIngredients: jest.fn(),
-    findHighPriceIngredients: jest.fn(),
+    getIngredientStats: jest.fn(),
+    getAdvancedIngredientStats: jest.fn(),
+    getMonthlyIngredientStats: jest.fn(),
+    getOptimizedIngredients: jest.fn()
   };
 
   beforeEach(async () => {
@@ -43,11 +45,14 @@ describe('IngredientsController', () => {
         name: 'Sugar',
         price_per_unit: 2.5,
         quantity: 100,
-        priority: 1
+        priority: 1,
+        type: 'SWEETENER'
       };
-      mockIngredientsService.create.mockResolvedValue(dto);
 
-      expect(await controller.create(dto)).toBe(dto);
+      mockIngredientsService.create.mockResolvedValue(dto);
+      const result = await controller.create(dto);
+
+      expect(result).toBe(dto);
       expect(service.create).toHaveBeenCalledWith(dto);
     });
 
@@ -58,26 +63,30 @@ describe('IngredientsController', () => {
           name: 'Sugar',
           price_per_unit: 2.5,
           quantity: 100,
-          priority: 1
+          priority: 1,
+          type: 'SWEETENER'
         },
         {
-          id: '2',
+          id: '1',
           name: 'Salt',
           price_per_unit: 1.5,
           quantity: 150,
-          priority: 2
+          priority: 2,
+          type: 'SEASONING'
         }
       ];
-      mockIngredientsService.create.mockResolvedValue(dtos);
 
-      expect(await controller.create(dtos)).toBe(dtos);
+      mockIngredientsService.create.mockResolvedValue(dtos);
+      const result = await controller.create(dtos);
+
+      expect(result).toBe(dtos);
       expect(service.create).toHaveBeenCalledWith(dtos);
     });
   });
 
   describe('findAll', () => {
-    it('should return array of ingredients', async () => {
-      const result = [
+    it('should return an array of ingredients', async () => {
+      const mockIngredients = [
         {
           id: '1',
           name: 'Sugar',
@@ -86,109 +95,144 @@ describe('IngredientsController', () => {
           priority: 1
         }
       ];
-      mockIngredientsService.findAll.mockResolvedValue(result);
 
-      expect(await controller.findAll()).toBe(result);
+      mockIngredientsService.findAll.mockResolvedValue(mockIngredients);
+      const result = await controller.findAll();
+
+      expect(result).toBe(mockIngredients);
       expect(service.findAll).toHaveBeenCalled();
+    });
+  });
+
+  describe('getIngredientStats', () => {
+    it('should return ingredient statistics', async () => {
+      const mockStats = {
+        totalCount: 10,
+        priorityCount: { '1': 3, '2': 4, '3': 3 },
+        lastUpdated: new Date()
+      };
+
+      mockIngredientsService.getIngredientStats.mockResolvedValue(mockStats);
+      const result = await controller.getIngredientStats();
+
+      expect(result).toBe(mockStats);
+      expect(service.getIngredientStats).toHaveBeenCalled();
+    });
+  });
+
+  describe('getAdvancedIngredientStats', () => {
+    it('should return advanced ingredient statistics', async () => {
+      const mockStats = {
+        statistics: { '1': { types: {} } },
+        totalIngredients: 10,
+        lastUpdated: new Date()
+      };
+
+      mockIngredientsService.getAdvancedIngredientStats.mockResolvedValue(mockStats);
+      const result = await controller.getAdvancedIngredientStats();
+
+      expect(result).toBe(mockStats);
+      expect(service.getAdvancedIngredientStats).toHaveBeenCalled();
+    });
+  });
+
+  describe('getMonthlyStats', () => {
+    it('should return monthly stats without year parameter', async () => {
+      const mockStats = {
+        year: new Date().getFullYear(),
+        monthlyStatistics: [],
+        summary: {}
+      };
+
+      mockIngredientsService.getMonthlyIngredientStats.mockResolvedValue(mockStats);
+      const result = await controller.getMonthlyStats();
+
+      expect(result).toBe(mockStats);
+      expect(service.getMonthlyIngredientStats).toHaveBeenCalledWith(undefined);
+    });
+
+    it('should return monthly stats for specific year', async () => {
+      const year = '2024';
+      const mockStats = {
+        year: 2024,
+        monthlyStatistics: [],
+        summary: {}
+      };
+
+      mockIngredientsService.getMonthlyIngredientStats.mockResolvedValue(mockStats);
+      const result = await controller.getMonthlyStats(year);
+
+      expect(result).toBe(mockStats);
+      expect(service.getMonthlyIngredientStats).toHaveBeenCalledWith(2024);
+    });
+  });
+
+  describe('getOptimizedIngredients', () => {
+    it('should return optimized ingredients', async () => {
+      const mockOptimized = {
+        ingredients: [],
+        optimization: {
+          totalSavings: 1000,
+          suggestedChanges: 5
+        }
+      };
+
+      mockIngredientsService.getOptimizedIngredients.mockResolvedValue(mockOptimized);
+      const result = await controller.getOptimizedIngredients();
+
+      expect(result).toBe(mockOptimized);
+      expect(service.getOptimizedIngredients).toHaveBeenCalled();
     });
   });
 
   describe('findOne', () => {
     it('should return a single ingredient', async () => {
-      const result = {
+      const mockIngredient = {
         id: '1',
         name: 'Sugar',
         price_per_unit: 2.5,
         quantity: 100,
         priority: 1
       };
-      mockIngredientsService.findOne.mockResolvedValue(result);
 
-      expect(await controller.findOne('1')).toBe(result);
+      mockIngredientsService.findOne.mockResolvedValue(mockIngredient);
+      const result = await controller.findOne('1');
+
+      expect(result).toBe(mockIngredient);
       expect(service.findOne).toHaveBeenCalledWith('1');
-    });
-  });
-
-  describe('findLowPriceIngredients', () => {
-    it('should return ingredients with low prices', async () => {
-      const result = [
-        {
-          id: '1',
-          name: 'Sugar',
-          price_per_unit: 2.5,
-          quantity: 100,
-          priority: 1,
-          priceComparison: {
-            lowestPrice: 2.5,
-            highestPrice: 3.5,
-            priceDifference: 1.0,
-            totalVariants: 2
-          }
-        }
-      ];
-      mockIngredientsService.findLowPriceIngredients.mockResolvedValue(result);
-
-      expect(await controller.findLowPriceIngredients()).toBe(result);
-      expect(service.findLowPriceIngredients).toHaveBeenCalled();
-    });
-  });
-
-  describe('findHighPriceIngredients', () => {
-    it('should return ingredients with high prices', async () => {
-      const result = [
-        {
-          id: '1',
-          name: 'Sugar',
-          price_per_unit: 3.5,
-          quantity: 100,
-          priority: 1,
-          priceComparison: {
-            lowestPrice: 2.5,
-            highestPrice: 3.5,
-            priceDifference: 1.0,
-            totalVariants: 2
-          }
-        }
-      ];
-      mockIngredientsService.findHighPriceIngredients.mockResolvedValue(result);
-
-      expect(await controller.findHighPriceIngredients()).toBe(result);
-      expect(service.findHighPriceIngredients).toHaveBeenCalled();
     });
   });
 
   describe('update', () => {
     it('should update an ingredient', async () => {
-      const dto: Prisma.IngredientUpdateInput = {
+      const updateDto: Prisma.IngredientUpdateInput = {
         name: 'Brown Sugar',
         price_per_unit: 3.0
       };
-      const result = {
+      const mockUpdated = {
         id: '1',
-        name: 'Brown Sugar',
-        price_per_unit: 3.0,
-        quantity: 100,
-        priority: 1
+        ...updateDto
       };
-      mockIngredientsService.update.mockResolvedValue(result);
 
-      expect(await controller.update('1', dto)).toBe(result);
-      expect(service.update).toHaveBeenCalledWith('1', dto);
+      mockIngredientsService.update.mockResolvedValue(mockUpdated);
+      const result = await controller.update('1', updateDto);
+
+      expect(result).toBe(mockUpdated);
+      expect(service.update).toHaveBeenCalledWith('1', updateDto);
     });
   });
 
   describe('remove', () => {
     it('should remove an ingredient', async () => {
-      const result = {
+      const mockRemoved = {
         id: '1',
-        name: 'Sugar',
-        price_per_unit: 2.5,
-        quantity: 100,
-        priority: 1
+        name: 'Sugar'
       };
-      mockIngredientsService.remove.mockResolvedValue(result);
 
-      expect(await controller.remove('1')).toBe(result);
+      mockIngredientsService.remove.mockResolvedValue(mockRemoved);
+      const result = await controller.remove('1');
+
+      expect(result).toBe(mockRemoved);
       expect(service.remove).toHaveBeenCalledWith('1');
     });
   });

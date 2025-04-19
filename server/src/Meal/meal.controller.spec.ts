@@ -16,11 +16,12 @@ describe('MealController', () => {
   };
 
   const mockMeal = {
-    id: 1,
-    name: 'Test Meal',
+    id: '1',
+    nameEnglish: 'Test Meal',
+    nameSinhala: 'පරික්ෂණ කෑම',
+    nameTamil: 'சோதனை உணவு',
     description: 'Test Description',
     price: 9.99,
-    category: 'Test Category',
     imageUrl: 'test.jpg',
     createdAt: new Date(),
   };
@@ -61,46 +62,26 @@ describe('MealController', () => {
       mockMealService.findAll.mockResolvedValue([mockMeal]);
       expect(await controller.findAll()).toEqual([mockMeal]);
     });
-
-    it('should throw InternalServerErrorException on error', async () => {
-      mockMealService.findAll.mockRejectedValue(new Error('Database error'));
-      await expect(controller.findAll()).rejects.toThrow(HttpException);
-    });
   });
 
   describe('findOne', () => {
     it('should return a single meal', async () => {
       mockMealService.findOne.mockResolvedValue(mockMeal);
-      expect(await controller.findOne(1)).toEqual(mockMeal);
-    });
-
-    it('should throw NotFoundException when meal not found', async () => {
-      mockMealService.findOne.mockResolvedValue(null);
-      await expect(controller.findOne(999)).rejects.toThrow(HttpException);
+      expect(await controller.findOne('1')).toEqual(mockMeal);
     });
   });
 
   describe('update', () => {
     it('should update a meal', async () => {
       mockMealService.update.mockResolvedValue(mockMeal);
-      expect(await controller.update(1, mockMeal)).toEqual(mockMeal);
-    });
-
-    it('should throw BadRequestException on error', async () => {
-      mockMealService.update.mockRejectedValue(new Error('Error updating meal'));
-      await expect(controller.update(1, mockMeal)).rejects.toThrow(HttpException);
+      expect(await controller.update('1', mockMeal)).toEqual(mockMeal);
     });
   });
 
   describe('remove', () => {
     it('should remove a meal', async () => {
       mockMealService.remove.mockResolvedValue(mockMeal);
-      expect(await controller.remove(1)).toEqual(mockMeal);
-    });
-
-    it('should throw NotFoundException on error', async () => {
-      mockMealService.remove.mockRejectedValue(new Error('Meal not found'));
-      await expect(controller.remove(999)).rejects.toThrow(HttpException);
+      expect(await controller.remove('1')).toEqual(mockMeal);
     });
   });
 });

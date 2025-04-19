@@ -21,14 +21,14 @@ const Report = () => {
     <div className={styles.container}>
       {/* Analysis Section */}
       <div className={styles.analysisContainer}>
-        <h2 className={styles.heading}>📊 Analysis</h2>
+        <h2 className={styles.heading}> Analysis</h2>
 
         <div className={styles.cardsContainer}>
           <Card title="High Demand Meals" className={styles.card}>
             {highDemandMeals.map((meal) => (
               <div key={meal.name} className={styles.mealItem}>
                 <span>{meal.name}</span>
-                <Progress percent={meal.percentage} showInfo={false} strokeColor="#8B1E3F" />
+                <Progress percent={meal.percentage} showInfo={false} strokeColor="rgb(224, 0, 0)" />
               </div>
             ))}
           </Card>
@@ -37,7 +37,7 @@ const Report = () => {
             {lowDemandMeals.map((meal) => (
               <div key={meal.name} className={styles.mealItem}>
                 <span>{meal.name}</span>
-                <Progress percent={meal.percentage} showInfo={false} strokeColor="#8B1E3F" />
+                <Progress percent={meal.percentage} showInfo={false} strokeColor="rgb(224, 0, 0)" />
               </div>
             ))}
           </Card>
@@ -48,8 +48,8 @@ const Report = () => {
       <div className={styles.reportContainer}>
         <div className={styles.reportHeader}>
           <div className={styles.iconTitle}>
-            <span className={styles.clockIcon}>⏱</span>
-            <h2>Reports</h2>
+            <span className={styles.clockIcon}></span>
+            <h2 className={styles.heading}>Reports</h2>
           </div>
         </div>
 
@@ -77,9 +77,9 @@ const Report = () => {
         <div className={styles.reportPanel}>
           <div className={styles.reportContent}>
             <div className={styles.reportIconContainer}>
-              <div className={styles.circleIcon}>
-                <span className={styles.chartIcon}>📊</span>
-              </div>
+              {/* <div className={styles.circleIcon}> */}
+                {/* <span className={styles.chartIcon}>📊</span> */}
+              {/* </div> */}
             </div>
             <h3 className={styles.reportTitle}>Meal Consumption Report</h3>
             <p className={styles.reportDescription}>
@@ -90,7 +90,7 @@ const Report = () => {
 
         <div className={styles.buttonContainer}>
           <button className={styles.downloadButton}>
-            <span className={styles.downloadIcon}>📄</span>
+            <span className={styles.downloadIcon}></span>
             Download PDF
           </button>
         </div>

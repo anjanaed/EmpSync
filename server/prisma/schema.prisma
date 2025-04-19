@@ -36,12 +36,13 @@ model User {
 }
 
 model Ingredient {
-  id             String   @id @unique
-  name           String
-  price_per_unit Decimal  @db.Decimal(10, 2)
-  quantity       Decimal  @db.Decimal(10, 2)
-  priority       Int
-  createdAt      DateTime @default(now())
+  id String @id @unique
+  name String 
+  price_per_unit Decimal @db.Decimal(10, 2)
+  quantity Decimal @db.Decimal(10, 2)
+  type String
+  priority Int
+  createdAt DateTime @default(now())
 }
 
 model Payroll {
@@ -56,13 +57,16 @@ model Payroll {
 }
 
 model Meal {
-  id          Int      @id @default(autoincrement())
-  name        String
-  description String?
-  price       Float
-  category    String
-  imageUrl    String?
-  createdAt   DateTime @default(now())
+  id           String    @id @unique
+  nameEnglish  String
+  nameSinhala  String
+  nameTamil    String
+  description  String?
+  price        Float
+  imageUrl     String?
+  ingredients  String[]
+  category     String?   
+  createdAt    DateTime  @default(now())
 }
 
 model SalaryAdjustments {

@@ -6,6 +6,7 @@ import mealImage from './images/image.png';
 import secondary from './images/second.png';
 import DateTime from '../../../components/Serving/DateAndTime/DateTime';
 
+const urL = import.meta.env.VITE_BASE_URL;
 const { Title, Text } = Typography;
 
 const MealConform = () => {
@@ -16,7 +17,7 @@ const MealConform = () => {
   useEffect(() => {
     const fetchOrderDetails = async () => {
       try {
-        const response = await fetch(`http://localhost:3000/orders/${id}`);
+        const response = await fetch(`${urL}/orders/${id}`);
         if (!response.ok) {
           throw new Error('Failed to fetch order details');
         }
@@ -45,7 +46,7 @@ const MealConform = () => {
 
   const handleConfirm = async () => {
     try {
-      const response = await fetch(`http://localhost:3000/orders/${id}`, {
+      const response = await fetch(`${urL}/orders/${id}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
