@@ -18,16 +18,16 @@ export async function generatePayslip({
   const net = values.netSalary;
   const deductAmount = values.totalDeduction;
   const paye = values.payeTax;
-
-
-
-
   const pdfDoc = await PDFDocument.create();
+
+  //PDF Meta Data
   pdfDoc.setTitle(`Payslip - ${employee.id}`);
   pdfDoc.setAuthor('Biz Solution Payroll System');
   pdfDoc.setSubject('Monthly Payslip');
   pdfDoc.setProducer('Biz Solution');
   pdfDoc.setCreationDate(new Date(payroll.createdAt));
+
+  //PDF Dimensions
   const lineHeight=15;
   const height=550+(deductions.length*lineHeight)+(earnings.length*lineHeight)
   const width =500
@@ -188,6 +188,8 @@ export async function generatePayslip({
   page.drawText('Net Salary', { x: colX[0], y, size: 12, font: boldFont });
   page.drawText(net.toFixed(2), { x: colX[1], y, size: 12, font: boldFont });
 
+
+  //Company Contributions
   y -= 40;
   page.drawText('Company Contributions:', {
     x: leftX,
@@ -218,7 +220,7 @@ export async function generatePayslip({
   });
 
 
-
+  //PDF Saving
   const pdfBytes = await pdfDoc.save();
   fs.writeFileSync(
     `C:\\Users\\USER\\Downloads\\Payrolls\\${employee.id} - ${month}.pdf`,

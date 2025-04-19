@@ -29,7 +29,13 @@ const Register = () => {
   const [supId, setSupId] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const jobSalaryMap={"HR Manager":40000,"Kitchen Admin":50000,"Kitchen Staff":70000,"Inventory Manager":90000,"Other":10}
+  const jobSalaryMap = {
+    "HR Manager": 40000,
+    "Kitchen Admin": 50000,
+    "Kitchen Staff": 70000,
+    "Inventory Manager": 90000,
+    Other: 10,
+  };
 
   const handleRegister = async () => {
     setLoading(true);
@@ -237,17 +243,17 @@ const Register = () => {
                       ]}
                     >
                       <Select
-                        onChange={(value) => {setJobRole(value)
-                          var sal
-                          if (value != "Other"){
-                            sal=((jobSalaryMap[value]).toString());
-                          }else{
-                            sal="";
+                        onChange={(value) => {
+                          setJobRole(value);
+                          var sal;
+                          if (value != "Other") {
+                            sal = jobSalaryMap[value].toString();
+                          } else {
+                            sal = "";
                           }
                           setSalary(sal);
                           form.setFieldsValue({ salary: sal });
-                        }
-                        }
+                        }}
                         style={{ width: "100%" }}
                         placeholder="Select Role"
                       >
@@ -342,7 +348,6 @@ const Register = () => {
                       required: true,
                       message: "Please Enter Salary!",
                     },
-                    
                   ]}
                 >
                   <Input
