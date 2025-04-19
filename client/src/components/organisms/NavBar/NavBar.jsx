@@ -134,7 +134,7 @@ const NavBar = ({ Comp }) => {
             items={[
               {
                 key: "1",
-                icon: <FontAwesomeIcon icon={faUsers} />,
+                icon: <FontAwesomeIcon size="2x" icon={faUsers} />,
                 label: "Employees",
                 onClick: () => navigate("/"),
               },
@@ -168,8 +168,8 @@ const NavBar = ({ Comp }) => {
             onClick={() => setCollapsed(!collapsed)}
             style={{
               fontSize: "16px",
-              width: 64,
-              height: 64,
+              width: 55,
+              height: 55,
             }}
           />
           <img className={styles.logo} src={img}></img>

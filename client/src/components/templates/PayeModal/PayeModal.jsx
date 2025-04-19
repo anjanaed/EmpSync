@@ -78,6 +78,8 @@ const PayeModal = ({handleCancel}) => {
         headerSortActiveBg: "rgba(151, 0, 0, 0.78)",
         headerSortHoverBg: "rgba(183, 0, 0, 0.78)",
         cellPaddingBlock: 7,
+        fontSize:12,
+
       },
     },
   };

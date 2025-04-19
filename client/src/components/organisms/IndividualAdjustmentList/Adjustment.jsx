@@ -8,6 +8,7 @@ import Loading from "../../atoms/loading/loading";
 import styles from "./Adjustment.module.css";
 import SearchBar from "../../molecules/SearchBar/SearchBar";
 import { debounce } from "lodash";
+import { RiFontFamily } from "react-icons/ri";
 
 const Adjustment = () => {
   const [loading, setLoading] = useState(true);
@@ -25,8 +26,12 @@ const Adjustment = () => {
       Table: {
         headerBg: "rgba(151, 0, 0, 0.78)",
         headerColor: "white",
+        cellPaddingBlock: 10,
         headerSortActiveBg: "rgba(151, 0, 0, 0.78)",
         headerSortHoverBg: "rgba(183, 0, 0, 0.78)",
+        fontSize:12,
+        fontFamily: "'Figtree', sans-serif",
+
       },
     },
   };

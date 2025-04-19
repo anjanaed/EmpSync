@@ -2,7 +2,7 @@
 
 .home {
   display: flex;
-  font-family: Arial, sans-serif;
+  font-family: "Figtree", sans-serif;
   flex-direction: row;
   width: 100%;
 }
@@ -23,6 +23,8 @@
   overflow: hidden;
   background-color: rgb(255, 255, 255);
   display: flex;
+  font-family: "Figtree", sans-serif !important;
+
   flex-direction: column;
   overflow-y: auto;
 }
@@ -48,8 +50,8 @@
 
 .headLeft {
   margin-right: auto;
-  font-family: "Roboto Slab", serif;
-  font-size: 1.3vw;
+  font-family: "Figtree", sans-serif;
+  font-size: 20px;
   font-weight: 600;
   margin: auto 0;
   color: #d10000;
