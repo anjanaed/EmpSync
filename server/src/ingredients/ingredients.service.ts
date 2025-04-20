@@ -362,44 +362,59 @@ export class IngredientsService {
     }
   }
 
-  async storeIngredientOrder(data: {
-    lastUpdated: Date;
-    priority1Ingredients: any[];
-    optimizedIngredients: any[];
-  }) {
+  async storeIngredientOrder(budgetOrderData: any) {
     try {
-
+      // Create the order with budget information
       const order = await this.databaseServices.ingredientOrder.create({
         data: {
-          lastUpdated: new Date(data.lastUpdated),
+          lastUpdated: budgetOrderData.lastUpdated,
+          budget: budgetOrderData.budget,
+          priority1Budget: budgetOrderData.budgetAllocation.priority1Budget,
+          otherPriorityBudget: budgetOrderData.budgetAllocation.otherPriorityBudget,
+          totalCost: budgetOrderData.actualCosts.totalCost,
           ingredients: {
             create: [
               // Priority 1 ingredients
-              ...data.priority1Ingredients.map((ing) => ({
+              ...budgetOrderData.orderDetails.priority1Ingredients.map((ing) => ({
                 id: ing.id,
                 name: ing.name,
                 price_per_unit: parseFloat(ing.price_per_unit.toString()),
-                quantity: parseInt(ing.quantity.toString()),
+                quantity: ing.quantity,
                 type: ing.type,
                 priority: ing.priority,
-                createdAt: new Date(ing.createdAt)
+                totalCost: ing.totalCost,
+                createdAt: new Date()
               })),
-              // Optimized ingredients
-              ...data.optimizedIngredients.map((ing) => ({
+              // Other priority ingredients
+              ...budgetOrderData.orderDetails.otherPriorityIngredients.map((ing) => ({
                 id: ing.id,
                 name: ing.name,
                 price_per_unit: parseFloat(ing.price_per_unit.toString()),
-                quantity: parseInt(ing.quantity.toString()),
+                quantity: ing.quantity,
                 type: ing.type,
                 priority: ing.priority,
-                createdAt: new Date(ing.createdAt)
+                totalCost: ing.totalCost,
+                createdAt: new Date()
               }))
             ]
           }
+        },
+        include: {
+          ingredients: true
         }
       });
 
-      return order;
+      return {
+        orderId: order.id,
+        budget: order.budget,
+        budgetAllocation: {
+          priority1Budget: order.priority1Budget,
+          otherPriorityBudget: order.otherPriorityBudget
+        },
+        totalCost: order.totalCost,
+        ingredients: order.ingredients,
+        lastUpdated: order.lastUpdated
+      };
     } catch (error) {
       throw new HttpException(
         'Failed to store ingredient order',
@@ -437,6 +452,94 @@ export class IngredientsService {
       }
       throw new HttpException(
         'Failed to retrieve stored ingredient orders',
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
+
+  async createBudgetBasedOrder(budget: number) {
+    try {
+      const optimizedData = await this.getOptimizedIngredients();
+      
+      // Calculate budget allocation
+      const priority1Budget = budget * 0.7;
+      const otherPriorityBudget = budget * 0.3;
+      
+      // Process priority 1 ingredients
+      const priority1Orders = optimizedData.priority1Ingredients.map(ing => {
+        const maxQuantity = Math.floor(priority1Budget / (optimizedData.priority1Ingredients.length * Number(ing.price_per_unit)));
+        return {
+          ingredientId: ing.id, // Store reference to original ingredient
+          name: ing.name,
+          price_per_unit: parseFloat(ing.price_per_unit.toString()),
+          quantity: maxQuantity,
+          type: ing.type,
+          priority: ing.priority,
+          totalCost: maxQuantity * Number(ing.price_per_unit)
+        };
+      });
+
+      // Process other priority ingredients
+      const otherPriorityOrders = optimizedData.optimizedIngredients.map(ing => {
+        const maxQuantity = Math.floor(otherPriorityBudget / (optimizedData.optimizedIngredients.length * Number(ing.price_per_unit)));
+        return {
+          ingredientId: ing.id, // Store reference to original ingredient
+          name: ing.name,
+          price_per_unit: parseFloat(ing.price_per_unit.toString()),
+          quantity: maxQuantity,
+          type: ing.type,
+          priority: ing.priority,
+          totalCost: maxQuantity * Number(ing.price_per_unit)
+        };
+      });
+
+      // Calculate total costs
+      const priority1TotalCost = priority1Orders.reduce((sum, ing) => sum + ing.totalCost, 0);
+      const otherPriorityTotalCost = otherPriorityOrders.reduce((sum, ing) => sum + ing.totalCost, 0);
+      const totalCost = priority1TotalCost + otherPriorityTotalCost;
+
+      // Create final order
+      const storedOrder = await this.databaseServices.ingredientOrder.create({
+        data: {
+          budget: budget,
+          priority1Budget: priority1Budget,
+          otherPriorityBudget: otherPriorityBudget,
+          totalCost: totalCost,
+          lastUpdated: new Date(),
+          ingredients: {
+            create: [
+              ...priority1Orders,
+              ...otherPriorityOrders
+            ]
+          }
+        },
+        include: {
+          ingredients: true
+        }
+      });
+
+      return {
+        orderId: storedOrder.id,
+        budget: budget,
+        budgetAllocation: {
+          priority1Budget,
+          otherPriorityBudget
+        },
+        actualCosts: {
+          priority1TotalCost,
+          otherPriorityTotalCost,
+          totalCost
+        },
+        orderDetails: {
+          priority1Ingredients: priority1Orders,
+          otherPriorityIngredients: otherPriorityOrders
+        },
+        lastUpdated: storedOrder.lastUpdated
+      };
+    } catch (error) {
+      console.error('Error creating budget-based order:', error);
+      throw new HttpException(
+        'Failed to create budget-based order',
         HttpStatus.INTERNAL_SERVER_ERROR
       );
     }
