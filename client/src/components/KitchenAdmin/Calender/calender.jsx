@@ -140,26 +140,29 @@ const MenuSets = () => {
     setIsDeleteConfirmVisible(false);
   };
 
-  // Fetch available meals from API
-  const fetchAvailableMeals = async () => {
-    setLoading(true);
-    try {
-      const response = await fetch("http://localhost:3000/meal");
-      if (!response.ok) {
-        throw new Error("Failed to fetch meals");
-      }
-      const data = await response.json();
-      // Store the full meal objects
-      setAvailableMeals(Array.isArray(data) ? data : []);
-    } catch (error) {
-      console.error("Error fetching meals:", error);
-      message.error("Failed to load available meals");
-      // Fallback to empty array if API fails
-      setAvailableMeals([]);
-    } finally {
-      setLoading(false);
+ // Fetch available meals from API
+const fetchAvailableMeals = async () => {
+  setLoading(true);
+  try {
+    const response = await fetch("http://localhost:3000/meal");
+    if (!response.ok) {
+      throw new Error("Failed to fetch meals");
     }
-  };
+    const data = await response.json();
+    console.log("Fetched available meals:", data);
+    // Store the full meal objects
+    setAvailableMeals(Array.isArray(data) ? data : []);
+    return data; // Return the data in case we need it
+  } catch (error) {
+    console.error("Error fetching meals:", error);
+    message.error("Failed to load available meals");
+    // Fallback to empty array if API fails
+    setAvailableMeals([]);
+    return [];
+  } finally {
+    setLoading(false);
+  }
+};
 
   const handleMealSelection = (meal) => {
     // Get the meal ID (assuming meal is passed as an object with id property)
@@ -182,28 +185,45 @@ const MenuSets = () => {
     }
   };
 
-  // Effect to fetch schedule when date changes
   useEffect(() => {
     const fetchMeals = async () => {
       try {
+        setLoading(true);
         const res = await fetch("http://localhost:3000/meal"); // Update if your backend URL is different
+        if (!res.ok) {
+          throw new Error("Failed to fetch meals");
+        }
         const data = await res.json();
         setMealList(data);
+        // Also set available meals so getMealNameById can use them
+        setAvailableMeals(Array.isArray(data) ? data : []);
       } catch (err) {
         console.error("Failed to fetch meals", err);
+        message.error("Failed to load available meals");
+      } finally {
+        setLoading(false);
       }
     };
-
+  
     console.log("Date changed in effect:", selectedDate.format("YYYY-MM-DD"));
-    fetchScheduleData(selectedDate);
-    fetchMeals(); // ✅ Now it's actually called
+    
+    // First fetch meals, then fetch schedule
+    fetchMeals().then(() => {
+      fetchScheduleData(selectedDate);
+    });
+    
     setIsConfirmed(false);
   }, [selectedDate]);
-
+  
   const toggleDatePicker = () => {
     setIsDatePickerOpen(!isDatePickerOpen);
   };
+  
   const getMealNameById = (mealId) => {
+    if (!availableMeals || availableMeals.length === 0) {
+      return `Loading meal information... (ID: ${mealId})`;
+    }
+    
     const meal = availableMeals.find((m) => m.id === mealId);
     return meal ? meal.nameEnglish : `Unknown Meal (ID: ${mealId})`;
   };
@@ -317,15 +337,22 @@ const MenuSets = () => {
       setHasExistingSchedule(false);
       // Reset confirmation status
       setIsConfirmed(false);
-
+  
+      // Make sure we have meals data
+      let meals = availableMeals;
+      if (meals.length === 0) {
+        // If we don't have meal data yet, fetch it
+        meals = await fetchAvailableMeals();
+      }
+  
       // Format date as required by your API (YYYY-MM-DD)
       const formattedDate = date.format("YYYY-MM-DD");
       console.log("Fetching schedule for date:", formattedDate);
-
+  
       const response = await fetch(
         `http://localhost:3000/schedule/${formattedDate}`
       );
-
+  
       // Handle 404 (Not Found) as a normal case, not an error
       if (response.status === 404) {
         console.log("The meal can not found");
@@ -333,48 +360,48 @@ const MenuSets = () => {
         // The empty state is already set above
         return;
       }
-
+  
       if (response.status === 400) {
         console.log("No scheduled Data for that Day");
         // Just return without showing an error message
         // The empty state is already set above
         return;
       }
-
+  
       // For other non-OK responses, throw an error
       if (!response.ok) {
         throw new Error(`Failed to fetch schedule: ${response.status}`);
       }
-
+  
       const data = await response.json();
       console.log("Schedule API response:", data);
-
+  
       // Process the data based on your actual API response format
       const newScheduleData = {
         breakfast: data.breakfast || [],
         lunch: data.lunch || [],
         dinner: data.dinner || [],
       };
-
+  
       const newScheduleIds = {
         breakfast: data.id,
         lunch: data.id,
         dinner: data.id,
       };
-
+  
       const scheduleFound =
         newScheduleData.breakfast.length > 0 ||
         newScheduleData.lunch.length > 0 ||
         newScheduleData.dinner.length > 0;
-
+  
       console.log("Processed schedule data:", newScheduleData);
       console.log("Schedule ID:", data.id);
-
+  
       // Update state with the processed data
       setScheduleData(newScheduleData);
       setScheduleIds(newScheduleIds);
       setHasExistingSchedule(scheduleFound);
-
+  
       // Check if schedule is confirmed (if your API provides this info)
       if (data.confirmed === true) {
         setIsConfirmed(true);
@@ -388,91 +415,6 @@ const MenuSets = () => {
     }
   };
 
-  // const handleMenuUpdate = async () => {
-  //   try {
-  //     if (selectedMeals.length === 0) {
-  //       message.error("Please select at least one meal");
-  //       return;
-  //     }
-
-  //     const formattedDate = selectedDate.format("YYYY-MM-DD");
-
-  //     // Prepare data for API request
-  //     const updateData = {
-  //       date: formattedDate,
-  //       breakfast:
-  //         activeTab === "breakfast"
-  //           ? selectedMeals
-  //           : scheduleData.breakfast || [],
-  //       lunch: activeTab === "lunch" ? selectedMeals : scheduleData.lunch || [],
-  //       dinner:
-  //         activeTab === "dinner" ? selectedMeals : scheduleData.dinner || [],
-  //     };
-
-  //     console.log("Sending data to API:", JSON.stringify(updateData));
-
-  //     let response;
-
-  //     if (hasExistingSchedule) {
-  //       // Use PATCH to update existing schedule - corrected endpoint format
-  //       response = await fetch(
-  //         `http://localhost:3000/schedule/${formattedDate}`,
-  //         {
-  //           method: "PATCH",
-  //           headers: {
-  //             "Content-Type": "application/json",
-  //           },
-  //           body: JSON.stringify(updateData),
-  //         }
-  //       );
-  //     } else {
-  //       // Use POST to create new schedule
-  //       response = await fetch(`http://localhost:3000/schedule`, {
-  //         method: "POST",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //         },
-  //         body: JSON.stringify(updateData),
-  //       });
-  //     }
-
-  //     if (!response.ok) {
-  //       const errorMessage = await getErrorMessage(response);
-  //       throw new Error(`${response.status}: ${errorMessage}`);
-  //     }
-
-  //     const responseData = await response.json();
-
-  //     // Update local state
-  //     setScheduleData({
-  //       ...scheduleData,
-  //       [activeTab]: selectedMeals,
-  //     });
-
-  //     // Update schedule ID if needed
-  //     if (responseData.id) {
-  //       setScheduleIds({
-  //         breakfast: responseData.id,
-  //         lunch: responseData.id,
-  //         dinner: responseData.id,
-  //       });
-  //       setHasExistingSchedule(true);
-  //     }
-
-  //     message.success(
-  //       `${activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} menu ${
-  //         hasExistingSchedule ? "updated" : "added"
-  //       } successfully`
-  //     );
-
-  //     closeUpdatePopup();
-  //     // Refresh schedule data to ensure we have the latest
-  //     fetchScheduleData(selectedDate);
-  //   } catch (error) {
-  //     console.error("Error updating schedule:", error);
-  //     message.error(`Failed to update schedule: ${error.message}`);
-  //   }
-  // };
 
   const handleMenuUpdate = async () => {
     try {

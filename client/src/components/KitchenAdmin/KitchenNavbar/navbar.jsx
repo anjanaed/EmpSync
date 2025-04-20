@@ -78,59 +78,142 @@ const NavBar = ({ Comp }) => {
   // Sample notifications data initialized as empty
   const [notifications, setNotifications] = useState([]);
 
-  // Function to check if a date exists in the schedules
-  const isDateScheduled = (date, schedules) => {
-    const formattedDate = date.toISOString().split('T')[0];
-    return schedules.some(schedule => 
-      schedule.date.split('T')[0] === formattedDate
-    );
+  // Function to check meal types for a specific date
+  const checkMealTypes = (date, schedules) => {
+    const formattedDate = date.toISOString().split("T")[0];
+    
+    // Find the schedule for the given date
+    const daySchedule = schedules.find((schedule) => {
+      const scheduleDate = new Date(schedule.date).toISOString().split("T")[0];
+      return scheduleDate === formattedDate;
+    });
+    
+    // If no schedule exists for the date, all meal types are missing
+    if (!daySchedule) {
+      return { 
+        exists: false, 
+        missingMeals: ["breakfast", "lunch", "dinner"] 
+      };
+    }
+    
+    // Check which meal types are missing or empty
+    const missingMeals = [];
+    
+    if (!daySchedule.breakfast || daySchedule.breakfast.length === 0) {
+      missingMeals.push("breakfast");
+    }
+    
+    if (!daySchedule.lunch || daySchedule.lunch.length === 0) {
+      missingMeals.push("lunch");
+    }
+    
+    if (!daySchedule.dinner || daySchedule.dinner.length === 0) {
+      missingMeals.push("dinner");
+    }
+    
+    return {
+      exists: true,
+      missingMeals: missingMeals
+    };
   };
 
-  // Function to fetch schedules and check for missing dates
+  // Function to fetch schedules and check for missing dates and meal types
   const checkSchedules = async () => {
     try {
       const response = await axios.get("http://localhost:3000/schedule");
       const schedules = response.data;
+
+      // Get today's date
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      // Check next 5 days, starting from tomorrow
+      const missingScheduleInfo = [];
       
-      // Get tomorrow's date
-      const tomorrow = new Date();
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      tomorrow.setHours(0, 0, 0, 0);
-      
-      // Check next 5 days
-      const missingDates = [];
-      for (let i = 0; i < 5; i++) {
-        const checkDate = new Date(tomorrow);
-        checkDate.setDate(checkDate.getDate() + i);
+      for (let i = 1; i <= 5; i++) {
+        const checkDate = new Date(today);
+        checkDate.setDate(today.getDate() + i);
         
-        if (!isDateScheduled(checkDate, schedules)) {
-          missingDates.push(new Date(checkDate));
+        const mealCheck = checkMealTypes(checkDate, schedules);
+        
+        if (!mealCheck.exists || mealCheck.missingMeals.length > 0) {
+          missingScheduleInfo.push({
+            date: new Date(checkDate),
+            displayDate: new Date(checkDate), // Will be modified for display
+            missing: mealCheck.missingMeals,
+            exists: mealCheck.exists
+          });
         }
       }
-      
-      // If there are missing dates, create a notification
-      if (missingDates.length > 0) {
-        const options = { weekday: 'long', month: 'short', day: 'numeric' };
-        const formattedDates = missingDates.map(date => 
-          date.toLocaleDateString('en-US', options)
-        ).join(', ');
+
+      // Create notifications for missing schedules or meal types
+      if (missingScheduleInfo.length > 0) {
+        const options = { weekday: "long", month: "short", day: "numeric" };
         
-        const newNotification = {
-          id: Date.now(),
-          type: "alert",
-          title: "Schedule Alert",
-          message: `Your menu is not scheduled for the next ${missingDates.length} ${missingDates.length === 1 ? 'day' : 'days'} (${formattedDates}). Please make sure to schedule meals.`,
-          time: "Just now",
-          read: false,
-        };
+        // Group notifications by type: missing dates vs. incomplete dates
+        const missingDates = missingScheduleInfo.filter(info => !info.exists);
+        const incompleteDates = missingScheduleInfo.filter(info => info.exists && info.missing.length > 0);
         
-        setNotifications(prev => {
-          // Check if a similar notification already exists
-          const exists = prev.some(n => n.type === "alert" && n.title === "Schedule Alert");
-          if (!exists) {
-            return [...prev, newNotification];
-          }
-          return prev;
+        // Create notification for completely missing dates
+        if (missingDates.length > 0) {
+          // Adjust display dates to show previous day for UI purposes
+          const displayDates = missingDates.map(info => {
+            const displayDate = new Date(info.date);
+            displayDate.setDate(displayDate.getDate() - 1);
+            return displayDate.toLocaleDateString("en-US", options);
+          }).join(", ");
+            
+          const newNotification = {
+            id: Date.now(),
+            type: "alert",
+            title: "Schedule Alert",
+            message: `Your menu is not scheduled for ${
+              missingDates.length === 1 ? "a day" : `${missingDates.length} days`
+            } (${displayDates}). Please schedule all meals.`,
+            time: "Just now",
+            read: false,
+          };
+          
+          setNotifications(prev => {
+            // Check if a similar notification already exists
+            const exists = prev.some(
+              n => n.type === "alert" && n.title === "Schedule Alert" && n.message === newNotification.message
+            );
+            if (!exists) {
+              return [...prev, newNotification];
+            }
+            return prev;
+          });
+        }
+        
+        // Create notifications for incomplete schedules (missing meal types)
+        incompleteDates.forEach(info => {
+          // Set display date to previous day for UI purposes
+          const displayDate = new Date(info.date);
+          displayDate.setDate(displayDate.getDate() - 1);
+          const formattedDate = displayDate.toLocaleDateString("en-US", options);
+          
+          const missingMeals = info.missing.map(meal => meal.charAt(0).toUpperCase() + meal.slice(1)).join(", ");
+          
+          const newNotification = {
+            id: Date.now() + Math.random(), // Ensure unique ID
+            type: "alert",
+            title: "Incomplete Meal Schedule",
+            message: `${missingMeals} not scheduled for ${formattedDate}. Please complete the schedule.`,
+            time: "Just now",
+            read: false,
+          };
+          
+          setNotifications(prev => {
+            // Check if a similar notification already exists
+            const exists = prev.some(
+              n => n.type === "alert" && n.title === "Incomplete Meal Schedule" && n.message === newNotification.message
+            );
+            if (!exists) {
+              return [...prev, newNotification];
+            }
+            return prev;
+          });
         });
       }
     } catch (error) {
@@ -144,10 +227,12 @@ const NavBar = ({ Comp }) => {
         time: "Just now",
         read: false,
       };
-      
-      setNotifications(prev => {
+
+      setNotifications((prev) => {
         // Check if a similar notification already exists
-        const exists = prev.some(n => n.type === "alert" && n.title === "Connection Error");
+        const exists = prev.some(
+          (n) => n.type === "alert" && n.title === "Connection Error"
+        );
         if (!exists) {
           return [...prev, errorNotification];
         }
@@ -155,7 +240,7 @@ const NavBar = ({ Comp }) => {
       });
     }
   };
-
+  
   const checkPath = () => {
     setLoading(true);
     const path = location.pathname;
@@ -168,10 +253,6 @@ const NavBar = ({ Comp }) => {
     if (path == "/kitchen-report") {
       setSelectedKey("3");
     }
-    // if (path == "/notifications") {
-    //   setSelectedKey("4");
-    // }
-
     setLoading(false);
   };
 
@@ -200,22 +281,22 @@ const NavBar = ({ Comp }) => {
   const handleNotificationAction = (notification) => {
     // Mark as read
     markAsRead(notification.id);
-    
+
     // If it's a schedule alert, navigate to the schedules page
-    if (notification.title === "Schedule Alert") {
+    if (notification.title === "Schedule Alert" || notification.title === "Incomplete Meal Schedule") {
       navigate("/kitchen-admin");
     }
   };
 
   useEffect(() => {
     checkPath();
-    
+
     // Check schedules when component mounts
     checkSchedules();
-    
+
     // Set up interval to check schedules periodically (every hour)
     const interval = setInterval(checkSchedules, 3600000);
-    
+
     return () => clearInterval(interval);
   }, [location.pathname]);
 
@@ -223,7 +304,7 @@ const NavBar = ({ Comp }) => {
   useEffect(() => {
     const handleClickOutside = (event) => {
       const notificationPanel = document.getElementById("notification-panel");
-      
+
       if (
         showNotifications &&
         notificationPanel &&
@@ -363,10 +444,7 @@ const NavBar = ({ Comp }) => {
 
       {/* Notification Panel */}
       {showNotifications && (
-        <div 
-          id="notification-panel"
-          className={styles.notificationSidePanel}
-        >
+        <div id="notification-panel" className={styles.notificationSidePanel}>
           <div className={styles.notificationHeader}>
             <h2>Notifications</h2>
             <div className={styles.notificationActions}>
@@ -384,9 +462,11 @@ const NavBar = ({ Comp }) => {
           <div className={styles.notificationList}>
             {notifications.length > 0 ? (
               notifications.map((notification) => (
-                <div 
-                  key={notification.id} 
-                  className={`${styles.notificationItem} ${!notification.read ? styles.unreadNotification : ''}`}
+                <div
+                  key={notification.id}
+                  className={`${styles.notificationItem} ${
+                    !notification.read ? styles.unreadNotification : ""
+                  }`}
                   onClick={() => handleNotificationAction(notification)}
                 >
                   <div
@@ -409,8 +489,10 @@ const NavBar = ({ Comp }) => {
                       {notification.time}
                     </div>
                   </div>
-                  {notification.title === "Schedule Alert" && (
-                    <CalendarOutlined className={styles.notificationActionIcon} />
+                  {(notification.title === "Schedule Alert" || notification.title === "Incomplete Meal Schedule") && (
+                    <CalendarOutlined
+                      className={styles.notificationActionIcon}
+                    />
                   )}
                 </div>
               ))
