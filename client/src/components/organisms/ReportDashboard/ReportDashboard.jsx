@@ -38,7 +38,7 @@ const ReportDashboard = () => {
           />
         </div>
         <div className={styles.budget}>
-          Proposed Budget For Inventory Items: 
+          Proposed Budget For Inventory Items: &nbsp;
           <InputNumber
             onChange={(value) => setBudget(value)}
             placeholder="Amount"

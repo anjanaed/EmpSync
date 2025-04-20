@@ -58,17 +58,7 @@ const Register = () => {
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
 
-  const prefixSelector = (
-    <Form.Item name="prefix" noStyle>
-      <Select
-        style={{
-          width: 70,
-        }}
-      >
-        <Option value="94">+94</Option>
-      </Select>
-    </Form.Item>
-  );
+
 
   //Registering Process
   const handleRegister = async () => {
@@ -188,7 +178,6 @@ const Register = () => {
                   <Input
                     placeholder="Enter Mobile Number"
                     onChange={(e) => setTel(e.target.value)}
-                    addonBefore={prefixSelector}
                     style={{
                       width: "100%",
                     }}
@@ -214,16 +203,7 @@ const Register = () => {
                     <Option value="Other">Other</Option>
                   </Select>
                 </Form.Item>
-                <Form.Item
-                  label="Job Role"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please Enter Role!",
-                    },
-                  ]}
-                  name="role"
-                >
+                <Form.Item label="Job Role" required>
                   <Space.Compact style={{ display: "flex", width: "100%" }}>
                     <Form.Item
                       noStyle
@@ -232,19 +212,17 @@ const Register = () => {
                       rules={[
                         {
                           required: true,
-                          message: "Please Enter Role!",
+                          message: "Please select a role!",
                         },
                       ]}
                     >
                       <Select
                         onChange={(value) => {
                           setJobRole(value);
-                          var sal;
-                          if (value != "Other") {
-                            sal = jobSalaryMap[value].toString();
-                          } else {
-                            sal = "";
-                          }
+                          const sal =
+                            value !== "Other"
+                              ? jobSalaryMap[value]?.toString()
+                              : "";
                           setSalary(sal);
                           form.setFieldsValue({ salary: sal });
                         }}
@@ -260,13 +238,32 @@ const Register = () => {
                         <Option value="Other">Other</Option>
                       </Select>
                     </Form.Item>
-                    <Form.Item name="customRole" noStyle style={{ flex: "2" }}>
+
+                    <Form.Item
+                      noStyle
+                      name="customRole"
+                      style={{ flex: "2" }}
+                      rules={[
+                        ({ getFieldValue }) => ({
+                          validator(_, value) {
+                            if (
+                              getFieldValue("selectRole") === "Other" &&
+                              !value
+                            ) {
+                              return Promise.reject(
+                                "Please enter custom role!"
+                              );
+                            }
+                            return Promise.resolve();
+                          },
+                        }),
+                      ]}
+                    >
                       <Input
                         style={{ width: "100%" }}
                         onChange={(e) => setCustomJobRole(e.target.value)}
                         placeholder="If Other, Enter Job Role"
                         disabled={jobRole !== "Other"}
-                        required={false}
                       />
                     </Form.Item>
                   </Space.Compact>
@@ -355,7 +352,7 @@ const Register = () => {
               </div>
             </div>
             <div className={styles.btnContainer}>
-              <Gbutton onClick={handleNext}>
+              <Gbutton width={200} onClick={handleNext}>
                 <>
                   Next &nbsp; <AiOutlineCaretRight />
                 </>
@@ -378,7 +375,11 @@ const Register = () => {
             <FingerPrint />
           </div>
           <div className={styles.btnContainer}>
-            <Gbutton onClick={handleRegister} className={styles.btn}>
+            <Gbutton
+              width={300}
+              onClick={handleRegister}
+              className={styles.btn}
+            >
               Register Without Finger Print
             </Gbutton>
           </div>

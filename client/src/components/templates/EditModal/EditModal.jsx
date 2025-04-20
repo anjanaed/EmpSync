@@ -278,7 +278,7 @@ const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
                             rules={[
                               {
                                 required: true,
-                                message: "Please Enter Role!",
+                                message: "Please select a role!",
                               },
                             ]}
                           >
@@ -308,7 +308,27 @@ const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
                               <Select.Option value="Other">Other</Select.Option>
                             </Select>
                           </Form.Item>
-                          <Form.Item noStyle style={{ flex: "2" }}>
+
+                          <Form.Item
+                            noStyle
+                            name="customRole"
+                            style={{ flex: "2" }}
+                            rules={[
+                              ({ getFieldValue }) => ({
+                                validator(_, value) {
+                                  if (
+                                    getFieldValue("role") === "Other" &&
+                                    !value
+                                  ) {
+                                    return Promise.reject(
+                                      "Please enter custom role!"
+                                    );
+                                  }
+                                  return Promise.resolve();
+                                },
+                              }),
+                            ]}
+                          >
                             <Input
                               style={{ width: "100%" }}
                               onChange={(e) => {
@@ -319,11 +339,11 @@ const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
                               }}
                               placeholder="If Other, Enter Job Role"
                               disabled={customRole !== "Other"}
-                              required={false}
                             />
                           </Form.Item>
                         </Space.Compact>
                       </Form.Item>
+
                       <Form.Item
                         name="salary"
                         label="Basic Salary"
