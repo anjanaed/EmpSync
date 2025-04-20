@@ -46,22 +46,27 @@ model Ingredient {
 }
 
 model IngredientOrder {
-  id            Int   @id @default(autoincrement())
-  lastUpdated   DateTime
-  ingredients   OrderedIngredient[]
-  createdAt     DateTime    @default(now())
+  id                  String      @id @default(uuid())
+  lastUpdated         DateTime    @default(now())
+  budget              Float?      // Make optional with ?
+  priority1Budget     Float?      // Make optional with ?
+  otherPriorityBudget Float?      // Make optional with ?
+  totalCost           Float?      // Make optional with ?
+  ingredients         OrderIngredient[]
 }
 
-model OrderedIngredient {
-  id              String         @id @unique
-  name            String
-  price_per_unit  Decimal       @db.Decimal(10, 2)
-  quantity        Decimal       @db.Decimal(10, 2)
-  type            String
-  priority        Int
-  createdAt       DateTime      @default(now())
-  orderId         Int
-  order           IngredientOrder @relation(fields: [orderId], references: [id])
+model OrderIngredient {
+  id            String          @id @default(uuid())
+  ingredientId  String?         // Make optional with ?
+  name          String
+  price_per_unit Float
+  quantity      Int
+  type          String
+  priority      Int
+  totalCost     Float
+  createdAt     DateTime       @default(now())
+  order         IngredientOrder @relation(fields: [orderId], references: [id])
+  orderId       String
 }
 
 model Payroll {
