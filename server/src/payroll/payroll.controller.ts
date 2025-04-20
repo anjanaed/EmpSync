@@ -6,9 +6,9 @@ import { PayrollService } from "./payroll.service";
 export class PayrollController{
     constructor(private readonly payrollService:PayrollService){}
 
-    @Post()
-    create(@Body() dto:Prisma.PayrollCreateInput ){
-        return this.payrollService.create(dto);
+    @Post('calculate-all')
+    async generatePayrollsForAll(@Body() dto: Prisma.PayrollCreateInput){
+        return this.payrollService.generatePayrollsForAll(dto);
     }
 
     @Get()
@@ -17,18 +17,18 @@ export class PayrollController{
     }
 
     @Get(':empId/:month')
-    findOne(@Param('empId') empId:string, @Param('month') month:string){
-        return this.payrollService.findOne(empId,month);
+    findOne(@Param('empId') empId:string, @Param('range') range:string[]){
+        return this.payrollService.findOne(empId,range);
 
     }
 
     @Put(':id')
-    update(@Param('id') id:string, @Body() dto:Prisma.PayrollUpdateInput){
+    update(@Param('id') id:number, @Body() dto:Prisma.PayrollUpdateInput){
         return this.payrollService.update(id,dto);
     }
 
     @Delete(':id')
-    remove(@Param('id') id:string){
+    remove(@Param('id') id:number){
         return this.payrollService.remove(id);
     }
 }

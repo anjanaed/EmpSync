@@ -4,7 +4,7 @@
 .card{
     background-color: rgb(235, 235, 235);
     margin: 2vw auto;
-    font-family: "Inter", sans-serif;
+    font-family: "Figtree", sans-serif;
     width: 75%;
     font-weight: 450;
     border: 2px solid rgb(105, 0, 0);
@@ -25,11 +25,12 @@
     gap: 20%;
 }
 
+
 .lastUpdate button{
     border-radius: 5px;
     cursor: pointer;
     border: 1px solid rgb(123, 0, 0);
-    font-size: 0.7vw;
+    font-size: 10px !important;
     background-color: white;
     transition: all 0.3s ease-in-out;
     padding: 3px 10px;
@@ -37,14 +38,13 @@
 
 .lastUpdate button:hover{
     background-color: rgba(206, 0, 0, 0.774);
-    font-size: 0.7vw;
     color: white;
 
 }
 
 .requested{
     color: rgb(129, 0, 0) !important;
-    font-size: 0.7vw !important;
+    font-size: 10px !important;
     display: flex;
     align-items: center;
 }
@@ -84,9 +84,10 @@
 .right button{
     margin-left: auto;
     width: 35%;
-    font-size: 0.9vw;
     padding: 5px;
+    font-size: 12px !important;
     justify-content: center;
+    align-items: center;
     display: flex;
     border-radius: 5px;
     cursor: pointer;
@@ -94,18 +95,18 @@
 }
 
 .cardTitle{
-    font-size: 1vw;
+    font-size: 15px !important;
     margin-bottom: 1.5vw;
-    line-height: 20px;
+    line-height: 15px;
 }
 
 .cardTitle span{
-    font-size: 0.8vw !important;
+    font-size: 12px !important;
     color: rgb(88, 88, 88);
 }
 
 .lastUpdate{
-    font-size: 0.8vw;
+    font-size: 11px;
     display: flex;
     align-items: center;
     color: rgb(88, 0, 0) ;
@@ -114,5 +115,5 @@
 
 .lastUpdate span{
     color: red ;
-    font-size: 1.1vw;
+    font-size: 12px;
 }

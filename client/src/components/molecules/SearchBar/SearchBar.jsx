@@ -10,7 +10,7 @@ const SearchBar = ({placeholder,onChange, onSearch,styles}) => {
           placeholder={placeholder}
           onChange={onChange}
           onSearch={onSearch}
-          style={{
+          style={{            
             width: 200,
             ...styles,
           }}

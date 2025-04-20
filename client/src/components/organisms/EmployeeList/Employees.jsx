@@ -40,6 +40,9 @@ const Employees = () => {
         headerColor: "white",
         headerSortActiveBg: "rgba(151, 0, 0, 0.78)",
         headerSortHoverBg: "rgba(183, 0, 0, 0.78)",
+        fontSize:12,
+        cellPaddingBlock: 12,
+        fontFamily: '"Figtree", sans-serif',
       },
     },
   };
@@ -73,6 +76,12 @@ const Employees = () => {
     }, 300),
     []
   );
+
+  const modalStyles={
+    mask: {
+      backdropFilter: 'blur(12px)',
+    },
+  }
 
   const handleDelete = async (id) => {
     try {
@@ -142,12 +151,12 @@ const Employees = () => {
           <FiEdit
             onClick={() => openModal(record.id)}
             className={styles.icons}
-            size="20px"
+            size="15px"
           />
           <MdOutlineDeleteOutline
             onClick={() => handleDelete(record.id)}
             className={styles.icons}
-            size="20px"
+            size="17px"
           />
         </Space>
       ),
@@ -159,8 +168,9 @@ const Employees = () => {
       <Modal
         open={isModalOpen}
         footer={null}
-        width="65vw"
+        width="66vw"
         onCancel={handleCancel}
+        styles={modalStyles}
       >
         <EditModal
           empId={emp}
@@ -214,7 +224,7 @@ const Employees = () => {
               columns={columns}
               dataSource={employee}
               pagination={{position:["bottomCenter"],
-                pageSize:20,
+                pageSize:25,
                 showTotal: (total, range) => `${range[0]}–${range[1]} of ${total} items`,
                 showSizeChanger:false,
               }}
