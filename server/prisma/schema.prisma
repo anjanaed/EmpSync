@@ -120,6 +120,7 @@ model ScheduledMeal {
   breakfast String[]
   lunch     String[]
   dinner    String[]
+  confirmed Boolean  @default(false) // Add this field with default value false
   createdAt DateTime @default(now())
 }
 

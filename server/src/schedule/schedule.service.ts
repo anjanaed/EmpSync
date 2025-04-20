@@ -16,12 +16,14 @@ export class ScheduleService {
           breakfast: createScheduleDto.breakfast || [],
           lunch: createScheduleDto.lunch || [],
           dinner: createScheduleDto.dinner || [],
+          confirmed: false, // <-- explicitly set confirmed to false
         },
       });
     } catch (error) {
       throw new BadRequestException(error.message);
     }
   }
+  
 
   async findAll() {
     try {
@@ -83,4 +85,34 @@ export class ScheduleService {
       throw new BadRequestException(error.message);
     }
   }
+
+  async confirm(date: string) {
+    try {
+      const formattedDate = new Date(date);
+  
+      if (isNaN(formattedDate.getTime())) {
+        throw new BadRequestException(`Invalid date format: ${date}`);
+      }
+  
+      const existing = await this.databaseService.scheduledMeal.findUnique({
+        where: { date: formattedDate },
+      });
+  
+      if (!existing) {
+        throw new NotFoundException(`Scheduled meal not found for date: ${date}`);
+      }
+  
+      return await this.databaseService.scheduledMeal.update({
+        where: { date: formattedDate },
+        data: { confirmed: true },
+      });
+    } catch (error) {
+      if (error instanceof BadRequestException || error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new BadRequestException(error.message);
+    }
+  }
+  
+  
 }

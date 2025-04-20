@@ -130,6 +130,37 @@ const MenuSets = () => {
     dinner: "Dinner",
   };
 
+  const showConfirmModal = async () => {
+    try {
+      const formattedDate = selectedDate.format("YYYY-MM-DD");
+      const response = await fetch(`http://localhost:3000/schedule/${formattedDate}`);
+  
+      if (!response.ok) {
+        message.error("Failed to load schedule data for confirmation");
+        return;
+      }
+  
+      const data = await response.json();
+  
+      const isMenuComplete =
+        data.breakfast && data.breakfast.length > 0 &&
+        data.lunch && data.lunch.length > 0 &&
+        data.dinner && data.dinner.length > 0;
+  
+      if (!isMenuComplete) {
+        message.warning("Cannot confirm. Please complete the menu (Breakfast, Lunch, and Dinner).");
+        return;
+      }
+  
+      // If all meal slots are filled, show the confirmation modal
+      setIsConfirmModalVisible(true);
+    } catch (error) {
+      console.error("Error checking schedule before confirmation:", error);
+      message.error("Something went wrong while checking the schedule");
+    }
+  };
+  
+
   // Show delete confirmation dialog
   const showDeleteConfirmation = () => {
     setIsDeleteConfirmVisible(true);
@@ -140,29 +171,29 @@ const MenuSets = () => {
     setIsDeleteConfirmVisible(false);
   };
 
- // Fetch available meals from API
-const fetchAvailableMeals = async () => {
-  setLoading(true);
-  try {
-    const response = await fetch("http://localhost:3000/meal");
-    if (!response.ok) {
-      throw new Error("Failed to fetch meals");
+  // Fetch available meals from API
+  const fetchAvailableMeals = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch("http://localhost:3000/meal");
+      if (!response.ok) {
+        throw new Error("Failed to fetch meals");
+      }
+      const data = await response.json();
+      console.log("Fetched available meals:", data);
+      // Store the full meal objects
+      setAvailableMeals(Array.isArray(data) ? data : []);
+      return data; // Return the data in case we need it
+    } catch (error) {
+      console.error("Error fetching meals:", error);
+      message.error("Failed to load available meals");
+      // Fallback to empty array if API fails
+      setAvailableMeals([]);
+      return [];
+    } finally {
+      setLoading(false);
     }
-    const data = await response.json();
-    console.log("Fetched available meals:", data);
-    // Store the full meal objects
-    setAvailableMeals(Array.isArray(data) ? data : []);
-    return data; // Return the data in case we need it
-  } catch (error) {
-    console.error("Error fetching meals:", error);
-    message.error("Failed to load available meals");
-    // Fallback to empty array if API fails
-    setAvailableMeals([]);
-    return [];
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   const handleMealSelection = (meal) => {
     // Get the meal ID (assuming meal is passed as an object with id property)
@@ -204,30 +235,29 @@ const fetchAvailableMeals = async () => {
         setLoading(false);
       }
     };
-  
+
     console.log("Date changed in effect:", selectedDate.format("YYYY-MM-DD"));
-    
+
     // First fetch meals, then fetch schedule
     fetchMeals().then(() => {
       fetchScheduleData(selectedDate);
     });
-    
+
     setIsConfirmed(false);
   }, [selectedDate]);
-  
+
   const toggleDatePicker = () => {
     setIsDatePickerOpen(!isDatePickerOpen);
   };
-  
+
   const getMealNameById = (mealId) => {
     if (!availableMeals || availableMeals.length === 0) {
       return `Loading meal information... (ID: ${mealId})`;
     }
-    
+
     const meal = availableMeals.find((m) => m.id === mealId);
     return meal ? meal.nameEnglish : `Unknown Meal (ID: ${mealId})`;
   };
-  
 
   // Modified date change handler
   const handleDateChange = (date) => {
@@ -337,22 +367,22 @@ const fetchAvailableMeals = async () => {
       setHasExistingSchedule(false);
       // Reset confirmation status
       setIsConfirmed(false);
-  
+
       // Make sure we have meals data
       let meals = availableMeals;
       if (meals.length === 0) {
         // If we don't have meal data yet, fetch it
         meals = await fetchAvailableMeals();
       }
-  
+
       // Format date as required by your API (YYYY-MM-DD)
       const formattedDate = date.format("YYYY-MM-DD");
       console.log("Fetching schedule for date:", formattedDate);
-  
+
       const response = await fetch(
         `http://localhost:3000/schedule/${formattedDate}`
       );
-  
+
       // Handle 404 (Not Found) as a normal case, not an error
       if (response.status === 404) {
         console.log("The meal can not found");
@@ -360,48 +390,48 @@ const fetchAvailableMeals = async () => {
         // The empty state is already set above
         return;
       }
-  
+
       if (response.status === 400) {
         console.log("No scheduled Data for that Day");
         // Just return without showing an error message
         // The empty state is already set above
         return;
       }
-  
+
       // For other non-OK responses, throw an error
       if (!response.ok) {
         throw new Error(`Failed to fetch schedule: ${response.status}`);
       }
-  
+
       const data = await response.json();
       console.log("Schedule API response:", data);
-  
+
       // Process the data based on your actual API response format
       const newScheduleData = {
         breakfast: data.breakfast || [],
         lunch: data.lunch || [],
         dinner: data.dinner || [],
       };
-  
+
       const newScheduleIds = {
         breakfast: data.id,
         lunch: data.id,
         dinner: data.id,
       };
-  
+
       const scheduleFound =
         newScheduleData.breakfast.length > 0 ||
         newScheduleData.lunch.length > 0 ||
         newScheduleData.dinner.length > 0;
-  
+
       console.log("Processed schedule data:", newScheduleData);
       console.log("Schedule ID:", data.id);
-  
+
       // Update state with the processed data
       setScheduleData(newScheduleData);
       setScheduleIds(newScheduleIds);
       setHasExistingSchedule(scheduleFound);
-  
+
       // Check if schedule is confirmed (if your API provides this info)
       if (data.confirmed === true) {
         setIsConfirmed(true);
@@ -415,6 +445,47 @@ const fetchAvailableMeals = async () => {
     }
   };
 
+  const confirmSchedule = async () => {
+    closeConfirmModal(); // Close the modal
+
+    try {
+      const formattedDate = selectedDate.format("YYYY-MM-DD"); // Use the selected date here, make sure it's formatted properly
+
+      if (!formattedDate) {
+        message.info("No schedule found to confirm");
+        return;
+      }
+
+      // Use the formatted date to send the PATCH request
+      const response = await fetch(
+        `http://localhost:3000/schedule/${formattedDate}/confirm`, // Use date in the URL path
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ confirmed: true }),
+        }
+      );
+
+      if (!response.ok) {
+        const errorMessage = await getErrorMessage(response);
+        throw new Error(errorMessage);
+      }
+
+      // Set confirmed status to true
+      setIsConfirmed(true);
+
+      // Show success message
+      message.success("Schedule confirmed successfully");
+
+      // Refresh schedule data to ensure we have the latest state
+      fetchScheduleData(selectedDate);
+    } catch (error) {
+      console.error("Error confirming schedule:", error);
+      message.error(`Failed to confirm schedule: ${error.message}`);
+    }
+  };
 
   const handleMenuUpdate = async () => {
     try {
@@ -568,13 +639,6 @@ const fetchAvailableMeals = async () => {
     }
   };
 
-  // const handleMealSelection = (mealName) => {
-  //   if (selectedMeals.includes(mealName)) {
-  //     setSelectedMeals(selectedMeals.filter((item) => item !== mealName));
-  //   } else {
-  //     setSelectedMeals([...selectedMeals, mealName]);
-  //   }
-  // };
 
   // Function to filter meals based on category and search text
   const filterMeals = () => {
@@ -600,59 +664,11 @@ const fetchAvailableMeals = async () => {
   // Get the current menu items based on active tab
   const currentMenuItems = scheduleData[activeTab] || [];
 
-  // Show confirmation modal before confirming schedule
-  const showConfirmModal = () => {
-    if (!scheduleIds[activeTab]) {
-      message.info("No schedule found to confirm");
-      return;
-    }
-    setIsConfirmModalVisible(true);
-  };
 
   // Close confirm modal
   const closeConfirmModal = () => {
     setIsConfirmModalVisible(false);
   };
-
-  // Confirm schedule function - simplified
-  const confirmSchedule = async () => {
-    closeConfirmModal(); // Close the modal
-
-    try {
-      const scheduleId = scheduleIds[activeTab];
-
-      if (!scheduleId) {
-        message.info("No schedule found to confirm");
-        return;
-      }
-
-      const response = await fetch(
-        `http://localhost:3000/schedule/${scheduleId}/confirm`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ confirmed: true }),
-        }
-      );
-
-      if (!response.ok) {
-        const errorMessage = await getErrorMessage(response);
-        throw new Error(errorMessage);
-      }
-
-      // Set confirmed status to true
-      setIsConfirmed(true);
-
-      message.success("Schedule confirmed successfully");
-    } catch (error) {
-      console.error("Error confirming schedule:", error);
-      message.error(`Failed to confirm schedule: ${error.message}`);
-    }
-  };
-
-  
 
   return (
     <Card className={styles.card}>
@@ -749,9 +765,7 @@ const fetchAvailableMeals = async () => {
                 renderItem={(item, index) => (
                   <>
                     <List.Item className={styles.menuItem}>
-                    <Typography.Text>{getMealNameById(item)}</Typography.Text>
-
-
+                      <Typography.Text>{getMealNameById(item)}</Typography.Text>
                     </List.Item>
                     {index < currentMenuItems.length - 1 && (
                       <Divider className={styles.divider} />
