@@ -46,6 +46,11 @@ export class IngredientsController {
     return this.ingredientsService.storeIngredientOrder(data);
   }
 
+  @Post('order/budget')
+  async createBudgetBasedOrder(@Body() data: { budget: number }) {
+    return this.ingredientsService.createBudgetBasedOrder(data.budget);
+  }
+
   @Get('orders')
   async getStoredIngredientOrders() {
     return this.ingredientsService.getStoredIngredientOrders();
