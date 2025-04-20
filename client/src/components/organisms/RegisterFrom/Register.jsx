@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { DatePicker, Form, Space, Input, Select } from "antd";
+import { DatePicker, Form, Space, Input, Select,InputNumber } from "antd";
 import styles from "./Register.module.css";
 import { IoIosArrowBack } from "react-icons/io";
 import FingerPrint from "../../atoms/FingerPrint/FingerPrint";
@@ -58,8 +58,6 @@ const Register = () => {
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
 
-
-
   //Registering Process
   const handleRegister = async () => {
     setLoading(true);
@@ -112,9 +110,6 @@ const Register = () => {
             {...formItemLayout}
             form={form}
             name="register"
-            initialValues={{
-              prefix: "+94",
-            }}
             scrollToFirstError
           >
             <div className={styles.sides}>
@@ -128,10 +123,15 @@ const Register = () => {
                       message: "Please input your Name!",
                       whitespace: true,
                     },
+                    {
+                      pattern: /^[A-Za-z\s]+$/,
+                      message: "Name can only include letters and spaces",
+                    },
                   ]}
                 >
                   <Input
                     placeholder="Enter Name"
+                    maxLength={40}
                     onChange={(e) => setName(e.target.value)}
                   />
                 </Form.Item>
@@ -151,6 +151,7 @@ const Register = () => {
                 >
                   <Input
                     placeholder="Enter Email Address"
+                    maxLength={40}
                     onChange={(e) => setEmail(e.target.value)}
                   />
                 </Form.Item>
@@ -171,11 +172,22 @@ const Register = () => {
                 >
                   <Input.Password
                     placeholder="Enter Password"
+                    maxLength={20}
                     onChange={(e) => setPassword(e.target.value)}
                   />
                 </Form.Item>
-                <Form.Item name="phone" label="Phone Number">
+                <Form.Item
+                  name="phone"
+                  label="Phone Number"
+                  rules={[
+                    {
+                      pattern: /^\d{10}$/,
+                      message: "Mobile Number must be include 10 digits",
+                    },
+                  ]}
+                >
                   <Input
+                    maxLength={10}
                     placeholder="Enter Mobile Number"
                     onChange={(e) => setTel(e.target.value)}
                     style={{
@@ -282,11 +294,13 @@ const Register = () => {
                 >
                   <Input
                     placeholder="Enter ID"
+                    maxLength={10}
                     onChange={(e) => setId(e.target.value)}
                   />
                 </Form.Item>
                 <Form.Item name="address" label="Residential Address">
                   <Input
+                    maxLength={65}
                     placeholder="Enter Address"
                     onChange={(e) => setAddress(e.target.value)}
                   />
@@ -312,6 +326,7 @@ const Register = () => {
                 <Form.Item name="supId" label="Supervisor's ID">
                   <Input
                     onChange={(e) => setSupId(e.target.value)}
+                    maxLength={10}
                     placeholder="Enter Supervisor ID (If Available)"
                   />
                 </Form.Item>
@@ -344,7 +359,12 @@ const Register = () => {
                     },
                   ]}
                 >
-                  <Input
+                  <InputNumber
+                    maxLength={12}
+                    min={0}
+                    style={{ width: "100%" }}
+                    formatter={(value) => `${value} LKR`}
+                    parser={(value) => value.replace(" LKR", "")}
                     placeholder="Enter Basic Salary"
                     onChange={(e) => setSalary(e.target.value)}
                   />

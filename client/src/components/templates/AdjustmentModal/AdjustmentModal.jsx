@@ -1,17 +1,19 @@
 import { React, useState } from "react";
-import { Input, Checkbox, InputNumber, message } from "antd";
+import { Input, Checkbox, InputNumber, Form } from "antd";
 import styles from "./AdjustmentModal.module.css";
 import Gbutton from "../../atoms/button/Button";
 import { FaRegSave } from "react-icons/fa";
 import Loading from "../../atoms/loading/loading";
 import axios from "axios";
 
-const AdjustmentModal = ({ handleCancel, fetch,sucNotify,erNotify }) => {
+const AdjustmentModal = ({ handleCancel, fetch, sucNotify, erNotify }) => {
   const [isAllowanceChecked, setIsAllowanceChecked] = useState(true);
   const [isTypeChecked, setIsTypeChecked] = useState(true);
   const [loading, setLoading] = useState(false);
   const [description, setDescription] = useState();
   const [amount, setAmount] = useState();
+    const [form] = Form.useForm();
+  
   const urL = import.meta.env.VITE_BASE_URL;
 
   const handleAllowanceChange = () => {
@@ -22,6 +24,7 @@ const AdjustmentModal = ({ handleCancel, fetch,sucNotify,erNotify }) => {
   };
 
   const handleSave = async () => {
+    await form.validateFields();
     setLoading(true);
     try {
       const payload = {
@@ -30,36 +33,52 @@ const AdjustmentModal = ({ handleCancel, fetch,sucNotify,erNotify }) => {
         allowance: isAllowanceChecked,
         amount: parseFloat(amount),
       };
-      await axios .post(`${urL}/adjustment`, payload);
+      await axios.post(`${urL}/adjustment`, payload);
       fetch();
       handleCancel();
-      sucNotify(`${description} Added Successfully`)
-
+      sucNotify(`${description} Added Successfully`);
     } catch (err) {
-      handleCancel()
-      erNotify("Something Went Wrong")
+      handleCancel();
+      erNotify("Something Went Wrong");
     }
-    setLoading(false)
+    setLoading(false);
   };
   if (loading) {
     return <Loading />;
   }
 
   return (
-    <div>
+    <Form form={form}>
       <div className={styles.mainBox}>
         <h1>Add New General Adjustment</h1>
         <div className={styles.inputDiv}>
           <div className={styles.inputLine}>
-            <label className={styles.titles}>Adjustment Description</label>
-            <Input
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="VAT"
-            ></Input>
+            <label className={styles.titles}>Adjustment Reason</label>
+            <Form.Item
+              name="des"
+              rules={[
+                {
+                  required: true,
+                  message: "Enter the Reason for Adjustment",
+                },
+              ]}
+            >
+              <Input
+                maxLength={25}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Bonus"
+              ></Input>
+            </Form.Item>
           </div>
           <div className={styles.inputLine}>
             <label className={styles.titles}>Amount</label>
             <br />
+            <Form.Item name="amount"rules={[
+                {
+                  required: true,
+                  message: "Enter the Amount",
+                },
+              ]}>
             <InputNumber
               style={{ width: "100%" }}
               onChange={(value) => setAmount(value)}
@@ -76,7 +95,10 @@ const AdjustmentModal = ({ handleCancel, fetch,sucNotify,erNotify }) => {
               }
               min={0}
               max={!isTypeChecked ? 100 : undefined}
-            ></InputNumber>
+            />
+
+            </Form.Item>
+
           </div>
           <div className={styles.inputLine}>
             <div>
@@ -135,7 +157,7 @@ const AdjustmentModal = ({ handleCancel, fetch,sucNotify,erNotify }) => {
           </Gbutton>
         </div>
       </div>
-    </div>
+    </Form>
   );
 };
 

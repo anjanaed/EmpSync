@@ -1,5 +1,13 @@
 import { React, useState, useEffect } from "react";
-import { Input, DatePicker, Checkbox, Modal, InputNumber, Form } from "antd";
+import {
+  Input,
+  DatePicker,
+  Checkbox,
+  Modal,
+  InputNumber,
+  Form,
+  Tooltip,
+} from "antd";
 import styles from "./Payroll.module.css";
 import { useNavigate } from "react-router-dom";
 import { BsPlusCircle } from "react-icons/bs";
@@ -8,6 +16,8 @@ import { LuEye } from "react-icons/lu";
 import Gbutton from "../../atoms/button/Button";
 import { MdCalculate } from "react-icons/md";
 import AdjustmentModal from "../../templates/AdjustmentModal/AdjustmentModal";
+import { InfoCircleOutlined } from "@ant-design/icons";
+
 import axios from "axios";
 import { IoOpenOutline } from "react-icons/io5";
 import Loading from "../../atoms/loading/loading";
@@ -181,14 +191,30 @@ const Payroll = () => {
 
   //Submit Individual Adjustment
   const handleIndiAdjustmentSave = async () => {
+    const allFields = form.getFieldsValue();
+    const fieldNamesToValidate = Object.keys(allFields).filter(
+      (name) => name !== "payrollMonth"
+    );
+    await form.validateFields(fieldNamesToValidate);
     setLoading(true);
     try {
+      const userRes = await axios.get(`${urL}/user`);
+      const userIds = userRes.data.map((user) => user.id);
+
       for (const adj of individualAdjustment) {
         //Trim & Validate fields
         const idArray = adj.id
           .split(",")
           .map((id) => id.trim())
           .filter((id) => id !== "");
+
+        //Validating Each ID with users
+        const invalidIds = idArray.filter((id) => !userIds.includes(id));
+        if (invalidIds.length > 0) {
+          erNofify(`Invalid Employee IDs: ${invalidIds.join(",")}`);
+          setLoading(false);
+          return;
+        }
 
         for (const ids of idArray) {
           const payload = {
@@ -211,6 +237,14 @@ const Payroll = () => {
               isAllowance: true,
             },
           ]);
+          const preservedFields = form.getFieldsValue([
+            "payrollMonth",
+            "etf",
+            "epf",
+            "EmployerFund",
+          ]);
+          form.resetFields();
+          form.setFieldsValue(preservedFields);
         }
       }
     } catch (err) {
@@ -334,6 +368,7 @@ const Payroll = () => {
               <label>Employee Trust Fund (ETF) Rate</label>
               <br />
               <Form.Item
+                style={{ marginBottom: 10 }}
                 name="etf"
                 rules={[{ required: true, message: "ETF Rate Required!" }]}
               >
@@ -353,6 +388,7 @@ const Payroll = () => {
               <label>Employee Provident Fund (EPF) Rate</label>
               <br />
               <Form.Item
+                style={{ marginBottom: 10 }}
                 name="epf"
                 rules={[{ required: true, message: "EPF Rate Required!" }]}
               >
@@ -373,6 +409,7 @@ const Payroll = () => {
               <br />
 
               <Form.Item
+                style={{ marginBottom: 10 }}
                 name="EmployerFund"
                 rules={[{ required: true, message: "EPF Rate Required!" }]}
               >
@@ -392,7 +429,7 @@ const Payroll = () => {
               <label>Max Paid Leave Days Allowed</label>
               <br />
 
-              <Form.Item name="leaves">
+              <Form.Item style={{ marginBottom: 10 }} name="leaves">
                 <InputNumber
                   style={{ width: "250px" }}
                   placeholder="No of Days"
@@ -434,7 +471,7 @@ const Payroll = () => {
             <div>
               <label>Payroll Period</label>
               <br />
-              <Form.Item name="range">
+              <Form.Item style={{ marginBottom: 0 }} name="range">
                 <RangePicker
                   style={{ width: "250px" }}
                   onChange={(dates) => handleRangeChange(dates)}
@@ -446,6 +483,7 @@ const Payroll = () => {
               <br />
               <Form.Item
                 name="payrollMonth"
+                style={{ marginBottom: 0 }}
                 rules={[{ required: true, message: "Please Fill the Month!" }]}
               >
                 <DatePicker
@@ -463,51 +501,91 @@ const Payroll = () => {
           {individualAdjustment.map((adj, index) => (
             <div key={index} className={styles.inputLine}>
               <div>
-                <label>Employee ID/IDs</label>
-                <Input
-                  placeholder="ID"
-                  onChange={(e) => {
-                    const newList = [...individualAdjustment];
-                    newList[index].id = e.target.value;
-                    setIndividualAdjustment(newList);
-                  }}
-                />
+                <label>
+                  Employee ID/IDs{" "}
+                  <Tooltip title="Separate IDs with Comma">
+                    <InfoCircleOutlined
+                      style={{ marginLeft: 4, color: "#1890ff" }}
+                    />
+                  </Tooltip>
+                </label>
+                <Form.Item
+                  name={[index, "name"]}
+                  style={{ marginBottom: 0, width: "300px" }}
+                  rules={[
+                    {
+                      required: true,
+                      message: "Enter ID",
+                    },
+                  ]}
+                >
+                  <Input
+                    placeholder="IDs"
+                    onChange={(e) => {
+                      const newList = [...individualAdjustment];
+                      newList[index].id = e.target.value;
+                      setIndividualAdjustment(newList);
+                    }}
+                  />
+                </Form.Item>
               </div>
               <div>
-                <label>Adjustment Details</label>
-                <Input
-                  placeholder="Description"
-                  onChange={(e) => {
-                    const newList = [...individualAdjustment];
-                    newList[index].details = e.target.value;
-                    setIndividualAdjustment(newList);
-                  }}
-                />
+                <label>Adjustment Reason</label>
+                <Form.Item
+                  name={[index, "des"]}
+                  style={{ marginBottom: 0, width: "300px" }}
+                  rules={[
+                    {
+                      required: true,
+                      message: "Enter Reason",
+                    },
+                  ]}
+                >
+                  <Input
+                    maxLength={25}
+                    placeholder="Description"
+                    onChange={(e) => {
+                      const newList = [...individualAdjustment];
+                      newList[index].details = e.target.value;
+                      setIndividualAdjustment(newList);
+                    }}
+                  />
+                </Form.Item>
               </div>
               <div>
                 <label>Amount</label>
                 <br />
-                <InputNumber
-                  placeholder="Amount"
-                  style={{ width: "280px" }}
-                  formatter={
-                    adj.isPercentage
-                      ? (value) => `${value}%`
-                      : (value) => value.replace("%", "")
-                  }
-                  parser={
-                    adj.isPercentage
-                      ? (value) => value.replace("%", "")
-                      : (value) => value
-                  }
-                  min={0}
-                  max={adj.isPercentage ? 100 : undefined}
-                  onChange={(value) => {
-                    const newList = [...individualAdjustment];
-                    newList[index].amount = value;
-                    setIndividualAdjustment(newList);
-                  }}
-                />
+                <Form.Item
+                  name={[index, "Amount"]}
+                  style={{ marginBottom: 0 }}
+                  rules={[
+                    {
+                      required: true,
+                      message: "Enter Amount",
+                    },
+                  ]}
+                >
+                  <InputNumber
+                    placeholder="Amount"
+                    formatter={
+                      adj.isPercentage
+                        ? (value) => `${value}%`
+                        : (value) => value.replace("%", "")
+                    }
+                    parser={
+                      adj.isPercentage
+                        ? (value) => value.replace("%", "")
+                        : (value) => value
+                    }
+                    min={0}
+                    max={adj.isPercentage ? 100 : undefined}
+                    onChange={(value) => {
+                      const newList = [...individualAdjustment];
+                      newList[index].amount = value;
+                      setIndividualAdjustment(newList);
+                    }}
+                  />
+                </Form.Item>
               </div>
               <div className={styles.checkBoxes}>
                 <Checkbox

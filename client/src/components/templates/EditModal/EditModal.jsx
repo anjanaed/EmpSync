@@ -1,11 +1,18 @@
 import { React, useState, useEffect } from "react";
-import { Tabs, Form, Input, DatePicker, Select, Space } from "antd";
+import {
+  Tabs,
+  Form,
+  Input,
+  DatePicker,
+  Select,
+  Space,
+  InputNumber,
+} from "antd";
 import styles from "./EditModal.module.css";
 import Loading from "../../atoms/loading/loading";
 import dayjs from "dayjs";
 import { LuSave } from "react-icons/lu";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 import Gbutton from "../../atoms/button/Button";
 import { RiFingerprintLine } from "react-icons/ri";
 
@@ -119,9 +126,14 @@ const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
                             message: "Please input your Name!",
                             whitespace: true,
                           },
+                          {
+                            pattern: /^[A-Za-z\s]+$/,
+                            message: "Name can only include letters and spaces",
+                          },
                         ]}
                       >
                         <Input
+                          maxLength={45}
                           placeholder="Enter Name"
                           onChange={(e) =>
                             setCurrentEmployee({
@@ -146,6 +158,7 @@ const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
                         ]}
                       >
                         <Input
+                          maxLength={35}
                           placeholder="Enter Email Address"
                           onChange={(e) =>
                             setCurrentEmployee({
@@ -155,8 +168,18 @@ const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
                           }
                         />
                       </Form.Item>
-                      <Form.Item name="telephone" label="Phone Number">
+                      <Form.Item
+                        name="telephone"
+                        label="Phone Number"
+                        rules={[
+                          {
+                            pattern: /^\d{10}$/,
+                            message: "Mobile Number must be include 10 digits",
+                          },
+                        ]}
+                      >
                         <Input
+                          maxLength={10}
                           placeholder="Enter Mobile Number"
                           onChange={(e) =>
                             setCurrentEmployee({
@@ -196,6 +219,7 @@ const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
                       </Form.Item>
                       <Form.Item name="address" label="Residential Address">
                         <Input
+                          maxLength={65}
                           placeholder="Enter Address"
                           onChange={(e) =>
                             setCurrentEmployee({
@@ -354,7 +378,12 @@ const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
                           },
                         ]}
                       >
-                        <Input
+                        <InputNumber
+                          maxLength={12}
+                          min={0}
+                          style={{ width: "100%" }}
+                          formatter={(value) => `${value} LKR`}
+                          parser={(value) => value.replace(" LKR", "")}
                           placeholder="Enter Basic Salary"
                           onChange={(e) =>
                             setCurrentEmployee({
@@ -400,7 +429,12 @@ const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
                         </Select>
                       </Form.Item>
                       <Form.Item name="height" label="Height">
-                        <Input
+                        <InputNumber
+                          maxLength={3}
+                          min={0}
+                          style={{ width: "100%" }}
+                          formatter={(value) => `${value} cm`}
+                          parser={(value) => value.replace(" cm", "")}
                           onChange={(e) =>
                             setCurrentEmployee({
                               ...currentEmployee,
@@ -411,7 +445,12 @@ const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
                         />
                       </Form.Item>
                       <Form.Item name="weight" label="Weight">
-                        <Input
+                        <InputNumber
+                          maxLength={3}
+                          min={0}
+                          style={{ width: "100%" }}
+                          formatter={(value) => `${value} Kg`}
+                          parser={(value) => value.replace(" Kg", "")}
                           onChange={(e) =>
                             setCurrentEmployee({
                               ...currentEmployee,

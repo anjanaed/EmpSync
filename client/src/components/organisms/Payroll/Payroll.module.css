@@ -14,7 +14,7 @@
   color: brown;
   font-weight: 580;
   font-size: 22px;
-  margin-bottom: 25px;
+  margin-bottom: 35px;
 }
 
 Input {
@@ -48,7 +48,7 @@ Input {
 }
 
 :global(.ant-form){
-  line-height: 1.25;
+  line-height: 1.2;
 }
 
 .link {

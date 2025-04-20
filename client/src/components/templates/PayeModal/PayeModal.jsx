@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Table, InputNumber, Button, ConfigProvider } from "antd";
+import { Table, InputNumber, Form, Button, ConfigProvider } from "antd";
 import axios from "axios";
 import Gbutton from "../../atoms/button/Button";
 import styles from "./PayeModal.module.css";
@@ -24,6 +24,7 @@ const customTheme = {
 const PayeModal = ({ handleCancel, sucNotify, erNotify }) => {
   const [loading, setLoading] = useState(true);
   const urL = import.meta.env.VITE_BASE_URL;
+  const [form] = Form.useForm();
   const [dataSource, setDataSource] = useState([]);
 
   const handleChange = (orderId, field, value) => {
@@ -37,9 +38,8 @@ const PayeModal = ({ handleCancel, sucNotify, erNotify }) => {
   const fetchRecord = async () => {
     const res = await axios.get(`${urL}/paye`);
     setDataSource(res.data);
-    setLoading(false)
+    setLoading(false);
   };
-
 
   //Add Line
   const handleAddRow = () => {
@@ -58,15 +58,13 @@ const PayeModal = ({ handleCancel, sucNotify, erNotify }) => {
     setDataSource((prev) => [...prev, newRow]);
   };
 
-
   //Remove Line
   const handleRemoveLastRow = () => {
     setDataSource((prev) => prev.slice(0, -1));
   };
 
-
-
   const handleConfirm = async () => {
+    await form.validateFields();
     setLoading(true);
     try {
       await axios.put(`${urL}/paye`, dataSource);
@@ -78,8 +76,6 @@ const PayeModal = ({ handleCancel, sucNotify, erNotify }) => {
     }
     setLoading(false);
   };
-
-
 
   const columns = [
     {
@@ -94,12 +90,23 @@ const PayeModal = ({ handleCancel, sucNotify, erNotify }) => {
       key: "lowerLimit",
       align: "center",
       render: (_, record) => (
-        <InputNumber
-          value={record.lowerLimit}
-          onChange={(value) =>
-            handleChange(record.orderId, "lowerLimit", value)
-          }
-        />
+        <Form.Item
+          style={{ marginBottom: 0 }} 
+          name={['rows', record.orderId, 'lowerLimit']}
+          rules={[
+            {
+              required: true,
+              message: "Fill the LowerLimit",
+            },
+          ]}
+        >
+          <InputNumber
+            value={record.lowerLimit}
+            onChange={(value) =>
+              handleChange(record.orderId, "lowerLimit", value)
+            }
+          />
+        </Form.Item>
       ),
     },
     {
@@ -108,13 +115,18 @@ const PayeModal = ({ handleCancel, sucNotify, erNotify }) => {
       key: "upperLimit",
       align: "center",
       render: (_, record) => (
-        <InputNumber
-          value={record.upperLimit}
-          onChange={(value) =>
-            handleChange(record.orderId, "upperLimit", value)
-          }
-          placeholder="Null"
-        />
+        <Form.Item
+          style={{ marginBottom: 0 }}
+          name={['rows', record.orderId, 'higherLimit']}
+          >
+          <InputNumber
+            value={record.upperLimit}
+            onChange={(value) =>
+              handleChange(record.orderId, "upperLimit", value)
+            }
+            placeholder="Null"
+          />
+        </Form.Item>
       ),
     },
     {
@@ -123,14 +135,25 @@ const PayeModal = ({ handleCancel, sucNotify, erNotify }) => {
       key: "taxRate",
       align: "center",
       render: (_, record) => (
-        <InputNumber
-          min={0}
-          max={100}
-          formatter={(value) => `${value}%`}
-          parser={(value) => value.replace("%", "")}
-          value={record.taxRate}
-          onChange={(value) => handleChange(record.orderId, "taxRate", value)}
-        />
+        <Form.Item
+          style={{ marginBottom: 0 }} 
+          name={['rows', record.orderId, 'percentage']}
+          rules={[
+            {
+              required: true,
+              message: "Enter the Percentage",
+            },
+          ]}
+        >
+          <InputNumber
+            min={0}
+            max={100}
+            formatter={(value) => `${value}%`}
+            parser={(value) => value.replace("%", "")}
+            value={record.taxRate}
+            onChange={(value) => handleChange(record.orderId, "taxRate", value)}
+          />
+        </Form.Item>
       ),
     },
   ];
@@ -139,8 +162,8 @@ const PayeModal = ({ handleCancel, sucNotify, erNotify }) => {
     fetchRecord();
   }, []);
 
-  if(loading){
-    return <Loading/>
+  if (loading) {
+    return <Loading />;
   }
 
   return (
@@ -161,14 +184,16 @@ const PayeModal = ({ handleCancel, sucNotify, erNotify }) => {
         <LuCircleMinus />
         Remove Level
       </Button>
-      <ConfigProvider theme={customTheme}>
-        <Table
-          columns={columns}
-          dataSource={dataSource}
-          pagination={false}
-          rowKey="orderId"
-        />
-      </ConfigProvider>
+      <Form form={form}>
+        <ConfigProvider theme={customTheme}>
+          <Table
+            columns={columns}
+            dataSource={dataSource}
+            pagination={false}
+            rowKey="orderId"
+          />
+        </ConfigProvider>
+      </Form>
       <div className={styles.btn}>
         <Gbutton onClick={handleConfirm}>
           <>

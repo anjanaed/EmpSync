@@ -1,18 +1,18 @@
+import { join } from 'path';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { join } from 'path';
-import { Request, Response } from 'express';
+import * as express from 'express';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // Enable CORS for frontend access
+  //CORS configuration
   app.enableCors({
-    origin: 'http://localhost:5173', // React dev server
+    origin: 'http://localhost:5173', 
     credentials: true,
   });
 
-
+  app.use('/pdfs', express.static(join(__dirname, '..', 'pdfs')));
 
   await app.listen(process.env.PORT ?? 3000);
 }

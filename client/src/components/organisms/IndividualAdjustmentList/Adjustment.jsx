@@ -102,7 +102,7 @@ const Adjustment = () => {
       render: (_, record) => (
         <Space size="middle">
           <MdOutlineDeleteOutline
-            onClick={() => handleDelete(record.id)}
+            onClick={() => handleDelete(record.key)}
             className={styles.icons}
             size="20px"
           />

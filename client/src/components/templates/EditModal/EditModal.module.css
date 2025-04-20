@@ -2,11 +2,12 @@
   font-size: 20px;
   color: brown;
   font-family: "Figtree", sans-serif;
-  font-weight: 600;
+  font-weight: 650;
 }
 
 .headDes {
   margin: 0.2vw 0vw 1vw 0vw;
+  font-family: "Figtree", sans-serif;
   font-size: 13px;
 }
 
@@ -71,7 +72,7 @@
 
 .subBtn {
   text-align: center;
-  margin: 0.5vw;
+  margin-bottom: 25px;
 }
 
 .icon {
