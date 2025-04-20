@@ -1,12 +1,12 @@
 import { React, useState } from "react";
-import { Input, Checkbox, InputNumber } from "antd";
+import { Input, Checkbox, InputNumber, message } from "antd";
 import styles from "./AdjustmentModal.module.css";
 import Gbutton from "../../atoms/button/Button";
 import { FaRegSave } from "react-icons/fa";
 import Loading from "../../atoms/loading/loading";
 import axios from "axios";
 
-const AdjustmentModal = ({ handleCancel, fetch }) => {
+const AdjustmentModal = ({ handleCancel, fetch,sucNotify,erNotify }) => {
   const [isAllowanceChecked, setIsAllowanceChecked] = useState(true);
   const [isTypeChecked, setIsTypeChecked] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -30,21 +30,16 @@ const AdjustmentModal = ({ handleCancel, fetch }) => {
         allowance: isAllowanceChecked,
         amount: parseFloat(amount),
       };
-      await axios
-        .post(`${urL}/adjustment`, payload)
-        .then((res) => {
-          console.log(res);
-          fetch();
-          handleCancel();
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-      setLoading(false);
+      await axios .post(`${urL}/adjustment`, payload);
+      fetch();
+      handleCancel();
+      sucNotify(`${description} Added Successfully`)
+
     } catch (err) {
-      console.log(err);
-      setLoading(false);
+      handleCancel()
+      erNotify("Something Went Wrong")
     }
+    setLoading(false)
   };
   if (loading) {
     return <Loading />;

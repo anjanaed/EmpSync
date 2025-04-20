@@ -7,8 +7,26 @@ import { LuSave } from "react-icons/lu";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Gbutton from "../../atoms/button/Button";
-const dateFormat = "YYYY/MM/DD";
 import { RiFingerprintLine } from "react-icons/ri";
+
+const formItemLayout = {
+  labelCol: {
+    xs: {
+      span: 24,
+    },
+    sm: {
+      span: 7,
+    },
+  },
+  wrapperCol: {
+    xs: {
+      span: 24,
+    },
+    sm: {
+      span: 14,
+    },
+  },
+};
 
 const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
   const [customRole, setCustomRole] = useState("");
@@ -31,70 +49,42 @@ const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
     weight: "",
   });
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
   const urL = import.meta.env.VITE_BASE_URL;
-  const getEmployee = async () => {
+
+  const fetchRecord = async () => {
     try {
-      setLoading(true);
       const res = await axios.get(`${urL}/user/${empId}`);
-      const employee=res.data;
+      const employee = res.data;
       employee.dob = dayjs(employee.dob);
       setCurrentEmployee(employee);
       form.setFieldsValue(employee);
-      setLoading(false);
     } catch (err) {
       console.log(err);
-      setLoading(false);
     }
+    setLoading(false);
   };
 
   useEffect(() => {
-    getEmployee();
+    fetchRecord();
   }, [empId]);
 
   const handleUpdate = async () => {
     await form.validateFields();
     setLoading(true);
     try {
-      await axios
-        .put(`${urL}/user/${empId}`, currentEmployee)
-        .then((res) => {
-          console.log(res);
-          console.log("Done");
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      await axios.put(`${urL}/user/${empId}`, currentEmployee);
       handleCancel();
       fetchEmployee();
-      setLoading(false);
     } catch (err) {
       console.log(err);
-      setLoading(false);
     }
+    setLoading(false);
   };
 
   if (loading) {
     return <Loading />;
   }
-  const formItemLayout = {
-    labelCol: {
-      xs: {
-        span: 24,
-      },
-      sm: {
-        span: 7,
-      },
-    },
-    wrapperCol: {
-      xs: {
-        span: 24,
-      },
-      sm: {
-        span: 14,
-      },
-    },
-  };
+
   return (
     <>
       <div className={styles.head}>Edit Employee - {currentEmployee.id}</div>
@@ -229,7 +219,7 @@ const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
                           onChange={(date) =>
                             setCurrentEmployee({
                               ...currentEmployee,
-                              dob: moment(date).format("YYYY-MM-DD"),
+                              dob: dayjs(date).format("YYYY-MM-DD"),
                             })
                           }
                           placeholder="Select Birth Date"
@@ -271,11 +261,13 @@ const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
                         />
                       </Form.Item>
                       <Form.Item
-                        label={
-                          <>
-                            <p style={{ color: "red" }}>* </p>&#8201; Job Role
-                          </>
-                        }
+                        rules={[
+                          {
+                            required: true,
+                            message: "Please Enter ID!",
+                          },
+                        ]}
+                        label="Job Role"
                         name="roleHold"
                       >
                         <Space.Compact className={styles.select}>

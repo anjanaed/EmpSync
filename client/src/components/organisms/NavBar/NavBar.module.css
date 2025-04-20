@@ -48,21 +48,20 @@
 
 .navHeader {
   text-align: center;
+  margin: 30px 0px;
+  font-weight: 600;
   font-family: "Bree Serif", serif;
   font-size: 25px !important;
   transition: opacity 0.3s ease-in-out;
-  ;
 }
 .navHeader.collapsed {
   opacity: 0;
 }
 
-
-
 .line {
   width: 85%;
   margin: auto;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 }
 
 .headerText {
@@ -113,7 +112,6 @@ img {
 .userDropdown {
   margin-right: 1vw;
   position: relative;
-
 }
 
 .userInfo {
@@ -135,7 +133,7 @@ img {
   color: #333;
   margin-bottom: 5px;
 }
-.userPosition{
+.userPosition {
   font-size: 10px !important;
   color: #666;
 }
@@ -152,7 +150,6 @@ img {
 
   font-weight: 550;
   border-radius: 0;
-  
 }
 
 .profileMenuItem {
@@ -163,14 +160,12 @@ img {
   color: #f44336;
 }
 
-.userDetails
-.userName 
-{
+.userDetails .userName {
   font-family: "Inter", sans-serif;
   font-size: 1vw;
 }
 
-.userPosition{
+.userPosition {
   font-family: "Inter", sans-serif;
   font-size: 0.8vw;
 }

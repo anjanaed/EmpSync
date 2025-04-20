@@ -2,7 +2,6 @@ import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 const fs = require('fs');
 const moment = require('moment');
 
-
 export async function generatePayslip({
   employee,
   values,
@@ -28,17 +27,16 @@ export async function generatePayslip({
   pdfDoc.setCreationDate(new Date(payroll.createdAt));
 
   //PDF Dimensions
-  const lineHeight=15;
-  const height=550+(deductions.length*lineHeight)+(earnings.length*lineHeight)
-  const width =500
+  const lineHeight = 15;
+  const height =
+    550 + deductions.length * lineHeight + earnings.length * lineHeight;
+  const width = 500;
   const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
   const boldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
-  let y = height-50;
+  let y = height - 50;
   const leftX = 40;
   const payRightX = 350;
   const page = pdfDoc.addPage([width, height]);
-  
-
 
   // Header
   page.drawText('Biz Solution', {
@@ -179,15 +177,14 @@ export async function generatePayslip({
   y -= lineHeight;
   page.drawLine({
     start: { x: leftX, y },
-    end: { x: 470, y }, 
-    thickness: 1, 
-    color: rgb(0, 0, 0), 
+    end: { x: 470, y },
+    thickness: 1,
+    color: rgb(0, 0, 0),
   });
 
   y -= 25;
   page.drawText('Net Salary', { x: colX[0], y, size: 12, font: boldFont });
   page.drawText(net.toFixed(2), { x: colX[1], y, size: 12, font: boldFont });
-
 
   //Company Contributions
   y -= 40;
@@ -219,11 +216,14 @@ export async function generatePayslip({
     font: font,
   });
 
-
   //PDF Saving
+  const dir = './pdfs';
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir);
+  }
   const pdfBytes = await pdfDoc.save();
   fs.writeFileSync(
-    `C:\\Users\\USER\\Downloads\\Payrolls\\${employee.id} - ${month}.pdf`,
+    `./pdfs/${employee.id}-${month}.pdf`,
     pdfBytes,
   );
 }

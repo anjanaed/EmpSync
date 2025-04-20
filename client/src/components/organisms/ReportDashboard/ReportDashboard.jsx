@@ -4,6 +4,7 @@ import ReportCard from "../../templates/ReportCard/ReportCard";
 import img from "../../../assets/report.png";
 import { InputNumber } from "antd";
 
+
 const ReportDashboard = () => {
   const [budget, setBudget] = useState();
 
@@ -37,7 +38,7 @@ const ReportDashboard = () => {
           />
         </div>
         <div className={styles.budget}>
-          Proposed Budget For Inventory Items:{" "}
+          Proposed Budget For Inventory Items: 
           <InputNumber
             onChange={(value) => setBudget(value)}
             placeholder="Amount"

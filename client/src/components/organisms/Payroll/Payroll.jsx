@@ -13,6 +13,7 @@ import { IoOpenOutline } from "react-icons/io5";
 import Loading from "../../atoms/loading/loading";
 import { IoMdRemoveCircleOutline } from "react-icons/io";
 import PayeModal from "../../templates/PayeModal/PayeModal";
+import { notification } from "antd";
 const { RangePicker } = DatePicker;
 
 const Payroll = () => {
@@ -43,6 +44,23 @@ const Payroll = () => {
       setMonth(formattedMonth);
       form.setFieldsValue({ payrollMonth: value });
     }
+  };
+
+  const sucNofify = (message) => {
+    notification.success({
+      message: message,
+      placement: "top",
+      showProgress: true,
+      duration: 2.5,
+    });
+  };
+  const erNofify = (message) => {
+    notification.error({
+      message: message,
+      placement: "top",
+      showProgress: true,
+      duration: 2.5,
+    });
   };
 
   //Format Range
@@ -81,8 +99,10 @@ const Payroll = () => {
         range: range,
         month: month,
       });
+      sucNofify("Payrolls Generated Successfully");
     } catch (err) {
       console.log(err);
+      erNofify("Payrolls Generation Failed");
     }
     setLoading(false);
   };
@@ -179,24 +199,18 @@ const Payroll = () => {
             amount: parseFloat(adj.amount),
           };
 
-          await axios
-            .post(`${urL}/indiadjustment`, payload)
-            .then((res) => {
-              console.log(res);
-              //Reset Fields
-              setIndividualAdjustment([
-                {
-                  id: "",
-                  details: "",
-                  amount: "",
-                  isPercentage: true,
-                  isAllowance: true,
-                },
-              ]);
-            })
-            .catch((err) => {
-              console.log(err);
-            });
+          await axios.post(`${urL}/indiadjustment`, payload);
+
+          //Reset Fields
+          setIndividualAdjustment([
+            {
+              id: "",
+              details: "",
+              amount: "",
+              isPercentage: true,
+              isAllowance: true,
+            },
+          ]);
         }
       }
     } catch (err) {
@@ -289,7 +303,12 @@ const Payroll = () => {
         onCancel={handleCancel}
         styles={modalStyles}
       >
-        <AdjustmentModal handleCancel={handleCancel} fetch={fetchAdjustments} />
+        <AdjustmentModal
+          erNofify={erNofify}
+          sucNotify={sucNofify}
+          handleCancel={handleCancel}
+          fetch={fetchAdjustments}
+        />
       </Modal>
       {/* Modal 2 */}
       <Modal
@@ -299,7 +318,11 @@ const Payroll = () => {
         onCancel={handlePayeModalCancel}
         styles={modalStyles}
       >
-        <PayeModal handleCancel={handlePayeModalCancel} />
+        <PayeModal
+          handleCancel={handlePayeModalCancel}
+          erNofify={erNofify}
+          sucNotify={sucNofify}
+        />
       </Modal>
       <div className={styles.mainBox}>
         <div className={styles.topTitle}>
@@ -463,6 +486,7 @@ const Payroll = () => {
               </div>
               <div>
                 <label>Amount</label>
+                <br />
                 <InputNumber
                   placeholder="Amount"
                   style={{ width: "280px" }}
@@ -567,10 +591,16 @@ const Payroll = () => {
           </div>
         </div>
         <div className={styles.genBtn}>
-          <Gbutton onClick={handleGenerate}>
+          <Gbutton width={250} onClick={handleGenerate}>
             <>
               <MdCalculate size={19} />
               &nbsp;Generate Payroll
+            </>
+          </Gbutton>{" "}
+          <Gbutton width={250} onClick={() => navigate("/payslip")}>
+            <>
+              <LuEye size={19} />
+              &nbsp;View Payrolls
             </>
           </Gbutton>
         </div>

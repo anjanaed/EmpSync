@@ -127,7 +127,7 @@ export class PayrollService {
           employee: { connect: { id: user.id } },
           month: month,
           netPay: values.netSalary,
-          payrollPdf: `C:\\Users\\USER\\Downloads\\Payrolls\\${user.id} - ${month}.pdf`,
+          payrollPdf: `http://localhost:3000/pdfs/${user.id}-${month}.pdf`,
         });
 
         //Passing Calculated Data & Payroll record Data for PDF generation
@@ -149,9 +149,16 @@ export class PayrollService {
     }
   }
 
-  async findAll() {
+  async findAll(search?:string) {
     try {
-      const payrolls = await this.databaseService.payroll.findMany({});
+      const payrolls = await this.databaseService.payroll.findMany({
+        include:{
+          employee:true,
+        },
+        where:search?{OR:[
+          {empId: {contains:search,mode:'insensitive'}},
+        ],
+      }:{},});
       if (payrolls) {
         return payrolls;
       } else {
@@ -162,11 +169,12 @@ export class PayrollService {
     }
   }
 
-  async findOne(empId: string) {
+  async findOne(empId: string,month:string) {
     try {
       const payroll = await this.databaseService.payroll.findFirst({
         where: {
           empId,
+          month,
         },
       });
       if (payroll) {

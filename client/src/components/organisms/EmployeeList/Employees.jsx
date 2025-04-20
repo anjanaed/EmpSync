@@ -9,42 +9,36 @@ import styles from "./Employee.module.css";
 import SearchBar from "../../molecules/SearchBar/SearchBar";
 import { debounce } from "lodash";
 
+const customTheme = {
+  components: {
+    Table: {
+      headerBg: "rgba(151, 0, 0, 0.78)",
+      headerColor: "white",
+      headerSortActiveBg: "rgba(151, 0, 0, 0.78)",
+      headerSortHoverBg: "rgba(183, 0, 0, 0.78)",
+      fontSize: 12,
+      cellPaddingBlock: 12,
+      fontFamily: '"Figtree", sans-serif',
+    },
+  },
+};
+
 const Employees = () => {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState();
   const [frole, setFrole] = useState();
-  const { Search } = Input;
-  const [emp, setEmp] = useState(null);
+  const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [employee, setEmployee] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const urL = import.meta.env.VITE_BASE_URL;
 
   const openModal = (empId) => {
-    setEmp(empId);
+    setSelectedEmployee(empId);
     setIsModalOpen(true);
   };
 
   const handleCancel = () => {
     setIsModalOpen(false);
-    // setSelectEmployee(null);
-  };
-
-  useEffect(() => {
-    debouncedFetch(search, frole);
-  }, [search, frole]);
-
-  const customTheme = {
-    components: {
-      Table: {
-        headerBg: "rgba(151, 0, 0, 0.78)",
-        headerColor: "white",
-        headerSortActiveBg: "rgba(151, 0, 0, 0.78)",
-        headerSortHoverBg: "rgba(183, 0, 0, 0.78)",
-        fontSize:12,
-        cellPaddingBlock: 12,
-        fontFamily: '"Figtree", sans-serif',
-      },
-    },
   };
 
   const fetchEmployee = async (searchValue, roleValue) => {
@@ -70,6 +64,7 @@ const Employees = () => {
     }
   };
 
+  //Preventing instant API calls when searching
   const debouncedFetch = useCallback(
     debounce((searchValue, roleValue) => {
       fetchEmployee(searchValue, roleValue);
@@ -77,31 +72,30 @@ const Employees = () => {
     []
   );
 
-  const modalStyles={
+  const modalStyles = {
     mask: {
-      backdropFilter: 'blur(12px)',
+      backdropFilter: "blur(12px)",
     },
-  }
+  };
 
   const handleDelete = async (id) => {
+    setLoading(true);
     try {
-      await axios
-        .delete(`${urL}/user/${id}`)
-        .then(() => {
-          console.log("User Deleted");
-          fetchEmployee();
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      await axios.delete(`${urL}/user/${id}`);
+      fetchEmployee();
     } catch (err) {
       console.log(err);
     }
+    setLoading(false);
   };
 
   useEffect(() => {
     fetchEmployee();
   }, []);
+
+  useEffect(() => {
+    debouncedFetch(search, frole);
+  }, [search, frole, debouncedFetch]);
 
   if (loading) {
     return <Loading />;
@@ -173,7 +167,7 @@ const Employees = () => {
         styles={modalStyles}
       >
         <EditModal
-          empId={emp}
+          empId={selectedEmployee}
           handleCancel={handleCancel}
           fetchEmployee={fetchEmployee}
         />
@@ -187,7 +181,6 @@ const Employees = () => {
               <SearchBar
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder={"Search Employee"}
-                onSearch={Search}
                 styles={{ marginRight: "1vw" }}
               />
 
@@ -223,10 +216,12 @@ const Employees = () => {
             <Table
               columns={columns}
               dataSource={employee}
-              pagination={{position:["bottomCenter"],
-                pageSize:25,
-                showTotal: (total, range) => `${range[0]}–${range[1]} of ${total} items`,
-                showSizeChanger:false,
+              pagination={{
+                position: ["bottomCenter"],
+                pageSize: 25,
+                showTotal: (total, range) =>
+                  `${range[0]}–${range[1]} of ${total} items`,
+                showSizeChanger: false,
               }}
             />
           </ConfigProvider>

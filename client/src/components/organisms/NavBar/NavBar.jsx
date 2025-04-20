@@ -9,19 +9,10 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { MenuOutlined, LogoutOutlined } from "@ant-design/icons";
 import { UserOutlined } from "@ant-design/icons";
-import {
-  Button,
-  Layout,
-  Menu,
-  ConfigProvider,
-  Space,
-  Dropdown,
-  Avatar,
-} from "antd";
+import { Button, Layout, Menu, ConfigProvider, Dropdown, Avatar } from "antd";
 import img from "../../../assets/logo.png";
 import { useNavigate } from "react-router-dom";
 import Loading from "../../atoms/loading/loading";
-
 const { Sider } = Layout;
 
 const customTheme = {
@@ -42,32 +33,36 @@ const customTheme = {
 };
 
 const NavBar = ({ Comp }) => {
-    const dropdownItems = [
-      {
-        key: "1",
-        label: (
-          <div className={styles.profileMenuItem}>
-            <UserOutlined className={styles.menuItemIcon} /> &nbsp;Profile
-          </div>
-        ),
-        onClick: () => navigate("/profile"),
-      },
-      {
-        key: "2",
-        label: (
-          <div className={styles.logoutMenuItem}>
-            <LogoutOutlined className={styles.menuItemIcon} />&nbsp;Log out
-          </div>
-        ),
-        onClick: () => navigate("/login"),
-      },
-    ];
-
   const [collapsed, setCollapsed] = useState(false);
   const [selectedKey, setSelectedKey] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  //Profile Dropdown Menu
+  const dropdownItems = [
+    {
+      key: "1",
+      label: (
+        <div className={styles.profileMenuItem}>
+          <UserOutlined className={styles.menuItemIcon} /> &nbsp;Profile
+        </div>
+      ),
+      onClick: () => navigate("/profile"),
+    },
+    {
+      key: "2",
+      label: (
+        <div className={styles.logoutMenuItem}>
+          <LogoutOutlined className={styles.menuItemIcon} />
+          &nbsp;Log out
+        </div>
+      ),
+      onClick: () => navigate("/login"),
+    },
+  ];
+  
+
+  //Set Selected Tab (For CSS)
   const checkPath = () => {
     setLoading(true);
     const path = location.pathname;
@@ -126,6 +121,7 @@ const NavBar = ({ Comp }) => {
               <hr className={styles.line} />
             </>
           )}
+          {/* Menu Items */}
           <Menu
             className={styles.menu}
             theme="light"
@@ -162,6 +158,7 @@ const NavBar = ({ Comp }) => {
       </ConfigProvider>
       <div className={styles.homeContent}>
         <div className={styles.headerContent}>
+          {/* Collapsing Button */}
           <Button
             type="text"
             icon={collapsed ? <MenuOutlined /> : <MenuOutlined />}
@@ -174,6 +171,7 @@ const NavBar = ({ Comp }) => {
           />
           <img className={styles.logo} src={img}></img>
           <div className={styles.userDropdown}>
+            {/* User Dropdown */}
             <Dropdown
               menu={{ items: dropdownItems }}
               placement="bottomRight"

@@ -9,6 +9,34 @@ import moment from "moment";
 import { AiOutlineCaretRight } from "react-icons/ai";
 import Gbutton from "../../atoms/button/Button";
 import axios from "axios";
+const { Option } = Select;
+
+const jobSalaryMap = {
+  "HR Manager": 40000,
+  "Kitchen Admin": 50000,
+  "Kitchen Staff": 70000,
+  "Inventory Manager": 90000,
+  Other: 10,
+};
+
+const formItemLayout = {
+  labelCol: {
+    xs: {
+      span: 24,
+    },
+    sm: {
+      span: 8,
+    },
+  },
+  wrapperCol: {
+    xs: {
+      span: 24,
+    },
+    sm: {
+      span: 16,
+    },
+  },
+};
 
 const Register = () => {
   const [menu, setMenu] = useState(1);
@@ -28,15 +56,21 @@ const Register = () => {
   const [lang, setLang] = useState("");
   const [supId, setSupId] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [form] = Form.useForm();
 
-  const jobSalaryMap = {
-    "HR Manager": 40000,
-    "Kitchen Admin": 50000,
-    "Kitchen Staff": 70000,
-    "Inventory Manager": 90000,
-    Other: 10,
-  };
+  const prefixSelector = (
+    <Form.Item name="prefix" noStyle>
+      <Select
+        style={{
+          width: 70,
+        }}
+      >
+        <Option value="94">+94</Option>
+      </Select>
+    </Form.Item>
+  );
 
+  //Registering Process
   const handleRegister = async () => {
     setLoading(true);
     let role = jobRole;
@@ -58,69 +92,23 @@ const Register = () => {
         language: lang,
         salary: parseInt(salary),
       };
-      await axios
-        .post(`${urL}/user`, payload)
-        .then((res) => {
-          console.log(res);
-          navigate("/");
-        })
-        .catch((err) => {
-          if (
-            err.response.data.message ==
-            "Id, Name, Email, Password must be filled"
-          ) {
-            setMenu(1);
-            setRequired(true);
-          } else {
-            setRequired(false);
-          }
-        });
-      setLoading(false);
+      await axios.post(`${urL}/user`, payload);
+      navigate("/");
     } catch (err) {
-      console.log(err);
-      setLoading(false);
+      if (
+        err.response.data.message == "Id, Name, Email, Password must be filled"
+      ) {
+        setMenu(1);
+      } else {
+      }
     }
+    setLoading(false);
   };
 
   const handleNext = async () => {
     await form.validateFields();
     setMenu(2);
   };
-
-  const { Option } = Select;
-
-  const formItemLayout = {
-    labelCol: {
-      xs: {
-        span: 24,
-      },
-      sm: {
-        span: 8,
-      },
-    },
-    wrapperCol: {
-      xs: {
-        span: 24,
-      },
-      sm: {
-        span: 16,
-      },
-    },
-  };
-
-  const [form] = Form.useForm();
-
-  const prefixSelector = (
-    <Form.Item name="prefix" noStyle>
-      <Select
-        style={{
-          width: 70,
-        }}
-      >
-        <Option value="94">+94</Option>
-      </Select>
-    </Form.Item>
-  );
 
   if (loading) {
     return <Loading />;
@@ -184,6 +172,10 @@ const Register = () => {
                       required: true,
                       message: "Please input your password!",
                     },
+                    {
+                      min: 8,
+                      message: "Password must be at least 8 characters.",
+                    },
                   ]}
                   hasFeedback
                 >
@@ -223,11 +215,13 @@ const Register = () => {
                   </Select>
                 </Form.Item>
                 <Form.Item
-                  label={
-                    <>
-                      <p style={{ color: "red" }}>* </p>&#8201; Job Role
-                    </>
-                  }
+                  label="Job Role"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please Enter Role!",
+                    },
+                  ]}
                   name="role"
                 >
                   <Space.Compact style={{ display: "flex", width: "100%" }}>
@@ -319,7 +313,10 @@ const Register = () => {
                   />
                 </Form.Item>
                 <Form.Item name="supId" label="Supervisor's ID">
-                  <Input placeholder="Enter Supervisor ID (If Available)" />
+                  <Input
+                    onChange={(e) => setSupId(e.target.value)}
+                    placeholder="Enter Supervisor ID (If Available)"
+                  />
                 </Form.Item>
                 <Form.Item
                   name="language"

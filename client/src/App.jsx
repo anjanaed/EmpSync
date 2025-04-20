@@ -1,6 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "./index.css";
+import 'antd/dist/reset.css';
 import RootLayout from "./components/UserPortalUI/layout"; // Import RootLayout
 import PayrollDetails from "./components/UserPortalUI/Components/payroll-details"; // Import PayrollDetails
 import UserPortal from "./pages/UserPortal/UserPortal";
@@ -31,7 +32,7 @@ import ReportPage from "./components/pages/HR/ReportPage/ReportPage";
 import PayrollPage from "./components/pages/HR/PayrollPage/PayrollPage";
 import AdjustmentPage from "./components/pages/HR/AdjustmentPage/AdjustmentPage";
 import OrderTab from "./pages/OrderTab/OrderTab";
-
+import PayslipPage from "./components/pages/HR/PayslipPage/PayslipPage";
 function App() {
   return (
     <Router>
@@ -70,6 +71,7 @@ function App() {
           <Route path="/userpayroll" element={<PayrollDetails />} />
           <Route path="/OrderTab" element={<OrderTab />} />
           <Route path="/adjustment" element={<AdjustmentPage />} />
+          <Route path="/payslip" element={<PayslipPage/>}/>
         </Routes>
       </RootLayout>
     </Router>

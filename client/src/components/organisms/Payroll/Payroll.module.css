@@ -27,8 +27,8 @@ Input {
   display: flex;
   width: 100%;
   font-size: 13px;
-
   gap: 50px;
+  margin-bottom: 5px;
 }
 
 .bottomHalf .inputLine {
@@ -47,13 +47,17 @@ Input {
   font-weight: 550;
 }
 
+:global(.ant-form){
+  line-height: 1.25;
+}
+
 .link {
   color: rgb(213, 0, 0);
   display: flex;
   align-items: center;
   width: 200px;
   font-weight: 550;
-  margin: 3px 10px;
+  margin: 0px 10px;
   cursor: pointer;
   gap: 2px;
   transition: all 0.3s ease-in-out;
@@ -64,7 +68,7 @@ Input {
 }
 
 .payee {
-  margin: 25px 0 20px 0;
+  margin: 15px 0 20px 0;
   font-size: 13px;
 }
 
@@ -80,7 +84,7 @@ Input {
 }
 
 hr {
-  margin: 15px 0vw;
+  margin: 25px 0vw;
   opacity: 50%;
 }
 
@@ -117,7 +121,7 @@ hr {
 
 .genBtn {
   text-align: center;
-  margin: 0 0 18px 0;
+  margin: 30px ;
 }
 
 .genBtn button {
