@@ -40,29 +40,28 @@
 }
 
 .menu {
-  font-size: 0.9vw;
+  font-size: 12px;
   font-family: "Inter", sans-serif;
   background-color: rgb(245, 244, 244);
-  font-weight: 500;
+  font-weight: 550;
 }
 
 .navHeader {
   text-align: center;
+  margin: 30px 0px;
+  font-weight: 600;
   font-family: "Bree Serif", serif;
-  font-size: 1.6vw;
+  font-size: 25px !important;
   transition: opacity 0.3s ease-in-out;
 }
 .navHeader.collapsed {
   opacity: 0;
 }
 
-.red {
-  color: #d10000;
-}
-
 .line {
   width: 85%;
-  margin-bottom: 1vw;
+  margin: auto;
+  margin-bottom: 10px;
 }
 
 .headerText {
@@ -86,7 +85,7 @@
 
 img {
   margin: auto;
-  width: 18%;
+  width: 150px !important;
 }
 
 .main {
@@ -113,7 +112,6 @@ img {
 .userDropdown {
   margin-right: 1vw;
   position: relative;
-
 }
 
 .userInfo {
@@ -131,12 +129,12 @@ img {
 
 .userName {
   font-weight: 600;
-  font-size: 18px;
-  /* font-family: 'Inter', sans-serif; */
+  font-size: 12px !important;
   color: #333;
+  margin-bottom: 5px;
 }
-.userPosition{
-  font-size: 14px;
+.userPosition {
+  font-size: 10px !important;
   color: #666;
 }
 
@@ -147,10 +145,11 @@ img {
   align-items: center;
   justify-content: center;
   padding: 10px 14px;
-  font-size: 14px;
-  font-weight: 400;
+  font-size: 12px;
+  font-family: "Figtree", sans-serif !important;
+
+  font-weight: 550;
   border-radius: 0;
-  
 }
 
 .profileMenuItem {
@@ -161,14 +160,12 @@ img {
   color: #f44336;
 }
 
-.userDetails
-.userName 
-{
+.userDetails .userName {
   font-family: "Inter", sans-serif;
   font-size: 1vw;
 }
 
-.userPosition{
+.userPosition {
   font-family: "Inter", sans-serif;
   font-size: 0.8vw;
 }

@@ -253,6 +253,21 @@
   
 }
 
+.selectedIngredientItem {
+  padding: 6px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.selectedIngredientItem:last-child {
+  border-bottom: none;
+}
+
+.noIngredientsMessage {
+  color: #888;
+  font-style: italic;
+  padding: 10px 0;
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .cancelButtonCol,

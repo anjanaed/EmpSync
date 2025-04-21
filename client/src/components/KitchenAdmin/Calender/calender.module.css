@@ -373,3 +373,68 @@
     width: 100%;
   }
 }
+
+/* Add these styles to your CSS file */
+.datePickerDropdown {
+  position: absolute;
+  top: 40px;
+  right: 0;
+  z-index: 1000;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  padding: 0;
+  overflow: hidden;
+}
+
+/* Improve calendar styling */
+.customCalendarDropdown {
+  border-radius: 8px !important;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Style the calendar day cells */
+:global(.ant-picker-cell-in-view.ant-picker-cell-selected .ant-picker-cell-inner) {
+  background-color: #b50909 !important;
+  color: white !important;
+}
+
+:global(.ant-picker-cell-in-view.ant-picker-cell-today .ant-picker-cell-inner::before) {
+  border-color: #b50909 !important;
+}
+
+/* Style the calendar header */
+:global(.ant-picker-header) {
+  border-bottom: 1px solid #e0e0e0;
+  padding: 12px 8px;
+}
+
+:global(.ant-picker-header-view) {
+  font-weight: 500;
+  font-family: 'Ubuntu', sans-serif;
+}
+
+/* Style navigation buttons */
+:global(.ant-picker-header button) {
+  color: #666;
+}
+
+:global(.ant-picker-header button:hover) {
+  color: #b50909;
+}
+
+/* Clean up the footer */
+:global(.ant-picker-footer) {
+  border-top: 1px solid #e0e0e0;
+  padding: 8px;
+}
+
+/* Ensure clear visibility of the current month */
+:global(.ant-picker-cell-in-view) {
+  color: #333;
+}
+
+/* Fix for overcrowded calendar */
+:global(.ant-picker-cell) {
+  padding: 3px 0;
+}

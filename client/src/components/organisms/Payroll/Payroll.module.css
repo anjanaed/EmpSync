@@ -1,75 +1,202 @@
-.mainBox{
-    margin: 2vw;
-    padding: 2vw;
-    font-family: Arial, Helvetica, sans-serif;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
-    border-radius: 15px;
+@import url("https://fonts.googleapis.com/css2?family=Bree+Serif&family=Figtree:ital,wght@0,300..900;1,300..900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Itim&family=Roboto+Slab:wght@100..900&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap");
+
+.mainBox {
+  margin: 20px;
+  padding: 25px;
+  font-family: "Figtree", sans-serif;
+  font-weight: 400;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 15px;
 }
 
-.topTitle{
-    text-align: center;
-    font-size: 1.5vw;
-    margin-bottom: 1.5vw;
+.topTitle {
+  text-align: center;
+  color: brown;
+  font-weight: 580;
+  font-size: 22px;
+  margin-bottom: 35px;
 }
 
-Input{
-    width: 100% !important;
+Input {
+  width: 100% !important;
+  font-size: 12px !important;
+  font-family: "Figtree", sans-serif !important;
 }
 
-.inputLine{
-    display: flex;
-    width: 100%;
-    gap: 50px;
-    margin-bottom: 1vw;
+.inputLine {
+  display: flex;
+  width: 100%;
+  font-size: 13px;
+  gap: 50px;
+  margin-bottom: 5px;
 }
 
-.inputSet{
-    flex: 1;
+.bottomHalf .inputLine {
+  padding: 0.7vw 0vw;
 }
 
-.payee span{
-    color: red;
+.inputSet {
+  flex: 1;
+  font-weight: 450;
+  font-size: 13px;
+  font-family: "Figtree", sans-serif !important;
 }
 
-.payee{
-    margin-bottom: 1vw;
+.payee span {
+  color: red;
+  font-weight: 550;
 }
 
-hr{
-    margin: 2vw 0vw;
-    opacity: 50%;
+:global(.ant-form){
+  line-height: 1.2;
 }
 
-.btnSet{
-    text-align: center;
+.link {
+  color: rgb(213, 0, 0);
+  display: flex;
+  align-items: center;
+  width: 200px;
+  font-weight: 550;
+  margin: 0px 10px;
+  cursor: pointer;
+  gap: 2px;
+  transition: all 0.3s ease-in-out;
 }
 
-.btnSet button{
-    margin: 0 1vw;
-    padding: 0.3vw 2vw;
-    cursor: pointer;
-    text-align: center ;
-    border-radius: 5px;
-    border: 1px solid rgb(107, 0, 0);
-    color: rgb(107, 0, 0);
-    transition: all 0.2s ease-in-out;
+.link:hover {
+  color: rgb(131, 0, 0);
 }
 
-
-.btnSet button:hover{
-    background-color: rgba(129, 0, 0, 0.427);
+.payee {
+  margin: 15px 0 20px 0;
+  font-size: 13px;
 }
 
-.genBtn{
-    text-align: center;
-    margin-top: 2vw;
-    
+.dates {
+  display: flex;
+  font-family: "Figtree", sans-serif;
+  gap: 65px;
+  font-size: 13px;
 }
 
-.genBtn button{
-    padding: 1vw 2vw;
-    border-radius: 10px;
+.dates label {
+  font-family: "Figtree", sans-serif !important;
 }
 
+hr {
+  margin: 25px 0vw;
+  opacity: 50%;
+}
 
+.btnSet {
+  text-align: center;
+  margin-bottom: 25px;
+  display: flex;
+  justify-content: center;
+}
 
+.btnSet button {
+  margin: 0 12px;
+  padding: 6px 25px;
+  font-size: 11px;
+  display: flex;
+  flex-direction: row;
+  font-family: "Figtree", sans-serif;
+  font-weight: 500;
+  gap: 5px;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  text-align: center;
+  background-color: rgb(255, 255, 255);
+  border-radius: 5px;
+  border: 1px solid rgb(135, 0, 0);
+  color: rgb(127, 0, 0);
+  transition: all 0.2s ease-in-out;
+}
+
+.btnSet button:hover {
+  transform: scale(1.07);
+}
+
+.genBtn {
+  text-align: center;
+  margin-top: 30px ;
+}
+
+.genBtn button {
+  padding: 1vw 2vw;
+  border-radius: 10px;
+}
+
+.dynamicInputLine {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem 3rem;
+}
+
+.dynamicInputSet {
+  display: flex;
+  font-size: 13px;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.inputDelete {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.inputDelete span {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  justify-content: right;
+  transition: all 0.2s ease-in-out;
+  margin-left: 0.2vw;
+}
+
+.inputDelete span:hover {
+  transform: scale(1.1);
+}
+
+.newFieldBtn {
+  color: rgb(110, 0, 0);
+  display: flex;
+  margin-top: auto;
+  align-items: center;
+  justify-content: center;
+  font-family: "Figtree", sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  background-color: white;
+  padding: 9px 30px;
+  border: none;
+  gap: 5px;
+  cursor: pointer;
+  transition: all 0.4s ease-in-out;
+  border-radius: 6px;
+}
+
+.newFieldBtn:hover {
+  background-color: rgba(255, 54, 54, 0.267);
+}
+
+.checkBoxes {
+  display: flex;
+
+  flex-direction: column;
+  gap: 8px;
+}
+
+.removeBtn {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.4s ease-in-out;
+}
+
+.removeBtn:hover {
+  transform: scale(1.1);
+}

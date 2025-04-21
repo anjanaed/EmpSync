@@ -1,118 +1,110 @@
-@import url('https://fonts.googleapis.com/css2?family=Bree+Serif&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Itim&family=Roboto+Slab:wght@100..900&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Bree+Serif&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Itim&family=Roboto+Slab:wght@100..900&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap");
 
-
-.card{
-    background-color: rgb(235, 235, 235);
-    margin: 2vw auto;
-    font-family: "Inter", sans-serif;
-    width: 75%;
-    font-weight: 450;
-    border: 2px solid rgb(105, 0, 0);
-    border-radius: 10px;
-    display: flex;
+.card {
+  background-color: rgb(235, 235, 235);
+  margin: 2vw auto;
+  font-family: "Figtree", sans-serif;
+  width: 75%;
+  font-weight: 450;
+  border: 2px solid rgb(105, 0, 0);
+  border-radius: 10px;
+  display: flex;
 }
 
-.card .left{
-    padding: 0.8vw 1.5vw;
-    flex: 1;
+.card .left {
+  padding: 0.8vw 1.5vw;
+  flex: 1;
 }
 
-.card .right{
-    flex: 1;
-    display: flex;
-    padding: 1vw 2vw;
-    flex-direction: column;
-    gap: 20%;
+.card .right {
+  flex: 1;
+  display: flex;
+  padding: 1vw 2vw;
+  flex-direction: column;
+  gap: 20%;
 }
 
-.lastUpdate button{
-    border-radius: 5px;
-    cursor: pointer;
-    border: 1px solid rgb(123, 0, 0);
-    font-size: 0.7vw;
-    background-color: white;
-    transition: all 0.3s ease-in-out;
-    padding: 3px 10px;
+.lastUpdate button {
+  border-radius: 5px;
+  cursor: pointer;
+  border: 1px solid rgb(123, 0, 0);
+  font-size: 10px !important;
+  background-color: white;
+  transition: all 0.3s ease-in-out;
+  padding: 3px 10px;
 }
 
-.lastUpdate button:hover{
-    background-color: rgba(206, 0, 0, 0.774);
-    font-size: 0.7vw;
-    color: white;
-
+.lastUpdate button:hover {
+  background-color: rgba(206, 0, 0, 0.774);
+  color: white;
 }
 
-.requested{
-    color: rgb(129, 0, 0) !important;
-    font-size: 0.7vw !important;
-    display: flex;
-    align-items: center;
+.requested {
+  color: rgb(129, 0, 0) !important;
+  font-size: 10px !important;
+  display: flex;
+  align-items: center;
 }
 
-.btn1{
-    color: rgb(150, 0, 0);
-    border: 2px solid ;
-    background-color: white;
-    transition: all 0.2s ease-in-out;
+.btn1 {
+  color: rgb(150, 0, 0);
+  border: 2px solid;
+  background-color: white;
+  transition: all 0.2s ease-in-out;
 }
 
-.btn2{
-    background-color: rgb(150, 0, 0);
-    color: white;
-    border: 2px solid rgb(150, 0, 0) ;
-    transition: all 0.2s ease-in-out;
-
-    
+.btn2 {
+  background-color: rgb(150, 0, 0);
+  color: white;
+  border: 2px solid rgb(150, 0, 0);
+  transition: all 0.2s ease-in-out;
 }
 
-.btn1:hover{
-    background-color: rgb(150, 0, 0);
-    color: white;
-    transform: scale(1.05);
-    border: 2px solid rgb(255, 255, 255) ;
+.btn1:hover {
+  background-color: rgb(150, 0, 0);
+  color: white;
+  transform: scale(1.05);
+  border: 2px solid rgb(255, 255, 255);
 }
 
-.btn2:hover{
-    color: rgb(150, 0, 0);
-    border: 2px solid ;
-    transform: scale(1.05);
-    background-color: white;
-
-
+.btn2:hover {
+  color: rgb(150, 0, 0);
+  border: 2px solid;
+  transform: scale(1.05);
+  background-color: white;
 }
 
-.right button{
-    margin-left: auto;
-    width: 35%;
-    font-size: 0.9vw;
-    padding: 5px;
-    justify-content: center;
-    display: flex;
-    border-radius: 5px;
-    cursor: pointer;
-
+.right button {
+  margin-left: auto;
+  width: 35%;
+  padding: 5px;
+  font-size: 12px !important;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  border-radius: 5px;
+  cursor: pointer;
 }
 
-.cardTitle{
-    font-size: 1vw;
-    margin-bottom: 1.5vw;
-    line-height: 20px;
+.cardTitle {
+  font-size: 15px !important;
+  margin-bottom: 1.5vw;
+  line-height: 15px;
 }
 
-.cardTitle span{
-    font-size: 0.8vw !important;
-    color: rgb(88, 88, 88);
+.cardTitle span {
+  font-size: 12px !important;
+  color: rgb(88, 88, 88);
 }
 
-.lastUpdate{
-    font-size: 0.8vw;
-    display: flex;
-    align-items: center;
-    color: rgb(88, 0, 0) ;
-
+.lastUpdate {
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  color: rgb(88, 0, 0);
 }
 
-.lastUpdate span{
-    color: red ;
-    font-size: 1.1vw;
+.lastUpdate span {
+  color: red;
+  font-size: 12px;
 }
