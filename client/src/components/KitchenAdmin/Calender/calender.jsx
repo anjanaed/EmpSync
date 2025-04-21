@@ -24,74 +24,88 @@ import {
   CheckCircleOutlined,
 } from "@ant-design/icons";
 import moment from "moment";
+import dayjs from "dayjs";
 import styles from "./calender.module.css";
+import enUS from "antd/es/date-picker/locale/en_US"; // Import locale directly from Ant Design
 
 const { Content } = Layout;
 const { Title } = Typography;
 
-const DatePicker = (props) => {
+const CustomDatePicker = ({ value, onChange, onClose }) => {
+  // Convert moment value to dayjs when setting internal state
+  const [internalValue, setInternalValue] = useState(value ? dayjs(value.format('YYYY-MM-DD')) : null);
+
+  useEffect(() => {
+    // Convert moment value to dayjs when value prop changes
+    setInternalValue(value ? dayjs(value.format('YYYY-MM-DD')) : null);
+  }, [value]);
+
+  const handleDateChange = (date) => {
+    if (date) {
+      setInternalValue(date);
+      // Convert dayjs back to moment for parent component
+      onChange(moment(date.format('YYYY-MM-DD')));
+    }
+  };
+
+  const handleOk = () => {
+    if (internalValue) {
+      // Convert dayjs back to moment for parent component
+      onChange(moment(internalValue.format('YYYY-MM-DD')));
+      onClose();
+    }
+  };
+
+  const disabledDate = (current) => {
+    if (!current) return false;
+    
+    // Only restrict dates more than 30 days in the past
+    const thirtyDaysAgo = dayjs().subtract(30, 'days').startOf('day');
+    
+    // Return true only for dates before 30 days ago
+    return current.isBefore(thirtyDaysAgo);
+  };
+
   return (
-    <ConfigProvider
-      theme={{
-        components: {
-          DatePicker: {
-            // Reset cell background colors
-            cellActiveWithRangeBg: "transparent",
-            cellHoverWithRangeBg: "transparent",
-            cellBgDisabled: "transparent",
-            // Only style the selected date
-            cellInViewBg: "transparent",
-            cellSelectedBg: "#b50909",
-            cellSelectedHoverBg: "#7e1010",
+    <div className={styles.datePickerWrapper}>
+      <ConfigProvider
+        theme={{
+          components: {
+            DatePicker: {
+              cellActiveWithRangeBg: "#fafafa",
+              cellHoverWithRangeBg: "#f0f0f0",
+              cellBgDisabled: "#f5f5f5",
+              cellInViewBg: "#ffffff",
+              cellSelectedBg: "#ff4d4f",
+              cellSelectedHoverBg: "#ff7875",
+            },
           },
-        },
-      }}
-    >
-      <AntDatePicker
-        {...props}
-        // Add locale explicitly to fix the error
-        locale={{
-          lang: {
-            locale: "en_US",
-            placeholder: "Select date",
-            rangePlaceholder: ["Start date", "End date"],
-            today: "Today",
-            now: "Now",
-            backToToday: "Back to today",
-            ok: "Ok",
-            clear: "Clear",
-            month: "Month",
-            year: "Year",
-            timeSelect: "Select time",
-            dateSelect: "Select date",
-            monthSelect: "Choose a month",
-            yearSelect: "Choose a year",
-            decadeSelect: "Choose a decade",
-            yearFormat: "YYYY",
-            dateFormat: "M/D/YYYY",
-            dayFormat: "D",
-            dateTimeFormat: "M/D/YYYY HH:mm:ss",
-            monthFormat: "MMMM",
-            monthBeforeYear: true,
-            previousMonth: "Previous month (PageUp)",
-            nextMonth: "Next month (PageDown)",
-            previousYear: "Last year (Control + left)",
-            nextYear: "Next year (Control + right)",
-            previousDecade: "Last decade",
-            nextDecade: "Next decade",
-            previousCentury: "Last century",
-            nextCentury: "Next century",
-          },
-          timePickerLocale: {
-            placeholder: "Select time",
-          },
-          dateFormat: "YYYY-MM-DD",
-          dateTimeFormat: "YYYY-MM-DD HH:mm:ss",
-          weekFormat: "YYYY-wo",
-          monthFormat: "YYYY-MM",
         }}
-      />
-    </ConfigProvider>
+      >
+        <AntDatePicker
+          value={internalValue}
+          onChange={handleDateChange}
+          onOk={handleOk}
+          onOpenChange={(open) => !open && onClose()}
+          locale={enUS}
+          format="YYYY-MM-DD"
+          allowClear={false}
+          showToday={true}
+          disabledDate={disabledDate}
+          style={{
+            width: "280px"
+          }}
+          popupStyle={{
+            position: "absolute",
+            zIndex: 1000,
+          }}
+          open={true}
+          inputReadOnly={true}
+          showTime={false}
+          mode="date"
+        />
+      </ConfigProvider>
+    </div>
   );
 };
 
@@ -703,19 +717,13 @@ const MenuSets = () => {
           </div>
           {isDatePickerOpen && (
             <div className={styles.datePickerDropdown}>
-              <DatePicker
-                open={true}
+              <CustomDatePicker
                 value={selectedDate}
-                onChange={handleDateChange}
-                onOpenChange={(open) => {
-                  if (!open) setIsDatePickerOpen(false);
-                }}
-                style={{ width: "280px" }}
-                defaultPickerValue={moment()}
-                format="YYYY-MM-DD"
-                onOk={(date) => {
+                onChange={(date) => {
+                  console.log('Date selected:', date.format('YYYY-MM-DD'));
                   handleDateChange(date);
                 }}
+                onClose={() => setIsDatePickerOpen(false)}
               />
             </div>
           )}
