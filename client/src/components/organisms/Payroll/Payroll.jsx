@@ -11,19 +11,18 @@ import {
 import styles from "./Payroll.module.css";
 import { useNavigate } from "react-router-dom";
 import { BsPlusCircle } from "react-icons/bs";
+import { toast, Toaster } from "sonner";
 import { FaRegSave } from "react-icons/fa";
 import { LuEye } from "react-icons/lu";
 import Gbutton from "../../atoms/button/Button";
 import { MdCalculate } from "react-icons/md";
 import AdjustmentModal from "../../templates/AdjustmentModal/AdjustmentModal";
 import { InfoCircleOutlined } from "@ant-design/icons";
-
 import axios from "axios";
 import { IoOpenOutline } from "react-icons/io5";
 import Loading from "../../atoms/loading/loading";
 import { IoMdRemoveCircleOutline } from "react-icons/io";
 import PayeModal from "../../templates/PayeModal/PayeModal";
-import { notification } from "antd";
 const { RangePicker } = DatePicker;
 
 const Payroll = () => {
@@ -57,20 +56,25 @@ const Payroll = () => {
   };
 
   const sucNofify = (message) => {
-    notification.success({
-      message: message,
-      placement: "top",
-      showProgress: true,
-      duration: 2.5,
-    });
+    setTimeout(
+      () =>
+        toast.success(message, {
+          duration: 2500,
+          position: "top-center",
+        }),
+      300
+    );
   };
+
   const erNofify = (message) => {
-    notification.error({
-      message: message,
-      placement: "top",
-      showProgress: true,
-      duration: 2.5,
-    });
+    setzTimeout(
+      () =>
+        toast.error(message, {
+          duration: 2500,
+          position: "top-center",
+        }),
+      300
+    );
   };
 
   //Format Range
@@ -99,7 +103,7 @@ const Payroll = () => {
 
   //Payroll Generation
   const handleGenerate = async () => {
-    await form.validateFields();
+    await form.validateFields(["payrollMonth", "epf", "etf", "EmpoyerFund"]);
 
     setLoading(true);
     //Sending ETF EPF data
@@ -146,8 +150,10 @@ const Payroll = () => {
       const intId = parseInt(id, 10);
       await axios.delete(`${urL}/adjustment/${intId}`);
       fetchAdjustments();
+      sucNofify("Adjustment Removed Successfully");
     } catch (err) {
       console.log(err);
+      erNofify("Something wen Wrong");
     }
     setLoading(false);
   };
@@ -211,8 +217,10 @@ const Payroll = () => {
         //Validating Each ID with users
         const invalidIds = idArray.filter((id) => !userIds.includes(id));
         if (invalidIds.length > 0) {
-          erNofify(`Invalid Employee IDs: ${invalidIds.join(",")}`);
           setLoading(false);
+          console.log(`Invalid Employee IDs: ${invalidIds.join(",")}`);
+          erNofify(`Invalid Employee IDs: ${invalidIds.join(",")}`);
+
           return;
         }
 
@@ -226,6 +234,7 @@ const Payroll = () => {
           };
 
           await axios.post(`${urL}/indiadjustment`, payload);
+          sucNofify("Adjustments Updated Successfully");
 
           //Reset Fields
           setIndividualAdjustment([
@@ -358,6 +367,7 @@ const Payroll = () => {
           sucNotify={sucNofify}
         />
       </Modal>
+      <Toaster richColors />
       <div className={styles.mainBox}>
         <div className={styles.topTitle}>
           Payroll Configuration & Salary Adjustments

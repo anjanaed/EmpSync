@@ -36,9 +36,27 @@ const PayeModal = ({ handleCancel, sucNotify, erNotify }) => {
   };
 
   const fetchRecord = async () => {
-    const res = await axios.get(`${urL}/paye`);
-    setDataSource(res.data);
-    setLoading(false);
+    try {
+      const res = await axios.get(`${urL}/paye`);
+      setDataSource(res.data);
+  
+      const formValues = {
+        rows: res.data.reduce((acc, row) => {
+          acc[row.orderId] = {
+            lowerLimit: row.lowerLimit,
+            upperLimit: row.upperLimit,
+            taxRate: row.taxRate,
+          };
+          return acc;
+        }, {}),
+      };
+      form.setFieldsValue(formValues);
+  
+      setLoading(false);
+    } catch (err) {
+      console.error("Failed to fetch PAYE records:", err);
+      setLoading(false);
+    }
   };
 
   //Add Line
@@ -92,7 +110,7 @@ const PayeModal = ({ handleCancel, sucNotify, erNotify }) => {
       render: (_, record) => (
         <Form.Item
           style={{ marginBottom: 0 }} 
-          name={['rows', record.orderId, 'lowerLimit']}
+          name={['rows',record.orderId,'lowerLimit']}
           rules={[
             {
               required: true,
@@ -117,7 +135,7 @@ const PayeModal = ({ handleCancel, sucNotify, erNotify }) => {
       render: (_, record) => (
         <Form.Item
           style={{ marginBottom: 0 }}
-          name={['rows', record.orderId, 'higherLimit']}
+          name={['rows', record.orderId, 'upperLimit']}
           >
           <InputNumber
             value={record.upperLimit}
@@ -137,7 +155,7 @@ const PayeModal = ({ handleCancel, sucNotify, erNotify }) => {
       render: (_, record) => (
         <Form.Item
           style={{ marginBottom: 0 }} 
-          name={['rows', record.orderId, 'percentage']}
+          name={['rows', record.orderId, 'taxRate']}
           rules={[
             {
               required: true,
