@@ -7,6 +7,7 @@ import Loading from "../../atoms/loading/loading";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
 import { AiOutlineCaretRight } from "react-icons/ai";
+import {Toaster,toast} from 'sonner'
 import Gbutton from "../../atoms/button/Button";
 import axios from "axios";
 const { Option } = Select;
@@ -81,16 +82,42 @@ const Register = () => {
         salary: parseInt(salary),
       };
       await axios.post(`${urL}/user`, payload);
+      sucNofify("User Registered Successfully")
       navigate("/");
     } catch (err) {
+      
       if (
         err.response.data.message == "Id, Name, Email, Password must be filled"
       ) {
         setMenu(1);
+        erNofify("d, Name, Email, Password must be filled");
       } else {
+        erNofify("Registration Failed! Try again")
       }
     }
     setLoading(false);
+  };
+
+  const sucNofify = (message) => {
+    setTimeout(
+      () =>
+        toast.success(message, {
+          duration: 2500,
+          position: "top-center",
+        }),
+      300
+    );
+  };
+
+  const erNofify = (message) => {
+    setzTimeout(
+      () =>
+        toast.error(message, {
+          duration: 2500,
+          position: "top-center",
+        }),
+      300
+    );
   };
 
   const handleNext = async () => {
@@ -105,6 +132,8 @@ const Register = () => {
     <div className={styles.formContainer}>
       {menu == 1 && (
         <>
+            <Toaster richColors/>
+
           <div className={styles.heading}>New Employee Onboarding</div>
           <Form
             {...formItemLayout}

@@ -33,9 +33,12 @@ import PayrollPage from "./components/pages/HR/PayrollPage/PayrollPage";
 import AdjustmentPage from "./components/pages/HR/AdjustmentPage/AdjustmentPage";
 import OrderTab from "./pages/OrderTab/OrderTab";
 import PayslipPage from "./components/pages/HR/PayslipPage/PayslipPage";
+import {Toaster} from 'sonner'
+
 function App() {
   return (
     <Router>
+      <Toaster richColors/>
       <RootLayout>
         <Routes>
           <Route path="/" element={<EmployeePage />} />

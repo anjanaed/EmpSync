@@ -7,6 +7,7 @@ import EditModal from "../../templates/EditModal/EditModal";
 import Loading from "../../atoms/loading/loading";
 import styles from "./Employee.module.css";
 import SearchBar from "../../molecules/SearchBar/SearchBar";
+import {Toaster,toast} from 'sonner'
 import { debounce } from "lodash";
 
 const customTheme = {
@@ -78,13 +79,40 @@ const Employees = () => {
     },
   };
 
+
+  const sucNofify = (message) => {
+    setTimeout(
+      () =>
+        toast.success(message, {
+          duration: 2500,
+          position: "top-center",
+        }),
+      300
+    );
+  };
+
+  const erNofify = (message) => {
+    setzTimeout(
+      () =>
+        toast.error(message, {
+          duration: 2500,
+          position: "top-center",
+        }),
+      300
+    );
+  };
+
+
+
   const handleDelete = async (id) => {
     setLoading(true);
     try {
       await axios.delete(`${urL}/user/${id}`);
       fetchEmployee();
+      sucNofify("User Removed Successfully!")
     } catch (err) {
       console.log(err);
+      erNofify("Something went Wrong!")
     }
     setLoading(false);
   };
@@ -159,6 +187,7 @@ const Employees = () => {
 
   return (
     <>
+    <Toaster richColors/>
       <Modal
         open={isModalOpen}
         footer={null}
