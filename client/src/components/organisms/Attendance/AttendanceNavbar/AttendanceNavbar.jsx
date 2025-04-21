@@ -12,7 +12,7 @@ const Navbar = () => {
     if (path === "/overview") {
       setSelectedKey("1");
     }
-    if (path === "/employee-details") {
+    if (path === "/EmployeeDetails") {
       setSelectedKey("2");
     }
     if (path === "/reports") {
@@ -42,7 +42,7 @@ const Navbar = () => {
           },
           {
             key: "2",
-            label: "Employee Details",
+            label: "EmployeeDetails",
             onClick: () => navigate("/EmployeeDetails"),
           },
           {

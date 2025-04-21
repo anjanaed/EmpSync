@@ -1,6 +1,6 @@
 import React from "react";
 import styles from "./EmployeeDetails.module.css";
-import NavBar from "../Navbar/Navbar";
+import NavBar from "../AttendanceNavbar/AttendanceNavbar";
 
 const employees = [
   { id: 'EMP001', name: 'John Smith', department: 'Engineering', checkIn: '08:45', checkOut: '17:30', status: 'Present', hours: '8:45' },
