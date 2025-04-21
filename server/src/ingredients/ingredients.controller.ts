@@ -57,17 +57,17 @@ export class IngredientsController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id') id: number) {
     return this.ingredientsService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateIngredientDto: Prisma.IngredientUpdateInput) {
+  update(@Param('id') id: number, @Body() updateIngredientDto: Prisma.IngredientUpdateInput) {
     return this.ingredientsService.update(id, updateIngredientDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  remove(@Param('id') id: number) {
     return this.ingredientsService.remove(id);
   }
 }
