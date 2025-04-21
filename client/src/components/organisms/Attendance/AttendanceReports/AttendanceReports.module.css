@@ -1,0 +1,438 @@
+.mainBox{
+    margin: 2vw;
+    padding: 2vw;
+    font-family: Arial, Helvetica, sans-serif;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+    border-radius: 15px;
+}
+
+.mainTitle{
+    text-align: left;
+    font-size: 1.0vw;
+    margin-bottom: 1.5vw;
+    margin-left: 30px;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+  }
+  
+  .header {
+    margin-bottom: 2rem;
+  }
+  
+  .title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #111827;
+    margin: 0 0 0.5rem 0;
+  }
+  
+  .description {
+    color: #6b7280;
+    margin: 0;
+  }
+  
+  .content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .reportGenerator {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  @media (min-width: 768px) {
+    .reportGenerator {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  
+  .card {
+    background-color: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    overflow: hidden;
+  }
+  
+  .cardHeader {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  
+  .cardTitle {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #111827;
+    margin: 0;
+  }
+  
+  .cardContent {
+    padding: 1.5rem;
+  }
+  
+  .formGroup {
+    margin-bottom: 1.25rem;
+  }
+  
+  .label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #374151;
+    margin-bottom: 0.5rem;
+  }
+  
+  .input,
+  .select {
+    width: 100%;
+    height: 2.5rem;
+    padding: 0 0.75rem;
+    border-radius: 0.375rem;
+    border: 1px solid #d1d5db;
+    background-color: white;
+    font-size: 0.875rem;
+    color: #111827;
+  }
+  
+  .input:focus,
+  .select:focus {
+    outline: none;
+    border-color: #6b7280;
+    box-shadow: 0 0 0 1px #6b7280;
+  }
+  
+  .dateRange {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  
+  @media (min-width: 640px) {
+    .dateRange {
+      flex-direction: row;
+    }
+  }
+  
+  .dateInput {
+    flex: 1;
+  }
+  
+  .dateLabel {
+    display: block;
+    font-size: 0.75rem;
+    color: #6b7280;
+    margin-bottom: 0.25rem;
+  }
+  
+  .dateInputWrapper {
+    position: relative;
+  }
+  
+  .dateIcon {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 1rem;
+    width: 1rem;
+    color: #6b7280;
+  }
+  
+  .dateInputWrapper .input {
+    padding-left: 2.25rem;
+  }
+  
+  .button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 2.5rem;
+    padding: 0 1rem;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all 0.2s;
+    cursor: pointer;
+  }
+  
+  .primaryButton {
+    background-color: #111827;
+    color: white;
+    border: none;
+    width: 100%;
+  }
+  
+  .primaryButton:hover {
+    background-color: #1f2937;
+  }
+  
+  .primaryButton:disabled {
+    background-color: #9ca3af;
+    cursor: not-allowed;
+  }
+  
+  .loading {
+    position: relative;
+    color: transparent;
+  }
+  
+  .loading::after {
+    content: "";
+    position: absolute;
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid white;
+    border-radius: 50%;
+    border-top-color: transparent;
+    animation: spin 0.8s linear infinite;
+  }
+  
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  
+  .outlineButton {
+    background-color: transparent;
+    color: #111827;
+    border: 1px solid #d1d5db;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .outlineButton:hover {
+    background-color: #f3f4f6;
+  }
+  
+  .buttonIcon {
+    height: 1rem;
+    width: 1rem;
+  }
+  
+  .iconButton {
+    height: 2rem;
+    width: 2rem;
+    padding: 0;
+    border-radius: 0.375rem;
+    background-color: transparent;
+    color: #6b7280;
+    border: none;
+  }
+  
+  .iconButton:hover {
+    background-color: #f3f4f6;
+    color: #111827;
+  }
+  
+  .actionIcon {
+    height: 1rem;
+    width: 1rem;
+  }
+  
+  .previewContent {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .emptyPreview {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    text-align: center;
+    background-color: #f9fafb;
+    border-radius: 0.375rem;
+  }
+  
+  .emptyPreviewIcon {
+    height: 3rem;
+    width: 3rem;
+    color: #d1d5db;
+    margin-bottom: 1rem;
+  }
+  
+  .emptyPreviewTitle {
+    font-size: 1.125rem;
+    font-weight: 500;
+    color: #374151;
+    margin: 0 0 0.5rem 0;
+  }
+  
+  .emptyPreviewText {
+    color: #6b7280;
+    max-width: 20rem;
+    margin: 0;
+  }
+  
+  .reportPreviewGenerated {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+  
+  .reportHeader {
+    margin-bottom: 1.5rem;
+  }
+  
+  .reportTitle {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #111827;
+    margin: 0 0 0.25rem 0;
+  }
+  
+  .reportMeta {
+    font-size: 0.875rem;
+    color: #6b7280;
+    margin: 0;
+  }
+  
+  .reportTable {
+    flex: 1;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.375rem;
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+  }
+  
+  .reportTableHeader {
+    display: grid;
+    grid-template-columns: 2fr repeat(4, 1fr);
+    background-color: #f9fafb;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  
+  .reportTableBody {
+    max-height: 15rem;
+    overflow-y: auto;
+  }
+  
+  .reportTableRow {
+    display: grid;
+    grid-template-columns: 2fr repeat(4, 1fr);
+    border-bottom: 1px solid #e5e7eb;
+  }
+  
+  .reportTableRow:last-child {
+    border-bottom: none;
+  }
+  
+  .reportTableCell {
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+    color: #374151;
+  }
+  
+  .reportTableHeader .reportTableCell {
+    font-weight: 500;
+    color: #6b7280;
+  }
+  
+  .exportActions {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: flex-end;
+  }
+  
+  .table {
+    width: 100%;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.375rem;
+    overflow: hidden;
+  }
+  
+  .tableHeader {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1.5fr 1fr 0.5fr;
+    background-color: #f9fafb;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  
+  .tableHeaderCell {
+    padding: 0.75rem 1rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  
+  .tableBody {
+    max-height: 25rem;
+    overflow-y: auto;
+  }
+  
+  .tableRow {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1.5fr 1fr 0.5fr;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  
+  .tableRow:last-child {
+    border-bottom: none;
+  }
+  
+  .tableCell {
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+    color: #374151;
+    display: flex;
+    align-items: center;
+  }
+  
+  /* Responsive adjustments for small screens */
+  @media (max-width: 640px) {
+    .tableHeader,
+    .tableRow,
+    .reportTableHeader,
+    .reportTableRow {
+      grid-template-columns: 1fr;
+    }
+  
+    .tableHeaderCell,
+    .tableCell,
+    .reportTableCell {
+      padding: 0.5rem;
+    }
+  
+    .tableHeaderCell:not(:first-child),
+    .reportTableHeader .reportTableCell:not(:first-child) {
+      display: none;
+    }
+  
+    .tableCell:not(:first-child) {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      padding-left: 1rem;
+    }
+  
+    .tableCell:not(:first-child)::before {
+      content: attr(data-label);
+      font-weight: 500;
+      color: #6b7280;
+    }
+  
+    .reportTableCell:not(:first-child) {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      padding-left: 1rem;
+    }
+  
+    .reportTableCell:not(:first-child)::before {
+      content: attr(data-label);
+      font-weight: 500;
+      color: #6b7280;
+    }
+  }
+  

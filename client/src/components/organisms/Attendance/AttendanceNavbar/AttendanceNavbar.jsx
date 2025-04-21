@@ -15,7 +15,7 @@ const Navbar = () => {
     if (path === "/EmployeeDetails") {
       setSelectedKey("2");
     }
-    if (path === "/reports") {
+    if (path === "/AttendanceReports") {
       setSelectedKey("3");
     }
   };
@@ -42,13 +42,13 @@ const Navbar = () => {
           },
           {
             key: "2",
-            label: "EmployeeDetails",
+            label: "Employee Details",
             onClick: () => navigate("/EmployeeDetails"),
           },
           {
             key: "3",
             label: "Reports",
-            onClick: () => navigate("/reports"),
+            onClick: () => navigate("/AttendanceReports"),
           },
         ]}
       />

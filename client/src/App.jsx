@@ -35,6 +35,7 @@ import OrderTab from "./pages/OrderTab/OrderTab";
 import PayslipPage from "./components/pages/HR/PayslipPage/PayslipPage";
 import Attendance from "./components/pages/HR/Attendance/Attendance";
 import EmployeeDetails from "./components/pages/HR/Attendance/EmployeeDetails";
+import AttendanceReports from "./components/pages/HR/Attendance/Reports"
 function App() {
   return (
     <Router>
@@ -76,6 +77,7 @@ function App() {
           <Route path="/payslip" element={<PayslipPage/>}/>
           <Route path="/Attendance" element={<Attendance/>}/>
           <Route path="/EmployeeDetails" element={<EmployeeDetails/>}/>
+          <Route path="/AttendanceReports" element={<AttendanceReports/>}/>
         </Routes>
       </RootLayout>
     </Router>
