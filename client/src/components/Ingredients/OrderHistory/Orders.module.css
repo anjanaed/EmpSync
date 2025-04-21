@@ -5,8 +5,7 @@
     padding: 24px;
     background-color: #ffffff;
     min-height: 100vh;
-    margin-left: 100px;
-    margin-right: 100px;
+    max-width: 1400px;
 }
 
 .titleSection {
