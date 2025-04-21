@@ -46,34 +46,40 @@ export class IngredientsService {
     return ingredients;
   }
 
-  async findOne(id: string) {
+  async findOne(id: number) {
+    // Ensure id is converted to number
+    const parsedId = parseInt(id.toString(), 10);
+    
+    if (isNaN(parsedId)) {
+      throw new HttpException('Invalid ingredient ID', HttpStatus.BAD_REQUEST);
+    }
+
     const ingredient = await this.databaseServices.ingredient.findUnique({
-      where: { id }
+      where: { id: parsedId }
     });
+
     if (!ingredient) {
       throw new HttpException('Ingredient Not found', HttpStatus.NOT_FOUND);
     }
     return ingredient;
   }
 
-  async update(id: string, updateIngredientDto: Prisma.IngredientUpdateInput) {
+  async update(id: number, updateIngredientDto: Prisma.IngredientUpdateInput) {
+    // The findOne method will now handle the id parsing
     const ingredient = await this.findOne(id);
-    if (!ingredient) {
-      throw new HttpException('Ingredient Not found', HttpStatus.NOT_FOUND);
-    }
+    
     return this.databaseServices.ingredient.update({
-      where: { id },
+      where: { id: parseInt(id.toString(), 10) },
       data: updateIngredientDto,
     });
   }
 
-  async remove(id: string) {
+  async remove(id: number) {
+    // The findOne method already handles ID validation and type conversion
     const ingredient = await this.findOne(id);
-    if (!ingredient) {
-      throw new HttpException('Ingredient Not found', HttpStatus.NOT_FOUND);
-    }
+    
     return this.databaseServices.ingredient.delete({
-      where: { id },
+      where: { id: parseInt(id.toString(), 10) },
     });
   }
 
@@ -128,7 +134,7 @@ export class IngredientsService {
       return acc;
     }, {} as Record<string, { types: Record<string, any[]> }>);
 
-    // Improved binary search function for finding price ranges
+    //  binary search function for finding price ranges
     function binarySearchPriceRange(items: any[]) {
       if (!items.length) return null;
 
@@ -426,11 +432,17 @@ export class IngredientsService {
   async getStoredIngredientOrders() {
     try {
       const orders = await this.databaseServices.ingredientOrder.findMany({
-        include: {
-          ingredients: true
+        select: {
+            id: true,
+            lastUpdated: true,
+            budget: true,
+            priority1Budget: true,
+            otherPriorityBudget: true,
+            totalCost: true,
+            ingredients: true
         },
         orderBy: {
-          lastUpdated: 'desc'
+            lastUpdated: 'desc'
         }
       });
 
@@ -441,6 +453,10 @@ export class IngredientsService {
       return orders.map(order => ({
         id: order.id,
         lastUpdated: order.lastUpdated,
+        budget: order.budget,
+        priority1Budget: order.priority1Budget,
+        otherPriorityBudget: order.otherPriorityBudget,
+        totalCost: order.totalCost,
         ingredients: {
           priority1Ingredients: order.ingredients.filter(ing => ing.priority === 1),
           optimizedIngredients: order.ingredients.filter(ing => ing.priority !== 1)
