@@ -26,7 +26,7 @@
 }
 
 :global(.ant-select-selector) {
-  border: 1px solid rgb(219, 218, 218) !important; 
+  border: 1px solid rgb(219, 218, 218) !important;
   background-color: white !important;
 }
 
@@ -35,7 +35,7 @@
 }
 
 :global(.ant-select:hover .ant-select-selector) {
-  border-color: #1890ff !important; 
+  border-color: #1890ff !important;
 }
 
 .homeHead {
@@ -60,8 +60,6 @@
 .filter {
   width: 10vw;
 }
-
-
 
 .searchBar {
   margin-right: 1vw;
@@ -104,7 +102,7 @@
   border-radius: 10px;
   padding: 0.5vw;
   height: auto;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25), 0 3px 6px rgba(0, 0, 0, 0.22); 
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25), 0 3px 6px rgba(0, 0, 0, 0.22);
   overflow-y: auto;
 }
 
@@ -112,5 +110,3 @@ Table {
   margin-top: 1vw;
   background-color: rgb(245, 245, 245);
 }
-
-

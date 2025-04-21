@@ -20,14 +20,18 @@ export class PayrollService {
     try {
       const users = await this.databaseService.user.findMany();
       const payeData = await this.databaseService.payeTaxSlab.findMany();
-      const allAdjustments = await this.databaseService.salaryAdjustments.findMany();
-      const allIndividualAdjustments = await this.databaseService.individualSalaryAdjustments.findMany();
-      const employerFundRate = allAdjustments.find((adj) => adj.label == 'EmployerFund').amount;
+      const allAdjustments =
+        await this.databaseService.salaryAdjustments.findMany();
+      const allIndividualAdjustments =
+        await this.databaseService.individualSalaryAdjustments.findMany();
+      const employerFundRate = allAdjustments.find(
+        (adj) => adj.label == 'EmployerFund',
+      ).amount;
       const ETF = allAdjustments.find((adj) => adj.label == 'ETF').amount;
       const range = dto.range;
-      const month=dto.month;
+      const month = dto.month;
 
-
+      //Function to divide additions and deduction based on their type (percentage & value)
       function extractAdjustments(
         data: any,
         allowance: boolean,
@@ -41,6 +45,7 @@ export class PayrollService {
           .map((adj: any) => ({ label: adj.label, amount: adj.amount }));
       }
 
+      //Function to divide individual additions and deduction based on their type (percentage & value)
       function extractIndividualAdjustment(
         data: any,
         user: string,
@@ -57,33 +62,55 @@ export class PayrollService {
           .map((adj: any) => ({ label: adj.label, amount: adj.amount }));
       }
 
+      //Extraction of General Adjustments
       const allAllowanceP = extractAdjustments(allAdjustments, true, true);
       const allAllowanceV = extractAdjustments(allAdjustments, true, false);
       const allDeductionV = extractAdjustments(allAdjustments, false, false);
 
+      //Filter Out Company Contributions from Employee deductions
       const allDeductionP = allAdjustments
         .filter(
           (adj) =>
             adj.isPercentage &&
             !adj.allowance &&
-            !["ETF", "EmployerFund"].includes(adj.label),
+            !['ETF', 'EmployerFund'].includes(adj.label),
         )
         .map((adj) => ({ label: adj.label, amount: adj.amount }));
 
-        console.log(allDeductionP);
-
+      //Process Individual Adjustments for each user
       for (const user of users) {
+        const indiAllowanceP = extractIndividualAdjustment(
+          allIndividualAdjustments,
+          user.id,
+          true,
+          true,
+        );
+        const indiAllowanceV = extractIndividualAdjustment(
+          allIndividualAdjustments,
+          user.id,
+          true,
+          false,
+        );
+        const indiDeductionsP = extractIndividualAdjustment(
+          allIndividualAdjustments,
+          user.id,
+          false,
+          true,
+        );
+        const indiDeductionsV = extractIndividualAdjustment(
+          allIndividualAdjustments,
+          user.id,
+          false,
+          false,
+        );
 
-        const indiAllowanceP=extractIndividualAdjustment(allIndividualAdjustments,user.id,true,true);
-        const indiAllowanceV=extractIndividualAdjustment(allIndividualAdjustments,user.id,true,false);
-        const indiDeductionsP=extractIndividualAdjustment(allIndividualAdjustments,user.id,false,true);
-        const indiDeductionsV=extractIndividualAdjustment(allIndividualAdjustments,user.id,false,false);
-
+        //Merging Individual Adjustments and General Adjustments
         const allowanceP = [...indiAllowanceP, ...allAllowanceP];
         const allowanceV = [...indiAllowanceV, ...allAllowanceV];
         const deductionsP = [...indiDeductionsP, ...allDeductionP];
         const deductionsV = [...indiDeductionsV, ...allDeductionV];
 
+        //Passing Data to receive calculated Data
         const values = calculateSalary(
           {
             basicSalary: user.salary,
@@ -95,13 +122,15 @@ export class PayrollService {
           payeData,
         );
 
+        //Create Payroll Record
         const payroll = await this.create({
           employee: { connect: { id: user.id } },
           month: month,
           netPay: values.netSalary,
-          payrollPdf: `C:\\Users\\USER\\Downloads\\Payrolls\\${user.id} - ${month}.pdf`,
+          payrollPdf: `http://localhost:3000/pdfs/${user.id}-${month}.pdf`,
         });
 
+        //Passing Calculated Data & Payroll record Data for PDF generation
         await generatePayslip({
           employee: user,
           values,
@@ -114,15 +143,22 @@ export class PayrollService {
           month,
         });
       }
-      console.log("Payrolls Generated")
+      console.log('Payrolls Generated');
     } catch (err) {
       console.log(err);
     }
   }
 
-  async findAll() {
+  async findAll(search?:string) {
     try {
-      const payrolls = await this.databaseService.payroll.findMany({});
+      const payrolls = await this.databaseService.payroll.findMany({
+        include:{
+          employee:true,
+        },
+        where:search?{OR:[
+          {empId: {contains:search,mode:'insensitive'}},
+        ],
+      }:{},});
       if (payrolls) {
         return payrolls;
       } else {
@@ -133,11 +169,12 @@ export class PayrollService {
     }
   }
 
-  async findOne(empId: string, range: string[]) {
+  async findOne(empId: string,month:string) {
     try {
       const payroll = await this.databaseService.payroll.findFirst({
         where: {
           empId,
+          month,
         },
       });
       if (payroll) {

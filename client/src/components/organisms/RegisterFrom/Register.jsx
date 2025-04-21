@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { DatePicker, Form, Space, Input, Select } from "antd";
+import { DatePicker, Form, Space, Input, Select,InputNumber } from "antd";
 import styles from "./Register.module.css";
 import { IoIosArrowBack } from "react-icons/io";
 import FingerPrint from "../../atoms/FingerPrint/FingerPrint";
@@ -9,6 +9,34 @@ import moment from "moment";
 import { AiOutlineCaretRight } from "react-icons/ai";
 import Gbutton from "../../atoms/button/Button";
 import axios from "axios";
+const { Option } = Select;
+
+const jobSalaryMap = {
+  "HR Manager": 40000,
+  "Kitchen Admin": 50000,
+  "Kitchen Staff": 70000,
+  "Inventory Manager": 90000,
+  Other: 10,
+};
+
+const formItemLayout = {
+  labelCol: {
+    xs: {
+      span: 24,
+    },
+    sm: {
+      span: 8,
+    },
+  },
+  wrapperCol: {
+    xs: {
+      span: 24,
+    },
+    sm: {
+      span: 16,
+    },
+  },
+};
 
 const Register = () => {
   const [menu, setMenu] = useState(1);
@@ -28,9 +56,9 @@ const Register = () => {
   const [lang, setLang] = useState("");
   const [supId, setSupId] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [form] = Form.useForm();
 
-  const jobSalaryMap={"HR Manager":40000,"Kitchen Admin":50000,"Kitchen Staff":70000,"Inventory Manager":90000,"Other":10}
-
+  //Registering Process
   const handleRegister = async () => {
     setLoading(true);
     let role = jobRole;
@@ -52,69 +80,23 @@ const Register = () => {
         language: lang,
         salary: parseInt(salary),
       };
-      await axios
-        .post(`${urL}/user`, payload)
-        .then((res) => {
-          console.log(res);
-          navigate("/");
-        })
-        .catch((err) => {
-          if (
-            err.response.data.message ==
-            "Id, Name, Email, Password must be filled"
-          ) {
-            setMenu(1);
-            setRequired(true);
-          } else {
-            setRequired(false);
-          }
-        });
-      setLoading(false);
+      await axios.post(`${urL}/user`, payload);
+      navigate("/");
     } catch (err) {
-      console.log(err);
-      setLoading(false);
+      if (
+        err.response.data.message == "Id, Name, Email, Password must be filled"
+      ) {
+        setMenu(1);
+      } else {
+      }
     }
+    setLoading(false);
   };
 
   const handleNext = async () => {
     await form.validateFields();
     setMenu(2);
   };
-
-  const { Option } = Select;
-
-  const formItemLayout = {
-    labelCol: {
-      xs: {
-        span: 24,
-      },
-      sm: {
-        span: 8,
-      },
-    },
-    wrapperCol: {
-      xs: {
-        span: 24,
-      },
-      sm: {
-        span: 16,
-      },
-    },
-  };
-
-  const [form] = Form.useForm();
-
-  const prefixSelector = (
-    <Form.Item name="prefix" noStyle>
-      <Select
-        style={{
-          width: 70,
-        }}
-      >
-        <Option value="94">+94</Option>
-      </Select>
-    </Form.Item>
-  );
 
   if (loading) {
     return <Loading />;
@@ -128,9 +110,6 @@ const Register = () => {
             {...formItemLayout}
             form={form}
             name="register"
-            initialValues={{
-              prefix: "+94",
-            }}
             scrollToFirstError
           >
             <div className={styles.sides}>
@@ -144,10 +123,15 @@ const Register = () => {
                       message: "Please input your Name!",
                       whitespace: true,
                     },
+                    {
+                      pattern: /^[A-Za-z\s]+$/,
+                      message: "Name can only include letters and spaces",
+                    },
                   ]}
                 >
                   <Input
                     placeholder="Enter Name"
+                    maxLength={40}
                     onChange={(e) => setName(e.target.value)}
                   />
                 </Form.Item>
@@ -167,6 +151,7 @@ const Register = () => {
                 >
                   <Input
                     placeholder="Enter Email Address"
+                    maxLength={40}
                     onChange={(e) => setEmail(e.target.value)}
                   />
                 </Form.Item>
@@ -178,19 +163,33 @@ const Register = () => {
                       required: true,
                       message: "Please input your password!",
                     },
+                    {
+                      min: 8,
+                      message: "Password must be at least 8 characters.",
+                    },
                   ]}
                   hasFeedback
                 >
                   <Input.Password
                     placeholder="Enter Password"
+                    maxLength={20}
                     onChange={(e) => setPassword(e.target.value)}
                   />
                 </Form.Item>
-                <Form.Item name="phone" label="Phone Number">
+                <Form.Item
+                  name="phone"
+                  label="Phone Number"
+                  rules={[
+                    {
+                      pattern: /^\d{10}$/,
+                      message: "Mobile Number must be include 10 digits",
+                    },
+                  ]}
+                >
                   <Input
+                    maxLength={10}
                     placeholder="Enter Mobile Number"
                     onChange={(e) => setTel(e.target.value)}
-                    addonBefore={prefixSelector}
                     style={{
                       width: "100%",
                     }}
@@ -216,14 +215,7 @@ const Register = () => {
                     <Option value="Other">Other</Option>
                   </Select>
                 </Form.Item>
-                <Form.Item
-                  label={
-                    <>
-                      <p style={{ color: "red" }}>* </p>&#8201; Job Role
-                    </>
-                  }
-                  name="role"
-                >
+                <Form.Item label="Job Role" required>
                   <Space.Compact style={{ display: "flex", width: "100%" }}>
                     <Form.Item
                       noStyle
@@ -232,22 +224,20 @@ const Register = () => {
                       rules={[
                         {
                           required: true,
-                          message: "Please Enter Role!",
+                          message: "Please select a role!",
                         },
                       ]}
                     >
                       <Select
-                        onChange={(value) => {setJobRole(value)
-                          var sal
-                          if (value != "Other"){
-                            sal=((jobSalaryMap[value]).toString());
-                          }else{
-                            sal="";
-                          }
+                        onChange={(value) => {
+                          setJobRole(value);
+                          const sal =
+                            value !== "Other"
+                              ? jobSalaryMap[value]?.toString()
+                              : "";
                           setSalary(sal);
                           form.setFieldsValue({ salary: sal });
-                        }
-                        }
+                        }}
                         style={{ width: "100%" }}
                         placeholder="Select Role"
                       >
@@ -260,13 +250,32 @@ const Register = () => {
                         <Option value="Other">Other</Option>
                       </Select>
                     </Form.Item>
-                    <Form.Item name="customRole" noStyle style={{ flex: "2" }}>
+
+                    <Form.Item
+                      noStyle
+                      name="customRole"
+                      style={{ flex: "2" }}
+                      rules={[
+                        ({ getFieldValue }) => ({
+                          validator(_, value) {
+                            if (
+                              getFieldValue("selectRole") === "Other" &&
+                              !value
+                            ) {
+                              return Promise.reject(
+                                "Please enter custom role!"
+                              );
+                            }
+                            return Promise.resolve();
+                          },
+                        }),
+                      ]}
+                    >
                       <Input
                         style={{ width: "100%" }}
                         onChange={(e) => setCustomJobRole(e.target.value)}
                         placeholder="If Other, Enter Job Role"
                         disabled={jobRole !== "Other"}
-                        required={false}
                       />
                     </Form.Item>
                   </Space.Compact>
@@ -285,11 +294,13 @@ const Register = () => {
                 >
                   <Input
                     placeholder="Enter ID"
+                    maxLength={10}
                     onChange={(e) => setId(e.target.value)}
                   />
                 </Form.Item>
                 <Form.Item name="address" label="Residential Address">
                   <Input
+                    maxLength={65}
                     placeholder="Enter Address"
                     onChange={(e) => setAddress(e.target.value)}
                   />
@@ -313,7 +324,11 @@ const Register = () => {
                   />
                 </Form.Item>
                 <Form.Item name="supId" label="Supervisor's ID">
-                  <Input placeholder="Enter Supervisor ID (If Available)" />
+                  <Input
+                    onChange={(e) => setSupId(e.target.value)}
+                    maxLength={10}
+                    placeholder="Enter Supervisor ID (If Available)"
+                  />
                 </Form.Item>
                 <Form.Item
                   name="language"
@@ -342,10 +357,14 @@ const Register = () => {
                       required: true,
                       message: "Please Enter Salary!",
                     },
-                    
                   ]}
                 >
-                  <Input
+                  <InputNumber
+                    maxLength={12}
+                    min={0}
+                    style={{ width: "100%" }}
+                    formatter={(value) => `${value} LKR`}
+                    parser={(value) => value.replace(" LKR", "")}
                     placeholder="Enter Basic Salary"
                     onChange={(e) => setSalary(e.target.value)}
                   />
@@ -353,7 +372,7 @@ const Register = () => {
               </div>
             </div>
             <div className={styles.btnContainer}>
-              <Gbutton onClick={handleNext}>
+              <Gbutton width={200} onClick={handleNext}>
                 <>
                   Next &nbsp; <AiOutlineCaretRight />
                 </>
@@ -376,7 +395,11 @@ const Register = () => {
             <FingerPrint />
           </div>
           <div className={styles.btnContainer}>
-            <Gbutton onClick={handleRegister} className={styles.btn}>
+            <Gbutton
+              width={300}
+              onClick={handleRegister}
+              className={styles.btn}
+            >
               Register Without Finger Print
             </Gbutton>
           </div>

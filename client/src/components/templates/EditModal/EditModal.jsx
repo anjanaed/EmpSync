@@ -1,14 +1,39 @@
 import { React, useState, useEffect } from "react";
-import { Tabs, Form, Input, DatePicker, Select, Space } from "antd";
+import {
+  Tabs,
+  Form,
+  Input,
+  DatePicker,
+  Select,
+  Space,
+  InputNumber,
+} from "antd";
 import styles from "./EditModal.module.css";
 import Loading from "../../atoms/loading/loading";
 import dayjs from "dayjs";
 import { LuSave } from "react-icons/lu";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 import Gbutton from "../../atoms/button/Button";
-const dateFormat = "YYYY/MM/DD";
 import { RiFingerprintLine } from "react-icons/ri";
+
+const formItemLayout = {
+  labelCol: {
+    xs: {
+      span: 24,
+    },
+    sm: {
+      span: 7,
+    },
+  },
+  wrapperCol: {
+    xs: {
+      span: 24,
+    },
+    sm: {
+      span: 14,
+    },
+  },
+};
 
 const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
   const [customRole, setCustomRole] = useState("");
@@ -31,70 +56,42 @@ const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
     weight: "",
   });
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
   const urL = import.meta.env.VITE_BASE_URL;
-  const getEmployee = async () => {
+
+  const fetchRecord = async () => {
     try {
-      setLoading(true);
       const res = await axios.get(`${urL}/user/${empId}`);
-      const employee=res.data;
+      const employee = res.data;
       employee.dob = dayjs(employee.dob);
       setCurrentEmployee(employee);
       form.setFieldsValue(employee);
-      setLoading(false);
     } catch (err) {
       console.log(err);
-      setLoading(false);
     }
+    setLoading(false);
   };
 
   useEffect(() => {
-    getEmployee();
+    fetchRecord();
   }, [empId]);
 
   const handleUpdate = async () => {
     await form.validateFields();
     setLoading(true);
     try {
-      await axios
-        .put(`${urL}/user/${empId}`, currentEmployee)
-        .then((res) => {
-          console.log(res);
-          console.log("Done");
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      await axios.put(`${urL}/user/${empId}`, currentEmployee);
       handleCancel();
       fetchEmployee();
-      setLoading(false);
     } catch (err) {
       console.log(err);
-      setLoading(false);
     }
+    setLoading(false);
   };
 
   if (loading) {
     return <Loading />;
   }
-  const formItemLayout = {
-    labelCol: {
-      xs: {
-        span: 24,
-      },
-      sm: {
-        span: 7,
-      },
-    },
-    wrapperCol: {
-      xs: {
-        span: 24,
-      },
-      sm: {
-        span: 14,
-      },
-    },
-  };
+
   return (
     <>
       <div className={styles.head}>Edit Employee - {currentEmployee.id}</div>
@@ -129,9 +126,14 @@ const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
                             message: "Please input your Name!",
                             whitespace: true,
                           },
+                          {
+                            pattern: /^[A-Za-z\s]+$/,
+                            message: "Name can only include letters and spaces",
+                          },
                         ]}
                       >
                         <Input
+                          maxLength={45}
                           placeholder="Enter Name"
                           onChange={(e) =>
                             setCurrentEmployee({
@@ -156,6 +158,7 @@ const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
                         ]}
                       >
                         <Input
+                          maxLength={35}
                           placeholder="Enter Email Address"
                           onChange={(e) =>
                             setCurrentEmployee({
@@ -165,8 +168,18 @@ const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
                           }
                         />
                       </Form.Item>
-                      <Form.Item name="telephone" label="Phone Number">
+                      <Form.Item
+                        name="telephone"
+                        label="Phone Number"
+                        rules={[
+                          {
+                            pattern: /^\d{10}$/,
+                            message: "Mobile Number must be include 10 digits",
+                          },
+                        ]}
+                      >
                         <Input
+                          maxLength={10}
                           placeholder="Enter Mobile Number"
                           onChange={(e) =>
                             setCurrentEmployee({
@@ -206,6 +219,7 @@ const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
                       </Form.Item>
                       <Form.Item name="address" label="Residential Address">
                         <Input
+                          maxLength={65}
                           placeholder="Enter Address"
                           onChange={(e) =>
                             setCurrentEmployee({
@@ -229,7 +243,7 @@ const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
                           onChange={(date) =>
                             setCurrentEmployee({
                               ...currentEmployee,
-                              dob: moment(date).format("YYYY-MM-DD"),
+                              dob: dayjs(date).format("YYYY-MM-DD"),
                             })
                           }
                           placeholder="Select Birth Date"
@@ -271,11 +285,13 @@ const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
                         />
                       </Form.Item>
                       <Form.Item
-                        label={
-                          <>
-                            <p style={{ color: "red" }}>* </p>&#8201; Job Role
-                          </>
-                        }
+                        rules={[
+                          {
+                            required: true,
+                            message: "Please Enter ID!",
+                          },
+                        ]}
+                        label="Job Role"
                         name="roleHold"
                       >
                         <Space.Compact className={styles.select}>
@@ -286,7 +302,7 @@ const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
                             rules={[
                               {
                                 required: true,
-                                message: "Please Enter Role!",
+                                message: "Please select a role!",
                               },
                             ]}
                           >
@@ -316,7 +332,27 @@ const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
                               <Select.Option value="Other">Other</Select.Option>
                             </Select>
                           </Form.Item>
-                          <Form.Item noStyle style={{ flex: "2" }}>
+
+                          <Form.Item
+                            noStyle
+                            name="customRole"
+                            style={{ flex: "2" }}
+                            rules={[
+                              ({ getFieldValue }) => ({
+                                validator(_, value) {
+                                  if (
+                                    getFieldValue("role") === "Other" &&
+                                    !value
+                                  ) {
+                                    return Promise.reject(
+                                      "Please enter custom role!"
+                                    );
+                                  }
+                                  return Promise.resolve();
+                                },
+                              }),
+                            ]}
+                          >
                             <Input
                               style={{ width: "100%" }}
                               onChange={(e) => {
@@ -327,11 +363,11 @@ const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
                               }}
                               placeholder="If Other, Enter Job Role"
                               disabled={customRole !== "Other"}
-                              required={false}
                             />
                           </Form.Item>
                         </Space.Compact>
                       </Form.Item>
+
                       <Form.Item
                         name="salary"
                         label="Basic Salary"
@@ -342,7 +378,12 @@ const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
                           },
                         ]}
                       >
-                        <Input
+                        <InputNumber
+                          maxLength={12}
+                          min={0}
+                          style={{ width: "100%" }}
+                          formatter={(value) => `${value} LKR`}
+                          parser={(value) => value.replace(" LKR", "")}
                           placeholder="Enter Basic Salary"
                           onChange={(e) =>
                             setCurrentEmployee({
@@ -388,7 +429,12 @@ const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
                         </Select>
                       </Form.Item>
                       <Form.Item name="height" label="Height">
-                        <Input
+                        <InputNumber
+                          maxLength={3}
+                          min={0}
+                          style={{ width: "100%" }}
+                          formatter={(value) => `${value} cm`}
+                          parser={(value) => value.replace(" cm", "")}
                           onChange={(e) =>
                             setCurrentEmployee({
                               ...currentEmployee,
@@ -399,7 +445,12 @@ const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
                         />
                       </Form.Item>
                       <Form.Item name="weight" label="Weight">
-                        <Input
+                        <InputNumber
+                          maxLength={3}
+                          min={0}
+                          style={{ width: "100%" }}
+                          formatter={(value) => `${value} Kg`}
+                          parser={(value) => value.replace(" Kg", "")}
                           onChange={(e) =>
                             setCurrentEmployee({
                               ...currentEmployee,

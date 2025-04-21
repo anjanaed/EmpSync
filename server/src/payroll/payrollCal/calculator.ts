@@ -18,30 +18,41 @@ export function calculateSalary(
   },
   payeData,
 ): salaryData {
+
+  //Calculating & Mapping Addition Amounts(Percentages)
   const calculatedAllowance = dto.allowanceP.map((allowance) => ({
     label: allowance.label,
     amount: (allowance.amount / 100) * dto.basicSalary,
   }));
 
+  //Calculating & Mapping Deduction Amounts(Percentages)
   const calculatedDeduction = dto.deductionsP.map((deduction) => ({
     label: deduction.label,
     amount: (deduction.amount / 100) * dto.basicSalary,
   }));
 
+  //Merge Calculated Percentage Amounts and Values
   const totalAllowanceArray = [...calculatedAllowance, ...dto.allowanceV];
   const totalDeductionArray = [...calculatedDeduction, ...dto.deductionsV];
 
+
+  //Calculate Total Deduction Amount
   const totalDeduction = totalDeductionArray.reduce(
     (sum, d) => sum + d.amount,
     0,
   );
+
+  //Calculate Total Addition Amount
   const totalAllowance = totalAllowanceArray.reduce(
     (sum, a) => sum + a.amount,
     0,
   );
 
+  //Calculate Gross Salary
   const grossSalary = dto.basicSalary + totalAllowance;
 
+
+  //Calculation of Paye Tax Amount
   let taxLevel: number;
   for (const level of payeData) {
     const upper = level.upperLimit ?? Infinity;
@@ -62,9 +73,10 @@ export function calculateSalary(
       ((level.upperLimit - level.lowerLimit) * level.taxRate) / 100;
     paye += levelTax;
   }
-
   const payeTax = paye / 12;
 
+
+  //Calculate Net Salary
   const netSalary = grossSalary - (totalDeduction + payeTax);
 
   return {
