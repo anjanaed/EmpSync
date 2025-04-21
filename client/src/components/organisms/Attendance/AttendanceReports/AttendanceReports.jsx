@@ -104,7 +104,14 @@ const AttendanceReports = () => {
         <div className={styles.container}>
           <div className={styles.content}>
             <div className={styles.reportGenerator}>
-              <div className={styles.card}>
+            <div className={styles.emptyPreview}>
+                  <FileText className={styles.emptyPreviewIcon} />
+                  <h3 className={styles.emptyPreviewTitle}>No Report Generated</h3>
+                  <p className={styles.emptyPreviewText}>
+                    Configure the report options and click Generate Report to preview
+                  </p>
+            </div>
+            <div className={styles.card}>
                 <div className={styles.cardHeader}>
                   <h2 className={styles.cardTitle}>Generate Report</h2>
                 </div>
@@ -208,6 +215,37 @@ const AttendanceReports = () => {
                     </button>
                   </form>
                 </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className={styles.card}>
+          <div className={styles.cardHeader}>
+            <h2 className={styles.cardTitle}>Recent Reports</h2>
+          </div>
+          <div className={styles.cardContent}>
+            <div className={styles.table}>
+              <div className={styles.tableHeader}>
+                <div className={styles.tableHeaderCell}>Report Name</div>
+                <div className={styles.tableHeaderCell}>Department</div>
+                <div className={styles.tableHeaderCell}>Date Range</div>
+                <div className={styles.tableHeaderCell}>Generated On</div>
+                <div className={styles.tableHeaderCell}>Actions</div>
+              </div>
+              <div className={styles.tableBody}>
+                {recentReports.map((report) => (
+                  <div key={report.id} className={styles.tableRow}>
+                    <div className={styles.tableCell}>{report.name}</div>
+                    <div className={styles.tableCell}>{report.department}</div>
+                    <div className={styles.tableCell}>{report.dateRange}</div>
+                    <div className={styles.tableCell}>{report.generatedOn}</div>
+                    <div className={styles.tableCell}>
+                      <button className={`${styles.button} ${styles.iconButton}`} title="Download Report">
+                        <Download className={styles.actionIcon} />
+                      </button>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
