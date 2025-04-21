@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import styles from "./Navbar.module.css";
+import styles from "./AttendanceNavbar.module.css";
 import { Menu, DatePicker } from "antd"; // Import DatePicker from Ant Design
 import { useNavigate } from "react-router-dom";
 

@@ -1,6 +1,6 @@
 import React from "react";
 import styles from "./AttendanceDashboard.module.css";
-import NavBar from "../Navbar/Navbar"; // Updated import path
+import NavBar from "../AttendanceNavbar/AttendanceNavbar"; // Updated import path
 import {
   ResponsiveContainer,
   PieChart,
@@ -87,6 +87,38 @@ const AttendanceDashboard = () => {
               </ResponsiveContainer>
             </div>
           </div>
+          <div className={styles.chartCard}>
+            <h3>Weekly Attendance</h3>
+            <div className={styles.barChartContainer}>
+              <ResponsiveContainer width="100%" height={250}>
+                <BarChart data={weeklyData}>
+                  <XAxis dataKey="day" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Bar dataKey="present" name="Present" fill="#4CAF50" />
+                  <Bar dataKey="late" name="Late" fill="#FF9800" />
+                  <Bar dataKey="absent" name="Absent" fill="#F44336" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+          <div className={styles.chartCard}>
+          <h3>Department Attendance</h3>
+          <div className={styles.barChartContainer}>
+            <ResponsiveContainer width="200%" height={250}>
+              <BarChart data={departmentData} layout="vertical">
+                <XAxis type="number" />
+                <YAxis dataKey="name" type="category" width={100} />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="present" name="Present" fill="#4CAF50" />
+                <Bar dataKey="late" name="Late" fill="#FF9800" />
+                <Bar dataKey="absent" name="Absent" fill="#F44336" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
         </div>
       </div>
     </div>
