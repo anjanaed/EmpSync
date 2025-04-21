@@ -6,6 +6,7 @@ import {
   faUserPlus,
   faFileInvoice,
   faDollarSign,
+  faClipboardUser,
 } from "@fortawesome/free-solid-svg-icons";
 import { MenuOutlined, LogoutOutlined } from "@ant-design/icons";
 import { UserOutlined } from "@ant-design/icons";
@@ -78,6 +79,9 @@ const NavBar = ({ Comp }) => {
     if (path == "/reportPage") {
       setSelectedKey("4");
     }
+    if (path == "/Attendance") {
+      setSelectedKey("5");
+    }
     setLoading(false);
   };
 
@@ -130,7 +134,7 @@ const NavBar = ({ Comp }) => {
             items={[
               {
                 key: "1",
-                icon: <FontAwesomeIcon size="2x" icon={faUsers} />,
+                icon: <FontAwesomeIcon icon={faUsers} />,
                 label: "Employees",
                 onClick: () => navigate("/"),
               },
@@ -152,6 +156,12 @@ const NavBar = ({ Comp }) => {
                 label: "Reports",
                 onClick: () => navigate("/reportPage"),
               },
+              {
+                key: "5",
+                icon: <FontAwesomeIcon icon={faClipboardUser} />,
+                label: "Attendance",
+                onClick: () => navigate("/Attendance"),
+              },
             ]}
           />
         </Sider>
@@ -165,8 +175,8 @@ const NavBar = ({ Comp }) => {
             onClick={() => setCollapsed(!collapsed)}
             style={{
               fontSize: "16px",
-              width: 55,
-              height: 55,
+              width: 64,
+              height: 64,
             }}
           />
           <img className={styles.logo} src={img}></img>
