@@ -33,6 +33,8 @@ import PayrollPage from "./components/pages/HR/PayrollPage/PayrollPage";
 import AdjustmentPage from "./components/pages/HR/AdjustmentPage/AdjustmentPage";
 import OrderTab from "./pages/OrderTab/OrderTab";
 import PayslipPage from "./components/pages/HR/PayslipPage/PayslipPage";
+import Attendance from "./components/pages/HR/Attendance/Attendance";
+import EmployeeDetails from "./components/pages/HR/Attendance/EmployeeDetails";
 function App() {
   return (
     <Router>
@@ -42,7 +44,7 @@ function App() {
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/meals" element={<MealsPage />} />
           <Route path="/suggestions" element={<SuggestionsPage />} />
-          <Route path="/attendance" element={<AttendancePage />} />{" "}
+          <Route path="/AttendancePage" element={<AttendancePage />} />{" "}
           {/* Add route for AttendancePage */}
           <Route path="/login" element={<Login />} />
           <Route path="/LoginRole" element={<LoginRole />} />
@@ -72,6 +74,8 @@ function App() {
           <Route path="/OrderTab" element={<OrderTab />} />
           <Route path="/adjustment" element={<AdjustmentPage />} />
           <Route path="/payslip" element={<PayslipPage/>}/>
+          <Route path="/Attendance" element={<Attendance/>}/>
+          <Route path="/EmployeeDetails" element={<EmployeeDetails/>}/>
         </Routes>
       </RootLayout>
     </Router>
