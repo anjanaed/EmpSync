@@ -1,0 +1,57 @@
+.ordersContainer {
+    padding: 24px;
+    background-color: #ffffff;
+    min-height: 100vh;
+}
+
+.titleSection {
+    margin-bottom: 24px;
+}
+
+.title {
+    color: #1a3353;
+    font-weight: 600;
+    position: relative;
+    padding-bottom: 12px;
+}
+
+.title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 60px;
+    height: 3px;
+    background-color: #1890ff;
+}
+
+.card {
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.table :global(.ant-table) {
+    background: white;
+}
+
+.table :global(.ant-table-thead > tr > th) {
+    background: #f0f5ff;
+    color: #1a3353;
+    font-weight: 600;
+}
+
+.tag {
+    border-radius: 4px;
+    padding: 4px 12px;
+    font-weight: 500;
+}
+
+.priceText {
+    font-weight: 500;
+    color: #52525b;
+}
+
+.expandedRow {
+    background-color: #fafafa;
+    padding: 16px;
+}
