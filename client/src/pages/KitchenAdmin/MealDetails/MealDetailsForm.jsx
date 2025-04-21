@@ -34,7 +34,7 @@ const AddMealPage = () => {
   const [imageUrl, setImageUrl] = useState(null);
   const [imageFile, setImageFile] = useState(null); // Store the actual file
   const fileInputRef = useRef(null);
-  const [isIngredientsModalVisible, setIsIngredientsModalVisible] =useState(false);
+  const [isIngredientsModalVisible, setIsIngredientsModalVisible] = useState(false);
   const [ingredients, setIngredients] = useState([]);
   const [searchIngredient, setSearchIngredient] = useState("");
   const [selectedIngredients, setSelectedIngredients] = useState([]);
@@ -131,7 +131,7 @@ const AddMealPage = () => {
         nameSinhala: values.nameSinhala,
         nameTamil: values.nameTamil,
         description: values.description,
-        category: values.category,
+        category: values.category || [], // Use the array of selected categories
         price: parseFloat(values.price),
         imageUrl: downloadURL, // Use the Firebase Storage URL
         ingredients: ingredientsData, // Add formatted ingredients data
@@ -379,14 +379,17 @@ const AddMealPage = () => {
                   label="Category"
                   name="category"
                   rules={[
-                    { required: true, message: "Please select a category" },
+                    { required: true, message: "Please select at least one category" },
                   ]}
                 >
-                  <Select placeholder="Select a category">
-                    <Select.Option value="Breakfast">Breakfast</Select.Option>
-                    <Select.Option value="Lunch">Lunch</Select.Option>
-                    <Select.Option value="Dinner">Dinner</Select.Option>
-                    <Select.Option value="All">All</Select.Option>
+                  <Select 
+                    mode="multiple"
+                    placeholder="Select categories"
+                    style={{ width: '100%' }}
+                  >
+                    <Option value="Breakfast">Breakfast</Option>
+                    <Option value="Lunch">Lunch</Option>
+                    <Option value="Dinner">Dinner</Option>
                   </Select>
                 </Form.Item>
 

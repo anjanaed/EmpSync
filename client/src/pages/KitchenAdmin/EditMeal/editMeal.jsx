@@ -118,13 +118,17 @@ const EditMealPage = () => {
         setMealData(meal);
         setImageUrl(meal.imageUrl);
 
+        // Ensure category is treated as an array
+        const mealCategories = Array.isArray(meal.category) ? meal.category : 
+                              (meal.category ? [meal.category] : []);
+
         form.setFieldsValue({
           nameEnglish: meal.nameEnglish,
           nameSinhala: meal.nameSinhala,
           nameTamil: meal.nameTamil,
           price: meal.price,
           description: meal.description,
-          category: meal.category || "All",
+          category: mealCategories, // Set as array for multi-select
         });
 
         // Parse and set the selected ingredients
@@ -260,6 +264,10 @@ const EditMealPage = () => {
         (ing) => `${ing.id}:${ing.quantity}`
       );
 
+      // Ensure category is an array
+      const categoryArray = Array.isArray(values.category) ? values.category : 
+                          (values.category ? [values.category] : []);
+      
       // Prepare the data to be sent to the API
       const updateData = {
         nameEnglish: values.nameEnglish,
@@ -268,7 +276,7 @@ const EditMealPage = () => {
         description: values.description,
         price: parseFloat(values.price),
         imageUrl: finalImageUrl,
-        category: values.category,
+        category: categoryArray, // Send as array
         ingredients: formattedIngredients,
       };
 
@@ -542,14 +550,17 @@ const EditMealPage = () => {
                   label="Category"
                   name="category"
                   rules={[
-                    { required: true, message: "Please select a category" },
+                    { required: true, message: "Please select at least one category" },
                   ]}
                 >
-                  <Select placeholder="Select a category">
+                  <Select 
+                    mode="multiple"
+                    placeholder="Select categories"
+                    style={{ width: '100%' }}
+                  >
                     <Option value="Breakfast">Breakfast</Option>
                     <Option value="Lunch">Lunch</Option>
                     <Option value="Dinner">Dinner</Option>
-                    <Option value="All">All</Option>
                   </Select>
                 </Form.Item>
 

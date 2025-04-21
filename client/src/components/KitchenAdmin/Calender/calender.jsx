@@ -33,35 +33,61 @@ const { Title } = Typography;
 
 const CustomDatePicker = ({ value, onChange, onClose }) => {
   // Convert moment value to dayjs when setting internal state
-  const [internalValue, setInternalValue] = useState(value ? dayjs(value.format('YYYY-MM-DD')) : null);
+  const [internalValue, setInternalValue] = useState(
+    value ? dayjs(value.format("YYYY-MM-DD")) : null
+  );
 
   useEffect(() => {
     // Convert moment value to dayjs when value prop changes
-    setInternalValue(value ? dayjs(value.format('YYYY-MM-DD')) : null);
+    setInternalValue(value ? dayjs(value.format("YYYY-MM-DD")) : null);
   }, [value]);
 
   const handleDateChange = (date) => {
     if (date) {
       setInternalValue(date);
       // Convert dayjs back to moment for parent component
-      onChange(moment(date.format('YYYY-MM-DD')));
+      onChange(moment(date.format("YYYY-MM-DD")));
     }
   };
 
   const handleOk = () => {
     if (internalValue) {
       // Convert dayjs back to moment for parent component
-      onChange(moment(internalValue.format('YYYY-MM-DD')));
+      onChange(moment(internalValue.format("YYYY-MM-DD")));
       onClose();
     }
   };
 
+  // Function to filter meals based on category and search text
+  const filterMeals = () => {
+    // Get category name for the active tab
+    const categoryName = tabToCategoryMap[activeTab];
+
+    // Filter meals that include the current category in their category array
+    let filteredByCategory = availableMeals.filter(
+      (meal) =>
+        // Check if category exists and includes the active category
+        meal.category &&
+        Array.isArray(meal.category) &&
+        meal.category.includes(categoryName)
+    );
+
+    // Then filter by search text if any
+    if (searchText) {
+      return filteredByCategory.filter((meal) =>
+        meal.nameEnglish.toLowerCase().includes(searchText.toLowerCase())
+      );
+    }
+
+    return filteredByCategory;
+  };
+
   const disabledDate = (current) => {
     if (!current) return false;
-    
+
     // Only restrict dates more than 30 days in the past
-    const thirtyDaysAgo = dayjs().subtract(30, 'days').startOf('day');
-    
+    const thirtyDaysAgo = dayjs().subtract(30, "days").startOf("day");
+
     // Return true only for dates before 30 days ago
     return current.isBefore(thirtyDaysAgo);
   };
@@ -93,7 +119,7 @@ const CustomDatePicker = ({ value, onChange, onClose }) => {
           showToday={true}
           disabledDate={disabledDate}
           style={{
-            width: "280px"
+            width: "280px",
           }}
           popupStyle={{
             position: "absolute",
@@ -147,25 +173,32 @@ const MenuSets = () => {
   const showConfirmModal = async () => {
     try {
       const formattedDate = selectedDate.format("YYYY-MM-DD");
-      const response = await fetch(`http://localhost:3000/schedule/${formattedDate}`);
-  
+      const response = await fetch(
+        `http://localhost:3000/schedule/${formattedDate}`
+      );
+
       if (!response.ok) {
         message.error("Failed to load schedule data for confirmation");
         return;
       }
-  
+
       const data = await response.json();
-  
+
       const isMenuComplete =
-        data.breakfast && data.breakfast.length > 0 &&
-        data.lunch && data.lunch.length > 0 &&
-        data.dinner && data.dinner.length > 0;
-  
+        data.breakfast &&
+        data.breakfast.length > 0 &&
+        data.lunch &&
+        data.lunch.length > 0 &&
+        data.dinner &&
+        data.dinner.length > 0;
+
       if (!isMenuComplete) {
-        message.warning("Cannot confirm. Please complete the menu (Breakfast, Lunch, and Dinner).");
+        message.warning(
+          "Cannot confirm. Please complete the menu (Breakfast, Lunch, and Dinner)."
+        );
         return;
       }
-  
+
       // If all meal slots are filled, show the confirmation modal
       setIsConfirmModalVisible(true);
     } catch (error) {
@@ -173,7 +206,6 @@ const MenuSets = () => {
       message.error("Something went wrong while checking the schedule");
     }
   };
-  
 
   // Show delete confirmation dialog
   const showDeleteConfirmation = () => {
@@ -500,6 +532,28 @@ const MenuSets = () => {
       message.error(`Failed to confirm schedule: ${error.message}`);
     }
   };
+  // Update the filterMeals function
+  const filterMeals = () => {
+    // Get category name for the active tab
+    const categoryName = tabToCategoryMap[activeTab];
+
+    // Filter meals that include the current category in their categories array
+    let filteredByCategory = availableMeals.filter(
+      (meal) =>
+        meal.category &&
+        Array.isArray(meal.category) &&
+        meal.category.includes(categoryName)
+    );
+
+    // Then filter by search text if any
+    if (searchText) {
+      return filteredByCategory.filter((meal) =>
+        meal.nameEnglish.toLowerCase().includes(searchText.toLowerCase())
+      );
+    }
+
+    return filteredByCategory;
+  };
 
   const handleMenuUpdate = async () => {
     try {
@@ -507,7 +561,6 @@ const MenuSets = () => {
         message.error("Please select at least one meal");
         return;
       }
-
       const formattedDate = selectedDate.format("YYYY-MM-DD");
 
       // Prepare data for API request - now selectedMeals contains meal IDs directly
@@ -653,31 +706,10 @@ const MenuSets = () => {
     }
   };
 
-
-  // Function to filter meals based on category and search text
-  const filterMeals = () => {
-    // First filter by category based on active tab
-    const categoryName = tabToCategoryMap[activeTab];
-
-    let filteredByCategory = availableMeals.filter(
-      (meal) => meal.category === categoryName || meal.category === "All"
-    );
-
-    // Then filter by search text if any
-    if (searchText) {
-      return filteredByCategory.filter((meal) =>
-        meal.nameEnglish.toLowerCase().includes(searchText.toLowerCase())
-      );
-    }
-
-    return filteredByCategory;
-  };
-
   const formattedDate = selectedDate.format("MMMM D, YYYY");
 
   // Get the current menu items based on active tab
   const currentMenuItems = scheduleData[activeTab] || [];
-
 
   // Close confirm modal
   const closeConfirmModal = () => {
@@ -720,7 +752,7 @@ const MenuSets = () => {
               <CustomDatePicker
                 value={selectedDate}
                 onChange={(date) => {
-                  console.log('Date selected:', date.format('YYYY-MM-DD'));
+                  console.log("Date selected:", date.format("YYYY-MM-DD"));
                   handleDateChange(date);
                 }}
                 onClose={() => setIsDatePickerOpen(false)}
@@ -872,7 +904,12 @@ const MenuSets = () => {
                     <List.Item className={styles.mealItem}>
                       <div className={styles.mealItemContent}>
                         <div>
-                          {meal.nameEnglish} ( ID : {meal.id})
+                          <span >
+                            {meal.nameEnglish}
+                          </span>
+                          <span style={{ color: "#b3b3b3", marginLeft: "8px" }}>
+                            (ID: {meal.id})
+                          </span>
                         </div>
                         <Checkbox
                           checked={selectedMeals.includes(meal.id)}

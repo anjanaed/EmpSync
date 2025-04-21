@@ -65,7 +65,7 @@ model Meal {
   price        Float
   imageUrl     String?
   ingredients  String[]
-  category     String?   
+  category     String[]
   createdAt    DateTime  @default(now())
 }
 
@@ -120,7 +120,7 @@ model ScheduledMeal {
   breakfast String[]
   lunch     String[]
   dinner    String[]
-  confirmed Boolean  @default(false) // Add this field with default value false
+  confirmed Boolean  @default(false) 
   createdAt DateTime @default(now())
 }
 
