@@ -279,14 +279,6 @@ const InventoryManagement = () => {
           name="addIngredientForm"
         >
           <Form.Item
-            name="id"
-            label="Ingredient ID"
-            rules={[{ required: true, message: 'Please enter ingredient ID' }]}
-          >
-            <Input placeholder="Enter ingredient ID" />
-          </Form.Item>
-          
-          <Form.Item
             name="name"
             label="Ingredient Name"
             rules={[{ required: true, message: 'Please enter ingredient name' }]}
