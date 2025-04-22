@@ -69,6 +69,12 @@ model OrderIngredient {
   orderId       String
 }
 
+model Budget {
+  id Int @id @default(autoincrement())
+  budgetDate DateTime @default(now())
+  budgetAmount Float
+}
+
 model Payroll {
   id         Int   @id @default(autoincrement())
   empId      String
