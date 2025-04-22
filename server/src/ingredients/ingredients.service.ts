@@ -302,9 +302,18 @@ export class IngredientsService {
     };
   }
 
-  async getOptimizedIngredients() {
+  async getOptimizedIngredients(targetMonth?: number, targetYear?: number) {
     try {
-      // Get all ingredients with createdAt field
+      // Set default to current month if not specified
+      const now = new Date();
+      const month = targetMonth ?? now.getMonth();
+      const year = targetYear ?? now.getFullYear();
+
+      // Calculate start and end dates for the target month
+      const startDate = new Date(year, month, 1);
+      const endDate = new Date(year, month + 1, 0);
+
+      // Get ingredients for the specified month
       const ingredients = await this.databaseServices.ingredient.findMany({
         select: {
           id: true,
@@ -315,8 +324,14 @@ export class IngredientsService {
           priority: true,
           createdAt: true
         },
+        where: {
+          createdAt: {
+            gte: startDate,
+            lte: endDate
+          }
+        },
         orderBy: {
-          createdAt: 'desc' // Order by most recent first
+          createdAt: 'desc'
         }
       });
 
@@ -336,23 +351,11 @@ export class IngredientsService {
           return acc;
         }, {} as Record<string, any[]>);
 
-      // Get most recent minimum price ingredient for each type
+      // Get lowest price ingredient for each type
       const minPriceIngredients = Object.entries(otherPriorityIngredients).map(([type, ings]) => {
-        // Sort ingredients by date first (most recent first)
-        const sortedIngs = ings.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
-        
-        // Get the most recent date
-        const mostRecentDate = sortedIngs[0].createdAt;
-        
-        // Filter ingredients from the most recent date
-        const mostRecentIngs = sortedIngs.filter(ing => 
-          ing.createdAt.toDateString() === mostRecentDate.toDateString()
-        );
-
-        // Find the minimum price among the most recent ingredients
-        return mostRecentIngs.reduce((min, current) => {
+        return ings.reduce((min, current) => {
           return Number(current.price_per_unit) < Number(min.price_per_unit) ? current : min;
-        }, mostRecentIngs[0]);
+        }, ings[0]);
       });
 
       return {
