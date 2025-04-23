@@ -1,14 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styles from "./NavBar.module.css";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faUsers,
-  faUserPlus,
-  faFileInvoice,
-  faDollarSign,
-  faClipboardUser,
-} from "@fortawesome/free-solid-svg-icons";
-import { MenuOutlined, LogoutOutlined } from "@ant-design/icons";
+import { MenuOutlined,LogoutOutlined } from "@ant-design/icons";
 import { UserOutlined } from "@ant-design/icons";
 import { Button, Layout, Menu, ConfigProvider, Dropdown, Avatar } from "antd";
 import img from "../../../assets/logo.png";
@@ -17,29 +9,32 @@ import Loading from "../../atoms/loading/loading";
 const { Sider } = Layout;
 
 const customTheme = {
-  token: {
-    colorText: "rgb(80, 80, 80)",
-  },
-  components: {
-    Menu: {
-      itemHeight: 50,
-      itemSelectedColor: "rgb(224, 0, 0)",
-      itemSelectedBg: "rgb(230, 230, 230)",
-      itemActiveBg: "rgba(255, 120, 120, 0.53)",
-      itemMarginInline: 10,
-      itemMarginBlock: 14,
-      iconMarginInlineEnd: 16,
+    token: {
+      colorText: "rgb(80, 80, 80)",
     },
-  },
-};
+    components: {
+      Menu: {
+        itemHeight: 50,
+        itemSelectedColor: "rgb(224, 0, 0)",
+        itemSelectedBg: "rgb(230, 230, 230)",
+        itemActiveBg: "rgba(255, 120, 120, 0.53)",
+        itemMarginInline: 10,
+        itemMarginBlock: 14,
+        iconMarginInlineEnd: 16,
+      },
+    },
+  };
 
-const NavBar = ({ Comp }) => {
+const NavBar = ({
+  Comp,
+  titleLines = [],
+  menuItems = [],
+}) => {
   const [collapsed, setCollapsed] = useState(false);
   const [selectedKey, setSelectedKey] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  //Profile Dropdown Menu
   const dropdownItems = [
     {
       key: "1",
@@ -61,37 +56,45 @@ const NavBar = ({ Comp }) => {
       onClick: () => navigate("/login"),
     },
   ];
-  
 
-  //Set Selected Tab (For CSS)
-  const checkPath = () => {
-    setLoading(true);
-    const path = location.pathname;
-    if (path == "/") {
-      setSelectedKey("1");
-    }
-    if (path == "/reg") {
-      setSelectedKey("2");
-    }
-    if (path == "/payroll") {
-      setSelectedKey("3");
-    }
-    if (path == "/reportPage") {
-      setSelectedKey("4");
-    }
-    if (path == "/Attendance") {
-      setSelectedKey("5");
-    }
-    setLoading(false);
-  };
+  // Handle responsive collapse
+  useEffect(() => {
+    const handleResize = () => setCollapsed(window.innerWidth <= 1000);
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
-    checkPath();
+    const currentPath = location.pathname;
+    const match = menuItems.find((item) => item.link === currentPath);
+    if (match) setSelectedKey(match.key);
   }, [location.pathname]);
 
-  if (loading) {
-    return <Loading />;
-  }
+  const renderTitle = () => (
+    <>
+      <h1 className={styles.navHeader}>
+        {titleLines.map((line, i) => (
+          <div key={i} className={i === 0 ? styles.red : ""}>
+            {line}
+          </div>
+        ))}
+      </h1>
+      <hr className={styles.line} />
+    </>
+  );
+
+  const renderedMenuItems = menuItems.map((item) => ({
+    key: item.key,
+    icon: item.icon,
+    label: item.label,
+    onClick: () => {
+      if (item.link) navigate(item.link);
+      else if (item.onClick) item.onClick();
+    },
+  }));
+
+  if (loading) return <Loading />;
 
   return (
     <div className={styles.main}>
@@ -103,104 +106,43 @@ const NavBar = ({ Comp }) => {
           collapsible
           collapsed={collapsed}
         >
-          {!collapsed && (
-            <>
-              <h1 className={styles.navHeader}>
-                <div className={styles.red}>
-                  Human <br /> Resource
-                </div>
-                Management
-              </h1>
-              <hr className={styles.line} />
-            </>
-          )}
-          {collapsed && (
-            <>
-              <h1 className={styles.navHeader}>
-                <div className={styles.red}>
-                  H <br /> R
-                </div>
-                M
-              </h1>
-              <hr className={styles.line} />
-            </>
-          )}
-          {/* Menu Items */}
+          {renderTitle()}
           <Menu
             className={styles.menu}
             theme="light"
             mode="inline"
             selectedKeys={[selectedKey]}
-            items={[
-              {
-                key: "1",
-                icon: <FontAwesomeIcon icon={faUsers} />,
-                label: "Employees",
-                onClick: () => navigate("/"),
-              },
-              {
-                key: "2",
-                icon: <FontAwesomeIcon icon={faUserPlus} />,
-                label: "Registration",
-                onClick: () => navigate("/reg"),
-              },
-              {
-                key: "3",
-                icon: <FontAwesomeIcon icon={faDollarSign} />,
-                label: "Payrolls",
-                onClick: () => navigate("/payroll"),
-              },
-              {
-                key: "4",
-                icon: <FontAwesomeIcon icon={faFileInvoice} />,
-                label: "Reports",
-                onClick: () => navigate("/reportPage"),
-              },
-              {
-                key: "5",
-                icon: <FontAwesomeIcon icon={faClipboardUser} />,
-                label: "Attendance",
-                onClick: () => navigate("/Attendance"),
-              },
-            ]}
+            items={renderedMenuItems}
           />
         </Sider>
       </ConfigProvider>
+
       <div className={styles.homeContent}>
         <div className={styles.headerContent}>
-          {/* Collapsing Button */}
           <Button
             type="text"
-            icon={collapsed ? <MenuOutlined /> : <MenuOutlined />}
+            icon={<MenuOutlined />}
             onClick={() => setCollapsed(!collapsed)}
-            style={{
-              fontSize: "16px",
-              width: 64,
-              height: 64,
-            }}
+            style={{ fontSize: "16px", width: 55, height: 55 }}
           />
-          <img className={styles.logo} src={img}></img>
-          <div className={styles.userDropdown}>
-            {/* User Dropdown */}
-            <Dropdown
-              menu={{ items: dropdownItems }}
-              placement="bottomRight"
-              trigger={["click"]}
-              overlayClassName={styles.userDropdownMenu}
-            >
-              <div className={styles.userInfo}>
-                <Avatar
-                  style={{ backgroundColor: "#d10000" }}
-                  size={36}
-                  icon={<UserOutlined />}
-                />
-                <div className={styles.userDetails}>
-                  <div className={styles.userName}>Anjana Edirisinghe</div>
-                  <div className={styles.userPosition}>HR Manager</div>
-                </div>
+          <img className={styles.logo} src={img} alt="Logo" />
+          <Dropdown
+            menu={{ items: dropdownItems }}
+            placement="bottomRight"
+            trigger={["click"]}
+            overlayClassName={styles.userDropdownMenu}
+          >
+            <div className={styles.userInfo}>
+              <Avatar
+                style={{ backgroundColor: "#d10000" }}
+                icon={<UserOutlined />}
+              />
+              <div className={styles.userDetails}>
+                <div className={styles.userName}>Anjana Edirisinghe</div>
+                <div className={styles.userPosition}>HR Manager</div>
               </div>
-            </Dropdown>
-          </div>
+            </div>
+          </Dropdown>
         </div>
         <div className={styles.content}>
           <Comp />

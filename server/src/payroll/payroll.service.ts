@@ -229,4 +229,14 @@ export class PayrollService {
       throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
     }
   }
+
+  async deleteByMonth(month:string){
+    try{
+      await this.databaseService.payroll.deleteMany({
+        where:{month},
+      })
+    }catch(err){
+      throw new Error("Failed to Delete Payrolls")
+    }
+  }
 }

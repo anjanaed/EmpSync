@@ -3,6 +3,8 @@ import {
   Controller,
   Delete,
   Get,
+  HttpException,
+  HttpStatus,
   Param,
   Post,
   Put,
@@ -49,4 +51,16 @@ export class PayrollController {
   remove(@Param('id') id: number) {
     return this.payrollService.remove(id);
   }
+
+  @Delete('delete-by-month/:month')
+  async deletePayrollsByMonth(@Param('month')month:string){
+    try{
+      return await this.payrollService.deleteByMonth(month);
+      
+    }catch (err){
+      throw new HttpException(err.message,HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+
 }
