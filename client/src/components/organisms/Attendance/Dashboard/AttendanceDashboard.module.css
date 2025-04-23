@@ -1,0 +1,155 @@
+.mainBox{
+    margin: 2vw;
+    padding: 2vw;
+    font-family: Arial, Helvetica, sans-serif;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+    border-radius: 15px;
+}
+
+.mainTitle{
+    text-align: left;
+    font-size: 1.0vw;
+    margin-bottom: 1.5vw;
+    margin-left: 30px;
+}
+
+/*nav bar*/
+
+
+
+/*done*/  
+  
+  .statsCards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    padding: 0 30px;
+    margin-bottom: 30px;
+  }
+  
+  .statCard {
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease;
+    border-top: 4px solid #ddd;
+  }
+  
+  .statCard:hover {
+    transform: translateY(-5px);
+  }
+  
+  .statCard.present {
+    border-top-color: #4caf50;
+  }
+  
+  .statCard.late {
+    border-top-color: #ff9800;
+  }
+  
+  .statCard.absent {
+    border-top-color: #f44336;
+  }
+  
+  .statValue {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 5px;
+  }
+  
+  .statName {
+    font-size: 1rem;
+    font-weight: 500;
+    margin-bottom: 5px;
+  }
+  
+  .statPercent {
+    font-size: 0.85rem;
+    color: #666;
+  }
+
+  /**/
+  .chartsSection {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  padding: 0 30px;
+  margin-bottom: 30px;
+}
+
+.chartCard {
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.chartCard h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0 0 15px 0;
+  color: #333;
+}
+
+.pieChartContainer {
+  height: 250px;
+}
+
+.barChartContainer {
+    height: 250px;
+  }
+.tabs {
+  display: flex;
+  gap: 10px;
+  padding: 0 30px;
+  margin-bottom: 20px;
+}
+
+.tab {
+  padding: 10px 20px;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tab:hover {
+  color: #e53935;
+}
+
+.activeTab {
+  color: #e53935;
+  border-bottom-color: #e53935;
+}
+
+.tableSection {
+  padding: 0 30px 30px;
+}
+
+.tableControls {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+.searchBar {
+  display: flex;
+  align-items: center;
+  background-color: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  padding: 0 15px;
+  width: 300px;
+}
+
+.searchBar input {
+  border: none;
+  padding: 10px;
+  width: 100%;
+  outline: none;
+}
