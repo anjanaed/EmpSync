@@ -67,7 +67,7 @@ const Payroll = () => {
   };
 
   const erNofify = (message) => {
-    setzTimeout(
+    setTimeout(
       () =>
         toast.error(message, {
           duration: 2500,
@@ -105,10 +105,18 @@ const Payroll = () => {
   const handleGenerate = async () => {
     await form.validateFields(["payrollMonth", "epf", "etf", "EmpoyerFund"]);
 
+    //
+
     setLoading(true);
     //Sending ETF EPF data
     try {
+      //Update Predefined Adjustments
       await handleEtfEpf();
+
+      //Remove Existing Payrolls with same month
+      await axios.delete(`${urL}/payroll/delete-by-month/${month}`);
+
+      //Start calculations
       await axios.post(`${urL}/payroll/calculate-all`, {
         range: range,
         month: month,
@@ -203,30 +211,37 @@ const Payroll = () => {
     );
     await form.validateFields(fieldNamesToValidate);
     setLoading(true);
+
     try {
       const userRes = await axios.get(`${urL}/user`);
       const userIds = userRes.data.map((user) => user.id);
+      const processedIds = new Set();
 
       for (const adj of individualAdjustment) {
-        //Trim & Validate fields
+        // Split and clean IDs
         const idArray = adj.id
           .split(",")
           .map((id) => id.trim())
           .filter((id) => id !== "");
 
-        //Validating Each ID with users
-        const invalidIds = idArray.filter((id) => !userIds.includes(id));
+        // Remove duplicates in current input
+        const uniqueIds = [...new Set(idArray)];
+
+        // Validate IDs
+        const invalidIds = uniqueIds.filter((id) => !userIds.includes(id));
         if (invalidIds.length > 0) {
           setLoading(false);
           console.log(`Invalid Employee IDs: ${invalidIds.join(",")}`);
           erNofify(`Invalid Employee IDs: ${invalidIds.join(",")}`);
-
           return;
         }
 
-        for (const ids of idArray) {
+        // Submit adjustments
+        for (const id of uniqueIds) {
+          if (processedIds.has(id)) continue;
+
           const payload = {
-            empId: ids,
+            empId: id,
             label: adj.details,
             allowance: adj.isAllowance,
             isPercentage: adj.isPercentage,
@@ -234,31 +249,34 @@ const Payroll = () => {
           };
 
           await axios.post(`${urL}/indiadjustment`, payload);
-          sucNofify("Adjustments Updated Successfully");
-
-          //Reset Fields
-          setIndividualAdjustment([
-            {
-              id: "",
-              details: "",
-              amount: "",
-              isPercentage: true,
-              isAllowance: true,
-            },
-          ]);
-          const preservedFields = form.getFieldsValue([
-            "payrollMonth",
-            "etf",
-            "epf",
-            "EmployerFund",
-          ]);
-          form.resetFields();
-          form.setFieldsValue(preservedFields);
+          processedIds.add(id);
         }
       }
+
+      // Reset fields once after all processing
+      setIndividualAdjustment([
+        {
+          id: "",
+          details: "",
+          amount: "",
+          isPercentage: true,
+          isAllowance: true,
+        },
+      ]);
+      const preservedFields = form.getFieldsValue([
+        "payrollMonth",
+        "etf",
+        "epf",
+        "EmployerFund",
+      ]);
+      form.resetFields();
+      form.setFieldsValue(preservedFields);
+
+      sucNofify("Adjustments Updated Successfully");
     } catch (err) {
       console.log(err);
     }
+
     setLoading(false);
   };
 

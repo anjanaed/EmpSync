@@ -11,6 +11,7 @@ import {
 import styles from "./EditModal.module.css";
 import Loading from "../../atoms/loading/loading";
 import dayjs from "dayjs";
+import {Toaster,toast} from 'sonner'
 import { LuSave } from "react-icons/lu";
 import axios from "axios";
 import Gbutton from "../../atoms/button/Button";
@@ -67,8 +68,31 @@ const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
       form.setFieldsValue(employee);
     } catch (err) {
       console.log(err);
+      erNofify("Error Fetching User Details")
     }
     setLoading(false);
+  };
+
+  const sucNofify = (message) => {
+    setTimeout(
+      () =>
+        toast.success(message, {
+          duration: 2500,
+          position: "top-center",
+        }),
+      300
+    );
+  };
+
+  const erNofify = (message) => {
+    setzTimeout(
+      () =>
+        toast.error(message, {
+          duration: 2500,
+          position: "top-center",
+        }),
+      300
+    );
   };
 
   useEffect(() => {
@@ -82,8 +106,10 @@ const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
       await axios.put(`${urL}/user/${empId}`, currentEmployee);
       handleCancel();
       fetchEmployee();
+      sucNofify("User Information Updated Successfully!")
     } catch (err) {
       console.log(err);
+      erNofify("User Update Failed")
     }
     setLoading(false);
   };
@@ -94,6 +120,7 @@ const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
 
   return (
     <>
+        <Toaster richColors/>
       <div className={styles.head}>Edit Employee - {currentEmployee.id}</div>
       <div className={styles.headDes}>
         Update Employee Information. Click Save Changes When You're Done.
