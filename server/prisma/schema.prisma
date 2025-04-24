@@ -36,13 +36,43 @@ model User {
 }
 
 model Ingredient {
-  id String @id @unique
-  name String 
-  price_per_unit Decimal @db.Decimal(10, 2)
-  quantity Decimal @db.Decimal(10, 2)
-  type String
-  priority Int
-  createdAt DateTime @default(now())
+  id              Int      @id @default(autoincrement())
+  name            String 
+  price_per_unit  Decimal @db.Decimal(10, 2)
+  quantity        Decimal @db.Decimal(10, 2)
+  type            String
+  priority        Int
+  createdAt       DateTime @default(now())
+}
+
+model IngredientOrder {
+  id                  String      @id @default(uuid())
+  lastUpdated         DateTime    @default(now())
+  budget              Float?     
+  priority1Budget     Float?      
+  otherPriorityBudget Float?      
+  totalCost           Float?      
+  ingredients         OrderIngredient[]
+}
+
+model OrderIngredient {
+  id            String          @id @default(uuid())
+  ingredientId  Int?          
+  name          String
+  price_per_unit Float
+  quantity      Int
+  type          String
+  priority      Int
+  totalCost     Float
+  createdAt     DateTime       @default(now())
+  order         IngredientOrder @relation(fields: [orderId], references: [id])
+  orderId       String
+}
+
+model Budget {
+  id Int @id @default(autoincrement())
+  budgetDate DateTime @default(now())
+  budgetAmount Float
 }
 
 model Payroll {

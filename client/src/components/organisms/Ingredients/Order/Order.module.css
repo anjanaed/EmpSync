@@ -1,6 +1,9 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Itim&family=Roboto+Slab:wght@100..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Bree+Serif&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Itim&family=Roboto+Slab:wght@100..900&display=swap");
+
 .orderContainer {
     padding: 20px;
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
 }
 
@@ -83,6 +86,8 @@
     background: #fff;
     border-radius: 8px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    padding: auto;
+    margin: auto;
 }
 
 .table :global(.ant-table-thead > tr > th) {
@@ -111,4 +116,38 @@
     background-color: white !important;
     color: rgb(0, 140, 255) !important;
     border: 1px solid rgb(0, 140, 255) !important;
+}
+
+.buttonContainer {
+    display: flex;
+    gap: 16px;
+    margin-top: 20px;
+}
+
+.exportBtn {
+    background-color: #fff;
+    border: 1px solid #d9d9d9;
+}
+
+.exportBtn:hover {
+    color: rgb(0, 140, 255);
+    border-color: rgb(0, 140, 255);
+}
+
+.headerContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.mainTitle {
+    margin: 0 !important;
+}
+
+.loadingContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
 }

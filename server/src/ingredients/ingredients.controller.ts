@@ -37,18 +37,37 @@ export class IngredientsController {
     return this.ingredientsService.getOptimizedIngredients();
   }
 
+  @Post('orders/store')
+  async storeIngredientOrder(@Body() data: {
+    lastUpdated: Date;
+    priority1Ingredients: any[];
+    optimizedIngredients: any[];
+  }) {
+    return this.ingredientsService.storeIngredientOrder(data);
+  }
+
+  @Post('order/budget')
+  async createBudgetBasedOrder(@Body() data: { budget: number }) {
+    return this.ingredientsService.createBudgetBasedOrder(data.budget);
+  }
+
+  @Get('orders')
+  async getStoredIngredientOrders() {
+    return this.ingredientsService.getStoredIngredientOrders();
+  }
+
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id') id: number) {
     return this.ingredientsService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateIngredientDto: Prisma.IngredientUpdateInput) {
+  update(@Param('id') id: number, @Body() updateIngredientDto: Prisma.IngredientUpdateInput) {
     return this.ingredientsService.update(id, updateIngredientDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  remove(@Param('id') id: number) {
     return this.ingredientsService.remove(id);
   }
 }
