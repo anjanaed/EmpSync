@@ -4,7 +4,7 @@ import { PlusOutlined, FilePdfOutlined } from '@ant-design/icons';
 import IngredientList from './IngredientList/IngredientList';
 import styles from './InventoryManagement.module.css';
 import axios from 'axios';
-import { exportIngredientsToPDF } from '../InventoryManagement/pdfExport/pdfExport';
+import { exportIngredientsToPDF } from './pdfExport/pdfExport'; 
 
 const urL = import.meta.env.VITE_BASE_URL;
 const { Search } = Input;
@@ -278,14 +278,6 @@ const InventoryManagement = () => {
           layout="vertical"
           name="addIngredientForm"
         >
-          <Form.Item
-            name="id"
-            label="Ingredient ID"
-            rules={[{ required: true, message: 'Please enter ingredient ID' }]}
-          >
-            <Input placeholder="Enter ingredient ID" />
-          </Form.Item>
-          
           <Form.Item
             name="name"
             label="Ingredient Name"
