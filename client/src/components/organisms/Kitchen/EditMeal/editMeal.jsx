@@ -19,12 +19,11 @@ import {
   FileImageOutlined,
   SearchOutlined,
 } from "@ant-design/icons";
-import Navbar from "../../../components/KitchenAdmin/header/header";
 import styles from "./editMeal.module.css";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 // Import Firebase services
-import { storage } from "../../../firebase/config";
+import { storage } from "../../../../firebase/config";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 const { TextArea } = Input;
@@ -419,8 +418,6 @@ const EditMealPage = () => {
 
   return (
     <div className={styles.pageContainer}>
-      <Navbar />
-
       <div className={styles.contentWrapper}>
         <Card className={styles.formCard}>
           <Title level={4} className={styles.cardTitle}>

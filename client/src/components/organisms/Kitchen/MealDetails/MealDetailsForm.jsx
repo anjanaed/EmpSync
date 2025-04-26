@@ -19,10 +19,9 @@ import {
   FileImageOutlined,
   SearchOutlined,
 } from "@ant-design/icons";
-import Navbar from "../../../components/KitchenAdmin/header/header";
 import styles from "./MealDetailsForm.module.css";
 import { useNavigate } from "react-router-dom";
-import { storage } from "../../../firebase/config"; // Import Firebase storage
+import { storage } from "../../../../firebase/config"; // Import Firebase storage
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage"; // Import Firebase storage functions
 
 const { TextArea } = Input;
@@ -246,7 +245,7 @@ const AddMealPage = () => {
 
   return (
     <div className={styles.pageContainer}>
-      <Navbar />
+    
 
       <div className={styles.contentWrapper}>
         <Card className={styles.formCard}>

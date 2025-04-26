@@ -12,8 +12,8 @@ import AttendancePage from "./components/UserPortalUI/Attendance/Attendance"; //
 import KitchenAdmin from "./components/pages/Kitchen Admin/KitchenAdminDashBoard/kitchenAdminDash";
 import Reports from "./components/pages/Kitchen Admin/Report/report";
 import Meals from "./components/pages/Kitchen Admin/MealDash/meal";
-import MealDetailsForm from "./pages/KitchenAdmin/MealDetails/MealDetailsForm";
-import EditMeal from "./pages/KitchenAdmin/EditMeal/editMeal";
+import MealDetailsForm from "./components/pages/Kitchen Admin/Add Meal/addMeal";
+import EditMeal from "./components/pages/Kitchen Admin/Edit Meal/editMeal";
 import Login from "./pages/Login/Login";
 import Serving from "./pages/Serving staff/Barcode Scan/Serving";
 import MealConform from "./pages/Serving staff/Meal Conform/MealConform";
