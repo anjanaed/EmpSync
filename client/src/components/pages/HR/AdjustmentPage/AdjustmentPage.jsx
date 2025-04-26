@@ -1,13 +1,54 @@
-import React from "react";
+import React from 'react'
+import {
+  faUsers,
+  faUserPlus,
+  faFileInvoice,
+  faDollarSign,
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Adjustment from "../../../organisms/IndividualAdjustmentList/Adjustment";
-import NavBar from "../../../organisms/NavBar/NavBar";
+import NavBar from '../../../organisms/NavBar/NavBar';
+
 
 const AdjustmentPage = () => {
   return (
-    <>
-      <NavBar Comp={Adjustment} />
-    </>
-  );
-};
+    <NavBar
+    titleLines={["Human", "Resource", "Management"]}
+    menuItems={[
+      {
+        key: "1",
+        icon: <FontAwesomeIcon icon={faUsers} />,
+        label: "Employees",
+        link: "/"
+      },
+      {
+        key: "2",
+        icon: <FontAwesomeIcon icon={faUserPlus} />,
+        label: "Registration",
+        link: "/reg"
+      },
+      {
+        key: "3",
+        icon: <FontAwesomeIcon icon={faDollarSign} />,
+        label: "Payrolls",
+        link: "/payroll"
+      },
+      {
+        key: "4",
+        icon: <FontAwesomeIcon icon={faFileInvoice} />,
+        label: "Reports",
+        link: "/reportPage"
+      }
+    ]}
+    Comp={Adjustment}
+  />
+    
+    
+  )
+}
 
-export default AdjustmentPage;
+export default AdjustmentPage
+
+
+
+
