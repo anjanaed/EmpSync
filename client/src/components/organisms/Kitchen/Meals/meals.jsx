@@ -22,6 +22,8 @@ import {
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowUpRightFromSquare } from "@fortawesome/free-solid-svg-icons";
+// Import Firebase storage related functions
+import { getStorage, ref, deleteObject } from "firebase/storage";
 
 import styles from './meals.module.css';
 
@@ -39,6 +41,9 @@ const AvailableMeals = () => {
   const [loading, setLoading] = useState(false);
   const [ingredientDetails, setIngredientDetails] = useState({});
   const [fetchingIngredients, setFetchingIngredients] = useState(false);
+  
+  // Initialize Firebase storage
+  const storage = getStorage();
   
   const navigate = useNavigate();
 
@@ -78,15 +83,52 @@ const AvailableMeals = () => {
       okType: 'danger',
       cancelText: 'No',
       onOk() {
-        deleteMeal(meal.id);
+        deleteMeal(meal);
       },
     });
   };
 
-  const deleteMeal = async (id) => {
+  // Delete image from Firebase Storage
+  const deleteImageFromFirebase = async (imageUrl) => {
+    if (!imageUrl) return true; // No image to delete
+    
+    try {
+      // Extract the file path from the URL
+      // This assumes your imageUrl is in a Firebase Storage format
+      // Example: https://firebasestorage.googleapis.com/v0/b/your-project.appspot.com/o/meals%2Fimage1.jpg?alt=media&token=abc123
+      const urlPath = decodeURIComponent(imageUrl.split('/o/')[1]?.split('?')[0]);
+      
+      if (!urlPath) {
+        console.warn("Could not parse image URL for deletion:", imageUrl);
+        return false;
+      }
+      
+      // Create a reference to the file to delete
+      const imageRef = ref(storage, urlPath);
+      
+      // Delete the file
+      await deleteObject(imageRef);
+      console.log("Image successfully deleted from Firebase Storage");
+      return true;
+    } catch (error) {
+      console.error("Error deleting image from Firebase:", error);
+      return false;
+    }
+  };
+
+  const deleteMeal = async (meal) => {
     setLoading(true);
     try {
-      const response = await fetch(`http://localhost:3000/meal/${id}`, {
+      // First try to delete the image from Firebase Storage if it exists
+      if (meal.imageUrl) {
+        const imageDeleted = await deleteImageFromFirebase(meal.imageUrl);
+        if (!imageDeleted) {
+          message.warning('Could not delete the associated image, but will proceed with meal deletion');
+        }
+      }
+
+      // Then delete the meal from the database
+      const response = await fetch(`http://localhost:3000/meal/${meal.id}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -99,7 +141,7 @@ const AvailableMeals = () => {
       }
 
       // Remove meal from state if deletion was successful
-      setMeals(meals.filter(meal => meal.id !== id));
+      setMeals(meals.filter(m => m.id !== meal.id));
       message.success('Meal deleted successfully');
     } catch (error) {
       console.error('Error deleting meal:', error);
