@@ -13,12 +13,28 @@ import { ScheduleModule } from './schedule/schedule.module';
 import { AdjustmentModule } from './SalaryAdjustments/adjustment.module';
 import { IndiAdjustmentModule } from './IndividualSalaryAdjustments/inAdjustment.module';
 import { PayeTaxModule } from './PayeTaxSlab/PayeTax.module';
+import { ScheduleModule as NestScheduleModule } from '@nestjs/schedule';
+
 
 
 
 
 @Module({
-  imports: [DatabaseModule, UserModule, IngredientsModule, MealModule, PayrollModule, AttendanceModule,OrdersModule, LeaveApplicationModule,ScheduleModule,AdjustmentModule,IndiAdjustmentModule,PayeTaxModule],
+  imports: [
+    NestScheduleModule.forRoot(), // <-- Add this!
+    DatabaseModule,
+    UserModule,
+    IngredientsModule,
+    MealModule,
+    PayrollModule,
+    AttendanceModule,
+    OrdersModule,
+    LeaveApplicationModule,
+    ScheduleModule, 
+    AdjustmentModule,
+    IndiAdjustmentModule,
+    PayeTaxModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
