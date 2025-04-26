@@ -33,7 +33,7 @@ const { Option } = Select;
 const AvailableMeals = () => {
   const [meals, setMeals] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('All Categories');
+  const [selectedCategory, setSelectedCategory] = useState('All');
   const [ingredientsModalVisible, setIngredientsModalVisible] = useState(false);
   const [selectedMeal, setSelectedMeal] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -49,12 +49,15 @@ const AvailableMeals = () => {
 
   const fetchMeals = async () => {
     try {
+      setLoading(true);
       const response = await fetch('http://localhost:3000/meal');
       const data = await response.json();
       setMeals(data);
     } catch (error) {
       console.error("Error fetching meals:", error);
       message.error("Failed to load meals");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -175,19 +178,52 @@ const AvailableMeals = () => {
   // Filter meals based on search term and selected category
   const filteredMeals = meals.filter(meal => {
     const matchesSearch = meal.nameEnglish.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategory === 'All Categories' || meal.category === selectedCategory;
+    
+    // Check if the meal matches the selected category
+    let matchesCategory;
+    if (selectedCategory === 'All') {
+      matchesCategory = true;
+    } else {
+      // Handle both string and array category formats
+      if (Array.isArray(meal.category)) {
+        matchesCategory = meal.category.includes(selectedCategory);
+      } else {
+        matchesCategory = meal.category === selectedCategory;
+      }
+    }
+    
     return matchesSearch && matchesCategory;
   });
 
-  // Get unique categories for the dropdown
-  const categories = ['All Categories', ...new Set(meals.map(meal => meal.category).filter(Boolean))];
+  // Fixed category options
+  const categoryOptions = ['All', 'Breakfast', 'Lunch', 'Dinner'];
+
+  // Function to render category tags
+  const renderCategoryTags = (categories) => {
+    if (!categories) return <Tag color="blue">Uncategorized</Tag>;
+    
+    // Handle both string and array formats
+    if (Array.isArray(categories)) {
+      if (categories.length === 0) {
+        return <Tag color="blue" className={styles.tag}>Uncategorized</Tag>;
+      } else {
+        // Join all categories into a single tag with separator
+        return (
+          <Tag color="blue" className={styles.tag}>
+            {categories.join(' / ')}
+          </Tag>
+        );
+      }
+    } else {
+      return <Tag color="blue" className={styles.tag}>{categories}</Tag>;
+    }
+  };
 
   return (
     <div className={styles.container}>
       <div className={styles.header}>
         <div>
           <Title level={3} className={styles.title}>Available Meals</Title>
-          
         </div>
       </div>
       
@@ -201,12 +237,13 @@ const AvailableMeals = () => {
         />
         
         <Select
-          defaultValue="All Categories"
+          defaultValue="All"
+          value={selectedCategory}
           onChange={handleCategoryChange}
           className={styles.categorySelect}
           size="large"
         >
-          {categories.map(category => (
+          {categoryOptions.map(category => (
             <Option key={category} value={category}>{category}</Option>
           ))}
         </Select>
@@ -222,66 +259,77 @@ const AvailableMeals = () => {
         </Button>
       </div>
 
-      <Row gutter={[16, 16]}>
-        {filteredMeals.map(meal => (
-          <Col xs={24} sm={12} md={4} key={meal.id}>
-            <Card
-              className={styles.card}
-            >
-              <div className={styles.categoryTag}>
-                <Tag color="blue" className={styles.tag}>
-                  {meal.category || 'Uncategorized'}
-                </Tag>
+      {loading ? (
+        <div style={{ textAlign: 'center', padding: '40px' }}>
+          <Spin size="large" />
+          <p style={{ marginTop: '10px' }}>Loading meals...</p>
+        </div>
+      ) : (
+        <Row gutter={[16, 16]}>
+          {filteredMeals.length === 0 ? (
+            <Col span={24}>
+              <div style={{ textAlign: 'center', padding: '40px' }}>
+                <p>No meals found matching your criteria.</p>
               </div>
-              
-              <div className={styles.imageContainer}>
-                {meal.imageUrl ? (
-                  <div className={styles.imageWrapper}>
-                    <img src={meal.imageUrl} alt={meal.nameEnglish} className={styles.mealImage} />
+            </Col>
+          ) : (
+            filteredMeals.map(meal => (
+              <Col xs={24} sm={12} md={4} key={meal.id}>
+                <Card className={styles.card}>
+                  <div className={styles.categoryTag}>
+                    {renderCategoryTags(meal.category)}
                   </div>
-                ) : (
-                  <div className={styles.imagePlaceholder}>
-                    <span className={styles.imageIcon}>🖼️</span>
+                  
+                  <div className={styles.imageContainer}>
+                    {meal.imageUrl ? (
+                      <div className={styles.imageWrapper}>
+                        <img src={meal.imageUrl} alt={meal.nameEnglish} className={styles.mealImage} />
+                      </div>
+                    ) : (
+                      <div className={styles.imagePlaceholder}>
+                        <span className={styles.imageIcon}>🖼️</span>
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
-              
-              <div className={styles.mealInfo}>
-                <Title level={5} className={styles.mealTitle}>{meal.nameEnglish}</Title>
-                <div className={styles.mealDetails}>
-                  <div>ID: <span className={styles.idValue}>{meal.id}</span></div>
-                  <div>Price: <span className={styles.priceValue}>Rs.{meal.price?.toFixed(2)}</span></div>
-                  <div 
-                    className={styles.ingredientsLink} 
-                    onClick={() => showIngredientsModal(meal)}
-                  >
-                    Ingredients <FontAwesomeIcon icon={faArrowUpRightFromSquare} style={{ marginLeft: '4px' }} />
+                  
+                  <div className={styles.mealInfo}>
+                    <Title level={5} className={styles.mealTitle}>{meal.nameEnglish}</Title>
+                    <div className={styles.mealDetails}>
+                      <div>ID: <span className={styles.idValue}>{meal.id}</span></div>
+                      <div>Price: <span className={styles.priceValue}>Rs.{meal.price?.toFixed(2)}</span></div>
+                      <div 
+                        className={styles.ingredientsLink} 
+                        onClick={() => showIngredientsModal(meal)}
+                      >
+                        Ingredients <FontAwesomeIcon icon={faArrowUpRightFromSquare} style={{ marginLeft: '4px' }} />
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
 
-              <div className={styles.mealActions}>
-                <Button 
-                  type="text" 
-                  danger
-                  icon={<DeleteOutlined />} 
-                  onClick={() => showDeleteConfirm(meal)}
-                  loading={loading}
-                >
-                  Delete
-                </Button>
-                <Button 
-                  type="text"
-                  icon={<EditOutlined />} 
-                  onClick={() => handleEdit(meal)}
-                >
-                  Edit
-                </Button>
-              </div>
-            </Card>
-          </Col>
-        ))}
-      </Row>
+                  <div className={styles.mealActions}>
+                    <Button 
+                      type="text" 
+                      danger
+                      icon={<DeleteOutlined />} 
+                      onClick={() => showDeleteConfirm(meal)}
+                      loading={loading}
+                    >
+                      Delete
+                    </Button>
+                    <Button 
+                      type="text"
+                      icon={<EditOutlined />} 
+                      onClick={() => handleEdit(meal)}
+                    >
+                      Edit
+                    </Button>
+                  </div>
+                </Card>
+              </Col>
+            ))
+          )}
+        </Row>
+      )}
 
       {/* Ingredients Modal */}
       <Modal
@@ -326,7 +374,6 @@ const AvailableMeals = () => {
                             </span>
                           </div>
                         }
-                      
                       />
                     </List.Item>
                   );

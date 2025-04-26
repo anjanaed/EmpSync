@@ -204,14 +204,19 @@
   position: relative;
 }
 
-.datePickerDropdown {
+.datePickerWrapper {
   position: absolute;
   top: 100%;
   right: 0;
-  z-index: 100;
-  margin-top: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  border-radius: 6px;
+  background: white;
+  padding: 8px;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+}
+
+.datePickerDropdown {
+  position: relative;
 }
 
 /* Optional: Customize scrollbar */

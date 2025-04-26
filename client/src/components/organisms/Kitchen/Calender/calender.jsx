@@ -24,74 +24,114 @@ import {
   CheckCircleOutlined,
 } from "@ant-design/icons";
 import moment from "moment";
+import dayjs from "dayjs";
 import styles from "./calender.module.css";
+import enUS from "antd/es/date-picker/locale/en_US"; // Import locale directly from Ant Design
 
 const { Content } = Layout;
 const { Title } = Typography;
 
-const DatePicker = (props) => {
+const CustomDatePicker = ({ value, onChange, onClose }) => {
+  // Convert moment value to dayjs when setting internal state
+  const [internalValue, setInternalValue] = useState(
+    value ? dayjs(value.format("YYYY-MM-DD")) : null
+  );
+
+  useEffect(() => {
+    // Convert moment value to dayjs when value prop changes
+    setInternalValue(value ? dayjs(value.format("YYYY-MM-DD")) : null);
+  }, [value]);
+
+  const handleDateChange = (date) => {
+    if (date) {
+      setInternalValue(date);
+      // Convert dayjs back to moment for parent component
+      onChange(moment(date.format("YYYY-MM-DD")));
+    }
+  };
+
+  const handleOk = () => {
+    if (internalValue) {
+      // Convert dayjs back to moment for parent component
+      onChange(moment(internalValue.format("YYYY-MM-DD")));
+      onClose();
+    }
+  };
+
+  // Function to filter meals based on category and search text
+  const filterMeals = () => {
+    // Get category name for the active tab
+    const categoryName = tabToCategoryMap[activeTab];
+
+    // Filter meals that include the current category in their category array
+    let filteredByCategory = availableMeals.filter(
+      (meal) =>
+        // Check if category exists and includes the active category
+        meal.category &&
+        Array.isArray(meal.category) &&
+        meal.category.includes(categoryName)
+    );
+
+    // Then filter by search text if any
+    if (searchText) {
+      return filteredByCategory.filter((meal) =>
+        meal.nameEnglish.toLowerCase().includes(searchText.toLowerCase())
+      );
+    }
+
+    return filteredByCategory;
+  };
+
+  const disabledDate = (current) => {
+    if (!current) return false;
+
+    // Only restrict dates more than 30 days in the past
+    const thirtyDaysAgo = dayjs().subtract(30, "days").startOf("day");
+
+    // Return true only for dates before 30 days ago
+    return current.isBefore(thirtyDaysAgo);
+  };
+
   return (
-    <ConfigProvider
-      theme={{
-        components: {
-          DatePicker: {
-            // Reset cell background colors
-            cellActiveWithRangeBg: "transparent",
-            cellHoverWithRangeBg: "transparent",
-            cellBgDisabled: "transparent",
-            // Only style the selected date
-            cellInViewBg: "transparent",
-            cellSelectedBg: "#b50909",
-            cellSelectedHoverBg: "#7e1010",
+    <div className={styles.datePickerWrapper}>
+      <ConfigProvider
+        theme={{
+          components: {
+            DatePicker: {
+              cellActiveWithRangeBg: "#fafafa",
+              cellHoverWithRangeBg: "#f0f0f0",
+              cellBgDisabled: "#f5f5f5",
+              cellInViewBg: "#ffffff",
+              cellSelectedBg: "#ff4d4f",
+              cellSelectedHoverBg: "#ff7875",
+            },
           },
-        },
-      }}
-    >
-      <AntDatePicker
-        {...props}
-        // Add locale explicitly to fix the error
-        locale={{
-          lang: {
-            locale: "en_US",
-            placeholder: "Select date",
-            rangePlaceholder: ["Start date", "End date"],
-            today: "Today",
-            now: "Now",
-            backToToday: "Back to today",
-            ok: "Ok",
-            clear: "Clear",
-            month: "Month",
-            year: "Year",
-            timeSelect: "Select time",
-            dateSelect: "Select date",
-            monthSelect: "Choose a month",
-            yearSelect: "Choose a year",
-            decadeSelect: "Choose a decade",
-            yearFormat: "YYYY",
-            dateFormat: "M/D/YYYY",
-            dayFormat: "D",
-            dateTimeFormat: "M/D/YYYY HH:mm:ss",
-            monthFormat: "MMMM",
-            monthBeforeYear: true,
-            previousMonth: "Previous month (PageUp)",
-            nextMonth: "Next month (PageDown)",
-            previousYear: "Last year (Control + left)",
-            nextYear: "Next year (Control + right)",
-            previousDecade: "Last decade",
-            nextDecade: "Next decade",
-            previousCentury: "Last century",
-            nextCentury: "Next century",
-          },
-          timePickerLocale: {
-            placeholder: "Select time",
-          },
-          dateFormat: "YYYY-MM-DD",
-          dateTimeFormat: "YYYY-MM-DD HH:mm:ss",
-          weekFormat: "YYYY-wo",
-          monthFormat: "YYYY-MM",
         }}
-      />
-    </ConfigProvider>
+      >
+        <AntDatePicker
+          value={internalValue}
+          onChange={handleDateChange}
+          onOk={handleOk}
+          onOpenChange={(open) => !open && onClose()}
+          locale={enUS}
+          format="YYYY-MM-DD"
+          allowClear={false}
+          showToday={true}
+          disabledDate={disabledDate}
+          style={{
+            width: "280px",
+          }}
+          popupStyle={{
+            position: "absolute",
+            zIndex: 1000,
+          }}
+          open={true}
+          inputReadOnly={true}
+          showTime={false}
+          mode="date"
+        />
+      </ConfigProvider>
+    </div>
   );
 };
 
@@ -130,6 +170,43 @@ const MenuSets = () => {
     dinner: "Dinner",
   };
 
+  const showConfirmModal = async () => {
+    try {
+      const formattedDate = selectedDate.format("YYYY-MM-DD");
+      const response = await fetch(
+        `http://localhost:3000/schedule/${formattedDate}`
+      );
+
+      if (!response.ok) {
+        message.error("Failed to load schedule data for confirmation");
+        return;
+      }
+
+      const data = await response.json();
+
+      const isMenuComplete =
+        data.breakfast &&
+        data.breakfast.length > 0 &&
+        data.lunch &&
+        data.lunch.length > 0 &&
+        data.dinner &&
+        data.dinner.length > 0;
+
+      if (!isMenuComplete) {
+        message.warning(
+          "Cannot confirm. Please complete the menu (Breakfast, Lunch, and Dinner)."
+        );
+        return;
+      }
+
+      // If all meal slots are filled, show the confirmation modal
+      setIsConfirmModalVisible(true);
+    } catch (error) {
+      console.error("Error checking schedule before confirmation:", error);
+      message.error("Something went wrong while checking the schedule");
+    }
+  };
+
   // Show delete confirmation dialog
   const showDeleteConfirmation = () => {
     setIsDeleteConfirmVisible(true);
@@ -149,13 +226,16 @@ const MenuSets = () => {
         throw new Error("Failed to fetch meals");
       }
       const data = await response.json();
+      console.log("Fetched available meals:", data);
       // Store the full meal objects
       setAvailableMeals(Array.isArray(data) ? data : []);
+      return data; // Return the data in case we need it
     } catch (error) {
       console.error("Error fetching meals:", error);
       message.error("Failed to load available meals");
       // Fallback to empty array if API fails
       setAvailableMeals([]);
+      return [];
     } finally {
       setLoading(false);
     }
@@ -182,32 +262,48 @@ const MenuSets = () => {
     }
   };
 
-  // Effect to fetch schedule when date changes
   useEffect(() => {
     const fetchMeals = async () => {
       try {
+        setLoading(true);
         const res = await fetch("http://localhost:3000/meal"); // Update if your backend URL is different
+        if (!res.ok) {
+          throw new Error("Failed to fetch meals");
+        }
         const data = await res.json();
         setMealList(data);
+        // Also set available meals so getMealNameById can use them
+        setAvailableMeals(Array.isArray(data) ? data : []);
       } catch (err) {
         console.error("Failed to fetch meals", err);
+        message.error("Failed to load available meals");
+      } finally {
+        setLoading(false);
       }
     };
 
     console.log("Date changed in effect:", selectedDate.format("YYYY-MM-DD"));
-    fetchScheduleData(selectedDate);
-    fetchMeals(); // ✅ Now it's actually called
+
+    // First fetch meals, then fetch schedule
+    fetchMeals().then(() => {
+      fetchScheduleData(selectedDate);
+    });
+
     setIsConfirmed(false);
   }, [selectedDate]);
 
   const toggleDatePicker = () => {
     setIsDatePickerOpen(!isDatePickerOpen);
   };
+
   const getMealNameById = (mealId) => {
+    if (!availableMeals || availableMeals.length === 0) {
+      return `Loading meal information... (ID: ${mealId})`;
+    }
+
     const meal = availableMeals.find((m) => m.id === mealId);
     return meal ? meal.nameEnglish : `Unknown Meal (ID: ${mealId})`;
   };
-  
 
   // Modified date change handler
   const handleDateChange = (date) => {
@@ -318,6 +414,13 @@ const MenuSets = () => {
       // Reset confirmation status
       setIsConfirmed(false);
 
+      // Make sure we have meals data
+      let meals = availableMeals;
+      if (meals.length === 0) {
+        // If we don't have meal data yet, fetch it
+        meals = await fetchAvailableMeals();
+      }
+
       // Format date as required by your API (YYYY-MM-DD)
       const formattedDate = date.format("YYYY-MM-DD");
       console.log("Fetching schedule for date:", formattedDate);
@@ -388,91 +491,69 @@ const MenuSets = () => {
     }
   };
 
-  // const handleMenuUpdate = async () => {
-  //   try {
-  //     if (selectedMeals.length === 0) {
-  //       message.error("Please select at least one meal");
-  //       return;
-  //     }
+  const confirmSchedule = async () => {
+    closeConfirmModal(); // Close the modal
 
-  //     const formattedDate = selectedDate.format("YYYY-MM-DD");
+    try {
+      const formattedDate = selectedDate.format("YYYY-MM-DD"); // Use the selected date here, make sure it's formatted properly
 
-  //     // Prepare data for API request
-  //     const updateData = {
-  //       date: formattedDate,
-  //       breakfast:
-  //         activeTab === "breakfast"
-  //           ? selectedMeals
-  //           : scheduleData.breakfast || [],
-  //       lunch: activeTab === "lunch" ? selectedMeals : scheduleData.lunch || [],
-  //       dinner:
-  //         activeTab === "dinner" ? selectedMeals : scheduleData.dinner || [],
-  //     };
+      if (!formattedDate) {
+        message.info("No schedule found to confirm");
+        return;
+      }
 
-  //     console.log("Sending data to API:", JSON.stringify(updateData));
+      // Use the formatted date to send the PATCH request
+      const response = await fetch(
+        `http://localhost:3000/schedule/${formattedDate}/confirm`, // Use date in the URL path
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ confirmed: true }),
+        }
+      );
 
-  //     let response;
+      if (!response.ok) {
+        const errorMessage = await getErrorMessage(response);
+        throw new Error(errorMessage);
+      }
 
-  //     if (hasExistingSchedule) {
-  //       // Use PATCH to update existing schedule - corrected endpoint format
-  //       response = await fetch(
-  //         `http://localhost:3000/schedule/${formattedDate}`,
-  //         {
-  //           method: "PATCH",
-  //           headers: {
-  //             "Content-Type": "application/json",
-  //           },
-  //           body: JSON.stringify(updateData),
-  //         }
-  //       );
-  //     } else {
-  //       // Use POST to create new schedule
-  //       response = await fetch(`http://localhost:3000/schedule`, {
-  //         method: "POST",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //         },
-  //         body: JSON.stringify(updateData),
-  //       });
-  //     }
+      // Set confirmed status to true
+      setIsConfirmed(true);
 
-  //     if (!response.ok) {
-  //       const errorMessage = await getErrorMessage(response);
-  //       throw new Error(`${response.status}: ${errorMessage}`);
-  //     }
+      // Show success message
+      message.success("Schedule confirmed successfully");
 
-  //     const responseData = await response.json();
+      // Refresh schedule data to ensure we have the latest state
+      fetchScheduleData(selectedDate);
+    } catch (error) {
+      console.error("Error confirming schedule:", error);
+      message.error(`Failed to confirm schedule: ${error.message}`);
+    }
+  };
+  // Update the filterMeals function
+  const filterMeals = () => {
+    // Get category name for the active tab
+    const categoryName = tabToCategoryMap[activeTab];
 
-  //     // Update local state
-  //     setScheduleData({
-  //       ...scheduleData,
-  //       [activeTab]: selectedMeals,
-  //     });
+    // Filter meals that include the current category in their categories array
+    let filteredByCategory = availableMeals.filter(
+      (meal) =>
+        meal.category &&
+        Array.isArray(meal.category) &&
+        meal.category.includes(categoryName)
+    );
 
-  //     // Update schedule ID if needed
-  //     if (responseData.id) {
-  //       setScheduleIds({
-  //         breakfast: responseData.id,
-  //         lunch: responseData.id,
-  //         dinner: responseData.id,
-  //       });
-  //       setHasExistingSchedule(true);
-  //     }
+    // Then filter by search text if any
+    if (searchText) {
+      return filteredByCategory.filter((meal) =>
+        meal.nameEnglish.toLowerCase().includes(searchText.toLowerCase())
+      );
+    }
 
-  //     message.success(
-  //       `${activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} menu ${
-  //         hasExistingSchedule ? "updated" : "added"
-  //       } successfully`
-  //     );
-
-  //     closeUpdatePopup();
-  //     // Refresh schedule data to ensure we have the latest
-  //     fetchScheduleData(selectedDate);
-  //   } catch (error) {
-  //     console.error("Error updating schedule:", error);
-  //     message.error(`Failed to update schedule: ${error.message}`);
-  //   }
-  // };
+    return filteredByCategory;
+  };
 
   const handleMenuUpdate = async () => {
     try {
@@ -480,7 +561,6 @@ const MenuSets = () => {
         message.error("Please select at least one meal");
         return;
       }
-
       const formattedDate = selectedDate.format("YYYY-MM-DD");
 
       // Prepare data for API request - now selectedMeals contains meal IDs directly
@@ -626,91 +706,15 @@ const MenuSets = () => {
     }
   };
 
-  // const handleMealSelection = (mealName) => {
-  //   if (selectedMeals.includes(mealName)) {
-  //     setSelectedMeals(selectedMeals.filter((item) => item !== mealName));
-  //   } else {
-  //     setSelectedMeals([...selectedMeals, mealName]);
-  //   }
-  // };
-
-  // Function to filter meals based on category and search text
-  const filterMeals = () => {
-    // First filter by category based on active tab
-    const categoryName = tabToCategoryMap[activeTab];
-
-    let filteredByCategory = availableMeals.filter(
-      (meal) => meal.category === categoryName || meal.category === "All"
-    );
-
-    // Then filter by search text if any
-    if (searchText) {
-      return filteredByCategory.filter((meal) =>
-        meal.nameEnglish.toLowerCase().includes(searchText.toLowerCase())
-      );
-    }
-
-    return filteredByCategory;
-  };
-
   const formattedDate = selectedDate.format("MMMM D, YYYY");
 
   // Get the current menu items based on active tab
   const currentMenuItems = scheduleData[activeTab] || [];
 
-  // Show confirmation modal before confirming schedule
-  const showConfirmModal = () => {
-    if (!scheduleIds[activeTab]) {
-      message.info("No schedule found to confirm");
-      return;
-    }
-    setIsConfirmModalVisible(true);
-  };
-
   // Close confirm modal
   const closeConfirmModal = () => {
     setIsConfirmModalVisible(false);
   };
-
-  // Confirm schedule function - simplified
-  const confirmSchedule = async () => {
-    closeConfirmModal(); // Close the modal
-
-    try {
-      const scheduleId = scheduleIds[activeTab];
-
-      if (!scheduleId) {
-        message.info("No schedule found to confirm");
-        return;
-      }
-
-      const response = await fetch(
-        `http://localhost:3000/schedule/${scheduleId}/confirm`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ confirmed: true }),
-        }
-      );
-
-      if (!response.ok) {
-        const errorMessage = await getErrorMessage(response);
-        throw new Error(errorMessage);
-      }
-
-      // Set confirmed status to true
-      setIsConfirmed(true);
-
-      message.success("Schedule confirmed successfully");
-    } catch (error) {
-      console.error("Error confirming schedule:", error);
-      message.error(`Failed to confirm schedule: ${error.message}`);
-    }
-  };
-
-  
 
   return (
     <Card className={styles.card}>
@@ -745,19 +749,13 @@ const MenuSets = () => {
           </div>
           {isDatePickerOpen && (
             <div className={styles.datePickerDropdown}>
-              <DatePicker
-                open={true}
+              <CustomDatePicker
                 value={selectedDate}
-                onChange={handleDateChange}
-                onOpenChange={(open) => {
-                  if (!open) setIsDatePickerOpen(false);
-                }}
-                style={{ width: "280px" }}
-                defaultPickerValue={moment()}
-                format="YYYY-MM-DD"
-                onOk={(date) => {
+                onChange={(date) => {
+                  console.log("Date selected:", date.format("YYYY-MM-DD"));
                   handleDateChange(date);
                 }}
+                onClose={() => setIsDatePickerOpen(false)}
               />
             </div>
           )}
@@ -807,9 +805,7 @@ const MenuSets = () => {
                 renderItem={(item, index) => (
                   <>
                     <List.Item className={styles.menuItem}>
-                    <Typography.Text>{getMealNameById(item)}</Typography.Text>
-
-
+                      <Typography.Text>{getMealNameById(item)}</Typography.Text>
                     </List.Item>
                     {index < currentMenuItems.length - 1 && (
                       <Divider className={styles.divider} />
@@ -908,7 +904,12 @@ const MenuSets = () => {
                     <List.Item className={styles.mealItem}>
                       <div className={styles.mealItemContent}>
                         <div>
-                          {meal.nameEnglish} ( ID : {meal.id})
+                          <span >
+                            {meal.nameEnglish}
+                          </span>
+                          <span style={{ color: "#b3b3b3", marginLeft: "8px" }}>
+                            (ID: {meal.id})
+                          </span>
                         </div>
                         <Checkbox
                           checked={selectedMeals.includes(meal.id)}
