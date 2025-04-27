@@ -9,13 +9,11 @@ import ProfilePage from "./components/UserPortalUI/Profile/Profile";
 import MealsPage from "./components/UserPortalUI/Meals/Meals"; // Import MealsPage
 import SuggestionsPage from "./components/UserPortalUI/Suggestions/Suggestions"; // Import SuggestionsPage
 import AttendancePage from "./components/UserPortalUI/Attendance/Attendance"; // Import AttendancePage
-import KitchenAdmin from "./pages/KitchenAdmin/KitchenAdminDashBoard/kitchenAdminDash";
-import Reports from "./pages/KitchenAdmin/Report/report";
-import Meals from "./pages/KitchenAdmin/MealDash/meal";
-import MealDetailsForm from "./pages/KitchenAdmin/MealDetails/MealDetailsForm";
-import MealPlan from "./pages/KitchenAdmin/MealPlan/mealPlan";
-import SelectIngredients from "./pages/KitchenAdmin/SelectIngredients/ingredients";
-import EditMeal from "./pages/KitchenAdmin/EditMeal/editMeal";
+import KitchenAdmin from "./components/pages/Kitchen Admin/KitchenAdminDashBoard/kitchenAdminDash";
+import Reports from "./components/pages/Kitchen Admin/Report/report";
+import Meals from "./components/pages/Kitchen Admin/MealDash/meal";
+import MealDetailsForm from "./components/pages/Kitchen Admin/Add Meal/addMeal";
+import EditMeal from "./components/pages/Kitchen Admin/Edit Meal/editMeal";
 import Login from "./pages/Login/Login";
 import Serving from "./pages/Serving staff/Barcode Scan/Serving";
 import MealConform from "./pages/Serving staff/Meal Conform/MealConform";
@@ -23,11 +21,11 @@ import LoginRole from "./pages/LoginRole/LoginRole";
 import PasswordReset from "./pages/PasswordReset/PasswordReset";
 import RegisterPage from "./components/pages/HR/RegisterPage/RegisterPage";
 import EmployeePage from "./components/pages/HR/EmployeePage/EmployeePage";
-import Ingredients from "./pages/Ingredients/Dashboard/Ingredients";
-import AnalysisDashboard from "./pages/Ingredients/AnalysisDashboard/AnalysisDashboard";
-import OrderReportDashboard from "./pages/Ingredients/OrderReportDashboard/OrderReportDashboard";
-import CostAnalysis from "./components/Ingredients/Analysis/Cost Analysis/CostAnalysis";
-import OrderHistory from "./pages/Ingredients/OrderHistory/OrderHistory";
+import Ingredients from "./components/pages/Ingredient Manager/Dashboard/Ingredients";
+import AnalysisDashboard from "./components/pages/Ingredient Manager/AnalysisDashboard/AnalysisDashboard";
+import OrderReportDashboard from "./components/pages/Ingredient Manager/OrderReportDashboard/OrderReportDashboard";
+import CostAnalysis from "./components/organisms/Ingredients/Analysis/Cost Analysis/CostAnalysis";
+import OrderHistory from "./components/pages/Ingredient Manager/OrderHistory/OrderHistory";
 import ReportPage from "./components/pages/HR/ReportPage/ReportPage";
 import PayrollPage from "./components/pages/HR/PayrollPage/PayrollPage";
 import AdjustmentPage from "./components/pages/HR/AdjustmentPage/AdjustmentPage";
@@ -55,9 +53,7 @@ function App() {
           <Route path="/report" element={<Reports />} />
           <Route path="/kitchen-report" element={<Reports />} />
           <Route path="/kitchen-meal" element={<Meals />} />
-          <Route path="/meal-details" element={<MealDetailsForm />} />
-          <Route path="/meal-plan" element={<MealPlan />} />
-          <Route path="/select-ingredients" element={<SelectIngredients />} />
+          <Route path="/meal-details" element={<MealDetailsForm />} />        
           <Route path="/edit-meal" element={<EditMeal />} />
           <Route path="/serving" element={<Serving />} />
           <Route path="/meal-conform/:id" element={<MealConform />} />
