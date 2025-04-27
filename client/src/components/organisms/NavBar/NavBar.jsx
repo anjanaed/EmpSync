@@ -73,14 +73,18 @@ const NavBar = ({
 
   const renderTitle = () => (
     <>
-      <h1 className={styles.navHeader}>
-        {titleLines.map((line, i) => (
-          <div key={i} className={i === 0 ? styles.red : ""}>
-            {line}
-          </div>
-        ))}
-      </h1>
-      <hr className={styles.line} />
+    <h1 className={styles.navHeader}>
+      {titleLines.map((line, i) => (
+        <div key={i} className={i === 0 ? styles.red : ""}>
+          {collapsed
+            ? line.split(" ").map((word, idx) => (
+                <div key={idx}>{word.charAt(0)}</div>
+              ))
+            : line}
+        </div>
+      ))}
+    </h1>
+    <hr className={styles.line} />
     </>
   );
 

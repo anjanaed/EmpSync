@@ -2,13 +2,13 @@ import React, { useState } from "react";
 import { DatePicker, Form, Space, Input, Select,InputNumber } from "antd";
 import styles from "./Register.module.css";
 import { IoIosArrowBack } from "react-icons/io";
-import FingerPrint from "../../atoms/FingerPrint/FingerPrint";
-import Loading from "../../atoms/loading/loading";
+import FingerPrint from "../../../atoms/FingerPrint/FingerPrint";
+import Loading from "../../../atoms/loading/loading";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
 import { AiOutlineCaretRight } from "react-icons/ai";
 import {Toaster,toast} from 'sonner'
-import Gbutton from "../../atoms/button/Button";
+import Gbutton from "../../../atoms/button/Button";
 import axios from "axios";
 const { Option } = Select;
 

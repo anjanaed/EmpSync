@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Table, InputNumber, Form, Button, ConfigProvider } from "antd";
 import axios from "axios";
-import Gbutton from "../../atoms/button/Button";
+import Gbutton from "../../../atoms/button/Button";
 import styles from "./PayeModal.module.css";
 import { FaRegSave } from "react-icons/fa";
 import { BsPlusCircle } from "react-icons/bs";
 import { LuCircleMinus } from "react-icons/lu";
-import Loading from "../../atoms/loading/loading";
+import Loading from "../../../atoms/loading/loading";
 
 const customTheme = {
   components: {
