@@ -55,6 +55,7 @@ model IngredientOrder {
   ingredients         OrderIngredient[]
 }
 
+
 model OrderIngredient {
   id            String          @id @default(uuid())
   ingredientId  Int?          
