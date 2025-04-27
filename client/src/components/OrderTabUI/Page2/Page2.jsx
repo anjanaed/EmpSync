@@ -1,15 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { Typography, Card } from 'antd';
-import styles from './Page2.module.css'; 
+import React, { useState } from 'react';
+import { Typography, Card, Spin } from 'antd'; // Import Spin for loading animation
+import styles from './Page2.module.css';
 import DateAndTime from '../DateAndTime/DateAndTime';
 import FingerPrint from '../../atoms/FingerPrint/FingerPrint';
 
-const Page2 = ({ carouselRef, language }) => { // Accept language as a prop
-    
+const Page2 = ({ carouselRef, language, setUsername, setUserId }) => {
     const [pin, setPin] = useState("");
     const [scanning, setScanning] = useState(false);
-
-    
+    const [showFingerprint, setShowFingerprint] = useState(true); // State to toggle views
+    const [loading, setLoading] = useState(false); // State for loading animation
 
     const handlePinInput = (digit) => {
         if (pin.length < 4) {
@@ -25,19 +24,34 @@ const Page2 = ({ carouselRef, language }) => { // Accept language as a prop
         setScanning(true);
         setTimeout(() => {
             setScanning(false);
-            localStorage.setItem("user", "John Wick");
             carouselRef.current.goTo(2); // Navigate to Page 3
-        }, 2000);
+        }, 3000);
     };
 
-    const handlePinSubmit = () => {
+    const handlePinSubmit = async () => {
         if (pin.length === 4) {
             setScanning(true);
-            setTimeout(() => {
+            try {
+                const response = await fetch(`http://localhost:3000/user/${pin}`);
+                if (!response.ok) {
+                    throw new Error("User not found");
+                }
+                const user = await response.json();
+                setUsername(user.name); // Pass the username to OrderTab.jsx
+                setUserId(user.id); // Pass the user ID to OrderTab.jsx
+                console.log("Retrieved Username:", user.name); // Log the username
+                console.log("Retrieved User ID:", user.id); // Log the user ID
+
+                // Navigate to Page 3
+                setTimeout(() => {
+                    carouselRef.current.goTo(2); // Navigate to Page 3
+                }, 100);
+            } catch (error) {
+                console.error("Error fetching user:", error);
+                alert("Invalid PIN or user not found");
+            } finally {
                 setScanning(false);
-                localStorage.setItem("user", "John Wick");
-                carouselRef.current.goTo(2); // Navigate to Page 3
-            }, 2000);
+            }
         }
     };
 
@@ -49,6 +63,8 @@ const Page2 = ({ carouselRef, language }) => { // Accept language as a prop
             back: "Back",
             submit: "Submit",
             clear: "Clear",
+            loginWithPin: "Login with PIN Number",
+            loginWithFingerprint: "Login with Fingerprint",
         },
         sinhala: {
             title: "පරිශීලක සත්‍යාපනය",
@@ -57,6 +73,8 @@ const Page2 = ({ carouselRef, language }) => { // Accept language as a prop
             back: "ආපසු",
             submit: "ඉදිරිපත් කරන්න",
             clear: "මකන්න",
+            loginWithPin: "PIN අංකය සමඟ පිවිසෙන්න",
+            loginWithFingerprint: "ඇඟිලි සලකුණු සමඟ පිවිසෙන්න",
         },
         tamil: {
             title: "பயனர் அங்கீகாரம்",
@@ -65,17 +83,19 @@ const Page2 = ({ carouselRef, language }) => { // Accept language as a prop
             back: "பின்னால்",
             submit: "சமர்ப்பி",
             clear: "அழி",
+            loginWithPin: "பின்னுடன் உள்நுழைக",
+            loginWithFingerprint: "கைரேகையுடன் உள்நுழைக",
         },
     };
 
     const text = translations[language]; // Use the selected language
 
     return (
-        <>
-            <div>
+        <Spin spinning={loading} tip="Loading..."> {/* Show loading animation */}
+            <div className={styles.dateAndTime}>
                 <DateAndTime />
             </div>
-            <br />
+
             <div>
                 <Card className={styles.card}>
                     <Typography.Title level={1}>
@@ -83,72 +103,104 @@ const Page2 = ({ carouselRef, language }) => { // Accept language as a prop
                         <hr />
                     </Typography.Title>
                     <div className={styles.content}>
-                        <div className={styles.fingerprintSection}>
-                            <div
-                                className={styles.fingerprintScanner}
-                                onClick={handleFingerprint}
-                            >
-                                <FingerPrint />
+                        {showFingerprint ? (
+                            <div className={styles.fingerprintSection}>
+                                <div
+                                    className={styles.fingerprintScanner}
+                                    onClick={handleFingerprint}
+                                >
+                                    <FingerPrint />
+                                </div>
+                                <p>
+                                    {scanning ? (
+                                        <span className={styles.SectionTexts}>
+                                            Scanning...<br />
+                                        </span>
+                                    ) : (
+                                        <span className={styles.SectionTexts}>
+                                            {text.fingerprint}
+                                        </span>
+                                    )}
+                                </p>
+                                <button
+                                    className={styles.toggleButton}
+                                    onClick={() => setShowFingerprint(false)}
+                                >
+                                    {text.loginWithPin}
+                                </button>
                             </div>
-                            <p>
-                                {scanning ? (
-                                    <span className={styles.SectionTexts}>
-                                        Scanning...<br />
-                                    </span>
-                                ) : (
-                                    <span className={styles.SectionTexts}>
-                                        {text.fingerprint}
-                                    </span>
-                                )}
-                            </p>
-                        </div>
-                        <Typography.Title level={1}>
-                            <div className={styles.title}>Or</div>
-                        </Typography.Title>
-                        <div className={styles.pinSection}>
-                            <div className={styles.SectionTexts}>
-                                {text.enterPin}
-                            </div>
-                            <input
-                                type="password"
-                                value={pin}
-                                readOnly
-                                className={styles.pinInput}
-                            />
-                            <div className={styles.pinButtons}>
-                                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 0].map((digit) => (
+                        ) : (
+                            <div className={styles.pinSection}>
+                                <div className={styles.SectionTexts}>
+                                    {text.enterPin}
+                                </div>
+                                <Typography.Text
+                                    className={styles.pinInput}
+                                    strong // Makes the text bold
+                                    visibilityToggle={true}
+                                >
+                                    {pin.padEnd(4, '•')} {/* Display the PIN with placeholders for missing digits */}
+                                </Typography.Text>
+                                <div className={styles.pinButtons}>
+                                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 0].map((digit) => (
+                                        <button
+                                            key={digit}
+                                            type="primary"
+                                            shape="circle"
+                                            size="large"
+                                            onClick={() => handlePinInput(digit.toString())}
+                                        >
+                                            {digit}
+                                        </button>
+                                    ))}
                                     <button
-                                        key={digit}
-                                        onClick={() => handlePinInput(digit.toString())}
+                                        type="default"
+                                        shape="circle"
+                                        size="large"
+                                        onClick={() => handlePinInput("E")} // Append "E" to the pin
                                     >
-                                        {digit}
+                                        E
                                     </button>
-                                ))}
-                                <br />
-                                <button onClick={handleBackspace}>←</button>
-                                <br />
+
+                                    <button
+                                        type="default"
+                                        shape="circle"
+                                        size="large"
+                                        onClick={handleBackspace}
+                                    >
+                                        ⮌
+                                    </button>
+                                </div>
+                                <button
+                                    className={styles.toggleButton}
+                                    onClick={handlePinSubmit}
+                                    disabled={pin.length !== 4}
+                                >
+                                    {text.submit}
+                                </button>
+
+                                <button
+                                    className={styles.toggleButton}
+                                    onClick={() => setShowFingerprint(true)}
+                                >
+                                    {text.loginWithFingerprint}
+                                </button>
                             </div>
-                            <button
-                                className={styles.pinButtonSubmit}
-                                onClick={handlePinSubmit}
-                                disabled={pin.length !== 4}
-                            >
-                                {text.submit}
-                            </button>
-                            <br />
-                        </div>
+                        )}
                     </div>
+                    <br />
+                    <div className={styles.backButtonContainer}>
+                        <button
+                            className={styles.backButton}
+                            onClick={() => carouselRef.current.goTo(0)}
+                        >
+                            ← {text.back}
+                        </button>
+                    </div>
+                    <br />
                 </Card>
             </div>
-            <div className={styles.backButtonContainer}>
-                <button
-                    className={styles.backButton}
-                    onClick={() => carouselRef.current.goTo(0)}
-                >
-                    ← {text.back}
-                </button>
-            </div>
-        </>
+        </Spin>
     );
 };
 

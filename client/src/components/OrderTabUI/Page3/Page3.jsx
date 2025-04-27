@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button, Card, Tabs, Badge, Row, Col, Typography, Layout, Alert, Space } from "antd";
-import { LeftOutlined, FilterOutlined, PlusOutlined, CheckCircleOutlined } from "@ant-design/icons";
+import { LeftOutlined, FilterOutlined, PlusOutlined, CheckCircleOutlined, CloseOutlined } from "@ant-design/icons";
 import { motion } from "framer-motion";
 import styles from "./Page3.module.css";
 import DateAndTime from "../DateAndTime/DateAndTime";
@@ -57,16 +57,20 @@ const translations = {
     },
 };
 
-const Page3 = ({ carouselRef, language = "english" }) => {
+const Page3 = ({ carouselRef, language = "english", username, userId }) => {
     const navigate = useNavigate();
     const [currentTime, setCurrentTime] = useState(new Date());
-    const [username, setUsername] = useState("Hashan Rajakaruna");
     const [selectedDate, setSelectedDate] = useState("today");
     const [selectedMealTime, setSelectedMealTime] = useState("breakfast");
     const [orderItems, setOrderItems] = useState([]);
     const [showSuccess, setShowSuccess] = useState(false);
     const [meals, setMeals] = useState([]);
     const [allMeals, setAllMeals] = useState([]); // New state to store all meals
+
+    useEffect(() => {
+        console.log("Username on Page 3:", username); // Log the username
+        console.log("User ID on Page 3:", userId); // Log the user ID
+    }, [username, userId]);
 
     useEffect(() => {
         // Set the current time
@@ -135,6 +139,18 @@ const Page3 = ({ carouselRef, language = "english" }) => {
         fetchMeals();
     }, [selectedDate, selectedMealTime]);
 
+    useEffect(() => {
+        const clearLocalStorageOnRefresh = () => {
+            localStorage.clear(); // Clear all localStorage items
+        };
+    
+        window.addEventListener("beforeunload", clearLocalStorageOnRefresh);
+    
+        return () => {
+            window.removeEventListener("beforeunload", clearLocalStorageOnRefresh);
+        };
+    }, []);
+
     const formatDateForDisplay = (date) => date.toLocaleDateString();
 
     const getTomorrowDate = () => {
@@ -180,7 +196,7 @@ const Page3 = ({ carouselRef, language = "english" }) => {
                     <DateAndTime />
                 </div>
                 <div className={styles.userName}>
-                    <div>{username}</div>
+                    <div>{username || "Guest"}</div> {/* Display "Guest" if username is empty */}
                 </div>
             </div>
 
@@ -222,16 +238,28 @@ const Page3 = ({ carouselRef, language = "english" }) => {
                                 <div style={{ marginBottom: 24 }}>
                                     <Button.Group className={styles.dateButtonGroup}>
                                         <Button
-                                            type={selectedDate === "today" ? "primary" : "default"}
+                                            type="default"
                                             onClick={() => setSelectedDate("today")}
                                             className={styles.dateButton}
+                                            style={{
+                                                backgroundColor: selectedDate === "today" ? "#ff4d4f" : "#f0f0f0", // Red for selected, light gray for default
+                                                color: selectedDate === "today" ? "#fff" : "#000", // White text for selected, black for default
+                                                borderColor: selectedDate === "today" ? "#d9363e" : "#d9d9d9", // Darker red border for selected
+                                               
+                                            }}
                                         >
                                             {text.today} ({formatDateForDisplay(currentTime)})
                                         </Button>
                                         <Button
-                                            type={selectedDate === "tomorrow" ? "primary" : "default"}
+                                            type="default"
                                             onClick={() => setSelectedDate("tomorrow")}
                                             className={styles.dateButton}
+                                            style={{
+                                                backgroundColor: selectedDate === "tomorrow" ? "#ff4d4f" : "#f0f0f0", // Red for selected, light gray for default
+                                                color: selectedDate === "tomorrow" ? "#fff" : "#000", // White text for selected, black for default
+                                                borderColor: selectedDate === "tomorrow" ? "#d9363e" : "#d9d9d9", // Darker red border for selected
+                                                fontSize: "16px", // Adjust font size
+                                            }}
                                         >
                                             {text.tomorrow} ({formatDateForDisplay(getTomorrowDate())})
                                         </Button>
@@ -243,10 +271,24 @@ const Page3 = ({ carouselRef, language = "english" }) => {
                                     onChange={setSelectedMealTime}
                                     tabBarStyle={{
                                         fontWeight: "bold", // Make the font bold
+
                                     }}
                                     items={["breakfast", "lunch", "dinner"].map((mealTime) => ({
                                         key: mealTime,
-                                        label: text[mealTime],
+                                        label: (
+                                            <span
+                                            style={{
+                                                color: !isMealTimeAvailable(mealTime, selectedDate)
+                                                    ? "gray" // Gray for unavailable times
+                                                    : selectedMealTime === mealTime
+                                                    ? "#ff4d4f" // Red for selected tab
+                                                    : "#000", // Black for available but not selected
+                                               
+                                            }}
+                                            >
+                                                {text[mealTime]}
+                                            </span>
+                                        ),
                                         disabled: !isMealTimeAvailable(mealTime, selectedDate),
                                         children: (
                                             <div className={styles.mealList}>
@@ -298,7 +340,13 @@ const Page3 = ({ carouselRef, language = "english" }) => {
                                                                                     type="primary"
                                                                                     block
                                                                                     icon={<PlusOutlined />}
-                                                                                    style={{ marginTop: 8 }}
+                                                                                    style={{
+                                                                                        marginTop: 8,
+                                                                                        backgroundColor: isPastDue ? "#d9d9d9" : "#ff4d4f", // Gray for disabled, red for enabled
+                                                                                        color: isPastDue ? "#8c8c8c" : "#fff", // Light gray text for disabled, white for enabled
+                                                                                        borderColor: isPastDue ? "#d9d9d9" : "#d9363e", // Gray border for disabled, darker red for enabled
+                                                                                        cursor: isPastDue ? "not-allowed" : "pointer", // Change cursor for disabled state
+                                                                                    }}
                                                                                     disabled={isPastDue} // Disable button if past due
                                                                                 >
                                                                                     {text.add}
@@ -337,17 +385,18 @@ const Page3 = ({ carouselRef, language = "english" }) => {
                                                             <div key={index} className={styles.orderCard}>
                                                                 <div className={styles.orderDetails}>
                                                                     <div>
+                                                                    <div style={{ textAlign: "left" }}> {/* Apply text alignment to the container */}
                                                                         <Text
                                                                             strong
                                                                             style={{
-                                                                                marginLeft: 0,
-                                                                                fontSize: 20,
+                                                                                fontSize: 15,
                                                                             }}
                                                                         >
                                                                             {meal
                                                                                 ? meal[`name${language.charAt(0).toUpperCase() + language.slice(1)}`] || "Unnamed Meal"
                                                                                 : "Meal not found"}
                                                                         </Text>
+                                                                    </div>
                                                                         <div style={{ marginTop: 8 }}>
                                                                             <Badge
                                                                                 status="processing"
@@ -374,10 +423,9 @@ const Page3 = ({ carouselRef, language = "english" }) => {
                                                                     <Button
                                                                         className={styles.removeButton}
                                                                         type="text"
+                                                                        icon={<CloseOutlined />} // Use the CloseOutlined icon
                                                                         onClick={() => removeFromOrder(index)}
-                                                                    >
-                                                                        X
-                                                                    </Button>
+                                                                    />
                                                                 </div>
                                                                 <hr />
                                                             </div>
@@ -393,7 +441,14 @@ const Page3 = ({ carouselRef, language = "english" }) => {
                                         size="large"
                                         onClick={placeOrder}
                                         disabled={orderItems.length === 0}
-                                        style={{ marginTop: 5, height: 70 }}
+                                        style={{
+                                            marginTop: 5,
+                                            height: 70,
+                                            backgroundColor: orderItems.length === 0 ? "#d9d9d9" : "#ff4d4f", // Gray for disabled, red for enabled
+                                            color: orderItems.length === 0 ? "#8c8c8c" : "#fff", // Light gray text for disabled, white for enabled
+                                            borderColor: orderItems.length === 0 ? "#d9d9d9" : "#d9363e", // Gray border for disabled, darker red for enabled
+                                            cursor: orderItems.length === 0 ? "not-allowed" : "pointer", // Change cursor for disabled state
+                                        }}
                                     >
                                         {text.placeOrder}
                                     </Button>
@@ -416,7 +471,15 @@ const Page3 = ({ carouselRef, language = "english" }) => {
                                         </Text>
                                         <Button
                                             icon={<LeftOutlined />}
-                                            onClick={() => {window.location.reload(); }}
+                                            onClick={() => {
+                                                window.location.reload();
+                                            }}
+                                            style={{
+                                                backgroundColor: "#f0f0f0", // Default background color
+                                                color: "#000", // Default text color
+                                                borderColor: "#d9d9d9", // Default border color
+                                            }}
+                                           
                                         >
                                             {text.back}
                                         </Button>
