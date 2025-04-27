@@ -5,6 +5,9 @@ import { HttpException,HttpStatus } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 
 describe('PayrollService', () => {
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
   let payrollService: PayrollService;
   let databaseService: DatabaseService;
   const mockEmployee = {
@@ -49,17 +52,18 @@ describe('PayrollService', () => {
   describe('create', () => {
     it('should create a payroll successfully', async () => {
       const dto: Prisma.PayrollCreateInput = {
-        id: '1',
-        employee: {connect:{id:mockEmployee.id}},
+        employee: { connect: { id: mockEmployee.id } },
         month: 'January',
-        payrollPdf: Buffer.from('U29tZSBiaW5hcnkgZGF0YQ==', 'base64'),
+        range: [],
+        netPay: 98000,
+        payrollPdf: 'me.pdf',
         createdAt: new Date('2025-01-31T00:00:00.000Z'),
       };
-      mockDatabaseService.payroll.create.mockResolvedValue({...dto,
-        employee:mockEmployee,
-      });
-
-      await expect(payrollService.create(dto)).resolves.toEqual('Payroll Generated');
+      const expectedResult = { ...dto, employee: mockEmployee };
+    
+      mockDatabaseService.payroll.create.mockResolvedValue(expectedResult);
+    
+      await expect(payrollService.create(dto)).resolves.toEqual(expectedResult);
       expect(mockDatabaseService.payroll.create).toHaveBeenCalledWith({ data: dto });
     });
 
@@ -67,10 +71,11 @@ describe('PayrollService', () => {
       mockDatabaseService.payroll.create.mockRejectedValue(new HttpException('Bad Request', HttpStatus.BAD_REQUEST));
 
       const dto: Prisma.PayrollCreateInput = {
-        id: '1',
         employee: {connect:{id:mockEmployee.id}},
         month: 'January',
-        payrollPdf: Buffer.from('U29tZSBiaW5hcnkgZGF0YQ==', 'base64'),
+        payrollPdf: 'me.pdf',
+        range: [],
+        netPay: 98000,
         createdAt: new Date('2025-01-31T00:00:00.000Z'),
       };
 
@@ -83,10 +88,10 @@ describe('PayrollService', () => {
     it('should return an array of payrolls', async () => {
       const mockPayrolls = [
         {
-          id: '1',
+          id: 1,
           employee: {connect:{id:mockEmployee.id}},
           month: 'January',
-          payrollPdf: Buffer.from('U29tZSBiaW5hcnkgZGF0YQ==', 'base64'),
+          payrollPdf: 'me.pdf',
           createdAt: new Date('2025-01-31T00:00:00.000Z'),
         },
       ];
@@ -106,10 +111,10 @@ describe('PayrollService', () => {
   describe('findOne', () => {
     it('should return a payroll by empId and month', async () => {
       const mockPayroll = {
-        id: '1',
+        id: 1,
         employee: {connect:{id:mockEmployee.id}},
         month: 'January',
-        payrollPdf: Buffer.from('U29tZSBiaW5hcnkgZGF0YQ==', 'base64'),
+        payrollPdf: 'me.pdf',
         createdAt: new Date('2025-01-31T00:00:00.000Z'),
       };
       mockDatabaseService.payroll.findFirst.mockResolvedValue(mockPayroll);
@@ -130,10 +135,10 @@ describe('PayrollService', () => {
   describe('update', () => {
     it('should update a payroll if found', async () => {
       const mockPayroll = {
-        id: '1',
+        id: 1,
         employee: {connect:{id:mockEmployee.id}},
         month: 'January',
-        payrollPdf: Buffer.from('U29tZSBiaW5hcnkgZGF0YQ==', 'base64'),
+        payrollPdf: 'me.pdf',
         createdAt: new Date('2025-01-31T00:00:00.000Z'),
       };
       const updateData: Prisma.PayrollUpdateInput = { month: 'February' };
@@ -141,9 +146,9 @@ describe('PayrollService', () => {
       mockDatabaseService.payroll.findUnique.mockResolvedValue(mockPayroll);
       mockDatabaseService.payroll.update.mockResolvedValue({ ...mockPayroll, ...updateData });
 
-      await expect(payrollService.update('1', updateData)).resolves.not.toThrow();
+      await expect(payrollService.update(1, updateData)).resolves.not.toThrow();
       expect(mockDatabaseService.payroll.update).toHaveBeenCalledWith({
-        where: { id: '1' },
+        where: { id: 1},
         data: updateData,
       });
     });
@@ -151,30 +156,30 @@ describe('PayrollService', () => {
     it('should throw an error if payroll is not found', async () => {
       mockDatabaseService.payroll.findUnique.mockResolvedValue(null);
 
-      await expect(payrollService.update('2', { month: 'February' })).rejects.toThrow('Payroll Not Found');
+      await expect(payrollService.update(2, { month: 'February' })).rejects.toThrow('Payroll Not Found');
     });
   });
 
   describe('remove', () => {
     it('should delete a payroll if found', async () => {
       const mockPayroll = {
-        id: '1',
+        id: 1,
         employee: {connect:{id:mockEmployee.id}},
         month: 'January',
-        payrollPdf: Buffer.from('U29tZSBiaW5hcnkgZGF0YQ==', 'base64'),
+        payrollPdf: 'me.pdf',
         createdAt: new Date('2025-01-31T00:00:00.000Z'),
       };
       mockDatabaseService.payroll.findUnique.mockResolvedValue(mockPayroll);
       mockDatabaseService.payroll.delete.mockResolvedValue(mockPayroll);
 
-      await expect(payrollService.remove('1')).resolves.not.toThrow();
-      expect(mockDatabaseService.payroll.delete).toHaveBeenCalledWith({ where: { id: '1' } });
+      await expect(payrollService.remove(1)).resolves.not.toThrow();
+      expect(mockDatabaseService.payroll.delete).toHaveBeenCalledWith({ where: { id: 1 } });
     });
 
     it('should throw an error if payroll is not found', async () => {
       mockDatabaseService.payroll.findUnique.mockResolvedValue(null);
 
-      await expect(payrollService.remove('2')).rejects.toThrow('Payroll Not Found');
+      await expect(payrollService.remove(2)).rejects.toThrow('Payroll Not Found');
     });
   });
 });

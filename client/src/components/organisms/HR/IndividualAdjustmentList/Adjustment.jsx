@@ -1,12 +1,10 @@
-import { React, useState, useEffect } from "react";
-import styles from "./Payslip.module.css";
-import { Table, Space, Modal, ConfigProvider, Input, Select } from "antd";
+import { useState, useEffect } from "react";
 import axios from "axios";
-import { IoMdDownload } from "react-icons/io";
-import { LuEye } from "react-icons/lu";
-import SearchBar from "../../molecules/SearchBar/SearchBar";
-import Loading from "../../atoms/loading/loading";
-
+import { Table, Space, ConfigProvider } from "antd";
+import { MdOutlineDeleteOutline } from "react-icons/md";
+import Loading from "../../../atoms/loading/loading";
+import styles from "./Adjustment.module.css";
+import SearchBar from "../../../molecules/SearchBar/SearchBar";
 const customTheme = {
   components: {
     Table: {
@@ -21,91 +19,89 @@ const customTheme = {
   },
 };
 
-const Payslip = () => {
+const Adjustment = () => {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState();
-  const [payslip, setPayslip] = useState();
+  const [adjustment, setAdjustment] = useState([]);
   const urL = import.meta.env.VITE_BASE_URL;
 
-  const fetchSlips = async (search) => {
+  const fetchAdjustment = async (searchValue) => {
     try {
-      const res = await axios.get(`${urL}/payroll`, {
+      const response = await axios.get(`${urL}/indiadjustment`, {
         params: {
-          search: search || undefined,
+          search: searchValue || undefined,
         },
       });
-      console.log(res);
-      const fetchedSlip = res.data.map((slip) => ({
-        key: slip.id,
-        id: slip.empId,
-        name: slip.employee.name,
-        month: slip.month,
-        salary: `LKR ${slip.netPay}`,
-        pdf: slip.payrollPdf,
+      const fetchedAdjustment = response.data.map((adj) => ({
+        key: adj.id,
+        label: adj.label,
+        empId: adj.empId,
+        allowance: adj.allowance ? "Addition" : "Deduction",
+        amount: adj.isPercentage ? `${adj.amount}%` : `${adj.amount} LKR`,
       }));
-      setPayslip(fetchedSlip);
+      setAdjustment(fetchedAdjustment);
     } catch (err) {
       console.log(err);
     }
     setLoading(false);
   };
 
-  const handleView = (payslip) => {
-    window.open(payslip, "_blank");
+  const handleDelete = async (id) => {
+    setLoading(true);
+    try {
+      await axios.delete(`${urL}/indiadjustment/${id}`);
+      fetchAdjustment();
+    } catch (err) {
+      console.log(err);
+    }
+    setLoading(false);
   };
 
-  const handleDownload = (payslip) => {
-    console.log(payslip);
-  };
-
+  //Columns
   const columns = [
     {
       title: "Employee ID",
-      dataIndex: "id",
-      key: "id",
+      dataIndex: "empId",
+      key: "empId",
       align: "center",
       defaultSortOrder: "ascend",
       sorter: (a, b) => {
-        const numA = parseInt(a.id.match(/\d+/)?.[0] || "0", 10);
-        const numB = parseInt(b.id.match(/\d+/)?.[0] || "0", 10);
+        const numA = parseInt(a.empId.match(/\d+/)?.[0] || "0", 10);
+        const numB = parseInt(b.empId.match(/\d+/)?.[0] || "0", 10);
         return numA - numB;
       },
       ellipsis: true,
     },
     {
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
+      title: "Description",
+      dataIndex: "label",
+      key: "label",
       align: "center",
       ellipsis: true,
     },
     {
-      title: "Month",
-      dataIndex: "month",
-      key: "month",
+      title: "Addition / Deduction",
+      dataIndex: "allowance",
+      key: "allowance",
+      align: "center",
+      ellipsis: true,
+      sorter: (a, b) => a.allowance.localeCompare(b.allowance),
+    },
+    {
+      title: "Amount",
+      dataIndex: "amount",
+      key: "amount",
       align: "center",
       ellipsis: true,
     },
     {
-      title: "Net Salary",
-      dataIndex: "salary",
-      key: "salary",
-      align: "center",
-      ellipsis: true,
-    },
-    {
-      title: "View / Download Payslip",
+      title: "Actions",
       key: "actions",
       align: "center",
       render: (_, record) => (
         <Space size="middle">
-          <LuEye
-            onClick={() => handleView(record.pdf)}
-            className={styles.icons}
-            size="20px"
-          />
-          <IoMdDownload
-            onClick={() => handleDownload(record.pdf)}
+          <MdOutlineDeleteOutline
+            onClick={() => handleDelete(record.key)}
             className={styles.icons}
             size="20px"
           />
@@ -115,18 +111,19 @@ const Payslip = () => {
   ];
 
   useEffect(() => {
-    fetchSlips(search);
+    fetchAdjustment(search);
   }, [search]);
 
   if (loading) {
     return <Loading />;
   }
+
   return (
     <>
       <div className={styles.home}>
         <div className={styles.homeContent}>
           <div className={styles.homeHead}>
-            <div className={styles.headLeft}>Payslips</div>
+            <div className={styles.headLeft}>Individual Adjustment Details</div>
             <div className={styles.headRight}>
               <SearchBar
                 onChange={(e) => setSearch(e.target.value)}
@@ -138,10 +135,10 @@ const Payslip = () => {
           <ConfigProvider theme={customTheme}>
             <Table
               columns={columns}
-              dataSource={payslip}
+              dataSource={adjustment}
               pagination={{
                 position: ["bottomCenter"],
-                pageSize: 25,
+                pageSize: 20,
                 showTotal: (total, range) =>
                   `${range[0]}–${range[1]} of ${total} items`,
                 showSizeChanger: false,
@@ -154,4 +151,4 @@ const Payslip = () => {
   );
 };
 
-export default Payslip;
+export default Adjustment;

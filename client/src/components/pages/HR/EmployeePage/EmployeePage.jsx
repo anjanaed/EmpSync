@@ -6,7 +6,7 @@ import {
   faDollarSign,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Employees from "../../../organisms/EmployeeList/Employees";
+import Employees from "../../../organisms/HR/EmployeeList/Employees";
 import NavBar from '../../../organisms/NavBar/NavBar';
 
 

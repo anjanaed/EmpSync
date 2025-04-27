@@ -9,12 +9,12 @@ import {
   InputNumber,
 } from "antd";
 import styles from "./EditModal.module.css";
-import Loading from "../../atoms/loading/loading";
+import Loading from "../../../atoms/loading/loading";
 import dayjs from "dayjs";
 import {Toaster,toast} from 'sonner'
 import { LuSave } from "react-icons/lu";
 import axios from "axios";
-import Gbutton from "../../atoms/button/Button";
+import Gbutton from "../../../atoms/button/Button";
 import { RiFingerprintLine } from "react-icons/ri";
 
 const formItemLayout = {

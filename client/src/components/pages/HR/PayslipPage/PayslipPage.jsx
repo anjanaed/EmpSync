@@ -1,5 +1,5 @@
 import React from 'react'
-import Payslip from '../../../organisms/Payslips/Payslip'
+import Payslip from '../../../organisms/HR/Payslips/Payslip'
 import NavBar from '../../../organisms/NavBar/NavBar'
 
 
