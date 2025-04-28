@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./LoginRole.module.css";
-import illustration from "../../assets/illustration2.png";
+import illustration from "../../../assets/illustration2.png";
 import { UserOutlined } from '@ant-design/icons';
 import { Avatar } from "antd";
 

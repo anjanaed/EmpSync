@@ -2,7 +2,7 @@ import React from "react";
 import { Form, Input, Checkbox } from "antd";
 import { useNavigate } from "react-router-dom";
 import styles from "./Login.module.css";
-import illustration from "../../assets/illustration.png";
+import illustration from "../../../assets/illustration.png";
 
 const LoginPage = () => {
   const navigate = useNavigate();
