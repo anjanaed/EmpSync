@@ -170,12 +170,32 @@ const Page3 = ({ carouselRef, language = "english", username, userId }) => {
         return false;
     };
 
-    const addToOrder = (mealId) => {
-        setOrderItems((prev) => [...prev, { mealId, date: selectedDate, mealTime: selectedMealTime, count: 1 }]);
+    const addToOrder = (mealId, date = selectedDate) => {
+        setOrderItems((prev) => [...prev, { mealId, date, mealTime: selectedMealTime, count: 1 }]);
+    };
+    const addToOrder2 = (mealId, date) => {
+        setOrderItems((prev) => [
+            ...prev,
+            { mealId, date, mealTime: selectedMealTime, count: 1 },
+        ]);
     };
 
-    const removeFromOrder = (index) => {
-        setOrderItems((prev) => prev.filter((_, i) => i !== index));
+const removeFromOrder = (mealId, date) => {
+    setOrderItems((prev) =>
+        prev
+            .map((item) => {
+                if (item.mealId === mealId && item.date === date) {
+                    console.log("Removing item:", item);
+                    return item.count > 1 ? { ...item, count: item.count - 1 } : null; // Return null if count becomes 0
+                }
+                return item; // Keep other items unchanged
+            })
+            .filter((item) => item !== null) // Remove null items
+    );
+};
+
+    const disappearFromOrder = (mealId) => {
+        setOrderItems((prev) => prev.filter((item) => item.mealId !== mealId));
     };
 
     const placeOrder = async () => {
@@ -434,17 +454,11 @@ const Page3 = ({ carouselRef, language = "english", username, userId }) => {
                             <Col span={8}>
                                 <div className={styles.orderSummaryContainer}>
                                     <div className={styles.orderSummary}>
-                                        <Card
-                                            title={<Title level={4}>{text.yourOrder}</Title>}
-                                        >
+                                        <Card title={<Title level={4}>{text.yourOrder}</Title>}>
                                             {orderItems.length === 0 ? (
-                                                <Alert
-                                                    message={text.noMealsSelected}
-                                                    type="info"
-                                                    showIcon
-                                                />
+                                                <Alert message={text.noMealsSelected} type="info" showIcon />
                                             ) : (
-                                                <>
+                                                <Row gutter={[16, 16]}>
                                                     {Object.entries(
                                                         orderItems.reduce((acc, item) => {
                                                             const key = `${item.mealId}-${item.date}-${item.mealTime}`;
@@ -457,60 +471,80 @@ const Page3 = ({ carouselRef, language = "english", username, userId }) => {
                                                     ).map(([key, item], index) => {
                                                         const meal = allMeals.find((meal) => meal.id === item.mealId);
                                                         return (
-                                                            <div key={index} className={styles.orderCard}>
-                                                                <div className={styles.orderDetails}>
-                                                                    <div>
-                                                                        <div style={{ textAlign: "left" }}>
-                                                                            <Text
-                                                                                strong
-                                                                                style={{
-                                                                                    fontSize: 15,
-                                                                                }}
-                                                                            >
+                                                            <Col span={24} key={index}>
+                                                                <div className={styles.orderCard}>
+                                                                    <Row gutter={[16, 16]}>
+                                                                        {/* First Row */}
+                                                                        <Col span={10} style={{ textAlign: "left" }}>
+                                                                            <Text strong style={{ fontSize: 15 }}>
                                                                                 {meal
                                                                                     ? meal[`name${language.charAt(0).toUpperCase() + language.slice(1)}`] || "Unnamed Meal"
                                                                                     : "Meal not found"}
                                                                             </Text>
-                                                                        </div>
-                                                                        <div style={{ marginTop: 8 }}>
+                                                                        </Col>
+                                                                        <Col span={10} style={{ textAlign: "right" }}>
+                                                                            <Text strong >
+                                                                                ${meal ? (meal.price * item.count).toFixed(2) : "0.00"}
+                                                                            </Text>
+                                                                        </Col>
+                                                                        <Col span={4} style={{ textAlign: "right" }}>
+                                                                            <Button
+                                                                                className={styles.removeButton}
+                                                                                type="text"
+                                                                                icon={<CloseOutlined />}
+                                                                                onClick={() => disappearFromOrder(orderItems[index].mealId)}
+                                                                            />
+                                                                        </Col>
+                                                                    </Row>
+                                                                    <Row gutter={[16, 16]} style={{ marginTop: 8 }}>
+                                                                        {/* Second Row */}
+                                                                        <Col span={12} >
                                                                             <Badge
                                                                                 status="processing"
-                                                                                text={
-                                                                                    item.date === "today"
-                                                                                        ? text.today
-                                                                                        : text.tomorrow
-                                                                                }
+                                                                                text={item.date === "today" ? text.today : text.tomorrow}
                                                                             />
                                                                             <Badge
                                                                                 status="success"
                                                                                 text={text[item.mealTime]}
                                                                                 style={{ marginLeft: 8 }}
                                                                             />
-                                                                            <Badge
-                                                                            status="default"
-                                                                            text={`x${item.count}`}
-                                                                            style={{ marginLeft: 8 }}
-                                                                        />
-                                                                        <Text
-                                                                            strong
-                                                                            style={{ marginLeft: 16 }} // Add margin to create space
+                                                                        </Col>
+                                                                        <Col span={12} style={{ textAlign: "right" }}>
+                                                                        <Button
+                                                                            type="text"
+                                                                            onClick={() => removeFromOrder(meal.id, item.date)}
+                                                                            style={{
+                                                                                marginRight: 8,
+                                                                                backgroundColor: "#f0f0f0",
+                                                                                border: "1px solid #d9d9d9",
+                                                                            }}
                                                                         >
-                                                                            ${meal ? (meal.price * item.count).toFixed(2) : "0.00"}
-                                                                        </Text>
-                                                                        </div>
-                                                                    </div>
-                                                                    <Button
-                                                                        className={styles.removeButton}
-                                                                        type="text"
-                                                                        icon={<CloseOutlined />}
-                                                                        onClick={() => removeFromOrder(index)}
-                                                                    />
+                                                                            -
+                                                                        </Button>
+                                                                            <Badge
+                                                                                status="default"
+                                                                                text={`${item.count}`}
+                                                                                style={{ marginRight: 8, fontSize: 16, fontWeight: "bold" }}
+                                                                            />
+                                                                            <Button
+                                                                                type="text"
+                                                                                onClick={() => addToOrder2(meal.id, item.date)}
+                                                                                style={{
+                                                                                    backgroundColor: "#f0f0f0",
+                                                                                    border: "1px solid #d9d9d9",
+                                                                                }}
+                                                                            >
+                                                                                +
+                                                                            </Button>
+                                                                        </Col>
+                                                                        
+                                                                    </Row>
+                                                                    <hr />
                                                                 </div>
-                                                                <hr />
-                                                            </div>
+                                                            </Col>
                                                         );
                                                     })}
-                                                </>
+                                                </Row>
                                             )}
                                         </Card>
                                     </div>
