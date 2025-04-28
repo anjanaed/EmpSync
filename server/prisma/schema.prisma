@@ -122,7 +122,7 @@ model Order {
   employeeId      String
   meals           String[] // Array of meal IDs
   orderDate       DateTime @default(now()) @db.Date // Store only the date
-  orderPlacedTime DateTime @default(now()) // Store the exact time the order was placed
+  orderPlacedTime DateTime @default(now()) @db.Timestamptz // Store the exact time the order was placed in Sri Lankan time zone
   breakfast       Boolean  @default(false)
   lunch           Boolean  @default(false)
   dinner          Boolean  @default(false)

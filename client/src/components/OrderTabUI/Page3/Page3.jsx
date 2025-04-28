@@ -203,11 +203,12 @@ const Page3 = ({ carouselRef, language = "english", username, userId }) => {
                 // Convert meals object to the desired format (e.g., "010:2,011:1")
                 const mealsArray = Object.entries(meals).map(([mealId, count]) => `${mealId}:${count}`);
     
-                // Format the orderDate as ISO-8601 DateTime (e.g., "2025-04-28T00:00:00.000Z")
+                // Format the orderDate using the current system date and time
+                const now = new Date();
                 const orderDate =
                     date === "today"
-                        ? new Date().toISOString().split("T")[0] + "T00:00:00.000Z"
-                        : new Date(new Date().setDate(new Date().getDate() + 1)).toISOString().split("T")[0] + "T00:00:00.000Z";
+                        ? now.toISOString() // Use the current system date and time
+                        : new Date(now.setDate(now.getDate() + 1)).toISOString(); // Use the next day's date and time
     
                 const orderData = {
                     employeeId: userId,
@@ -220,8 +221,9 @@ const Page3 = ({ carouselRef, language = "english", username, userId }) => {
                     serve: false,
                 };
     
-                // Log the orderData for debugging
+                // Log the orderData and current date/time for debugging
                 console.log("Sending orderData to backend:", orderData);
+                console.log("Order placed at:", now.toISOString());
     
                 // Send the order to the backend
                 const response = await fetch("http://localhost:3000/orders", {
