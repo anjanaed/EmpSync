@@ -171,7 +171,7 @@ const Page3 = ({ carouselRef, language = "english", username, userId }) => {
     };
 
     const addToOrder = (mealId) => {
-        setOrderItems((prev) => [...prev, { mealId, date: selectedDate, mealTime: selectedMealTime }]);
+        setOrderItems((prev) => [...prev, { mealId, date: selectedDate, mealTime: selectedMealTime, count: 1 }]);
     };
 
     const removeFromOrder = (index) => {
@@ -183,39 +183,63 @@ const Page3 = ({ carouselRef, language = "english", username, userId }) => {
         const groupedOrders = orderItems.reduce((acc, item) => {
             const key = `${item.date}-${item.mealTime}`;
             if (!acc[key]) {
-                acc[key] = { date: item.date, mealTime: item.mealTime, meals: [], totalPrice: 0 };
+                acc[key] = { date: item.date, mealTime: item.mealTime, meals: {}, totalPrice: 0 };
             }
-            acc[key].meals.push(item.mealId);
+            // Increment the count for the mealId
+            acc[key].meals[item.mealId] = (acc[key].meals[item.mealId] || 0) + item.count;
+    
+            // Calculate the total price
             const meal = allMeals.find((meal) => meal.id === item.mealId);
-            acc[key].totalPrice += meal ? meal.price : 0;
+            acc[key].totalPrice += meal ? meal.price * item.count : 0;
+    
             return acc;
         }, {});
-
+    
         // Prepare and send each order to the backend
         try {
             for (const key in groupedOrders) {
                 const { date, mealTime, meals, totalPrice } = groupedOrders[key];
+    
+                // Convert meals object to the desired format (e.g., "010:2,011:1")
+                const mealsArray = Object.entries(meals).map(([mealId, count]) => `${mealId}:${count}`);
+    
+                // Format the orderDate as ISO-8601 DateTime (e.g., "2025-04-28T00:00:00.000Z")
+                const orderDate =
+                    date === "today"
+                        ? new Date().toISOString().split("T")[0] + "T00:00:00.000Z"
+                        : new Date(new Date().setDate(new Date().getDate() + 1)).toISOString().split("T")[0] + "T00:00:00.000Z";
+    
                 const orderData = {
                     employeeId: userId,
-                    meals,
-                    orderDate: date === "today" ? new Date() : new Date(new Date().setDate(new Date().getDate() + 1)),
+                    meals: mealsArray, // Pass the meals as an array of strings
+                    orderDate, // Use the formatted ISO-8601 DateTime
                     breakfast: mealTime === "breakfast",
                     lunch: mealTime === "lunch",
                     dinner: mealTime === "dinner",
                     price: totalPrice,
                     serve: false,
                 };
-
+    
+                // Log the orderData for debugging
+                console.log("Sending orderData to backend:", orderData);
+    
                 // Send the order to the backend
-                await fetch("http://localhost:3000/orders", {
+                const response = await fetch("http://localhost:3000/orders", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
                     },
                     body: JSON.stringify(orderData),
                 });
+    
+                // Check if the response is successful
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    console.error("Error from backend:", errorData);
+                    throw new Error(`Failed to place order: ${response.statusText}`);
+                }
             }
-
+    
             // Show success message and reset state
             setShowSuccess(true);
             setTimeout(() => {
@@ -227,7 +251,6 @@ const Page3 = ({ carouselRef, language = "english", username, userId }) => {
             console.error("Error placing orders:", error);
         }
     };
-
     const text = translations[language];
 
     return (
@@ -420,24 +443,33 @@ const Page3 = ({ carouselRef, language = "english", username, userId }) => {
                                                 />
                                             ) : (
                                                 <>
-                                                    {orderItems.map((item, index) => {
-                                                        const meal = allMeals.find((meal) => meal.id === item.mealId); // Use allMeals instead of meals
+                                                    {Object.entries(
+                                                        orderItems.reduce((acc, item) => {
+                                                            const key = `${item.mealId}-${item.date}-${item.mealTime}`;
+                                                            if (!acc[key]) {
+                                                                acc[key] = { ...item, count: 0 };
+                                                            }
+                                                            acc[key].count += 1;
+                                                            return acc;
+                                                        }, {})
+                                                    ).map(([key, item], index) => {
+                                                        const meal = allMeals.find((meal) => meal.id === item.mealId);
                                                         return (
                                                             <div key={index} className={styles.orderCard}>
                                                                 <div className={styles.orderDetails}>
                                                                     <div>
-                                                                    <div style={{ textAlign: "left" }}> {/* Apply text alignment to the container */}
-                                                                        <Text
-                                                                            strong
-                                                                            style={{
-                                                                                fontSize: 15,
-                                                                            }}
-                                                                        >
-                                                                            {meal
-                                                                                ? meal[`name${language.charAt(0).toUpperCase() + language.slice(1)}`] || "Unnamed Meal"
-                                                                                : "Meal not found"}
-                                                                        </Text>
-                                                                    </div>
+                                                                        <div style={{ textAlign: "left" }}>
+                                                                            <Text
+                                                                                strong
+                                                                                style={{
+                                                                                    fontSize: 15,
+                                                                                }}
+                                                                            >
+                                                                                {meal
+                                                                                    ? meal[`name${language.charAt(0).toUpperCase() + language.slice(1)}`] || "Unnamed Meal"
+                                                                                    : "Meal not found"}
+                                                                            </Text>
+                                                                        </div>
                                                                         <div style={{ marginTop: 8 }}>
                                                                             <Badge
                                                                                 status="processing"
@@ -453,18 +485,22 @@ const Page3 = ({ carouselRef, language = "english", username, userId }) => {
                                                                                 style={{ marginLeft: 8 }}
                                                                             />
                                                                             <Badge
-                                                                                status="default"
-                                                                                style={{ marginLeft: 8 }}
-                                                                            />
-                                                                            <Text strong>
-                                                                                ${meal ? meal.price.toFixed(2) : "0.00"}
-                                                                            </Text>
+                                                                            status="default"
+                                                                            text={`x${item.count}`}
+                                                                            style={{ marginLeft: 8 }}
+                                                                        />
+                                                                        <Text
+                                                                            strong
+                                                                            style={{ marginLeft: 16 }} // Add margin to create space
+                                                                        >
+                                                                            ${meal ? (meal.price * item.count).toFixed(2) : "0.00"}
+                                                                        </Text>
                                                                         </div>
                                                                     </div>
                                                                     <Button
                                                                         className={styles.removeButton}
                                                                         type="text"
-                                                                        icon={<CloseOutlined />} // Use the CloseOutlined icon
+                                                                        icon={<CloseOutlined />}
                                                                         onClick={() => removeFromOrder(index)}
                                                                     />
                                                                 </div>

@@ -118,15 +118,16 @@ model IndividualSalaryAdjustments{
 }
 
 model Order {
-  id          Int      @id @default(autoincrement())
-  employeeId  String
-  meals       String[] // Array of meal IDs
-  orderDate   DateTime @default(now())
-  breakfast   Boolean  @default(false)
-  lunch       Boolean  @default(false)
-  dinner      Boolean  @default(false)
-  price       Float
-  serve       Boolean  @default(false)
+  id              Int      @id @default(autoincrement())
+  employeeId      String
+  meals           String[] // Array of meal IDs
+  orderDate       DateTime @default(now()) @db.Date // Store only the date
+  orderPlacedTime DateTime @default(now()) // Store the exact time the order was placed
+  breakfast       Boolean  @default(false)
+  lunch           Boolean  @default(false)
+  dinner          Boolean  @default(false)
+  price           Float
+  serve           Boolean  @default(false)
 }
 
 model Attendance {
