@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import NotificationBox from '../../../molecules/NotificationBox/NotificationBox';
 import {
   Layout,
   Button,

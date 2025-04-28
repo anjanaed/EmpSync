@@ -24,7 +24,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 // Import Firebase services
 import { storage } from "../../../../firebase/config";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
 
 const { TextArea } = Input;
 const { Title } = Typography;
@@ -33,6 +33,7 @@ const { Option } = Select;
 const EditMealPage = () => {
   const [form] = Form.useForm();
   const [imageUrl, setImageUrl] = useState(null);
+  const [originalImageUrl, setOriginalImageUrl] = useState(null); // Store original image URL
   const fileInputRef = useRef(null);
   const [isIngredientsModalVisible, setIsIngredientsModalVisible] = useState(false);
   const [loadingIngredients, setLoadingIngredients] = useState(false);
@@ -116,6 +117,7 @@ const EditMealPage = () => {
         const meal = location.state.meal;
         setMealData(meal);
         setImageUrl(meal.imageUrl);
+        setOriginalImageUrl(meal.imageUrl); // Store the original image URL
 
         // Ensure category is treated as an array
         const mealCategories = Array.isArray(meal.category) ? meal.category : 
@@ -210,6 +212,45 @@ const EditMealPage = () => {
     navigate("/kitchen-meal"); // Navigate back to meals list
   };
 
+  // Function to delete the old image from Firebase
+  const deleteImageFromFirebase = async (imageUrl) => {
+    if (!imageUrl) return true; // No image to delete
+    
+    try {
+      // Check if this is a Firebase Storage URL
+      if (!imageUrl.includes('firebasestorage.googleapis.com')) {
+        console.warn("Image URL doesn't appear to be from Firebase Storage:", imageUrl);
+        return false;
+      }
+      
+      // Extract the file path from the URL
+      let urlPath;
+      if (imageUrl.startsWith('gs://')) {
+        // Handle gs:// protocol format
+        urlPath = imageUrl.replace(/^gs:\/\/[^\/]+\//, '');
+      } else {
+        // Handle https:// format
+        urlPath = decodeURIComponent(imageUrl.split('/o/')[1]?.split('?')[0]);
+      }
+      
+      if (!urlPath) {
+        console.warn("Could not parse image URL for deletion:", imageUrl);
+        return false;
+      }
+      
+      // Create a reference to the file to delete
+      const imageRef = ref(storage, urlPath);
+      
+      // Delete the file
+      await deleteObject(imageRef);
+      console.log("Old image successfully deleted from Firebase Storage");
+      return true;
+    } catch (error) {
+      console.error("Error deleting old image from Firebase:", error);
+      return false;
+    }
+  };
+
   const uploadImageToFirebase = async (file) => {
     // If no new image was selected, return the existing URL
     if (!file) {
@@ -250,12 +291,23 @@ const EditMealPage = () => {
 
       // Only upload to Firebase if a new image was selected
       if (imageFile) {
-        message.loading({ content: "Uploading image...", key: "imageUpload" });
+        // message.loading({ content: "Uploading image...", key: "imageUpload" });
         finalImageUrl = await uploadImageToFirebase(imageFile);
-        message.success({
-          content: "Image uploaded successfully",
-          key: "imageUpload",
-        });
+        // message.success({
+        //   content: "Image uploaded successfully",
+        //   key: "imageUpload",
+        // });
+        
+        // If we have a new image and there was an old image, delete the old one
+        if (originalImageUrl && originalImageUrl !== finalImageUrl) {
+          console.log("Deleting old image:", originalImageUrl);
+          const deleted = await deleteImageFromFirebase(originalImageUrl);
+          if (deleted) {
+            console.log("Old image deleted successfully");
+          } else {
+            console.warn("Failed to delete old image");
+          }
+        }
       }
 
       // Format ingredients to match the expected format ["ingredientId:quantity"]
