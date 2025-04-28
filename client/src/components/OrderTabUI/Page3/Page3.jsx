@@ -178,13 +178,54 @@ const Page3 = ({ carouselRef, language = "english", username, userId }) => {
         setOrderItems((prev) => prev.filter((_, i) => i !== index));
     };
 
-    const placeOrder = () => {
-        setShowSuccess(true);
-        setTimeout(() => {
-            setShowSuccess(false);
-            setOrderItems([]);
-            window.location.reload();
-        }, 3000);
+    const placeOrder = async () => {
+        // Group order items by date and meal time
+        const groupedOrders = orderItems.reduce((acc, item) => {
+            const key = `${item.date}-${item.mealTime}`;
+            if (!acc[key]) {
+                acc[key] = { date: item.date, mealTime: item.mealTime, meals: [], totalPrice: 0 };
+            }
+            acc[key].meals.push(item.mealId);
+            const meal = allMeals.find((meal) => meal.id === item.mealId);
+            acc[key].totalPrice += meal ? meal.price : 0;
+            return acc;
+        }, {});
+
+        // Prepare and send each order to the backend
+        try {
+            for (const key in groupedOrders) {
+                const { date, mealTime, meals, totalPrice } = groupedOrders[key];
+                const orderData = {
+                    employeeId: userId,
+                    meals,
+                    orderDate: date === "today" ? new Date() : new Date(new Date().setDate(new Date().getDate() + 1)),
+                    breakfast: mealTime === "breakfast",
+                    lunch: mealTime === "lunch",
+                    dinner: mealTime === "dinner",
+                    price: totalPrice,
+                    serve: false,
+                };
+
+                // Send the order to the backend
+                await fetch("http://localhost:3000/orders", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(orderData),
+                });
+            }
+
+            // Show success message and reset state
+            setShowSuccess(true);
+            setTimeout(() => {
+                setShowSuccess(false);
+                setOrderItems([]);
+                window.location.reload();
+            }, 3000);
+        } catch (error) {
+            console.error("Error placing orders:", error);
+        }
     };
 
     const text = translations[language];

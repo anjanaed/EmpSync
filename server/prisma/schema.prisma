@@ -119,10 +119,13 @@ model IndividualSalaryAdjustments{
 
 model Order {
   id          Int      @id @default(autoincrement())
-  orderNumber String   @unique
-  orderDate   DateTime @default(now())
-  price       Float
   employeeId  String
+  meals       String[] // Array of meal IDs
+  orderDate   DateTime @default(now())
+  breakfast   Boolean  @default(false)
+  lunch       Boolean  @default(false)
+  dinner      Boolean  @default(false)
+  price       Float
   serve       Boolean  @default(false)
 }
 
