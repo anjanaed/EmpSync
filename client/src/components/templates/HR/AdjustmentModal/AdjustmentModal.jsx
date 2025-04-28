@@ -1,9 +1,9 @@
 import { React, useState } from "react";
 import { Input, Checkbox, InputNumber, Form } from "antd";
 import styles from "./AdjustmentModal.module.css";
-import Gbutton from "../../atoms/button/Button";
+import Gbutton from "../../../atoms/button/Button";
 import { FaRegSave } from "react-icons/fa";
-import Loading from "../../atoms/loading/loading";
+import Loading from "../../../atoms/loading/loading";
 import axios from "axios";
 
 const AdjustmentModal = ({ handleCancel, fetch, sucNotify, erNotify }) => {

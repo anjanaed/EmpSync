@@ -1,7 +1,7 @@
 import { React, useState } from "react";
 import styles from "./ReportDashboard.module.css";
-import ReportCard from "../../templates/ReportCard/ReportCard";
-import img from "../../../assets/report.png";
+import ReportCard from "../../../templates/HR/ReportCard/ReportCard";
+import img from "../../../../assets/report.png";
 import { InputNumber } from "antd";
 
 

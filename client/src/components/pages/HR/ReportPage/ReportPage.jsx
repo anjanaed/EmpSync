@@ -7,7 +7,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import NavBar from '../../../organisms/NavBar/NavBar';
-import ReportDashboard from '../../../organisms/ReportDashboard/ReportDashboard';
+import ReportDashboard from '../../../organisms/HR/ReportDashboard/ReportDashboard';
 
 
 const ReportPage = () => {

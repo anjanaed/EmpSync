@@ -10,7 +10,7 @@ export class PayrollService {
 
   async create(dto: Prisma.PayrollCreateInput) {
     try {
-      return await this.databaseService.payroll.create({ data: dto });
+      return await this.databaseService.payroll.create({ data: dto })
     } catch (err) {
       throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
     }

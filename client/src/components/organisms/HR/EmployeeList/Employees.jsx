@@ -1,12 +1,12 @@
 import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
-import { Table, Space, Modal, ConfigProvider, Input, Select } from "antd";
+import { Table, Space, Modal, ConfigProvider, Select } from "antd";
 import { FiEdit } from "react-icons/fi";
 import { MdOutlineDeleteOutline } from "react-icons/md";
-import EditModal from "../../templates/EditModal/EditModal";
-import Loading from "../../atoms/loading/loading";
+import EditModal from "../../../templates/HR/EditModal/EditModal";
+import Loading from "../../../atoms/loading/loading";
 import styles from "./Employee.module.css";
-import SearchBar from "../../molecules/SearchBar/SearchBar";
+import SearchBar from "../../../molecules/SearchBar/SearchBar";
 import {Toaster,toast} from 'sonner'
 import { debounce } from "lodash";
 
