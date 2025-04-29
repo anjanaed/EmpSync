@@ -482,12 +482,13 @@ const Payroll = () => {
                 </div>
               </div>
             ))}
+          
             <div className={styles.dynamicInputSet}>
               <button onClick={handleNewFields} className={styles.newFieldBtn}>
                 <BsPlusCircle size={13} /> Add New Field
               </button>
             </div>
-          </div>
+            </div>
           <div className={styles.payee}>
             <span>*</span> Income Paye Taxes Will Be Applied Automatically
             &nbsp;
@@ -580,6 +581,8 @@ const Payroll = () => {
                   />
                 </Form.Item>
               </div>
+              <div className={styles.amountLine}>
+
               <div>
                 <label>Amount</label>
                 <br />
@@ -668,6 +671,7 @@ const Payroll = () => {
                 >
                   Value
                 </Checkbox>
+              </div>
               </div>
               <div
                 className={styles.removeBtn}

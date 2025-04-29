@@ -3,6 +3,7 @@
 .mainBox {
   margin: 20px;
   padding: 25px;
+  overflow: hidden;
   font-family: "Figtree", sans-serif;
   font-weight: 400;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
@@ -200,3 +201,71 @@ hr {
 .removeBtn:hover {
   transform: scale(1.1);
 }
+
+.amountLine{
+  display: flex;
+  gap: 2.6vw;
+  flex-direction: row;
+}
+
+
+@media (max-width: 800px) {
+  .inputLine {
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+  }
+
+  .dynamicInputLine {
+    grid-template-columns: repeat(1, 1fr); 
+    gap: 1rem;
+    align-items: center;
+
+  }
+
+  .dates {
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+
+  }
+
+  /* .btnSet {
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
+
+  } */
+
+  .genBtn {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
+
+  }
+
+
+
+  .removeBtn {
+    justify-content: center;
+    align-items: center;
+
+  }
+  .amountLine{
+    display: flex;
+    flex-direction: row;
+  }
+  
+  .payee{
+    text-align: center !important;
+  }
+  .link {
+    justify-content: center;
+    text-align: center;
+    margin: 0 auto; /* Center horizontally */
+  }
+
+
+}
+
