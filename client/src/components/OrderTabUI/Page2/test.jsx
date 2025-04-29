@@ -5,11 +5,11 @@ import DateAndTime from '../DateAndTime/DateAndTime';
 import FingerPrint from '../../atoms/FingerPrint/FingerPrint';
 
 const Page2 = ({ carouselRef, language, setUsername, setUserId }) => {
-    const [errorMessage, setErrorMessage] = useState(""); // State for error messages
     const [pin, setPin] = useState("");
     const [scanning, setScanning] = useState(false);
     const [showFingerprint, setShowFingerprint] = useState(true); // State to toggle views
     const [loading, setLoading] = useState(false); // State for loading animation
+    const [errorMessage, setErrorMessage] = useState(""); // State for error message
 
     const handlePinInput = (digit) => {
         if (pin.length < 4) {
@@ -50,7 +50,7 @@ const Page2 = ({ carouselRef, language, setUsername, setUserId }) => {
             } catch (error) {
                 console.error("Error fetching user:", error);
                 setErrorMessage(text.invalidPin); // Set the error message
-                setTimeout(() => setErrorMessage(""), 2000); // Clear the error message after 3 seconds
+                setTimeout(() => setErrorMessage(""), 3000); // Clear the error message after 3 seconds
             } finally {
                 setScanning(false);
             }
@@ -162,15 +162,6 @@ const Page2 = ({ carouselRef, language, setUsername, setUserId }) => {
                                         type="default"
                                         shape="circle"
                                         size="large"
-                                        onClick={() => handlePinInput("E")} // Append "E" to the pin
-                                    >
-                                        E
-                                    </button>
-
-                                    <button
-                                        type="default"
-                                        shape="circle"
-                                        size="large"
                                         onClick={handleBackspace}
                                     >
                                         ⮌
@@ -197,7 +188,7 @@ const Page2 = ({ carouselRef, language, setUsername, setUserId }) => {
                     <div className={styles.backButtonContainer}>
                         <button
                             className={styles.backButton}
-                            onClick={() => window.location.reload()}
+                            onClick={() => carouselRef.current.goTo(0)}
                         >
                             ← {text.back}
                         </button>
@@ -207,11 +198,11 @@ const Page2 = ({ carouselRef, language, setUsername, setUserId }) => {
             </div>
 
             {/* Move the errorPopup outside the Card */}
-                        {errorMessage && (
-                            <div className={styles.errorPopup}>
-                                {errorMessage}
-                            </div>
-                        )}
+            {errorMessage && (
+                <div className={styles.errorPopup}>
+                    {errorMessage}
+                </div>
+            )}
         </Spin>
     );
 };

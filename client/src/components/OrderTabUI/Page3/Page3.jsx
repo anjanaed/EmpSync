@@ -12,6 +12,7 @@ const { Title, Text } = Typography;
 const translations = {
     english: {
         orderSuccess: "Your order has been placed successfully!",
+        orderFailed: "Failed to place your order. Please try again.",
         title: "Order Your Meal",
         back: "Change Language",
         today: "Today",
@@ -27,6 +28,7 @@ const translations = {
     },
     sinhala: {
         orderSuccess: "ඔබේ ඇණවුම සාර්ථකව ඉදිරිපත් කර ඇත!",
+        orderFailed: "ඔබේ ඇණවුම ඉදිරිපත් කිරීමට අසමත් විය. කරුණාකර නැවත උත්සාහ කරන්න.",
         title: "ඔබේ ආහාරය ඇණවුම් කරන්න",
         back: "භාෂාව වෙනස් කරන්න",
         today: "අද",
@@ -42,6 +44,7 @@ const translations = {
     },
     tamil: {
         orderSuccess: "உங்கள் ஆர்டர் வெற்றிகரமாக சமர்ப்பிக்கப்பட்டது!",
+        orderFailed: "உங்கள் ஆர்டரை சமர்ப்பிக்க முடியவில்லை. தயவுசெய்து மீண்டும் முயற்சிக்கவும்.",
         title: "உங்கள் உணவை ஆர்டர் செய்யவும்",
         back: "மொழியை மாற்றவும்",
         today: "இன்று",
@@ -64,8 +67,9 @@ const Page3 = ({ carouselRef, language = "english", username, userId }) => {
     const [selectedMealTime, setSelectedMealTime] = useState("breakfast");
     const [orderItems, setOrderItems] = useState([]);
     const [showSuccess, setShowSuccess] = useState(false);
+    const [showError, setShowError] = useState(false); // New state for error card
     const [meals, setMeals] = useState([]);
-    const [allMeals, setAllMeals] = useState([]); // New state to store all meals
+    const [allMeals, setAllMeals] = useState([]);
 
     useEffect(() => {
         console.log("Username on Page 3:", username); // Log the username
@@ -267,7 +271,13 @@ const Page3 = ({ carouselRef, language = "english", username, userId }) => {
                 if (!response.ok) {
                     const errorData = await response.json();
                     console.error("Error from backend:", errorData);
-                    throw new Error(`Failed to place order: ${response.statusText}`);
+                    const errorMessage = `Failed to place order: ${response.statusText}`;
+                    console.error(errorMessage);
+                    setShowError(true);
+                    setTimeout(() => {
+                        setShowError(false);
+                    }, 3000);
+                    throw new Error(errorMessage);
                 }
             }
     
@@ -280,6 +290,11 @@ const Page3 = ({ carouselRef, language = "english", username, userId }) => {
             }, 3000);
         } catch (error) {
             console.error("Error placing orders:", error);
+            setShowError(true);
+            setTimeout(() => {
+                setShowError(false);
+                window.location.reload();
+            }, 3000);
         }
     };
     const text = translations[language];
@@ -316,6 +331,30 @@ const Page3 = ({ carouselRef, language = "english", username, userId }) => {
                             </motion.div>
                             <Title level={2} className={styles.cardTitle}>
                                 {text.orderSuccess}
+                            </Title>
+                        </Card>
+                        
+                    </motion.div>
+                ) : showError ? (
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        style={{
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            height: "80vh",
+                        }}
+                    >
+                        <Card className={styles.errorCard}>
+                            <motion.div
+                                animate={{ scale: [1, 1.2, 1] }}
+                                transition={{ repeat: Infinity, duration: 2 }}
+                            >
+                                <CloseOutlined className={styles.errorIcon} />
+                            </motion.div>
+                            <Title level={2} className={styles.cardTitle}>
+                                {text.orderFailed}
                             </Title>
                         </Card>
                     </motion.div>

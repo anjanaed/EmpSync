@@ -142,3 +142,16 @@ font-weight: bold;
 cursor: pointer;
 border: none;
 }
+
+
+.errorCard {
+    width: 600px;
+    text-align: center;
+    border: 2px solid #ffa39e;
+}
+
+.errorIcon {
+    font-size: 80px;
+    color: #ff4d4f;
+    margin-bottom: 24px;
+}
