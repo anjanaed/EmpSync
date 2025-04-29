@@ -71,16 +71,16 @@ const Register = () => {
       await signUpUser({ email, password, role });
 
       const payload = {
-        id: id,
-        name: name,
-        role: role,
-        dob: dob,
+        id,
+        name,
+        role,
+        dob,
         telephone: tel,
-        gender: gender,
-        address: address,
-        email: email,
-        password: password,
-        supId: supId,
+        gender,
+        address,
+        email,
+        password,
+        supId,
         language: lang,
         salary: parseInt(salary),
       };
@@ -88,16 +88,18 @@ const Register = () => {
       sucNofify("User Registered Successfully");
       navigate("/");
     } catch (err) {
+      console.error("Registration Error:", err);
       if (
-        err.response.data.message == "Id, Name, Email, Password must be filled"
+        err.response?.data?.message === "Id, Name, Email, Password must be filled"
       ) {
         setMenu(1);
-        erNofify("d, Name, Email, Password must be filled");
+        erNofify("ID, Name, Email, Password must be filled");
       } else {
         erNofify("Registration Failed! Try again");
       }
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const signUpUser = async ({ email, password, role }) => {
@@ -110,7 +112,7 @@ const Register = () => {
           password,
           connection: "Username-Password-Authentication",
           user_metadata: {
-            signup_role: role,
+            role,
           },
         }
       );
@@ -119,10 +121,10 @@ const Register = () => {
       sucNofify("Auth0 Registered!");
 
     } catch (error) {
-      console.log(error);
-      erNofify("Auth0 Not!");
+      console.error("Auth0 Registration Error:", error);
+      erNofify("Auth0 Registration Failed!");
       setLoading(false);
-      return;
+      throw error;
     }
   };
 

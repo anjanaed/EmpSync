@@ -35,8 +35,14 @@ const LoginPage = () => {
       // Navigate based on roles
       if (roles.includes('HR_Manager')) {
         navigate("/");
-      } else {
+      } else if (roles.includes('Inventory_Manager')) {
+        navigate("/inventory");
+      } else if (roles.includes('Kitchen_Staff')) {
+        navigate("/kitchen-staff");
+      } else if (roles.includes('Kitchen_Admin')) {
         navigate("/kitchen-admin");
+      } else {
+        navigate("/profile"); // Fallback for 'Other' or unrecognized roles
       }
 
     } catch (error) {
