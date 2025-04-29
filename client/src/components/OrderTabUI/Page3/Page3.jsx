@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import styles from "./Page3.module.css";
 import DateAndTime from "../DateAndTime/DateAndTime";
 
+
 const { Content } = Layout;
 const { Title, Text } = Typography;
 
@@ -71,10 +72,7 @@ const Page3 = ({ carouselRef, language = "english", username, userId }) => {
     const [meals, setMeals] = useState([]);
     const [allMeals, setAllMeals] = useState([]);
 
-    useEffect(() => {
-        console.log("Username on Page 3:", username); // Log the username
-        console.log("User ID on Page 3:", userId); // Log the user ID
-    }, [username, userId]);
+
 
     useEffect(() => {
         // Set the current time
@@ -370,34 +368,33 @@ const Page3 = ({ carouselRef, language = "english", username, userId }) => {
                         <Row gutter={24}>
                             <Col span={16}>
                                 <div style={{ marginBottom: 24 }}>
-                                    <Button.Group className={styles.dateButtonGroup}>
-                                        <Button
-                                            type="default"
-                                            onClick={() => setSelectedDate("today")}
-                                            className={styles.dateButton}
-                                            style={{
-                                                backgroundColor: selectedDate === "today" ? "#ff4d4f" : "#f0f0f0", // Red for selected, light gray for default
-                                                color: selectedDate === "today" ? "#fff" : "#000", // White text for selected, black for default
-                                                borderColor: selectedDate === "today" ? "#d9363e" : "#d9d9d9", // Darker red border for selected
-                                               
-                                            }}
-                                        >
-                                            {text.today} ({formatDateForDisplay(currentTime)})
-                                        </Button>
-                                        <Button
-                                            type="default"
-                                            onClick={() => setSelectedDate("tomorrow")}
-                                            className={styles.dateButton}
-                                            style={{
-                                                backgroundColor: selectedDate === "tomorrow" ? "#ff4d4f" : "#f0f0f0", // Red for selected, light gray for default
-                                                color: selectedDate === "tomorrow" ? "#fff" : "#000", // White text for selected, black for default
-                                                borderColor: selectedDate === "tomorrow" ? "#d9363e" : "#d9d9d9", // Darker red border for selected
-                                                fontSize: "16px", // Adjust font size
-                                            }}
-                                        >
-                                            {text.tomorrow} ({formatDateForDisplay(getTomorrowDate())})
-                                        </Button>
-                                    </Button.Group>
+                                <Space.Compact className={styles.dateButtonGroup}>
+                                    <Button
+                                        type="default"
+                                        onClick={() => setSelectedDate("today")}
+                                        className={styles.dateButton}
+                                        style={{
+                                            backgroundColor: selectedDate === "today" ? "#ff4d4f" : "#f0f0f0", // Red for selected, light gray for default
+                                            color: selectedDate === "today" ? "#fff" : "#000", // White text for selected, black for default
+                                            borderColor: selectedDate === "today" ? "#d9363e" : "#d9d9d9", // Darker red border for selected
+                                        }}
+                                    >
+                                        {text.today} ({formatDateForDisplay(currentTime)})
+                                    </Button>
+                                    <Button
+                                        type="default"
+                                        onClick={() => setSelectedDate("tomorrow")}
+                                        className={styles.dateButton}
+                                        style={{
+                                            backgroundColor: selectedDate === "tomorrow" ? "#ff4d4f" : "#f0f0f0", // Red for selected, light gray for default
+                                            color: selectedDate === "tomorrow" ? "#fff" : "#000", // White text for selected, black for default
+                                            borderColor: selectedDate === "tomorrow" ? "#d9363e" : "#d9d9d9", // Darker red border for selected
+                                            fontSize: "16px", // Adjust font size
+                                        }}
+                                    >
+                                        {text.tomorrow} ({formatDateForDisplay(getTomorrowDate())})
+                                    </Button>
+                                </Space.Compact>
                                 </div>
 
                                 <Tabs

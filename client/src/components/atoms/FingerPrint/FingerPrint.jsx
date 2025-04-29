@@ -76,7 +76,7 @@ const FingerPrint = () => {
         ></div>
       </div>
 
-      <style jsx>{`
+      <style >{`
         @keyframes ripple {
           0% {
             transform: scale(0.8);

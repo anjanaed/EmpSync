@@ -142,7 +142,6 @@ const Page2 = ({ carouselRef, language, setUsername, setUserId }) => {
                                 <Typography.Text
                                     className={styles.pinInput}
                                     strong // Makes the text bold
-                                    visibilityToggle={true}
                                 >
                                     {pin.padEnd(4, '•')} {/* Display the PIN with placeholders for missing digits */}
                                 </Typography.Text>
