@@ -1,6 +1,6 @@
 .getGreeting {
-	font-size: 2em;
-	font-weight: 600;
+	font-size: 1.5em !important;
+	font-weight: 700 !important;
 	color: #ffffff !important;
 	text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
 }

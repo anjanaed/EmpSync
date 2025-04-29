@@ -51,38 +51,34 @@
 }
 
 .mainbox {
-    margin-top: 10vh;
+    
     height: 100vh;
     width: 100vw;
 }
 
 .languageButton {
-    background: linear-gradient(45deg, #000000, #585858);
-    border: 1px solid rgb(255, 255, 255);
+    background: #ff3b3e;
+    border: 1px solid rgb(255, 0, 0);
     color: white;
     margin: 20px;
     padding: 20px;
     text-align: center;
     text-decoration: none;
     display: inline-block;
-    font-size: 40px;
+    font-size: 40px !important;
     cursor: pointer;
     border-radius: 12px;
     transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
     line-height: 1.5;
     width: 400px;
+    /* text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000; */
 }
 
 .languageButton:hover {
-    background: linear-gradient(45deg, #5e5e5e, #000000);
-    color: white;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+
+    transform: scale(1.05);
 }
 
-.languageButton:hover {
-	background-color: rgb(99, 5, 5) !important;
-	color: white !important;
-}
 
 .languageButtonContainer {
     display: flex;
