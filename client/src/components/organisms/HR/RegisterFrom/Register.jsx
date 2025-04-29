@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { DatePicker, Form, Space, Input, Select,InputNumber } from "antd";
+import { DatePicker, Form, Space, Input, Select, InputNumber } from "antd";
 import styles from "./Register.module.css";
 import { IoIosArrowBack } from "react-icons/io";
 import FingerPrint from "../../../atoms/FingerPrint/FingerPrint";
@@ -7,7 +7,7 @@ import Loading from "../../../atoms/loading/loading";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
 import { AiOutlineCaretRight } from "react-icons/ai";
-import {Toaster,toast} from 'sonner'
+import { Toaster, toast } from "sonner";
 import Gbutton from "../../../atoms/button/Button";
 import axios from "axios";
 const { Option } = Select;
@@ -66,7 +66,10 @@ const Register = () => {
     if (role === "Other") {
       role = customJobRole;
     }
+
     try {
+      await signUpUser({ email, password, role });
+
       const payload = {
         id: id,
         name: name,
@@ -82,20 +85,45 @@ const Register = () => {
         salary: parseInt(salary),
       };
       await axios.post(`${urL}/user`, payload);
-      sucNofify("User Registered Successfully")
+      sucNofify("User Registered Successfully");
       navigate("/");
     } catch (err) {
-      
       if (
         err.response.data.message == "Id, Name, Email, Password must be filled"
       ) {
         setMenu(1);
         erNofify("d, Name, Email, Password must be filled");
       } else {
-        erNofify("Registration Failed! Try again")
+        erNofify("Registration Failed! Try again");
       }
     }
     setLoading(false);
+  };
+
+  const signUpUser = async ({ email, password, role }) => {
+    try {
+      const res = await axios.post(
+        "https://dev-ew20puedqaszptqy.us.auth0.com/dbconnections/signup",
+        {
+          client_id: "Do05XqmmkqHcQKLvOTYtTKQjsaLsf8zd",
+          email,
+          password,
+          connection: "Username-Password-Authentication",
+          user_metadata: {
+            signup_role: role,
+          },
+        }
+      );
+
+      console.log("User signed up:", res.data);
+      sucNofify("Auth0 Registered!");
+
+    } catch (error) {
+      console.log(error);
+      erNofify("Auth0 Not!");
+      setLoading(false);
+      return;
+    }
   };
 
   const sucNofify = (message) => {
@@ -110,7 +138,7 @@ const Register = () => {
   };
 
   const erNofify = (message) => {
-    setzTimeout(
+    setTimeout(
       () =>
         toast.error(message, {
           duration: 2500,
@@ -132,7 +160,7 @@ const Register = () => {
     <div className={styles.formContainer}>
       {menu == 1 && (
         <>
-            <Toaster richColors/>
+          <Toaster richColors />
 
           <div className={styles.heading}>New Employee Onboarding</div>
           <Form
@@ -270,8 +298,8 @@ const Register = () => {
                         style={{ width: "100%" }}
                         placeholder="Select Role"
                       >
-                        <Option value="HR Manager">HR Administrator</Option>
-                        <Option value="Kitchen Admin">Kitchen Admin</Option>
+                        <Option value="HR_Manager">HR Administrator</Option>
+                        <Option value="Kitchen_Admin">Kitchen Admin</Option>
                         <Option value="Kitchen Staff">Kitchen Staff</Option>
                         <Option value="Inventory Manager">
                           Inventory Manager
@@ -395,7 +423,7 @@ const Register = () => {
                     formatter={(value) => `${value} LKR`}
                     parser={(value) => value.replace(" LKR", "")}
                     placeholder="Enter Basic Salary"
-                    onChange={(e) => setSalary(e.target.value)}
+                    onChange={(value) => setSalary(value)}
                   />
                 </Form.Item>
               </div>
