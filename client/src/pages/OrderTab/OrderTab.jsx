@@ -8,6 +8,8 @@ import Page3 from '../../components/OrderTabUI/Page3/Page3';
 const OrderTab = () => {
     const carouselRef = useRef();
     const [language, setLanguage] = useState('english'); // State for selected language
+    const [username, setUsername] = useState(""); // State to store the username
+    const [userId, setUserId] = useState(""); // State to store the user ID
 
     return (
         <>
@@ -16,10 +18,20 @@ const OrderTab = () => {
                     <Page1 carouselRef={carouselRef} setLanguage={setLanguage} /> {/* Pass setLanguage */}
                 </div>
                 <div className={styles.contentStyle2}>
-                    <Page2 carouselRef={carouselRef} language={language} /> {/* Pass language */}
+                    <Page2
+                        carouselRef={carouselRef}
+                        language={language}
+                        setUsername={setUsername}
+                        setUserId={setUserId} // Pass setUserId
+                    />
                 </div>
                 <div className={styles.contentStyle3}>
-                    <Page3 carouselRef={carouselRef} language={language} /> {/* Pass language */}
+                    <Page3
+                        carouselRef={carouselRef}
+                        language={language}
+                        username={username}
+                        userId={userId} // Pass userId
+                    />
                 </div>
             </Carousel>
         </>
