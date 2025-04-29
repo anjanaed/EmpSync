@@ -47,7 +47,10 @@
 }
 
 .cardTitle {
-    color: #fa8c16;
+    
+    font-weight: 700!important;
+    color: #333!important;
+    margin-bottom: 0px!important;
 }
 
 .cardContainer {

@@ -57,8 +57,8 @@
 }
 
 .languageButton {
-    background: linear-gradient(45deg, #a54d00, #ff8c00);
-    border: 1px solid rgb(255, 255, 255);
+    background: #ff3b3e;
+    border: 1px solid rgb(255, 0, 0);
     color: white;
     margin: 20px;
     padding: 20px;
@@ -75,15 +75,10 @@
 }
 
 .languageButton:hover {
-    background: linear-gradient(45deg, #ff8c00,  #a54d00);
-    color: white;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+
+    transform: scale(1.05);
 }
 
-.languageButton:hover {
-	background-color: rgb(99, 5, 5) !important;
-	color: white !important;
-}
 
 .languageButtonContainer {
     display: flex;

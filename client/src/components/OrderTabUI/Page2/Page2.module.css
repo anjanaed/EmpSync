@@ -94,9 +94,9 @@
 }
 
 .pinButtons button {
-    height: 55px;
+    height: 50px;
     border: none;
-    border-radius: 50%;
+    border-radius: 10%;
     background: linear-gradient(to bottom right, #000000, #555555); /* Red gradient */
     color: #fff;
     cursor: pointer;
@@ -104,7 +104,7 @@
 }
 
 .pinButtons button:hover {
-    background: linear-gradient(to bottom right, #ff8c00,  #a54d00); /* Lighter red gradient */
+
     transform: scale(1.05);
 }
 
@@ -129,26 +129,26 @@
 
 .backButtonContainer button {
     padding: 10px 20px;
-    font-size: 2rem;
-    border: 1px solid #ffffff; /* Red border */
+    font-size: 1rem!important;
+    border: 1px solid #ff0000; /* Red border */
     border-radius: 15px;
-    background: linear-gradient(to bottom right, #a54d00, #ff8c00); /* Red gradient */
+    background: #ff3b3e; /* Red gradient */
     color: #fff;
     cursor: pointer;
     transition: background-color 0.2s ease-in-out, transform 0.2s ease-in-out;
 }
 
 .backButtonContainer button:hover {
-    background: linear-gradient(to bottom right,  #ff8c00,  #a54d00); /* Lighter red gradient */
+
     transform: scale(1.05);
 }
 
 .toggleButton {
     padding: 10px 20px;
-    font-size: 1.2rem;
+    font-size: 1.2rem!important;
     border: none;
     border-radius: 10px;
-    background: linear-gradient(to bottom right,  #a54d00, #ff8c00); /* Red gradient */
+    background: #ff3b3e; /* Red gradient */
     color: #fff;
     cursor: pointer;
     transition: background-color 0.2s ease-in-out, transform 0.2s ease-in-out;
@@ -159,7 +159,7 @@
 }
 
 .toggleButton:hover {
-    background: linear-gradient(to bottom right,  #ff8c00,  #a54d00); /* Lighter red gradient */
+
     transform: scale(1.05);
 }
 

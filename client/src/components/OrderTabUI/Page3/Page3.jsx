@@ -19,7 +19,7 @@ const translations = {
         breakfast: "Breakfast",
         lunch: "Lunch",
         dinner: "Dinner",
-        filter: "Suggestions from AI",
+        filter: "Personalized Suggestions",
         yourOrder: "Your Order",
         noMealsSelected: "No meals selected.",
         placeOrder: "Place Order",
@@ -34,7 +34,7 @@ const translations = {
         breakfast: "උදේ ආහාරය",
         lunch: "දවල් ආහාරය",
         dinner: "රාත්‍රී ආහාරය",
-        filter: "AI නිර්දේශ",
+        filter: "පුද්ගලාරෝපිත යෝජනා",
         yourOrder: "ඔබේ ඇණවුම",
         noMealsSelected: "ආහාරයක් තෝරාගෙන නැත.",
         placeOrder: "ඇණවුම ඉදිරිපත් කරන්න",
@@ -173,29 +173,38 @@ const Page3 = ({ carouselRef, language = "english", username, userId }) => {
     const addToOrder = (mealId, date = selectedDate) => {
         setOrderItems((prev) => [...prev, { mealId, date, mealTime: selectedMealTime, count: 1 }]);
     };
-    const addToOrder2 = (mealId, date) => {
+    const addToOrder2 = (mealId, date, mealTime = selectedMealTime) => {
         setOrderItems((prev) => [
             ...prev,
-            { mealId, date, mealTime: selectedMealTime, count: 1 },
+            { mealId, date, mealTime, count: 1 },
         ]);
     };
 
-const removeFromOrder = (mealId, date) => {
-    setOrderItems((prev) =>
-        prev
-            .map((item) => {
-                if (item.mealId === mealId && item.date === date) {
-                    console.log("Removing item:", item);
-                    return item.count > 1 ? { ...item, count: item.count - 1 } : null; // Return null if count becomes 0
-                }
-                return item; // Keep other items unchanged
-            })
-            .filter((item) => item !== null) // Remove null items
-    );
-};
+    const removeFromOrder = (mealId, date, mealTime = selectedMealTime) => {
+        setOrderItems((prev) => {
+            const index = prev.findIndex(
+                (item) => item.mealId === mealId && item.date === date && item.mealTime === mealTime
+            );
 
-    const disappearFromOrder = (mealId) => {
-        setOrderItems((prev) => prev.filter((item) => item.mealId !== mealId));
+            if (index === -1) {
+                return prev; // If the item is not found, return the previous state
+            }
+
+            const updatedItems = [...prev];
+            if (updatedItems[index].count > 1) {
+                updatedItems[index] = { ...updatedItems[index], count: updatedItems[index].count - 1 }; // Decrease count
+            } else {
+                updatedItems.splice(index, 1); // Remove the item if count is 1
+            }
+
+            return updatedItems;
+        });
+    };
+
+    const disappearFromOrder = (mealId, date, mealTime = selectedMealTime) => {
+        setOrderItems((prev) =>
+            prev.filter((item) => !(item.mealId === mealId && item.date === date && item.mealTime === mealTime))
+        );
     };
 
     const placeOrder = async () => {
@@ -359,6 +368,20 @@ const removeFromOrder = (mealId, date) => {
                                         fontWeight: "bold", // Make the font bold
 
                                     }}
+                                    tabBarExtraContent={
+                                        <Button
+                                            type="default"
+                                            icon={<FilterOutlined />}
+                                            onClick={() => console.log("Filter button clicked")}
+                                            style={{
+                                                backgroundColor: "#f0f0f0",
+                                                color: "#000",
+                                                borderColor: "#d9d9d9",
+                                            }}
+                                        >
+                                            {text.filter}
+                                        </Button>
+                                    }
                                     items={["breakfast", "lunch", "dinner"].map((mealTime) => ({
                                         key: mealTime,
                                         label: (
@@ -440,6 +463,7 @@ const removeFromOrder = (mealId, date) => {
                                                                             </>
                                                                         }
                                                                     />
+                                                                    
                                                                 </Card>
                                                             </Col>
                                                         );
@@ -488,12 +512,12 @@ const removeFromOrder = (mealId, date) => {
                                                                             </Text>
                                                                         </Col>
                                                                         <Col span={4} style={{ textAlign: "right" }}>
-                                                                            <Button
-                                                                                className={styles.removeButton}
-                                                                                type="text"
-                                                                                icon={<CloseOutlined />}
-                                                                                onClick={() => disappearFromOrder(orderItems[index].mealId)}
-                                                                            />
+                                                                        <Button
+                                                                            className={styles.removeButton}
+                                                                            type="text"
+                                                                            icon={<CloseOutlined />}
+                                                                            onClick={() => disappearFromOrder(orderItems[index].mealId, orderItems[index].date, orderItems[index].mealTime)}
+                                                                        />
                                                                         </Col>
                                                                     </Row>
                                                                     <Row gutter={[16, 16]} style={{ marginTop: 8 }}>
@@ -510,25 +534,27 @@ const removeFromOrder = (mealId, date) => {
                                                                             />
                                                                         </Col>
                                                                         <Col span={12} style={{ textAlign: "right" }}>
-                                                                        <Button
-                                                                            type="text"
-                                                                            onClick={() => removeFromOrder(meal.id, item.date)}
-                                                                            style={{
-                                                                                marginRight: 8,
-                                                                                backgroundColor: "#f0f0f0",
-                                                                                border: "1px solid #d9d9d9",
-                                                                            }}
-                                                                        >
-                                                                            -
-                                                                        </Button>
+                                                                            
+                                                                            <Button
+                                                                                type="text"
+                                                                                onClick={() => removeFromOrder(meal.id, item.date, item.mealTime)}
+                                                                                style={{
+                                                                                    marginRight: 8,
+                                                                                    backgroundColor: "#f0f0f0",
+                                                                                    border: "1px solid #d9d9d9",
+                                                                                }}
+                                                                            >
+                                                                                -
+                                                                            </Button>
                                                                             <Badge
                                                                                 status="default"
                                                                                 text={`${item.count}`}
                                                                                 style={{ marginRight: 8, fontSize: 16, fontWeight: "bold" }}
                                                                             />
-                                                                            <Button
+
+<Button
                                                                                 type="text"
-                                                                                onClick={() => addToOrder2(meal.id, item.date)}
+                                                                                onClick={() => addToOrder2(meal.id, item.date, item.mealTime)}
                                                                                 style={{
                                                                                     backgroundColor: "#f0f0f0",
                                                                                     border: "1px solid #d9d9d9",
@@ -536,8 +562,9 @@ const removeFromOrder = (mealId, date) => {
                                                                             >
                                                                                 +
                                                                             </Button>
+
+
                                                                         </Col>
-                                                                        
                                                                     </Row>
                                                                     <hr />
                                                                 </div>
