@@ -26,6 +26,7 @@ const Page1 = ({ carouselRef, setLanguage }) => { // Accept setLanguage as a pro
     return (
         <div className={styles.mainbox}>
             <div>
+                <br />
                 <Typography.Title level={2} className={styles.getGreeting}>{getGreeting()}</Typography.Title>
             </div>
             <div>
@@ -34,7 +35,7 @@ const Page1 = ({ carouselRef, setLanguage }) => { // Accept setLanguage as a pro
             <div>
                 <DateAndTime />
             </div>
-            <br /><br /><br />
+            <br />
             <div>
                 <Card className={styles.cardStyle}>
                     <div className={styles.cardPartl}>
