@@ -22,7 +22,6 @@ export const AuthProvider = ({ children }) => {
     const currentUser = await axios.get(
       `${urL}/user/${employeeId.toUpperCase()}`
     );
-
     const userData = {
       accessToken: access_token,
       idToken: id_token,
