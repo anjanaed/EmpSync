@@ -68,7 +68,7 @@ const Register = () => {
     }
 
     try {
-      await signUpUser({ email, password, role });
+      await signUpUser({ email, password, role, employeeID: id });
 
       const payload = {
         id,
@@ -102,7 +102,7 @@ const Register = () => {
     }
   };
 
-  const signUpUser = async ({ email, password, role }) => {
+  const signUpUser = async ({ email, password, role, employeeID }) => {
     try {
       const res = await axios.post(
         "https://dev-ew20puedqaszptqy.us.auth0.com/dbconnections/signup",
@@ -113,6 +113,7 @@ const Register = () => {
           connection: "Username-Password-Authentication",
           user_metadata: {
             role,
+            employeeID,
           },
         }
       );
