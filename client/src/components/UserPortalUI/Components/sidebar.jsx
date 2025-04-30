@@ -1,25 +1,32 @@
-import React from "react";
-import { Menu, Avatar, Button, Layout } from "antd";
-import { Link } from "react-router-dom"; // Import Link from react-router-dom
+import React, { useContext } from "react";
+import { UserContext } from "../../../contexts/UserContext"; // Import UserContext
+import { Avatar, Button, Menu } from "antd";
+import { Link } from "react-router-dom";
 import {
   UserOutlined,
   DollarOutlined,
   CalendarOutlined,
   CoffeeOutlined,
   BulbOutlined,
-  MenuOutlined,
   CloseOutlined,
+  MenuOutlined,
 } from "@ant-design/icons";
-import { useSidebar } from "./sidebar-provider";
+import Sider from "antd/es/layout/Sider";
 
-const { Sider } = Layout;
+// Mock implementation of useSidebar (replace with your actual implementation)
+const useSidebar = () => {
+  const [isOpen, setIsOpen] = React.useState(true);
+  const toggleSidebar = () => setIsOpen((prev) => !prev);
+  return { isOpen, toggleSidebar };
+};
 
 export function Sidebar({ isOpen, activeTab, setActiveTab }) {
-  const { toggleSidebar } = useSidebar();
+  const { toggleSidebar } = useSidebar(); // Use the hook
+  const userData = useContext(UserContext); // Access userData from UserContext
 
   const navItems = [
     { name: "Profile", path: "/profile", icon: <UserOutlined /> },
-    { name: "Payroll", path: "/payroll", icon: <DollarOutlined /> }, // Ensure path is set to /payroll
+    { name: "Payroll", path: "/payroll", icon: <DollarOutlined /> },
     { name: "Attendance", path: "/attendance", icon: <CalendarOutlined /> },
     { name: "Meals", path: "/meals", icon: <CoffeeOutlined /> },
     { name: "AI Suggestions", path: "/suggestions", icon: <BulbOutlined /> },
@@ -91,11 +98,13 @@ export function Sidebar({ isOpen, activeTab, setActiveTab }) {
       >
         {isOpen ? (
           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            <Avatar size="small" src="/placeholder.svg" alt="John Doe" />
+            <Avatar size="small" src="/placeholder.svg" alt={userData?.name || "User"} />
             <div>
-              <p style={{ margin: 0, fontWeight: "bold" }}>John Doe</p>
+              <p style={{ margin: 0, fontWeight: "bold" }}>
+                {userData?.name || "Loading..."}
+              </p>
               <p style={{ margin: 0, fontSize: "12px", color: "#8c8c8c" }}>
-                ID: EMP-1234
+                ID: {userData?.id || "Loading..."}
               </p>
             </div>
           </div>
@@ -103,7 +112,7 @@ export function Sidebar({ isOpen, activeTab, setActiveTab }) {
           <Avatar
             size="small"
             src="/placeholder.svg"
-            alt="John Doe"
+            alt={userData?.name || "User"}
             style={{ margin: "0 auto" }}
           />
         )}

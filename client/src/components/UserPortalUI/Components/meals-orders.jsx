@@ -1,53 +1,51 @@
-import React, { useState } from "react";
-import { Card, Tabs, Badge, Button, Modal, Typography, List, Avatar } from "antd";
+import React, { useState, useEffect, useContext } from "react";
+import { Card, Tabs, Badge, Button, Modal, Typography, List, Avatar, message } from "antd";
 import { ClockCircleOutlined, CheckOutlined, CoffeeOutlined } from "@ant-design/icons";
+import { UserContext } from "../../../contexts/UserContext";
+import axios from "axios";
 
 const { TabPane } = Tabs;
 const { Title, Text } = Typography;
 
-// Mock meal data
-const currentOrders = [
-  {
-    id: "ORD-1234",
-    name: "Grilled Chicken Salad",
-    type: "Lunch",
-    status: "In Progress",
-    orderTime: "12:15 PM",
-    estimatedDelivery: "12:45 PM",
-    price: 8.99,
-    ingredients: ["Grilled chicken", "Mixed greens", "Cherry tomatoes", "Cucumber", "Balsamic vinaigrette"],
-    nutritionalInfo: {
-      calories: 320,
-      protein: 28,
-      carbs: 12,
-      fat: 18,
-    },
-  },
-];
-
-const pastOrders = [
-  {
-    id: "ORD-1233",
-    name: "Vegetable Omelette",
-    type: "Breakfast",
-    status: "Completed",
-    orderTime: "08:30 AM",
-    deliveryTime: "08:50 AM",
-    price: 6.99,
-    date: "April 28, 2023",
-    ingredients: ["Eggs", "Bell peppers", "Onions", "Spinach", "Cheddar cheese"],
-    nutritionalInfo: {
-      calories: 280,
-      protein: 18,
-      carbs: 8,
-      fat: 20,
-    },
-  },
-];
-
 export function MealsOrders() {
+  const [currentOrders, setCurrentOrders] = useState([]);
+  const [pastOrders, setPastOrders] = useState([]);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const userData = useContext(UserContext); // Access user data from UserContext
+
+  // Fetch orders relative to the user ID
+  useEffect(() => {
+    const fetchOrders = async () => {
+      if (!userData?.id) {
+        message.error("User ID is missing. Unable to fetch orders.");
+        return;
+      }
+
+      try {
+        const response = await axios.get(`http://localhost:3000/orders?employeeId=${userData.id}`);
+        const orders = response.data;
+
+        // Filter orders that match the employee ID
+        const filteredOrders = orders.filter((order) => order.employeeId === userData.id);
+
+        // Log the filtered order IDs to the console
+        console.log("Filtered Order IDs for user:", filteredOrders.map((order) => order.id));
+
+        // Separate current and past orders
+        const current = filteredOrders.filter((order) => order.status === "In Progress");
+        const past = filteredOrders.filter((order) => order.status === "Completed");
+
+        setCurrentOrders(current);
+        setPastOrders(past);
+      } catch (error) {
+        console.error("Failed to fetch orders:", error.message);
+        message.error("Failed to fetch orders. Please try again.");
+      }
+    };
+
+    fetchOrders();
+  }, [userData]);
 
   const showOrderDetails = (order) => {
     setSelectedOrder(order);
