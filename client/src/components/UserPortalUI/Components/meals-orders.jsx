@@ -72,37 +72,6 @@ export function MealsOrders() {
     }
   };
 
-  const isCancelable = (order) => {
-    const now = new Date();
-    const orderDate = new Date(order.orderDate);
-  
-    // Check if the order date is today or in the future
-    if (
-      orderDate.getFullYear() > now.getFullYear() ||
-      (orderDate.getFullYear() === now.getFullYear() && orderDate.getMonth() > now.getMonth()) ||
-      (orderDate.getFullYear() === now.getFullYear() &&
-        orderDate.getMonth() === now.getMonth() &&
-        orderDate.getDate() >= now.getDate())
-    ) {
-      const currentTime = now.getHours() * 60 + now.getMinutes(); // Current time in minutes
-      console.log("Current Time in Minutes:", currentTime);
-      console.log("Current Date:", now.toLocaleDateString());
-  
-      // Allow cancellation for future dates or based on time for today's orders
-      if (orderDate.getDate() === now.getDate()) {
-        if (order.breakfast && currentTime < 540) return true; // Before 9:00 AM (540 minutes)
-        if (order.lunch && currentTime < 660) return true; // Before 11:00 AM (660 minutes)
-        if (order.dinner && currentTime < 1080) return true; // Before 6:00 PM (1080 minutes)
-        return false; // Not cancelable if the time has passed for today's order
-      }
-  
-      // For future dates, allow cancellation
-      return true;
-    }
-  
-    return false; // Not cancelable for past dates
-  };
-
   return (
     <div style={{ margin: "20px" }}>
       <Title level={4}>Orders</Title>
@@ -155,7 +124,6 @@ export function MealsOrders() {
                     type="primary"
                     danger
                     onClick={() => handleCancelOrder(order.id)}
-                    disabled={!isCancelable(order)} // Disable button if not cancelable
                     style={{ marginTop: "10px", alignSelf: "center" }}
                   >
                     Cancel Order
@@ -187,14 +155,7 @@ export function MealsOrders() {
                       <strong>Order Date:</strong> {new Date(order.orderDate).toLocaleDateString()}
                     </p>
                     <p>
-                      <strong>Meal Type:</strong>{" "}
-                      {order.breakfast
-                        ? "Breakfast"
-                        : order.lunch
-                        ? "Lunch"
-                        : order.dinner
-                        ? "Dinner"
-                        : "Unknown"}
+                      <strong>Meal Type:</strong> {order.mealType || "Unknown"}
                     </p>
                     <p>
                       <strong>Ordered At:</strong>{" "}
@@ -215,7 +176,9 @@ export function MealsOrders() {
                       })}
                     </ul>
                   </div>
-                  
+                  <Button type="primary" danger disabled style={{ marginTop: "10px", alignSelf: "center" }}>
+                    Cancel Order
+                  </Button>
                 </Card>
               ))}
             </div>
