@@ -68,7 +68,7 @@ const Register = () => {
     }
 
     try {
-      await signUpUser({ email, password, role });
+      await signUpUser({ email, password, id });
 
       const payload = {
         id,
@@ -90,7 +90,8 @@ const Register = () => {
     } catch (err) {
       console.error("Registration Error:", err);
       if (
-        err.response?.data?.message === "Id, Name, Email, Password must be filled"
+        err.response?.data?.message ===
+        "Id, Name, Email, Password must be filled"
       ) {
         setMenu(1);
         erNofify("ID, Name, Email, Password must be filled");
@@ -102,24 +103,21 @@ const Register = () => {
     }
   };
 
-  const signUpUser = async ({ email, password, role }) => {
+  const signUpUser = async ({ email, password, id }) => {
     try {
       const res = await axios.post(
-        "https://dev-ew20puedqaszptqy.us.auth0.com/dbconnections/signup",
+        "https://dev-77pr5yqzs0m53x77.us.auth0.com/dbconnections/signup",
         {
-          client_id: "Do05XqmmkqHcQKLvOTYtTKQjsaLsf8zd",
+          client_id: "jPw9tY0jcdhSAhErMaqgdVGYQ6Srh3xs",
           email,
+          username: id,
           password,
           connection: "Username-Password-Authentication",
-          user_metadata: {
-            role,
-          },
         }
       );
 
       console.log("User signed up:", res.data);
       sucNofify("Auth0 Registered!");
-
     } catch (error) {
       console.error("Auth0 Registration Error:", error);
       erNofify("Auth0 Registration Failed!");

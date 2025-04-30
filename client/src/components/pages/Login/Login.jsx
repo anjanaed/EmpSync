@@ -3,48 +3,55 @@ import { Form, Input, Checkbox, Button, message } from "antd";
 import { useNavigate } from "react-router-dom";
 import styles from "./Login.module.css";
 import illustration from "../../../assets/illustration.png";
-import axios from 'axios';
-import { jwtDecode } from 'jwt-decode';
+import axios from "axios";
+import { jwtDecode } from "jwt-decode";
+import { useAuth } from "../../../AuthContext";
 
 const LoginPage = () => {
+  const { login } = useAuth();
+  const urL = import.meta.env.VITE_BASE_URL;
   const navigate = useNavigate();
 
   const handleForgotPassword = () => {
     navigate("/PasswordReset");
   };
 
-  const handleLogin = async (email, password) => {
+  const handleLogin = async (username, password) => {
     try {
-      const response = await axios.post('http://localhost:3000/auth/login', {
-        email,
-        password
+      const response = await axios.post(`${urL}/auth/login`, {
+        username,
+        password,
       });
 
       const { access_token, id_token } = response.data;
+      login({ access_token, id_token });
 
-      // Store tokens
-      localStorage.setItem('access_token', access_token);
-      localStorage.setItem('id_token', id_token);
-
-      // Decode ID token to get roles
       const decoded = jwtDecode(id_token);
-      const roles = decoded['https://Gangulel.com/claims/roles'] || [];
+      const employeeId = decoded["https://empidReceiver.com"];
 
-      console.log('User Roles:', roles);
+      if (access_token) {
+        try {
+          const response = await axios.get(
+            `${urL}/user/fetchrole/${employeeId.toUpperCase()}`
+          );
+          const userRole = response.data;
 
-      // Navigate based on roles
-      if (roles.includes('HR_Manager')) {
-        navigate("/");
-      } else if (roles.includes('Inventory_Manager')) {
-        navigate("/inventory");
-      } else if (roles.includes('Kitchen_Staff')) {
-        navigate("/kitchen-staff");
-      } else if (roles.includes('Kitchen_Admin')) {
-        navigate("/kitchen-admin");
+          const roleRouteMap = {
+            HR_Manager: "/",
+            Inventory_Manager: "/inventory",
+            Kitchen_Staff: "/kitchen-staff",
+            Kitchen_Admin: "/kitchen-admin",
+          };
+
+          const route = roleRouteMap[userRole] || "/profile";
+
+          navigate(route);
+        } catch (err) {
+          console.error("Failed to fetch role or navigate:", err);
+        }
       } else {
-        navigate("/profile"); // Fallback for 'Other' or unrecognized roles
+        return;
       }
-
     } catch (error) {
       console.error("Login error:", error);
       message.error("Login failed. Please check your credentials.");
@@ -68,12 +75,16 @@ const LoginPage = () => {
           <Form
             layout="vertical"
             className={styles.loginForm}
-            onFinish={(values) => handleLogin(values.employeeID, values.password)}
+            onFinish={(values) =>
+              handleLogin(values.employeeID, values.password)
+            }
           >
             <Form.Item
               label="Employee ID"
               name="employeeID"
-              rules={[{ required: true, message: 'Please input your Employee ID!' }]}
+              rules={[
+                { required: true, message: "Please input your Employee ID!" },
+              ]}
             >
               <Input placeholder="Enter Employee ID" />
             </Form.Item>
@@ -81,20 +92,30 @@ const LoginPage = () => {
             <Form.Item
               label="Password"
               name="password"
-              rules={[{ required: true, message: 'Please input your password!' }]}
+              rules={[
+                { required: true, message: "Please input your password!" },
+              ]}
             >
               <Input.Password placeholder="**********" />
             </Form.Item>
 
             <div className={styles.loginOptions}>
               <Checkbox>Remember me</Checkbox>
-              <a href="#" className={styles.forgotPassword} onClick={handleForgotPassword}>
+              <a
+                href="#"
+                className={styles.forgotPassword}
+                onClick={handleForgotPassword}
+              >
                 Forgot Password
               </a>
             </div>
 
             <Form.Item>
-              <Button type="primary" htmlType="submit" className={styles.loginButton}>
+              <Button
+                type="primary"
+                htmlType="submit"
+                className={styles.loginButton}
+              >
                 Login
               </Button>
             </Form.Item>
