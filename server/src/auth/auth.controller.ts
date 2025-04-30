@@ -1,4 +1,4 @@
-import { Controller, Post, Body, BadRequestException } from '@nestjs/common';
+import { Controller, Post, Get, Query, Param, Body, BadRequestException, NotFoundException } from '@nestjs/common';
 import { AuthService } from './auth.service';
 
 @Controller('auth')
@@ -18,6 +18,25 @@ export class AuthController {
       return tokens;
     } catch (error) {
       console.error(error);
+      throw new BadRequestException('Failed to authenticate');
+    }
+  }
+
+  @Get('resolve-email/:employeeId')
+  async resolveEmail(@Param('employeeId') employeeId: string) {
+    if (!employeeId) {
+      throw new BadRequestException('Employee ID is required');
+    }
+
+    try {
+      const email = await this.authService.getEmailFromEmployeeID(employeeId);
+      if (!email) {
+        throw new NotFoundException('User not found');
+      }
+      return { email };
+    } catch (error) {
+      console.error(error);
+      throw new BadRequestException('Failed to resolve email');
     }
   }
 }
