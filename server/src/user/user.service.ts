@@ -56,6 +56,23 @@ export class UserService {
     }
   }
 
+  async fetchRole(id:string){
+    try{
+      const user = await this.databaseService.user.findUnique({
+        where: {
+          id,
+        },
+      });
+      if(!user){
+        throw new HttpException('User Not found', HttpStatus.NOT_FOUND);
+      }
+      return user.role;
+
+    }catch(err){
+      throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
   async update(id: string, dto: Prisma.UserUpdateInput) {
     try {
       const user = await this.databaseService.user.findUnique({
