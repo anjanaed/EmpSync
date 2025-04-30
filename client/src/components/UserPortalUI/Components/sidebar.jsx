@@ -1,32 +1,25 @@
-import React, { useContext } from "react";
-import { UserContext } from "../../../contexts/UserContext"; // Import UserContext
-import { Avatar, Button, Menu } from "antd";
-import { Link } from "react-router-dom";
+import React from "react";
+import { Menu, Avatar, Button, Layout } from "antd";
+import { Link } from "react-router-dom"; // Import Link from react-router-dom
 import {
   UserOutlined,
   DollarOutlined,
   CalendarOutlined,
   CoffeeOutlined,
   BulbOutlined,
-  CloseOutlined,
   MenuOutlined,
+  CloseOutlined,
 } from "@ant-design/icons";
-import Sider from "antd/es/layout/Sider";
+import { useSidebar } from "./sidebar-provider";
 
-// Mock implementation of useSidebar (replace with your actual implementation)
-const useSidebar = () => {
-  const [isOpen, setIsOpen] = React.useState(true);
-  const toggleSidebar = () => setIsOpen((prev) => !prev);
-  return { isOpen, toggleSidebar };
-};
+const { Sider } = Layout;
 
 export function Sidebar({ isOpen, activeTab, setActiveTab }) {
-  const { toggleSidebar } = useSidebar(); // Use the hook
-  const userData = useContext(UserContext); // Access userData from UserContext
+  const { toggleSidebar } = useSidebar();
 
   const navItems = [
     { name: "Profile", path: "/profile", icon: <UserOutlined /> },
-    { name: "Payroll", path: "/payroll", icon: <DollarOutlined /> },
+    { name: "Payroll", path: "/payroll", icon: <DollarOutlined /> }, // Ensure path is set to /payroll
     { name: "Attendance", path: "/attendance", icon: <CalendarOutlined /> },
     { name: "Meals", path: "/meals", icon: <CoffeeOutlined /> },
     { name: "AI Suggestions", path: "/suggestions", icon: <BulbOutlined /> },
@@ -83,7 +76,7 @@ export function Sidebar({ isOpen, activeTab, setActiveTab }) {
           <Menu.Item
             key={item.path.substring(1)}
             icon={item.icon}
-            onClick={() => setActiveTab && setActiveTab(item.path.substring(1))}
+            onClick={() => setActiveTab(item.path.substring(1))}
           >
             <Link to={item.path}>{isOpen ? item.name : null}</Link>
           </Menu.Item>
@@ -98,13 +91,11 @@ export function Sidebar({ isOpen, activeTab, setActiveTab }) {
       >
         {isOpen ? (
           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            <Avatar size="small" src="/placeholder.svg" alt={userData?.name || "User"} />
+            <Avatar size="small" src="/placeholder.svg" alt="John Doe" />
             <div>
-              <p style={{ margin: 0, fontWeight: "bold" }}>
-                {userData?.name || "Loading..."}
-              </p>
+              <p style={{ margin: 0, fontWeight: "bold" }}>John Doe</p>
               <p style={{ margin: 0, fontSize: "12px", color: "#8c8c8c" }}>
-                ID: {userData?.id || "Loading..."}
+                ID: EMP-1234
               </p>
             </div>
           </div>
@@ -112,7 +103,7 @@ export function Sidebar({ isOpen, activeTab, setActiveTab }) {
           <Avatar
             size="small"
             src="/placeholder.svg"
-            alt={userData?.name || "User"}
+            alt="John Doe"
             style={{ margin: "0 auto" }}
           />
         )}
