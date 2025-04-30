@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Card, Tabs, Typography, message, Button } from "antd";
+import { Card, Tabs, Typography, message, Button, Calendar, Modal } from "antd"; // Import Calendar and Modal from antd
 import { UserContext } from "../../../contexts/UserContext";
 import axios from "axios";
 
@@ -10,6 +10,8 @@ export function MealsOrders() {
   const [currentOrders, setCurrentOrders] = useState([]);
   const [pastOrders, setPastOrders] = useState([]);
   const [mealDetails, setMealDetails] = useState({});
+  const [selectedDateOrders, setSelectedDateOrders] = useState([]);
+  const [isModalVisible, setIsModalVisible] = useState(false);
   const userData = useContext(UserContext);
 
   useEffect(() => {
@@ -75,7 +77,7 @@ export function MealsOrders() {
   const isCancelable = (order) => {
     const now = new Date();
     const orderDate = new Date(order.orderDate);
-  
+
     // Check if the order date is today or in the future
     if (
       orderDate.getFullYear() > now.getFullYear() ||
@@ -87,7 +89,7 @@ export function MealsOrders() {
       const currentTime = now.getHours() * 60 + now.getMinutes(); // Current time in minutes
       console.log("Current Time in Minutes:", currentTime);
       console.log("Current Date:", now.toLocaleDateString());
-  
+
       // Allow cancellation for future dates or based on time for today's orders
       if (orderDate.getDate() === now.getDate()) {
         if (order.breakfast && currentTime < 540) return true; // Before 9:00 AM (540 minutes)
@@ -95,12 +97,26 @@ export function MealsOrders() {
         if (order.dinner && currentTime < 1080) return true; // Before 6:00 PM (1080 minutes)
         return false; // Not cancelable if the time has passed for today's order
       }
-  
+
       // For future dates, allow cancellation
       return true;
     }
-  
+
     return false; // Not cancelable for past dates
+  };
+
+  const handleDateSelect = (date) => {
+    const selectedDate = date.format("YYYY-MM-DD");
+    const ordersForDate = pastOrders.filter(
+      (order) => new Date(order.orderDate).toISOString().split("T")[0] === selectedDate
+    );
+    setSelectedDateOrders(ordersForDate);
+    setIsModalVisible(true);
+  };
+
+  const handleModalClose = () => {
+    setIsModalVisible(false);
+    setSelectedDateOrders([]);
   };
 
   return (
@@ -173,51 +189,59 @@ export function MealsOrders() {
 
         <TabPane tab="Past Orders" key="past">
           {pastOrders.length > 0 ? (
-            <div style={{ display: "flex", gap: "16px", flexWrap: "wrap" }}>
-              {pastOrders.map((order) => (
-                <Card
-                  key={order.id}
-                  extra={`Order ID: ${order.id}`}
-                  title={`LKR ${order.price.toFixed(2)}`}
-                  style={{ width: 300, display: "flex", flexDirection: "column", justifyContent: "space-between" }}
-                  bodyStyle={{ display: "flex", flexDirection: "column", flexGrow: 1 }}
-                >
-                  <div style={{ flexGrow: 1 }}>
-                    <p>
-                      <strong>Order Date:</strong> {new Date(order.orderDate).toLocaleDateString()}
-                    </p>
-                    <p>
-                      <strong>Meal Type:</strong>{" "}
-                      {order.breakfast
-                        ? "Breakfast"
-                        : order.lunch
-                        ? "Lunch"
-                        : order.dinner
-                        ? "Dinner"
-                        : "Unknown"}
-                    </p>
-                    <p>
-                      <strong>Ordered At:</strong>{" "}
-                      {new Date(order.orderPlacedTime).toLocaleDateString()}{" "}
-                      {new Date(order.orderPlacedTime).toLocaleTimeString()}
-                    </p>
-                    <p>
-                      <strong>Meals Ordered:</strong>
-                    </p>
-                    <ul>
-                      {Object.entries(order.meals || {}).map(([mealId, count]) => {
-                        const [parsedMealId, parsedCount] = count.toString().split(":");
-                        return (
-                          <li key={mealId}>
-                            {mealDetails[parsedMealId] || "Unknown Meal"}: {parsedCount}
-                          </li>
-                        );
-                      })}
-                    </ul>
-                  </div>
-                  
-                </Card>
-              ))}
+            <div>
+              <Calendar
+                fullscreen={true}
+                onSelect={handleDateSelect} // Handle date selection
+              />
+              <Modal
+                title="Orders for Selected Date"
+                visible={isModalVisible}
+                onCancel={handleModalClose}
+                footer={null}
+              >
+                {selectedDateOrders.length > 0 ? (
+                  selectedDateOrders.map((order) => (
+                    <Card
+                      key={order.id}
+                      extra={`Order ID: ${order.id}`}
+                      title={`LKR ${order.price.toFixed(2)}`}
+                      style={{ marginBottom: "16px" }}
+                    >
+                      <p>
+                        <strong>Meal Type:</strong>{" "}
+                        {order.breakfast
+                          ? "Breakfast"
+                          : order.lunch
+                          ? "Lunch"
+                          : order.dinner
+                          ? "Dinner"
+                          : "Unknown"}
+                      </p>
+                      <p>
+                        <strong>Ordered At:</strong>{" "}
+                        {new Date(order.orderPlacedTime).toLocaleDateString()}{" "}
+                        {new Date(order.orderPlacedTime).toLocaleTimeString()}
+                      </p>
+                      <p>
+                        <strong>Meals Ordered:</strong>
+                      </p>
+                      <ul>
+                        {Object.entries(order.meals || {}).map(([mealId, count]) => {
+                          const [parsedMealId, parsedCount] = count.toString().split(":");
+                          return (
+                            <li key={mealId}>
+                              {mealDetails[parsedMealId] || "Unknown Meal"}: {parsedCount}
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    </Card>
+                  ))
+                ) : (
+                  <Text>No orders found for this date.</Text>
+                )}
+              </Modal>
             </div>
           ) : (
             <Card>
