@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Card, Tabs, Badge, Button, Modal, Typography, List, Avatar, message } from "antd";
-import { ClockCircleOutlined, CheckOutlined, CoffeeOutlined } from "@ant-design/icons";
+import { Card, Tabs, Typography, message, Button } from "antd";
 import { UserContext } from "../../../contexts/UserContext";
 import axios from "axios";
 
@@ -10,11 +9,9 @@ const { Title, Text } = Typography;
 export function MealsOrders() {
   const [currentOrders, setCurrentOrders] = useState([]);
   const [pastOrders, setPastOrders] = useState([]);
-  const [selectedOrder, setSelectedOrder] = useState(null);
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const userData = useContext(UserContext); // Access user data from UserContext
+  const [mealDetails, setMealDetails] = useState({});
+  const userData = useContext(UserContext);
 
-  // Fetch orders relative to the user ID
   useEffect(() => {
     const fetchOrders = async () => {
       if (!userData?.id) {
@@ -26,125 +23,173 @@ export function MealsOrders() {
         const response = await axios.get(`http://localhost:3000/orders?employeeId=${userData.id}`);
         const orders = response.data;
 
-        // Filter orders that match the employee ID
-        const filteredOrders = orders.filter((order) => order.employeeId === userData.id);
+        const current = orders.filter((order) => order.employeeId === userData.id && order.serve === false);
+        const past = orders.filter((order) => order.employeeId === userData.id && order.serve === true);
 
-        // Log the filtered order IDs to the console
-        console.log("Filtered Order IDs for user:", filteredOrders.map((order) => order.id));
+        const mealIdCounts = orders.flatMap((order) =>
+          Object.entries(order.meals || {}).map(([mealId, count]) => {
+            const [parsedMealId, parsedCount] = count.toString().split(":");
+            return { mealId: parsedMealId, count: parsedCount };
+          })
+        );
 
-        // Separate current and past orders
-        const current = filteredOrders.filter((order) => order.status === "In Progress");
-        const past = filteredOrders.filter((order) => order.status === "Completed");
+        const uniqueMealIds = [...new Set(mealIdCounts.map((item) => item.mealId))];
 
+        const mealResponses = await Promise.all(
+          uniqueMealIds.map((mealId) =>
+            axios
+              .get(`http://localhost:3000/meal/${mealId}`)
+              .then((response) => response.data)
+              .catch(() => null)
+          )
+        );
+
+        const mealDetailsMap = {};
+        mealResponses.forEach((meal) => {
+          if (meal) {
+            mealDetailsMap[meal.id] = meal.nameEnglish;
+          }
+        });
+
+        setMealDetails(mealDetailsMap);
         setCurrentOrders(current);
         setPastOrders(past);
       } catch (error) {
-        console.error("Failed to fetch orders:", error.message);
-        message.error("Failed to fetch orders. Please try again.");
+        message.error("Failed to fetch orders or meal details. Please try again.");
       }
     };
 
     fetchOrders();
   }, [userData]);
 
-  const showOrderDetails = (order) => {
-    setSelectedOrder(order);
-    setIsModalVisible(true);
-  };
-
-  const closeModal = () => {
-    setIsModalVisible(false);
-    setSelectedOrder(null);
+  const handleCancelOrder = async (orderId) => {
+    try {
+      await axios.delete(`http://localhost:3000/orders/${orderId}`);
+      message.success("Order canceled successfully.");
+      setCurrentOrders((prev) => prev.filter((order) => order.id !== orderId));
+    } catch (error) {
+      message.error("Failed to cancel the order. Please try again.");
+    }
   };
 
   return (
-    <Tabs defaultActiveKey="current">
-      <TabPane tab="Current Orders" key="current">
-        {currentOrders.length > 0 ? (
-          <div style={{ display: "flex", gap: "16px", flexWrap: "wrap" }}>
-            {currentOrders.map((order) => (
-              <Card
-                key={order.id}
-                title={order.name}
-                extra={<Badge status="processing" text={order.status} />}
-                style={{ width: 300 }}
-              >
-                <p>
-                  <ClockCircleOutlined /> Ordered at: {order.orderTime}
-                </p>
-                <p>
-                  <CoffeeOutlined /> Estimated delivery: {order.estimatedDelivery}
-                </p>
-                <p>
-                  <strong>Price:</strong> ${order.price.toFixed(2)}
-                </p>
-                <Button type="link" onClick={() => showOrderDetails(order)}>
-                  View Details
-                </Button>
-              </Card>
-            ))}
-          </div>
-        ) : (
-          <Card>
-            <Title level={4}>No Current Orders</Title>
-            <Text>You don't have any active meal orders.</Text>
-          </Card>
-        )}
-      </TabPane>
-
-      <TabPane tab="Past Orders" key="past">
-        <div style={{ display: "flex", gap: "16px", flexWrap: "wrap" }}>
-          {pastOrders.map((order) => (
-            <Card
-              key={order.id}
-              title={order.name}
-              extra={<Badge status="success" text={order.status} />}
-              style={{ width: 300 }}
-            >
-              <p>
-                <ClockCircleOutlined /> Ordered at: {order.orderTime}
-              </p>
-              <p>
-                <CheckOutlined /> Delivered at: {order.deliveryTime}
-              </p>
-              <p>
-                <strong>Price:</strong> ${order.price.toFixed(2)}
-              </p>
-              <Button type="link" onClick={() => showOrderDetails(order)}>
-                View Details
-              </Button>
+    <div style={{ margin: "20px" }}>
+      <Title level={4}>Orders</Title>
+      <Tabs defaultActiveKey="current">
+        <TabPane tab="Current Orders" key="current">
+          {currentOrders.length > 0 ? (
+            <div style={{ display: "flex", gap: "16px", flexWrap: "wrap" }}>
+              {currentOrders.map((order) => (
+                <Card
+                  key={order.id}
+                  extra={`Order ID: ${order.id}`}
+                  title={`LKR ${order.price.toFixed(2)}`}
+                  style={{ width: 300, display: "flex", flexDirection: "column", justifyContent: "space-between" }}
+                  bodyStyle={{ display: "flex", flexDirection: "column", flexGrow: 1 }}
+                >
+                  <div style={{ flexGrow: 1 }}>
+                    <p>
+                      <strong>Order Date:</strong> {new Date(order.orderDate).toLocaleDateString()}
+                    </p>
+                    <p>
+                      <strong>Meal Type:</strong>{" "}
+                      {order.breakfast
+                        ? "Breakfast"
+                        : order.lunch
+                        ? "Lunch"
+                        : order.dinner
+                        ? "Dinner"
+                        : "Unknown"}
+                    </p>
+                    <p>
+                      <strong>Ordered At:</strong>{" "}
+                      {new Date(order.orderPlacedTime).toLocaleDateString()}{" "}
+                      {new Date(order.orderPlacedTime).toLocaleTimeString()}
+                    </p>
+                    <p>
+                      <strong>Meals Ordered:</strong>
+                    </p>
+                    <ul>
+                      {Object.entries(order.meals || {}).map(([mealId, count]) => {
+                        const [parsedMealId, parsedCount] = count.toString().split(":");
+                        return (
+                          <li key={mealId}>
+                            {mealDetails[parsedMealId] || "Unknown Meal"}: {parsedCount}
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </div>
+                  <Button
+                    type="primary"
+                    danger
+                    onClick={() => handleCancelOrder(order.id)}
+                    style={{ marginTop: "10px", alignSelf: "center" }}
+                  >
+                    Cancel Order
+                  </Button>
+                </Card>
+              ))}
+            </div>
+          ) : (
+            <Card>
+              <Title level={4}>No Current Orders</Title>
+              <Text>You don't have any active orders.</Text>
             </Card>
-          ))}
-        </div>
-      </TabPane>
+          )}
+        </TabPane>
 
-      <Modal
-        title={selectedOrder?.name}
-        visible={isModalVisible}
-        onCancel={closeModal}
-        footer={[
-          <Button key="close" onClick={closeModal}>
-            Close
-          </Button>,
-        ]}
-      >
-        {selectedOrder && (
-          <div>
-            <Title level={5}>Ingredients:</Title>
-            <List
-              dataSource={selectedOrder.ingredients}
-              renderItem={(item) => <List.Item>{item}</List.Item>}
-            />
-            <Title level={5} style={{ marginTop: "16px" }}>
-              Nutritional Information:
-            </Title>
-            <p>Calories: {selectedOrder.nutritionalInfo.calories}</p>
-            <p>Protein: {selectedOrder.nutritionalInfo.protein}g</p>
-            <p>Carbs: {selectedOrder.nutritionalInfo.carbs}g</p>
-            <p>Fat: {selectedOrder.nutritionalInfo.fat}g</p>
-          </div>
-        )}
-      </Modal>
-    </Tabs>
+        <TabPane tab="Past Orders" key="past">
+          {pastOrders.length > 0 ? (
+            <div style={{ display: "flex", gap: "16px", flexWrap: "wrap" }}>
+              {pastOrders.map((order) => (
+                <Card
+                  key={order.id}
+                  extra={`Order ID: ${order.id}`}
+                  title={`LKR ${order.price.toFixed(2)}`}
+                  style={{ width: 300, display: "flex", flexDirection: "column", justifyContent: "space-between" }}
+                  bodyStyle={{ display: "flex", flexDirection: "column", flexGrow: 1 }}
+                >
+                  <div style={{ flexGrow: 1 }}>
+                    <p>
+                      <strong>Order Date:</strong> {new Date(order.orderDate).toLocaleDateString()}
+                    </p>
+                    <p>
+                      <strong>Meal Type:</strong> {order.mealType || "Unknown"}
+                    </p>
+                    <p>
+                      <strong>Ordered At:</strong>{" "}
+                      {new Date(order.orderPlacedTime).toLocaleDateString()}{" "}
+                      {new Date(order.orderPlacedTime).toLocaleTimeString()}
+                    </p>
+                    <p>
+                      <strong>Meals Ordered:</strong>
+                    </p>
+                    <ul>
+                      {Object.entries(order.meals || {}).map(([mealId, count]) => {
+                        const [parsedMealId, parsedCount] = count.toString().split(":");
+                        return (
+                          <li key={mealId}>
+                            {mealDetails[parsedMealId] || "Unknown Meal"}: {parsedCount}
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </div>
+                  <Button type="primary" danger disabled style={{ marginTop: "10px", alignSelf: "center" }}>
+                    Cancel Order
+                  </Button>
+                </Card>
+              ))}
+            </div>
+          ) : (
+            <Card>
+              <Title level={4}>No Past Orders</Title>
+              <Text>You don't have any completed orders.</Text>
+            </Card>
+          )}
+        </TabPane>
+      </Tabs>
+    </div>
   );
 }

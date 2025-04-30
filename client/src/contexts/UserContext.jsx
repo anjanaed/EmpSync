@@ -9,7 +9,7 @@ export const UserProvider = ({ children }) => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/user/E001"); // Replace with your API endpoint
+        const response = await axios.get("http://localhost:3000/user/E002"); // Replace with your API endpoint
         setUserData(response.data);
       } catch (err) {
         console.error("Failed to fetch user data:", err.message);

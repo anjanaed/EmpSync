@@ -32,19 +32,19 @@ export default function ProfilePage() {
             borderRadius: "8px",
             backgroundColor: "#ffffff",
           }}
-          bodyStyle={{
-            padding: "24px",
-          }}
+          bodyStyle={undefined} // Remove the deprecated `bodyStyle`
         >
-          <PageHeader
-            title="User Profile"
-            description="View and manage your personal information"
-            style={{
-              marginBottom: "24px",
-              textAlign: "center",
-            }}
-          />
-          <ProfileForm />
+          <div style={{ padding: "24px" }}>
+            <PageHeader
+              title="User Profile"
+              description="View and manage your personal information"
+              style={{
+                marginBottom: "24px",
+                textAlign: "center",
+              }}
+            />
+            <ProfileForm />
+          </div>
         </Card>
       </Content>
     </Layout>

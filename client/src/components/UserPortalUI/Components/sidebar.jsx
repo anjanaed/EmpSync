@@ -83,7 +83,7 @@ export function Sidebar({ isOpen, activeTab, setActiveTab }) {
           <Menu.Item
             key={item.path.substring(1)}
             icon={item.icon}
-            onClick={() => setActiveTab(item.path.substring(1))}
+            onClick={() => setActiveTab && setActiveTab(item.path.substring(1))}
           >
             <Link to={item.path}>{isOpen ? item.name : null}</Link>
           </Menu.Item>
