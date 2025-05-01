@@ -18,19 +18,15 @@ export function MealsOrders() {
   const employeeId = location.state?.employeeId || localStorage.getItem("employeeId");
 
   useEffect(() => {
-    // Save employeeId to localStorage if it's available
-    if (employeeId) {
-      localStorage.setItem("employeeId", employeeId);
+    if (!employeeId) {
+      message.error("Employee ID is missing. Please log in again.");
+      return;
     }
 
-    console.log("Employee ID in MealsOrders:", employeeId); // Debugging log
+    // Save employeeId to localStorage if it's available
+    localStorage.setItem("employeeId", employeeId);
 
     const fetchOrders = async () => {
-      if (!employeeId) {
-        message.error("Employee ID is missing. Unable to fetch orders.");
-        return;
-      }
-
       try {
         const response = await axios.get(`http://localhost:3000/orders?employeeId=${employeeId}`);
         const orders = response.data;

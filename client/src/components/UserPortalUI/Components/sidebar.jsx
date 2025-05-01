@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Avatar, Button, Menu, message } from "antd";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom"; // Added useNavigate
 import axios from "axios";
 import {
   UserOutlined,
@@ -10,6 +10,7 @@ import {
   BulbOutlined,
   CloseOutlined,
   MenuOutlined,
+  LogoutOutlined, // Added LogoutOutlined
 } from "@ant-design/icons";
 import Sider from "antd/es/layout/Sider";
 
@@ -23,6 +24,7 @@ const useSidebar = () => {
 export function Sidebar({ isOpen, activeTab, setActiveTab }) {
   const { toggleSidebar } = useSidebar();
   const location = useLocation();
+  const navigate = useNavigate(); // Added navigate
 
   // Retrieve employeeId from location.state or localStorage
   const [employeeId, setEmployeeId] = useState(() => {
@@ -54,6 +56,11 @@ export function Sidebar({ isOpen, activeTab, setActiveTab }) {
     }
   }, [employeeId]);
 
+  const handleLogout = () => {
+    localStorage.clear(); // Clear all local storage data
+    navigate("/login"); // Redirect to login page
+  };
+
   const navItems = [
     { name: "Profile", path: "/profile", icon: <UserOutlined /> },
     { name: "Payroll", path: "/userpayroll", icon: <DollarOutlined /> },
@@ -75,6 +82,16 @@ export function Sidebar({ isOpen, activeTab, setActiveTab }) {
         display: "flex",
         flexDirection: "column",
       }}
+      trigger={
+        <Button
+          type="text"
+          icon={<LogoutOutlined />}
+          onClick={handleLogout}
+          style={{ color: "white" }} // Optional: Adjust color to match the theme
+        >
+          Log Out
+        </Button>
+      }
     >
       <div
         style={{
@@ -146,6 +163,7 @@ export function Sidebar({ isOpen, activeTab, setActiveTab }) {
             style={{ margin: "0 auto" }}
           />
         )}
+       
       </div>
     </Sider>
   );

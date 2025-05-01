@@ -15,34 +15,35 @@ export function ProfileForm({ employeeId: propEmployeeId }) {
   const employeeId = propEmployeeId || localStorage.getItem("employeeId");
 
   useEffect(() => {
-    // Save employeeId to localStorage if it's available
-    if (employeeId) {
-      localStorage.setItem("employeeId", employeeId);
+    if (!employeeId) {
+      message.error("Employee ID is missing. Please log in again.");
+      return;
     }
+
+    // Save employeeId to localStorage if it's available
+    localStorage.setItem("employeeId", employeeId);
 
     // Fetch user data based on employeeId
     const fetchUserData = async () => {
       try {
-        if (employeeId) {
-          const response = await axios.get(`http://localhost:3000/user/${employeeId}`);
-          setUserData(response.data);
-          form.setFieldsValue({
-            employeeId: response.data.id || "EMP12345",
-            email: response.data.email || "user@example.com",
-            fullName: response.data.name || "John Doe",
-            password: response.data.password || "Password",
-            role: response.data.role || "Software Engineer",
-            salary: response.data.salary,
-            phone: response.data.telephone || "123-456-7890",
-            birthday: response.data.dob || "1990-01-01",
-            language: response.data.language || "English",
-            joinDate: response.data.createdAt,
-            address: response.data.address || "123 Main St, City, Country",
-            gender: response.data.gender || "Male",
-            height: response.data.height || 0,
-            weight: response.data.weight || 0,
-          });
-        }
+        const response = await axios.get(`http://localhost:3000/user/${employeeId}`);
+        setUserData(response.data);
+        form.setFieldsValue({
+          employeeId: response.data.id || "EMP12345",
+          email: response.data.email || "user@example.com",
+          fullName: response.data.name || "John Doe",
+          password: response.data.password || "Password",
+          role: response.data.role || "Software Engineer",
+          salary: response.data.salary,
+          phone: response.data.telephone || "123-456-7890",
+          birthday: response.data.dob || "1990-01-01",
+          language: response.data.language || "English",
+          joinDate: response.data.createdAt,
+          address: response.data.address || "123 Main St, City, Country",
+          gender: response.data.gender || "Male",
+          height: response.data.height || 0,
+          weight: response.data.weight || 0,
+        });
       } catch (error) {
         console.error("Failed to fetch user data:", error);
         message.error("Failed to load user data.");
