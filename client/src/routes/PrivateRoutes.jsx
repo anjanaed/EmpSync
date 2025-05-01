@@ -2,7 +2,7 @@ import React from "react";
 import { Route } from "react-router-dom";
 import ProtectedRoute from "../components/ProtectedRoutes/ProtectedRoutes";
 
-// HR Section
+// HR_Manager
 import EmployeePage from "../components/pages/HR/EmployeePage/EmployeePage";
 import RegisterPage from "../components/pages/HR/RegisterPage/RegisterPage";
 import ReportPage from "../components/pages/HR/ReportPage/ReportPage";
@@ -19,7 +19,7 @@ import SuggestionsPage from "../components/UserPortalUI/Suggestions/Suggestions"
 import AttendancePage from "../components/UserPortalUI/Attendance/Attendance";
 import PayrollDetails from "../components/UserPortalUI/Components/payroll-details";
 
-// KitchenAdmin
+// Kitchen_Admin
 import KitchenAdmin from "../components/pages/Kitchen Admin/KitchenAdminDashBoard/kitchenAdminDash";
 import Reports from "../components/pages/Kitchen Admin/Report/report";
 import Meals from "../components/pages/Kitchen Admin/MealDash/meal";
@@ -30,19 +30,18 @@ import EditMeal from "../components/pages/Kitchen Admin/Edit Meal/editMeal";
 import Serving from "../../src/pages/Serving staff/Barcode Scan/Serving";
 import MealConform from "../../src/pages/Serving staff/Meal Conform/MealConform";
 
-// IngredientManager
+// Inventory_Manager
 import Ingredients from "../components/pages/Ingredient Manager/Dashboard/Ingredients";
 import AnalysisDashboard from "../components/pages/Ingredient Manager/AnalysisDashboard/AnalysisDashboard";
 import OrderReportDashboard from "../components/pages/Ingredient Manager/OrderReportDashboard/OrderReportDashboard";
 import OrderHistory from "../components/pages/Ingredient Manager/OrderHistory/OrderHistory";
 import CostAnalysis from "../components/organisms/Ingredients/Analysis/Cost Analysis/CostAnalysis";
 
-// OrderTab
-import OrderTab from "../pages/OrderTab/OrderTab";
+
 
 const PrivateRoutes = () => (
   <>
-    {/* Employee Routes */}
+    {/* HR_Manager Routes */}
     <Route
       path="/EmployeePage"
       element={
@@ -52,51 +51,9 @@ const PrivateRoutes = () => (
       }
     />
     <Route
-      path="/profile"
-      element={
-        <ProtectedRoute allowedRoles={["employee"]}>
-          <ProfilePage />
-        </ProtectedRoute>
-      }
-    />
-    <Route
-      path="/meals"
-      element={
-        <ProtectedRoute allowedRoles={["employee"]}>
-          <MealsPage />
-        </ProtectedRoute>
-      }
-    />
-    <Route
-      path="/suggestions"
-      element={
-        <ProtectedRoute allowedRoles={["employee"]}>
-          <SuggestionsPage />
-        </ProtectedRoute>
-      }
-    />
-    <Route
-      path="/AttendancePage"
-      element={
-        <ProtectedRoute allowedRoles={["employee"]}>
-          <AttendancePage />
-        </ProtectedRoute>
-      }
-    />
-    <Route
-      path="/userpayroll"
-      element={
-        <ProtectedRoute allowedRoles={["employee"]}>
-          <PayrollDetails />
-        </ProtectedRoute>
-      }
-    />
-
-    {/* HR Routes */}
-    <Route
       path="/reg"
       element={
-        <ProtectedRoute allowedRoles={["hr"]}>
+        <ProtectedRoute allowedRoles={["HR_Manager"]}>
           <RegisterPage />
         </ProtectedRoute>
       }
@@ -104,7 +61,7 @@ const PrivateRoutes = () => (
     <Route
       path="/reportPage"
       element={
-        <ProtectedRoute allowedRoles={["hr"]}>
+        <ProtectedRoute allowedRoles={["HR_Manager"]}>
           <ReportPage />
         </ProtectedRoute>
       }
@@ -112,7 +69,7 @@ const PrivateRoutes = () => (
     <Route
       path="/payroll"
       element={
-        <ProtectedRoute allowedRoles={["hr"]}>
+        <ProtectedRoute allowedRoles={["HR_Manager"]}>
           <PayrollPage />
         </ProtectedRoute>
       }
@@ -120,7 +77,7 @@ const PrivateRoutes = () => (
     <Route
       path="/adjustment"
       element={
-        <ProtectedRoute allowedRoles={["hr"]}>
+        <ProtectedRoute allowedRoles={["HR_Manager"]}>
           <AdjustmentPage />
         </ProtectedRoute>
       }
@@ -128,7 +85,7 @@ const PrivateRoutes = () => (
     <Route
       path="/payslip"
       element={
-        <ProtectedRoute allowedRoles={["hr"]}>
+        <ProtectedRoute allowedRoles={["HR_Manager"]}>
           <PayslipPage />
         </ProtectedRoute>
       }
@@ -136,7 +93,7 @@ const PrivateRoutes = () => (
     <Route
       path="/Attendance"
       element={
-        <ProtectedRoute allowedRoles={["hr"]}>
+        <ProtectedRoute allowedRoles={["HR_Manager"]}>
           <Attendance />
         </ProtectedRoute>
       }
@@ -144,17 +101,59 @@ const PrivateRoutes = () => (
     <Route
       path="/EmployeeDetails"
       element={
-        <ProtectedRoute allowedRoles={["hr"]}>
+        <ProtectedRoute allowedRoles={["HR_Manager"]}>
           <EmployeeDetails />
         </ProtectedRoute>
       }
     />
 
-    {/* Kitchen Admin Routes */}
+    {/* UserPortal Routes */}
+    <Route
+      path="/profile"
+      element={
+        <ProtectedRoute allowedRoles={["UserPortal"]}>
+          <ProfilePage />
+        </ProtectedRoute>
+      }
+    />
+    <Route
+      path="/meals"
+      element={
+        <ProtectedRoute allowedRoles={["UserPortal"]}>
+          <MealsPage />
+        </ProtectedRoute>
+      }
+    />
+    <Route
+      path="/suggestions"
+      element={
+        <ProtectedRoute allowedRoles={["UserPortal"]}>
+          <SuggestionsPage />
+        </ProtectedRoute>
+      }
+    />
+    <Route
+      path="/AttendancePage"
+      element={
+        <ProtectedRoute allowedRoles={["UserPortal"]}>
+          <AttendancePage />
+        </ProtectedRoute>
+      }
+    />
+    <Route
+      path="/userpayroll"
+      element={
+        <ProtectedRoute allowedRoles={["UserPortal"]}>
+          <PayrollDetails />
+        </ProtectedRoute>
+      }
+    />
+
+    {/* Kitchen_Admin Routes */}
     <Route
       path="/kitchen-admin"
       element={
-        <ProtectedRoute allowedRoles={["kitchen_admin"]}>
+        <ProtectedRoute allowedRoles={["Kitchen_Admin"]}>
           <KitchenAdmin />
         </ProtectedRoute>
       }
@@ -162,15 +161,7 @@ const PrivateRoutes = () => (
     <Route
       path="/report"
       element={
-        <ProtectedRoute allowedRoles={["kitchen_admin"]}>
-          <Reports />
-        </ProtectedRoute>
-      }
-    />
-    <Route
-      path="/kitchen-report"
-      element={
-        <ProtectedRoute allowedRoles={["kitchen_admin"]}>
+        <ProtectedRoute allowedRoles={["Kitchen_Admin"]}>
           <Reports />
         </ProtectedRoute>
       }
@@ -178,7 +169,7 @@ const PrivateRoutes = () => (
     <Route
       path="/kitchen-meal"
       element={
-        <ProtectedRoute allowedRoles={["kitchen_admin"]}>
+        <ProtectedRoute allowedRoles={["Kitchen_Admin"]}>
           <Meals />
         </ProtectedRoute>
       }
@@ -186,7 +177,7 @@ const PrivateRoutes = () => (
     <Route
       path="/meal-details"
       element={
-        <ProtectedRoute allowedRoles={["kitchen_admin"]}>
+        <ProtectedRoute allowedRoles={["Kitchen_Admin"]}>
           <MealDetailsForm />
         </ProtectedRoute>
       }
@@ -194,17 +185,17 @@ const PrivateRoutes = () => (
     <Route
       path="/edit-meal"
       element={
-        <ProtectedRoute allowedRoles={["kitchen_admin"]}>
+        <ProtectedRoute allowedRoles={["Kitchen_Admin"]}>
           <EditMeal />
         </ProtectedRoute>
       }
     />
 
-    {/* Serving Staff Routes */}
+    {/* ServingStaff Routes */}
     <Route
       path="/serving"
       element={
-        <ProtectedRoute allowedRoles={["serving_staff"]}>
+        <ProtectedRoute allowedRoles={["ServingStaff"]}>
           <Serving />
         </ProtectedRoute>
       }
@@ -212,17 +203,17 @@ const PrivateRoutes = () => (
     <Route
       path="/meal-conform/:id"
       element={
-        <ProtectedRoute allowedRoles={["serving_staff"]}>
+        <ProtectedRoute allowedRoles={["ServingStaff"]}>
           <MealConform />
         </ProtectedRoute>
       }
     />
 
-    {/* Ingredient Manager Routes */}
+    {/* Inventory_Manager Routes */}
     <Route
       path="/Ingredients"
       element={
-        <ProtectedRoute allowedRoles={["ingredient_manager"]}>
+        <ProtectedRoute allowedRoles={["Inventory_Manager"]}>
           <Ingredients />
         </ProtectedRoute>
       }
@@ -230,7 +221,7 @@ const PrivateRoutes = () => (
     <Route
       path="/CostAnalysis"
       element={
-        <ProtectedRoute allowedRoles={["ingredient_manager"]}>
+        <ProtectedRoute allowedRoles={["Inventory_Manager"]}>
           <CostAnalysis />
         </ProtectedRoute>
       }
@@ -238,7 +229,7 @@ const PrivateRoutes = () => (
     <Route
       path="/AnalysisDashboard"
       element={
-        <ProtectedRoute allowedRoles={["ingredient_manager"]}>
+        <ProtectedRoute allowedRoles={["Inventory_Manager"]}>
           <AnalysisDashboard />
         </ProtectedRoute>
       }
@@ -246,7 +237,7 @@ const PrivateRoutes = () => (
     <Route
       path="/OrderReportDashboard"
       element={
-        <ProtectedRoute allowedRoles={["ingredient_manager"]}>
+        <ProtectedRoute allowedRoles={["Inventory_Manager"]}>
           <OrderReportDashboard />
         </ProtectedRoute>
       }
@@ -254,21 +245,12 @@ const PrivateRoutes = () => (
     <Route
       path="/OrderHistory"
       element={
-        <ProtectedRoute allowedRoles={["ingredient_manager"]}>
+        <ProtectedRoute allowedRoles={["Inventory_Manager"]}>
           <OrderHistory />
         </ProtectedRoute>
       }
     />
-
-    {/* Order Tab Route */}
-    <Route
-      path="/OrderTab"
-      element={
-        <ProtectedRoute allowedRoles={["employee"]}>
-          <OrderTab />
-        </ProtectedRoute>
-      }
-    />
+    
   </>
 );
 

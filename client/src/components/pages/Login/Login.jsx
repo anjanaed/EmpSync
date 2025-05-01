@@ -37,7 +37,7 @@ const LoginPage = () => {
           const userRole = response.data;
 
           const roleRouteMap = {
-            HR_Manager: "/EmployeePage",
+            HR_Manager: "/OrderTab",
             Inventory_Manager: "/inventory",
             Kitchen_Staff: "/kitchen-staff",
             Kitchen_Admin: "/kitchen-admin",
