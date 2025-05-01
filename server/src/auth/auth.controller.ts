@@ -1,4 +1,4 @@
-import { Controller, Post, Body, BadRequestException } from '@nestjs/common';
+import { Controller, Post, Body, HttpException, HttpStatus } from '@nestjs/common';
 import { AuthService } from './auth.service';
 
 @Controller('auth')
@@ -7,17 +7,25 @@ export class AuthController {
 
   @Post('login')
   async login(@Body() body: { username: string; password: string }) {
-    const { username, password } = body;
-
-    if (!username || !password) {
-      throw new BadRequestException('Email and password are required');
-    }
-
     try {
-      const tokens = await this.authService.loginWithAuth0(username, password);
-      return tokens;
+      return await this.authService.loginWithAuth0(body.username, body.password);
     } catch (error) {
-      console.error(error);
+      throw new HttpException(
+        error.response?.data || error.message || 'Authentication failed',
+        error.status || HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  @Post('delete')
+  async remove(@Body() body: { email: string }) {
+    try {
+      return await this.authService.deleteAuth0UserByEmail(body.email);
+    } catch (error) {
+      throw new HttpException(
+        error.response?.data || error.message || 'User Removing failed',
+        error.status || HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 }

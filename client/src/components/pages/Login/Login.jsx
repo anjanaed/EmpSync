@@ -8,7 +8,7 @@ import { jwtDecode } from "jwt-decode";
 import { useAuth } from "../../../AuthContext";
 
 const LoginPage = () => {
-  const { login } = useAuth();
+  const { login, authData } = useAuth();
   const urL = import.meta.env.VITE_BASE_URL;
   const navigate = useNavigate();
 
@@ -23,14 +23,15 @@ const LoginPage = () => {
         password,
       });
 
+      console.log(response)
+
       const { access_token, id_token } = response.data;
       login({ access_token, id_token });
 
-      const decoded = jwtDecode(id_token);
-      const employeeId = decoded["https://empidReceiver.com"];
-
       if (access_token) {
         try {
+          const employeeId = authData.user.data.id;
+
           const response = await axios.get(
             `${urL}/user/fetchrole/${employeeId.toUpperCase()}`
           );
@@ -54,7 +55,7 @@ const LoginPage = () => {
       }
     } catch (error) {
       console.error("Login error:", error);
-      message.error("Login failed. Please check your credentials.");
+      message.error(`Login Failed: ${error.response.data.message}`);
     }
   };
 
