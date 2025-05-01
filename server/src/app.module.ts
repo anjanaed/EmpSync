@@ -5,6 +5,7 @@ import { DatabaseModule } from './database/database.module';
 import { UserModule } from './user/user.module';
 import { MealModule } from './Meal/meal.module';
 import { IngredientsModule } from './ingredients/ingredients.module';
+import { BudgetsModule } from './Budgets/Budgets.module';
 import { PayrollModule } from './payroll/payroll.module';
 import { AttendanceModule } from './attendance/attendance.module';
 import {OrdersModule} from './orders/orders.module'
@@ -28,6 +29,7 @@ import { ScheduleModule as NestScheduleModule } from '@nestjs/schedule';
     DatabaseModule,
     UserModule,
     IngredientsModule,
+    BudgetsModule,
     MealModule,
     PayrollModule,
     AttendanceModule,
