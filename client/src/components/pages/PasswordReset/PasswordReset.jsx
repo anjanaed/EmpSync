@@ -102,7 +102,7 @@ const PasswordReset = () => {
               </div>
               <div className={styles.footer}>
                 <a
-                  href="/login"
+                  href="/"
                   className={styles.backButton}
                 >
                   Back to Login

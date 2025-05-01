@@ -44,7 +44,7 @@ const NavBar = ({ Comp, titleLines = [], menuItems = [] }) => {
   const handleLogOut = () => {
     logout();
     setCurrentUser(null);
-    navigate("/login");
+    navigate("/");
   };
   const dropdownItems = [
     {
