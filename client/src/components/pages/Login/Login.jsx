@@ -23,8 +23,6 @@ const LoginPage = () => {
         password,
       });
 
-   
-
       const { access_token, id_token } = response.data;
       login({ access_token, id_token });
 
