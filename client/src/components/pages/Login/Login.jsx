@@ -23,7 +23,7 @@ const LoginPage = () => {
         password,
       });
 
-      console.log(response)
+   
 
       const { access_token, id_token } = response.data;
       login({ access_token, id_token });
