@@ -46,7 +46,7 @@ const PrivateRoutes = () => (
     <Route
       path="/EmployeePage"
       element={
-        <ProtectedRoute allowedRoles={["hr"]}>
+        <ProtectedRoute allowedRoles={["HR_Manager"]}>
           <EmployeePage />
         </ProtectedRoute>
       }

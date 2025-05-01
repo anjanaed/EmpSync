@@ -16,21 +16,29 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const login = async ({ access_token, id_token }) => {
-    const decoded = jwtDecode(id_token);
-    const employeeId = decoded["https://empidReceiver.com"];
+    try {
+      const decoded = jwtDecode(id_token);
+      const employeeId = decoded["https://empidReceiver.com"];
 
-    const currentUser = await axios.get(
-      `${urL}/user/${employeeId.toUpperCase()}`
-    );
-    const userData = {
-      accessToken: access_token,
-      idToken: id_token,
-      user: currentUser,
-      email: decoded.email,
-    };
+      const response = await axios.get(`${urL}/user/${employeeId.toUpperCase()}`);
+      const currentUser = response.data;
 
-    setAuthData(userData);
-    localStorage.setItem("authData", JSON.stringify(userData));
+      const userRole = currentUser.role;
+
+      const userData = {
+        accessToken: access_token,
+        idToken: id_token,
+        user: currentUser,
+        email: decoded.email,
+        role: userRole,
+      };
+
+      setAuthData(userData);
+      localStorage.setItem("authData", JSON.stringify(userData));
+    } catch (error) {
+      console.error("Login error:", error);
+      throw new Error("Failed to log in. Please check your credentials.");
+    }
   };
 
   const logout = () => {
@@ -46,3 +54,6 @@ export const AuthProvider = ({ children }) => {
 };
 
 export const useAuth = () => useContext(AuthContext);
+
+
+
