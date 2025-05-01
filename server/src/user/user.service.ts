@@ -15,7 +15,7 @@ export class UserService {
       await this.databaseService.user.create({ data: dto });
     } catch (err) {
       if (err.code === 'P2002') {
-        throw new HttpException(`Id, Name must be unique - ${err}` , HttpStatus.CONFLICT);
+        throw new HttpException(`Id or Email Already Registered`, HttpStatus.CONFLICT);
       }
       throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
     }

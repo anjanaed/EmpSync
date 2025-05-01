@@ -88,16 +88,10 @@ const Register = () => {
       sucNofify("User Registered Successfully");
       navigate("/");
     } catch (err) {
+      await axios.post(`${urL}/auth/delete`, {email:email});
       console.error("Registration Error:", err);
-      if (
-        err.response?.data?.message ===
-        "Id, Name, Email, Password must be filled"
-      ) {
-        setMenu(1);
-        erNofify("ID, Name, Email, Password must be filled");
-      } else {
-        erNofify("Registration Failed! Try again");
-      }
+      erNofify(`Registration Failed: ${err.response.data.message}`)
+      
     } finally {
       setLoading(false);
     }
@@ -115,12 +109,9 @@ const Register = () => {
           connection: "Username-Password-Authentication",
         }
       );
-
-      console.log("User signed up:", res.data);
-      sucNofify("Auth0 Registered!");
     } catch (error) {
       console.error("Auth0 Registration Error:", error);
-      erNofify("Auth0 Registration Failed!");
+      erNofify(`Registration Failed: ${error.response.data.message}`);
       setLoading(false);
       throw error;
     }

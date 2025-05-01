@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable,HttpException, HttpStatus  } from '@nestjs/common';
 import axios from 'axios';
 
 @Injectable()
@@ -22,14 +22,52 @@ export class AuthService {
           headers: { 'Content-Type': 'application/json' },
         },
       );
-
       return response.data;
     } catch (error) {
       console.error(
         'Error during Auth0 login:',
         error.response?.data || error.message,
       );
-      throw new Error('Failed to authenticate with Auth0');
+      throw new HttpException(
+        error.response?.data?.error_description || 'Failed to authenticate with Auth0',
+        error.response?.status || HttpStatus.INTERNAL_SERVER_ERROR,
+      );    }
+  }
+
+  async deleteAuth0UserByEmail(email:string) {
+    try {
+      const tokenRes = await axios.post(`https://dev-77pr5yqzs0m53x77.us.auth0.com/oauth/token`, {
+        client_id: 'jPw9tY0jcdhSAhErMaqgdVGYQ6Srh3xs',
+        client_secret: 'b-elWz_BWHoWAsNixkUhDfYghGJuy9tuE1gnE2MwSJfmn7fIPZqZIO7STDdRFrck',
+        audience: `https://dev-77pr5yqzs0m53x77.us.auth0.com/api/v2/`,
+        grant_type: "client_credentials",
+      });
+  
+      const mgmtToken = tokenRes.data.access_token;
+  
+      const usersRes = await axios.get(
+        `https://dev-77pr5yqzs0m53x77.us.auth0.com/api/v2/users-by-email?email=${encodeURIComponent(email)}`,
+        {
+          headers: {
+            Authorization: `Bearer ${mgmtToken}`,
+          },
+        }
+      );
+  
+      const user = usersRes.data[0];
+      const userId = user.user_id;
+  
+      await axios.delete(
+        `https://dev-77pr5yqzs0m53x77.us.auth0.com/api/v2/users/${userId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${mgmtToken}`,
+          },
+        }
+      );
+  
+    } catch (error) {
+      console.error("Error deleting user from Auth0:", error.response?.data || error.message);
     }
   }
 }

@@ -36,7 +36,7 @@ const NavBar = ({ Comp, titleLines = [], menuItems = [] }) => {
 
   const setUser = () => {
     if (authData) {
-      setCurrentUser(authData.user.data.name);
+      setCurrentUser(authData.user.data);
     }
     setLoading(false);
   };
@@ -157,8 +157,8 @@ const NavBar = ({ Comp, titleLines = [], menuItems = [] }) => {
                 icon={<UserOutlined />}
               />
               <div className={styles.userDetails}>
-                <div className={styles.userName}>{currentUser}</div>
-                <div className={styles.userPosition}>HR Manager</div>
+                <div className={styles.userName}>{currentUser.name}</div>
+                <div className={styles.userPosition}>{currentUser.role}</div>
               </div>
             </div>
           </Dropdown>
