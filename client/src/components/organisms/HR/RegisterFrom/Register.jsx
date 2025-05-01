@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { DatePicker, Form, Space, Input, Select,InputNumber } from "antd";
+import { DatePicker, Form, Space, Input, Select, InputNumber } from "antd";
 import styles from "./Register.module.css";
 import { IoIosArrowBack } from "react-icons/io";
 import FingerPrint from "../../../atoms/FingerPrint/FingerPrint";
@@ -7,7 +7,7 @@ import Loading from "../../../atoms/loading/loading";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
 import { AiOutlineCaretRight } from "react-icons/ai";
-import {Toaster,toast} from 'sonner'
+import { Toaster, toast } from "sonner";
 import Gbutton from "../../../atoms/button/Button";
 import axios from "axios";
 const { Option } = Select;
@@ -66,36 +66,64 @@ const Register = () => {
     if (role === "Other") {
       role = customJobRole;
     }
+
     try {
+      await signUpUser({ email, password, id });
+
       const payload = {
-        id: id,
-        name: name,
-        role: role,
-        dob: dob,
+        id,
+        name,
+        role,
+        dob,
         telephone: tel,
-        gender: gender,
-        address: address,
-        email: email,
-        password: password,
-        supId: supId,
+        gender,
+        address,
+        email,
+        password,
+        supId,
         language: lang,
         salary: parseInt(salary),
       };
       await axios.post(`${urL}/user`, payload);
-      sucNofify("User Registered Successfully")
+      sucNofify("User Registered Successfully");
       navigate("/");
     } catch (err) {
-      
+      console.error("Registration Error:", err);
       if (
-        err.response.data.message == "Id, Name, Email, Password must be filled"
+        err.response?.data?.message ===
+        "Id, Name, Email, Password must be filled"
       ) {
         setMenu(1);
-        erNofify("d, Name, Email, Password must be filled");
+        erNofify("ID, Name, Email, Password must be filled");
       } else {
-        erNofify("Registration Failed! Try again")
+        erNofify("Registration Failed! Try again");
       }
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
+  };
+
+  const signUpUser = async ({ email, password, id }) => {
+    try {
+      const res = await axios.post(
+        "https://dev-77pr5yqzs0m53x77.us.auth0.com/dbconnections/signup",
+        {
+          client_id: "jPw9tY0jcdhSAhErMaqgdVGYQ6Srh3xs",
+          email,
+          username: id,
+          password,
+          connection: "Username-Password-Authentication",
+        }
+      );
+
+      console.log("User signed up:", res.data);
+      sucNofify("Auth0 Registered!");
+    } catch (error) {
+      console.error("Auth0 Registration Error:", error);
+      erNofify("Auth0 Registration Failed!");
+      setLoading(false);
+      throw error;
+    }
   };
 
   const sucNofify = (message) => {
@@ -110,7 +138,7 @@ const Register = () => {
   };
 
   const erNofify = (message) => {
-    setzTimeout(
+    setTimeout(
       () =>
         toast.error(message, {
           duration: 2500,
@@ -132,7 +160,7 @@ const Register = () => {
     <div className={styles.formContainer}>
       {menu == 1 && (
         <>
-            <Toaster richColors/>
+          <Toaster richColors />
 
           <div className={styles.heading}>New Employee Onboarding</div>
           <Form
@@ -270,8 +298,8 @@ const Register = () => {
                         style={{ width: "100%" }}
                         placeholder="Select Role"
                       >
-                        <Option value="HR Manager">HR Administrator</Option>
-                        <Option value="Kitchen Admin">Kitchen Admin</Option>
+                        <Option value="HR_Manager">HR Administrator</Option>
+                        <Option value="Kitchen_Admin">Kitchen Admin</Option>
                         <Option value="Kitchen Staff">Kitchen Staff</Option>
                         <Option value="Inventory Manager">
                           Inventory Manager
@@ -395,7 +423,7 @@ const Register = () => {
                     formatter={(value) => `${value} LKR`}
                     parser={(value) => value.replace(" LKR", "")}
                     placeholder="Enter Basic Salary"
-                    onChange={(e) => setSalary(e.target.value)}
+                    onChange={(value) => setSalary(value)}
                   />
                 </Form.Item>
               </div>

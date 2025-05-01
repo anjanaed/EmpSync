@@ -68,6 +68,22 @@ import {
         );
       }
     }
+
+    @Get('/fetchrole/:id')
+    async findRole(@Param('id') id: string) {
+      try {
+        return await this.userService.fetchRole(id);
+      } catch (err) {
+        throw new HttpException(
+          {
+            status: HttpStatus.NOT_FOUND,
+            error: 'Not Found',
+            message: err.message,
+          },
+          HttpStatus.NOT_FOUND,
+        );
+      }
+    }
   
     @Put(':id')
     async update(@Param('id') id: string, @Body() dto: Prisma.UserUpdateInput) {
