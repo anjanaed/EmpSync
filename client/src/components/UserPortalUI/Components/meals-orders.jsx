@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Card, Tabs, Typography, message, Button, Calendar, Modal } from "antd"; // Import Calendar and Modal from antd
 import { UserContext } from "../../../contexts/UserContext";
+import { useLocation } from "react-router-dom"; // Import useLocation
 import axios from "axios";
 
 const { TabPane } = Tabs;
@@ -12,21 +13,30 @@ export function MealsOrders() {
   const [mealDetails, setMealDetails] = useState({});
   const [selectedDateOrders, setSelectedDateOrders] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const userData = useContext(UserContext);
+
+  const location = useLocation(); // Access navigation state
+  const employeeId = location.state?.employeeId || localStorage.getItem("employeeId");
 
   useEffect(() => {
+    // Save employeeId to localStorage if it's available
+    if (employeeId) {
+      localStorage.setItem("employeeId", employeeId);
+    }
+
+    console.log("Employee ID in MealsOrders:", employeeId); // Debugging log
+
     const fetchOrders = async () => {
-      if (!userData?.id) {
-        message.error("User ID is missing. Unable to fetch orders.");
+      if (!employeeId) {
+        message.error("Employee ID is missing. Unable to fetch orders.");
         return;
       }
 
       try {
-        const response = await axios.get(`http://localhost:3000/orders?employeeId=${userData.id}`);
+        const response = await axios.get(`http://localhost:3000/orders?employeeId=${employeeId}`);
         const orders = response.data;
 
-        const current = orders.filter((order) => order.employeeId === userData.id && order.serve === false);
-        const past = orders.filter((order) => order.employeeId === userData.id && order.serve === true);
+        const current = orders.filter((order) => order.employeeId === employeeId && order.serve === false);
+        const past = orders.filter((order) => order.employeeId === employeeId && order.serve === true);
 
         const mealIdCounts = orders.flatMap((order) =>
           Object.entries(order.meals || {}).map(([mealId, count]) => {
@@ -62,7 +72,7 @@ export function MealsOrders() {
     };
 
     fetchOrders();
-  }, [userData]);
+  }, [employeeId]);
 
   const handleCancelOrder = async (orderId) => {
     try {
