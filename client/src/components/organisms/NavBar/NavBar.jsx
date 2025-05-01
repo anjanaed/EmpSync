@@ -6,7 +6,7 @@ import { Button, Layout, Menu, ConfigProvider, Dropdown, Avatar } from "antd";
 import img from "../../../assets/logo.png";
 import { useNavigate } from "react-router-dom";
 import Loading from "../../atoms/loading/loading";
-import { useAuth } from "../../../AuthContext";
+import { useAuth } from "../../../contexts/AuthContext";
 const { Sider } = Layout;
 
 const customTheme = {

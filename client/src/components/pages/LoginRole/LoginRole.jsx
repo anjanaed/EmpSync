@@ -14,7 +14,7 @@ const LoginPage = () => {
   };
 
   const handleLogin = () => {
-    navigate("/reg");
+    navigate("/");
   };
 
   return (

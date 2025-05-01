@@ -1,14 +1,24 @@
+
 import React from "react";
 import { Navigate } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext";
 
-const ProtectedRoute = ({ children }) => {
-  const isAuthenticated = !!localStorage.getItem("access_token"); // Check if the user is authenticated
+const ProtectedRoute = ({ children, allowedRoles }) => {
+  const { authData } = useAuth();
+  const isAuthenticated = !!authData?.accessToken;
 
   if (!isAuthenticated) {
-    return <Navigate to="/" replace />; // Redirect to login if not authenticated
+    return <Navigate to="/" replace />;
   }
 
-  return children; // Render the protected component if authenticated
+  const userRole = authData?.role;
+  const hasRequiredRole = allowedRoles.includes(userRole);
+
+  if (!hasRequiredRole) {
+    return <Navigate to="/" replace />;
+  }
+
+  return children;
 };
 
 export default ProtectedRoute;

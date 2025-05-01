@@ -5,7 +5,7 @@ import styles from "./Login.module.css";
 import illustration from "../../../assets/illustration.png";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
-import { useAuth } from "../../../AuthContext";
+import { useAuth } from "../../../contexts/AuthContext";
 
 const LoginPage = () => {
   const { login } = useAuth();
@@ -37,7 +37,7 @@ const LoginPage = () => {
           const userRole = response.data;
 
           const roleRouteMap = {
-            HR_Manager: "/EmployeePage",
+            HR_Manager: "/PasswordReset",
             Inventory_Manager: "/inventory",
             Kitchen_Staff: "/kitchen-staff",
             Kitchen_Admin: "/kitchen-admin",
