@@ -1,27 +1,34 @@
 import React, { createContext, useState, useEffect } from "react";
-import axios from "axios";
 
 export const UserContext = createContext();
 
-export const UserProvider = ({ children }) => {
-  const [userData, setUserData] = useState(null);
+export function UserProvider({ children }) {
+  const [user, setUser] = useState({
+    employeeId: null,
+    name: null,
+  });
 
   useEffect(() => {
-    const fetchUserData = async () => {
+    // Fetch user data from the backend
+    async function fetchUserData() {
       try {
-        const response = await axios.get("http://localhost:3000/user/E002"); // Replace with your API endpoint
-        setUserData(response.data);
-      } catch (err) {
-        console.error("Failed to fetch user data:", err.message);
+        const response = await fetch("/api/user"); // Replace with your API endpoint
+        const data = await response.json();
+        setUser({
+          employeeId: data.emplocyeeId,
+          name: data.name,
+        });
+      } catch (error) {
+        console.error("Failed to fetch user data:", error);
       }
-    };
+    }
 
     fetchUserData();
   }, []);
 
   return (
-    <UserContext.Provider value={userData}>
+    <UserContext.Provider value={{ user, setUser }}>
       {children}
     </UserContext.Provider>
   );
-};
+}

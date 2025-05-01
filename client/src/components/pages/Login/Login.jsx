@@ -29,6 +29,8 @@ const LoginPage = () => {
       const decoded = jwtDecode(id_token);
       const employeeId = decoded["https://empidReceiver.com"];
 
+      console.log("Employee ID after login:", employeeId); // Debugging log
+
       if (access_token) {
         try {
           const response = await axios.get(
@@ -45,7 +47,8 @@ const LoginPage = () => {
 
           const route = roleRouteMap[userRole] || "/profile";
 
-          navigate(route);
+          // Pass employeeId as state when navigating
+          navigate(route, { state: { employeeId } });
         } catch (err) {
           console.error("Failed to fetch role or navigate:", err);
         }

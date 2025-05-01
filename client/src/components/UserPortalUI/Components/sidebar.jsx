@@ -1,7 +1,7 @@
-import React, { useContext } from "react";
-import { UserContext } from "../../../contexts/UserContext"; // Import UserContext
-import { Avatar, Button, Menu } from "antd";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Avatar, Button, Menu, message } from "antd";
+import { Link, useLocation } from "react-router-dom";
+import axios from "axios";
 import {
   UserOutlined,
   DollarOutlined,
@@ -21,8 +21,38 @@ const useSidebar = () => {
 };
 
 export function Sidebar({ isOpen, activeTab, setActiveTab }) {
-  const { toggleSidebar } = useSidebar(); // Use the hook
-  const userData = useContext(UserContext); // Access userData from UserContext
+  const { toggleSidebar } = useSidebar();
+  const location = useLocation();
+
+  // Retrieve employeeId from location.state or localStorage
+  const [employeeId, setEmployeeId] = useState(() => {
+    const idFromState = location.state?.employeeId?.toUpperCase();
+    const idFromStorage = localStorage.getItem("employeeId");
+    return idFromState || idFromStorage || "Loading...";
+  });
+
+  const [employeeName, setEmployeeName] = useState("Loading...");
+
+  useEffect(() => {
+    // Save employeeId to localStorage if it's available
+    if (employeeId && employeeId !== "Loading...") {
+      localStorage.setItem("employeeId", employeeId);
+    }
+
+    // Fetch employee name from the database
+    if (employeeId && employeeId !== "Loading...") {
+      axios
+        .get(`http://localhost:3000/user/${employeeId}`) // Replace with your actual API endpoint
+        .then((response) => {
+          setEmployeeName(response.data.name || "Unknown User");
+        })
+        .catch((error) => {
+          console.error("Failed to fetch employee name:", error);
+          message.error("Failed to load employee name.");
+          setEmployeeName("Error Loading Name");
+        });
+    }
+  }, [employeeId]);
 
   const navItems = [
     { name: "Profile", path: "/profile", icon: <UserOutlined /> },
@@ -98,13 +128,13 @@ export function Sidebar({ isOpen, activeTab, setActiveTab }) {
       >
         {isOpen ? (
           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            <Avatar size="small" src="/placeholder.svg" alt={userData?.name || "User"} />
+            <Avatar size="small" src="/placeholder.svg" alt={employeeName || "User"} />
             <div>
               <p style={{ margin: 0, fontWeight: "bold" }}>
-                {userData?.name || "Loading..."}
+                {employeeName}
               </p>
               <p style={{ margin: 0, fontSize: "12px", color: "#8c8c8c" }}>
-                ID: {userData?.id || "Loading..."}
+                ID: {employeeId || "Loading..."}
               </p>
             </div>
           </div>
@@ -112,7 +142,7 @@ export function Sidebar({ isOpen, activeTab, setActiveTab }) {
           <Avatar
             size="small"
             src="/placeholder.svg"
-            alt={userData?.name || "User"}
+            alt={employeeName || "User"}
             style={{ margin: "0 auto" }}
           />
         )}
