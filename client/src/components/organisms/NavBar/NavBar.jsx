@@ -1,40 +1,51 @@
 import React, { useEffect, useState } from "react";
 import styles from "./NavBar.module.css";
-import { MenuOutlined,LogoutOutlined } from "@ant-design/icons";
+import { MenuOutlined, LogoutOutlined } from "@ant-design/icons";
 import { UserOutlined } from "@ant-design/icons";
 import { Button, Layout, Menu, ConfigProvider, Dropdown, Avatar } from "antd";
 import img from "../../../assets/logo.png";
 import { useNavigate } from "react-router-dom";
 import Loading from "../../atoms/loading/loading";
+import { useAuth } from "../../../AuthContext";
 const { Sider } = Layout;
 
 const customTheme = {
-    token: {
-      colorText: "rgb(80, 80, 80)",
+  token: {
+    colorText: "rgb(80, 80, 80)",
+  },
+  components: {
+    Menu: {
+      itemHeight: 50,
+      itemSelectedColor: "rgb(224, 0, 0)",
+      itemSelectedBg: "rgb(230, 230, 230)",
+      itemActiveBg: "rgba(255, 120, 120, 0.53)",
+      itemMarginInline: 10,
+      itemMarginBlock: 14,
+      iconMarginInlineEnd: 16,
     },
-    components: {
-      Menu: {
-        itemHeight: 50,
-        itemSelectedColor: "rgb(224, 0, 0)",
-        itemSelectedBg: "rgb(230, 230, 230)",
-        itemActiveBg: "rgba(255, 120, 120, 0.53)",
-        itemMarginInline: 10,
-        itemMarginBlock: 14,
-        iconMarginInlineEnd: 16,
-      },
-    },
-  };
+  },
+};
 
-const NavBar = ({
-  Comp,
-  titleLines = [],
-  menuItems = [],
-}) => {
+const NavBar = ({ Comp, titleLines = [], menuItems = [] }) => {
   const [collapsed, setCollapsed] = useState(false);
   const [selectedKey, setSelectedKey] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [currentUser, setCurrentUser] = useState("null");
   const navigate = useNavigate();
+  const { authData, logout } = useAuth();
 
+  const setUser = () => {
+    if (authData) {
+      setCurrentUser(authData.user.data.name);
+    }
+    setLoading(false);
+  };
+
+  const handleLogOut = () => {
+    logout();
+    setCurrentUser(null);
+    navigate("/login");
+  };
   const dropdownItems = [
     {
       key: "1",
@@ -53,7 +64,7 @@ const NavBar = ({
           &nbsp;Log out
         </div>
       ),
-      onClick: () => navigate("/login"),
+      onClick: () => handleLogOut(),
     },
   ];
 
@@ -71,20 +82,24 @@ const NavBar = ({
     if (match) setSelectedKey(match.key);
   }, [location.pathname]);
 
+  useEffect(() => {
+    setUser();
+  }, [authData]);
+
   const renderTitle = () => (
     <>
-    <h1 className={styles.navHeader}>
-      {titleLines.map((line, i) => (
-        <div key={i} className={i === 0 ? styles.red : ""}>
-          {collapsed
-            ? line.split(" ").map((word, idx) => (
-                <div key={idx}>{word.charAt(0)}</div>
-              ))
-            : line}
-        </div>
-      ))}
-    </h1>
-    <hr className={styles.line} />
+      <h1 className={styles.navHeader}>
+        {titleLines.map((line, i) => (
+          <div key={i} className={i === 0 ? styles.red : ""}>
+            {collapsed
+              ? line
+                  .split(" ")
+                  .map((word, idx) => <div key={idx}>{word.charAt(0)}</div>)
+              : line}
+          </div>
+        ))}
+      </h1>
+      <hr className={styles.line} />
     </>
   );
 
@@ -142,7 +157,7 @@ const NavBar = ({
                 icon={<UserOutlined />}
               />
               <div className={styles.userDetails}>
-                <div className={styles.userName}>Anjana Edirisinghe</div>
+                <div className={styles.userName}>{currentUser}</div>
                 <div className={styles.userPosition}>HR Manager</div>
               </div>
             </div>

@@ -64,11 +64,7 @@
 .searchBar {
   margin-right: 1vw;
 }
-:global(.ant-select-selector) {
-  font-size: 12px !important;
-  padding: 0;
-  font-family: "Figtree", sans-serif !important;
-}
+
 
 .headRight select {
   font-size: 1vw;
@@ -109,4 +105,11 @@
 Table {
   margin-top: 1vw;
   background-color: rgb(245, 245, 245);
+}
+
+@media(max-width:768px){
+
+  .headLeft{
+    font-size: 15px;
+  }
 }

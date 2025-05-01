@@ -83,7 +83,7 @@
     0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
-img {
+.logo {
   margin: auto;
   width: 150px !important;
 }
@@ -169,3 +169,23 @@ img {
   font-family: "Inter", sans-serif;
   font-size: 0.8vw;
 }
+
+@media (max-width: 768px){
+  .logo{
+    display: none;
+  }
+  .headerContent Button{
+    display: none;
+  }
+  .userInfo{
+
+    margin-left: auto;
+  }
+}
+
+@media(max-width:575px){
+  .userDetails{
+    display: none;
+  }
+}
+
