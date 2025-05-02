@@ -34,6 +34,8 @@ const formItemLayout = {
 const Register = () => {
   const [menu, setMenu] = useState(1);
   const urL = import.meta.env.VITE_BASE_URL;
+  const auth0Url = import.meta.env.VITE_AUTH0_URL;
+  const auth0Id = import.meta.env.VITE_AUTH0_ID;
   const navigate = useNavigate();
   const [id, setId] = useState(null);
   const [email, setEmail] = useState(null);
@@ -91,9 +93,9 @@ const Register = () => {
   const signUpUser = async ({ email, password, id }) => {
     try {
       const res = await axios.post(
-        "https://dev-77pr5yqzs0m53x77.us.auth0.com/dbconnections/signup",
+        `https://${auth0Url}/dbconnections/signup`,
         {
-          client_id: "jPw9tY0jcdhSAhErMaqgdVGYQ6Srh3xs",
+          client_id: auth0Id,
           email,
           username: id,
           password,
@@ -275,7 +277,9 @@ const Register = () => {
                         placeholder="Select Role"
                       >
                         <Option value="HR_ADMIN">Human Resource Manager</Option>
-                        <Option value="KITCHEN_ADMIN">Kitchen Administrator</Option>
+                        <Option value="KITCHEN_ADMIN">
+                          Kitchen Administrator
+                        </Option>
                         <Option value="KITCHEN_STAFF">Kitchen Staff</Option>
                         <Option value="INVENTORY_ADMIN">
                           Inventory Manager
@@ -443,5 +447,3 @@ const Register = () => {
 };
 
 export default Register;
-
-

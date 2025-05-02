@@ -17,10 +17,9 @@ const roleDisplayMap = {
 const roleRouteMap = {
   HR_ADMIN: "/EmployeePage",
   INVENTORY_ADMIN: "/Ingredients",
-  KITCHEN_STAFF: "/kitchen-staff",
+  KITCHEN_STAFF: "/serving",
   KITCHEN_ADMIN: "/kitchen-admin",
 };
-
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -63,16 +62,15 @@ const LoginPage = () => {
             </div>
             <div className={styles.loginname}>
               <p className={styles.username}>{authData.user.name}</p>
-              <p className={styles.userpost}>{roleDisplayMap[authData.user.role]}</p>
+              <p className={styles.userpost}>
+                {roleDisplayMap[authData.user.role]}
+              </p>
             </div>
           </div>
           <p className={styles.loginSubtitle}>Login as:</p>
           <hr className={styles.divider} />
           <div className={styles.buttonGroup}>
-            <button
-              className={styles.customButton}
-              onClick={handleAdminLogin}
-            >
+            <button className={styles.customButton} onClick={handleAdminLogin}>
               Administrator
             </button>
             <button
@@ -82,7 +80,6 @@ const LoginPage = () => {
               Employee
             </button>
           </div>
-
         </div>
       </div>
     </div>
