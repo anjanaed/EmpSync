@@ -35,6 +35,8 @@ import { Toaster } from "sonner";
 import { NotificationsProvider } from "./contexts/NotificationsContext";
 import Attendance from "./components/pages/HR/Attendance/Attendance";
 import EmployeeDetails from "./components/pages/HR/Attendance/EmployeeDetails";
+
+import MealsServing from "./components/pages/ServingStaff/ServingStaff";
 function App() {
   return (
     <Router>
@@ -76,6 +78,9 @@ function App() {
             <Route path="/payslip" element={<PayslipPage />} />
             <Route path="/Attendance" element={<Attendance />} />
             <Route path="/EmployeeDetails" element={<EmployeeDetails />} />
+            <Route path="/MealsServing" element={<MealsServing />} />
+
+           
           </Routes>
         </RootLayout>
       </NotificationsProvider>
