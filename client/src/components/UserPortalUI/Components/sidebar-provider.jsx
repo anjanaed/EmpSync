@@ -46,7 +46,7 @@ export function SidebarProvider({ children }) {
     location.pathname.includes("profile")  || 
     location.pathname.includes("attendance")||
     location.pathname.includes("meals")||
-    location.pathname.includes("userpayroll")||
+    location.pathname.includes("userpayroll2")||
     location.pathname.includes("suggestions");
 
   return (

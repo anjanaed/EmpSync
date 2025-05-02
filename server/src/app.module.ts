@@ -8,13 +8,14 @@ import { IngredientsModule } from './ingredients/ingredients.module';
 import { PayrollModule } from './payroll/payroll.module';
 import { AttendanceModule } from './attendance/attendance.module';
 import {OrdersModule} from './orders/orders.module'
-import { LeaveApplicationModule } from './leave-application/leave-application.module';
 import { ScheduleModule } from './schedule/schedule.module';
 import { AdjustmentModule } from './SalaryAdjustments/adjustment.module';
 import { IndiAdjustmentModule } from './IndividualSalaryAdjustments/inAdjustment.module';
 import { PayeTaxModule } from './PayeTaxSlab/PayeTax.module';
 import { AuthModule } from './auth/auth.module';
 import { ScheduleModule as NestScheduleModule } from '@nestjs/schedule';
+import { ReportModule } from './Reports/reports.module';
+
 
 
 
@@ -24,7 +25,7 @@ import { ScheduleModule as NestScheduleModule } from '@nestjs/schedule';
 @Module({
 
   imports: [
-    NestScheduleModule.forRoot(), // <-- Add this!
+    NestScheduleModule.forRoot(), 
     DatabaseModule,
     UserModule,
     IngredientsModule,
@@ -32,9 +33,9 @@ import { ScheduleModule as NestScheduleModule } from '@nestjs/schedule';
     PayrollModule,
     AttendanceModule,
     OrdersModule,
-    LeaveApplicationModule,
     ScheduleModule, 
     AdjustmentModule,
+    ReportModule,
     IndiAdjustmentModule,
     PayeTaxModule,
     AuthModule,
