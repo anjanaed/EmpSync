@@ -7,12 +7,15 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [authData, setAuthData] = useState(null);
   const urL = import.meta.env.VITE_BASE_URL;
+  const [authLoading, setAuthLoading] = useState(true);
+
 
   useEffect(() => {
     const stored = localStorage.getItem("authData");
     if (stored) {
       setAuthData(JSON.parse(stored));
     }
+    setAuthLoading(false)
   }, []);
 
   const login = async ({ access_token, id_token }) => {
@@ -47,7 +50,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ authData, login, logout }}>
+    <AuthContext.Provider value={{ authData,authLoading, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

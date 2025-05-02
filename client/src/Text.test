@@ -42,7 +42,7 @@ function App() {
       <NotificationsProvider>
         <RootLayout>
           <Routes>
-            <Route path="/" element={<EmployeePage />} />
+            <Route path="/EmployeePage" element={<EmployeePage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/meals" element={<MealsPage />} />
             <Route path="/suggestions" element={<SuggestionsPage />} />

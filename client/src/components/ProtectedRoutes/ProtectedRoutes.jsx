@@ -1,25 +1,35 @@
 import React from "react";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
+import Loading from "../atoms/loading/loading";
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
-  const { authData } = useAuth();
-  const isAuthenticated = !!authData?.accessToken;
-  console.log("User is authenticated......");
+  const { authData, authLoading } = useAuth();
+
+  if (authLoading) {
+    return <Loading />;
+  }
+  console.log(`Authdata: ${authData}`);
+
+  const token = authData.accessToken;
 
   // Redirect unauthenticated users to the login page
-  if (!isAuthenticated) {
-    console.log("User is not authenticated. Redirecting to /login.");
-    return <Navigate to="/" replace />;
+  if (!token) {
+    console.log("User is not authenticated. Redirecting to Login.");
+    return <Navigate to="/login" replace />;
   }
 
-  const userRole = authData?.role;
-  const hasRequiredRole = allowedRoles.includes(userRole);
+  const userRole = authData.user.role;
+
+  const hasRequiredRole = allowedRoles.includes("*") || allowedRoles.includes(userRole);
+
 
   // Redirect unauthorized users to the Unauthorized page
   if (!hasRequiredRole) {
-    console.log(`User role (${userRole}) does not have access. Redirecting to /unauthorized.`);
-    return <Navigate to="/" replace />;
+    console.log(
+      `User role (${userRole}) does not have access. Redirecting to /unauthorized.`
+    );
+    return <Navigate to="/login" replace />;
   }
 
   // Render the protected component if all checks pass

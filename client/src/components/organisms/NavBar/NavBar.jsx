@@ -9,6 +9,14 @@ import Loading from "../../atoms/loading/loading";
 import { useAuth } from "../../../contexts/AuthContext";
 const { Sider } = Layout;
 
+const roleDisplayMap = {
+  HR_ADMIN: "Human Resource Admin",
+  INVENTORY_ADMIN: "Inventory Admin",
+  KITCHEN_STAFF: "Kitchen Staff",
+  KITCHEN_ADMIN: "Kitchen Admin",
+};
+
+
 const customTheme = {
   token: {
     colorText: "rgb(80, 80, 80)",
@@ -36,7 +44,7 @@ const NavBar = ({ Comp, titleLines = [], menuItems = [] }) => {
 
   const setUser = () => {
     if (authData) {
-      setCurrentUser(authData.user.data);
+      setCurrentUser(authData.user);
     }
     setLoading(false);
   };
@@ -44,7 +52,7 @@ const NavBar = ({ Comp, titleLines = [], menuItems = [] }) => {
   const handleLogOut = () => {
     logout();
     setCurrentUser(null);
-    navigate("/");
+    navigate("/login");
   };
   const dropdownItems = [
     {
@@ -158,7 +166,7 @@ const NavBar = ({ Comp, titleLines = [], menuItems = [] }) => {
               />
               <div className={styles.userDetails}>
                 <div className={styles.userName}>{currentUser.name}</div>
-                <div className={styles.userPosition}>{currentUser.role}</div>
+                <div className={styles.userPosition}>{roleDisplayMap[currentUser.role]}</div>
               </div>
             </div>
           </Dropdown>

@@ -12,14 +12,6 @@ import Gbutton from "../../../atoms/button/Button";
 import axios from "axios";
 const { Option } = Select;
 
-const jobSalaryMap = {
-  "HR Manager": 40000,
-  "Kitchen Admin": 50000,
-  "Kitchen Staff": 70000,
-  "Inventory Manager": 90000,
-  Other: 10,
-};
-
 const formItemLayout = {
   labelCol: {
     xs: {
@@ -86,12 +78,11 @@ const Register = () => {
       };
       await axios.post(`${urL}/user`, payload);
       sucNofify("User Registered Successfully");
-      navigate("/");
+      navigate("/EmployeePage");
     } catch (err) {
-      await axios.post(`${urL}/auth/delete`, {email:email});
+      await axios.post(`${urL}/auth/delete`, { email: email });
       console.error("Registration Error:", err);
-      erNofify(`Registration Failed: ${err.response.data.message}`)
-      
+      erNofify(`Registration Failed: ${err.response.data.message}`);
     } finally {
       setLoading(false);
     }
@@ -279,20 +270,14 @@ const Register = () => {
                       <Select
                         onChange={(value) => {
                           setJobRole(value);
-                          const sal =
-                            value !== "Other"
-                              ? jobSalaryMap[value]?.toString()
-                              : "";
-                          setSalary(sal);
-                          form.setFieldsValue({ salary: sal });
                         }}
                         style={{ width: "100%" }}
                         placeholder="Select Role"
                       >
-                        <Option value="HR_Manager">HR Administrator</Option>
-                        <Option value="Kitchen_Admin">Kitchen Admin</Option>
-                        <Option value="Kitchen Staff">Kitchen Staff</Option>
-                        <Option value="Inventory Manager">
+                        <Option value="HR_ADMIN">Human Resource Manager</Option>
+                        <Option value="KITCHEN_ADMIN">Kitchen Administrator</Option>
+                        <Option value="KITCHEN_STAFF">Kitchen Staff</Option>
+                        <Option value="INVENTORY_ADMIN">
                           Inventory Manager
                         </Option>
                         <Option value="Other">Other</Option>
@@ -458,3 +443,5 @@ const Register = () => {
 };
 
 export default Register;
+
+

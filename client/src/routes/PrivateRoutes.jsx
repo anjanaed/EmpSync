@@ -1,8 +1,9 @@
 import React from "react";
 import { Route } from "react-router-dom";
 import ProtectedRoute from "../components/ProtectedRoutes/ProtectedRoutes";
+import LoginRole from "../components/pages/LoginRole/LoginRole";
+import Login from "../components/pages/Login/Login";
 
-// HR_Manager
 import EmployeePage from "../components/pages/HR/EmployeePage/EmployeePage";
 import RegisterPage from "../components/pages/HR/RegisterPage/RegisterPage";
 import ReportPage from "../components/pages/HR/ReportPage/ReportPage";
@@ -12,246 +13,118 @@ import PayslipPage from "../components/pages/HR/PayslipPage/PayslipPage";
 import Attendance from "../components/pages/HR/Attendance/Attendance";
 import EmployeeDetails from "../components/pages/HR/Attendance/EmployeeDetails";
 
-// UserPortal
 import ProfilePage from "../components/UserPortalUI/Profile/Profile";
 import MealsPage from "../components/UserPortalUI/Meals/Meals";
 import SuggestionsPage from "../components/UserPortalUI/Suggestions/Suggestions";
 import AttendancePage from "../components/UserPortalUI/Attendance/Attendance";
 import PayrollDetails from "../components/UserPortalUI/Components/payroll-details";
 
-// Kitchen_Admin
 import KitchenAdmin from "../components/pages/Kitchen Admin/KitchenAdminDashBoard/kitchenAdminDash";
 import Reports from "../components/pages/Kitchen Admin/Report/report";
 import Meals from "../components/pages/Kitchen Admin/MealDash/meal";
 import MealDetailsForm from "../components/pages/Kitchen Admin/Add Meal/addMeal";
 import EditMeal from "../components/pages/Kitchen Admin/Edit Meal/editMeal";
 
-// ServingStaff
 import Serving from "../../src/pages/Serving staff/Barcode Scan/Serving";
 import MealConform from "../../src/pages/Serving staff/Meal Conform/MealConform";
 
-// Inventory_Manager
 import Ingredients from "../components/pages/Ingredient Manager/Dashboard/Ingredients";
 import AnalysisDashboard from "../components/pages/Ingredient Manager/AnalysisDashboard/AnalysisDashboard";
 import OrderReportDashboard from "../components/pages/Ingredient Manager/OrderReportDashboard/OrderReportDashboard";
 import OrderHistory from "../components/pages/Ingredient Manager/OrderHistory/OrderHistory";
 import CostAnalysis from "../components/organisms/Ingredients/Analysis/Cost Analysis/CostAnalysis";
+import LoginRouting from "../components/ProtectedRoutes/LoginRouting";
 
-
-
-const PrivateRoutes = () => (
-  <>
-    {/* HR_Manager Routes */}
-    <Route
-      path="/EmployeePage"
-      element={
-        <ProtectedRoute allowedRoles={["HR_Manager"]}>
-          <EmployeePage />
-        </ProtectedRoute>
-      }
-    />
-    <Route
-      path="/reg"
-      element={
-        <ProtectedRoute allowedRoles={["HR_Manager"]}>
-          <RegisterPage />
-        </ProtectedRoute>
-      }
-    />
-    <Route
-      path="/reportPage"
-      element={
-        <ProtectedRoute allowedRoles={["HR_Manager"]}>
-          <ReportPage />
-        </ProtectedRoute>
-      }
-    />
-    <Route
-      path="/payroll"
-      element={
-        <ProtectedRoute allowedRoles={["HR_Manager"]}>
-          <PayrollPage />
-        </ProtectedRoute>
-      }
-    />
-    <Route
-      path="/adjustment"
-      element={
-        <ProtectedRoute allowedRoles={["HR_Manager"]}>
-          <AdjustmentPage />
-        </ProtectedRoute>
-      }
-    />
-    <Route
-      path="/payslip"
-      element={
-        <ProtectedRoute allowedRoles={["HR_Manager"]}>
-          <PayslipPage />
-        </ProtectedRoute>
-      }
-    />
-    <Route
-      path="/Attendance"
-      element={
-        <ProtectedRoute allowedRoles={["HR_Manager"]}>
-          <Attendance />
-        </ProtectedRoute>
-      }
-    />
-    <Route
-      path="/EmployeeDetails"
-      element={
-        <ProtectedRoute allowedRoles={["HR_Manager"]}>
-          <EmployeeDetails />
-        </ProtectedRoute>
-      }
-    />
-
-    {/* UserPortal Routes */}
-    <Route
-      path="/profile"
-      element={
-        <ProtectedRoute allowedRoles={["UserPortal"]}>
-          <ProfilePage />
-        </ProtectedRoute>
-      }
-    />
-    <Route
-      path="/meals"
-      element={
-        <ProtectedRoute allowedRoles={["UserPortal"]}>
-          <MealsPage />
-        </ProtectedRoute>
-      }
-    />
-    <Route
-      path="/suggestions"
-      element={
-        <ProtectedRoute allowedRoles={["UserPortal"]}>
-          <SuggestionsPage />
-        </ProtectedRoute>
-      }
-    />
-    <Route
-      path="/AttendancePage"
-      element={
-        <ProtectedRoute allowedRoles={["UserPortal"]}>
-          <AttendancePage />
-        </ProtectedRoute>
-      }
-    />
-    <Route
-      path="/userpayroll"
-      element={
-        <ProtectedRoute allowedRoles={["UserPortal"]}>
-          <PayrollDetails />
-        </ProtectedRoute>
-      }
-    />
-
-    {/* Kitchen_Admin Routes */}
-    <Route
-      path="/kitchen-admin"
-      element={
-        <ProtectedRoute allowedRoles={["Kitchen_Admin"]}>
-          <KitchenAdmin />
-        </ProtectedRoute>
-      }
-    />
-    <Route
-      path="/report"
-      element={
-        <ProtectedRoute allowedRoles={["Kitchen_Admin"]}>
-          <Reports />
-        </ProtectedRoute>
-      }
-    />
-    <Route
-      path="/kitchen-meal"
-      element={
-        <ProtectedRoute allowedRoles={["Kitchen_Admin"]}>
-          <Meals />
-        </ProtectedRoute>
-      }
-    />
-    <Route
-      path="/meal-details"
-      element={
-        <ProtectedRoute allowedRoles={["Kitchen_Admin"]}>
-          <MealDetailsForm />
-        </ProtectedRoute>
-      }
-    />
-    <Route
-      path="/edit-meal"
-      element={
-        <ProtectedRoute allowedRoles={["Kitchen_Admin"]}>
-          <EditMeal />
-        </ProtectedRoute>
-      }
-    />
-
-    {/* ServingStaff Routes */}
-    <Route
-      path="/serving"
-      element={
-        <ProtectedRoute allowedRoles={["ServingStaff"]}>
-          <Serving />
-        </ProtectedRoute>
-      }
-    />
-    <Route
-      path="/meal-conform/:id"
-      element={
-        <ProtectedRoute allowedRoles={["ServingStaff"]}>
-          <MealConform />
-        </ProtectedRoute>
-      }
-    />
-
-    {/* Inventory_Manager Routes */}
-    <Route
-      path="/Ingredients"
-      element={
-        <ProtectedRoute allowedRoles={["Inventory_Manager"]}>
-          <Ingredients />
-        </ProtectedRoute>
-      }
-    />
-    <Route
-      path="/CostAnalysis"
-      element={
-        <ProtectedRoute allowedRoles={["Inventory_Manager"]}>
-          <CostAnalysis />
-        </ProtectedRoute>
-      }
-    />
-    <Route
-      path="/AnalysisDashboard"
-      element={
-        <ProtectedRoute allowedRoles={["Inventory_Manager"]}>
-          <AnalysisDashboard />
-        </ProtectedRoute>
-      }
-    />
-    <Route
-      path="/OrderReportDashboard"
-      element={
-        <ProtectedRoute allowedRoles={["Inventory_Manager"]}>
-          <OrderReportDashboard />
-        </ProtectedRoute>
-      }
-    />
-    <Route
-      path="/OrderHistory"
-      element={
-        <ProtectedRoute allowedRoles={["Inventory_Manager"]}>
-          <OrderHistory />
-        </ProtectedRoute>
-      }
-    />
-    
-  </>
+// Helper function for Protected Routes
+const createRoute = (path, component, allowedRoles) => (
+  <Route
+    path={path}
+    element={
+      <ProtectedRoute allowedRoles={allowedRoles}>
+        {component}
+      </ProtectedRoute>
+    }
+  />
 );
+
+const PrivateRoutes = () => {
+  // Routes Map
+  const routeMap = [
+    // Login Route (handled by LoginRouting)
+    {
+      path: "/Login",
+      component: <Login />,
+      allowedRoles: [],
+      isLoginRoute: true, // Special flag to handle differently
+    },
+    {
+      path: "/LoginRole",
+      component: <LoginRole />,
+      allowedRoles: [
+        "HR_ADMIN",
+        "INVENTORY_ADMIN",
+        "KITCHEN_ADMIN",
+        "KITCHEN_STAFF",
+      ],
+    },
+    // HR_ADMIN Routes
+    { path: "/EmployeePage", component: <EmployeePage />, allowedRoles: ["HR_ADMIN"] },
+    { path: "/reg", component: <RegisterPage />, allowedRoles: ["HR_ADMIN"] },
+    { path: "/reportPage", component: <ReportPage />, allowedRoles: ["HR_ADMIN"] },
+    { path: "/payroll", component: <PayrollPage />, allowedRoles: ["HR_ADMIN"] },
+    { path: "/adjustment", component: <AdjustmentPage />, allowedRoles: ["HR_ADMIN"] },
+    { path: "/payslip", component: <PayslipPage />, allowedRoles: ["HR_ADMIN"] },
+    { path: "/Attendance", component: <Attendance />, allowedRoles: ["HR_ADMIN"] },
+    { path: "/EmployeeDetails", component: <EmployeeDetails />, allowedRoles: ["HR_ADMIN"] },
+
+    // UserPortal Routes
+    { path: "/profile", component: <ProfilePage />, allowedRoles: ["*"] },
+    { path: "/meals", component: <MealsPage />, allowedRoles: ["*"] },
+    { path: "/suggestions", component: <SuggestionsPage />, allowedRoles: ["*"] },
+    { path: "/AttendancePage", component: <AttendancePage />, allowedRoles: ["*"] },
+    { path: "/userpayroll", component: <PayrollDetails />, allowedRoles: ["*"] },
+
+    // KITCHEN_ADMIN Routes
+    { path: "/kitchen-admin", component: <KitchenAdmin />, allowedRoles: ["KITCHEN_ADMIN"] },
+    { path: "/report", component: <Reports />, allowedRoles: ["KITCHEN_ADMIN"] },
+    { path: "/kitchen-meal", component: <Meals />, allowedRoles: ["KITCHEN_ADMIN"] },
+    { path: "/meal-details", component: <MealDetailsForm />, allowedRoles: ["KITCHEN_ADMIN"] },
+    { path: "/edit-meal", component: <EditMeal />, allowedRoles: ["KITCHEN_ADMIN"] },
+
+    // ServingStaff Routes
+    { path: "/serving", component: <Serving />, allowedRoles: ["ServingStaff"] },
+    { path: "/meal-conform/:id", component: <MealConform />, allowedRoles: ["ServingStaff"] },
+
+    // INVENTORY_ADMIN Routes
+    { path: "/Ingredients", component: <Ingredients />, allowedRoles: ["INVENTORY_ADMIN"] },
+    { path: "/CostAnalysis", component: <CostAnalysis />, allowedRoles: ["INVENTORY_ADMIN"] },
+    { path: "/AnalysisDashboard", component: <AnalysisDashboard />, allowedRoles: ["INVENTORY_ADMIN"] },
+    { path: "/OrderReportDashboard", component: <OrderReportDashboard />, allowedRoles: ["INVENTORY_ADMIN"] },
+    { path: "/OrderHistory", component: <OrderHistory />, allowedRoles: ["INVENTORY_ADMIN"] },
+  ];
+
+  return (
+    <>
+      {/* Routes */}
+      {routeMap.map(({ path, component, allowedRoles, isLoginRoute }) => {
+        if (isLoginRoute) {
+          return (
+            <Route
+              key={path}
+              path={path}
+              element={
+                <LoginRouting>
+                  {component}
+                </LoginRouting>
+              }
+            />
+          );
+        }
+
+        return createRoute(path, component, allowedRoles);
+      })}
+    </>
+  );
+};
 
 export default PrivateRoutes;
