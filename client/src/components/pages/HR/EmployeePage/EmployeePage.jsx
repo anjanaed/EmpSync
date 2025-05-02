@@ -19,7 +19,7 @@ const EmployeePage = () => {
         key: "1",
         icon: <FontAwesomeIcon icon={faUsers} />,
         label: "Employees",
-        link: "/"
+        link: "/EmployeePage"
       },
       {
         key: "2",

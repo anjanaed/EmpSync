@@ -6,8 +6,16 @@ import { Button, Layout, Menu, ConfigProvider, Dropdown, Avatar } from "antd";
 import img from "../../../assets/logo.png";
 import { useNavigate } from "react-router-dom";
 import Loading from "../../atoms/loading/loading";
-import { useAuth } from "../../../AuthContext";
+import { useAuth } from "../../../contexts/AuthContext";
 const { Sider } = Layout;
+
+const roleDisplayMap = {
+  HR_ADMIN: "Human Resource Admin",
+  INVENTORY_ADMIN: "Inventory Admin",
+  KITCHEN_STAFF: "Kitchen Staff",
+  KITCHEN_ADMIN: "Kitchen Admin",
+};
+
 
 const customTheme = {
   token: {
@@ -36,7 +44,7 @@ const NavBar = ({ Comp, titleLines = [], menuItems = [] }) => {
 
   const setUser = () => {
     if (authData) {
-      setCurrentUser(authData.user.data);
+      setCurrentUser(authData.user);
     }
     setLoading(false);
   };
@@ -158,7 +166,7 @@ const NavBar = ({ Comp, titleLines = [], menuItems = [] }) => {
               />
               <div className={styles.userDetails}>
                 <div className={styles.userName}>{currentUser.name}</div>
-                <div className={styles.userPosition}>{currentUser.role}</div>
+                <div className={styles.userPosition}>{roleDisplayMap[currentUser.role]}</div>
               </div>
             </div>
           </Dropdown>

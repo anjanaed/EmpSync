@@ -12,14 +12,6 @@ import Gbutton from "../../../atoms/button/Button";
 import axios from "axios";
 const { Option } = Select;
 
-const jobSalaryMap = {
-  "HR Manager": 40000,
-  "Kitchen Admin": 50000,
-  "Kitchen Staff": 70000,
-  "Inventory Manager": 90000,
-  Other: 10,
-};
-
 const formItemLayout = {
   labelCol: {
     xs: {
@@ -42,6 +34,8 @@ const formItemLayout = {
 const Register = () => {
   const [menu, setMenu] = useState(1);
   const urL = import.meta.env.VITE_BASE_URL;
+  const auth0Url = import.meta.env.VITE_AUTH0_URL;
+  const auth0Id = import.meta.env.VITE_AUTH0_ID;
   const navigate = useNavigate();
   const [id, setId] = useState(null);
   const [email, setEmail] = useState(null);
@@ -86,12 +80,11 @@ const Register = () => {
       };
       await axios.post(`${urL}/user`, payload);
       sucNofify("User Registered Successfully");
-      navigate("/");
+      navigate("/EmployeePage");
     } catch (err) {
-      await axios.post(`${urL}/auth/delete`, {email:email});
+      await axios.post(`${urL}/auth/delete`, { email: email });
       console.error("Registration Error:", err);
-      erNofify(`Registration Failed: ${err.response.data.message}`)
-      
+      erNofify(`Registration Failed: ${err.response.data.message}`);
     } finally {
       setLoading(false);
     }
@@ -100,9 +93,9 @@ const Register = () => {
   const signUpUser = async ({ email, password, id }) => {
     try {
       const res = await axios.post(
-        "https://dev-77pr5yqzs0m53x77.us.auth0.com/dbconnections/signup",
+        `https://${auth0Url}/dbconnections/signup`,
         {
-          client_id: "jPw9tY0jcdhSAhErMaqgdVGYQ6Srh3xs",
+          client_id: auth0Id,
           email,
           username: id,
           password,
@@ -279,20 +272,16 @@ const Register = () => {
                       <Select
                         onChange={(value) => {
                           setJobRole(value);
-                          const sal =
-                            value !== "Other"
-                              ? jobSalaryMap[value]?.toString()
-                              : "";
-                          setSalary(sal);
-                          form.setFieldsValue({ salary: sal });
                         }}
                         style={{ width: "100%" }}
                         placeholder="Select Role"
                       >
-                        <Option value="HR_Manager">HR Administrator</Option>
-                        <Option value="Kitchen_Admin">Kitchen Admin</Option>
-                        <Option value="Kitchen Staff">Kitchen Staff</Option>
-                        <Option value="Inventory Manager">
+                        <Option value="HR_ADMIN">Human Resource Manager</Option>
+                        <Option value="KITCHEN_ADMIN">
+                          Kitchen Administrator
+                        </Option>
+                        <Option value="KITCHEN_STAFF">Kitchen Staff</Option>
+                        <Option value="INVENTORY_ADMIN">
                           Inventory Manager
                         </Option>
                         <Option value="Other">Other</Option>

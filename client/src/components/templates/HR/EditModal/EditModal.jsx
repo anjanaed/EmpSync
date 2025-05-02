@@ -344,16 +344,16 @@ const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
                               style={{ width: "100%" }}
                               placeholder="Select Role"
                             >
-                              <Select.Option value="HrManager">
-                                HR Administrator
+                              <Select.Option value="HR_ADMIN">
+                                Human Resources Manager
                               </Select.Option>
-                              <Select.Option value="KitchenAdmin">
-                                Kitchen Admin
+                              <Select.Option value="KITCHEN_ADMIN">
+                                Kitchen Administrator
                               </Select.Option>
-                              <Select.Option value="KitchenStaff">
+                              <Select.Option value="KITCHEN_STAFF">
                                 Kitchen Staff
                               </Select.Option>
-                              <Select.Option value="InventoryManager">
+                              <Select.Option value="INVENTORY_ADMIN">
                                 Inventory Manager
                               </Select.Option>
                               <Select.Option value="Other">Other</Select.Option>

@@ -1,5 +1,7 @@
-import { useState } from "react";
+import { useState, useContext, useEffect } from "react";
 import { Form, Input, Button, Card, Avatar, Divider, Typography, message, Select } from "antd";
+import { UserContext } from "../../../contexts/UserContext";
+import axios from "axios";
 
 const { TextArea } = Input;
 const { Title, Paragraph } = Typography;
@@ -7,29 +9,69 @@ const { Option } = Select;
 
 export function ProfileForm() {
   const [isEditing, setIsEditing] = useState(false);
-
-  // Default values for the form
-  const defaultValues = {
-    employeeId: "EMP-1234",
-    firstName: "John",
-    lastName: "Doe",
-    email: "john.doe@company.com",
-    phone: "+1 (555) 123-4567",
-    department: "Engineering",
-    position: "Senior Developer",
-    joinDate: "2020-01-15",
-    address: "123 Main St, Anytown, USA",
-    height: "175", // in cm
-    weight: "70", // in kg
-    bio: "Experienced software developer with a passion for creating efficient and user-friendly applications.",
-    gender: "Male", // Default gender value
-  };
-
+  const userData = useContext(UserContext); // Access user data from UserContext
   const [form] = Form.useForm();
 
-  const onSubmit = (values) => {
-    message.success("Your profile has been updated successfully.");
-    setIsEditing(false);
+  // Set form values when userData is loaded
+  useEffect(() => {
+    if (userData) {
+      form.setFieldsValue({
+        employeeId: userData.id || "EMP12345",
+        email: userData.email || "user@example.com",
+        fullName: userData.name || "John Doe",
+        password: userData.password || "Password",
+        role: userData.role || "Software Engineer",
+        salary: userData.salary,
+        phone: userData.telephone || "123-456-7890",
+        birthday: userData.dob || "1990-01-01",
+        language: userData.language || "English",
+        joinDate: userData.createdAt,
+        address: userData.address || "123 Main St, City, Country",
+        gender: userData.gender || "Male",
+        height: userData.height || 0,
+        weight: userData.weight || 0,
+      });
+    }
+  }, [userData, form]);
+
+  const onSubmit = async (values) => {
+    try {
+      const userId = userData?.id;
+
+      if (!userId) {
+        message.error("User ID is missing. Unable to update profile.");
+        return;
+      }
+
+      const payload = {
+        id: userId,
+        name: values.fullName,
+        role: values.role,
+        dob: values.birthday ? values.birthday.split("T")[0] : null,
+        telephone: values.phone,
+        gender: values.gender,
+        address: values.address,
+        email: values.email,
+        password: values.password,
+        salary: values.salary,
+        thumbId: null,
+        supId: null,
+        language: values.language,
+        height: values.height && values.height !== "0" ? parseInt(values.height, 10) : null,
+        weight: values.weight && values.weight !== "0" ? parseInt(values.weight, 10) : null,
+        createdAt: userData.createdAt,
+      };
+
+      console.log("Dataset to be sent to the backend:", payload);
+
+      await axios.put(`http://localhost:3000/user/${userId}`, payload);
+
+      message.success("Your profile has been updated successfully.");
+      setIsEditing(false);
+    } catch (error) {
+      console.error("Failed to update profile:", error);
+      message.error("Failed to update profile. Please try again.");
+    }
   };
 
   return (
@@ -50,7 +92,13 @@ export function ProfileForm() {
                 <Button onClick={() => setIsEditing(false)} style={{ marginRight: "8px" }}>
                   Cancel
                 </Button>
-                <Button type="primary" onClick={() => form.submit()}>
+                <Button
+                  type="primary"
+                  onClick={() => {
+                    form.submit();
+                    window.location.reload();
+                  }}
+                >
                   Save Changes
                 </Button>
               </>
@@ -73,7 +121,6 @@ export function ProfileForm() {
             <Form
               form={form}
               layout="vertical"
-              initialValues={defaultValues}
               onFinish={onSubmit}
               disabled={!isEditing}
             >
@@ -81,26 +128,36 @@ export function ProfileForm() {
                 <Form.Item label="Employee ID" name="employeeId">
                   <Input disabled />
                 </Form.Item>
-                <Form.Item label="First Name" name="firstName">
-                  <Input />
-                </Form.Item>
-                <Form.Item label="Last Name" name="lastName">
-                  <Input />
-                </Form.Item>
                 <Form.Item label="Email" name="email">
+                  <Input disabled />
+                </Form.Item>
+                <Form.Item label="Full Name" name="fullName">
                   <Input />
+                </Form.Item>
+                <Form.Item label="Password" name="password">
+                  <Input.Password visibilityToggle={isEditing} />
+                </Form.Item>
+                <Form.Item label="Role" name="role">
+                  <Input disabled />
+                </Form.Item>
+                <Form.Item label="Salary" name="salary">
+                  <Input disabled />
                 </Form.Item>
                 <Form.Item label="Phone" name="phone">
                   <Input />
                 </Form.Item>
-                <Form.Item label="Department" name="department">
-                  <Input />
-                </Form.Item>
-                <Form.Item label="Position" name="position">
-                  <Input />
+                <Form.Item label="Birthday" name="birthday">
+                  <Input type="date" />
                 </Form.Item>
                 <Form.Item label="Join Date" name="joinDate">
-                  <Input type="date" />
+                  <Input disabled />
+                </Form.Item>
+                <Form.Item label="Preferred Language" name="language">
+                  <Select>
+                    <Option value="Sinhala">Sinhala</Option>
+                    <Option value="Tamil">Tamil</Option>
+                    <Option value="English">English</Option>
+                  </Select>
                 </Form.Item>
                 <Form.Item label="Address" name="address">
                   <Input />
@@ -118,11 +175,7 @@ export function ProfileForm() {
                 <Form.Item label="Weight (kg)" name="weight">
                   <Input type="number" />
                 </Form.Item>
-                
               </div>
-              <Form.Item label="Bio" name="bio">
-                <TextArea rows={4} />
-              </Form.Item>
             </Form>
           </div>
         </div>
