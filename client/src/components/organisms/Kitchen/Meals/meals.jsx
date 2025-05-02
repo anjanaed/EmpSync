@@ -21,8 +21,10 @@ import {
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowUpRightFromSquare, faUtensils } from "@fortawesome/free-solid-svg-icons";
-
+import {
+  faArrowUpRightFromSquare,
+  faUtensils,
+} from "@fortawesome/free-solid-svg-icons";
 
 // Then in your JSX:
 <FontAwesomeIcon icon={faUtensils} className={styles.emptyIcon} />;
@@ -164,7 +166,7 @@ const AvailableMeals = () => {
     navigate("/edit-meal", { state: { meal } });
   };
 
-  // Fetch ingredient details by ID
+  // Update the fetchIngredientDetails function to work with the new schema
   const fetchIngredientDetails = async (ingredientId) => {
     try {
       const response = await fetch(
@@ -181,42 +183,26 @@ const AvailableMeals = () => {
     }
   };
 
-  // Function to show ingredients modal and fetch ingredient details
+  // Update the showIngredientsModal function
   const showIngredientsModal = async (meal) => {
     setSelectedMeal(meal);
     setIngredientsModalVisible(true);
     setFetchingIngredients(true);
 
-    const ingredientIds = [];
-    // Extract ingredient IDs from the ingredients array
-    if (meal.ingredients && meal.ingredients.length > 0) {
-      meal.ingredients.forEach((item) => {
-        if (typeof item === "string" && item.includes(":")) {
-          const [id] = item.split(":");
-          ingredientIds.push(id);
-        }
-      });
-    }
-
-    // Fetch details for all ingredients
-    if (ingredientIds.length > 0) {
+    try {
+      // No need to fetch ingredients separately since they're included in the meal data
       const detailsMap = {};
-
-      try {
-        // Fetch details for each ingredient
-        const promises = ingredientIds.map((id) => fetchIngredientDetails(id));
-        const results = await Promise.all(promises);
-
-        // Map the results to ingredient IDs
-        ingredientIds.forEach((id, index) => {
-          detailsMap[id] = results[index];
+      if (meal.ingredients && meal.ingredients.length > 0) {
+        meal.ingredients.forEach((item) => {
+          if (item.ingredient) {
+            detailsMap[item.ingredientId] = item.ingredient;
+          }
         });
-
-        setIngredientDetails(detailsMap);
-      } catch (error) {
-        console.error("Error fetching ingredient details:", error);
-        message.error("Failed to load ingredient details");
       }
+      setIngredientDetails(detailsMap);
+    } catch (error) {
+      console.error("Error processing ingredient details:", error);
+      message.error("Failed to load ingredient details");
     }
 
     setFetchingIngredients(false);
@@ -423,7 +409,8 @@ const AvailableMeals = () => {
         </Row>
       )}
 
-      {/* Ingredients Modal */}
+
+      {/* {Ingredient modal} */}
       <Modal
         title={
           selectedMeal
@@ -443,49 +430,30 @@ const AvailableMeals = () => {
         ]}
       >
         {fetchingIngredients ? (
-          <div
-            className={styles.loadingContainer}
-            style={{ textAlign: "center", padding: "20px" }}
-          >
+          <div className={styles.loadingContainer}>
             <Spin size="large" />
-            <p style={{ marginTop: "10px" }}>Loading ingredients...</p>
+            <p>Loading ingredients...</p>
           </div>
         ) : (
           selectedMeal && (
             <List
-              dataSource={
-                selectedMeal.ingredients || ["No ingredients available"]
-              }
-              renderItem={(item) => {
-                // Check if item is a string in "id:quantity" format
-                if (typeof item === "string" && item.includes(":")) {
-                  const [id, quantity] = item.split(":");
-                  const ingredientData = ingredientDetails[id];
-
-                  return (
-                    <List.Item>
-                      <List.Item.Meta
-                        title={
-                          <div className={styles.ingredientItem}>
-                            <span className={styles.ingredientName}>
-                              {ingredientData ? ingredientData.name : id}
-                            </span>
-                            <span className={styles.ingredientQuantity}>
-                              : {quantity}g
-                            </span>
-                          </div>
-                        }
-                      />
-                    </List.Item>
-                  );
-                } else {
-                  // If item doesn't match expected format, display as is
-                  return (
-                    <List.Item>
-                      <List.Item.Meta title={item} />
-                    </List.Item>
-                  );
-                }
+              dataSource={selectedMeal.ingredients || []}
+              renderItem={(item) => (
+                <List.Item>
+                  <List.Item.Meta
+                    title={
+                      <div className={styles.ingredientItem}>
+                        <span className={styles.ingredientName}>
+                          {item.ingredient?.name || "Unknown Ingredient"}
+                        </span>
+                      </div>
+                    }
+                    
+                  />
+                </List.Item>
+              )}
+              locale={{
+                emptyText: "No ingredients available",
               }}
             />
           )

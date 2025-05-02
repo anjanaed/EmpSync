@@ -241,3 +241,21 @@
     width: 100%;
   }
 }
+
+.ingredientItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.ingredientName {
+  font-weight: 300;
+  color: rgba(0, 0, 0, 0.85);
+}
+
+
+.loadingContainer {
+  text-align: center;
+  padding: 20px;
+}
+

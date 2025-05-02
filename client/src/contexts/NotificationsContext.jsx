@@ -79,24 +79,24 @@ export const NotificationsProvider = ({ children }) => {
             `http://localhost:3000/schedule/${formattedDate}`
           );
           const schedule = scheduleResponse.data;
-          console.log(`Schedule found for ${formattedDate}:`, schedule);
+          // console.log(`Schedule found for ${formattedDate}:`, schedule);
 
-          console.log(`Schedule for ${formattedDate} exists:`, !!schedule);
-          console.log(`Schedule.confirmed property:`, schedule.confirmed);
-          console.log(`Type of confirmed property:`, typeof schedule.confirmed);
-          console.log(`Schedule confirmed status: ${schedule?.confirmed}`);
+          // console.log(`Schedule for ${formattedDate} exists:`, !!schedule);
+          // console.log(`Schedule.confirmed property:`, schedule.confirmed);
+          // console.log(`Type of confirmed property:`, typeof schedule.confirmed);
+          // console.log(`Schedule confirmed status: ${schedule?.confirmed}`);
 
           if (schedule && schedule.confirmed !== true) {
             const confirmDeadline = new Date(checkDate);
             confirmDeadline.setDate(confirmDeadline.getDate() - 2);
             const deadlineString = confirmDeadline.toISOString().split("T")[0];
 
-            console.log(`Today: ${todayString}, Deadline: ${deadlineString}`);
+            // console.log(`Today: ${todayString}, Deadline: ${deadlineString}`);
 
             // Notify before or on deadline, as long as schedule is unconfirmed
             if (todayString <= deadlineString) {
               const urgency = i === 2 ? "warning" : "info";
-              console.log(`Adding ${formattedDate} to unconfirmed list with urgency: ${urgency}`);
+              // console.log(`Adding ${formattedDate} to unconfirmed list with urgency: ${urgency}`);
 
               unconfirmedSchedules.push({
                 scheduleDate: formattedDate,
@@ -105,27 +105,27 @@ export const NotificationsProvider = ({ children }) => {
                 urgency,
               });
             } else {
-              console.log(`Deadline passed for ${formattedDate}, skipping`);
+              // console.log(`Deadline passed for ${formattedDate}, skipping`);
             }
           } else {
             console.log(
-              `Schedule for ${formattedDate} is already confirmed or invalid. Confirmed value: ${schedule?.confirmed}`
+              // `Schedule for ${formattedDate} is already confirmed or invalid. Confirmed value: ${schedule?.confirmed}`
             );
           }
         } catch (error) {
-          console.log(`No schedule found for ${formattedDate}`, error);
+          // console.log(`No schedule found for ${formattedDate}`, error);
         }
       }
 
-      console.log("Unconfirmed schedules that need attention:", unconfirmedSchedules);
+      // console.log("Unconfirmed schedules that need attention:", unconfirmedSchedules);
 
       if (unconfirmedSchedules.length > 0) {
-        console.log(`Creating ${unconfirmedSchedules.length} notifications`);
+        // console.log(`Creating ${unconfirmedSchedules.length} notifications`);
         const options = { weekday: "long", month: "short", day: "numeric" };
 
         unconfirmedSchedules.forEach((schedule) => {
           const formattedDate = schedule.date.toLocaleDateString("en-US", options);
-          console.log(`Creating notification for ${formattedDate}`);
+          // console.log(`Creating notification for ${formattedDate}`);
 
           let title = "";
           let message = "";
@@ -149,7 +149,7 @@ export const NotificationsProvider = ({ children }) => {
             actionType: "confirm",
           };
 
-          console.log("New notification:", newNotification);
+          // console.log("New notification:", newNotification);
 
           setNotifications((prev) => {
             const exists = prev.some(
@@ -158,18 +158,18 @@ export const NotificationsProvider = ({ children }) => {
                 n.actionType === "confirm"
             );
             if (!exists) {
-              console.log("Adding notification to list");
+              // console.log("Adding notification to list");
               return [...prev, newNotification];
             }
-            console.log("Similar notification already exists, not adding");
+            // console.log("Similar notification already exists, not adding");
             return prev;
           });
         });
       } else {
-        console.log("No unconfirmed schedules requiring notifications");
+        // console.log("No unconfirmed schedules requiring notifications");
       }
     } catch (error) {
-      console.error("Error fetching schedules for confirmation check:", error);
+      // console.error("Error fetching schedules for confirmation check:", error);
     }
   };
 
@@ -290,7 +290,7 @@ export const NotificationsProvider = ({ children }) => {
         });
       }
     } catch (error) {
-      console.error("Error fetching schedules:", error);
+      // console.error("Error fetching schedules:", error);
       // Create an error notification
       const errorNotification = {
         id: Date.now(),
@@ -317,7 +317,7 @@ export const NotificationsProvider = ({ children }) => {
   // Function to confirm a schedule
   const confirmSchedule = async (scheduleDate) => {
     try {
-      console.log(`Confirming schedule for date: ${scheduleDate}`);
+      // console.log(`Confirming schedule for date: ${scheduleDate}`);
       await axios.patch(`http://localhost:3000/schedule/${scheduleDate}/confirm`, {
         confirmed: true,
       });
@@ -348,7 +348,7 @@ export const NotificationsProvider = ({ children }) => {
       // Refresh the schedules
       checkUnconfirmedSchedules();
     } catch (error) {
-      console.error("Error confirming schedule:", error);
+      // console.error("Error confirming schedule:", error);
 
       // Add an error notification
       const errorNotification = {

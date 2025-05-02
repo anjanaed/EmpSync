@@ -10,7 +10,6 @@ import {
   message,
   Modal,
   Checkbox,
-  InputNumber,
   Spin,
   Select,
 } from "antd";
@@ -24,7 +23,12 @@ import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 // Import Firebase services
 import { storage } from "../../../../firebase/config";
-import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
+import {
+  ref,
+  uploadBytes,
+  getDownloadURL,
+  deleteObject,
+} from "firebase/storage";
 
 const { TextArea } = Input;
 const { Title } = Typography;
@@ -35,7 +39,8 @@ const EditMealPage = () => {
   const [imageUrl, setImageUrl] = useState(null);
   const [originalImageUrl, setOriginalImageUrl] = useState(null); // Store original image URL
   const fileInputRef = useRef(null);
-  const [isIngredientsModalVisible, setIsIngredientsModalVisible] = useState(false);
+  const [isIngredientsModalVisible, setIsIngredientsModalVisible] =
+    useState(false);
   const [loadingIngredients, setLoadingIngredients] = useState(false);
   const [searchIngredient, setSearchIngredient] = useState("");
   const [selectedIngredients, setSelectedIngredients] = useState([]);
@@ -44,11 +49,10 @@ const EditMealPage = () => {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [imageFile, setImageFile] = useState(null);
-  const [uploadProgress, setUploadProgress] = useState(0);
 
   const navigate = useNavigate();
   const location = useLocation();
-  
+
   // Define parseIngredientsFromMealData function first
   const parseIngredientsFromMealData = async (ingredientsArray) => {
     if (!ingredientsArray || ingredientsArray.length === 0) {
@@ -57,40 +61,44 @@ const EditMealPage = () => {
 
     try {
       // First, fetch all ingredients to get their names
-      const response = await fetch("http://localhost:3000/Ingredients/optimized");
+      const response = await fetch(
+        "http://localhost:3000/Ingredients/optimized"
+      );
       if (!response.ok) {
         throw new Error("Failed to fetch ingredients data");
       }
 
       const data = await response.json();
-      
+
       // Combine both ingredient arrays from the API
-      const priority1Ingredients = Array.isArray(data.priority1Ingredients) 
-        ? data.priority1Ingredients 
+      const priority1Ingredients = Array.isArray(data.priority1Ingredients)
+        ? data.priority1Ingredients
         : [];
-      const optimizedIngredients = Array.isArray(data.optimizedIngredients) 
-        ? data.optimizedIngredients 
+      const optimizedIngredients = Array.isArray(data.optimizedIngredients)
+        ? data.optimizedIngredients
         : [];
       const allIngredients = [...priority1Ingredients, ...optimizedIngredients];
-      
+
       // Create a map of ingredient IDs to their full details for quick lookup
       const ingredientsMap = {};
-      allIngredients.forEach(ing => {
+      allIngredients.forEach((ing) => {
         ingredientsMap[ing.id] = ing;
       });
 
       console.log("Ingredients map:", ingredientsMap);
-      console.log("Processing ingredient strings:", ingredientsArray);
+      console.log("Processing ingredients:", ingredientsArray);
 
-      // Parse the meal's ingredients which are in format "id:quantity"
-      const parsedIngredients = ingredientsArray.map(ingredientString => {
-        const [ingredientId, quantity] = ingredientString.split(':');
+      // Parse the meal's ingredients which are now just ingredient IDs
+      const parsedIngredients = ingredientsArray.map((ingredient) => {
+        const ingredientId = ingredient.ingredientId || ingredient;
         const ingredientDetails = ingredientsMap[ingredientId];
-        
+
         return {
           id: ingredientId,
-          name: ingredientDetails ? ingredientDetails.name : `Ingredient ID: ${ingredientId}`,
-          quantity: parseInt(quantity, 10) || 0
+          name: ingredientDetails
+            ? ingredientDetails.name
+            : `Ingredient ID: ${ingredientId}`,
+          selected: true,
         };
       });
 
@@ -99,12 +107,12 @@ const EditMealPage = () => {
     } catch (error) {
       console.error("Error parsing ingredients:", error);
       // Fallback parsing if API fetch fails
-      return ingredientsArray.map(ingredientString => {
-        const [ingredientId, quantity] = ingredientString.split(':');
+      return ingredientsArray.map((ingredient) => {
+        const ingredientId = ingredient.ingredientId || ingredient;
         return {
           id: ingredientId,
           name: `Ingredient ID: ${ingredientId}`,
-          quantity: parseInt(quantity, 10) || 0
+          selected: true,
         };
       });
     }
@@ -120,10 +128,14 @@ const EditMealPage = () => {
         setOriginalImageUrl(meal.imageUrl); // Store the original image URL
 
         // Ensure category is treated as an array
-        const mealCategories = Array.isArray(meal.category) ? meal.category : 
-                              (meal.category ? [meal.category] : []);
+        const mealCategories = Array.isArray(meal.category)
+          ? meal.category
+          : meal.category
+          ? [meal.category]
+          : [];
 
         form.setFieldsValue({
+          id: meal.id,
           nameEnglish: meal.nameEnglish,
           nameSinhala: meal.nameSinhala,
           nameTamil: meal.nameTamil,
@@ -135,7 +147,9 @@ const EditMealPage = () => {
         // Parse and set the selected ingredients
         if (meal.ingredients && meal.ingredients.length > 0) {
           try {
-            const parsedIngredients = await parseIngredientsFromMealData(meal.ingredients);
+            const parsedIngredients = await parseIngredientsFromMealData(
+              meal.ingredients
+            );
             console.log("Parsed ingredients:", parsedIngredients);
             setSelectedIngredients(parsedIngredients);
           } catch (error) {
@@ -157,7 +171,9 @@ const EditMealPage = () => {
   const fetchIngredients = async () => {
     setLoadingIngredients(true);
     try {
-      const response = await fetch("http://localhost:3000/Ingredients/optimized");
+      const response = await fetch(
+        "http://localhost:3000/Ingredients/optimized"
+      );
       if (!response.ok) {
         throw new Error("Failed to fetch ingredients");
       }
@@ -185,8 +201,7 @@ const EditMealPage = () => {
         return {
           id: ingredient.id,
           name: ingredient.name,
-          quantity: existingIngredient ? existingIngredient.quantity : 0,
-          selected: Boolean(existingIngredient)
+          selected: Boolean(existingIngredient),
         };
       });
 
@@ -215,32 +230,35 @@ const EditMealPage = () => {
   // Function to delete the old image from Firebase
   const deleteImageFromFirebase = async (imageUrl) => {
     if (!imageUrl) return true; // No image to delete
-    
+
     try {
       // Check if this is a Firebase Storage URL
-      if (!imageUrl.includes('firebasestorage.googleapis.com')) {
-        console.warn("Image URL doesn't appear to be from Firebase Storage:", imageUrl);
+      if (!imageUrl.includes("firebasestorage.googleapis.com")) {
+        console.warn(
+          "Image URL doesn't appear to be from Firebase Storage:",
+          imageUrl
+        );
         return false;
       }
-      
+
       // Extract the file path from the URL
       let urlPath;
-      if (imageUrl.startsWith('gs://')) {
+      if (imageUrl.startsWith("gs://")) {
         // Handle gs:// protocol format
-        urlPath = imageUrl.replace(/^gs:\/\/[^\/]+\//, '');
+        urlPath = imageUrl.replace(/^gs:\/\/[^\/]+\//, "");
       } else {
         // Handle https:// format
-        urlPath = decodeURIComponent(imageUrl.split('/o/')[1]?.split('?')[0]);
+        urlPath = decodeURIComponent(imageUrl.split("/o/")[1]?.split("?")[0]);
       }
-      
+
       if (!urlPath) {
         console.warn("Could not parse image URL for deletion:", imageUrl);
         return false;
       }
-      
+
       // Create a reference to the file to delete
       const imageRef = ref(storage, urlPath);
-      
+
       // Delete the file
       await deleteObject(imageRef);
       console.log("Old image successfully deleted from Firebase Storage");
@@ -284,6 +302,11 @@ const EditMealPage = () => {
       return;
     }
 
+    if (selectedIngredients.length === 0) {
+      message.warning("Please select at least one ingredient for the meal");
+      return;
+    }
+
     setSubmitting(true);
 
     try {
@@ -291,13 +314,8 @@ const EditMealPage = () => {
 
       // Only upload to Firebase if a new image was selected
       if (imageFile) {
-        // message.loading({ content: "Uploading image...", key: "imageUpload" });
         finalImageUrl = await uploadImageToFirebase(imageFile);
-        // message.success({
-        //   content: "Image uploaded successfully",
-        //   key: "imageUpload",
-        // });
-        
+
         // If we have a new image and there was an old image, delete the old one
         if (originalImageUrl && originalImageUrl !== finalImageUrl) {
           console.log("Deleting old image:", originalImageUrl);
@@ -310,15 +328,18 @@ const EditMealPage = () => {
         }
       }
 
-      // Format ingredients to match the expected format ["ingredientId:quantity"]
-      const formattedIngredients = selectedIngredients.map(
-        (ing) => `${ing.id}:${ing.quantity}`
-      );
+      // Format ingredients to match the new format [{ ingredientId: "id" }]
+      const ingredientsData = selectedIngredients.map((ingredient) => ({
+        ingredientId: ingredient.id,
+      }));
 
       // Ensure category is an array
-      const categoryArray = Array.isArray(values.category) ? values.category : 
-                          (values.category ? [values.category] : []);
-      
+      const categoryArray = Array.isArray(values.category)
+        ? values.category
+        : values.category
+        ? [values.category]
+        : [];
+
       // Prepare the data to be sent to the API
       const updateData = {
         nameEnglish: values.nameEnglish,
@@ -328,7 +349,7 @@ const EditMealPage = () => {
         price: parseFloat(values.price),
         imageUrl: finalImageUrl,
         category: categoryArray, // Send as array
-        ingredients: formattedIngredients,
+        ingredients: ingredientsData, // New format for ingredients
       };
 
       console.log("Sending update data:", updateData);
@@ -352,11 +373,11 @@ const EditMealPage = () => {
       }
     } catch (error) {
       console.error("Error updating meal:", error);
-      
+
       if (error.response) {
         console.error("Response data:", error.response.data);
         console.error("Response status:", error.response.status);
-        
+
         if (error.response.status === 413) {
           message.error(
             "Request entity too large. Image may be too big or data package exceeds server limits."
@@ -431,19 +452,9 @@ const EditMealPage = () => {
     );
   };
 
-  const handleQuantityChange = (id, value) => {
-    setIngredients(
-      ingredients.map((ingredient) =>
-        ingredient.id === id ? { ...ingredient, quantity: value } : ingredient
-      )
-    );
-  };
-
   const handleIngredientsConfirm = () => {
-    const selected = ingredients.filter(
-      (ingredient) => ingredient.selected && ingredient.quantity > 0
-    );
-    
+    const selected = ingredients.filter((ingredient) => ingredient.selected);
+
     console.log("Selected ingredients from modal:", selected);
     setSelectedIngredients(selected);
     setIsIngredientsModalVisible(false);
@@ -535,6 +546,14 @@ const EditMealPage = () => {
 
               <Col xs={24} md={14}>
                 <Form.Item
+                  label="Meal ID"
+                  name="id"
+                  rules={[{ required: true, message: "Please enter Meal Id" }]}
+                >
+                  <Input disabled   />
+                </Form.Item>
+
+                <Form.Item
                   label="Name"
                   required
                   style={{ marginBottom: "8px" }}
@@ -599,13 +618,16 @@ const EditMealPage = () => {
                   label="Category"
                   name="category"
                   rules={[
-                    { required: true, message: "Please select at least one category" },
+                    {
+                      required: true,
+                      message: "Please select at least one category",
+                    },
                   ]}
                 >
-                  <Select 
+                  <Select
                     mode="multiple"
                     placeholder="Select categories"
-                    style={{ width: '100%' }}
+                    style={{ width: "100%" }}
                   >
                     <Option value="Breakfast">Breakfast</Option>
                     <Option value="Lunch">Lunch</Option>
@@ -630,12 +652,17 @@ const EditMealPage = () => {
 
                 {/* Selected Ingredients Display */}
                 <div className={styles.selectedIngredientsContainer}>
-                  <p className={styles.selectedIngredientsTitle}>Selected Ingredients:</p>
+                  <p className={styles.selectedIngredientsTitle}>
+                    Selected Ingredients:
+                  </p>
                   {selectedIngredients.length > 0 ? (
                     <ul className={styles.selectedIngredientsList}>
                       {selectedIngredients.map((ingredient) => (
-                        <li key={ingredient.id} className={styles.selectedIngredientItem}>
-                          {ingredient.name} - {ingredient.quantity}g
+                        <li
+                          key={ingredient.id}
+                          className={styles.selectedIngredientItem}
+                        >
+                          {ingredient.name}
                         </li>
                       ))}
                     </ul>
@@ -710,17 +737,6 @@ const EditMealPage = () => {
                     {ingredient.name} (ID: {ingredient.id})
                   </Checkbox>
                 </div>
-                {ingredient.selected && (
-                  <InputNumber
-                    min={0}
-                    value={ingredient.quantity}
-                    onChange={(value) =>
-                      handleQuantityChange(ingredient.id, value)
-                    }
-                    className={styles.quantityInput}
-                    placeholder="In Grams"
-                  />
-                )}
               </div>
             ))
           ) : (
