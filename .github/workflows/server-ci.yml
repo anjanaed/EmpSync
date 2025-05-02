@@ -23,6 +23,7 @@ jobs:
 
     env:
       DATABASE_URL: postgresql://postgres:mysecretpassword@localhost:5432/mydatabase
+      DIRECT_URL : postgresql://postgres:mysecretpassword@localhost:5432/mydatabase
 
 
     steps:

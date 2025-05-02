@@ -10,8 +10,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model User {
@@ -180,3 +181,10 @@ model PayeTaxSlab{
   taxRate Float
 }
 
+model Reports{
+  id Int @id @default(autoincrement())
+  name String
+  requestStatus Boolean
+  link String
+
+}

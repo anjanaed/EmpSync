@@ -1,20 +1,30 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, HttpException, HttpStatus, Query } from "@nestjs/common";
-import { Prisma } from "@prisma/client";
-import { IndiAdjustmentService } from "./inAdjustment.service";
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
+import { Prisma } from '@prisma/client';
+import { ReportService } from './reports.service';
 
-@Controller('indiadjustment')
-export class IndiAdjustmentController {
-  constructor(private readonly IndiAdjustmentService: IndiAdjustmentService) {}
+@Controller('report')
+export class ReportController {
+  constructor(private readonly reportService: ReportService) {}
 
   @Post()
-  async create(@Body() dto: Prisma.IndividualSalaryAdjustmentsCreateInput) {
+  async create(@Body() dto: Prisma.ReportsCreateInput) {
     try {
-      return await this.IndiAdjustmentService.create(dto);
+      return await this.reportService.create(dto);
     } catch (error) {
       throw new HttpException(
         {
           status: HttpStatus.BAD_REQUEST,
-          error: 'Failed to create adjustment',
+          error: 'Failed to create Report',
           message: error.message,
         },
         HttpStatus.BAD_REQUEST,
@@ -23,14 +33,14 @@ export class IndiAdjustmentController {
   }
 
   @Get()
-  async findAll(@Query('search') search?: string) {
+  async findAll() {
     try {
-      return await this.IndiAdjustmentService.findAll(search);
+      return await this.reportService.findAll();
     } catch (error) {
       throw new HttpException(
         {
           status: HttpStatus.INTERNAL_SERVER_ERROR,
-          error: 'Failed to fetch adjustments',
+          error: 'Failed to fetch Report',
           message: error.message,
         },
         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -41,16 +51,16 @@ export class IndiAdjustmentController {
   @Get(':id')
   async findOne(@Param('id') id: number) {
     try {
-      const adjust = await this.IndiAdjustmentService.findOne(id);
-      if (!adjust) {
-        throw new HttpException('Adjustment not found', HttpStatus.NOT_FOUND);
+      const adjustment = await this.reportService.findOne(id);
+      if (!adjustment) {
+        throw new HttpException('Report not found', HttpStatus.NOT_FOUND);
       }
-      return adjust;
+      return adjustment;
     } catch (error) {
       throw new HttpException(
         {
           status: HttpStatus.NOT_FOUND,
-          error: 'Failed to fetch adjustment',
+          error: 'Failed to fetch Report',
           message: error.message,
         },
         HttpStatus.NOT_FOUND,
@@ -59,9 +69,12 @@ export class IndiAdjustmentController {
   }
 
   @Put(':id')
-  async update(@Param('id') id: number, @Body() dto: Prisma.IndividualSalaryAdjustmentsUpdateInput) {
+  async update(
+    @Param('id') id: string,
+    @Body() dto: Prisma.ReportsUpdateInput,
+  ) {
     try {
-      return await this.IndiAdjustmentService.update(id, dto);
+      return await this.reportService.update(id, dto);
     } catch (error) {
       throw new HttpException(
         {
@@ -77,7 +90,7 @@ export class IndiAdjustmentController {
   @Delete(':id')
   async remove(@Param('id') id: string) {
     try {
-      return await this.IndiAdjustmentService.remove(id);
+      return await this.reportService.remove(id);
     } catch (error) {
       throw new HttpException(
         {
