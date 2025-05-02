@@ -9,7 +9,6 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
   if (authLoading) {
     return <Loading />;
   }
-  console.log(`Authdata: ${authData}`);
 
   const token = authData.accessToken;
 
@@ -27,7 +26,7 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
   // Redirect unauthorized users to the Unauthorized page
   if (!hasRequiredRole) {
     console.log(
-      `User role (${userRole}) does not have access. Redirecting to /unauthorized.`
+      children
     );
     return <Navigate to="/login" replace />;
   }

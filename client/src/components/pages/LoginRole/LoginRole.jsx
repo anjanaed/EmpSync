@@ -16,7 +16,7 @@ const roleDisplayMap = {
 
 const roleRouteMap = {
   HR_ADMIN: "/EmployeePage",
-  INVENTORY_ADMIN: "/inventory",
+  INVENTORY_ADMIN: "/Ingredients",
   KITCHEN_STAFF: "/kitchen-staff",
   KITCHEN_ADMIN: "/kitchen-admin",
 };
@@ -32,8 +32,6 @@ const LoginPage = () => {
 
   const handleAdminLogin = () => {
     const userRole = authData.user.role;
-
-
     const route = roleRouteMap[userRole];
 
     navigate(route);
