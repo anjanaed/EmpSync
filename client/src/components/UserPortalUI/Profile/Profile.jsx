@@ -53,5 +53,7 @@ export default function ProfilePage() {
         </Card>
       </Content>
     </Layout>
+
+    
   );
 }
