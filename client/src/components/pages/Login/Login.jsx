@@ -4,8 +4,16 @@ import { useNavigate } from "react-router-dom";
 import styles from "./Login.module.css";
 import illustration from "../../../assets/illustration.png";
 import axios from "axios";
-import { jwtDecode } from "jwt-decode";
-import { useAuth } from "../../../AuthContext";
+import { useAuth } from "../../../contexts/AuthContext";
+
+const redirectRoles = [
+  "KITCHEN_ADMIN",
+  "KITCHEN_STAFF",
+  "INVENTORY_ADMIN",
+  "HR_ADMIN",
+
+
+];
 
 const LoginPage = () => {
   const { login, authData } = useAuth();
@@ -23,35 +31,15 @@ const LoginPage = () => {
         password,
       });
 
-      console.log(response)
-
       const { access_token, id_token } = response.data;
       login({ access_token, id_token });
 
-      if (access_token) {
-        try {
-          const employeeId = authData.user.data.id;
+      const userRole = authData.user.role;
 
-          const response = await axios.get(
-            `${urL}/user/fetchrole/${employeeId.toUpperCase()}`
-          );
-          const userRole = response.data;
-
-          const roleRouteMap = {
-            HR_Manager: "/",
-            Inventory_Manager: "/inventory",
-            Kitchen_Staff: "/kitchen-staff",
-            Kitchen_Admin: "/kitchen-admin",
-          };
-
-          const route = roleRouteMap[userRole] || "/profile";
-
-          navigate(route);
-        } catch (err) {
-          console.error("Failed to fetch role or navigate:", err);
-        }
+      if (redirectRoles.includes(userRole)) {
+        navigate("/loginrole");
       } else {
-        return;
+        navigate("/profile");
       }
     } catch (error) {
       console.error("Login error:", error);

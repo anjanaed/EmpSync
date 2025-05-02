@@ -408,7 +408,7 @@ const Payroll = () => {
                   value={etf}
                   onChange={(value) => setEtf(value)}
                   placeholder={"Enter Rate"}
-                  style={{ width: "250px" }}
+                  style={{ width: "20vw" }}
                 />
               </Form.Item>
             </div>
@@ -428,7 +428,7 @@ const Payroll = () => {
                   value={epf}
                   onChange={(value) => setEpf(value)}
                   placeholder={"Enter Rate"}
-                  style={{ width: "250px" }}
+                  style={{ width: "20vw" }}
                 />
               </Form.Item>
             </div>
@@ -449,18 +449,7 @@ const Payroll = () => {
                   value={employerFund}
                   onChange={(value) => setEmployerFund(value)}
                   placeholder={"Enter Rate"}
-                  style={{ width: "250px" }}
-                />
-              </Form.Item>
-            </div>
-            <div className={styles.inputSet}>
-              <label>Max Paid Leave Days Allowed</label>
-              <br />
-
-              <Form.Item style={{ marginBottom: 10 }} name="leaves">
-                <InputNumber
-                  style={{ width: "250px" }}
-                  placeholder="No of Days"
+                  style={{ width: "20vw" }}
                 />
               </Form.Item>
             </div>
