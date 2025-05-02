@@ -42,7 +42,7 @@ const LoginPage = () => {
             Kitchen_Staff: "/kitchen-staff",
             Kitchen_Admin: "/kitchen-admin",
           };
-
+          
           const route = roleRouteMap[userRole] || "/profile";
 
           navigate(route);
