@@ -177,6 +177,7 @@ export function MealsOrders() {
                     type="primary"
                     danger
                     onClick={() => handleCancelOrder(order.id)}
+                    disabled={!isCancelable(order)} // Disable button if not cancelable
                     style={{ marginTop: "10px", alignSelf: "center" }}
                   >
                     Cancel Order

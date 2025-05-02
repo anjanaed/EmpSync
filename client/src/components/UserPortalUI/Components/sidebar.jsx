@@ -8,14 +8,18 @@ import {
   CalendarOutlined,
   CoffeeOutlined,
   BulbOutlined,
-  MenuOutlined,
   CloseOutlined,
   MenuOutlined,
   LogoutOutlined, // Added LogoutOutlined
 } from "@ant-design/icons";
-import { useSidebar } from "./sidebar-provider";
+import Sider from "antd/es/layout/Sider";
 
-const { Sider } = Layout;
+// Mock implementation of useSidebar (replace with your actual implementation)
+const useSidebar = () => {
+  const [isOpen, setIsOpen] = React.useState(true);
+  const toggleSidebar = () => setIsOpen((prev) => !prev);
+  return { isOpen, toggleSidebar };
+};
 
 export function Sidebar({ isOpen, activeTab, setActiveTab }) {
   const { toggleSidebar } = useSidebar();
@@ -126,7 +130,7 @@ export function Sidebar({ isOpen, activeTab, setActiveTab }) {
           <Menu.Item
             key={item.path.substring(1)}
             icon={item.icon}
-            onClick={() => setActiveTab(item.path.substring(1))}
+            onClick={() => setActiveTab && setActiveTab(item.path.substring(1))}
           >
             <Link to={item.path}>{isOpen ? item.name : null}</Link>
           </Menu.Item>

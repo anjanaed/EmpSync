@@ -19,7 +19,7 @@ export function UserProvider({ children }) {
           name: data.name,
         });
       } catch (error) {
-        console.error("Failed to fetch user data:", error);
+        // console.error("Failed to fetch user data:", error);
       }
     }
 
