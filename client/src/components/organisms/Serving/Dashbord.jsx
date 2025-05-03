@@ -1,9 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Calendar, Plus, Trash2 } from "lucide-react";
+import { DatePicker } from "antd"; // Import DatePicker from Ant Design
+import "antd/dist/reset.css"; // Import Ant Design styles
 import styles from "./Dashbord.module.css";
 
 const Dashbord = () => {
   const [activeTab, setActiveTab] = useState("breakfast");
+  const [currentTime, setCurrentTime] = useState(new Date());
   const currentDate = new Date();
   const formattedDate = currentDate.toLocaleDateString("en-US", {
     month: "long",
@@ -11,18 +14,40 @@ const Dashbord = () => {
     year: "numeric",
   });
 
+  // Update the time every second
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+
+    return () => clearInterval(timer); // Cleanup the interval on component unmount
+  }, []);
+
+  const formattedTime = currentTime.toLocaleTimeString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  });
+
+  // Handle date selection
+  const handleDateChange = (date, dateString) => {
+    console.log("Selected Date:", dateString);
+  };
+
   return (
     <div className={styles.dashboardContainer}>
       {/* Menu Scheduler Section */}
       <div className={styles.menuScheduler}>
         <div className={styles.header}>
-          <h2 className={styles.title}> Order - {formattedDate}</h2>
+          <h2 className={styles.title}>Order - {formattedDate}</h2>
+          <p className={styles.time}>{formattedTime}</p>
           <div className={styles.dateControls}>
             <button className={styles.dateButton}>Tomorrow</button>
-            <button className={styles.dateButton}>
-              <Calendar className={styles.calendarIcon} size={18} />
-              Select Date
-            </button>
+            <DatePicker
+              className={styles.datePicker}
+              onChange={handleDateChange}
+              placeholder="Select Date"
+            />
           </div>
         </div>
 
