@@ -1,20 +1,57 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./LoginRole.module.css";
 import illustration from "../../../assets/illustration2.png";
-import { UserOutlined } from '@ant-design/icons';
+import { UserOutlined } from "@ant-design/icons";
 import { Avatar } from "antd";
+import { useAuth } from "../../../contexts/AuthContext";
+import Loading from "../../atoms/loading/loading";
+
+const roleDisplayMap = {
+  HR_ADMIN: "Human Resource Admin",
+  INVENTORY_ADMIN: "Inventory Admin",
+  KITCHEN_STAFF: "Kitchen Staff",
+  KITCHEN_ADMIN: "Kitchen Admin",
+};
+
+const redirectRoles = [
+  "KITCHEN_ADMIN",
+  "KITCHEN_STAFF",
+  "INVENTORY_ADMIN",
+  "HR_ADMIN",
+];
+
+const roleRouteMap = {
+  HR_ADMIN: "/EmployeePage",
+  INVENTORY_ADMIN: "/Ingredients",
+  KITCHEN_STAFF: "/serving",
+  KITCHEN_ADMIN: "/kitchen-admin",
+};
 
 const LoginPage = () => {
   const navigate = useNavigate();
-  const [selectedRole, setSelectedRole] = useState(null);
+  const { authData, authLoading } = useAuth();
 
-  const handleRoleClick = (role) => {
-    setSelectedRole(role);
+  if (authLoading) {
+    return <Loading />;
+  }
+
+  useEffect(() => {
+    const userRole = authData.user.role;
+    if (!redirectRoles.includes(userRole)) {
+      navigate("/profile");
+    }
+  }, []);
+
+  const handleAdminLogin = () => {
+    const userRole = authData.user.role;
+    const route = roleRouteMap[userRole];
+
+    navigate(route);
   };
 
-  const handleLogin = () => {
-    navigate("/reg");
+  const handleEmployeeLogin = () => {
+    navigate("/profile");
   };
 
   return (
@@ -34,31 +71,29 @@ const LoginPage = () => {
               <Avatar
                 size={55}
                 icon={<UserOutlined />}
-                style={{ backgroundColor: '#8b0000', color: '#fff' }}
+                style={{ backgroundColor: "#8b0000", color: "#fff" }}
               />
             </div>
             <div className={styles.loginname}>
-              <p className={styles.username}>Mr.John Doe</p>
-              <p className={styles.userpost}>Human Resources Manager.</p>
+              <p className={styles.username}>{authData.user.name}</p>
+              <p className={styles.userpost}>
+                {roleDisplayMap[authData.user.role]}
+              </p>
             </div>
           </div>
           <p className={styles.loginSubtitle}>Login as:</p>
           <hr className={styles.divider} />
           <div className={styles.buttonGroup}>
+            <button className={styles.customButton} onClick={handleAdminLogin}>
+              Administrator
+            </button>
             <button
-              className={`${styles.customButton} ${selectedRole === 'employee' ? styles.selectedButton : ''}`}
-              onClick={() => handleRoleClick('employee')}
+              className={styles.customButton}
+              onClick={handleEmployeeLogin}
             >
               Employee
             </button>
-            <button
-              className={`${styles.customButton} ${selectedRole === 'inventory_manager' ? styles.selectedButton : ''}`}
-              onClick={() => handleRoleClick('inventory_manager')}
-            >
-              Inventory Manager
-            </button>
           </div>
-          <button type="submit" className={styles.loginButton} onClick={handleLogin}>Login</button>
         </div>
       </div>
     </div>

@@ -31,7 +31,7 @@ const CostAnalysis = () => {
   };
 
   const handleLogout = () => {
-    navigate('/login');
+    navigate('/');
   };
 
   const exportMonthlyStatistics = () => {

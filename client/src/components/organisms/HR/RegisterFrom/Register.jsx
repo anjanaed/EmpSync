@@ -12,14 +12,6 @@ import Gbutton from "../../../atoms/button/Button";
 import axios from "axios";
 const { Option } = Select;
 
-const jobSalaryMap = {
-  "HR Manager": 40000,
-  "Kitchen Admin": 50000,
-  "Kitchen Staff": 70000,
-  "Inventory Manager": 90000,
-  Other: 10,
-};
-
 const formItemLayout = {
   labelCol: {
     xs: {
@@ -42,6 +34,8 @@ const formItemLayout = {
 const Register = () => {
   const [menu, setMenu] = useState(1);
   const urL = import.meta.env.VITE_BASE_URL;
+  const auth0Url = import.meta.env.VITE_AUTH0_URL;
+  const auth0Id = import.meta.env.VITE_AUTH0_ID;
   const navigate = useNavigate();
   const [id, setId] = useState(null);
   const [email, setEmail] = useState(null);
@@ -68,7 +62,7 @@ const Register = () => {
     }
 
     try {
-      await signUpUser({ email, password, role });
+      await signUpUser({ email, password, id });
 
       const payload = {
         id,
@@ -86,43 +80,31 @@ const Register = () => {
       };
       await axios.post(`${urL}/user`, payload);
       sucNofify("User Registered Successfully");
-      navigate("/");
+      navigate("/EmployeePage");
     } catch (err) {
+      await axios.post(`${urL}/auth/delete`, { email: email });
       console.error("Registration Error:", err);
-      if (
-        err.response?.data?.message === "Id, Name, Email, Password must be filled"
-      ) {
-        setMenu(1);
-        erNofify("ID, Name, Email, Password must be filled");
-      } else {
-        erNofify("Registration Failed! Try again");
-      }
+      erNofify(`Registration Failed: ${err.response.data.message}`);
     } finally {
       setLoading(false);
     }
   };
 
-  const signUpUser = async ({ email, password, role }) => {
+  const signUpUser = async ({ email, password, id }) => {
     try {
       const res = await axios.post(
-        "https://dev-ew20puedqaszptqy.us.auth0.com/dbconnections/signup",
+        `https://${auth0Url}/dbconnections/signup`,
         {
-          client_id: "Do05XqmmkqHcQKLvOTYtTKQjsaLsf8zd",
+          client_id: auth0Id,
           email,
+          username: id,
           password,
           connection: "Username-Password-Authentication",
-          user_metadata: {
-            role,
-          },
         }
       );
-
-      console.log("User signed up:", res.data);
-      sucNofify("Auth0 Registered!");
-
     } catch (error) {
       console.error("Auth0 Registration Error:", error);
-      erNofify("Auth0 Registration Failed!");
+      erNofify(`Registration Failed: ${error.response.data.message}`);
       setLoading(false);
       throw error;
     }
@@ -290,20 +272,16 @@ const Register = () => {
                       <Select
                         onChange={(value) => {
                           setJobRole(value);
-                          const sal =
-                            value !== "Other"
-                              ? jobSalaryMap[value]?.toString()
-                              : "";
-                          setSalary(sal);
-                          form.setFieldsValue({ salary: sal });
                         }}
                         style={{ width: "100%" }}
                         placeholder="Select Role"
                       >
-                        <Option value="HR_Manager">HR Administrator</Option>
-                        <Option value="Kitchen_Admin">Kitchen Admin</Option>
-                        <Option value="Kitchen Staff">Kitchen Staff</Option>
-                        <Option value="Inventory Manager">
+                        <Option value="HR_ADMIN">Human Resource Manager</Option>
+                        <Option value="KITCHEN_ADMIN">
+                          Kitchen Administrator
+                        </Option>
+                        <Option value="KITCHEN_STAFF">Kitchen Staff</Option>
+                        <Option value="INVENTORY_ADMIN">
                           Inventory Manager
                         </Option>
                         <Option value="Other">Other</Option>

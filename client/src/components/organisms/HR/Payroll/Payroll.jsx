@@ -408,7 +408,7 @@ const Payroll = () => {
                   value={etf}
                   onChange={(value) => setEtf(value)}
                   placeholder={"Enter Rate"}
-                  style={{ width: "250px" }}
+                  style={{ width: "20vw" }}
                 />
               </Form.Item>
             </div>
@@ -428,7 +428,7 @@ const Payroll = () => {
                   value={epf}
                   onChange={(value) => setEpf(value)}
                   placeholder={"Enter Rate"}
-                  style={{ width: "250px" }}
+                  style={{ width: "20vw" }}
                 />
               </Form.Item>
             </div>
@@ -449,18 +449,7 @@ const Payroll = () => {
                   value={employerFund}
                   onChange={(value) => setEmployerFund(value)}
                   placeholder={"Enter Rate"}
-                  style={{ width: "250px" }}
-                />
-              </Form.Item>
-            </div>
-            <div className={styles.inputSet}>
-              <label>Max Paid Leave Days Allowed</label>
-              <br />
-
-              <Form.Item style={{ marginBottom: 10 }} name="leaves">
-                <InputNumber
-                  style={{ width: "250px" }}
-                  placeholder="No of Days"
+                  style={{ width: "20vw" }}
                 />
               </Form.Item>
             </div>
@@ -482,12 +471,13 @@ const Payroll = () => {
                 </div>
               </div>
             ))}
+          
             <div className={styles.dynamicInputSet}>
               <button onClick={handleNewFields} className={styles.newFieldBtn}>
                 <BsPlusCircle size={13} /> Add New Field
               </button>
             </div>
-          </div>
+            </div>
           <div className={styles.payee}>
             <span>*</span> Income Paye Taxes Will Be Applied Automatically
             &nbsp;
@@ -580,6 +570,8 @@ const Payroll = () => {
                   />
                 </Form.Item>
               </div>
+              <div className={styles.amountLine}>
+
               <div>
                 <label>Amount</label>
                 <br />
@@ -668,6 +660,7 @@ const Payroll = () => {
                 >
                   Value
                 </Checkbox>
+              </div>
               </div>
               <div
                 className={styles.removeBtn}

@@ -24,6 +24,13 @@ const customTheme = {
   },
 };
 
+const roleMap = {
+  "KITCHEN_ADMIN": "Kitchen Administrator",
+  "KITCHEN_STAFF": "Kitchen Staff",
+  "INVENTORY_ADMIN": "Inventory Manager",
+  "HR_ADMIN": "Human Resource Manager",
+};
+
 const Employees = () => {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState();
@@ -156,6 +163,7 @@ const Employees = () => {
       key: "role",
       align: "center",
       ellipsis: true,
+      render: (role) => roleMap[role] || role,
     },
     {
       title: "Email",
