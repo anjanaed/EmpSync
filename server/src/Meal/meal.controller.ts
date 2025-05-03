@@ -2,14 +2,32 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, HttpException, HttpS
 import { MealService } from './meal.service';
 import { Prisma } from '@prisma/client';
 
+// Custom DTO for meal creation that includes ingredients
+interface CreateMealWithIngredientsDto extends Omit<Prisma.MealCreateInput, 'ingredients'> {
+  ingredients: Array<{
+    ingredientId: number;
+  }>;
+}
+
+// Custom DTO for meal updates that includes ingredients
+interface UpdateMealWithIngredientsDto extends Omit<Prisma.MealUpdateInput, 'ingredients'> {
+  ingredients?: Array<{
+    ingredientId: number;
+  }>;
+}
+
 @Controller('meal')
 export class MealController {
   constructor(private readonly mealService: MealService) {}
 
   @Post()
-  async create(@Body() createMealDto: Prisma.MealCreateInput) {
+  async create(@Body() createMealDto: CreateMealWithIngredientsDto) {
     try {
-      return await this.mealService.create(createMealDto);
+      // Convert DTO to Prisma format
+      const { ingredients, ...mealData } = createMealDto;
+      
+      // Create the meal with ingredients relationships
+      return await this.mealService.createWithIngredients(mealData, ingredients);
     } catch (error) {
       throw new HttpException(
         {
@@ -25,7 +43,7 @@ export class MealController {
   @Get()
   async findAll() {
     try {
-      return await this.mealService.findAll();
+      return await this.mealService.findAllWithIngredients();
     } catch (error) {
       throw new HttpException(
         {
@@ -41,7 +59,7 @@ export class MealController {
   @Get(':id')
   async findOne(@Param('id') id: string) {  
     try {
-      const meal = await this.mealService.findOne(id);
+      const meal = await this.mealService.findOneWithIngredients(id);
       if (!meal) {
         throw new HttpException('Meal not found', HttpStatus.NOT_FOUND);
       }
@@ -59,9 +77,10 @@ export class MealController {
   }
 
   @Patch(':id')
-  async update(@Param('id') id: string, @Body() updateMealDto: Prisma.MealUpdateInput) {  
+  async update(@Param('id') id: string, @Body() updateMealDto: UpdateMealWithIngredientsDto) {  
     try {
-      return await this.mealService.update(id, updateMealDto);
+      const { ingredients, ...mealData } = updateMealDto;
+      return await this.mealService.updateWithIngredients(id, mealData, ingredients);
     } catch (error) {
       throw new HttpException(
         {

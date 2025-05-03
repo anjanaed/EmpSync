@@ -1,31 +1,38 @@
-import React, { useState, useEffect } from 'react';
-import { 
-  Typography, 
-  Input, 
-  Button, 
-  Card, 
-  Row, 
-  Col, 
-  Modal, 
+import React, { useState, useEffect } from "react";
+import {
+  Typography,
+  Input,
+  Button,
+  Card,
+  Row,
+  Col,
+  Modal,
   List,
   message,
   Select,
   Tag,
-  Spin
-} from 'antd';
-import { 
-  DeleteOutlined, 
-  EditOutlined, 
-  PlusOutlined, 
-  ExclamationCircleOutlined
-} from '@ant-design/icons';
+  Spin,
+} from "antd";
+import {
+  DeleteOutlined,
+  EditOutlined,
+  PlusOutlined,
+  ExclamationCircleOutlined,
+} from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowUpRightFromSquare } from "@fortawesome/free-solid-svg-icons";
+import {
+  faArrowUpRightFromSquare,
+  faUtensils,
+} from "@fortawesome/free-solid-svg-icons";
+
+// Then in your JSX:
+<FontAwesomeIcon icon={faUtensils} className={styles.emptyIcon} />;
+
 // Import Firebase storage related functions
 import { getStorage, ref, deleteObject } from "firebase/storage";
 
-import styles from './meals.module.css';
+import styles from "./meals.module.css";
 
 const { Title } = Typography;
 const { Search } = Input;
@@ -34,17 +41,17 @@ const { Option } = Select;
 
 const AvailableMeals = () => {
   const [meals, setMeals] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('All');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("All");
   const [ingredientsModalVisible, setIngredientsModalVisible] = useState(false);
   const [selectedMeal, setSelectedMeal] = useState(null);
   const [loading, setLoading] = useState(false);
   const [ingredientDetails, setIngredientDetails] = useState({});
   const [fetchingIngredients, setFetchingIngredients] = useState(false);
-  
+
   // Initialize Firebase storage
   const storage = getStorage();
-  
+
   const navigate = useNavigate();
 
   // Fetch meal data from the API
@@ -55,7 +62,7 @@ const AvailableMeals = () => {
   const fetchMeals = async () => {
     try {
       setLoading(true);
-      const response = await fetch('http://localhost:3000/meal');
+      const response = await fetch("http://localhost:3000/meal");
       const data = await response.json();
       setMeals(data);
     } catch (error) {
@@ -76,12 +83,12 @@ const AvailableMeals = () => {
 
   const showDeleteConfirm = (meal) => {
     confirm({
-      title: 'Are you sure you want to delete this meal?',
+      title: "Are you sure you want to delete this meal?",
       icon: <ExclamationCircleOutlined />,
       content: `Meal ID: ${meal.id}`,
-      okText: 'Yes',
-      okType: 'danger',
-      cancelText: 'No',
+      okText: "Yes",
+      okType: "danger",
+      cancelText: "No",
       onOk() {
         deleteMeal(meal);
       },
@@ -91,21 +98,23 @@ const AvailableMeals = () => {
   // Delete image from Firebase Storage
   const deleteImageFromFirebase = async (imageUrl) => {
     if (!imageUrl) return true; // No image to delete
-    
+
     try {
       // Extract the file path from the URL
       // This assumes your imageUrl is in a Firebase Storage format
       // Example: https://firebasestorage.googleapis.com/v0/b/your-project.appspot.com/o/meals%2Fimage1.jpg?alt=media&token=abc123
-      const urlPath = decodeURIComponent(imageUrl.split('/o/')[1]?.split('?')[0]);
-      
+      const urlPath = decodeURIComponent(
+        imageUrl.split("/o/")[1]?.split("?")[0]
+      );
+
       if (!urlPath) {
         console.warn("Could not parse image URL for deletion:", imageUrl);
         return false;
       }
-      
+
       // Create a reference to the file to delete
       const imageRef = ref(storage, urlPath);
-      
+
       // Delete the file
       await deleteObject(imageRef);
       console.log("Image successfully deleted from Firebase Storage");
@@ -123,28 +132,30 @@ const AvailableMeals = () => {
       if (meal.imageUrl) {
         const imageDeleted = await deleteImageFromFirebase(meal.imageUrl);
         if (!imageDeleted) {
-          message.warning('Could not delete the associated image, but will proceed with meal deletion');
+          message.warning(
+            "Could not delete the associated image, but will proceed with meal deletion"
+          );
         }
       }
 
       // Then delete the meal from the database
       const response = await fetch(`http://localhost:3000/meal/${meal.id}`, {
-        method: 'DELETE',
+        method: "DELETE",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        credentials: 'include', // Important for cookies/auth headers
+        credentials: "include", // Important for cookies/auth headers
       });
 
       if (!response.ok) {
-        throw new Error('Failed to delete meal');
+        throw new Error("Failed to delete meal");
       }
 
       // Remove meal from state if deletion was successful
-      setMeals(meals.filter(m => m.id !== meal.id));
-      message.success('Meal deleted successfully');
+      setMeals(meals.filter((m) => m.id !== meal.id));
+      message.success("Meal deleted successfully");
     } catch (error) {
-      console.error('Error deleting meal:', error);
+      console.error("Error deleting meal:", error);
       message.error(`Failed to delete meal: ${error.message}`);
     } finally {
       setLoading(false);
@@ -152,13 +163,15 @@ const AvailableMeals = () => {
   };
 
   const handleEdit = (meal) => {
-    navigate('/edit-meal', { state: { meal } });
+    navigate("/edit-meal", { state: { meal } });
   };
-  
-  // Fetch ingredient details by ID
+
+  // Update the fetchIngredientDetails function to work with the new schema
   const fetchIngredientDetails = async (ingredientId) => {
     try {
-      const response = await fetch(`http://localhost:3000/Ingredients/${ingredientId}`);
+      const response = await fetch(
+        `http://localhost:3000/Ingredients/${ingredientId}`
+      );
       if (!response.ok) {
         throw new Error(`Failed to fetch ingredient ${ingredientId}`);
       }
@@ -170,44 +183,28 @@ const AvailableMeals = () => {
     }
   };
 
-  // Function to show ingredients modal and fetch ingredient details
+  // Update the showIngredientsModal function
   const showIngredientsModal = async (meal) => {
     setSelectedMeal(meal);
     setIngredientsModalVisible(true);
     setFetchingIngredients(true);
-    
-    const ingredientIds = [];
-    // Extract ingredient IDs from the ingredients array
-    if (meal.ingredients && meal.ingredients.length > 0) {
-      meal.ingredients.forEach(item => {
-        if (typeof item === 'string' && item.includes(':')) {
-          const [id] = item.split(':');
-          ingredientIds.push(id);
-        }
-      });
-    }
-    
-    // Fetch details for all ingredients
-    if (ingredientIds.length > 0) {
+
+    try {
+      // No need to fetch ingredients separately since they're included in the meal data
       const detailsMap = {};
-      
-      try {
-        // Fetch details for each ingredient
-        const promises = ingredientIds.map(id => fetchIngredientDetails(id));
-        const results = await Promise.all(promises);
-        
-        // Map the results to ingredient IDs
-        ingredientIds.forEach((id, index) => {
-          detailsMap[id] = results[index];
+      if (meal.ingredients && meal.ingredients.length > 0) {
+        meal.ingredients.forEach((item) => {
+          if (item.ingredient) {
+            detailsMap[item.ingredientId] = item.ingredient;
+          }
         });
-        
-        setIngredientDetails(detailsMap);
-      } catch (error) {
-        console.error("Error fetching ingredient details:", error);
-        message.error("Failed to load ingredient details");
       }
+      setIngredientDetails(detailsMap);
+    } catch (error) {
+      console.error("Error processing ingredient details:", error);
+      message.error("Failed to load ingredient details");
     }
-    
+
     setFetchingIngredients(false);
   };
 
@@ -218,12 +215,14 @@ const AvailableMeals = () => {
   };
 
   // Filter meals based on search term and selected category
-  const filteredMeals = meals.filter(meal => {
-    const matchesSearch = meal.nameEnglish.toLowerCase().includes(searchTerm.toLowerCase());
-    
+  const filteredMeals = meals.filter((meal) => {
+    const matchesSearch = meal.nameEnglish
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+
     // Check if the meal matches the selected category
     let matchesCategory;
-    if (selectedCategory === 'All') {
+    if (selectedCategory === "All") {
       matchesCategory = true;
     } else {
       // Handle both string and array category formats
@@ -233,31 +232,39 @@ const AvailableMeals = () => {
         matchesCategory = meal.category === selectedCategory;
       }
     }
-    
+
     return matchesSearch && matchesCategory;
   });
 
   // Fixed category options
-  const categoryOptions = ['All', 'Breakfast', 'Lunch', 'Dinner'];
+  const categoryOptions = ["All", "Breakfast", "Lunch", "Dinner"];
 
   // Function to render category tags
   const renderCategoryTags = (categories) => {
     if (!categories) return <Tag color="blue">Uncategorized</Tag>;
-    
+
     // Handle both string and array formats
     if (Array.isArray(categories)) {
       if (categories.length === 0) {
-        return <Tag color="blue" className={styles.tag}>Uncategorized</Tag>;
+        return (
+          <Tag color="blue" className={styles.tag}>
+            Uncategorized
+          </Tag>
+        );
       } else {
         // Join all categories into a single tag with separator
         return (
           <Tag color="blue" className={styles.tag}>
-            {categories.join(' / ')}
+            {categories.join(" / ")}
           </Tag>
         );
       }
     } else {
-      return <Tag color="blue" className={styles.tag}>{categories}</Tag>;
+      return (
+        <Tag color="blue" className={styles.tag}>
+          {categories}
+        </Tag>
+      );
     }
   };
 
@@ -265,10 +272,12 @@ const AvailableMeals = () => {
     <div className={styles.container}>
       <div className={styles.header}>
         <div>
-          <Title level={3} className={styles.title}>Available Meals</Title>
+          <Title level={3} className={styles.title}>
+            Available Meals
+          </Title>
         </div>
       </div>
-      
+
       <div className={styles.filterContainer}>
         <Search
           placeholder="Search meals..."
@@ -277,7 +286,7 @@ const AvailableMeals = () => {
           className={styles.searchInput}
           size="large"
         />
-        
+
         <Select
           defaultValue="All"
           value={selectedCategory}
@@ -285,14 +294,16 @@ const AvailableMeals = () => {
           className={styles.categorySelect}
           size="large"
         >
-          {categoryOptions.map(category => (
-            <Option key={category} value={category}>{category}</Option>
+          {categoryOptions.map((category) => (
+            <Option key={category} value={category}>
+              {category}
+            </Option>
           ))}
         </Select>
-        
-        <Button 
-          type="primary" 
-          icon={<PlusOutlined />} 
+
+        <Button
+          type="primary"
+          icon={<PlusOutlined />}
           onClick={() => navigate("/meal-details")}
           size="large"
           className={styles.redButton}
@@ -302,30 +313,42 @@ const AvailableMeals = () => {
       </div>
 
       {loading ? (
-        <div style={{ textAlign: 'center', padding: '40px' }}>
+        <div style={{ textAlign: "center", padding: "40px" }}>
           <Spin size="large" />
-          <p style={{ marginTop: '10px' }}>Loading meals...</p>
+          <p style={{ marginTop: "10px" }}>Loading meals...</p>
         </div>
       ) : (
         <Row gutter={[16, 16]}>
           {filteredMeals.length === 0 ? (
             <Col span={24}>
-              <div style={{ textAlign: 'center', padding: '40px' }}>
-                <p>No meals found matching your criteria.</p>
+              <div className={styles.emptyState}>
+                <FontAwesomeIcon
+                  icon={faUtensils}
+                  className={styles.emptyIcon}
+                />
+                <p className={styles.emptyTitle}>No Meal Data</p>
+                <p className={styles.emptyDescription}>
+                  No meals are currently available. Try adding a new meal or
+                  adjusting your search criteria.
+                </p>
               </div>
             </Col>
           ) : (
-            filteredMeals.map(meal => (
+            filteredMeals.map((meal) => (
               <Col xs={24} sm={12} md={4} key={meal.id}>
                 <Card className={styles.card}>
                   <div className={styles.categoryTag}>
                     {renderCategoryTags(meal.category)}
                   </div>
-                  
+
                   <div className={styles.imageContainer}>
                     {meal.imageUrl ? (
                       <div className={styles.imageWrapper}>
-                        <img src={meal.imageUrl} alt={meal.nameEnglish} className={styles.mealImage} />
+                        <img
+                          src={meal.imageUrl}
+                          alt={meal.nameEnglish}
+                          className={styles.mealImage}
+                        />
                       </div>
                     ) : (
                       <div className={styles.imagePlaceholder}>
@@ -333,34 +356,47 @@ const AvailableMeals = () => {
                       </div>
                     )}
                   </div>
-                  
+
                   <div className={styles.mealInfo}>
-                    <Title level={5} className={styles.mealTitle}>{meal.nameEnglish}</Title>
+                    <Title level={5} className={styles.mealTitle}>
+                      {meal.nameEnglish}
+                    </Title>
                     <div className={styles.mealDetails}>
-                      <div>ID: <span className={styles.idValue}>{meal.id}</span></div>
-                      <div>Price: <span className={styles.priceValue}>Rs.{meal.price?.toFixed(2)}</span></div>
-                      <div 
-                        className={styles.ingredientsLink} 
+                      <div>
+                        ID: <span className={styles.idValue}>{meal.id}</span>
+                      </div>
+                      <div>
+                        Price:{" "}
+                        <span className={styles.priceValue}>
+                          Rs.{meal.price?.toFixed(2)}
+                        </span>
+                      </div>
+                      <div
+                        className={styles.ingredientsLink}
                         onClick={() => showIngredientsModal(meal)}
                       >
-                        Ingredients <FontAwesomeIcon icon={faArrowUpRightFromSquare} style={{ marginLeft: '4px' }} />
+                        Ingredients{" "}
+                        <FontAwesomeIcon
+                          icon={faArrowUpRightFromSquare}
+                          style={{ marginLeft: "4px" }}
+                        />
                       </div>
                     </div>
                   </div>
 
                   <div className={styles.mealActions}>
-                    <Button 
-                      type="text" 
+                    <Button
+                      type="text"
                       danger
-                      icon={<DeleteOutlined />} 
+                      icon={<DeleteOutlined />}
                       onClick={() => showDeleteConfirm(meal)}
                       loading={loading}
                     >
                       Delete
                     </Button>
-                    <Button 
+                    <Button
                       type="text"
-                      icon={<EditOutlined />} 
+                      icon={<EditOutlined />}
                       onClick={() => handleEdit(meal)}
                     >
                       Edit
@@ -373,60 +409,51 @@ const AvailableMeals = () => {
         </Row>
       )}
 
-      {/* Ingredients Modal */}
+
+      {/* {Ingredient modal} */}
       <Modal
-        title={selectedMeal ? `${selectedMeal.nameEnglish} Ingredients` : 'Ingredients'}
+        title={
+          selectedMeal
+            ? `${selectedMeal.nameEnglish} Ingredients`
+            : "Ingredients"
+        }
         open={ingredientsModalVisible}
         onCancel={closeIngredientsModal}
         footer={[
-          <Button 
-            key="close" 
+          <Button
+            key="close"
             onClick={closeIngredientsModal}
             className={styles.redButton}
           >
             Close
-          </Button>
+          </Button>,
         ]}
       >
         {fetchingIngredients ? (
-          <div className={styles.loadingContainer} style={{ textAlign: 'center', padding: '20px' }}>
+          <div className={styles.loadingContainer}>
             <Spin size="large" />
-            <p style={{ marginTop: '10px' }}>Loading ingredients...</p>
+            <p>Loading ingredients...</p>
           </div>
         ) : (
           selectedMeal && (
             <List
-              dataSource={selectedMeal.ingredients || ["No ingredients available"]}
-              renderItem={(item) => {
-                // Check if item is a string in "id:quantity" format
-                if (typeof item === "string" && item.includes(":")) {
-                  const [id, quantity] = item.split(":");
-                  const ingredientData = ingredientDetails[id];
-                  
-                  return (
-                    <List.Item>
-                      <List.Item.Meta 
-                        title={
-                          <div className={styles.ingredientItem}>
-                            <span className={styles.ingredientName} >
-                              {ingredientData ? ingredientData.name : id}
-                            </span>
-                            <span className={styles.ingredientQuantity}>
-                              : {quantity}g
-                            </span>
-                          </div>
-                        }
-                      />
-                    </List.Item>
-                  );
-                } else {
-                  // If item doesn't match expected format, display as is
-                  return (
-                    <List.Item>
-                      <List.Item.Meta title={item} />
-                    </List.Item>
-                  );
-                }
+              dataSource={selectedMeal.ingredients || []}
+              renderItem={(item) => (
+                <List.Item>
+                  <List.Item.Meta
+                    title={
+                      <div className={styles.ingredientItem}>
+                        <span className={styles.ingredientName}>
+                          {item.ingredient?.name || "Unknown Ingredient"}
+                        </span>
+                      </div>
+                    }
+                    
+                  />
+                </List.Item>
+              )}
+              locale={{
+                emptyText: "No ingredients available",
               }}
             />
           )

@@ -44,6 +44,7 @@ model Ingredient {
   type            String
   priority        Int
   createdAt       DateTime @default(now())
+  usedInMeals     MealIngredient[]  
 }
 
 model IngredientOrder {
@@ -96,10 +97,21 @@ model Meal {
   description  String?
   price        Float
   imageUrl     String?
-  ingredients  String[]
   category     String[]
   createdAt    DateTime  @default(now())
+  ingredients  MealIngredient[] 
 }
+
+model MealIngredient {
+  id           Int         @id @default(autoincrement())
+  meal         Meal        @relation(fields: [mealId], references: [id])
+  mealId       String
+  ingredient   Ingredient  @relation(fields: [ingredientId], references: [id])
+  ingredientId Int
+
+  
+}
+
 
 model SalaryAdjustments {
   id           Int     @id @default(autoincrement())
@@ -159,6 +171,7 @@ model ScheduledMeal {
   confirmed Boolean  @default(false) 
   createdAt DateTime @default(now())
 }
+
 
 model PayeTaxSlab{
   id Int @id @default(autoincrement())
