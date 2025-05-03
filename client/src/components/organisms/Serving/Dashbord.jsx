@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Calendar, Plus, Trash2 } from "lucide-react";
-import { DatePicker } from "antd"; // Import DatePicker from Ant Design
+import { DatePicker, Card } from "antd"; // Import DatePicker and Card from Ant Design
 import "antd/dist/reset.css"; // Import Ant Design styles
 import styles from "./Dashbord.module.css";
+
+const { Meta } = Card;
 
 const Dashbord = () => {
   const [activeTab, setActiveTab] = useState("breakfast");
@@ -14,11 +16,22 @@ const Dashbord = () => {
     year: "numeric",
   });
 
-  // Update the time every second
+  // Update the time every second and set the active tab based on the time
   useEffect(() => {
     const timer = setInterval(() => {
-      setCurrentTime(new Date());
-    }, 1000);
+      const now = new Date();
+      setCurrentTime(now);
+
+      // Update activeTab based on the current time
+      const currentHour = now.getHours();
+      if (currentHour >= 6 && currentHour < 9) {
+        setActiveTab("breakfast");
+      } else if (currentHour >= 9 && currentHour < 15) {
+        setActiveTab("lunch");
+      } else if (currentHour >= 15 && currentHour < 24) {
+        setActiveTab("dinner");
+      }
+    }, 6000);
 
     return () => clearInterval(timer); // Cleanup the interval on component unmount
   }, []);
@@ -34,9 +47,59 @@ const Dashbord = () => {
     console.log("Selected Date:", dateString);
   };
 
+  // Render content based on the active tab
+  const renderTabContent = () => {
+    if (activeTab === "breakfast") {
+      return (
+        <Card
+          hoverable
+          style={{ width: 240 }}
+          cover={
+            <img
+              alt="Breakfast"
+              src="https://os.alipayobjects.com/rmsportal/QBnOOoLaAfKPirc.png"
+            />
+          }
+        >
+          <Meta title="Breakfast Menu" description="Delicious breakfast sets" />
+        </Card>
+      );
+    } else if (activeTab === "lunch") {
+      return (
+        <Card
+          hoverable
+          style={{ width: 240 }}
+          cover={
+            <img
+              alt="Lunch"
+              src="https://os.alipayobjects.com/rmsportal/QBnOOoLaAfKPirc.png"
+            />
+          }
+        >
+          <Meta title="Lunch Menu" description="Tasty lunch options" />
+        </Card>
+      );
+    } else if (activeTab === "dinner") {
+      return (
+        <Card
+          hoverable
+          style={{ width: 240 }}
+          cover={
+            <img
+              alt="Dinner"
+              src="https://os.alipayobjects.com/rmsportal/QBnOOoLaAfKPirc.png"
+            />
+          }
+        >
+          <Meta title="Dinner Menu" description="Hearty dinner meals" />
+        </Card>
+      );
+    }
+  };
+
   return (
     <div className={styles.dashboardContainer}>
-      {/* Menu Scheduler Section */}
+      {/* Oder Scheduler Section */}
       <div className={styles.menuScheduler}>
         <div className={styles.header}>
           <h2 className={styles.title}>Order - {formattedDate}</h2>
@@ -78,6 +141,11 @@ const Dashbord = () => {
               Dinner Set
             </button>
           </div>
+        </div>
+
+        <div className={styles.content}>
+          {/* Render the card content based on the active tab */}
+          {renderTabContent()}
         </div>
       </div>
     </div>

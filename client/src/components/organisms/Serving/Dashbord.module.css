@@ -84,6 +84,7 @@
   .content {
     display: flex;
     gap: 20px;
+    margin: 20px;
   }
   
   .emptyState {
