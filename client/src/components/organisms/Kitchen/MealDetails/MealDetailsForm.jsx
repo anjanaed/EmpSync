@@ -10,7 +10,6 @@ import {
   message,
   Modal,
   Checkbox,
-  InputNumber,
   Select,
   Spin,
 } from "antd";
@@ -71,7 +70,6 @@ const AddMealPage = () => {
       const formattedIngredients = allIngredients.map((ingredient) => ({
         id: ingredient.id,
         name: ingredient.name,
-        quantity: 0,
         selected: false,
       }));
 
@@ -118,11 +116,10 @@ const AddMealPage = () => {
       // Get the download URL of the uploaded image
       const downloadURL = await getDownloadURL(imageRef);
 
-      // Format ingredients data for database storage
-      // Store in format: "ingredientId:quantity"
-      const ingredientsData = selectedIngredients.map(
-        (ingredient) => `${ingredient.id}:${ingredient.quantity}`
-      );
+      // Format ingredients data for the new backend API
+      const ingredientsData = selectedIngredients.map((ingredient) => ({
+        ingredientId: ingredient.id,
+      }));
 
       const mealData = {
         id: values.Id,
@@ -133,7 +130,7 @@ const AddMealPage = () => {
         category: values.category || [], // Use the array of selected categories
         price: parseFloat(values.price),
         imageUrl: downloadURL, // Use the Firebase Storage URL
-        ingredients: ingredientsData, // Add formatted ingredients data
+        ingredients: ingredientsData, // Now sending as an array of objects with just ingredientId
         createdAt: new Date().toISOString(),
       };
 
@@ -219,17 +216,9 @@ const AddMealPage = () => {
     );
   };
 
-  const handleQuantityChange = (id, value) => {
-    setIngredients(
-      ingredients.map((ingredient) =>
-        ingredient.id === id ? { ...ingredient, quantity: value } : ingredient
-      )
-    );
-  };
-
   const handleIngredientsConfirm = () => {
     const selected = ingredients.filter(
-      (ingredient) => ingredient.selected && ingredient.quantity > 0
+      (ingredient) => ingredient.selected
     );
     setSelectedIngredients(selected);
     setIsIngredientsModalVisible(false);
@@ -245,8 +234,6 @@ const AddMealPage = () => {
 
   return (
     <div className={styles.pageContainer}>
-    
-
       <div className={styles.contentWrapper}>
         <Card className={styles.formCard}>
           <Title level={4} className={styles.cardTitle}>
@@ -378,13 +365,16 @@ const AddMealPage = () => {
                   label="Category"
                   name="category"
                   rules={[
-                    { required: true, message: "Please select at least one category" },
+                    {
+                      required: true,
+                      message: "Please select at least one category",
+                    },
                   ]}
                 >
-                  <Select 
+                  <Select
                     mode="multiple"
                     placeholder="Select categories"
-                    style={{ width: '100%' }}
+                    style={{ width: "100%" }}
                   >
                     <Option value="Breakfast">Breakfast</Option>
                     <Option value="Lunch">Lunch</Option>
@@ -416,7 +406,7 @@ const AddMealPage = () => {
                     <ul className={styles.selectedIngredientsList}>
                       {selectedIngredients.map((ingredient) => (
                         <li key={ingredient.id}>
-                          {ingredient.name} - {ingredient.quantity}g
+                          {ingredient.name}
                         </li>
                       ))}
                     </ul>
@@ -488,17 +478,6 @@ const AddMealPage = () => {
                     {ingredient.name} (ID: {ingredient.id})
                   </Checkbox>
                 </div>
-                {ingredient.selected && (
-                  <InputNumber
-                    min={0}
-                    value={ingredient.quantity}
-                    onChange={(value) =>
-                      handleQuantityChange(ingredient.id, value)
-                    }
-                    className={styles.quantityInput}
-                    placeholder="In Grams"
-                  />
-                )}
               </div>
             ))
           ) : (
