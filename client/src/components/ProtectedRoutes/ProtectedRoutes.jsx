@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import Loading from "../atoms/loading/loading";
@@ -7,31 +7,27 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
   const { authData, authLoading } = useAuth();
   const navigate = useNavigate();
 
-  if (authLoading) {
-    return <Loading />;
-  }
-
   const token = authData?.accessToken;
-
-  // Redirect unauthenticated users to the login page
-  if (!token) {
-    console.log("User is not authenticated. Redirecting to Login.");
-    navigate("/login");
-    return null;
-  }
-
-  const userRole = authData.user.role;
-
+  const userRole = authData?.user?.role;
   const hasRequiredRole =
     allowedRoles.includes("*") || allowedRoles.includes(userRole);
 
-  // Redirect unauthorized users to the Unauthorized page
-  if (!hasRequiredRole) {
-    navigate("/login");
-    return null;
-  }
+  useEffect(() => {
+    if (!authLoading && !token) {
+      navigate("/login");
+    }
+  }, [authLoading, token, navigate]);
 
-  // Render the protected component if all checks pass
+  useEffect(() => {
+    if (!authLoading && token && !hasRequiredRole) {
+      navigate("/loginrole");
+    }
+  }, [authLoading, token, hasRequiredRole, navigate]);
+
+  if (authLoading) return <Loading />;
+
+  if (!token || !hasRequiredRole) return null;
+
   return children;
 };
 

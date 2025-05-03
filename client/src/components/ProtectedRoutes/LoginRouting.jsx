@@ -30,7 +30,7 @@ const LoginRouting = ({ children }) => {
 
 
 
-  return children; // fallback if token exists but redirection hasn't happened yet
+  return children; 
 };
 
 export default LoginRouting;

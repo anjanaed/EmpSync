@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./LoginRole.module.css";
 import illustration from "../../../assets/illustration2.png";
@@ -14,6 +14,13 @@ const roleDisplayMap = {
   KITCHEN_ADMIN: "Kitchen Admin",
 };
 
+const redirectRoles = [
+  "KITCHEN_ADMIN",
+  "KITCHEN_STAFF",
+  "INVENTORY_ADMIN",
+  "HR_ADMIN",
+];
+
 const roleRouteMap = {
   HR_ADMIN: "/EmployeePage",
   INVENTORY_ADMIN: "/Ingredients",
@@ -28,6 +35,13 @@ const LoginPage = () => {
   if (authLoading) {
     return <Loading />;
   }
+
+  useEffect(() => {
+    const userRole = authData.user.role;
+    if (!redirectRoles.includes(userRole)) {
+      navigate("/profile");
+    }
+  }, []);
 
   const handleAdminLogin = () => {
     const userRole = authData.user.role;
