@@ -5,6 +5,7 @@ import styles from "./Login.module.css";
 import illustration from "../../../assets/illustration.png";
 import axios from "axios";
 import { useAuth } from "../../../contexts/AuthContext";
+import Loading from "../../atoms/loading/loading";
 
 const redirectRoles = [
   "KITCHEN_ADMIN",
@@ -16,7 +17,7 @@ const redirectRoles = [
 ];
 
 const LoginPage = () => {
-  const { login, authData } = useAuth();
+  const { login, authData,authLoading } = useAuth();
   const urL = import.meta.env.VITE_BASE_URL;
   const navigate = useNavigate();
 
@@ -34,7 +35,11 @@ const LoginPage = () => {
       const { access_token, id_token } = response.data;
       login({ access_token, id_token });
 
-      const userRole = authData.user.role;
+      if (authLoading){
+        return (<Loading/>)
+      }
+
+      const userRole = authData?.user.role;
 
       if (redirectRoles.includes(userRole)) {
         navigate("/loginrole");
