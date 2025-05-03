@@ -40,7 +40,11 @@ const NavBar = ({ Comp, titleLines = [], menuItems = [] }) => {
   const [loading, setLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState("null");
   const navigate = useNavigate();
-  const { authData, logout } = useAuth();
+  const { authData, logout,authLoading } = useAuth();
+
+  if (authLoading){
+    return <Loading/>
+  }
 
   const setUser = () => {
     if (authData) {

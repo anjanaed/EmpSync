@@ -12,8 +12,6 @@ const redirectRoles = [
   "KITCHEN_STAFF",
   "INVENTORY_ADMIN",
   "HR_ADMIN",
-
-
 ];
 
 const LoginPage = () => {
@@ -35,17 +33,8 @@ const LoginPage = () => {
       const { access_token, id_token } = response.data;
       login({ access_token, id_token });
 
-      if (authLoading){
-        return (<Loading/>)
-      }
+      navigate("/loginrole")
 
-      const userRole = authData?.user.role;
-
-      if (redirectRoles.includes(userRole)) {
-        navigate("/loginrole");
-      } else {
-        navigate("/profile");
-      }
     } catch (error) {
       console.error("Login error:", error);
       message.error(`Login Failed: ${error.response.data.message}`);

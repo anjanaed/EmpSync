@@ -11,11 +11,20 @@ export const AuthProvider = ({ children }) => {
 
 
   useEffect(() => {
-    const stored = localStorage.getItem("authData");
-    if (stored) {
-      setAuthData(JSON.parse(stored));
-    }
-    setAuthLoading(false)
+    const loadAuthData = async () => {
+      const stored = localStorage.getItem("authData");
+      if (stored) {
+        try {
+          const parsedData = JSON.parse(stored);
+          setAuthData(parsedData);
+        } catch (error) {
+          localStorage.removeItem("authData"); 
+        }
+      }
+      setAuthLoading(false); 
+    };
+
+    loadAuthData();
   }, []);
 
   const login = async ({ access_token, id_token }) => {
@@ -46,7 +55,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     setAuthData(null);
-    localStorage.removeItem("authData"); // 🧹 Clear from localStorage
+    localStorage.removeItem("authData"); 
   };
 
   return (
