@@ -7,15 +7,16 @@ import {
   Select,
   Space,
   InputNumber,
+  message,
 } from "antd";
 import styles from "./EditModal.module.css";
 import Loading from "../../../atoms/loading/loading";
 import dayjs from "dayjs";
-import {Toaster,toast} from 'sonner'
 import { LuSave } from "react-icons/lu";
 import axios from "axios";
 import Gbutton from "../../../atoms/button/Button";
 import { RiFingerprintLine } from "react-icons/ri";
+import { usePopup } from "../../../../contexts/PopupContext";
 
 const formItemLayout = {
   labelCol: {
@@ -39,6 +40,8 @@ const formItemLayout = {
 const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
   const [customRole, setCustomRole] = useState("");
   const [form] = Form.useForm();
+  const { success, error } = usePopup();
+
   const [currentEmployee, setCurrentEmployee] = useState({
     id: "",
     name: "",
@@ -59,6 +62,7 @@ const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
   const [loading, setLoading] = useState(true);
   const urL = import.meta.env.VITE_BASE_URL;
 
+
   const fetchRecord = async () => {
     try {
       const res = await axios.get(`${urL}/user/${empId}`);
@@ -68,31 +72,9 @@ const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
       form.setFieldsValue(employee);
     } catch (err) {
       console.log(err);
-      erNofify("Error Fetching User Details")
+      error("Error Fetching User Details");
     }
     setLoading(false);
-  };
-
-  const sucNofify = (message) => {
-    setTimeout(
-      () =>
-        toast.success(message, {
-          duration: 2500,
-          position: "top-center",
-        }),
-      300
-    );
-  };
-
-  const erNofify = (message) => {
-    setzTimeout(
-      () =>
-        toast.error(message, {
-          duration: 2500,
-          position: "top-center",
-        }),
-      300
-    );
   };
 
   useEffect(() => {
@@ -100,16 +82,24 @@ const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
   }, [empId]);
 
   const handleUpdate = async () => {
-    await form.validateFields();
-    setLoading(true);
     try {
+      await form.validateFields();
+      setLoading(true);
       await axios.put(`${urL}/user/${empId}`, currentEmployee);
       handleCancel();
       fetchEmployee();
-      sucNofify("User Information Updated Successfully!")
+      success("User Information Updated Successfully!");
     } catch (err) {
-      console.log(err);
-      erNofify("User Update Failed")
+      if (err?.errorFields) {
+        // Extract all error messages into one string
+        const allMessages = err.errorFields
+          .map((field) => field.errors.join(", "))
+          .join(" | ");
+
+        error(allMessages);
+      } else {
+        error(err?.message || "Update failed");
+      }
     }
     setLoading(false);
   };
@@ -120,7 +110,6 @@ const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
 
   return (
     <>
-        <Toaster richColors/>
       <div className={styles.head}>Edit Employee - {currentEmployee.id}</div>
       <div className={styles.headDes}>
         Update Employee Information. Click Save Changes When You're Done.
@@ -314,7 +303,6 @@ const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
                       <Form.Item
                         rules={[
                           {
-                            required: true,
                             message: "Please Enter ID!",
                           },
                         ]}
@@ -344,16 +332,16 @@ const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
                               style={{ width: "100%" }}
                               placeholder="Select Role"
                             >
-                              <Select.Option value="HrManager">
-                                HR Administrator
+                              <Select.Option value="HR_ADMIN">
+                                Human Resources Manager
                               </Select.Option>
-                              <Select.Option value="KitchenAdmin">
-                                Kitchen Admin
+                              <Select.Option value="KITCHEN_ADMIN">
+                                Kitchen Administrator
                               </Select.Option>
-                              <Select.Option value="KitchenStaff">
+                              <Select.Option value="KITCHEN_STAFF">
                                 Kitchen Staff
                               </Select.Option>
-                              <Select.Option value="InventoryManager">
+                              <Select.Option value="INVENTORY_ADMIN">
                                 Inventory Manager
                               </Select.Option>
                               <Select.Option value="Other">Other</Select.Option>
@@ -412,10 +400,10 @@ const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
                           formatter={(value) => `${value} LKR`}
                           parser={(value) => value.replace(" LKR", "")}
                           placeholder="Enter Basic Salary"
-                          onChange={(e) =>
+                          onChange={(value) =>
                             setCurrentEmployee({
                               ...currentEmployee,
-                              salary: parseFloat(e.target.value) || 0,
+                              salary: parseFloat(value) || 0,
                             })
                           }
                         />
