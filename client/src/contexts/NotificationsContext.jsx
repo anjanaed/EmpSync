@@ -54,15 +54,15 @@ export const NotificationsProvider = ({ children }) => {
   // Function to check for unconfirmed schedules
   const checkUnconfirmedSchedules = async () => {
     try {
-      console.log("Starting unconfirmed schedule check...");
-      const response = await axios.get("http://localhost:3000/schedule");
+      // console.log("Starting unconfirmed schedule check...");
+      // const response = await axios.get("http://localhost:3000/schedule");
       const schedules = response.data;
-      console.log("All schedules:", schedules);
+      // console.log("All schedules:", schedules);
 
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       const todayString = today.toISOString().split("T")[0];
-      console.log("Today's date:", todayString);
+      // console.log("Today's date:", todayString);
 
       const unconfirmedSchedules = [];
 
@@ -71,10 +71,10 @@ export const NotificationsProvider = ({ children }) => {
         checkDate.setDate(today.getDate() + i);
         const formattedDate = checkDate.toISOString().split("T")[0];
 
-        console.log(`Checking date: ${formattedDate} (${i} days from today)`);
+        // console.log(`Checking date: ${formattedDate} (${i} days from today)`);
 
         try {
-          console.log(`Fetching schedule for ${formattedDate}...`);
+          // console.log(`Fetching schedule for ${formattedDate}...`);
           const scheduleResponse = await axios.get(
             `http://localhost:3000/schedule/${formattedDate}`
           );
