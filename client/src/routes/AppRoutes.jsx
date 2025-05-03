@@ -1,17 +1,16 @@
 import React from "react";
-import { Routes, Route, BrowserRouter } from "react-router-dom";
+import { Routes, Route, BrowserRouter,Navigate } from "react-router-dom";
 import RootLayout from "../components/UserPortalUI/layout";
 import PasswordReset from "../components/pages/PasswordReset/PasswordReset";
 import OrderTab from "../pages/OrderTab/OrderTab";
 import PrivateRoutes from "./PrivateRoutes";
-
-import { Toaster } from "sonner";
 import { NotificationsProvider } from "../contexts/NotificationsContext";
+import { PopupProvider } from "../contexts/PopupContext";
 
 const AppRoutes = () => (
   <BrowserRouter>
-    <Toaster richColors />
     <NotificationsProvider>
+      <PopupProvider>
       <RootLayout>
         <Routes>
           {/* Public Routes */}
@@ -20,8 +19,11 @@ const AppRoutes = () => (
 
           {/* Private Routes */}
           {PrivateRoutes()}
+          <Route path="*" element={<Navigate to="/login" replace />} />
+
         </Routes>
       </RootLayout>
+      </PopupProvider>
     </NotificationsProvider>
   </BrowserRouter>
 );
