@@ -36,16 +36,7 @@ export function Sidebar({ isOpen, activeTab, setActiveTab }) {
       onCollapse={toggleSidebar}
       width={240}
       className={styles.sider}
-      trigger={
-        <Button
-          type="text"
-          icon={<LogoutOutlined />}
-          onClick={logout}
-          style={{ width: "100%", color: "#fff" }}
-        >
-          Log Out
-        </Button>
-      }
+      trigger={null}
     >
       <div className={styles.header}>
         {isOpen && (
@@ -75,7 +66,11 @@ export function Sidebar({ isOpen, activeTab, setActiveTab }) {
           <Menu.Item
             key={item.path.substring(1)}
             icon={item.icon}
-            onClick={() => setActiveTab(item.path.substring(1))}
+            onClick={() => {
+              if (typeof setActiveTab === "function") {
+                setActiveTab(item.path.substring(1)); // Update active tab
+              }
+            }}
           >
             <Link to={item.path}>{isOpen ? item.name : null}</Link>
           </Menu.Item>
@@ -109,14 +104,14 @@ export function Sidebar({ isOpen, activeTab, setActiveTab }) {
 }
 
 export function App() {
-  const [activeTab, setActiveTab] = useState("profile");
-  const { isSidebarOpen } = useSidebar();
+  const [activeTab, setActiveTab] = useState("profile"); // State for active tab
+  const { isSidebarOpen } = useSidebar(); // Sidebar open state
 
   return (
     <Sidebar
       isOpen={isSidebarOpen}
       activeTab={activeTab}
-      setActiveTab={setActiveTab}
+      setActiveTab={setActiveTab} // Pass setActiveTab correctly
     />
   );
 }
