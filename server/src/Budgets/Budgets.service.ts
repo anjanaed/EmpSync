@@ -18,11 +18,18 @@ export class BudgetService {
     
     async createBudget(data: Prisma.BudgetCreateInput) {
         try {
-        return await this.database.budget.create({
-            data,
-        });
+            if (typeof data.budgetAmount !== 'number' || data.budgetAmount <= 0) {
+                throw new HttpException('Budget amount must be greater than 0', HttpStatus.BAD_REQUEST);
+            }
+            
+            return await this.database.budget.create({
+                data,
+            });
         } catch (error) {
-        throw new HttpException('Error creating budget', HttpStatus.BAD_REQUEST);
+            if (error instanceof HttpException) {
+                throw error;
+            }
+            throw new HttpException('Error creating budget', HttpStatus.BAD_REQUEST);
         }
     }
     
