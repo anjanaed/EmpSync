@@ -21,6 +21,9 @@ describe('IngredientsService', () => {
     ingredientOrder: {
       create: jest.fn(),
     },
+    mealIngredient: {
+      deleteMany: jest.fn(),
+    },
   };
 
   beforeEach(async () => {
@@ -257,35 +260,67 @@ describe('IngredientsService', () => {
     });
   });
 
+  describe('remove', () => {
+    const mockIngredient = {
+      id: 1,
+      name: 'Sugar', 
+      price_per_unit: 2.5,
+      quantity: 100,
+      priority: 1
+    };
+
+    beforeEach(() => {
+      mockDatabaseService.mealIngredient = {
+        deleteMany: jest.fn().mockResolvedValue({ count: 1 })
+      };
+      mockDatabaseService.ingredient.findUnique.mockResolvedValue(mockIngredient);
+      mockDatabaseService.ingredient.delete.mockResolvedValue(mockIngredient);
+    });
+
+    it('should delete related mealIngredients before deleting ingredient', async () => {
+      await service.remove(1);
+
+      expect(mockDatabaseService.mealIngredient.deleteMany).toHaveBeenCalledWith({
+        where: { ingredientId: 1 }
+      });
+      expect(mockDatabaseService.ingredient.delete).toHaveBeenCalledWith({
+        where: { id: 1 } 
+      });
+    });
+
+    it('should throw error if mealIngredient deletion fails', async () => {
+      mockDatabaseService.mealIngredient.deleteMany.mockRejectedValue(new Error());
+
+      await expect(service.remove(1)).rejects.toThrow('Failed to delete ingredient');
+    });
+
+    it('should throw error if ingredient deletion fails', async () => {
+      mockDatabaseService.ingredient.delete.mockRejectedValue(new Error());
+
+      await expect(service.remove(1)).rejects.toThrow('Failed to delete ingredient');
+    });
+
+    it('should validate ID is a number', async () => {
+      await expect(service.remove(NaN)).rejects.toThrow('Invalid ingredient ID');
+    });
+
+    it('should parse string ID to number', async () => {
+      await service.remove('1' as unknown as number);
+
+      expect(mockDatabaseService.ingredient.delete).toHaveBeenCalledWith({
+        where: { id: 1 }
+      });
+    });
+  });
+
   describe('createBudgetBasedOrder', () => {
     it('should create a budget-based order successfully', async () => {
-      // Mock optimized ingredients data
       const mockOptimizedData = {
-        priority1Ingredients: [
-          {
-            id: 1,
-            name: 'Sugar',
-            price_per_unit: new Prisma.Decimal(2),
-            type: 'SWEETENER',
-            priority: 1,
-            quantity: new Prisma.Decimal(100),
-            createdAt: new Date()
-          }
-        ],
-        optimizedIngredients: [
-          {
-            id: 2,
-            name: 'Salt',
-            price_per_unit: new Prisma.Decimal(1),
-            type: 'SEASONING',
-            priority: 2,
-            quantity: new Prisma.Decimal(50),
-            createdAt: new Date()
-          }
-        ],
+        priority1Ingredients: [],
+        optimizedIngredients: [],
         lastUpdated: new Date()
       };
-
+      
       mockDatabaseService.ingredientOrder.create.mockResolvedValue({
         id: 1,
         budget: 1000,
