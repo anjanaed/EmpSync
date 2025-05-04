@@ -34,6 +34,7 @@ model User {
   payrolls   Payroll[]
   attendance Attendance[]
   createdAt  DateTime     @default(now())
+  
 }
 
 model Ingredient {
