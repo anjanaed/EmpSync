@@ -478,6 +478,14 @@ export class IngredientsService {
 
   async createBudgetBasedOrder(budget: number) {
     try {
+      // Validate budget
+      if (budget <= 0) {
+        throw new HttpException(
+          'Budget must be greater than zero',
+          HttpStatus.BAD_REQUEST
+        );
+      }
+
       const optimizedData = await this.getOptimizedIngredients();
       
       // Calculate budget allocation
@@ -485,32 +493,26 @@ export class IngredientsService {
       const otherPriorityBudget = budget * 0.3;
       
       // Process priority 1 ingredients
-      const priority1Orders = optimizedData.priority1Ingredients.map(ing => {
-        const maxQuantity = Math.floor(priority1Budget / (optimizedData.priority1Ingredients.length * Number(ing.price_per_unit)));
-        return {
-          ingredientId: ing.id, // Store reference to original ingredient
-          name: ing.name,
-          price_per_unit: parseFloat(ing.price_per_unit.toString()),
-          quantity: maxQuantity,
-          type: ing.type,
-          priority: ing.priority,
-          totalCost: maxQuantity * Number(ing.price_per_unit)
-        };
-      });
+      const priority1Orders = optimizedData.priority1Ingredients.map(ing => ({
+        id: ing.id,
+        name: ing.name,
+        price_per_unit: parseFloat(ing.price_per_unit.toString()),
+        quantity: Math.floor(priority1Budget / parseFloat(ing.price_per_unit.toString()) / optimizedData.priority1Ingredients.length),
+        type: ing.type,
+        priority: ing.priority,
+        totalCost: Math.floor(priority1Budget / optimizedData.priority1Ingredients.length)
+      }));
 
       // Process other priority ingredients
-      const otherPriorityOrders = optimizedData.optimizedIngredients.map(ing => {
-        const maxQuantity = Math.floor(otherPriorityBudget / (optimizedData.optimizedIngredients.length * Number(ing.price_per_unit)));
-        return {
-          ingredientId: ing.id, // Store reference to original ingredient
-          name: ing.name,
-          price_per_unit: parseFloat(ing.price_per_unit.toString()),
-          quantity: maxQuantity,
-          type: ing.type,
-          priority: ing.priority,
-          totalCost: maxQuantity * Number(ing.price_per_unit)
-        };
-      });
+      const otherPriorityOrders = optimizedData.optimizedIngredients.map(ing => ({
+        id: ing.id,
+        name: ing.name,
+        price_per_unit: parseFloat(ing.price_per_unit.toString()),
+        quantity: Math.floor(otherPriorityBudget / parseFloat(ing.price_per_unit.toString()) / optimizedData.optimizedIngredients.length),
+        type: ing.type,
+        priority: ing.priority,
+        totalCost: Math.floor(otherPriorityBudget / optimizedData.optimizedIngredients.length)
+      }));
 
       // Calculate total costs
       const priority1TotalCost = priority1Orders.reduce((sum, ing) => sum + ing.totalCost, 0);
@@ -557,6 +559,11 @@ export class IngredientsService {
       };
     } catch (error) {
       console.error('Error creating budget-based order:', error);
+      
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      
       throw new HttpException(
         'Failed to create budget-based order',
         HttpStatus.INTERNAL_SERVER_ERROR
