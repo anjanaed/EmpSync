@@ -1,14 +1,15 @@
 import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
-import { Table, Space, Modal, ConfigProvider, Select } from "antd";
+import { Table, Space, Modal, ConfigProvider, Select, Popconfirm } from "antd";
 import { FiEdit } from "react-icons/fi";
 import { MdOutlineDeleteOutline } from "react-icons/md";
 import EditModal from "../../../templates/HR/EditModal/EditModal";
 import Loading from "../../../atoms/loading/loading";
 import styles from "./Employee.module.css";
 import SearchBar from "../../../molecules/SearchBar/SearchBar";
-import {Toaster,toast} from 'sonner'
+import { Toaster, toast } from "sonner";
 import { debounce } from "lodash";
+import { usePopup } from "../../../../contexts/PopupContext";
 
 const customTheme = {
   components: {
@@ -25,10 +26,10 @@ const customTheme = {
 };
 
 const roleMap = {
-  "KITCHEN_ADMIN": "Kitchen Administrator",
-  "KITCHEN_STAFF": "Kitchen Staff",
-  "INVENTORY_ADMIN": "Inventory Manager",
-  "HR_ADMIN": "Human Resource Manager",
+  KITCHEN_ADMIN: "Kitchen Administrator",
+  KITCHEN_STAFF: "Kitchen Staff",
+  INVENTORY_ADMIN: "Inventory Manager",
+  HR_ADMIN: "Human Resource Manager",
 };
 
 const Employees = () => {
@@ -39,6 +40,7 @@ const Employees = () => {
   const [employee, setEmployee] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const urL = import.meta.env.VITE_BASE_URL;
+  const { success, error } = usePopup();
 
   const openModal = (empId) => {
     setSelectedEmployee(empId);
@@ -87,40 +89,16 @@ const Employees = () => {
   };
 
 
-  const sucNofify = (message) => {
-    setTimeout(
-      () =>
-        toast.success(message, {
-          duration: 2500,
-          position: "top-center",
-        }),
-      300
-    );
-  };
-
-  const erNofify = (message) => {
-    setzTimeout(
-      () =>
-        toast.error(message, {
-          duration: 2500,
-          position: "top-center",
-        }),
-      300
-    );
-  };
-
-
-
-  const handleDelete = async (id,email) => {
+  const handleDelete = async (id, email) => {
     setLoading(true);
     try {
       await axios.delete(`${urL}/user/${id}`);
       await axios.post(`${urL}/auth/delete`, { email: email });
       fetchEmployee();
-      sucNofify("User Removed Successfully!")
+      success("User Removed Successfully!");
     } catch (err) {
       console.log(err);
-      erNofify("Something went Wrong!")
+      error("Something went Wrong!");
     }
     setLoading(false);
   };
@@ -184,11 +162,25 @@ const Employees = () => {
             className={styles.icons}
             size="15px"
           />
-          <MdOutlineDeleteOutline
-            onClick={() => handleDelete(record.id,record.email)}
-            className={styles.icons}
-            size="17px"
-          />
+          <Popconfirm
+            title={
+              <span style={{ fontSize: "0.75vw" }}>
+                Delete User {record.id}
+              </span>
+            }
+            placement="bottom"
+            onConfirm={() => handleDelete(record.id, record.email)}
+            description={
+              <span style={{ fontStyle: "italic", fontSize: "0.6vw" }}>
+                Are You Sure to Delete
+              </span>
+            }
+            okText={<span style={{ fontSize: "0.6vw" }}>Yes</span>}
+            cancelText={<span style={{ fontSize: "0.6vw" }}>No</span>}
+          >
+            {" "}
+            <MdOutlineDeleteOutline className={styles.icons} size="17px" />
+          </Popconfirm>
         </Space>
       ),
     },
@@ -196,7 +188,7 @@ const Employees = () => {
 
   return (
     <>
-    <Toaster richColors/>
+      <Toaster richColors />
       <Modal
         open={isModalOpen}
         footer={null}

@@ -21,7 +21,7 @@ const customTheme = {
   },
 };
 
-const PayeModal = ({ handleCancel, sucNotify, erNotify }) => {
+const PayeModal = ({ handleCancel, success, error }) => {
   const [loading, setLoading] = useState(true);
   const urL = import.meta.env.VITE_BASE_URL;
   const [form] = Form.useForm();
@@ -87,10 +87,10 @@ const PayeModal = ({ handleCancel, sucNotify, erNotify }) => {
     try {
       await axios.put(`${urL}/paye`, dataSource);
       handleCancel();
-      sucNotify("PAYE Slab Updated");
+      success("PAYE Slab Updated");
     } catch (err) {
       handleCancel();
-      erNotify("Something Went Wrong");
+      error("Something Went Wrong");
     }
     setLoading(false);
   };

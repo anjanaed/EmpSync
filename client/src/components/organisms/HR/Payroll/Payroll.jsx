@@ -23,6 +23,7 @@ import { IoOpenOutline } from "react-icons/io5";
 import Loading from "../../../atoms/loading/loading";
 import { IoMdRemoveCircleOutline } from "react-icons/io";
 import PayeModal from "../../../templates/HR/PayeModal/PayeModal";
+import { usePopup } from "../../../../contexts/PopupContext";
 const { RangePicker } = DatePicker;
 
 const Payroll = () => {
@@ -38,6 +39,8 @@ const Payroll = () => {
   const urL = import.meta.env.VITE_BASE_URL;
   const [form] = Form.useForm();
   const navigate = useNavigate();
+  const { success, error } = usePopup();
+
   const [individualAdjustment, setIndividualAdjustment] = useState([
     { id: "", details: "", amount: "", isPercentage: true, isAllowance: true },
   ]);
@@ -55,27 +58,7 @@ const Payroll = () => {
     }
   };
 
-  const sucNofify = (message) => {
-    setTimeout(
-      () =>
-        toast.success(message, {
-          duration: 2500,
-          position: "top-center",
-        }),
-      300
-    );
-  };
 
-  const erNofify = (message) => {
-    setTimeout(
-      () =>
-        toast.error(message, {
-          duration: 2500,
-          position: "top-center",
-        }),
-      300
-    );
-  };
 
   //Format Range
   const handleRangeChange = (dates) => {
@@ -121,10 +104,10 @@ const Payroll = () => {
         range: range,
         month: month,
       });
-      sucNofify("Payrolls Generated Successfully");
+      success("Payrolls Generated Successfully");
     } catch (err) {
       console.log(err);
-      erNofify("Payrolls Generation Failed");
+      error("Payrolls Generation Failed");
     }
     setLoading(false);
   };
@@ -158,10 +141,10 @@ const Payroll = () => {
       const intId = parseInt(id, 10);
       await axios.delete(`${urL}/adjustment/${intId}`);
       fetchAdjustments();
-      sucNofify("Adjustment Removed Successfully");
+      success("Adjustment Removed Successfully");
     } catch (err) {
       console.log(err);
-      erNofify("Something wen Wrong");
+      error("Something wen Wrong");
     }
     setLoading(false);
   };
@@ -232,7 +215,7 @@ const Payroll = () => {
         if (invalidIds.length > 0) {
           setLoading(false);
           console.log(`Invalid Employee IDs: ${invalidIds.join(",")}`);
-          erNofify(`Invalid Employee IDs: ${invalidIds.join(",")}`);
+          error(`Invalid Employee IDs: ${invalidIds.join(",")}`);
           return;
         }
 
@@ -272,7 +255,7 @@ const Payroll = () => {
       form.resetFields();
       form.setFieldsValue(preservedFields);
 
-      sucNofify("Adjustments Updated Successfully");
+      success("Adjustments Updated Successfully");
     } catch (err) {
       console.log(err);
     }
@@ -365,8 +348,8 @@ const Payroll = () => {
         styles={modalStyles}
       >
         <AdjustmentModal
-          erNofify={erNofify}
-          sucNotify={sucNofify}
+          error={error}
+          success={success}
           handleCancel={handleCancel}
           fetch={fetchAdjustments}
         />
@@ -381,8 +364,8 @@ const Payroll = () => {
       >
         <PayeModal
           handleCancel={handlePayeModalCancel}
-          erNofify={erNofify}
-          sucNotify={sucNofify}
+          error={error}
+          success={success}
         />
       </Modal>
       <Toaster richColors />
@@ -471,13 +454,13 @@ const Payroll = () => {
                 </div>
               </div>
             ))}
-          
+
             <div className={styles.dynamicInputSet}>
               <button onClick={handleNewFields} className={styles.newFieldBtn}>
                 <BsPlusCircle size={13} /> Add New Field
               </button>
             </div>
-            </div>
+          </div>
           <div className={styles.payee}>
             <span>*</span> Income Paye Taxes Will Be Applied Automatically
             &nbsp;
@@ -571,96 +554,95 @@ const Payroll = () => {
                 </Form.Item>
               </div>
               <div className={styles.amountLine}>
-
-              <div>
-                <label>Amount</label>
-                <br />
-                <Form.Item
-                  name={[index, "Amount"]}
-                  style={{ marginBottom: 0 }}
-                  rules={[
-                    {
-                      required: true,
-                      message: "Enter Amount",
-                    },
-                  ]}
-                >
-                  <InputNumber
-                    placeholder="Amount"
-                    formatter={
-                      adj.isPercentage
-                        ? (value) => `${value}%`
-                        : (value) => value.replace("%", "")
-                    }
-                    parser={
-                      adj.isPercentage
-                        ? (value) => value.replace("%", "")
-                        : (value) => value
-                    }
-                    min={0}
-                    max={adj.isPercentage ? 100 : undefined}
-                    onChange={(value) => {
+                <div>
+                  <label>Amount</label>
+                  <br />
+                  <Form.Item
+                    name={[index, "Amount"]}
+                    style={{ marginBottom: 0 }}
+                    rules={[
+                      {
+                        required: true,
+                        message: "Enter Amount",
+                      },
+                    ]}
+                  >
+                    <InputNumber
+                      placeholder="Amount"
+                      formatter={
+                        adj.isPercentage
+                          ? (value) => `${value}%`
+                          : (value) => value.replace("%", "")
+                      }
+                      parser={
+                        adj.isPercentage
+                          ? (value) => value.replace("%", "")
+                          : (value) => value
+                      }
+                      min={0}
+                      max={adj.isPercentage ? 100 : undefined}
+                      onChange={(value) => {
+                        const newList = [...individualAdjustment];
+                        newList[index].amount = value;
+                        setIndividualAdjustment(newList);
+                      }}
+                    />
+                  </Form.Item>
+                </div>
+                <div className={styles.checkBoxes}>
+                  <Checkbox
+                    style={{ transform: "scale(0.9)" }}
+                    checked={adj.isAllowance}
+                    onChange={() => {
+                      handleAllowanceChange();
                       const newList = [...individualAdjustment];
-                      newList[index].amount = value;
+                      newList[index].isAllowance = true;
                       setIndividualAdjustment(newList);
                     }}
-                  />
-                </Form.Item>
-              </div>
-              <div className={styles.checkBoxes}>
-                <Checkbox
-                  style={{ transform: "scale(0.9)" }}
-                  checked={adj.isAllowance}
-                  onChange={() => {
-                    handleAllowanceChange();
-                    const newList = [...individualAdjustment];
-                    newList[index].isAllowance = true;
-                    setIndividualAdjustment(newList);
-                  }}
-                >
-                  Addition
-                </Checkbox>
-                <Checkbox
-                  style={{ transform: "scale(0.9)" }}
-                  checked={!adj.isAllowance}
-                  onChange={() => {
-                    handleAllowanceChange();
-                    const newList = [...individualAdjustment];
-                    newList[index].isAllowance = false;
-                    setIndividualAdjustment(newList);
-                  }}
-                >
-                  Deduction
-                </Checkbox>
-              </div>
-              <div className={styles.checkBoxes}>
-                <Checkbox
-                  style={{ transform: "scale(0.9)" }}
-                  checked={adj.isPercentage}
-                  onChange={() => {
-                    handleAllowanceChange();
+                  >
+                    Addition
+                  </Checkbox>
+                  <Checkbox
+                    style={{ transform: "scale(0.9)" }}
+                    checked={!adj.isAllowance}
+                    onChange={() => {
+                      handleAllowanceChange();
+                      const newList = [...individualAdjustment];
+                      newList[index].isAllowance = false;
+                      setIndividualAdjustment(newList);
+                    }}
+                  >
+                    Deduction
+                  </Checkbox>
+                </div>
+                <div className={styles.checkBoxes}>
+                  <Checkbox
+                    style={{ transform: "scale(0.9)" }}
+                    checked={adj.isPercentage}
+                    onChange={() => {
+                      handleAllowanceChange();
 
-                    const newList = [...individualAdjustment];
-                    newList[index].isPercentage = true;
-                    setIndividualAdjustment(newList);
-                  }}
-                >
-                  Percentage
-                </Checkbox>
-                <Checkbox
-                  style={{ transform: "scale(0.9)" }}
-                  checked={!adj.isPercentage}
-                  defaultChecked
-                  onChange={() => {
-                    handleAllowanceChange();
-                    const newList = [...individualAdjustment];
-                    newList[index].isPercentage = false;
-                    setIndividualAdjustment(newList);
-                  }}
-                >
-                  Value
-                </Checkbox>
-              </div>
+                      const newList = [...individualAdjustment];
+                      newList[index].isPercentage = true;
+                      setIndividualAdjustment(newList);
+                    }}
+                  >
+                    Percentage
+                  </Checkbox>
+                  <Checkbox
+                    style={{ transform: "scale(0.9)" }}
+                    checked={!adj.isPercentage}
+                    defaultChecked
+                    onChange={() => {
+                      handleAllowanceChange();
+                      const newList = [...individualAdjustment];
+                      newList[index].isPercentage = false;
+                      setIndividualAdjustment(newList);
+                    }}
+                  >
+                    Value
+                  </Checkbox>
+                </div>
               </div>
               <div
                 className={styles.removeBtn}

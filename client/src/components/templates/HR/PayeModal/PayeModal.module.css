@@ -24,7 +24,7 @@ h2{
 }
 
 Button{
-    margin-right: 1vw;
+    margin-right: 1vw !important;
     font-family: "Figtree", sans-serif !important;
     font-weight: 500 !important;
     font-size: 13px !important;

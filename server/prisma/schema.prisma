@@ -73,7 +73,8 @@ model OrderIngredient {
 }
 
 model Budget {
-  id Int @id @default(autoincrement())
+  id Int @id 
+  name String
   budgetDate DateTime @default(now())
   budgetAmount Float
 }
