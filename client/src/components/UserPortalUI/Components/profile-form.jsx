@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Form, Input, Button, Card, Avatar, Divider, Typography, message, Select } from "antd";
+import { Form, Input, Button, Card, Avatar, Divider, Typography, message, Select, Row, Col, Space } from "antd";
 import axios from "axios";
 import { useAuth } from "../../../contexts/AuthContext"; // Import useAuth
 
@@ -102,36 +102,29 @@ export function ProfileForm({ employeeId: propEmployeeId }) {
   return (
     <div style={{ margin: "20px" }}>
       <Card>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <div>
+        <Row justify="space-between" align="middle">
+          <Col>
             <Title level={4}>Personal Information</Title>
             <Paragraph type="secondary">View and update your personal information</Paragraph>
-          </div>
-          <div>
+          </Col>
+          <Col>
             {!isEditing ? (
               <Button type="primary" onClick={() => setIsEditing(true)}>
                 Edit Profile
               </Button>
             ) : (
-              <>
-                <Button onClick={() => setIsEditing(false)} style={{ marginRight: "8px" }}>
-                  Cancel
-                </Button>
-                <Button
-                  type="primary"
-                  onClick={() => {
-                    form.submit();
-                  }}
-                >
+              <Space>
+                <Button onClick={() => setIsEditing(false)}>Cancel</Button>
+                <Button type="primary" onClick={() => form.submit()}>
                   Save Changes
                 </Button>
-              </>
+              </Space>
             )}
-          </div>
-        </div>
+          </Col>
+        </Row>
         <Divider />
-        <div style={{ display: "flex", gap: "20px", flexWrap: "wrap" }}>
-          <div style={{ textAlign: "center" }}>
+        <Row gutter={[20, 20]}>
+          <Col xs={24} sm={8} style={{ textAlign: "center" }}>
             <Avatar size={128} src="/placeholder.svg" />
             {isEditing && (
               <div style={{ marginTop: "10px" }}>
@@ -140,69 +133,97 @@ export function ProfileForm({ employeeId: propEmployeeId }) {
                 </Button>
               </div>
             )}
-          </div>
-          <div style={{ flex: 1 }}>
+          </Col>
+          <Col xs={24} sm={16}>
             <Form
               form={form}
               layout="vertical"
               onFinish={onSubmit}
               disabled={!isEditing}
             >
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
-                <Form.Item label="Employee ID" name="employeeId">
-                  <Input disabled value={authData?.user?.id || "EMP12345"} />
-                </Form.Item>
-                <Form.Item label="Email" name="email">
-                  <Input disabled value={authData?.user?.email || "user@example.com"} />
-                </Form.Item>
-                <Form.Item label="Full Name" name="fullName">
-                  <Input />
-                </Form.Item>
-                <Form.Item label="Password" name="password">
-                  <Input.Password visibilityToggle={isEditing} />
-                </Form.Item>
-                <Form.Item label="Role" name="role">
-                  <Input disabled value={authData?.user?.role || "Software Engineer"} />
-                </Form.Item>
-                <Form.Item label="Salary" name="salary">
-                  <Input disabled />
-                </Form.Item>
-                <Form.Item label="Phone" name="phone">
-                  <Input />
-                </Form.Item>
-                <Form.Item label="Birthday" name="birthday">
-                  <Input type="date" />
-                </Form.Item>
-                <Form.Item label="Join Date" name="joinDate">
-                  <Input disabled />
-                </Form.Item>
-                <Form.Item label="Preferred Language" name="language">
-                  <Select>
-                    <Option value="Sinhala">Sinhala</Option>
-                    <Option value="Tamil">Tamil</Option>
-                    <Option value="English">English</Option>
-                  </Select>
-                </Form.Item>
-                <Form.Item label="Address" name="address">
-                  <Input />
-                </Form.Item>
-                <Form.Item label="Gender" name="gender">
-                  <Select>
-                    <Option value="Male">Male</Option>
-                    <Option value="Female">Female</Option>
-                    <Option value="Other">Other</Option>
-                  </Select>
-                </Form.Item>
-                <Form.Item label="Height (cm)" name="height">
-                  <Input type="number" />
-                </Form.Item>
-                <Form.Item label="Weight (kg)" name="weight">
-                  <Input type="number" />
-                </Form.Item>
-              </div>
+              <Row gutter={[16, 16]}>
+                <Col xs={24} sm={12}>
+                  <Form.Item label="Employee ID" name="employeeId">
+                    <Input disabled />
+                  </Form.Item>
+                </Col>
+                <Col xs={24} sm={12}>
+                  <Form.Item label="Email" name="email">
+                    <Input disabled />
+                  </Form.Item>
+                </Col>
+                <Col xs={24} sm={12}>
+                  <Form.Item label="Full Name" name="fullName">
+                    <Input />
+                  </Form.Item>
+                </Col>
+                <Col xs={24} sm={12}>
+                  <Form.Item label="Password" name="password">
+                    <Input.Password visibilityToggle={isEditing} />
+                  </Form.Item>
+                </Col>
+                <Col xs={24} sm={12}>
+                  <Form.Item label="Role" name="role">
+                    <Input disabled />
+                  </Form.Item>
+                </Col>
+                <Col xs={24} sm={12}>
+                  <Form.Item label="Salary" name="salary">
+                    <Input disabled />
+                  </Form.Item>
+                </Col>
+                <Col xs={24} sm={12}>
+                  <Form.Item label="Phone" name="phone">
+                    <Input />
+                  </Form.Item>
+                </Col>
+                <Col xs={24} sm={12}>
+                  <Form.Item label="Birthday" name="birthday">
+                    <Input type="date" />
+                  </Form.Item>
+                </Col>
+                <Col xs={24} sm={12}>
+                  <Form.Item label="Join Date" name="joinDate">
+                    <Input disabled />
+                  </Form.Item>
+                </Col>
+                <Col xs={24} sm={12}>
+                  <Form.Item label="Preferred Language" name="language">
+                    <Select>
+                      <Option value="Sinhala">Sinhala</Option>
+                      <Option value="Tamil">Tamil</Option>
+                      <Option value="English">English</Option>
+                    </Select>
+                  </Form.Item>
+                </Col>
+                <Col xs={24} sm={12}>
+                  <Form.Item label="Address" name="address">
+                    <Input />
+                  </Form.Item>
+                </Col>
+                <Col xs={24} sm={12}>
+                  <Form.Item label="Gender" name="gender">
+                    <Select>
+                      <Option value="Male">Male</Option>
+                      <Option value="Female">Female</Option>
+                      <Option value="Other">Other</Option>
+                    </Select>
+                  </Form.Item>
+                </Col>
+                <Col xs={24} sm={12}>
+                  <Form.Item label="Height (cm)" name="height">
+                    <Input type="number" />
+                  </Form.Item>
+                </Col>
+                <Col xs={24} sm={12}>
+                  <Form.Item label="Weight (kg)" name="weight">
+                    <Input type="number" />
+                  </Form.Item>
+                </Col>
+              </Row>
             </Form>
-          </div>
-        </div>
+          </Col>
+        </Row>
       </Card>
     </div>
   );
