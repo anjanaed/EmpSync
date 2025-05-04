@@ -111,10 +111,11 @@ const Employees = () => {
 
 
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (id,email) => {
     setLoading(true);
     try {
       await axios.delete(`${urL}/user/${id}`);
+      await axios.post(`${urL}/auth/delete`, { email: email });
       fetchEmployee();
       sucNofify("User Removed Successfully!")
     } catch (err) {
@@ -184,7 +185,7 @@ const Employees = () => {
             size="15px"
           />
           <MdOutlineDeleteOutline
-            onClick={() => handleDelete(record.id)}
+            onClick={() => handleDelete(record.id,record.email)}
             className={styles.icons}
             size="17px"
           />
