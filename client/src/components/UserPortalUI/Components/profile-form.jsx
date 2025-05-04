@@ -1,19 +1,22 @@
 import { useState, useEffect } from "react";
-import { Form, Input, Button, Card, Avatar, Divider, Typography, message, Select, Row, Col, Space } from "antd";
+import { Form, Input, Button, Card, Avatar, Divider, Typography, message, Select, Row, Col, Space, Upload } from "antd";
+import { UploadOutlined } from "@ant-design/icons";
 import axios from "axios";
-import { useAuth } from "../../../contexts/AuthContext"; // Import useAuth
+import { useAuth } from "../../../contexts/AuthContext";
+import { storage } from "../../../firebase/config"; // Import Firebase storage
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
-const { TextArea } = Input;
 const { Title, Paragraph } = Typography;
 const { Option } = Select;
 
 export function ProfileForm({ employeeId: propEmployeeId }) {
-  const { authData } = useAuth(); // Access authData from AuthContext
+  const { authData } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
-  const [userData, setUserData] = useState(null); // State to store user data
+  const [userData, setUserData] = useState(null);
   const [form] = Form.useForm();
+  const [uploading, setUploading] = useState(false); // State for upload status
+  const [imageUrl, setImageUrl] = useState("/placeholder.svg"); // Default avatar
 
-  // Retrieve employeeId from authData or props/localStorage
   const employeeId = authData?.user?.id || propEmployeeId || localStorage.getItem("employeeId");
 
   useEffect(() => {
@@ -22,14 +25,13 @@ export function ProfileForm({ employeeId: propEmployeeId }) {
       return;
     }
 
-    // Save employeeId to localStorage if it's available
     localStorage.setItem("employeeId", employeeId);
 
-    // Fetch user data based on employeeId
     const fetchUserData = async () => {
       try {
         const response = await axios.get(`http://localhost:3000/user/${employeeId}`);
         setUserData(response.data);
+        setImageUrl(response.data.profileImage || "/placeholder.svg"); // Set profile image
         form.setFieldsValue({
           employeeId: response.data.id || "EMP12345",
           email: response.data.email || "user@example.com",
@@ -55,6 +57,33 @@ export function ProfileForm({ employeeId: propEmployeeId }) {
     fetchUserData();
   }, [employeeId, form]);
 
+  const handlePhotoUpload = async (file) => {
+    if (!file) {
+      message.error("No file selected.");
+      return;
+    }
+
+    setUploading(true);
+    const storageRef = ref(storage, `profile-images/${employeeId}-${file.name}`);
+    try {
+      await uploadBytes(storageRef, file);
+      const downloadURL = await getDownloadURL(storageRef);
+      setImageUrl(downloadURL);
+
+      // Log the payload for debugging
+      console.log("Payload being sent to the backend:", { profileImage: downloadURL });
+
+      // Update the user's profile image in the backend
+      await axios.put(`http://localhost:3000/user/${employeeId}`, { profileImage: downloadURL });
+      message.success("Profile image updated successfully.");
+    } catch (error) {
+      console.error("Failed to upload image:", error);
+      message.error("Failed to upload image. Please try again.");
+    } finally {
+      setUploading(false);
+    }
+  };
+
   const onSubmit = async (values) => {
     try {
       if (!employeeId) {
@@ -79,19 +108,12 @@ export function ProfileForm({ employeeId: propEmployeeId }) {
         height: values.height && values.height !== "0" ? parseInt(values.height, 10) : null,
         weight: values.weight && values.weight !== "0" ? parseInt(values.weight, 10) : null,
         createdAt: userData?.createdAt,
+        profileImage: imageUrl, // Include profile image URL
       };
-
-      console.log("Dataset to be sent to the backend:", payload);
 
       await axios.put(`http://localhost:3000/user/${employeeId}`, payload);
 
       message.success("Your profile has been updated successfully.");
-
-      // Refetch user data to ensure the latest data is displayed
-      const updatedData = await axios.get(`http://localhost:3000/user/${employeeId}`);
-      setUserData(updatedData.data);
-
-      // Reload the page
       window.location.reload();
     } catch (error) {
       console.error("Failed to update profile:", error);
@@ -125,12 +147,20 @@ export function ProfileForm({ employeeId: propEmployeeId }) {
         <Divider />
         <Row gutter={[20, 20]}>
           <Col xs={24} sm={8} style={{ textAlign: "center" }}>
-            <Avatar size={128} src="/placeholder.svg" />
+            <Avatar size={128} src={imageUrl} />
             {isEditing && (
               <div style={{ marginTop: "10px" }}>
-                <Button onClick={() => message.info("Change photo clicked")}>
-                  Change Photo
-                </Button>
+                <Upload
+                  beforeUpload={(file) => {
+                    handlePhotoUpload(file);
+                    return false; // Prevent automatic upload
+                  }}
+                  showUploadList={false}
+                >
+                  <Button icon={<UploadOutlined />} loading={uploading}>
+                    Change Photo
+                  </Button>
+                </Upload>
               </div>
             )}
           </Col>
