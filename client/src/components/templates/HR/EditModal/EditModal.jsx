@@ -285,6 +285,10 @@ const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
                             required: true,
                             message: "Please Enter ID!",
                           },
+                          {
+                            pattern: /^\S{4}$/,
+                            message: "ID must be exactly 4 characters with no spaces!",
+                          },
                         ]}
                       >
                         <Input disabled />

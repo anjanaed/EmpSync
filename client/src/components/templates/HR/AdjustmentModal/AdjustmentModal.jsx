@@ -6,14 +6,14 @@ import { FaRegSave } from "react-icons/fa";
 import Loading from "../../../atoms/loading/loading";
 import axios from "axios";
 
-const AdjustmentModal = ({ handleCancel, fetch, sucNotify, erNotify }) => {
+const AdjustmentModal = ({ handleCancel, fetch, success, error }) => {
   const [isAllowanceChecked, setIsAllowanceChecked] = useState(true);
   const [isTypeChecked, setIsTypeChecked] = useState(true);
   const [loading, setLoading] = useState(false);
   const [description, setDescription] = useState();
   const [amount, setAmount] = useState();
-    const [form] = Form.useForm();
-  
+  const [form] = Form.useForm();
+
   const urL = import.meta.env.VITE_BASE_URL;
 
   const handleAllowanceChange = () => {
@@ -36,10 +36,10 @@ const AdjustmentModal = ({ handleCancel, fetch, sucNotify, erNotify }) => {
       await axios.post(`${urL}/adjustment`, payload);
       fetch();
       handleCancel();
-      sucNotify(`${description} Added Successfully`);
+      success(`${description} Added Successfully`);
     } catch (err) {
       handleCancel();
-      erNotify("Something Went Wrong");
+      error("Something Went Wrong");
     }
     setLoading(false);
   };
@@ -73,32 +73,33 @@ const AdjustmentModal = ({ handleCancel, fetch, sucNotify, erNotify }) => {
           <div className={styles.inputLine}>
             <label className={styles.titles}>Amount</label>
             <br />
-            <Form.Item name="amount"rules={[
+            <Form.Item
+              name="amount"
+              rules={[
                 {
                   required: true,
                   message: "Enter the Amount",
                 },
-              ]}>
-            <InputNumber
-              style={{ width: "100%" }}
-              onChange={(value) => setAmount(value)}
-              placeholder="Value / Percentage"
-              formatter={
-                !isTypeChecked
-                  ? (value) => `${value}%`
-                  : (value) => value.replace("%", "")
-              }
-              parser={
-                !isTypeChecked
-                  ? (value) => value.replace("%", "")
-                  : (value) => value
-              }
-              min={0}
-              max={!isTypeChecked ? 100 : undefined}
-            />
-
+              ]}
+            >
+              <InputNumber
+                style={{ width: "100%" }}
+                onChange={(value) => setAmount(value)}
+                placeholder="Value / Percentage"
+                formatter={
+                  !isTypeChecked
+                    ? (value) => `${value}%`
+                    : (value) => value.replace("%", "")
+                }
+                parser={
+                  !isTypeChecked
+                    ? (value) => value.replace("%", "")
+                    : (value) => value
+                }
+                min={0}
+                max={!isTypeChecked ? 100 : undefined}
+              />
             </Form.Item>
-
           </div>
           <div className={styles.inputLine}>
             <div>
