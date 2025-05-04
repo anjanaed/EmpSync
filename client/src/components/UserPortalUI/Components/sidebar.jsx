@@ -9,6 +9,7 @@ import {
   BulbOutlined,
   MenuOutlined,
   CloseOutlined,
+  LogoutOutlined,
 } from "@ant-design/icons";
 import { useSidebar } from "./sidebar-provider";
 import { useAuth } from "../../../contexts/AuthContext"; // Import useAuth
@@ -17,11 +18,11 @@ const { Sider } = Layout;
 
 export function Sidebar({ isOpen, activeTab, setActiveTab }) {
   const { toggleSidebar } = useSidebar();
-  const { authData } = useAuth(); // Access authData from AuthContext
+  const { authData, logout } = useAuth(); // Access logout function from AuthContext
 
   const navItems = [
     { name: "Profile", path: "/profile", icon: <UserOutlined /> },
-    { name: "Payroll", path: "/payroll", icon: <DollarOutlined /> }, // Ensure path is set to /payroll
+    { name: "Payroll", path: "/payroll", icon: <DollarOutlined /> },
     { name: "Attendance", path: "/attendance", icon: <CalendarOutlined /> },
     { name: "Meals", path: "/meals", icon: <CoffeeOutlined /> },
     { name: "AI Suggestions", path: "/suggestions", icon: <BulbOutlined /> },
@@ -40,6 +41,16 @@ export function Sidebar({ isOpen, activeTab, setActiveTab }) {
         display: "flex",
         flexDirection: "column",
       }}
+      trigger={
+        <Button
+          type="text"
+          icon={<LogoutOutlined />}
+          onClick={logout}
+          style={{ width: "100%", color: "#fff" }}
+        >
+          Log Out
+        </Button>
+      }
     >
       <div
         style={{
@@ -111,6 +122,7 @@ export function Sidebar({ isOpen, activeTab, setActiveTab }) {
             style={{ margin: "0 auto" }}
           />
         )}
+        
       </div>
     </Sider>
   );
