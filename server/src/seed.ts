@@ -1,9 +1,11 @@
 import { Prisma } from '@prisma/client';
 import { UserService } from './user/user.service';
 import { DatabaseService } from './database/database.service';
+import { IngredientsService } from './ingredients/ingredients.service';
 
 const databaseService = new DatabaseService();
 const userService = new UserService(databaseService);
+const ingredientsService = new IngredientsService(databaseService);
 
 async function main() {
 
@@ -609,19 +611,751 @@ async function main() {
             "address": "USS Small, FPO AP 65906",
             "email": "aliciarhodes@yahoo.com",
             "salary": 58553
+        },
+        {
+            "id": "E6969",
+            "name": "Ubetta",
+            "role": "Human Resource Manager",
+            "password": "Anjana12345.",
+            "dob": "1983-02-15",
+            "telephone": "4911249283",
+            "salary":65000,
+            "gender": "Female",
+            "address": "435 Elizabeth Stravenue, Williamsland, CA 32888",
+            "email": "anjanaape2002@gmail.com"
+        },
+        {
+            "id": "E7070",
+            "name": "Chamilka",
+            "role": "Inventory Manager",
+            "password": "Chamilka12345.",
+            "dob": "1983-02-15",
+            "telephone": "4911249283",
+            "salary":65000,
+            "gender": "male",
+            "address": "435 Elizabeth Stravenue, Williamsland, CA 32888",
+            "email": "Chamilka2002@gmail.com"
+          }
+    ];
+
+    const ingredients: Prisma.IngredientCreateInput[] = [
+        {
+          "name": "Tomato",
+          "price_per_unit": 19,
+          "quantity": "36",
+          "type": "Vegetables",
+          "priority": 2
+        },
+        {
+          "name": "Apple",
+          "price_per_unit": 13,
+          "quantity": "53",
+          "type": "Fruits",
+          "priority": 3
+        },
+        {
+          "name": "Wheat Flour",
+          "price_per_unit": 7,
+          "quantity": "95",
+          "type": "Grains & Cereals",
+          "priority": 2
+        },
+        {
+          "name": "Condensed Milk",
+          "price_per_unit": 8,
+          "quantity": "29",
+          "type": "Dairy Products",
+          "priority": 1
+        },
+        {
+          "name": "Minced Beef",
+          "price_per_unit": 2,
+          "quantity": "80",
+          "type": "Meat & Poultry",
+          "priority": 2
+        },
+        {
+          "name": "Paprika",
+          "price_per_unit": 17,
+          "quantity": "90",
+          "type": "Spices & Condiments",
+          "priority": 1
+        },
+        {
+          "name": "Iced Tea",
+          "price_per_unit": 2,
+          "quantity": "66",
+          "type": "Beverages",
+          "priority": 3
+        },
+        {
+          "name": "Olive Oil",
+          "price_per_unit": 5,
+          "quantity": "49",
+          "type": "Oils & Fats",
+          "priority": 1
+        },
+        {
+          "name": "Chocolate",
+          "price_per_unit": 7,
+          "quantity": "44",
+          "type": "Bakery & Sweets",
+          "priority": 1
+        },
+        {
+          "name": "Canned Corn",
+          "price_per_unit": 15,
+          "quantity": "23",
+          "type": "Processed & Canned",
+          "priority": 1
+        },
+        {
+          "name": "Pepper",
+          "price_per_unit": 14,
+          "quantity": "46",
+          "type": "Vegetables",
+          "priority": 1
+        },
+        {
+          "name": "Strawberry",
+          "price_per_unit": 5,
+          "quantity": "61",
+          "type": "Fruits",
+          "priority": 3
+        },
+        {
+          "name": "Millet",
+          "price_per_unit": 9,
+          "quantity": "80",
+          "type": "Grains & Cereals",
+          "priority": 1
+        },
+        {
+          "name": "Paneer",
+          "price_per_unit": 19,
+          "quantity": "43",
+          "type": "Dairy Products",
+          "priority": 1
+        },
+        {
+          "name": "Pork",
+          "price_per_unit": 13,
+          "quantity": "41",
+          "type": "Meat & Poultry",
+          "priority": 2
+        },
+        {
+          "name": "Garlic Powder",
+          "price_per_unit": 11,
+          "quantity": "93",
+          "type": "Spices & Condiments",
+          "priority": 2
+        },
+        {
+          "name": "Soft Drink",
+          "price_per_unit": 20,
+          "quantity": "64",
+          "type": "Beverages",
+          "priority": 1
+        },
+        {
+          "name": "Margarine",
+          "price_per_unit": 10,
+          "quantity": "82",
+          "type": "Oils & Fats",
+          "priority": 2
+        },
+        {
+          "name": "Cookies",
+          "price_per_unit": 1,
+          "quantity": "41",
+          "type": "Bakery & Sweets",
+          "priority": 3
+        },
+        {
+          "name": "Canned Tomatoes",
+          "price_per_unit": 9,
+          "quantity": "39",
+          "type": "Processed & Canned",
+          "priority": 1
+        },
+        {
+          "name": "Pepper",
+          "price_per_unit": 3,
+          "quantity": "49",
+          "type": "Vegetables",
+          "priority": 2
+        },
+        {
+          "name": "Banana",
+          "price_per_unit": 20,
+          "quantity": "48",
+          "type": "Fruits",
+          "priority": 2
+        },
+        {
+          "name": "Millet",
+          "price_per_unit": 13,
+          "quantity": "40",
+          "type": "Grains & Cereals",
+          "priority": 2
+        },
+        {
+          "name": "Yogurt",
+          "price_per_unit": 16,
+          "quantity": "65",
+          "type": "Dairy Products",
+          "priority": 1
+        },
+        {
+          "name": "Duck",
+          "price_per_unit": 12,
+          "quantity": "53",
+          "type": "Meat & Poultry",
+          "priority": 2
+        },
+        {
+          "name": "Cinnamon",
+          "price_per_unit": 9,
+          "quantity": "34",
+          "type": "Spices & Condiments",
+          "priority": 1
+        },
+        {
+          "name": "Soft Drink",
+          "price_per_unit": 3,
+          "quantity": "81",
+          "type": "Beverages",
+          "priority": 1
+        },
+        {
+          "name": "Lard",
+          "price_per_unit": 10,
+          "quantity": "43",
+          "type": "Oils & Fats",
+          "priority": 3
+        },
+        {
+          "name": "Donut",
+          "price_per_unit": 9,
+          "quantity": "31",
+          "type": "Bakery & Sweets",
+          "priority": 2
+        },
+        {
+          "name": "Canned Tomatoes",
+          "price_per_unit": 10,
+          "quantity": "36",
+          "type": "Processed & Canned",
+          "priority": 2
+        },
+        {
+          "name": "Broccoli",
+          "price_per_unit": 3,
+          "quantity": "79",
+          "type": "Vegetables",
+          "priority": 2
+        },
+        {
+          "name": "Strawberry",
+          "price_per_unit": 12,
+          "quantity": "23",
+          "type": "Fruits",
+          "priority": 2
+        },
+        {
+          "name": "Rye",
+          "price_per_unit": 19,
+          "quantity": "84",
+          "type": "Grains & Cereals",
+          "priority": 3
+        },
+        {
+          "name": "Cream",
+          "price_per_unit": 13,
+          "quantity": "23",
+          "type": "Dairy Products",
+          "priority": 1
+        },
+        {
+          "name": "Pork",
+          "price_per_unit": 4,
+          "quantity": "28",
+          "type": "Meat & Poultry",
+          "priority": 3
+        },
+        {
+          "name": "Coriander",
+          "price_per_unit": 13,
+          "quantity": "11",
+          "type": "Spices & Condiments",
+          "priority": 2
+        },
+        {
+          "name": "Tea",
+          "price_per_unit": 20,
+          "quantity": "57",
+          "type": "Beverages",
+          "priority": 2
+        },
+        {
+          "name": "Sunflower Oil",
+          "price_per_unit": 4,
+          "quantity": "90",
+          "type": "Oils & Fats",
+          "priority": 1
+        },
+        {
+          "name": "Croissant",
+          "price_per_unit": 17,
+          "quantity": "86",
+          "type": "Bakery & Sweets",
+          "priority": 1
+        },
+        {
+          "name": "Peanut Butter",
+          "price_per_unit": 19,
+          "quantity": "11",
+          "type": "Processed & Canned",
+          "priority": 2
+        },
+        {
+          "name": "Cauliflower",
+          "price_per_unit": 15,
+          "quantity": "99",
+          "type": "Vegetables",
+          "priority": 3
+        },
+        {
+          "name": "Orange",
+          "price_per_unit": 12,
+          "quantity": "82",
+          "type": "Fruits",
+          "priority": 2
+        },
+        {
+          "name": "Barley",
+          "price_per_unit": 15,
+          "quantity": "41",
+          "type": "Grains & Cereals",
+          "priority": 1
+        },
+        {
+          "name": "Buttermilk",
+          "price_per_unit": 13,
+          "quantity": "78",
+          "type": "Dairy Products",
+          "priority": 1
+        },
+        {
+          "name": "Minced Beef",
+          "price_per_unit": 14,
+          "quantity": "45",
+          "type": "Meat & Poultry",
+          "priority": 2
+        },
+        {
+          "name": "Coriander",
+          "price_per_unit": 8,
+          "quantity": "87",
+          "type": "Spices & Condiments",
+          "priority": 2
+        },
+        {
+          "name": "Iced Tea",
+          "price_per_unit": 6,
+          "quantity": "18",
+          "type": "Beverages",
+          "priority": 2
+        },
+        {
+          "name": "Ghee",
+          "price_per_unit": 17,
+          "quantity": "58",
+          "type": "Oils & Fats",
+          "priority": 1
+        },
+        {
+          "name": "Pastry",
+          "price_per_unit": 3,
+          "quantity": "15",
+          "type": "Bakery & Sweets",
+          "priority": 1
+        },
+        {
+          "name": "Canned Soup",
+          "price_per_unit": 6,
+          "quantity": "33",
+          "type": "Processed & Canned",
+          "priority": 1
+        },
+        {
+          "name": "Potato",
+          "price_per_unit": 14,
+          "quantity": "13",
+          "type": "Vegetables",
+          "priority": 2
+        },
+        {
+          "name": "Papaya",
+          "price_per_unit": 6,
+          "quantity": "97",
+          "type": "Fruits",
+          "priority": 1
+        },
+        {
+          "name": "Buckwheat",
+          "price_per_unit": 7,
+          "quantity": "43",
+          "type": "Grains & Cereals",
+          "priority": 1
+        },
+        {
+          "name": "Paneer",
+          "price_per_unit": 14,
+          "quantity": "26",
+          "type": "Dairy Products",
+          "priority": 2
+        },
+        {
+          "name": "Sausage",
+          "price_per_unit": 5,
+          "quantity": "87",
+          "type": "Meat & Poultry",
+          "priority": 3
+        },
+        {
+          "name": "Coriander",
+          "price_per_unit": 2,
+          "quantity": "36",
+          "type": "Spices & Condiments",
+          "priority": 2
+        },
+        {
+          "name": "Tea",
+          "price_per_unit": 10,
+          "quantity": "73",
+          "type": "Beverages",
+          "priority": 1
+        },
+        {
+          "name": "Canola Oil",
+          "price_per_unit": 7,
+          "quantity": "83",
+          "type": "Oils & Fats",
+          "priority": 2
+        },
+        {
+          "name": "Brownie",
+          "price_per_unit": 6,
+          "quantity": "80",
+          "type": "Bakery & Sweets",
+          "priority": 3
+        },
+        {
+          "name": "Pickles",
+          "price_per_unit": 5,
+          "quantity": "25",
+          "type": "Processed & Canned",
+          "priority": 2
+        },
+        {
+          "name": "Broccoli",
+          "price_per_unit": 20,
+          "quantity": "99",
+          "type": "Vegetables",
+          "priority": 3
+        },
+        {
+          "name": "Apple",
+          "price_per_unit": 1,
+          "quantity": "15",
+          "type": "Fruits",
+          "priority": 3
+        },
+        {
+          "name": "Buckwheat",
+          "price_per_unit": 4,
+          "quantity": "60",
+          "type": "Grains & Cereals",
+          "priority": 2
+        },
+        {
+          "name": "Cheese",
+          "price_per_unit": 13,
+          "quantity": "52",
+          "type": "Dairy Products",
+          "priority": 3
+        },
+        {
+          "name": "Sausage",
+          "price_per_unit": 13,
+          "quantity": "66",
+          "type": "Meat & Poultry",
+          "priority": 3
+        },
+        {
+          "name": "Turmeric",
+          "price_per_unit": 11,
+          "quantity": "38",
+          "type": "Spices & Condiments",
+          "priority": 3
+        },
+        {
+          "name": "Coconut Water",
+          "price_per_unit": 12,
+          "quantity": "93",
+          "type": "Beverages",
+          "priority": 3
+        },
+        {
+          "name": "Vegetable Oil",
+          "price_per_unit": 10,
+          "quantity": "74",
+          "type": "Oils & Fats",
+          "priority": 3
+        },
+        {
+          "name": "Chocolate",
+          "price_per_unit": 19,
+          "quantity": "47",
+          "type": "Bakery & Sweets",
+          "priority": 1
+        },
+        {
+          "name": "Canned Peas",
+          "price_per_unit": 13,
+          "quantity": "68",
+          "type": "Processed & Canned",
+          "priority": 3
+        },
+        {
+          "name": "Lettuce",
+          "price_per_unit": 2,
+          "quantity": "33",
+          "type": "Vegetables",
+          "priority": 3
+        },
+        {
+          "name": "Grapes",
+          "price_per_unit": 10,
+          "quantity": "83",
+          "type": "Fruits",
+          "priority": 2
+        },
+        {
+          "name": "Millet",
+          "price_per_unit": 13,
+          "quantity": "66",
+          "type": "Grains & Cereals",
+          "priority": 2
+        },
+        {
+          "name": "Condensed Milk",
+          "price_per_unit": 6,
+          "quantity": "63",
+          "type": "Dairy Products",
+          "priority": 2
+        },
+        {
+          "name": "Sausage",
+          "price_per_unit": 9,
+          "quantity": "89",
+          "type": "Meat & Poultry",
+          "priority": 1
+        },
+        {
+          "name": "Chili Powder",
+          "price_per_unit": 19,
+          "quantity": "36",
+          "type": "Spices & Condiments",
+          "priority": 1
+        },
+        {
+          "name": "Lemonade",
+          "price_per_unit": 3,
+          "quantity": "78",
+          "type": "Beverages",
+          "priority": 2
+        },
+        {
+          "name": "Palm Oil",
+          "price_per_unit": 12,
+          "quantity": "77",
+          "type": "Oils & Fats",
+          "priority": 2
+        },
+        {
+          "name": "Chocolate",
+          "price_per_unit": 15,
+          "quantity": "52",
+          "type": "Bakery & Sweets",
+          "priority": 3
+        },
+        {
+          "name": "Baked Beans",
+          "price_per_unit": 7,
+          "quantity": "46",
+          "type": "Processed & Canned",
+          "priority": 2
+        },
+        {
+          "name": "Spinach",
+          "price_per_unit": 4,
+          "quantity": "53",
+          "type": "Vegetables",
+          "priority": 1
+        },
+        {
+          "name": "Strawberry",
+          "price_per_unit": 16,
+          "quantity": "97",
+          "type": "Fruits",
+          "priority": 3
+        },
+        {
+          "name": "Millet",
+          "price_per_unit": 9,
+          "quantity": "62",
+          "type": "Grains & Cereals",
+          "priority": 2
+        },
+        {
+          "name": "Yogurt",
+          "price_per_unit": 7,
+          "quantity": "18",
+          "type": "Dairy Products",
+          "priority": 2
+        },
+        {
+          "name": "Chicken Breast",
+          "price_per_unit": 16,
+          "quantity": "58",
+          "type": "Meat & Poultry",
+          "priority": 2
+        },
+        {
+          "name": "Ginger",
+          "price_per_unit": 5,
+          "quantity": "54",
+          "type": "Spices & Condiments",
+          "priority": 3
+        },
+        {
+          "name": "Lemonade",
+          "price_per_unit": 7,
+          "quantity": "95",
+          "type": "Beverages",
+          "priority": 3
+        },
+        {
+          "name": "Coconut Oil",
+          "price_per_unit": 9,
+          "quantity": "30",
+          "type": "Oils & Fats",
+          "priority": 1
+        },
+        {
+          "name": "Donut",
+          "price_per_unit": 11,
+          "quantity": "57",
+          "type": "Bakery & Sweets",
+          "priority": 1
+        },
+        {
+          "name": "Pickles",
+          "price_per_unit": 8,
+          "quantity": "17",
+          "type": "Processed & Canned",
+          "priority": 2
+        },
+        {
+          "name": "Carrot",
+          "price_per_unit": 10,
+          "quantity": "20",
+          "type": "Vegetables",
+          "priority": 1
+        },
+        {
+          "name": "Blueberry",
+          "price_per_unit": 6,
+          "quantity": "31",
+          "type": "Fruits",
+          "priority": 2
+        },
+        {
+          "name": "Oats",
+          "price_per_unit": 7,
+          "quantity": "22",
+          "type": "Grains & Cereals",
+          "priority": 2
+        },
+        {
+          "name": "Cream",
+          "price_per_unit": 5,
+          "quantity": "47",
+          "type": "Dairy Products",
+          "priority": 1
+        },
+        {
+          "name": "Chicken Breast",
+          "price_per_unit": 17,
+          "quantity": "15",
+          "type": "Meat & Poultry",
+          "priority": 1
+        },
+        {
+          "name": "Coriander",
+          "price_per_unit": 10,
+          "quantity": "81",
+          "type": "Spices & Condiments",
+          "priority": 2
+        },
+        {
+          "name": "Smoothie",
+          "price_per_unit": 16,
+          "quantity": "58",
+          "type": "Beverages",
+          "priority": 1
+        },
+        {
+          "name": "Vegetable Oil",
+          "price_per_unit": 2,
+          "quantity": "75",
+          "type": "Oils & Fats",
+          "priority": 1
+        },
+        {
+          "name": "Chocolate",
+          "price_per_unit": 20,
+          "quantity": "60",
+          "type": "Bakery & Sweets",
+          "priority": 2
+        },
+        {
+          "name": "Baked Beans",
+          "price_per_unit": 20,
+          "quantity": "68",
+          "type": "Processed & Canned",
+          "priority": 2
         }
-    ]
-    
-
-
+      ];
 
   try {
+    // Create users
     for (const user of users) {
       await userService.create(user);
     }
     console.log('Users created successfully.');
+
+    // Create ingredients
+    for (const ingredient of ingredients) {
+      await ingredientsService.create(ingredient);
+    }
+    console.log('Ingredients created successfully.');
+
   } catch (error) {
-    console.error('Error creating users:', error);
+    console.error('Error during seeding:', error);
   } finally {
     await databaseService.$disconnect();
   }
