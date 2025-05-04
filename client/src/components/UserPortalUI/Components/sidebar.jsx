@@ -11,11 +11,13 @@ import {
   CloseOutlined,
 } from "@ant-design/icons";
 import { useSidebar } from "./sidebar-provider";
+import { useAuth } from "../../../contexts/AuthContext"; // Import useAuth
 
 const { Sider } = Layout;
 
 export function Sidebar({ isOpen, activeTab, setActiveTab }) {
   const { toggleSidebar } = useSidebar();
+  const { authData } = useAuth(); // Access authData from AuthContext
 
   const navItems = [
     { name: "Profile", path: "/profile", icon: <UserOutlined /> },
@@ -93,9 +95,11 @@ export function Sidebar({ isOpen, activeTab, setActiveTab }) {
           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
             <Avatar size="small" src="/placeholder.svg" alt="John Doe" />
             <div>
-              <p style={{ margin: 0, fontWeight: "bold" }}>John Doe</p>
+              <p style={{ margin: 0, fontWeight: "bold" }}>
+                {authData?.user?.name || "John Doe"}
+              </p>
               <p style={{ margin: 0, fontSize: "12px", color: "#8c8c8c" }}>
-                ID: EMP-1234
+                ID: {authData?.user?.id || "EMP-1234"}
               </p>
             </div>
           </div>
