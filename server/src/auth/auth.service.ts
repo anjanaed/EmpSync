@@ -76,6 +76,7 @@ export class AuthService {
           },
         },
       );
+      console.log(`User ${userId} deleted`)
     } catch (error) {
       console.error(
         'Error deleting user from Auth0:',

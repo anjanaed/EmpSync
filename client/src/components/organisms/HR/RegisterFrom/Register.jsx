@@ -7,9 +7,10 @@ import Loading from "../../../atoms/loading/loading";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
 import { AiOutlineCaretRight } from "react-icons/ai";
-import { Toaster, toast } from "sonner";
 import Gbutton from "../../../atoms/button/Button";
 import axios from "axios";
+import { usePopup } from "../../../../contexts/PopupContext";
+
 const { Option } = Select;
 
 const formItemLayout = {
@@ -52,6 +53,7 @@ const Register = () => {
   const [supId, setSupId] = useState(null);
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
+  const { success, error } = usePopup();
 
   //Registering Process
   const handleRegister = async () => {
@@ -62,8 +64,6 @@ const Register = () => {
     }
 
     try {
-      await signUpUser({ email, password, id });
-
       const payload = {
         id,
         name,
@@ -78,13 +78,19 @@ const Register = () => {
         language: lang,
         salary: parseInt(salary),
       };
-      await axios.post(`${urL}/user`, payload);
-      sucNofify("User Registered Successfully");
+      await axios.post(`${urL}/user`, payload);}catch(err){
+        error(`Registration Failed: ${err.response?.data?.message || "Unknown error"}`);
+        setLoading(false)
+        return;
+      }
+      try{
+      await signUpUser({ email, password, id });
+      success("User Registered Successfully");
       navigate("/EmployeePage");
     } catch (err) {
-      await axios.post(`${urL}/auth/delete`, { email: email });
+      await axios.delete(`${urL}/user/${id}`);
       console.error("Registration Error:", err);
-      erNofify(`Registration Failed: ${err.response.data.message}`);
+      error(`Registration Failed: ${err.response?.data?.message || "Unknown error"}`);
     } finally {
       setLoading(false);
     }
@@ -92,45 +98,21 @@ const Register = () => {
 
   const signUpUser = async ({ email, password, id }) => {
     try {
-      const res = await axios.post(
-        `https://${auth0Url}/dbconnections/signup`,
-        {
-          client_id: auth0Id,
-          email,
-          username: id,
-          password,
-          connection: "Username-Password-Authentication",
-        }
-      );
+      const res = await axios.post(`https://${auth0Url}/dbconnections/signup`, {
+        client_id: auth0Id,
+        email,
+        username: id,
+        password,
+        connection: "Username-Password-Authentication",
+      });
     } catch (error) {
       console.error("Auth0 Registration Error:", error);
-      erNofify(`Registration Failed: ${error.response.data.message}`);
+      error(`Registration Failed: ${error.response.data.message}`);
       setLoading(false);
       throw error;
     }
   };
 
-  const sucNofify = (message) => {
-    setTimeout(
-      () =>
-        toast.success(message, {
-          duration: 2500,
-          position: "top-center",
-        }),
-      300
-    );
-  };
-
-  const erNofify = (message) => {
-    setTimeout(
-      () =>
-        toast.error(message, {
-          duration: 2500,
-          position: "top-center",
-        }),
-      300
-    );
-  };
 
   const handleNext = async () => {
     await form.validateFields();
@@ -144,8 +126,6 @@ const Register = () => {
     <div className={styles.formContainer}>
       {menu == 1 && (
         <>
-          <Toaster richColors />
-
           <div className={styles.heading}>New Employee Onboarding</div>
           <Form
             {...formItemLayout}
@@ -205,8 +185,8 @@ const Register = () => {
                       message: "Please input your password!",
                     },
                     {
-                      min: 8,
-                      message: "Password must be at least 8 characters.",
+                      pattern: /^(?=.*[A-Z])(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).{8,}$/,
+                      message: "Password must be at least 8 characters, include a capital letter and a special character.",
                     },
                   ]}
                   hasFeedback
@@ -326,6 +306,11 @@ const Register = () => {
                     {
                       required: true,
                       message: "Please Enter ID!",
+                    },
+                    {
+                      pattern: /^\S{4}$/,
+                      message:
+                        "ID Must be Exactly 4 Characters With No Spaces!",
                     },
                   ]}
                 >
