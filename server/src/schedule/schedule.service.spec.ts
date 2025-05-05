@@ -37,18 +37,26 @@ describe('ScheduleService', () => {
   });
 
   describe('create', () => {
-    it('should create a scheduled meal', async () => {
+    it('should create a scheduled meal with converted number arrays', async () => {
       const dto = {
         date: new Date('2024-01-01'),
-        breakfast: ['eggs'],
-        lunch: ['sandwich'],
-        dinner: ['pasta']
+        breakfast: ['1', '2'],
+        lunch: ['3', '4'],
+        dinner: ['5', '6']
       };
 
-      mockDatabaseService.scheduledMeal.create.mockResolvedValue(dto);
+      const expectedData = {
+        date: new Date('2024-01-01'),
+        breakfast: [1, 2],
+        lunch: [3, 4],
+        dinner: [5, 6],
+        confirmed: false
+      };
+
+      mockDatabaseService.scheduledMeal.create.mockResolvedValue(expectedData);
 
       const result = await service.create(dto);
-      expect(result).toEqual(dto);
+      expect(result).toEqual(expectedData);
     });
 
     it('should throw BadRequestException on create error', async () => {
@@ -97,22 +105,67 @@ describe('ScheduleService', () => {
   });
 
   describe('update', () => {
-    it('should update a scheduled meal', async () => {
+    it('should update a scheduled meal with converted number arrays', async () => {
       const existingMeal = {
         date: new Date('2024-01-01'),
-        breakfast: ['eggs']
+        breakfast: [1, 2]
       };
       const updateDto = {
-        breakfast: ['oatmeal']
+        breakfast: ['3', '4'],
+        lunch: ['5', '6']
+      };
+
+      const expectedUpdate = {
+        ...existingMeal,
+        breakfast: [3, 4],
+        lunch: [5, 6]
       };
 
       mockDatabaseService.scheduledMeal.findUnique.mockResolvedValue(existingMeal);
-      mockDatabaseService.scheduledMeal.update.mockResolvedValue({...existingMeal, ...updateDto});
+      mockDatabaseService.scheduledMeal.update.mockResolvedValue(expectedUpdate);
 
       const result = await service.update('2024-01-01', updateDto);
-      expect(result.breakfast).toEqual(['oatmeal']);
+      expect(result).toEqual(expectedUpdate);
+    });
+
+    it('should throw NotFoundException when updating non-existent meal', async () => {
+      mockDatabaseService.scheduledMeal.findUnique.mockResolvedValue(null);
+
+      await expect(service.update('2024-01-01', {})).rejects.toThrow(NotFoundException);
     });
   });
+
+  describe('confirm', () => {
+    it('should confirm a scheduled meal', async () => {
+      const existingMeal = {
+        date: new Date('2024-01-01'),
+        confirmed: false
+      };
+
+      const confirmedMeal = {
+        ...existingMeal,
+        confirmed: true
+      };
+
+      mockDatabaseService.scheduledMeal.findUnique.mockResolvedValue(existingMeal);
+      mockDatabaseService.scheduledMeal.update.mockResolvedValue(confirmedMeal);
+
+      const result = await service.confirm('2024-01-01');
+      expect(result.confirmed).toBe(true);
+    });
+
+    it('should throw BadRequestException for invalid date format', async () => {
+      await expect(service.confirm('invalid-date')).rejects.toThrow(BadRequestException);
+    });
+
+    it('should throw NotFoundException when confirming non-existent meal', async () => {
+      mockDatabaseService.scheduledMeal.findUnique.mockResolvedValue(null);
+
+      await expect(service.confirm('2024-01-01')).rejects.toThrow(NotFoundException);
+    });
+  });
+
+
 
   describe('remove', () => {
     it('should remove a scheduled meal', async () => {

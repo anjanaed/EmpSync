@@ -55,7 +55,7 @@ export const NotificationsProvider = ({ children }) => {
   const checkUnconfirmedSchedules = async () => {
     try {
       // console.log("Starting unconfirmed schedule check...");
-      // const response = await axios.get("http://localhost:3000/schedule");
+      const response = await axios.get("http://localhost:3000/schedule");
       const schedules = response.data;
       // console.log("All schedules:", schedules);
 
