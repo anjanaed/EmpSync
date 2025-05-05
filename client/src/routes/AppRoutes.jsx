@@ -1,6 +1,6 @@
 import React from "react";
 import { Routes, Route, BrowserRouter, Navigate } from "react-router-dom";
-import RootLayout from "../components/UserPortalUI/layout";
+// import RootLayout from "../components/UserPortalUI/layout";
 import PasswordReset from "../components/pages/PasswordReset/PasswordReset";
 import OrderTab from "../pages/OrderTab/OrderTab";
 import PrivateRoutes from "./PrivateRoutes";
@@ -12,7 +12,7 @@ const AppRoutes = () => (
   <BrowserRouter>
     <NotificationsProvider>
       <PopupProvider>
-        <RootLayout>
+        {/* <RootLayout> */}
           <Routes>
             {/* Public Routes */}
             <Route path="/passwordReset" element={<PasswordReset />} />
@@ -25,7 +25,7 @@ const AppRoutes = () => (
             {PrivateRoutes()}
             <Route path="*" element={<Navigate to="/login" replace />} />
           </Routes>
-        </RootLayout>
+        {/* </RootLayout> */}
       </PopupProvider>
     </NotificationsProvider>
   </BrowserRouter>
