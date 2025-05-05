@@ -14,12 +14,6 @@ import PayslipPage from "../components/pages/HR/PayslipPage/PayslipPage";
 import Attendance from "../components/pages/HR/Attendance/Attendance";
 import EmployeeDetails from "../components/pages/HR/Attendance/EmployeeDetails";
 
-// UserPortal
-import ProfilePage from "../components/UserPortalUI/Profile/Profile";
-import MealsPage from "../components/UserPortalUI/Meals/Meals";
-import SuggestionsPage from "../components/UserPortalUI/Suggestions/Suggestions";
-import AttendancePage from "../components/UserPortalUI/Attendance/Attendance";
-import PayrollDetails from "../components/UserPortalUI/Components/payroll-details";
 
 // KITCHEN_ADMIN
 import KitchenAdmin from "../components/pages/Kitchen Admin/KitchenAdminDashBoard/kitchenAdminDash";
@@ -132,46 +126,6 @@ const PrivateRoutes = () => (
     />
 
     {/* UserPortal Routes */}
-    <Route
-      path="/profile"
-      element={
-        <ProtectedRoute allowedRoles={["*"]}>
-          <ProfilePage />
-        </ProtectedRoute>
-      }
-    />
-    <Route
-      path="/meals"
-      element={
-        <ProtectedRoute allowedRoles={["*"]}>
-          <MealsPage />
-        </ProtectedRoute>
-      }
-    />
-    <Route
-      path="/suggestions"
-      element={
-        <ProtectedRoute allowedRoles={["*"]}>
-          <SuggestionsPage />
-        </ProtectedRoute>
-      }
-    />
-    <Route
-      path="/AttendancePage"
-      element={
-        <ProtectedRoute allowedRoles={["*"]}>
-          <AttendancePage />
-        </ProtectedRoute>
-      }
-    />
-    <Route
-      path="/userpayroll"
-      element={
-        <ProtectedRoute allowedRoles={["*"]}>
-          <PayrollDetails />
-        </ProtectedRoute>
-      }
-    />
 
     {/* KITCHEN_ADMIN Routes */}
     <Route
