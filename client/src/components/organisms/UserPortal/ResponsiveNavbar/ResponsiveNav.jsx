@@ -64,7 +64,7 @@ const ResponsiveNav = () => {
           {darkMode ? <FontAwesomeIcon icon={faMoon} size="lg" style={{ fontSize: '20px' }} /> : <FontAwesomeIcon icon={faSun} size="lg" style={{ fontSize: '20px' }} />}
         </button>
         <button onClick={toggleMenu} className={styles.menuToggle}>
-          <FontAwesomeIcon icon={faBars} />
+          <FontAwesomeIcon icon={faBars} size="lg" style={{ fontSize: '20px' }} />
         </button>
         <button onClick={handleLogout} className={`${styles.logoutButton} ${styles.desktopLogout}`}>
           <LogOut size={18} style={{ marginRight: '8px' }} /> Logout
