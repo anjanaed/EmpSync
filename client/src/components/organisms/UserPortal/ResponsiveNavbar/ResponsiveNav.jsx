@@ -24,10 +24,10 @@ const ResponsiveNav = () => {
         ☰
       </button>
       <ul className={`${styles.navLinks} ${menuOpen ? styles.active : ''}`}>
-        <li><a href="#meel" className={styles.navLink}>Meel</a></li>
-        <li><a href="#account" className={styles.navLink}>Account</a></li>
-        <li><a href="#payroll" className={styles.navLink}>Payroll</a></li>
-        <li><a href="#aisuggestion" className={styles.navLink}>AI Suggestion</a></li>
+        <li><a href="#Profile" className={styles.navLink}>Profile</a></li>
+        <li><a href="#Payroll" className={styles.navLink}>Payroll</a></li>
+        <li><a href="#Meals" className={styles.navLink}>Meals</a></li>
+        <li><a href="#AI Suggestions" className={styles.navLink}>AI Suggestions</a></li>
       </ul>
       <button onClick={toggleDarkMode} className={styles.themeToggle}>
         {darkMode ? '🌙' : '☀️'}
