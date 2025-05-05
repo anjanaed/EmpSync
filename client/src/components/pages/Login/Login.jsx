@@ -21,7 +21,7 @@ const LoginPage = () => {
   const navigate = useNavigate();
 
   const handleForgotPassword = () => {
-    navigate("/PasswordReset");
+    navigate("/ServingStaff");
   };
 
   const handleLogin = async (username, password) => {
