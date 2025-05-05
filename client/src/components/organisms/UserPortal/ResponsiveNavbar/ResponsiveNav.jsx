@@ -3,6 +3,7 @@ import {
     faBars,
     faMoon,
     faSun,
+    faUser,
   } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styles from './ResponsiveNav.module.css';
@@ -21,23 +22,34 @@ const ResponsiveNav = () => {
     setMenuOpen(!menuOpen);
   };
 
+  const handleLogout = () => {
+    // Add your logout logic here
+    console.log("User logged out");
+  };
+
   return (
     <nav className={`${styles.navbar} ${darkMode ? styles.dark : ''}`}>
       <div className={styles.companyName}>
         <img src={Companylogo} alt="Company Logo" className={styles.logo} />
       </div>
       <ul className={`${styles.navLinks} ${menuOpen ? styles.active : ''}`}>
-        <li><a href="#Profile" className={styles.navLink}>Profile</a></li>
+        <li><a href="#Profile" className={styles.navLink}><FontAwesomeIcon icon={faUser} /> Profile</a></li>
         <li><a href="#Payroll" className={styles.navLink}>Payroll</a></li>
         <li><a href="#Meals" className={styles.navLink}>Meals</a></li>
         <li><a href="#AI Suggestions" className={styles.navLink}>AI Suggestions</a></li>
+        <li className={styles.mobileLogout}><a href="#Logout" onClick={handleLogout} className={styles.navLink}>Logout</a></li>
       </ul>
-      <button onClick={toggleDarkMode} className={styles.themeToggle}>
-        {darkMode ? <FontAwesomeIcon icon={faMoon} /> : <FontAwesomeIcon icon={faSun} />}
-      </button>
-      <button onClick={toggleMenu} className={styles.menuToggle}>
-        <FontAwesomeIcon icon={faBars} />
-      </button>
+      <div className={styles.rightSection}>
+        <button onClick={toggleDarkMode} className={styles.themeToggle}>
+          {darkMode ? <FontAwesomeIcon icon={faMoon} /> : <FontAwesomeIcon icon={faSun} />}
+        </button>
+        <button onClick={toggleMenu} className={styles.menuToggle}>
+          <FontAwesomeIcon icon={faBars} />
+        </button>
+        <button onClick={handleLogout} className={`${styles.logoutButton} ${styles.desktopLogout}`}>
+          Logout
+        </button>
+      </div>
     </nav>
   );
 };

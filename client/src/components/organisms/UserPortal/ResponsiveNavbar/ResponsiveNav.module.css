@@ -54,6 +54,32 @@
     margin-left: 1rem;
   }
   
+  .logoutButton {
+    background-color: #ffffff;
+    color: rgb(23, 22, 22);
+    border: #1e1e1e;
+    padding: 8px 12px;
+    border-radius: 4px;
+    box: size 2px;;
+    cursor: pointer;
+    margin-left: 10px;
+  }
+  
+  .logoutButton:hover {
+    background-color: #e60000;
+    color: #fff;
+  }
+  
+  /* Hide mobile logout link by default */
+  .mobileLogout {
+    display: none;
+  }
+  
+  /* Show desktop logout button by default */
+  .desktopLogout {
+    display: inline-block;
+  }
+  
   /* 🔽 Responsive Styles for Mobile */
   @media screen and (max-width: 768px) {
     .menuToggle {
@@ -79,5 +105,12 @@
     .navLink {
       padding: 0.5rem 0;
     }
-  }
   
+    .desktopLogout {
+      display: none; /* Hide desktop logout button */
+    }
+  
+    .mobileLogout {
+      display: block; /* Show mobile logout link */
+    }
+  }
