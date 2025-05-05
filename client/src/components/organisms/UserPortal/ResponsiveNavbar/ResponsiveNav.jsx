@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import {
-    faBars,
-    faMoon,
-    faSun,
-  } from "@fortawesome/free-solid-svg-icons";
-import { User, CreditCard, Utensils, Sparkles, LogOut, Menu, X, Users } from "lucide-react"
+  faBars,
+  faMoon,
+  faSun,
+} from "@fortawesome/free-solid-svg-icons";
+import { User, CreditCard, Utensils, Sparkles, LogOut } from "lucide-react"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styles from './ResponsiveNav.module.css';
 import Companylogo from '../../../../assets/logo.png';
@@ -23,7 +23,6 @@ const ResponsiveNav = () => {
   };
 
   const handleLogout = () => {
-    // Add your logout logic here
     console.log("User logged out");
   };
 
@@ -60,13 +59,28 @@ const ResponsiveNav = () => {
         </li>
       </ul>
       <div className={styles.rightSection}>
-        <button onClick={toggleDarkMode} className={styles.themeToggle}>
-          {darkMode ? <FontAwesomeIcon icon={faMoon} size="lg" style={{ fontSize: '20px' }} /> : <FontAwesomeIcon icon={faSun} size="lg" style={{ fontSize: '20px' }} />}
+        <button
+          onClick={toggleDarkMode}
+          className={styles.themeToggle}
+          aria-label="Toggle Dark Mode"
+        >
+          <FontAwesomeIcon
+            icon={darkMode ? faSun : faMoon}
+            size="lg"
+            style={{ fontSize: '20px' }}
+          />
         </button>
-        <button onClick={toggleMenu} className={styles.menuToggle}>
+        <button
+          onClick={toggleMenu}
+          className={styles.menuToggle}
+          aria-label="Toggle Menu"
+        >
           <FontAwesomeIcon icon={faBars} size="lg" style={{ fontSize: '20px' }} />
         </button>
-        <button onClick={handleLogout} className={`${styles.logoutButton} ${styles.desktopLogout}`}>
+        <button
+          onClick={handleLogout}
+          className={`${styles.logoutButton} ${styles.desktopLogout}`}
+        >
           <LogOut size={18} style={{ marginRight: '8px' }} /> Logout
         </button>
       </div>
