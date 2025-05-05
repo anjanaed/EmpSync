@@ -26,12 +26,12 @@
   /* Dark Mode Support */
   .dark {
     background-color: #1e1e1e;
-    color: #f0f0f0;
+    color: #ffffff;
   }
   
   .darkMode {
     background-color: #121212;
-    color: white;
+    color: rgb(0, 0, 0);
   }
   
   .navLinks {
@@ -57,10 +57,9 @@
   .logoutButton {
     background-color: #ffffff;
     color: rgb(23, 22, 22);
-    border: #1e1e1e;
+    border: 2px solid #1e1e1e; /* Added border */
     padding: 8px 12px;
     border-radius: 4px;
-    box: size 2px;;
     cursor: pointer;
     margin-left: 10px;
   }
@@ -68,6 +67,7 @@
   .logoutButton:hover {
     background-color: #e60000;
     color: #fff;
+    border-color: #e60000; /* Change border color on hover */
   }
   
   /* Hide mobile logout link by default */
