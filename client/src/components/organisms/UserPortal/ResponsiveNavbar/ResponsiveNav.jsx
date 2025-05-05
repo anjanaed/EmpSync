@@ -85,6 +85,7 @@ const ResponsiveNav = () => {
         <button
           onClick={handleLogout}
           className={`${styles.logoutButton} ${styles.desktopLogout}`}
+          style={{ fontSize: '16px' }} // Adjust the font size here
         >
           <LogOut size={18} style={{ marginRight: '8px' }} /> Logout
         </button>
