@@ -36,14 +36,25 @@
   
   .navLinks {
     display: flex;
-    gap: 1rem;
+    gap: 2rem;
     list-style: none;
+    margin-top: 20px;
   }
   
   .navLink {
     text-decoration: none;
     color: inherit;
     font-weight: 500;
+    transition: color 0.3s ease; /* Smooth transition for hover effect */
+  }
+  
+  .navLink:hover {
+    color: red; /* Change text color to red on hover */
+  }
+  
+  .navLink svg {
+    margin-right: 10px; /* Adds space between the icon and the text */
+    vertical-align: middle; /* Aligns the icon with the text */
   }
   
   .themeToggle {
@@ -52,6 +63,7 @@
     font-size: 1.25rem;
     cursor: pointer;
     margin-left: 1rem;
+    margin-right: 20px;
   }
   
   .logoutButton {
@@ -104,6 +116,7 @@
   
     .navLink {
       padding: 0.5rem 0;
+      font-size: 18px; /* Set font size for mobile view */
     }
   
     .desktopLogout {
