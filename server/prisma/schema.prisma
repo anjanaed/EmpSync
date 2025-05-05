@@ -164,9 +164,9 @@ model LeaveApplication {
 model ScheduledMeal {
   id        Int      @id @default(autoincrement())
   date      DateTime @unique @db.Date // Store as DATE (without time)
-  breakfast String[]
-  lunch     String[]
-  dinner    String[]
+  breakfast Int[]    // Changed from String[] to Int[]
+  lunch     Int[]    // Changed from String[] to Int[]
+  dinner    Int[]    // Changed from String[] to Int[]
   confirmed Boolean  @default(false) 
   createdAt DateTime @default(now())
 }
