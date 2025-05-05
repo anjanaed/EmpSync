@@ -24,6 +24,8 @@ h1 {
   color: rgb(144, 2, 2);
 }
 
+
+
 .bottom {
   text-align: center;
   margin: 2vw;
@@ -34,6 +36,10 @@ img {
 }
 
 .budget {
-  text-align: center;
+  display: flex;
+  justify-content: center; 
+  align-items: center; 
   font-size: 13px;
+  text-align: center;
+  gap: 1vw;
 }

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Form, Input, Checkbox, Button, message } from "antd";
 import { useNavigate } from "react-router-dom";
 import styles from "./Login.module.css";
@@ -15,7 +15,8 @@ const redirectRoles = [
 ];
 
 const LoginPage = () => {
-  const { login, authData,authLoading } = useAuth();
+  const { login } = useAuth();
+  const [loading,setLoading]=useState(false)
   const urL = import.meta.env.VITE_BASE_URL;
   const navigate = useNavigate();
 
@@ -24,6 +25,7 @@ const LoginPage = () => {
   };
 
   const handleLogin = async (username, password) => {
+    setLoading(true)
     try {
       const response = await axios.post(`${urL}/auth/login`, {
         username,
@@ -33,13 +35,21 @@ const LoginPage = () => {
       const { access_token, id_token } = response.data;
       login({ access_token, id_token });
 
+
       navigate("/loginrole")
 
     } catch (error) {
       console.error("Login error:", error);
       message.error(`Login Failed: ${error.response.data.message}`);
     }
+    setLoading(false)
   };
+
+  if(loading){
+    return <Loading/>
+  }
+
+
 
   return (
     <div className={styles.loginContainer}>

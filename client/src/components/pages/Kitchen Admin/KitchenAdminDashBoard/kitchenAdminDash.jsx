@@ -46,13 +46,13 @@ const AnalysisDashboard = () => {
           },
           {
             key: "2",
-            icon: <FontAwesomeIcon icon={faChartLine} />,
+            icon: <FontAwesomeIcon icon={faBowlFood} />,
             label: "Meal",
             link: "/kitchen-meal",
           },
           {
             key: "3",
-            icon: <FontAwesomeIcon icon={faBowlFood} />,
+            icon: <FontAwesomeIcon icon={faChartLine} />,
             label: "Report & Analysis",
             link: "/kitchen-report",
           },

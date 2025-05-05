@@ -28,7 +28,7 @@ Input {
   display: flex;
   width: 100%;
   font-size: 13px;
-  gap: 50px;
+  gap: 10%;
   margin-bottom: 5px;
 }
 
@@ -213,6 +213,7 @@ hr {
   .inputLine {
     flex-direction: column;
     gap: 20px;
+    
     align-items: center;
   }
 

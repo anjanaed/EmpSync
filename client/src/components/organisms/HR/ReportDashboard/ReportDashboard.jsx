@@ -2,7 +2,7 @@ import { React, useState } from "react";
 import styles from "./ReportDashboard.module.css";
 import ReportCard from "../../../templates/HR/ReportCard/ReportCard";
 import img from "../../../../assets/report.png";
-import { InputNumber } from "antd";
+import { InputNumber,Button } from "antd";
 
 
 const ReportDashboard = () => {
@@ -14,6 +14,10 @@ const ReportDashboard = () => {
   const handleDownload = () => {
     console.log("Downloading");
   };
+
+  const updateBudget=()=>{
+    
+  }
   return (
     <div className={styles.dash}>
       <div className={styles.mainBox}>
@@ -47,6 +51,7 @@ const ReportDashboard = () => {
             parser={(value) => value.replace(" LKR", "")}
             min={0}
           ></InputNumber>
+          <Button onClick={updateBudget}>Update Budget</Button>
         </div>
         <div className={styles.bottom}>
           <img src={img}></img>

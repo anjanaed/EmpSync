@@ -183,7 +183,7 @@ const PrivateRoutes = () => (
       }
     />
     <Route
-      path="/report"
+      path="/kitchen-report"
       element={
         <ProtectedRoute allowedRoles={["KITCHEN_ADMIN"]}>
           <Reports />
