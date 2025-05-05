@@ -12,7 +12,6 @@ const AppRoutes = () => (
   <BrowserRouter>
     <NotificationsProvider>
       <PopupProvider>
-        {/* <RootLayout> */}
           <Routes>
             {/* Public Routes */}
             <Route path="/passwordReset" element={<PasswordReset />} />
@@ -25,7 +24,6 @@ const AppRoutes = () => (
             {PrivateRoutes()}
             <Route path="*" element={<Navigate to="/login" replace />} />
           </Routes>
-        {/* </RootLayout> */}
       </PopupProvider>
     </NotificationsProvider>
   </BrowserRouter>
