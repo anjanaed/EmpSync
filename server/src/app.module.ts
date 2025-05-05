@@ -15,6 +15,8 @@ import { PayeTaxModule } from './PayeTaxSlab/PayeTax.module';
 import { AuthModule } from './auth/auth.module';
 import { ScheduleModule as NestScheduleModule } from '@nestjs/schedule';
 import { ReportModule } from './Reports/reports.module';
+import { PersonalizedMealSuggestionsModule } from './personalized-meal-suggestions/personalized-meal-suggestions.module';
+
 
 
 
@@ -39,6 +41,7 @@ import { ReportModule } from './Reports/reports.module';
     IndiAdjustmentModule,
     PayeTaxModule,
     AuthModule,
+    PersonalizedMealSuggestionsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
