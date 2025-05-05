@@ -12,6 +12,7 @@ import {
   Select,
   Tag,
   Spin,
+  Pagination 
 } from "antd";
 import {
   DeleteOutlined,
@@ -48,6 +49,8 @@ const AvailableMeals = () => {
   const [loading, setLoading] = useState(false);
   const [ingredientDetails, setIngredientDetails] = useState({});
   const [fetchingIngredients, setFetchingIngredients] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(12); // Number of meals per page
 
   // Initialize Firebase storage
   const storage = getStorage();
@@ -125,6 +128,13 @@ const AvailableMeals = () => {
     }
   };
 
+   // Add this new function for handling page changes
+   const handlePageChange = (page, size) => {
+    setCurrentPage(page);
+    setPageSize(size);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   const deleteMeal = async (meal) => {
     setLoading(true);
     try {
@@ -164,28 +174,7 @@ const AvailableMeals = () => {
           }
         }
 
-        // Option 2: Alternative - delete all ingredients for this meal in one request
-        // Uncomment and use this if your API supports it
-        /*
-        try {
-          const bulkIngredientsResponse = await fetch(
-            `http://localhost:3000/meal-ingredients/by-meal/${meal.id}`,
-            {
-              method: "DELETE",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              credentials: "include",
-            }
-          );
-          
-          if (!bulkIngredientsResponse.ok) {
-            console.warn(`Failed to delete ingredients for meal ${meal.id}`);
-          }
-        } catch (bulkIngredientError) {
-          console.error("Error deleting meal ingredients:", bulkIngredientError);
-        }
-        */
+        
       }
 
       // Then delete the meal from the database
@@ -290,6 +279,12 @@ const AvailableMeals = () => {
     return matchesSearch && matchesCategory;
   });
 
+  // Add pagination logic here
+  const paginatedMeals = filteredMeals.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize
+  );
+
   // Fixed category options
   const categoryOptions = ["All", "Breakfast", "Lunch", "Dinner"];
 
@@ -388,7 +383,7 @@ const AvailableMeals = () => {
               </div>
             </Col>
           ) : (
-            filteredMeals.map((meal) => (
+            paginatedMeals.map((meal) => (
               <Col xs={24} sm={12} md={4} key={meal.id}>
                 <Card className={styles.card}>
                   <div className={styles.categoryTag}>
@@ -459,6 +454,20 @@ const AvailableMeals = () => {
                 </Card>
               </Col>
             ))
+          )}
+          {filteredMeals.length > 0 && (
+            <Col span={24}>
+              <div className={styles.paginationContainer}>
+                <Pagination
+                  current={currentPage}
+                  pageSize={pageSize}
+                  total={filteredMeals.length}
+                  onChange={handlePageChange}
+                  // showSizeChanger
+                  // showTotal={(total, range) => `${range[0]}-${range[1]} of ${total} meals`}
+                />
+              </div>
+            </Col>
           )}
         </Row>
       )}
