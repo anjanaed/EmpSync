@@ -92,7 +92,7 @@ model Payroll {
 }
 
 model Meal {
-  id           String    @id @unique
+  id           Int            @id @default(autoincrement()) // Changed from String to Int
   nameEnglish  String
   nameSinhala  String
   nameTamil    String
@@ -100,20 +100,17 @@ model Meal {
   price        Float
   imageUrl     String?
   category     String[]
-  createdAt    DateTime  @default(now())
-  ingredients  MealIngredient[] 
+  createdAt    DateTime       @default(now())
+  ingredients  MealIngredient[]
 }
 
 model MealIngredient {
   id           Int         @id @default(autoincrement())
-  meal         Meal        @relation(fields: [mealId], references: [id])
-  mealId       String
+  meal         Meal        @relation(fields: [mealId], references: [id], onDelete: Cascade)
+  mealId       Int         // Changed to match Meal.id's new type
   ingredient   Ingredient  @relation(fields: [ingredientId], references: [id])
   ingredientId Int
-
-  
 }
-
 
 model SalaryAdjustments {
   id           Int     @id @default(autoincrement())
