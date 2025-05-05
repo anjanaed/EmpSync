@@ -1,4 +1,10 @@
 import React, { useState } from 'react';
+import {
+    faBars,
+    faMoon,
+    faSun,
+  } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styles from './ResponsiveNav.module.css';
 import Companylogo from '../../../../assets/logo.png';
 
@@ -20,9 +26,6 @@ const ResponsiveNav = () => {
       <div className={styles.companyName}>
         <img src={Companylogo} alt="Company Logo" className={styles.logo} />
       </div>
-      <button onClick={toggleMenu} className={styles.menuToggle}>
-        ☰
-      </button>
       <ul className={`${styles.navLinks} ${menuOpen ? styles.active : ''}`}>
         <li><a href="#Profile" className={styles.navLink}>Profile</a></li>
         <li><a href="#Payroll" className={styles.navLink}>Payroll</a></li>
@@ -30,7 +33,10 @@ const ResponsiveNav = () => {
         <li><a href="#AI Suggestions" className={styles.navLink}>AI Suggestions</a></li>
       </ul>
       <button onClick={toggleDarkMode} className={styles.themeToggle}>
-        {darkMode ? '🌙' : '☀️'}
+        {darkMode ? <FontAwesomeIcon icon={faMoon} /> : <FontAwesomeIcon icon={faSun} />}
+      </button>
+      <button onClick={toggleMenu} className={styles.menuToggle}>
+        <FontAwesomeIcon icon={faBars} />
       </button>
     </nav>
   );
