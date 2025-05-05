@@ -67,7 +67,7 @@ const ResponsiveNav = () => {
           <FontAwesomeIcon icon={faBars} />
         </button>
         <button onClick={handleLogout} className={`${styles.logoutButton} ${styles.desktopLogout}`}>
-          Logout
+          <LogOut size={18} style={{ marginRight: '8px' }} /> Logout
         </button>
       </div>
     </nav>
