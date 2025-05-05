@@ -193,14 +193,25 @@ const Order = () => {
         <div className={styles.orderContainer}>
             <div className={styles.headerContainer}>
                 <Title level={3} className={styles.mainTitle}>Selected Ingredients for Order</Title>
-                <Button 
-                    type="default" 
-                    size="large"
-                    onClick={exportToPDF}
-                    className={styles.exportBtn}
-                >
-                    Export to PDF
-                </Button>
+                <div className={styles.buttonGroup}>
+                    <Button 
+                        type="default" 
+                        size="large"
+                        onClick={exportToPDF}
+                        className={styles.exportBtn}
+                    >
+                        Export to PDF
+                    </Button>
+                    <Button 
+                        type="primary" 
+                        size="large"
+                        className={styles.placeOrderBtn}
+                        onClick={showBudgetModal}
+                    >
+                        Place the Order
+                    </Button>
+                    {budgetModal}
+                </div>
             </div>
 
             <Title level={3} className={styles.sectionTitle}>Priority Ingredients</Title>
@@ -233,17 +244,6 @@ const Order = () => {
                 Last updated: {new Date(ingredients?.lastUpdated).toLocaleString()}
             </p>
             
-            <div className={styles.buttonContainer}>
-                <Button 
-                    type="primary" 
-                    size="large"
-                    className={styles.placeOrderBtn}
-                    onClick={showBudgetModal}
-                >
-                    Place the Order
-                </Button>
-            </div>
-            {budgetModal}
         </div>
     );
 };
