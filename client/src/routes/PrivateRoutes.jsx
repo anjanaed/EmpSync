@@ -215,7 +215,7 @@ const PrivateRoutes = () => (
       }
     />
 
-    {/* ServingStaff Routes */}
+    ServingStaff Routes
     <Route
       path="/serving"
       element={

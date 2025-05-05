@@ -31,7 +31,7 @@ const Dashbord = () => {
       } else if (currentHour >= 15 && currentHour < 24) {
         setActiveTab("dinner");
       }
-    }, 6000);
+    }, 1000); // Update every second
 
     return () => clearInterval(timer); // Cleanup the interval on component unmount
   }, []);
@@ -99,7 +99,7 @@ const Dashbord = () => {
 
   return (
     <div className={styles.dashboardContainer}>
-      {/* Oder Scheduler Section */}
+      {/* Order Scheduler Section */}
       <div className={styles.menuScheduler}>
         <div className={styles.header}>
           <h2 className={styles.title}>Order - {formattedDate}</h2>
