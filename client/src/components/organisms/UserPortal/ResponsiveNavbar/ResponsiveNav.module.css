@@ -2,31 +2,88 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 1rem;
+  background-color: #fff;
+  color: red;
+  font-family: "Inter", sans-serif;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.dark {
   background-color: #333;
-  padding: 10px 20px;
   color: white;
 }
 
 .companyName {
+  display: flex;
+  align-items: center;
   font-size: 1.5rem;
   font-weight: bold;
 }
 
+.logo {
+  height: 40px;
+  width: auto;
+  margin-right: 10px;
+}
+
 .navLinks {
-  list-style: none;
   display: flex;
-  gap: 20px;
+  list-style: none;
+  gap: 1rem;
   margin: 0;
   padding: 0;
 }
 
 .navLink {
   text-decoration: none;
-  color: white;
+  color: #333;
   font-size: 1rem;
   transition: color 0.3s ease;
 }
 
 .navLink:hover {
-  color: #00bcd4;
+  color: #ff6347;
+}
+
+.themeToggle {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: inherit;
+  transition: color 0.3s ease;
+}
+
+.themeToggle:hover {
+  color: #ff6347;
+}
+
+/* Mobile styles */
+@media (max-width: 768px) {
+  .navLinks {
+    display: none; /* Hide links by default */
+    flex-direction: column;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background-color: #fff;
+    padding: 1rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  .navLinks.active {
+    display: flex; /* Show links when active */
+  }
+
+  .themeToggle {
+    font-size: 1.2rem;
+  }
+}
+
+.darkMode {
+  background-color: #121212;
+  color: white;
 }
