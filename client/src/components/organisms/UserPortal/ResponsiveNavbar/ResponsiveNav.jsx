@@ -30,7 +30,11 @@ const ResponsiveNav = () => {
   return (
     <nav className={`${styles.navbar} ${darkMode ? styles.dark : ''}`}>
       <div className={styles.companyName}>
-        <img src={Companylogo} alt="Company Logo" className={styles.logo} />
+        <img
+          src={darkMode ? Whitelogo : Companylogo}
+          alt="Company Logo"
+          className={styles.logo}
+        />
       </div>
       <ul className={`${styles.navLinks} ${menuOpen ? styles.active : ''}`}>
         <li>
