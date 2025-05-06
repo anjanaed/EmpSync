@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import styles from "./Page3.module.css";
 import DateAndTime from "../DateAndTime/DateAndTime";
 import axios from "axios";
+import SuggestionsWindow from "./SuggestionsWindow"; // Import SuggestionsWindow
 
 const { Content } = Layout;
 const { Title, Text } = Typography;
@@ -80,6 +81,7 @@ const Page3 = ({ carouselRef, language = "english", username, userId }) => {
   const [showError, setShowError] = useState(false);
   const [meals, setMeals] = useState([]);
   const [allMeals, setAllMeals] = useState([]);
+  const [isSuggestionsVisible, setIsSuggestionsVisible] = useState(false); // State for modal visibility
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -279,7 +281,11 @@ const Page3 = ({ carouselRef, language = "english", username, userId }) => {
   };
 
   const handleSuggestionClick = () => {
-    console.log("suggestion button clicked");
+    setIsSuggestionsVisible(true); // Show the modal
+  };
+
+  const handleSuggestionsClose = () => {
+    setIsSuggestionsVisible(false); // Hide the modal
   };
 
   const text = translations[language];
@@ -394,7 +400,7 @@ const Page3 = ({ carouselRef, language = "english", username, userId }) => {
                       <Button
                         type="default"
                         icon={<FilterOutlined />}
-                        onClick={handleSuggestionClick}
+                        onClick={handleSuggestionClick} // Open modal on click
                         style={{
                           backgroundColor: "#f0f0f0",
                           color: "#000",
@@ -643,6 +649,17 @@ const Page3 = ({ carouselRef, language = "english", username, userId }) => {
           </>
         )}
       </Content>
+
+      {/* Modal for SuggestionsWindow */}
+      <Modal
+        title="Personalized Suggestions"
+        visible={isSuggestionsVisible}
+        onCancel={handleSuggestionsClose} // Close modal
+        footer={null} // Remove footer buttons
+        centered
+      >
+        <SuggestionsWindow /> {/* Render SuggestionsWindow inside the modal */}
+      </Modal>
     </Layout>
   );
 };
