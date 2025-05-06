@@ -68,7 +68,7 @@ const Order = () => {
 
     const fetchBudgets = async () => {
         try {
-            const response = await fetch('http://localhost:3000/budgets');
+            const response = await fetch(`${urL}/budgets`);
             const data = await response.json();
             console.log("Budgets:", data);
             setBudgets(data);
@@ -134,7 +134,7 @@ const Order = () => {
         }
         console.log("Selected Budget:", selectedBudget);
         try {
-            const response = await fetch('http://localhost:3000/ingredients/order/budget', {
+            const response = await fetch(`${urL}/ingredients/order/budget`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
