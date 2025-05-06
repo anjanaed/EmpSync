@@ -6,7 +6,7 @@ import OrderTab from "../pages/OrderTab/OrderTab";
 import PrivateRoutes from "./PrivateRoutes";
 import { NotificationsProvider } from "../contexts/NotificationsContext";
 import { PopupProvider } from "../contexts/PopupContext";
-import ProfilePage from "../components/pages/UserAccount/ProfilePage/ProfilePage";
+// import ProfilePage from "../components/pages/UserAccount/ProfilePage/ProfilePage";
 
 const AppRoutes = () => (
   <BrowserRouter>
@@ -18,7 +18,7 @@ const AppRoutes = () => (
             <Route path="/OrderTab" element={<OrderTab />} />
 
             {/* Temp */}
-            <Route path="/Userprofile1" element={<ProfilePage />} />
+            {/* <Route path="/Userprofile1" element={<ProfilePage />} /> */}
 
             {/* Private Routes */}
             {PrivateRoutes()}
