@@ -25,11 +25,11 @@ export class PersonalizedMealSuggestionsService {
       select: { meals: true },
     });
 
-    const categoryCounts: Record<string, number> = {};
+    const categoryCounts = {};
     for (const order of pastOrders) {
       for (const mealId of order.meals) {
         const meal = await this.databaseService.meal.findUnique({
-          where: { id: Number(mealId) }, // Cast mealId to number
+          where: { id: mealId },
           select: { category: true },
         });
         if (meal && meal.category) {
@@ -42,7 +42,7 @@ export class PersonalizedMealSuggestionsService {
 
     // Return top 3 categories
     return Object.entries(categoryCounts)
-      .sort((a, b) => Number(b[1]) - Number(a[1])) // Explicitly cast to number
+      .sort((a, b) => b[1] - a[1])
       .slice(0, 3)
       .map(([category]) => category);
   }
