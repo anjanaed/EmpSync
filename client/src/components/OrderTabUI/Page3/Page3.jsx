@@ -80,9 +80,6 @@ const Page3 = ({ carouselRef, language = "english", username, userId }) => {
   const [showError, setShowError] = useState(false);
   const [meals, setMeals] = useState([]);
   const [allMeals, setAllMeals] = useState([]);
-  const [suggestions, setSuggestions] = useState([]);
-  const [showSuggestions, setShowSuggestions] = useState(false);
-  const [loadingSuggestions, setLoadingSuggestions] = useState(false);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -281,44 +278,8 @@ const Page3 = ({ carouselRef, language = "english", username, userId }) => {
     }
   };
 
-  const fetchSuggestions = async () => {
-    setLoadingSuggestions(true);
-    setShowSuggestions(true);
-    try {
-      if (!userId) {
-        throw new Error("User ID is missing");
-      }
-      console.log(`Fetching suggestions for userId: ${userId}`); // Log userId for debugging
-      const response = await axios.get(`http://localhost:3000/meal-suggestions?userId=${userId}`);
-      setSuggestions(response.data);
-      message.success(translations[language].suggestionsTitle);
-    } catch (error) {
-      console.error("Error fetching suggestions:", error, { userId });
-      let errorMessage;
-      if (error.response) {
-        switch (error.response.status) {
-          case 404:
-            errorMessage = "Meal suggestions endpoint not found. Please check the backend setup.";
-            break;
-          case 400:
-            errorMessage = error.response.data.message || "Invalid user ID or request.";
-            break;
-          case 500:
-            errorMessage = "Server error. Please try again later.";
-            break;
-          default:
-            errorMessage = error.response.data.message || "An error occurred while fetching suggestions.";
-        }
-      } else {
-        errorMessage = error.message === "User ID is missing"
-          ? "User ID is missing. Please log in again."
-          : translations[language].noSuggestions; // Fallback for network errors
-      }
-      message.error(errorMessage);
-      // Do not set showError here to avoid displaying the errorCard unnecessarily
-    } finally {
-      setLoadingSuggestions(false);
-    }
+  const handleSuggestionClick = () => {
+    console.log("suggestion button clicked");
   };
 
   const text = translations[language];
@@ -433,7 +394,7 @@ const Page3 = ({ carouselRef, language = "english", username, userId }) => {
                       <Button
                         type="default"
                         icon={<FilterOutlined />}
-                        onClick={fetchSuggestions}
+                        onClick={handleSuggestionClick}
                         style={{
                           backgroundColor: "#f0f0f0",
                           color: "#000",
@@ -679,72 +640,6 @@ const Page3 = ({ carouselRef, language = "english", username, userId }) => {
                 </Col>
               </Row>
             </Card>
-
-            <Modal
-              title={text.suggestionsTitle}
-              open={showSuggestions}
-              onCancel={() => setShowSuggestions(false)}
-              footer={null}
-              width={800}
-            >
-              {loadingSuggestions ? (
-                <div style={{ textAlign: "center", padding: "20px" }}>
-                  <Spin size="large" />
-                  <Text style={{ marginTop: "10px", display: "block" }}>{text.loadingSuggestions}</Text>
-                </div>
-              ) : suggestions.length === 0 ? (
-                <Alert message={text.noSuggestions} type="info" showIcon />
-              ) : (
-                <Row gutter={16}>
-                  {suggestions.map((meal) => (
-                    <Col span={8} key={meal.id}>
-                      <Card
-                        cover={
-                          <img
-                            alt={meal[`name${language.charAt(0).toUpperCase() + language.slice(1)}`]}
-                            src={meal.imageUrl || "https://via.placeholder.com/200"}
-                            style={{
-                              height: 150,
-                              objectFit: "cover",
-                              borderRadius: 4,
-                            }}
-                          />
-                        }
-                        style={{ marginBottom: 16 }}
-                      >
-                        <Card.Meta
-                          title={meal[`name${language.charAt(0).toUpperCase() + language.slice(1)}`] || "Unnamed Meal"}
-                          description={
-                            <>
-                              <Text ellipsis>{meal.description || "No description available"}</Text>
-                              <div style={{ marginTop: 8 }}>
-                                <Text strong>Rs. {meal.price ? meal.price.toFixed(2) : "0.00"}</Text>
-                              </div>
-                              <Button
-                                type="primary"
-                                block
-                                icon={<PlusOutlined />}
-                                style={{
-                                  marginTop: 8,
-                                  backgroundColor: "#ff4d4f",
-                                  borderColor: "#d9363e",
-                                }}
-                                onClick={() => {
-                                  addToOrder(meal.id);
-                                  message.success(`${meal[`name${language.charAt(0).toUpperCase() + language.slice(1)}`]} added to order`);
-                                }}
-                              >
-                                {text.add}
-                              </Button>
-                            </>
-                          }
-                        />
-                      </Card>
-                    </Col>
-                  ))}
-                </Row>
-              )}
-            </Modal>
           </>
         )}
       </Content>
