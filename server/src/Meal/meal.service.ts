@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { DatabaseService } from '../database/database.service';
 
@@ -7,9 +11,10 @@ export class MealService {
   constructor(private readonly databaseService: DatabaseService) {}
 
   // Create a meal with ingredient relationships
+  // ...existing code...
   async createWithIngredients(
     mealData: Omit<Prisma.MealCreateInput, 'ingredients'>,
-    ingredients: Array<{ ingredientId: number }>
+    ingredients: Array<{ ingredientId: number }>,
   ) {
     try {
       // Create the meal with nested ingredient relations
@@ -17,35 +22,33 @@ export class MealService {
         data: {
           ...mealData,
           ingredients: {
-            create: ingredients.map(ing => ({
+            create: ingredients.map((ing) => ({
               ingredient: {
-                connect: { id: ing.ingredientId }
-              }
-            }))
-          }
+                connect: { id: ing.ingredientId },
+              },
+            })),
+          },
         },
         include: {
           ingredients: {
             include: {
-              ingredient: true
-            }
-          }
-        }
+              ingredient: true,
+            },
+          },
+        },
       });
-      
-      console.log('Created meal:', result); // Add logging
+
       return result;
     } catch (error) {
-      console.error('Database error:', error); // Add error logging
       throw new BadRequestException(`Failed to create meal: ${error.message}`);
     }
   }
+  // ...existing code...
 
- 
   // Create method which now will route to createWithIngredients
   async create(createMealDto: Prisma.MealCreateInput) {
     throw new BadRequestException(
-      'This method is deprecated. Please use createWithIngredients instead.'
+      'This method is deprecated. Please use createWithIngredients instead.',
     );
   }
 
@@ -56,10 +59,10 @@ export class MealService {
         include: {
           ingredients: {
             include: {
-              ingredient: true
-            }
-          }
-        }
+              ingredient: true,
+            },
+          },
+        },
       });
     } catch (error) {
       throw new BadRequestException('Failed to retrieve meals');
@@ -83,16 +86,16 @@ export class MealService {
         include: {
           ingredients: {
             include: {
-              ingredient: true
-            }
-          }
-        }
+              ingredient: true,
+            },
+          },
+        },
       });
-      
+
       if (!meal) {
         throw new NotFoundException('Meal not found');
       }
-      
+
       return meal;
     } catch (error) {
       if (error instanceof NotFoundException) {
@@ -102,27 +105,25 @@ export class MealService {
     }
   }
 
-
-
   // Update a meal with its ingredient relationships
   async updateWithIngredients(
     id: number,
     mealData: Omit<Prisma.MealUpdateInput, 'ingredients'>,
-    ingredients?: Array<{ ingredientId: number }>
+    ingredients?: Array<{ ingredientId: number }>,
   ) {
     try {
       return await this.databaseService.$transaction(async (prisma) => {
         if (ingredients && ingredients.length > 0) {
           await prisma.mealIngredient.deleteMany({
-            where: { mealId: id }
+            where: { mealId: id },
           });
-          
+
           for (const ing of ingredients) {
             await prisma.mealIngredient.create({
               data: {
                 mealId: id,
                 ingredientId: ing.ingredientId,
-              }
+              },
             });
           }
         }
@@ -133,12 +134,12 @@ export class MealService {
           include: {
             ingredients: {
               include: {
-                ingredient: true
-              }
-            }
-          }
+                ingredient: true,
+              },
+            },
+          },
         });
-        
+
         return updatedMeal;
       });
     } catch (error) {
@@ -146,17 +147,16 @@ export class MealService {
     }
   }
 
- 
   async remove(id: number) {
     try {
       const meal = await this.databaseService.meal.findUnique({
-        where: { id }
+        where: { id },
       });
-      
+
       if (!meal) {
         throw new NotFoundException('Meal not found');
       }
-      
+
       return await this.databaseService.meal.delete({
         where: { id },
       });
