@@ -28,12 +28,17 @@ Input {
   display: flex;
   width: 100%;
   font-size: 13px;
-  gap: 10%;
   margin-bottom: 5px;
+  justify-content: space-between;
 }
 
 .bottomHalf .inputLine {
   padding: 0.7vw 0vw;
+}
+
+.bottomHalf{
+  width: 100%;
+  overflow: hidden;
 }
 
 .inputSet {
@@ -194,6 +199,9 @@ hr {
 .removeBtn {
   display: flex;
   align-items: center;
+  justify-content: center;
+  width: auto;
+  height: auto;
   cursor: pointer;
   transition: all 0.4s ease-in-out;
 }
