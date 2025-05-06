@@ -58,6 +58,7 @@ export function calculateSalary(
     const upper = level.upperLimit ?? Infinity;
     if (grossSalary * 12 < upper) {
       taxLevel = level.orderId;
+      break
     }
   }
   let paye = 0;
