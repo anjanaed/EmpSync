@@ -661,8 +661,7 @@ async function main() {
   ];
 
 
-    ,
-  ];
+
 
   const meals: Prisma.MealCreateInput[] = [
     {
