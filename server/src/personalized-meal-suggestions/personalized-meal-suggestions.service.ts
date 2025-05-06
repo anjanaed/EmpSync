@@ -144,6 +144,117 @@ export class PersonalizedMealSuggestionsService {
     }));
   }
 
+  async getPersonalizedSuggestionsForDate(userId: string, date: Date): Promise<any[]> {
+    try {
+      console.log('User ID:', userId);
+      console.log('Date:', date);
+
+      const parsedDate = new Date(date);
+      console.log('Parsed Date:', parsedDate);
+      if (isNaN(parsedDate.getTime())) {
+        throw new HttpException('Invalid date format', HttpStatus.BAD_REQUEST);
+      }
+
+      // Fetch user data
+      const user = await this.databaseService.user.findUnique({
+        where: { id: userId },
+      });
+
+      if (!user) {
+        throw new HttpException(`User with ID ${userId} not found.`, HttpStatus.NOT_FOUND);
+      }
+
+      if (!user.height || !user.weight) {
+        throw new HttpException(
+          `Incomplete user data for user ID ${userId}. Height and weight are required.`,
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
+      // Calculate age from dob (assuming dob is a string like 'YYYY-MM-DD')
+      const age = user.dob
+        ? Math.floor(
+            (new Date().getTime() - new Date(user.dob).getTime()) / (1000 * 60 * 60 * 24 * 365.25),
+          )
+        : 30; // Default age if not provided
+
+      // Calculate caloric needs
+      const caloricNeeds = this.calculateCaloricNeeds(
+        user.height,
+        user.weight,
+        age,
+        user.gender || 'male', // Default gender if not provided
+      );
+
+      // Get user's preferred meal categories based on past orders
+      const preferredCategories = await this.getUserPreferences(userId);
+
+      // Normalize the date to remove time components
+      const normalizedDate = new Date(date);
+      normalizedDate.setHours(0, 0, 0, 0);
+
+      // Fetch scheduled meals for the given date
+      const scheduledMeals = await this.databaseService.scheduledMeal.findUnique({
+        where: {
+          date: normalizedDate,
+        },
+        select: {
+          breakfast: true,
+          lunch: true,
+          dinner: true,
+        },
+      });
+
+      if (!scheduledMeals) {
+        throw new HttpException('No meals scheduled for the given date', HttpStatus.NOT_FOUND);
+      }
+
+      // Combine all meal IDs for the date
+      const mealIds = [
+        ...scheduledMeals.breakfast,
+        ...scheduledMeals.lunch,
+        ...scheduledMeals.dinner,
+      ];
+
+      // Fetch meal details
+      const meals = await this.databaseService.meal.findMany({
+        where: { id: { in: mealIds } },
+      });
+
+      // Filter meals based on user preferences and caloric needs
+      const suggestions = meals
+        .filter((meal) => {
+          // Match category preference
+          const categoryMatch =
+            preferredCategories.length === 0 ||
+            meal.category.some((cat) => preferredCategories.includes(cat));
+
+          // Estimate calories based on price (placeholder; adjust if calorie data is available)
+          const estimatedCalories = meal.price * 100; // Assume $1 ~ 100 kcal (simplified)
+          const caloricMatch =
+            estimatedCalories >= caloricNeeds * 0.8 && estimatedCalories <= caloricNeeds * 1.2;
+
+          return categoryMatch && caloricMatch;
+        })
+        .slice(0, 3); // Return top 3 suggestions
+
+      // Map the suggestions to a user-friendly format
+      return suggestions.map((meal) => ({
+        id: meal.id,
+        nameEnglish: meal.nameEnglish,
+        nameSinhala: meal.nameSinhala,
+        nameTamil: meal.nameTamil,
+        description: meal.description,
+        price: meal.price,
+        imageUrl: meal.imageUrl,
+        category: meal.category,
+      }));
+    } catch (err) {
+      console.error('Error in getPersonalizedSuggestionsForDate:', err);
+      throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
   async findOrdersByUserId(userId: string) {
     try {
       const orders = await this.databaseService.order.findMany({
@@ -309,14 +420,23 @@ export class PersonalizedMealSuggestionsService {
         throw new HttpException('No meals available at this time', HttpStatus.NOT_FOUND);
       }
 
-      // Return the available meal IDs
+      // Fetch meal details for the current meal IDs
+      const meals = await this.databaseService.meal.findMany({
+        where: { id: { in: currentMealIds } },
+        select: { nameEnglish: true },
+      });
+
+      // Extract meal English names
+      const availableMealNames = meals.map((meal) => meal.nameEnglish);
+
+      // Return the available meal names
       return {
         user: {
           height: user.height,
           weight: user.weight,
         },
         previousMealIds,
-        availableMealIds: currentMealIds,
+        availableMealNames,
       };
     } catch (err) {
       console.error('Error fetching available meals:', err);

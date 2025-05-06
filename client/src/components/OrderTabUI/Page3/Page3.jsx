@@ -280,8 +280,24 @@ const Page3 = ({ carouselRef, language = "english", username, userId }) => {
     }
   };
 
-  const handleSuggestionClick = () => {
-    setIsSuggestionsVisible(true); // Show the modal
+  const handleSuggestionClick = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:3000/meal-suggestions/personalized?userId=${userId}&date=${selectedDate === "today" ? new Date().toISOString().split("T")[0] : getTomorrowDate().toISOString().split("T")[0]}`
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch personalized suggestions");
+      }
+
+      const suggestions = await response.json();
+      console.log("Personalized Suggestions:", suggestions);
+
+      // Optionally, pass suggestions to the modal or handle them as needed
+      setIsSuggestionsVisible(true); // Show the modal
+    } catch (error) {
+      console.error("Error fetching personalized suggestions:", error);
+    }
   };
 
   const handleSuggestionsClose = () => {

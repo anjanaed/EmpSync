@@ -114,4 +114,24 @@ export class PersonalizedMealSuggestionsController {
       );
     }
   }
+
+  @Get('/personalized')
+  async getPersonalizedSuggestionsForDate(
+    @Query('userId') userId: string,
+    @Query('date') date: string,
+  ): Promise<any[]> {
+    if (!userId || !date) {
+      throw new HttpException(
+        'Both "userId" and "date" query parameters are required.',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const parsedDate = new Date(date);
+    if (isNaN(parsedDate.getTime())) {
+      throw new HttpException('Invalid date format. Use "YYYY-MM-DD".', HttpStatus.BAD_REQUEST);
+    }
+
+    return await this.suggestionsService.getPersonalizedSuggestionsForDate(userId, parsedDate);
+  }
 }
