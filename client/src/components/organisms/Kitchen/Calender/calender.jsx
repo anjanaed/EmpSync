@@ -242,11 +242,11 @@ const MenuSets = () => {
   };
 
   const handleMealSelection = (meal) => {
-    // Get the meal ID (assuming meal is passed as an object with id property)
-    const mealId = typeof meal === "object" ? meal.id : meal;
+    // Get the meal ID and ensure it's a number
+    const mealId = typeof meal === 'object' ? Number(meal.id) : Number(meal);
 
     if (selectedMeals.includes(mealId)) {
-      setSelectedMeals(selectedMeals.filter((item) => item !== mealId));
+      setSelectedMeals(selectedMeals.filter(item => item !== mealId));
     } else {
       setSelectedMeals([...selectedMeals, mealId]);
     }
@@ -275,7 +275,7 @@ const MenuSets = () => {
         // Also set available meals so getMealNameById can use them
         setAvailableMeals(Array.isArray(data) ? data : []);
       } catch (err) {
-        console.error("Failed to fetch meals", err);
+        // console.error("Failed to fetch meals", err);
         message.error("Failed to load available meals");
       } finally {
         setLoading(false);
@@ -301,9 +301,11 @@ const MenuSets = () => {
       return `Loading meal information... (ID: ${mealId})`;
     }
 
-    const meal = availableMeals.find((m) => m.id === mealId);
+    // Ensure we're comparing numbers
+    const meal = availableMeals.find(m => m.id === Number(mealId));
     return meal ? meal.nameEnglish : `Unknown Meal (ID: ${mealId})`;
   };
+
 
   // Modified date change handler
   const handleDateChange = (date) => {
@@ -907,9 +909,7 @@ const MenuSets = () => {
                           <span >
                             {meal.nameEnglish}
                           </span>
-                          <span style={{ color: "#b3b3b3", marginLeft: "8px" }}>
-                            (ID: {meal.id})
-                          </span>
+                          
                         </div>
                         <Checkbox
                           checked={selectedMeals.includes(meal.id)}

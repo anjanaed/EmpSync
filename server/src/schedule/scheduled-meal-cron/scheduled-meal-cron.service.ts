@@ -9,19 +9,19 @@ export class ScheduledMealCronService {
   constructor(private readonly prisma: DatabaseService) {}
 
   @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
-//   @Cron('*/2 * * * *') // <-- every 5 minutes for testing purpose
+  // @Cron('*/2 * * * *')
   async confirmScheduledMeals() {
     this.logger.log('Running scheduled meal confirmation...');
 
     try {
       const twoDaysLater = new Date();
-      twoDaysLater.setDate(twoDaysLater.getDate() + 2); // Add 2 days in local time
-      twoDaysLater.setHours(0, 0, 0, 0); // Set to midnight in local time (Sri Lanka Time)
+      twoDaysLater.setDate(twoDaysLater.getDate() + 2);
+      twoDaysLater.setHours(0, 0, 0, 0); // Local midnight
 
       const result = await this.prisma.scheduledMeal.updateMany({
         where: {
-          date: twoDaysLater,
-          confirmed: false, // Using local date
+          date: twoDaysLater, // Pass a Date object, not a string
+          confirmed: false,
         },
         data: {
           confirmed: true,

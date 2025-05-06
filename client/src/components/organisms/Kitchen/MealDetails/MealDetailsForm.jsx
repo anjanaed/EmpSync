@@ -100,64 +100,65 @@ const AddMealPage = () => {
       message.warning("Please select an image for the meal");
       return;
     }
-
+  
     if (selectedIngredients.length === 0) {
       message.warning("Please select at least one ingredient for the meal");
       return;
     }
-
+  
     setUploading(true);
-
+  
     try {
       // Upload image to Firebase Storage
       const imageRef = ref(storage, `meals/${Date.now()}-${imageFile.name}`);
       await uploadBytes(imageRef, imageFile);
-
+  
       // Get the download URL of the uploaded image
       const downloadURL = await getDownloadURL(imageRef);
-
-      // Format ingredients data for the new backend API
+  
+      // Format ingredients data - make sure ingredientId is a number
       const ingredientsData = selectedIngredients.map((ingredient) => ({
-        ingredientId: ingredient.id,
+        ingredientId: parseInt(ingredient.id),
       }));
-
+  
       const mealData = {
-        id: values.Id,
         nameEnglish: values.nameEnglish,
         nameSinhala: values.nameSinhala,
         nameTamil: values.nameTamil,
-        description: values.description,
-        category: values.category || [], // Use the array of selected categories
+        description: values.description || "",
+        category: values.category || [],
         price: parseFloat(values.price),
-        imageUrl: downloadURL, // Use the Firebase Storage URL
-        ingredients: ingredientsData, // Now sending as an array of objects with just ingredientId
-        createdAt: new Date().toISOString(),
+        imageUrl: downloadURL,
+        ingredients: ingredientsData,
       };
-
+  
       console.log("Submitting meal data:", mealData);
-
+  
       const response = await fetch("http://localhost:3000/meal", {
         method: "POST",
-        credentials: "include", // Important for cookies/auth headers
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(mealData),
       });
-
+  
+      const responseData = await response.json();
+  
       if (!response.ok) {
-        throw new Error("Failed to add meal");
+        throw new Error(responseData.message || "Failed to add meal");
       }
-
+  
+      console.log("Server response:", responseData);
       message.success("Meal added successfully!");
       form.resetFields();
       setImageUrl(null);
       setImageFile(null);
       setSelectedIngredients([]);
-      navigate("/kitchen-meal"); // Redirect after success
+      navigate("/kitchen-meal");
     } catch (error) {
-      message.error(`Error: ${error.message}`);
-      console.error("Error adding meal:", error);
+      console.error("Detailed error:", error);
+      message.error(`Error adding meal: ${error.message}`);
     } finally {
       setUploading(false);
     }
@@ -293,13 +294,7 @@ const AddMealPage = () => {
               </Col>
 
               <Col xs={24} md={14}>
-                <Form.Item
-                  label="Meal ID"
-                  name="Id"
-                  rules={[{ required: true, message: "Please enter Meal Id" }]}
-                >
-                  <Input placeholder="Enter Meal ID" />
-                </Form.Item>
+                
                 <Form.Item
                   label="Name"
                   required
@@ -475,7 +470,7 @@ const AddMealPage = () => {
                     onChange={() => handleIngredientSelect(ingredient.id)}
                     className={styles.ingredientCheckbox}
                   >
-                    {ingredient.name} (ID: {ingredient.id})
+                    {ingredient.name} 
                   </Checkbox>
                 </div>
               </div>
