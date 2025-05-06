@@ -1,30 +1,37 @@
-import React, { useState, useEffect, useContext } from "react";
-import { Card, Tabs, Typography, message, Button } from "antd";
-import { UserContext } from "../../../contexts/UserContext";
+import React, { useState, useEffect } from "react";
+import { Card, Tabs, Typography, message, Button, Calendar, Modal } from "antd";
+import { useAuth } from "../../../contexts/AuthContext"; // Import useAuth
 import axios from "axios";
 
 const { TabPane } = Tabs;
 const { Title, Text } = Typography;
 
 export function MealsOrders() {
+  const { authData } = useAuth(); // Access authData from AuthContext
   const [currentOrders, setCurrentOrders] = useState([]);
   const [pastOrders, setPastOrders] = useState([]);
   const [mealDetails, setMealDetails] = useState({});
-  const userData = useContext(UserContext);
+  const [selectedDateOrders, setSelectedDateOrders] = useState([]);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const employeeId = authData?.user?.id || localStorage.getItem("employeeId"); // Get employeeId from authData
 
   useEffect(() => {
-    const fetchOrders = async () => {
-      if (!userData?.id) {
-        message.error("User ID is missing. Unable to fetch orders.");
-        return;
-      }
+    if (!employeeId) {
+      message.error("Employee ID is missing. Please log in again.");
+      return;
+    }
 
+    // Save employeeId to localStorage if it's available
+    localStorage.setItem("employeeId", employeeId);
+
+    const fetchOrders = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/orders?employeeId=${userData.id}`);
+        const response = await axios.get(`http://localhost:3000/orders?employeeId=${employeeId}`);
         const orders = response.data;
 
-        const current = orders.filter((order) => order.employeeId === userData.id && order.serve === false);
-        const past = orders.filter((order) => order.employeeId === userData.id && order.serve === true);
+        const current = orders.filter((order) => order.employeeId === employeeId && order.serve === false);
+        const past = orders.filter((order) => order.employeeId === employeeId && order.serve === true);
 
         const mealIdCounts = orders.flatMap((order) =>
           Object.entries(order.meals || {}).map(([mealId, count]) => {
@@ -60,7 +67,7 @@ export function MealsOrders() {
     };
 
     fetchOrders();
-  }, [userData]);
+  }, [employeeId]);
 
   const handleCancelOrder = async (orderId) => {
     try {
@@ -70,6 +77,46 @@ export function MealsOrders() {
     } catch (error) {
       message.error("Failed to cancel the order. Please try again.");
     }
+  };
+
+  const isCancelable = (order) => {
+    const now = new Date();
+    const orderDate = new Date(order.orderDate);
+
+    if (
+      orderDate.getFullYear() > now.getFullYear() ||
+      (orderDate.getFullYear() === now.getFullYear() && orderDate.getMonth() > now.getMonth()) ||
+      (orderDate.getFullYear() === now.getFullYear() &&
+        orderDate.getMonth() === now.getMonth() &&
+        orderDate.getDate() >= now.getDate())
+    ) {
+      const currentTime = now.getHours() * 60 + now.getMinutes();
+
+      if (orderDate.getDate() === now.getDate()) {
+        if (order.breakfast && currentTime < 540) return true;
+        if (order.lunch && currentTime < 660) return true;
+        if (order.dinner && currentTime < 1080) return true;
+        return false;
+      }
+
+      return true;
+    }
+
+    return false;
+  };
+
+  const handleDateSelect = (date) => {
+    const selectedDate = date.format("YYYY-MM-DD");
+    const ordersForDate = pastOrders.filter(
+      (order) => new Date(order.orderDate).toISOString().split("T")[0] === selectedDate
+    );
+    setSelectedDateOrders(ordersForDate);
+    setIsModalVisible(true);
+  };
+
+  const handleModalClose = () => {
+    setIsModalVisible(false);
+    setSelectedDateOrders([]);
   };
 
   return (
@@ -124,6 +171,7 @@ export function MealsOrders() {
                     type="primary"
                     danger
                     onClick={() => handleCancelOrder(order.id)}
+                    disabled={!isCancelable(order)}
                     style={{ marginTop: "10px", alignSelf: "center" }}
                   >
                     Cancel Order
@@ -141,46 +189,59 @@ export function MealsOrders() {
 
         <TabPane tab="Past Orders" key="past">
           {pastOrders.length > 0 ? (
-            <div style={{ display: "flex", gap: "16px", flexWrap: "wrap" }}>
-              {pastOrders.map((order) => (
-                <Card
-                  key={order.id}
-                  extra={`Order ID: ${order.id}`}
-                  title={`LKR ${order.price.toFixed(2)}`}
-                  style={{ width: 300, display: "flex", flexDirection: "column", justifyContent: "space-between" }}
-                  bodyStyle={{ display: "flex", flexDirection: "column", flexGrow: 1 }}
-                >
-                  <div style={{ flexGrow: 1 }}>
-                    <p>
-                      <strong>Order Date:</strong> {new Date(order.orderDate).toLocaleDateString()}
-                    </p>
-                    <p>
-                      <strong>Meal Type:</strong> {order.mealType || "Unknown"}
-                    </p>
-                    <p>
-                      <strong>Ordered At:</strong>{" "}
-                      {new Date(order.orderPlacedTime).toLocaleDateString()}{" "}
-                      {new Date(order.orderPlacedTime).toLocaleTimeString()}
-                    </p>
-                    <p>
-                      <strong>Meals Ordered:</strong>
-                    </p>
-                    <ul>
-                      {Object.entries(order.meals || {}).map(([mealId, count]) => {
-                        const [parsedMealId, parsedCount] = count.toString().split(":");
-                        return (
-                          <li key={mealId}>
-                            {mealDetails[parsedMealId] || "Unknown Meal"}: {parsedCount}
-                          </li>
-                        );
-                      })}
-                    </ul>
-                  </div>
-                  <Button type="primary" danger disabled style={{ marginTop: "10px", alignSelf: "center" }}>
-                    Cancel Order
-                  </Button>
-                </Card>
-              ))}
+            <div>
+              <Calendar
+                fullscreen={true}
+                onSelect={handleDateSelect}
+              />
+              <Modal
+                title="Orders for Selected Date"
+                visible={isModalVisible}
+                onCancel={handleModalClose}
+                footer={null}
+              >
+                {selectedDateOrders.length > 0 ? (
+                  selectedDateOrders.map((order) => (
+                    <Card
+                      key={order.id}
+                      extra={`Order ID: ${order.id}`}
+                      title={`LKR ${order.price.toFixed(2)}`}
+                      style={{ marginBottom: "16px" }}
+                    >
+                      <p>
+                        <strong>Meal Type:</strong>{" "}
+                        {order.breakfast
+                          ? "Breakfast"
+                          : order.lunch
+                          ? "Lunch"
+                          : order.dinner
+                          ? "Dinner"
+                          : "Unknown"}
+                      </p>
+                      <p>
+                        <strong>Ordered At:</strong>{" "}
+                        {new Date(order.orderPlacedTime).toLocaleDateString()}{" "}
+                        {new Date(order.orderPlacedTime).toLocaleTimeString()}
+                      </p>
+                      <p>
+                        <strong>Meals Ordered:</strong>
+                      </p>
+                      <ul>
+                        {Object.entries(order.meals || {}).map(([mealId, count]) => {
+                          const [parsedMealId, parsedCount] = count.toString().split(":");
+                          return (
+                            <li key={mealId}>
+                              {mealDetails[parsedMealId] || "Unknown Meal"}: {parsedCount}
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    </Card>
+                  ))
+                ) : (
+                  <Text>No orders found for this date.</Text>
+                )}
+              </Modal>
             </div>
           ) : (
             <Card>

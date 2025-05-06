@@ -34,6 +34,7 @@ model User {
   payrolls   Payroll[]
   attendance Attendance[]
   createdAt  DateTime     @default(now())
+  
 }
 
 model Ingredient {
@@ -91,7 +92,7 @@ model Payroll {
 }
 
 model Meal {
-  id           String    @id @unique
+  id           Int            @id @default(autoincrement()) // Changed from String to Int
   nameEnglish  String
   nameSinhala  String
   nameTamil    String
@@ -99,20 +100,17 @@ model Meal {
   price        Float
   imageUrl     String?
   category     String[]
-  createdAt    DateTime  @default(now())
-  ingredients  MealIngredient[] 
+  createdAt    DateTime       @default(now())
+  ingredients  MealIngredient[]
 }
 
 model MealIngredient {
   id           Int         @id @default(autoincrement())
-  meal         Meal        @relation(fields: [mealId], references: [id])
-  mealId       String
+  meal         Meal        @relation(fields: [mealId], references: [id], onDelete: Cascade)
+  mealId       Int         // Changed to match Meal.id's new type
   ingredient   Ingredient  @relation(fields: [ingredientId], references: [id])
   ingredientId Int
-
-  
 }
-
 
 model SalaryAdjustments {
   id           Int     @id @default(autoincrement())
@@ -166,9 +164,9 @@ model LeaveApplication {
 model ScheduledMeal {
   id        Int      @id @default(autoincrement())
   date      DateTime @unique @db.Date // Store as DATE (without time)
-  breakfast String[]
-  lunch     String[]
-  dinner    String[]
+  breakfast Int[]    // Changed from String[] to Int[]
+  lunch     Int[]    // Changed from String[] to Int[]
+  dinner    Int[]    // Changed from String[] to Int[]
   confirmed Boolean  @default(false) 
   createdAt DateTime @default(now())
 }

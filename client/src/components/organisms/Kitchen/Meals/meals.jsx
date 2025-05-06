@@ -138,6 +138,56 @@ const AvailableMeals = () => {
         }
       }
 
+      // Check if the meal has ingredients and delete them first
+      if (meal.ingredients && meal.ingredients.length > 0) {
+        // Option 1: Delete ingredients one by one
+        for (const ingredient of meal.ingredients) {
+          try {
+            const ingredientResponse = await fetch(
+              `http://localhost:3000/meal-ingredients/${ingredient.id}`,
+              {
+                method: "DELETE",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                credentials: "include", // Important for cookies/auth headers
+              }
+            );
+
+            if (!ingredientResponse.ok) {
+              console.warn(
+                `Failed to delete meal ingredient with ID ${ingredient.id}`
+              );
+            }
+          } catch (ingredientError) {
+            console.error("Error deleting meal ingredient:", ingredientError);
+          }
+        }
+
+        // Option 2: Alternative - delete all ingredients for this meal in one request
+        // Uncomment and use this if your API supports it
+        /*
+        try {
+          const bulkIngredientsResponse = await fetch(
+            `http://localhost:3000/meal-ingredients/by-meal/${meal.id}`,
+            {
+              method: "DELETE",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              credentials: "include",
+            }
+          );
+          
+          if (!bulkIngredientsResponse.ok) {
+            console.warn(`Failed to delete ingredients for meal ${meal.id}`);
+          }
+        } catch (bulkIngredientError) {
+          console.error("Error deleting meal ingredients:", bulkIngredientError);
+        }
+        */
+      }
+
       // Then delete the meal from the database
       const response = await fetch(`http://localhost:3000/meal/${meal.id}`, {
         method: "DELETE",
@@ -148,7 +198,11 @@ const AvailableMeals = () => {
       });
 
       if (!response.ok) {
-        throw new Error("Failed to delete meal");
+        const errorData = await response.json().catch(() => ({}));
+        console.error("Server error response:", errorData);
+        throw new Error(
+          `Failed to delete meal: ${errorData.message || response.statusText}`
+        );
       }
 
       // Remove meal from state if deletion was successful
@@ -409,7 +463,6 @@ const AvailableMeals = () => {
         </Row>
       )}
 
-
       {/* {Ingredient modal} */}
       <Modal
         title={
@@ -448,7 +501,6 @@ const AvailableMeals = () => {
                         </span>
                       </div>
                     }
-                    
                   />
                 </List.Item>
               )}

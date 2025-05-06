@@ -242,11 +242,11 @@ const MenuSets = () => {
   };
 
   const handleMealSelection = (meal) => {
-    // Get the meal ID (assuming meal is passed as an object with id property)
-    const mealId = typeof meal === "object" ? meal.id : meal;
+    // Get the meal ID and ensure it's a number
+    const mealId = typeof meal === 'object' ? Number(meal.id) : Number(meal);
 
     if (selectedMeals.includes(mealId)) {
-      setSelectedMeals(selectedMeals.filter((item) => item !== mealId));
+      setSelectedMeals(selectedMeals.filter(item => item !== mealId));
     } else {
       setSelectedMeals([...selectedMeals, mealId]);
     }
@@ -301,9 +301,11 @@ const MenuSets = () => {
       return `Loading meal information... (ID: ${mealId})`;
     }
 
-    const meal = availableMeals.find((m) => m.id === mealId);
+    // Ensure we're comparing numbers
+    const meal = availableMeals.find(m => m.id === Number(mealId));
     return meal ? meal.nameEnglish : `Unknown Meal (ID: ${mealId})`;
   };
+
 
   // Modified date change handler
   const handleDateChange = (date) => {

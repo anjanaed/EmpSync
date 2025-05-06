@@ -1,23 +1,22 @@
 
 .loginContainer {
   display: flex;
-  background-color: #272626;
   min-height: 100vh;
   background:url('../../../assets/loginbackground.png') center/cover no-repeat;
-  font-family: Arial, sans-serif;
+  font-family: "Figtree", sans-serif;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  overflow: hidden;
 }
 .loginBox {
   display: flex;
-  width: 800px;
-  height: 500px;
+  width: 55vw;
   background: white;
   border-radius: 10px;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
   overflow: hidden;
 }
+
 
 .loginLeft {
   flex: 1;
@@ -25,7 +24,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px;
+  padding: 1vw;
 }
 
 .loginIllustration {
@@ -34,48 +33,44 @@
 
 .loginRight {
   flex: 1;
-  padding: 20px;
   display: flex;
   flex-direction: column;
   justify-content: center;
 }
 
 .loginTitle {
-  font-size: 35px;
+  font-size: 2.2rem;
+  margin-bottom: 3vw;
+  text-align: center;
   font-weight: bold;
-  color: #000;
-  margin-bottom: 15px; 
+  color: #353535;
 }
 
 .logindetails {
   display: flex;
   align-items: center;
-  margin-bottom: 0px; 
+ justify-content: center;
+ gap: 1vw;
 }
-
-.loginavatar {
-  margin-right: 10px;
-  margin-top: 20px;
-}
-
 
 
 .username {
-  font-size: 20px;
+  font-size: 1.1rem;
   font-weight: bold;
   line-height: 0;
   padding-top: 20px;
 }
 
 .userpost {
-  font-size: 14px;
+  font-size: 0.8rem;
   color: #888;
   line-height: 0;
 
 }
 
 .divider {
-  margin: 10px 0;
+  margin: 1vw ;
+  
   border: 2;
   border-top: 1px solid #676767;
 }
@@ -100,6 +95,7 @@
   width: 60%;
   font-size: 16px;
   padding: 10px;
+  transition: all 0.3s ease-in-out;
   margin: 5px;
   border-radius: 5px;
   color: #8b0000;
@@ -118,7 +114,11 @@
 
 .loginSubtitle {
   color: #8b0000;
-  margin-bottom: 0px;
+margin: 0 auto;
+font-weight: bold;
+padding-top: 2vw;
+
+
 }
 
 .loginButton {

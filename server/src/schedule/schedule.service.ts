@@ -9,21 +9,31 @@ export class ScheduleService {
   async create(createScheduleDto: Prisma.ScheduledMealCreateInput) {
     try {
       const formattedDate = new Date(createScheduleDto.date).toISOString().split('T')[0];
+      
+      // Convert string arrays to number arrays if they exist
+      const breakfast = Array.isArray(createScheduleDto.breakfast) 
+        ? createScheduleDto.breakfast.map(id => Number(id)) 
+        : [];
+      const lunch = Array.isArray(createScheduleDto.lunch) 
+        ? createScheduleDto.lunch.map(id => Number(id)) 
+        : [];
+      const dinner = Array.isArray(createScheduleDto.dinner) 
+        ? createScheduleDto.dinner.map(id => Number(id)) 
+        : [];
+
       return await this.databaseService.scheduledMeal.create({
         data: {
-          ...createScheduleDto,
           date: new Date(formattedDate),
-          breakfast: createScheduleDto.breakfast || [],
-          lunch: createScheduleDto.lunch || [],
-          dinner: createScheduleDto.dinner || [],
-          confirmed: false, // <-- explicitly set confirmed to false
+          breakfast,
+          lunch,
+          dinner,
+          confirmed: false,
         },
       });
     } catch (error) {
       throw new BadRequestException(error.message);
     }
   }
-  
 
   async findAll() {
     try {
@@ -60,21 +70,34 @@ export class ScheduleService {
       const existingRecord = await this.databaseService.scheduledMeal.findUnique({
         where: { date: formattedDate },
       });
+      
       if (!existingRecord) {
         throw new NotFoundException(`Scheduled meal not found for date: ${date}`);
       }
-      return await this.databaseService.scheduledMeal.update({
-        where: { date: formattedDate },
-        data: {
-          breakfast: updateScheduleDto.breakfast || [],
-          lunch: updateScheduleDto.lunch || [],
-          dinner: updateScheduleDto.dinner || [],
-        },
-      });
-    } catch (error) {
-      throw new BadRequestException(error.message);
+
+      // Convert string arrays to number arrays if they exist
+      const breakfast = Array.isArray(updateScheduleDto.breakfast) 
+        ? updateScheduleDto.breakfast.map(id => Number(id)) 
+        : undefined;
+      const lunch = Array.isArray(updateScheduleDto.lunch) 
+        ? updateScheduleDto.lunch.map(id => Number(id)) 
+        : undefined;
+      const dinner = Array.isArray(updateScheduleDto.dinner) 
+        ? updateScheduleDto.dinner.map(id => Number(id)) 
+        : undefined;
+        return await this.databaseService.scheduledMeal.update({
+          where: { date: formattedDate },
+          data: {
+            breakfast,
+            lunch,
+            dinner,
+          },
+        });
+      } catch (error) {
+        throw new BadRequestException(error.message);
+      }
     }
-  }
+
 
   async remove(date: string) {
     try {
