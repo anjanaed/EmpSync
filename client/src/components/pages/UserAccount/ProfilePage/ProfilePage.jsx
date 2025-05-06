@@ -14,7 +14,6 @@ const ProfilePage = () => {
   return (
     <>
       <NavBar />
-      <div>Hello hello</div>
       <UserProfile user={user} />
     </>
   );

@@ -1,0 +1,142 @@
+.profileContainer {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1.5rem;
+  }
+  
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+  
+  .title {
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: #333;
+  }
+  
+  .editButton {
+    min-width: 120px;
+  }
+  
+  .content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .profileCard {
+    width: 100%;
+    background-color: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+  
+  .profileImageSection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 2rem;
+  }
+  
+  .profileAvatar {
+    width: 100px;
+    height: 100px;
+    margin-bottom: 1rem;
+    border: 3px solid #f3f4f6;
+  }
+  
+  .uploadControls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .uploadButton {
+    margin-top: 0.5rem;
+  }
+  
+  .fileInput {
+    display: none;
+  }
+  
+  .tabs {
+    margin-top: 1.5rem;
+  }
+  
+  .tabContent {
+    padding: 1.5rem 0;
+  }
+  
+  .formGrid {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 1.5rem;
+  }
+  
+  @media (min-width: 640px) {
+    .formGrid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  
+  .formGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .textarea {
+    min-height: 100px;
+  }
+  
+  .radioGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding-top: 0.5rem;
+  }
+  
+  .readOnlyField {
+    background-color: #f9fafb;
+    opacity: 0.8;
+  }
+  
+  .currencyInput {
+    position: relative;
+  }
+  
+  .cardFooter {
+    border-top: 1px solid #e5e7eb;
+    padding-top: 1.5rem;
+  }
+  
+  .actionButtons {
+    display: flex;
+    gap: 1rem;
+    margin-left: auto;
+  }
+  
+  /* Mobile responsiveness */
+  @media (max-width: 640px) {
+    .profileContainer {
+      padding: 1rem;
+    }
+  
+    .header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+  
+    .editButton {
+      width: 100%;
+    }
+  
+    .formGroup {
+      grid-column: span 1;
+    }
+  }
+  
