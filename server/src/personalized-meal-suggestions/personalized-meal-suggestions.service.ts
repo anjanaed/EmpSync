@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { DatabaseService } from '../database/database.service';
-import { addDays, subDays } from 'date-fns';
+import { subDays } from 'date-fns';
 
 @Injectable()
 export class PersonalizedMealSuggestionsService {
@@ -25,13 +25,20 @@ export class PersonalizedMealSuggestionsService {
       select: { meals: true },
     });
 
-    const categoryCounts = {};
+    const categoryCounts: Record<string, number> = {};
     for (const order of pastOrders) {
       for (const mealId of order.meals) {
+        const numericMealId = parseInt(mealId, 10); // Convert mealId to a number
+        if (isNaN(numericMealId)) {
+          console.warn(`Invalid mealId: ${mealId}`);
+          continue;
+        }
+
         const meal = await this.databaseService.meal.findUnique({
-          where: { id: mealId },
+          where: { id: numericMealId },
           select: { category: true },
         });
+
         if (meal && meal.category) {
           for (const category of meal.category) {
             categoryCounts[category] = (categoryCounts[category] || 0) + 1;
@@ -42,7 +49,7 @@ export class PersonalizedMealSuggestionsService {
 
     // Return top 3 categories
     return Object.entries(categoryCounts)
-      .sort((a, b) => b[1] - a[1])
+      .sort((a, b) => b[1] - a[1]) // Ensure numeric comparison
       .slice(0, 3)
       .map(([category]) => category);
   }
@@ -52,11 +59,19 @@ export class PersonalizedMealSuggestionsService {
     // Fetch user data
     const user = await this.databaseService.user.findUnique({
       where: { id: userId },
-      select: { height: true, weight: true, gender: true, dob: true },
     });
 
-    if (!user || !user.height || !user.weight) {
-      throw new Error('User data incomplete');
+    if (!user) {
+      console.warn(`User with ID ${userId} not found.`);
+      throw new Error(`User with ID ${userId} not found.`);
+    }
+
+    // Log the raw user data to the console
+    console.log('Raw user data:', user);
+
+    if (!user.height || !user.weight) {
+      console.warn(`Incomplete user data for user ID ${userId}.`);
+      throw new Error(`Incomplete user data for user ID ${userId}.`);
     }
 
     // Calculate age from dob (assuming dob is a string like 'YYYY-MM-DD')
@@ -86,6 +101,7 @@ export class PersonalizedMealSuggestionsService {
     });
 
     if (!scheduledMeals) {
+      console.warn(`No scheduled meals found for date: ${today}`);
       return [];
     }
 
