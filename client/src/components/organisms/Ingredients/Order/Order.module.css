@@ -9,7 +9,6 @@
 
 .sectionTitle {
     margin: 24px 0 16px;
-    color: #1890ff;
 }
 
 .cardGrid {
@@ -149,7 +148,9 @@
 
 .mainTitle {
     margin: 0 !important;
+    color: brown !important;
 }
+
 
 .loadingContainer {
     display: flex;
