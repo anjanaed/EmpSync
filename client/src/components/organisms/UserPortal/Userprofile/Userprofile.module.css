@@ -12,7 +12,7 @@
   }
   
   .title {
-    font-size: 1.75rem;
+    font-size: clamp(1.5rem, 2vw, 1.75rem);
     font-weight: 600;
     color: #333;
   }
@@ -28,25 +28,27 @@
   }
   
   .profileCard {
-    width: 1200px;
-    height: 60vh;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
     background-color: white;
     border-radius: 0.5rem;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    padding: 1rem;
   }
   
   .profileImageSection {
     display: flex;
-    flex-direction: row; /* Align items horizontally */
-    justify-content: center; /* Center align the content horizontally */
-    align-items: center; /* Center align the content vertically */
-    gap: 2rem; /* Add spacing between the image and the fixed data */
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
     margin-bottom: 3rem;
+    flex-wrap: wrap;
   }
   
-  /* Default styles for larger screens */
   .profileAvatar {
-    width: 80px !important;
+    width: 100px !important;
     height: 100px;
     border: 3px solid #f3f4f6;
     border-radius: 50%;
@@ -54,8 +56,8 @@
   
   .fixedData {
     display: flex;
-    flex-direction: column; /* Stack the data vertically */
-    gap: 0.5rem; /* Add spacing between each data row */
+    flex-direction: column;
+    gap: 0.5rem;
     font-size: 1rem;
     color: #555;
   }
@@ -89,21 +91,15 @@
   
   .formGrid {
     display: grid;
-    grid-template-columns: repeat(1, 1fr); /* Default: single column */
+    grid-template-columns: 1fr;
     gap: 1.5rem;
-    margin-left: 50px;
-  }
-  
-  @media (min-width: 640px) {
-    .formGrid {
-      grid-template-columns: repeat(3, 1fr); /* Three columns for larger screens */
-    }
+    margin-left: 0;
   }
   
   .inlineGroup {
     display: flex;
-    gap: 1rem; /* Space between fields */
-    flex-wrap: wrap; /* Wrap fields if they don't fit */
+    gap: 1rem;
+    flex-wrap: wrap;
   }
   
   .formGroup {
@@ -143,7 +139,13 @@
     margin-left: auto;
   }
   
-  /* Mobile responsiveness */
+  .inputMaxWidth {
+    max-width: 300px;
+    width: 100%;
+    min-height: 35px;
+  }
+  
+  /* Responsive styles */
   @media (max-width: 640px) {
     .profileContainer {
       padding: 1rem;
@@ -159,8 +161,9 @@
       width: 100%;
     }
   
-    .formGroup {
-      grid-column: span 1;
+    .profileImageSection {
+      flex-direction: column;
+      text-align: center;
     }
   
     .profileAvatar {
@@ -173,19 +176,19 @@
     }
   
     .formGrid {
-      grid-template-columns: repeat(1, 1fr); /* Single column for smaller screens */
+      grid-template-columns: 1fr;
+      margin-left: 0;
+    }
+  
+    .formGroup {
+      grid-column: span 1;
     }
   }
-
-  .inputMaxWidth {
-    max-width: 300px;
-    width: 100%; /* Ensures it takes full width up to the max-width */
-    height: 35px;
-  }
-
-  @media (max-width: 640px) {
-    /* Styles for screens smaller than 640px */
-  }
+  
   @media (min-width: 641px) {
-    /* Styles for screens larger than 640px */
+    .formGrid {
+      grid-template-columns: repeat(3, 1fr);
+      margin-left: 50px;
+    }
   }
+  
