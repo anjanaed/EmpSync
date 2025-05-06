@@ -79,8 +79,7 @@ export default function UserProfile() {
                 className={styles.avatarImage}
               />
               {!profileImage && <User />}
-            </div>
-            {isEditing && (
+              {isEditing && (
               <div className={styles.uploadControls}>
                 <button onClick={triggerFileInput} className={styles.uploadButton}>
                   <Camera className="mr-2" />
@@ -95,6 +94,13 @@ export default function UserProfile() {
                 />
               </div>
             )}
+            </div>
+            <div className={styles.fixedData}>
+              <p><strong>Employee ID:</strong> {userData.employeeId}</p>
+              <p><strong>Email:</strong> {userData.email}</p>
+              <p><strong>Job Role:</strong> {userData.jobRole}</p>
+              <p><strong>Join Date:</strong> {userData.joinDate}</p>
+            </div>
           </div>
 
           <div className={styles.formGrid}>
