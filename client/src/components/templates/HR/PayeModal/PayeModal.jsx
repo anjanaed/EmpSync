@@ -39,7 +39,7 @@ const PayeModal = ({ handleCancel, success, error }) => {
     try {
       const res = await axios.get(`${urL}/paye`);
       setDataSource(res.data);
-  
+
       const formValues = {
         rows: res.data.reduce((acc, row) => {
           acc[row.orderId] = {
@@ -51,7 +51,7 @@ const PayeModal = ({ handleCancel, success, error }) => {
         }, {}),
       };
       form.setFieldsValue(formValues);
-  
+
       setLoading(false);
     } catch (err) {
       console.error("Failed to fetch PAYE records:", err);
@@ -109,8 +109,8 @@ const PayeModal = ({ handleCancel, success, error }) => {
       align: "center",
       render: (_, record) => (
         <Form.Item
-          style={{ marginBottom: 0 }} 
-          name={['rows',record.orderId,'lowerLimit']}
+          style={{ marginBottom: 0 }}
+          name={["rows", record.orderId, "lowerLimit"]}
           rules={[
             {
               required: true,
@@ -120,6 +120,10 @@ const PayeModal = ({ handleCancel, success, error }) => {
         >
           <InputNumber
             value={record.lowerLimit}
+            formatter={(value) =>
+              `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+            } // Add commas
+            parser={(value) => value.replace(/,/g, "")} // Remove commas when parsing
             onChange={(value) =>
               handleChange(record.orderId, "lowerLimit", value)
             }
@@ -135,10 +139,14 @@ const PayeModal = ({ handleCancel, success, error }) => {
       render: (_, record) => (
         <Form.Item
           style={{ marginBottom: 0 }}
-          name={['rows', record.orderId, 'upperLimit']}
-          >
+          name={["rows", record.orderId, "upperLimit"]}
+        >
           <InputNumber
             value={record.upperLimit}
+            formatter={(value) =>
+              `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+            } // Add commas
+            parser={(value) => value.replace(/,/g, "")} // Remove commas when parsing
             onChange={(value) =>
               handleChange(record.orderId, "upperLimit", value)
             }
@@ -154,8 +162,8 @@ const PayeModal = ({ handleCancel, success, error }) => {
       align: "center",
       render: (_, record) => (
         <Form.Item
-          style={{ marginBottom: 0 }} 
-          name={['rows', record.orderId, 'taxRate']}
+          style={{ marginBottom: 0 }}
+          name={["rows", record.orderId, "taxRate"]}
           rules={[
             {
               required: true,

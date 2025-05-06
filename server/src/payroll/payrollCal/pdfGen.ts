@@ -39,7 +39,7 @@ export async function generatePayslip({
   const page = pdfDoc.addPage([width, height]);
 
   // Header
-  page.drawText('Biz Solution', {
+  page.drawText('EmpSync Solution', {
     x: leftX,
     y,
     size: 25,
@@ -56,7 +56,7 @@ export async function generatePayslip({
     font,
   });
   y -= lineHeight;
-  page.drawText('Phone: +112954862, Email: biz@provider.com', {
+  page.drawText('Phone: +112954862, Email: emp@provider.com', {
     x: leftX,
     y,
     size: 10,
@@ -138,7 +138,7 @@ export async function generatePayslip({
   earnings.forEach((item) => {
     y -= lineHeight;
     page.drawText(item.label, { x: colX[0], y, size: 9, font });
-    page.drawText(item.amount.toFixed(2), { x: colX[1], y, size: 9, font });
+    page.drawText(item.amount.toFixed(2), { x: colX[1], y, size: 10, font });
   });
   y -= 25;
   page.drawText('PAYE Salary', { x: colX[0], y, size: 10, font: boldFont });
@@ -154,11 +154,11 @@ export async function generatePayslip({
   deductions.forEach((item) => {
     y -= lineHeight;
     page.drawText(item.label, { x: colX[0], y, size: 9, font });
-    page.drawText(item.amount.toFixed(2), { x: colX[1], y, size: 9, font });
+    page.drawText(item.amount.toFixed(2), { x: colX[1], y, size: 10, font });
   });
   y -= 20;
   page.drawText('Paye Tax', { x: colX[0], y, size: 9, font: boldFont });
-  page.drawText(paye.toFixed(2), { x: colX[1], y, size: 9, font });
+  page.drawText(paye.toFixed(2), { x: colX[1], y, size: 10, font });
 
   y -= 15;
   page.drawText('Total Deductions', {
@@ -222,7 +222,7 @@ export async function generatePayslip({
     fs.mkdirSync(dir);
   }
   const pdfBytes = await pdfDoc.save();
-  fs.writeFileSync(
+  await fs.writeFileSync(
     `./pdfs/${employee.id}-${month}.pdf`,
     pdfBytes,
   );
