@@ -2,6 +2,35 @@
 import React, { createContext, useState, useEffect, useContext } from "react";
 import axios from "axios";
 
+const formatTimeAgo = (timestamp) => {
+  const now = new Date();
+  const date = new Date(timestamp);
+  const seconds = Math.floor((now - date) / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
+
+  if (seconds < 30) {
+    return 'Just now';
+  } else if (seconds < 60) {
+    return `${seconds} seconds ago`;
+  } else if (minutes === 1) {
+    return '1 minute ago';
+  } else if (minutes < 60) {
+    return `${minutes} minutes ago`;
+  } else if (hours === 1) {
+    return '1 hour ago';
+  } else if (hours < 24) {
+    return `${hours} hours ago`;
+  } else if (days === 1) {
+    return '1 day ago'; 
+  } else if (days < 7) {
+    return `${days} days ago`;
+  } else {
+    return date.toLocaleDateString();
+  }
+};
+
 const NotificationsContext = createContext();
 
 export const useNotifications = () => useContext(NotificationsContext);
@@ -9,6 +38,22 @@ export const useNotifications = () => useContext(NotificationsContext);
 export const NotificationsProvider = ({ children }) => {
   const [notifications, setNotifications] = useState([]);
   const [showNotifications, setShowNotifications] = useState(false);
+
+  // Helper function to create consistent notification objects
+  const createNotification = (type, title, message, actionType = null, scheduleDate = null) => {
+    const timestamp = new Date().toISOString();
+    return {
+      id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      type,
+      title,
+      message,
+      timestamp,
+      displayTime: 'Just now',
+      read: false,
+      actionType,
+      scheduleDate
+    };
+  };
 
   // Check meal types for a specific date
   const checkMealTypes = (date, schedules) => {
@@ -108,9 +153,10 @@ export const NotificationsProvider = ({ children }) => {
               // console.log(`Deadline passed for ${formattedDate}, skipping`);
             }
           } else {
-            console.log(
+            console
+              .log
               // `Schedule for ${formattedDate} is already confirmed or invalid. Confirmed value: ${schedule?.confirmed}`
-            );
+              ();
           }
         } catch (error) {
           // console.log(`No schedule found for ${formattedDate}`, error);
@@ -124,7 +170,10 @@ export const NotificationsProvider = ({ children }) => {
         const options = { weekday: "long", month: "short", day: "numeric" };
 
         unconfirmedSchedules.forEach((schedule) => {
-          const formattedDate = schedule.date.toLocaleDateString("en-US", options);
+          const formattedDate = schedule.date.toLocaleDateString(
+            "en-US",
+            options
+          );
           // console.log(`Creating notification for ${formattedDate}`);
 
           let title = "";
@@ -138,16 +187,13 @@ export const NotificationsProvider = ({ children }) => {
             message = `Please confirm your meal schedule for ${formattedDate}.`;
           }
 
-          const newNotification = {
-            id: `confirm-${schedule.scheduleDate}-${Date.now()}`,
-            type: schedule.urgency === "warning" ? "alert" : "update",
+          const newNotification = createNotification(
+            schedule.urgency === "warning" ? "alert" : "update",
             title,
             message,
-            time: "Just now",
-            read: false,
-            scheduleDate: schedule.scheduleDate,
-            actionType: "confirm",
-          };
+            "confirm",
+            schedule.scheduleDate
+          );
 
           // console.log("New notification:", newNotification);
 
@@ -223,18 +269,13 @@ export const NotificationsProvider = ({ children }) => {
             })
             .join(", ");
 
-          const newNotification = {
-            id: Date.now(),
-            type: "alert",
-            title: "Schedule Alert",
-            message: `Your menu is not scheduled for ${
-              missingDates.length === 1
-                ? "a day"
-                : `${missingDates.length} days`
-            } (${displayDates}). Please schedule all meals.`,
-            time: "Just now",
-            read: false,
-          };
+          const newNotification = createNotification(
+            "alert",
+            "Schedule Alert",
+            `Your menu is not scheduled for ${
+              missingDates.length === 1 ? "a day" : `${missingDates.length} days`
+            } (${displayDates}). Please schedule all meals.`
+          );
 
           setNotifications((prev) => {
             // Check if a similar notification already exists
@@ -265,14 +306,11 @@ export const NotificationsProvider = ({ children }) => {
             .map((meal) => meal.charAt(0).toUpperCase() + meal.slice(1))
             .join(", ");
 
-          const newNotification = {
-            id: Date.now() + Math.random(), // Ensure unique ID
-            type: "alert",
-            title: "Incomplete Meal Schedule",
-            message: `${missingMeals} not scheduled for ${formattedDate}. Please complete the schedule.`,
-            time: "Just now",
-            read: false,
-          };
+          const newNotification = createNotification(
+            "alert",
+            "Incomplete Meal Schedule",
+            `${missingMeals} not scheduled for ${formattedDate}. Please complete the schedule.`
+          );
 
           setNotifications((prev) => {
             // Check if a similar notification already exists
@@ -292,15 +330,12 @@ export const NotificationsProvider = ({ children }) => {
     } catch (error) {
       // console.error("Error fetching schedules:", error);
       // Create an error notification
-      const errorNotification = {
-        id: Date.now(),
-        type: "alert",
-        title: "Connection Error",
-        message: "Unable to fetch schedule data. Please check your connection.",
-        time: "Just now",
-        read: false,
-      };
-
+      const errorNotification = createNotification(
+        "alert",
+        "Connection Error",
+        "Unable to fetch schedule data. Please check your connection."
+      );
+      
       setNotifications((prev) => {
         // Check if a similar notification already exists
         const exists = prev.some(
@@ -311,56 +346,6 @@ export const NotificationsProvider = ({ children }) => {
         }
         return prev;
       });
-    }
-  };
-
-  // Function to confirm a schedule
-  const confirmSchedule = async (scheduleDate) => {
-    try {
-      // console.log(`Confirming schedule for date: ${scheduleDate}`);
-      await axios.patch(`http://localhost:3000/schedule/${scheduleDate}/confirm`, {
-        confirmed: true,
-      });
-
-      // Remove the confirmation notification
-      setNotifications((prev) =>
-        prev.filter(
-          (notification) =>
-            !(
-              notification.scheduleDate === scheduleDate &&
-              notification.actionType === "confirm"
-            )
-        )
-      );
-
-      // Add a success notification
-      const successNotification = {
-        id: Date.now(),
-        type: "new",
-        title: "Schedule Confirmed",
-        message: `Meal schedule for ${scheduleDate} has been successfully confirmed.`,
-        time: "Just now",
-        read: false,
-      };
-
-      setNotifications((prev) => [...prev, successNotification]);
-
-      // Refresh the schedules
-      checkUnconfirmedSchedules();
-    } catch (error) {
-      // console.error("Error confirming schedule:", error);
-
-      // Add an error notification
-      const errorNotification = {
-        id: Date.now(),
-        type: "alert",
-        title: "Confirmation Error",
-        message: `Unable to confirm your schedule for ${scheduleDate}. Please try again.`,
-        time: "Just now",
-        read: false,
-      };
-
-      setNotifications((prev) => [...prev, errorNotification]);
     }
   };
 
@@ -398,11 +383,6 @@ export const NotificationsProvider = ({ children }) => {
     ) {
       navigate("/kitchen-admin");
     }
-
-    // If it's a confirmation notification
-    if (notification.actionType === "confirm") {
-      confirmSchedule(notification.scheduleDate);
-    }
   };
 
   // Initialize notifications when component mounts
@@ -426,6 +406,29 @@ export const NotificationsProvider = ({ children }) => {
       clearInterval(scheduleInterval);
       clearInterval(confirmationInterval);
     };
+  }, []);
+
+  // Update notification times periodically
+  useEffect(() => {
+    // Initial update of all timestamps
+    setNotifications(currentNotifications => 
+      currentNotifications.map(notification => ({
+        ...notification,
+        displayTime: formatTimeAgo(notification.timestamp)
+      }))
+    );
+    
+    // Set up interval to update times every minute
+    const timer = setInterval(() => {
+      setNotifications(currentNotifications => 
+        currentNotifications.map(notification => ({
+          ...notification,
+          displayTime: formatTimeAgo(notification.timestamp)
+        }))
+      );
+    }, 60000); // Update every minute
+
+    return () => clearInterval(timer);
   }, []);
 
   // Handle clicks outside notification panel
@@ -459,7 +462,6 @@ export const NotificationsProvider = ({ children }) => {
         markAsRead,
         getUnreadCount,
         handleNotificationAction,
-        confirmSchedule,
       }}
     >
       {children}

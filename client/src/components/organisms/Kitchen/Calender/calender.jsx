@@ -909,9 +909,7 @@ const MenuSets = () => {
                           <span >
                             {meal.nameEnglish}
                           </span>
-                          <span style={{ color: "#b3b3b3", marginLeft: "8px" }}>
-                            (ID: {meal.id})
-                          </span>
+                          
                         </div>
                         <Checkbox
                           checked={selectedMeals.includes(meal.id)}

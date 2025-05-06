@@ -470,7 +470,7 @@ const AddMealPage = () => {
                     onChange={() => handleIngredientSelect(ingredient.id)}
                     className={styles.ingredientCheckbox}
                   >
-                    {ingredient.name} (ID: {ingredient.id})
+                    {ingredient.name} 
                   </Checkbox>
                 </div>
               </div>
