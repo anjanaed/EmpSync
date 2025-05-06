@@ -1,6 +1,10 @@
 import React, { useState, useRef } from "react";
-import { CalendarIcon, Camera, User } from "lucide-react";
+import { Input, Select, Radio } from "antd"; // Import Ant Design Input, Select, and Radio
+import { Camera, User } from "lucide-react";
 import styles from "./Userprofile.module.css";
+
+const { TextArea } = Input; // Destructure TextArea from Input
+const { Option } = Select; // Destructure Option from Select
 
 export default function UserProfile() {
   const [isEditing, setIsEditing] = useState(false);
@@ -96,8 +100,9 @@ export default function UserProfile() {
           <div className={styles.formGrid}>
             <div className={styles.formGroup}>
               <label htmlFor="fullName">Full Name</label>
-              <input
+              <Input
                 id="fullName"
+                className={styles.inputMaxWidth} // Apply the max-width class
                 value={userData.fullName}
                 onChange={(e) => handleInputChange("fullName", e.target.value)}
                 disabled={!isEditing}
@@ -106,9 +111,9 @@ export default function UserProfile() {
 
             <div className={styles.formGroup}>
               <label htmlFor="password">Password</label>
-              <input
+              <Input.Password
                 id="password"
-                type="password"
+                className={styles.inputMaxWidth} // Apply the max-width class
                 value={userData.password}
                 onChange={(e) => handleInputChange("password", e.target.value)}
                 disabled={!isEditing}
@@ -117,8 +122,9 @@ export default function UserProfile() {
 
             <div className={styles.formGroup}>
               <label htmlFor="phoneNumber">Phone Number</label>
-              <input
+              <Input
                 id="phoneNumber"
+                className={styles.inputMaxWidth} // Apply the max-width class
                 value={userData.phoneNumber}
                 onChange={(e) => handleInputChange("phoneNumber", e.target.value)}
                 disabled={!isEditing}
@@ -127,8 +133,9 @@ export default function UserProfile() {
 
             <div className={styles.formGroup}>
               <label htmlFor="birthday">Birthday</label>
-              <input
+              <Input
                 id="birthday"
+                className={styles.inputMaxWidth} // Apply the max-width class
                 value={userData.birthday}
                 onChange={(e) => handleInputChange("birthday", e.target.value)}
                 disabled={!isEditing}
@@ -136,9 +143,60 @@ export default function UserProfile() {
             </div>
 
             <div className={styles.formGroup}>
+              <label htmlFor="preferredLanguage">Preferred Language</label>
+              <Select
+                id="preferredLanguage"
+                className={styles.inputMaxWidth} // Apply the max-width class
+                value={userData.preferredLanguage}
+                onChange={(value) => handleInputChange("preferredLanguage", value)}
+                disabled={!isEditing}
+              >
+                <Option value="English">English</Option>
+                <Option value="Tamil">Tamil</Option>
+                <Option value="Sinhala">Sinhala</Option>
+              </Select>
+            </div>
+
+            <div className={styles.formGroup}>
+              <label htmlFor="height">Height (cm)</label>
+              <Input
+                id="height"
+                className={styles.inputMaxWidth} // Apply the max-width class
+                value={userData.height}
+                onChange={(e) => handleInputChange("height", e.target.value)}
+                disabled={!isEditing}
+              />
+            </div>
+
+            <div className={styles.formGroup}>
+              <label htmlFor="weight">Weight (kg)</label>
+              <Input
+                id="weight"
+                className={styles.inputMaxWidth}
+                value={userData.weight}
+                onChange={(e) => handleInputChange("weight", e.target.value)}
+                disabled={!isEditing}
+              />
+            </div>
+
+            <div className={styles.formGroup}>
+              <label>Gender</label>
+              <Radio.Group
+                value={userData.gender}
+                onChange={(e) => handleInputChange("gender", e.target.value)}
+                disabled={!isEditing}
+              >
+                <Radio value="male">Male</Radio>
+                <Radio value="female">Female</Radio>
+                <Radio value="other">Other</Radio>
+              </Radio.Group>
+            </div>
+
+            <div className={styles.formGroup}>
               <label htmlFor="address">Address</label>
-              <textarea
+              <Input
                 id="address"
+                className={styles.inputMaxWidth} // Apply the max-width class
                 value={userData.address}
                 onChange={(e) => handleInputChange("address", e.target.value)}
                 disabled={!isEditing}

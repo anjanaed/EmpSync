@@ -139,4 +139,8 @@
       grid-column: span 1;
     }
   }
-  
+
+  .inputMaxWidth {
+    max-width: 300px;
+    width: 100%; /* Ensures it takes full width up to the max-width */
+  }
