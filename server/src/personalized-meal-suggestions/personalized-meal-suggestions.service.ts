@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { DatabaseService } from '../database/database.service';
 import { subDays } from 'date-fns';
 
@@ -142,5 +142,185 @@ export class PersonalizedMealSuggestionsService {
       imageUrl: meal.imageUrl,
       category: meal.category,
     }));
+  }
+
+  async findOrdersByUserId(userId: string) {
+    try {
+      const orders = await this.databaseService.order.findMany({
+        where: {
+          employeeId: userId, // Ensure this matches the database schema
+        },
+      });
+  
+      if (orders.length > 0) {
+        return orders;
+      } else {
+        throw new HttpException('No Orders Found for this User', HttpStatus.NOT_FOUND);
+      }
+    } catch (err) {
+      console.error('Error fetching orders by userId:', err);
+      throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async findUsersByUserId(userId: string) {
+    try {
+      const user = await this.databaseService.user.findUnique({
+        where: {
+          id: userId, // Ensure this matches the database schema
+        },
+        include: {
+          payrolls: true, // Include related payrolls
+          attendance: true, // Include related attendance
+        },
+      });
+
+      if (!user) {
+        throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+      }
+
+      return user;
+    } catch (err) {
+      console.error('Error fetching user by userId:', err);
+      throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async findMealsByMealId(id: number) {
+    try {
+      const meal = await this.databaseService.meal.findUnique({
+        where: {
+          id: Number(id), // Ensure the id is passed as an Int
+        },
+        include: {
+          ingredients: {
+            include: {
+              ingredient: true, // Include related ingredient details
+            },
+          },
+        },
+      });
+
+      if (!meal) {
+        throw new HttpException('Meal not found', HttpStatus.NOT_FOUND);
+      }
+
+      return meal;
+    } catch (err) {
+      console.error('Error fetching meal by id:', err);
+      throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async findMealsByScheduledDate(date: Date) {
+    try {
+      // Ensure the date is normalized to remove time components
+      const normalizedDate = new Date(date);
+      normalizedDate.setHours(0, 0, 0, 0);
+
+      const scheduledMeal = await this.databaseService.scheduledMeal.findUnique({
+        where: {
+          date: normalizedDate, // Match the date in the database
+        },
+        select: {
+          breakfast: true,
+          lunch: true,
+          dinner: true,
+        },
+      });
+
+      if (!scheduledMeal) {
+        throw new HttpException('No meals scheduled for the given date', HttpStatus.NOT_FOUND);
+      }
+
+      return scheduledMeal; // Return the meal IDs for breakfast, lunch, and dinner
+    } catch (err) {
+      console.error('Error fetching meals by scheduled date:', err);
+      throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async getAvailableMeals(userId: string): Promise<any> {
+    try {
+      // Retrieve user details (height, weight, etc.)
+      const user = await this.databaseService.user.findUnique({
+        where: { id: userId },
+        select: {
+          height: true,
+          weight: true,
+        },
+      });
+
+      if (!user) {
+        throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+      }
+
+      if (!user.height || !user.weight) {
+        throw new HttpException(
+          'Incomplete user data. Height and weight are required.',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
+      // Retrieve user's previous orders
+      const thirtyDaysAgo = subDays(new Date(), 30);
+      const previousOrders = await this.databaseService.order.findMany({
+        where: {
+          employeeId: userId,
+          orderDate: { gte: thirtyDaysAgo },
+        },
+        select: {
+          meals: true,
+        },
+      });
+
+      // Flatten meal IDs from previous orders
+      const previousMealIds = previousOrders.flatMap((order) => order.meals);
+
+      // Get today's date and time
+      const now = new Date();
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      // Retrieve scheduled meals for today
+      const scheduledMeals = await this.databaseService.scheduledMeal.findUnique({
+        where: { date: today },
+        select: {
+          breakfast: true,
+          lunch: true,
+          dinner: true,
+        },
+      });
+
+      if (!scheduledMeals) {
+        throw new HttpException('No meals scheduled for today', HttpStatus.NOT_FOUND);
+      }
+
+      // Determine the current meal time (breakfast, lunch, or dinner)
+      let currentMealIds: number[] = [];
+      const currentHour = now.getHours();
+      if (currentHour >= 6 && currentHour < 11) {
+        currentMealIds = scheduledMeals.breakfast;
+      } else if (currentHour >= 11 && currentHour < 16) {
+        currentMealIds = scheduledMeals.lunch;
+      } else if (currentHour >= 16 && currentHour < 22) {
+        currentMealIds = scheduledMeals.dinner;
+      } else {
+        throw new HttpException('No meals available at this time', HttpStatus.NOT_FOUND);
+      }
+
+      // Return the available meal IDs
+      return {
+        user: {
+          height: user.height,
+          weight: user.weight,
+        },
+        previousMealIds,
+        availableMealIds: currentMealIds,
+      };
+    } catch (err) {
+      console.error('Error fetching available meals:', err);
+      throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 }

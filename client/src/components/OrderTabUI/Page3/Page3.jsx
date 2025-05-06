@@ -652,13 +652,12 @@ const Page3 = ({ carouselRef, language = "english", username, userId }) => {
 
       {/* Modal for SuggestionsWindow */}
       <Modal
-        title="Personalized Suggestions"
         visible={isSuggestionsVisible}
         onCancel={handleSuggestionsClose} // Close modal
         footer={null} // Remove footer buttons
         centered
       >
-        <SuggestionsWindow /> {/* Render SuggestionsWindow inside the modal */}
+        <SuggestionsWindow username={username} userId={userId} /> {/* Pass userId as a prop */}
       </Modal>
     </Layout>
   );
