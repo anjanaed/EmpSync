@@ -259,3 +259,32 @@
   padding: 20px;
 }
 
+.paginationContainer {
+  margin-top: 24px;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  padding: 20px 0;
+}
+
+/* Custom styles for pagination */
+.paginationContainer :global(.ant-pagination-item-active) {
+  border-color: rgb(224, 0, 0);
+}
+
+.paginationContainer :global(.ant-pagination-item-active a) {
+  color: rgb(224, 0, 0);
+}
+
+.paginationContainer :global(.ant-pagination-item:hover) {
+  border-color: rgb(224, 0, 0);
+}
+
+.paginationContainer :global(.ant-pagination-item:hover a) {
+  color: rgb(224, 0, 0);
+}
+
+.paginationContainer :global(.ant-select-item-option-selected) {
+  background-color: rgba(224, 0, 0, 0.1);
+}
+

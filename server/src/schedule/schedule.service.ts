@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { DatabaseService } from '../database/database.service';
 
@@ -8,22 +12,34 @@ export class ScheduleService {
 
   async create(createScheduleDto: Prisma.ScheduledMealCreateInput) {
     try {
-      const formattedDate = new Date(createScheduleDto.date).toISOString().split('T')[0];
+      const formattedDate = new Date(createScheduleDto.date)
+        .toISOString()
+        .split('T')[0];
+
+      // Convert string arrays to number arrays if they exist
+      const breakfast = Array.isArray(createScheduleDto.breakfast)
+        ? createScheduleDto.breakfast.map((id) => Number(id))
+        : [];
+      const lunch = Array.isArray(createScheduleDto.lunch)
+        ? createScheduleDto.lunch.map((id) => Number(id))
+        : [];
+      const dinner = Array.isArray(createScheduleDto.dinner)
+        ? createScheduleDto.dinner.map((id) => Number(id))
+        : [];
+
       return await this.databaseService.scheduledMeal.create({
         data: {
-          ...createScheduleDto,
           date: new Date(formattedDate),
-          breakfast: createScheduleDto.breakfast || [],
-          lunch: createScheduleDto.lunch || [],
-          dinner: createScheduleDto.dinner || [],
-          confirmed: false, // <-- explicitly set confirmed to false
+          breakfast,
+          lunch,
+          dinner,
+          confirmed: false,
         },
       });
     } catch (error) {
       throw new BadRequestException(error.message);
     }
   }
-  
 
   async findAll() {
     try {
@@ -36,14 +52,18 @@ export class ScheduleService {
   async findOne(date: string) {
     try {
       const formattedDate = new Date(date);
-      const scheduledMeal = await this.databaseService.scheduledMeal.findUnique({
-        where: { date: formattedDate },
-      });
-      
+      const scheduledMeal = await this.databaseService.scheduledMeal.findUnique(
+        {
+          where: { date: formattedDate },
+        },
+      );
+
       if (!scheduledMeal) {
-        throw new NotFoundException(`Scheduled meal not found for date: ${date}`);
+        throw new NotFoundException(
+          `Scheduled meal not found for date: ${date}`,
+        );
       }
-      
+
       return scheduledMeal;
     } catch (error) {
       if (error instanceof NotFoundException) {
@@ -52,23 +72,40 @@ export class ScheduleService {
       throw new BadRequestException(error.message);
     }
   }
-  
 
-  async update(date: string, updateScheduleDto: Prisma.ScheduledMealUpdateInput) {
+  async update(
+    date: string,
+    updateScheduleDto: Prisma.ScheduledMealUpdateInput,
+  ) {
+    const formattedDate = new Date(date + 'T00:00:00.000Z');
+
+    // First check if the record exists
+    const existingRecord = await this.databaseService.scheduledMeal.findUnique({
+      where: { date: formattedDate },
+    });
+
+    if (!existingRecord) {
+      throw new NotFoundException(`Scheduled meal not found for date: ${date}`);
+    }
+
     try {
-      const formattedDate = new Date(date + "T00:00:00.000Z");
-      const existingRecord = await this.databaseService.scheduledMeal.findUnique({
-        where: { date: formattedDate },
-      });
-      if (!existingRecord) {
-        throw new NotFoundException(`Scheduled meal not found for date: ${date}`);
-      }
+      // Convert string arrays to number arrays if they exist
+      const breakfast = Array.isArray(updateScheduleDto.breakfast)
+        ? updateScheduleDto.breakfast.map((id) => Number(id))
+        : undefined;
+      const lunch = Array.isArray(updateScheduleDto.lunch)
+        ? updateScheduleDto.lunch.map((id) => Number(id))
+        : undefined;
+      const dinner = Array.isArray(updateScheduleDto.dinner)
+        ? updateScheduleDto.dinner.map((id) => Number(id))
+        : undefined;
+
       return await this.databaseService.scheduledMeal.update({
         where: { date: formattedDate },
         data: {
-          breakfast: updateScheduleDto.breakfast || [],
-          lunch: updateScheduleDto.lunch || [],
-          dinner: updateScheduleDto.dinner || [],
+          breakfast,
+          lunch,
+          dinner,
         },
       });
     } catch (error) {
@@ -89,30 +126,33 @@ export class ScheduleService {
   async confirm(date: string) {
     try {
       const formattedDate = new Date(date);
-  
+
       if (isNaN(formattedDate.getTime())) {
         throw new BadRequestException(`Invalid date format: ${date}`);
       }
-  
+
       const existing = await this.databaseService.scheduledMeal.findUnique({
         where: { date: formattedDate },
       });
-  
+
       if (!existing) {
-        throw new NotFoundException(`Scheduled meal not found for date: ${date}`);
+        throw new NotFoundException(
+          `Scheduled meal not found for date: ${date}`,
+        );
       }
-  
+
       return await this.databaseService.scheduledMeal.update({
         where: { date: formattedDate },
         data: { confirmed: true },
       });
     } catch (error) {
-      if (error instanceof BadRequestException || error instanceof NotFoundException) {
+      if (
+        error instanceof BadRequestException ||
+        error instanceof NotFoundException
+      ) {
         throw error;
       }
       throw new BadRequestException(error.message);
     }
   }
-  
-  
 }

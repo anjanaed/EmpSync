@@ -12,6 +12,7 @@ import {
   Select,
   Tag,
   Spin,
+  Pagination 
 } from "antd";
 import {
   DeleteOutlined,
@@ -48,6 +49,8 @@ const AvailableMeals = () => {
   const [loading, setLoading] = useState(false);
   const [ingredientDetails, setIngredientDetails] = useState({});
   const [fetchingIngredients, setFetchingIngredients] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(12); // Number of meals per page
 
   // Initialize Firebase storage
   const storage = getStorage();
@@ -125,6 +128,13 @@ const AvailableMeals = () => {
     }
   };
 
+   // Add this new function for handling page changes
+   const handlePageChange = (page, size) => {
+    setCurrentPage(page);
+    setPageSize(size);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   const deleteMeal = async (meal) => {
     setLoading(true);
     try {
@@ -138,6 +148,35 @@ const AvailableMeals = () => {
         }
       }
 
+      // Check if the meal has ingredients and delete them first
+      if (meal.ingredients && meal.ingredients.length > 0) {
+        // Option 1: Delete ingredients one by one
+        for (const ingredient of meal.ingredients) {
+          try {
+            const ingredientResponse = await fetch(
+              `http://localhost:3000/meal-ingredients/${ingredient.id}`,
+              {
+                method: "DELETE",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                credentials: "include", // Important for cookies/auth headers
+              }
+            );
+
+            if (!ingredientResponse.ok) {
+              console.warn(
+                `Failed to delete meal ingredient with ID ${ingredient.id}`
+              );
+            }
+          } catch (ingredientError) {
+            console.error("Error deleting meal ingredient:", ingredientError);
+          }
+        }
+
+        
+      }
+
       // Then delete the meal from the database
       const response = await fetch(`http://localhost:3000/meal/${meal.id}`, {
         method: "DELETE",
@@ -148,7 +187,11 @@ const AvailableMeals = () => {
       });
 
       if (!response.ok) {
-        throw new Error("Failed to delete meal");
+        const errorData = await response.json().catch(() => ({}));
+        console.error("Server error response:", errorData);
+        throw new Error(
+          `Failed to delete meal: ${errorData.message || response.statusText}`
+        );
       }
 
       // Remove meal from state if deletion was successful
@@ -235,6 +278,12 @@ const AvailableMeals = () => {
 
     return matchesSearch && matchesCategory;
   });
+
+  // Add pagination logic here
+  const paginatedMeals = filteredMeals.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize
+  );
 
   // Fixed category options
   const categoryOptions = ["All", "Breakfast", "Lunch", "Dinner"];
@@ -334,7 +383,7 @@ const AvailableMeals = () => {
               </div>
             </Col>
           ) : (
-            filteredMeals.map((meal) => (
+            paginatedMeals.map((meal) => (
               <Col xs={24} sm={12} md={4} key={meal.id}>
                 <Card className={styles.card}>
                   <div className={styles.categoryTag}>
@@ -406,9 +455,22 @@ const AvailableMeals = () => {
               </Col>
             ))
           )}
+          {filteredMeals.length > 0 && (
+            <Col span={24}>
+              <div className={styles.paginationContainer}>
+                <Pagination
+                  current={currentPage}
+                  pageSize={pageSize}
+                  total={filteredMeals.length}
+                  onChange={handlePageChange}
+                  // showSizeChanger
+                  // showTotal={(total, range) => `${range[0]}-${range[1]} of ${total} meals`}
+                />
+              </div>
+            </Col>
+          )}
         </Row>
       )}
-
 
       {/* {Ingredient modal} */}
       <Modal
@@ -448,7 +510,6 @@ const AvailableMeals = () => {
                         </span>
                       </div>
                     }
-                    
                   />
                 </List.Item>
               )}

@@ -9,9 +9,18 @@ export class BudgetsController {
     @Get()
     async getBudgets() {
         try {
-            return await this.BudgetsService.getBudgets();
+            return await this.BudgetsService.getAllBudgets();
         } catch (error) {
             throw new HttpException('Failed to fetch budgets', HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    @Get(':id')
+    async getBudget(@Param('id') id: string) {
+        try {
+            const budgetExists = await this.BudgetsService.getBudget(Number(id));
+            return { exists: budgetExists }; 
+        } catch (error) {
+            throw new HttpException('Failed to fetch budget', HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

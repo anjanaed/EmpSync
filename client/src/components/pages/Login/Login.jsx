@@ -76,7 +76,7 @@ const LoginPage = () => {
               label="Employee ID"
               name="employeeID"
               rules={[
-                { required: true, message: "Please input your Employee ID!" },
+                { required: true, message: "Please Input Your Employee ID !" },
               ]}
             >
               <Input placeholder="Enter Employee ID" />
@@ -86,7 +86,7 @@ const LoginPage = () => {
               label="Password"
               name="password"
               rules={[
-                { required: true, message: "Please input your password!" },
+                { required: true, message: "Please Input Your Password !" },
               ]}
             >
               <Input.Password placeholder="**********" />

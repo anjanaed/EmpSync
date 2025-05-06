@@ -59,7 +59,11 @@ export class MealController {
   @Get(':id')
   async findOne(@Param('id') id: string) {  
     try {
-      const meal = await this.mealService.findOneWithIngredients(id);
+      const parsedId = parseInt(id);
+      if (isNaN(parsedId)) {
+        throw new HttpException('Invalid ID format', HttpStatus.BAD_REQUEST);
+      }
+      const meal = await this.mealService.findOneWithIngredients(parsedId);
       if (!meal) {
         throw new HttpException('Meal not found', HttpStatus.NOT_FOUND);
       }
@@ -79,8 +83,12 @@ export class MealController {
   @Patch(':id')
   async update(@Param('id') id: string, @Body() updateMealDto: UpdateMealWithIngredientsDto) {  
     try {
+      const parsedId = parseInt(id);
+      if (isNaN(parsedId)) {
+        throw new HttpException('Invalid ID format', HttpStatus.BAD_REQUEST);
+      }
       const { ingredients, ...mealData } = updateMealDto;
-      return await this.mealService.updateWithIngredients(id, mealData, ingredients);
+      return await this.mealService.updateWithIngredients(parsedId, mealData, ingredients);
     } catch (error) {
       throw new HttpException(
         {
@@ -96,7 +104,11 @@ export class MealController {
   @Delete(':id')
   async remove(@Param('id') id: string) {  
     try {
-      return await this.mealService.remove(id);
+      const parsedId = parseInt(id);
+      if (isNaN(parsedId)) {
+        throw new HttpException('Invalid ID format', HttpStatus.BAD_REQUEST);
+      }
+      return await this.mealService.remove(parsedId);
     } catch (error) {
       throw new HttpException(
         {

@@ -45,6 +45,7 @@ const Payroll = () => {
     { id: "", details: "", amount: "", isPercentage: true, isAllowance: true },
   ]);
   const [loading, setLoading] = useState(true);
+  const [pdfLoading, setPDFLoading] = useState(false);
   const handleAllowanceChange = () => {
     setIsAllowanceChecked(!isAllowanceChecked);
   };
@@ -57,8 +58,6 @@ const Payroll = () => {
       form.setFieldsValue({ payrollMonth: value });
     }
   };
-
-
 
   //Format Range
   const handleRangeChange = (dates) => {
@@ -88,11 +87,10 @@ const Payroll = () => {
   const handleGenerate = async () => {
     await form.validateFields(["payrollMonth", "epf", "etf", "EmpoyerFund"]);
 
-    //
-
-    setLoading(true);
     //Sending ETF EPF data
     try {
+      setPDFLoading(true);
+
       //Update Predefined Adjustments
       await handleEtfEpf();
 
@@ -108,8 +106,9 @@ const Payroll = () => {
     } catch (err) {
       console.log(err);
       error("Payrolls Generation Failed");
+    } finally {
+      setPDFLoading(false);
     }
-    setLoading(false);
   };
 
   const handleNewFields = () => {
@@ -156,7 +155,6 @@ const Payroll = () => {
       //Check Availability of Pre defined Fields & Set their Existing Values
       const epfValue = res.data.find((adj) => adj.label == "EPF (Employee)");
       const etfValue = res.data.find((adj) => adj.label == "ETF");
-      console.log(epfValue);
       const employerFundValue = res.data.find(
         (adj) => adj.label == "EmployerFund"
       );
@@ -334,6 +332,10 @@ const Payroll = () => {
   }, []);
 
   if (loading) {
+    return <Loading />;
+  }
+
+  if (pdfLoading) {
     return <Loading />;
   }
 
@@ -653,7 +655,7 @@ const Payroll = () => {
                   setIndividualAdjustment(newList);
                 }}
               >
-                <IoMdRemoveCircleOutline size={30} color="brown" />
+                <IoMdRemoveCircleOutline size="2vw" color="brown" />
               </div>
             </div>
           ))}
