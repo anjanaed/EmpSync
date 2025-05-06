@@ -11,14 +11,14 @@ import ReportPage from "../components/pages/HR/ReportPage/ReportPage";
 import PayrollPage from "../components/pages/HR/PayrollPage/PayrollPage";
 import AdjustmentPage from "../components/pages/HR/AdjustmentPage/AdjustmentPage";
 import PayslipPage from "../components/pages/HR/PayslipPage/PayslipPage";
-
-
+import Attendance from "../components/pages/HR/Attendance/Attendance";
+import EmployeeDetails from "../components/pages/HR/Attendance/EmployeeDetails";
 
 // UserPortal
 import ProfilePage from "../components/UserPortalUI/Profile/Profile";
 import MealsPage from "../components/UserPortalUI/Meals/Meals";
 import SuggestionsPage from "../components/UserPortalUI/Suggestions/Suggestions";
-
+import AttendancePage from "../components/UserPortalUI/Attendance/Attendance";
 import PayrollDetails from "../components/UserPortalUI/Components/payroll-details";
 
 // KITCHEN_ADMIN

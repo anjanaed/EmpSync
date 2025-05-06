@@ -1,20 +1,36 @@
-import { Controller, Get, Param, ParseIntPipe, NotFoundException } from '@nestjs/common';
+// meals-serving.controller.ts
+import { Controller, Get, Query, BadRequestException } from '@nestjs/common';
 import { MealsServingService } from './meals-serving.service';
 
 @Controller('meals-serving')
 export class MealsServingController {
   constructor(private readonly mealsServingService: MealsServingService) {}
 
-  // Endpoint to retrieve a meal by its ID
-  @Get(':id')
-  async findMealsServingByMealId(@Param('id', ParseIntPipe) id: number) {
+  // Existing endpoint
+  // @Get('orders-by-date')
+  // async findOrdersByDate(@Query('date') date: string) {
+  //   try {
+  //     const parsedDate = new Date(date);
+  //     if (isNaN(parsedDate.getTime())) {
+  //       throw new BadRequestException('Invalid date format');
+  //     }
+  //     return await this.mealsServingService.findOrdersByDate(parsedDate);
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // }
+
+  // New endpoint to get meal order counts by date
+  @Get('meal-order-counts')
+  async getMealOrderCountsByDate(@Query('date') date: string) {
     try {
-      return await this.mealsServingService.findMealsServingByMealId(id);
-    } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw error;
+      const parsedDate = new Date(date);
+      if (isNaN(parsedDate.getTime())) {
+        throw new BadRequestException('Invalid date format');
       }
-      throw new Error('Failed to retrieve meal');
+      return await this.mealsServingService.getMealOrderCountsByDate(parsedDate);
+    } catch (error) {
+      throw error;
     }
   }
 }
