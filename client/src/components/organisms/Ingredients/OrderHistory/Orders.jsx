@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Table, Card, Typography, Tag, Space } from "antd";
 import axios from "axios";
 import styles from './Orders.module.css';
+const urL = import.meta.env.VITE_BASE_URL;
 
 const { Title } = Typography;
 
@@ -15,7 +16,7 @@ const Orders = () => {
 
     const fetchOrders = async () => {
         try {
-            const response = await axios.get("http://localhost:3000/ingredients/orders");
+            const response = await axios.get(`${urL}/ingredients/orders`);
             // Filter orders to only include those with non-empty ingredients
             const filteredOrders = response.data.map(order => {
                 const allIngredients = [
