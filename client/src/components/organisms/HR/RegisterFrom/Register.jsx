@@ -78,19 +78,24 @@ const Register = () => {
         language: lang,
         salary: parseInt(salary),
       };
-      await axios.post(`${urL}/user`, payload);}catch(err){
-        error(`Registration Failed: ${err.response?.data?.message || "Unknown error"}`);
-        setLoading(false)
-        return;
-      }
-      try{
+      await axios.post(`${urL}/user`, payload);
+    } catch (err) {
+      error(
+        `Registration Failed: ${err.response?.data?.message || "Unknown error"}`
+      );
+      setLoading(false);
+      return;
+    }
+    try {
       await signUpUser({ email, password, id });
       success("User Registered Successfully");
       navigate("/EmployeePage");
     } catch (err) {
       await axios.delete(`${urL}/user/${id}`);
       console.error("Registration Error:", err);
-      error(`Registration Failed: ${err.response?.data?.message || "Unknown error"}`);
+      error(
+        `Registration Failed: ${err.response?.data?.message || "Unknown error"}`
+      );
     } finally {
       setLoading(false);
     }
@@ -112,7 +117,6 @@ const Register = () => {
       throw error;
     }
   };
-
 
   const handleNext = async () => {
     await form.validateFields();
@@ -185,8 +189,10 @@ const Register = () => {
                       message: "Please input your password!",
                     },
                     {
-                      pattern: /^(?=.*[A-Z])(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).{8,}$/,
-                      message: "Password must be at least 8 characters, include a capital letter and a special character.",
+                      pattern:
+                        /^(?=.*[A-Z])(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).{8,}$/,
+                      message:
+                        "Password must be at least 8 characters, include a capital letter and a special character.",
                     },
                   ]}
                   hasFeedback

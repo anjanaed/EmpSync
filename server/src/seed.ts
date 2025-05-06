@@ -609,6 +609,58 @@ async function main() {
       email: 'aliciarhodes@yahoo.com',
       salary: 58553,
     },
+
+    {
+      id: 'E6969',
+      name: 'Charles',
+      role: 'HR_ADMIN',
+      password: 'h^C0lxBj5u',
+      dob: '1982-03-13',
+      telephone: '001-863-857-4946',
+      gender: 'Male',
+      address: 'USS Small, FPO AP 65906',
+      email: 'anjanaape2002@gmail.com',
+      salary: 58553,
+    },
+    {
+      id: 'E7070',
+      name: 'Chamilka Mihiraj',
+      role: 'INVENTORY_ADMIN',
+      password: 'h^C0lxBj5u',
+      dob: '1982-03-13',
+      telephone: '001-863-857-4946',
+      gender: 'Male',
+      address: 'USS Small, FPO AP 65906',
+      email: 'chamilkapererea5@gmail.com',
+      salary: 58553,
+    },
+    {
+      id: 'E8080',
+      name: 'Kavindya',
+      role: 'KITCHEN_ADMIN',
+      password: 'h^C0lxBj5u',
+      dob: '1982-03-13',
+      telephone: '001-863-857-4946',
+      gender: 'Male',
+      address: 'USS Small, FPO AP 65906',
+      email: 'kavindaya123@gmail.com',
+      salary: 58553,
+    },
+    {
+      id: 'E700',
+      name: 'Hasan',
+      role: 'INVENTORY_ADMIN',
+      password: 'h^C0lxBj5u',
+      dob: '1982-03-13',
+      telephone: '001-863-857-4946',
+      gender: 'Male',
+      address: 'USS Small, FPO AP 65906',
+      email: 'hashanrajakaruna123@gmail.com',
+      salary: 58553,
+    },
+  ];
+
+
     ,
   ];
 
@@ -653,6 +705,7 @@ async function main() {
       },
     },
   ];
+
 
   try {
     for (const user of users) {

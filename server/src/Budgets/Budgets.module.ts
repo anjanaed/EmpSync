@@ -6,4 +6,4 @@ import { BudgetsController } from './Budgets.controller';
   controllers: [BudgetsController],
   providers: [BudgetService],
 })
-export class LeaveApplicationModule {}
+export class BudgetsModule {}

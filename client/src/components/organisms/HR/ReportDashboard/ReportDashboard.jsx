@@ -1,12 +1,15 @@
-import { React, useState } from "react";
+import { React, useState,useEffect } from "react";
 import styles from "./ReportDashboard.module.css";
 import ReportCard from "../../../templates/HR/ReportCard/ReportCard";
 import img from "../../../../assets/report.png";
-import { InputNumber,Button } from "antd";
-
+import { InputNumber, Button } from "antd";
+import axios from "axios";
+import Loading from "../../../atoms/loading/loading";
 
 const ReportDashboard = () => {
-  const [budget, setBudget] = useState();
+  const [budget, setBudget] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const urL = import.meta.env.VITE_BASE_URL;
 
   const handleView = () => {
     console.log("Viewing");
@@ -15,8 +18,63 @@ const ReportDashboard = () => {
     console.log("Downloading");
   };
 
-  const updateBudget=()=>{
-    
+  const fetchBudget = async () => {
+    try {
+      const response = await axios.get(`${urL}/budgets/1`);
+      const budgetData = response.data;
+  
+      setBudget(budgetData.budgetAmount);
+      console.log("Budget fetched successfully:", budgetData);
+    } catch (err) {
+      if (err.response && err.response.status === 404) {
+        const payLoad = {
+          id: 1,
+          name: "Inventory Budget",
+          budgetAmount: 0,
+        };
+        try {
+          await axios.post(`${urL}/budgets`, payLoad);
+          console.log("Budget created successfully");
+          setBudget(0); 
+        } catch (createErr) {
+          console.error("Error creating budget:", createErr);
+        }
+      } else {
+        console.error("Error fetching budget:", err);
+      }
+    }
+  };
+
+  useEffect(()=>{
+    fetchBudget()
+  },[])
+
+  const updateBudget = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(`${urL}/budgets/1`);
+      const budgetExists = response.data.exists;
+      const payLoad = {
+        id: 1,
+        name: "Inventory Budget",
+        budgetAmount: budget,
+      };
+      if (budgetExists) {
+        await axios.put(`${urL}/budgets/1`, payLoad);
+        console.log("Budget updated successfully");
+      } else {
+        await axios.post(`${urL}/budgets`, payLoad);
+        console.log("Budget created successfully");
+      }
+    } catch (err) {
+      console.error("Error updating/creating budget:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return <Loading />;
   }
   return (
     <div className={styles.dash}>
