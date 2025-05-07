@@ -24,7 +24,7 @@ const redirectRoles = [
 const roleRouteMap = {
   HR_ADMIN: "/EmployeePage",
   INVENTORY_ADMIN: "/Ingredients",
-  KITCHEN_STAFF: "/serving",
+  KITCHEN_STAFF: "/KitchenStaff",
   KITCHEN_ADMIN: "/kitchen-admin",
 };
 

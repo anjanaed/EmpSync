@@ -29,6 +29,9 @@ import EditMeal from "../components/pages/Kitchen Admin/Edit Meal/editMeal";
 import Serving from "../../src/components/pages/Serving staff/Barcode Scan/Serving";
 import MealConform from "../../src/components/pages/Serving staff/Meal Conform/MealConform";
 
+// KitchenStaff
+import KitchenStaff from "../components/pages/kitchen staff/kitchenStaff";
+
 // INVENTORY_ADMIN
 import Ingredients from "../components/pages/Ingredient Manager/Dashboard/Ingredients";
 import AnalysisDashboard from "../components/pages/Ingredient Manager/AnalysisDashboard/AnalysisDashboard";
@@ -205,6 +208,17 @@ const PrivateRoutes = () => (
         </ProtectedRoute>
       }
     />
+
+    {/*Kitchen Staff */}
+    <Route
+      path="/kitchenStaff"
+      element={
+        <ProtectedRoute allowedRoles={["KITCHEN_STAFF"]}>
+          <KitchenStaff />
+        </ProtectedRoute>
+      }
+    />
+
 
     {/* INVENTORY_ADMIN Routes */}
     <Route
