@@ -26,19 +26,19 @@ import MealDetailsForm from "../components/Pages/KitchenAdmin/Add Meal/addMeal";
 import EditMeal from "../components/Pages/KitchenAdmin/Edit Meal/editMeal";
 
 // ServingStaff
-import Serving from "../components/Pages/Serving staff/Barcode Scan/Serving";
-import MealConform from "../components/Pages/Serving staff/Meal Conform/MealConform";
+import Serving from "../components/Pages/ServingStaff/BarcodeScan/Serving";
+import MealConform from "../components/pages/ServingStaff/MealConfirm/MealConform";
 
 // KitchenStaff
-import KitchenStaff from "../components/Pages/kitchen staff/kitchenStaff";
+import KitchenStaff from "../components/Pages/kitchenStaff/kitchenStaff";
 
 // INVENTORY_ADMIN
-import Ingredients from "../components/Pages/Ingredient Manager/Dashboard/Ingredients";
-import AnalysisDashboard from "../components/Pages/Ingredient Manager/AnalysisDashboard/AnalysisDashboard";
-import OrderReportDashboard from "../components/Pages/Ingredient Manager/OrderReportDashboard/OrderReportDashboard";
-import OrderHistory from "../components/Pages/Ingredient Manager/OrderHistory/OrderHistory";
-import CostAnalysis from "../components/organisms/Ingredients/Analysis/Cost Analysis/CostAnalysis";
-import LoginRouting from "../components/ProtectedRoutes/LoginRouting";
+import Ingredients from "../components/Pages/InventoryAdmin/Dashboard/Ingredients";
+import AnalysisDashboard from "../components/Pages/InventoryAdmin/AnalysisDashboard/AnalysisDashboard";
+import OrderReportDashboard from "../components/Pages/InventoryAdmin/OrderReportDashboard/OrderReportDashboard";
+import OrderHistory from "../components/Pages/InventoryAdmin/OrderHistory/OrderHistory";
+import CostAnalysis from "../components/organisms/Inventory/Analysis/Cost Analysis/CostAnalysis";
+import LoginRouting from "../guards/LoginRouting";
 
 //UserAccout
 import ProfilePage from "../components/Pages/UserAccount/ProfilePage/ProfilePage";

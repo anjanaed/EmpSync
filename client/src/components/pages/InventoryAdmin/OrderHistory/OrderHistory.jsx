@@ -7,7 +7,7 @@ import {
     faHistory,
 } from "@fortawesome/free-solid-svg-icons";
 import NavBar from '../../../organisms/NavBar/NavBar';
-import Orders from '../../../organisms/Ingredients/OrderHistory/Orders';
+import Orders from '../../../organisms/Inventory/OrderHistory/Orders';
 
 const OrderHistory = () => {
     return (
