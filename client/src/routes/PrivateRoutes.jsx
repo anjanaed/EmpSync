@@ -11,8 +11,6 @@ import ReportPage from "../components/pages/HR/ReportPage/ReportPage";
 import PayrollPage from "../components/pages/HR/PayrollPage/PayrollPage";
 import AdjustmentPage from "../components/pages/HR/AdjustmentPage/AdjustmentPage";
 import PayslipPage from "../components/pages/HR/PayslipPage/PayslipPage";
-import Attendance from "../components/pages/HR/Attendance/Attendance";
-import EmployeeDetails from "../components/pages/HR/Attendance/EmployeeDetails";
 
 
 // KITCHEN_ADMIN
