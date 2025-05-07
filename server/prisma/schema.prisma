@@ -180,10 +180,3 @@ model PayeTaxSlab{
   taxRate Float
 }
 
-model Reports{
-  id Int @id @default(autoincrement())
-  name String
-  requestStatus Boolean
-  link String
-
-}

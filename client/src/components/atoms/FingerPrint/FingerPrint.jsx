@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { Button, Card, Layout, Typography } from "antd";
 import { LuFingerprint } from "react-icons/lu";
 
 const FingerPrint = () => {

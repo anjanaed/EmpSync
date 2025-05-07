@@ -11,3 +11,11 @@
   left: 0;
   z-index: 9999;
 }
+
+
+.loadingText {
+  margin-top: 20px; 
+  font-size: 18px;
+  color: #5d071c;
+  text-align: center;
+}

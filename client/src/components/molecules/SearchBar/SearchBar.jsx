@@ -1,8 +1,8 @@
 import React from "react";
-import { Space,Input } from "antd";
+import { Space, Input } from "antd";
 
-const SearchBar = ({placeholder,onChange, onSearch,styles}) => {
-    const { Search } = Input;
+const SearchBar = ({ placeholder, onChange, onSearch, styles }) => {
+  const { Search } = Input;
   return (
     <div>
       <Space direction="vertical">
@@ -10,7 +10,7 @@ const SearchBar = ({placeholder,onChange, onSearch,styles}) => {
           placeholder={placeholder}
           onChange={onChange}
           onSearch={onSearch}
-          style={{            
+          style={{
             width: "15vw",
             ...styles,
           }}

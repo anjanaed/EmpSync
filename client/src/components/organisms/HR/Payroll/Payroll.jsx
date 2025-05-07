@@ -11,7 +11,6 @@ import {
 import styles from "./Payroll.module.css";
 import { useNavigate } from "react-router-dom";
 import { BsPlusCircle } from "react-icons/bs";
-import { toast, Toaster } from "sonner";
 import { FaRegSave } from "react-icons/fa";
 import { LuEye } from "react-icons/lu";
 import Gbutton from "../../../atoms/button/Button";
@@ -370,7 +369,6 @@ const Payroll = () => {
           success={success}
         />
       </Modal>
-      <Toaster richColors />
       <div className={styles.mainBox}>
         <div className={styles.topTitle}>
           Payroll Configuration & Salary Adjustments
