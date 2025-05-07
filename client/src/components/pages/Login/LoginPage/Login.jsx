@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Form, Input, Checkbox, Button, message } from "antd";
 import { useNavigate } from "react-router-dom";
 import styles from "./Login.module.css";
-import illustration from "../../../assets/Loginpage.png";
+import illustration from "../../../../assets/Login/Loginpage.png";
 import axios from "axios";
 import { useAuth } from "../../../../contexts/AuthContext";
 import Loading from "../../../atoms/loading/loading";
