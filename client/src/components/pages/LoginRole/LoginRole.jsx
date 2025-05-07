@@ -65,11 +65,11 @@ const LoginPage = () => {
           />
         </div>
         <div className={styles.loginRight}>
-          <h2 className={styles.loginTitle}>Welcome Back !</h2>
+          <h2 className={styles.loginTitle}>Welcome Back!</h2>
           <div className={styles.logindetails}>
             <div className={styles.loginavatar}>
               <Avatar
-                size={55}
+                size={65}
                 icon={<UserOutlined />}
                 style={{ backgroundColor: "#8b0000", color: "#fff" }}
               />

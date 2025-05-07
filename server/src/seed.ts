@@ -1,9 +1,11 @@
 import { Prisma } from '@prisma/client';
 import { UserService } from './user/user.service';
 import { DatabaseService } from './database/database.service';
+import { MealService } from './meal/meal.service';
 
 const databaseService = new DatabaseService();
 const userService = new UserService(databaseService);
+const mealService = new MealService(databaseService);
 
 async function main() {
   const users: Prisma.UserCreateInput[] = [
@@ -607,20 +609,117 @@ async function main() {
       email: 'aliciarhodes@yahoo.com',
       salary: 58553,
     },
-,
+
+    {
+      id: 'E6969',
+      name: 'Charles',
+      role: 'HR_ADMIN',
+      password: 'h^C0lxBj5u',
+      dob: '1982-03-13',
+      telephone: '001-863-857-4946',
+      gender: 'Male',
+      address: 'USS Small, FPO AP 65906',
+      email: 'anjanaape2002@gmail.com',
+      salary: 58553,
+    },
+    {
+      id: 'E7070',
+      name: 'Chamilka Mihiraj',
+      role: 'INVENTORY_ADMIN',
+      password: 'h^C0lxBj5u',
+      dob: '1982-03-13',
+      telephone: '001-863-857-4946',
+      gender: 'Male',
+      address: 'USS Small, FPO AP 65906',
+      email: 'chamilkapererea5@gmail.com',
+      salary: 58553,
+    },
+    {
+      id: 'E8080',
+      name: 'Kavindya',
+      role: 'KITCHEN_ADMIN',
+      password: 'h^C0lxBj5u',
+      dob: '1982-03-13',
+      telephone: '001-863-857-4946',
+      gender: 'Male',
+      address: 'USS Small, FPO AP 65906',
+      email: 'kavindaya123@gmail.com',
+      salary: 58553,
+    },
+    {
+      id: 'E700',
+      name: 'Hasan',
+      role: 'INVENTORY_ADMIN',
+      password: 'h^C0lxBj5u',
+      dob: '1982-03-13',
+      telephone: '001-863-857-4946',
+      gender: 'Male',
+      address: 'USS Small, FPO AP 65906',
+      email: 'hashanrajakaruna123@gmail.com',
+      salary: 58553,
+    },
   ];
 
 
+    ,
+  ];
 
-  
+  const meals: Prisma.MealCreateInput[] = [
+    {
+      nameEnglish: 'Milk Rice',
+      nameSinhala: 'කිරි බත්',
+      nameTamil: 'பாற்சோறு',
+      description: 'Milk rice with lunu mirirs',
+      price: 100,
+      imageUrl:
+        'https://firebasestorage.googleapis.com/v0/b/empsync-af358.firebasestorage.app/o/meals%2F1746436871187-milk%20rice.jpg?alt=media&token=6ecbabc5-115b-4cbc-bff0-7183312bc57a',
+      category: ['Breakfast'],
+      ingredients: {
+        create: [], // Add ingredients if needed
+      },
+    },
+    {
+      nameEnglish: 'Rice',
+      nameSinhala: 'සුදු බත්',
+      nameTamil: 'சோறு',
+      description: 'Rice with three curries',
+      price: 200,
+      imageUrl:
+        'https://firebasestorage.googleapis.com/v0/b/empsync-af358.firebasestorage.app/o/meals%2F1746436529202-rice2.jpg?alt=media&token=1e243e98-cbfa-43e8-a385-61d3b8b31382',
+      category: ['Breakfast', 'Lunch', 'Dinner'],
+      ingredients: {
+        create: [], // Add ingredients if needed
+      },
+    },
+    {
+      nameEnglish: 'Peas',
+      nameSinhala: 'කඩල',
+      nameTamil: 'பட்டாணி',
+      description: 'Boiled peas',
+      price: 100,
+      imageUrl:
+        'https://firebasestorage.googleapis.com/v0/b/empsync-af358.firebasestorage.app/o/meals%2F1746464953661-peas.jpg?alt=media&token=63edd9f2-c4de-4962-b152-aa3c65bba17c',
+      category: ['Breakfast'],
+      ingredients: {
+        create: [], // Add ingredients if needed
+      },
+    },
+  ];
+
 
   try {
     for (const user of users) {
       await userService.create(user);
     }
     console.log('Users created successfully.');
+
+    // Create meals
+    for (const meal of meals) {
+      await mealService.createWithIngredients(meal, []);
+    }
+    console.log('Meals created successfully.');
   } catch (error) {
-    console.error('Error creating users:', error);
+    console.error('Error during seeding:', error);
   } finally {
     await databaseService.$disconnect();
   }
