@@ -1,16 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { Calendar, Plus, Trash2 } from "lucide-react";
-import { DatePicker, Card } from "antd"; // Import DatePicker and Card from Ant Design
-import { useNavigate } from "react-router-dom"; // Import useNavigate from react-router-dom
-import "antd/dist/reset.css"; // Import Ant Design styles
+import { DatePicker, Card } from "antd";
+import { useNavigate } from "react-router-dom";
+import "antd/dist/reset.css";
 import styles from "./Kitchenstaff.module.css";
 
 const { Meta } = Card;
 
 const Dashbord = () => {
   const [activeTab, setActiveTab] = useState("breakfast");
+  const [manualOverride, setManualOverride] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
-  const navigate = useNavigate(); // Initialize the navigate function
+  const [mealData, setMealData] = useState({ breakfast: [], lunch: [], dinner: [] }); // State to store meal data
+  const navigate = useNavigate();
+
   const currentDate = new Date();
   const formattedDate = currentDate.toLocaleDateString("en-US", {
     month: "long",
@@ -18,90 +21,60 @@ const Dashbord = () => {
     year: "numeric",
   });
 
-  // Update the time every second and set the active tab based on the time
-  useEffect(() => {
-    const timer = setInterval(() => {
-      const now = new Date();
-      setCurrentTime(now);
-
-      // Update activeTab based on the current time
-      const currentHour = now.getHours();
-      if (currentHour >= 6 && currentHour < 9) {
-        setActiveTab("breakfast");
-      } else if (currentHour >= 9 && currentHour < 15) {
-        setActiveTab("lunch");
-      } else if (currentHour >= 15 && currentHour < 24) {
-        setActiveTab("dinner");
-      }
-    }, 1000); // Update every second
-
-    return () => clearInterval(timer); // Cleanup the interval on component unmount
-  }, []);
-
   const formattedTime = currentTime.toLocaleTimeString("en-US", {
     hour: "2-digit",
     minute: "2-digit",
     second: "2-digit",
   });
 
-  // Handle date selection
-  const handleDateChange = (date, dateString) => {
-    console.log("Selected Date:", dateString);
+  // Fetch meal data from the backend
+  useEffect(() => {
+    const fetchMealData = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:3000/meals-serving/meal-counts-by-time?date=${currentDate.toISOString().split("T")[0]}`
+        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch meal data");
+        }
+        const data = await response.json();
+        setMealData(data); // Update state with fetched data
+      } catch (error) {
+        console.error("Error fetching meal data:", error);
+      }
+    };
+
+    fetchMealData();
+  }, [currentDate]);
+
+  // Handle manual tab switching
+  const handleTabSwitch = (tab) => {
+    setActiveTab(tab);
+    setManualOverride(true);
   };
 
   // Render content based on the active tab
   const renderTabContent = () => {
-    if (activeTab === "breakfast") {
-      return (
-        <Card
-          hoverable
-          style={{ width: 240 }}
-          cover={
-            <img
-              alt="Breakfast"
-              src="https://os.alipayobjects.com/rmsportal/QBnOOoLaAfKPirc.png"
-            />
-          }
-        >
-          <Meta title="Breakfast Menu" description="Delicious breakfast sets" />
-        </Card>
-      );
-    } else if (activeTab === "lunch") {
-      return (
-        <Card
-          hoverable
-          style={{ width: 240 }}
-          cover={
-            <img
-              alt="Lunch"
-              src="https://os.alipayobjects.com/rmsportal/QBnOOoLaAfKPirc.png"
-            />
-          }
-        >
-          <Meta title="Lunch Menu" description="Tasty lunch options" />
-        </Card>
-      );
-    } else if (activeTab === "dinner") {
-      return (
-        <Card
-          hoverable
-          style={{ width: 240 }}
-          cover={
-            <img
-              alt="Dinner"
-              src="https://os.alipayobjects.com/rmsportal/QBnOOoLaAfKPirc.png"
-            />
-          }
-        >
-          <Meta title="Dinner Menu" description="Hearty dinner meals" />
-        </Card>
-      );
-    }
+    const meals = mealData[activeTab] || [];
+    return meals.map((meal) => (
+      <Card
+        key={meal.mealId}
+        hoverable
+        style={{ width: 240 }}
+        cover={
+          <img
+            alt={meal.name}
+            src="https://os.alipayobjects.com/rmsportal/QBnOOoLaAfKPirc.png" // Placeholder image
+          />
+        }
+      >
+        <Meta title={meal.name} description={`Total Count: ${meal.totalCount}`} />
+      </Card>
+    ));
   };
 
   return (
     <div className={styles.dashboardContainer}>
-      {/* Order Scheduler Section */}
       <div className={styles.menuScheduler}>
         <div className={styles.header}>
           <h2 className={styles.title}>Order - {formattedDate}</h2>
@@ -110,12 +83,11 @@ const Dashbord = () => {
             <button className={styles.dateButton}>Tomorrow</button>
             <DatePicker
               className={styles.datePicker}
-              onChange={handleDateChange}
               placeholder="Select Date"
             />
             <button
-              className={styles.gotoDashboardButton} // Add a new style for this button
-              onClick={() => navigate("/serving")} // Navigate to /serving
+              className={styles.gotoDashboardButton}
+              onClick={() => navigate("/serving")}
             >
               Goto Serving
             </button>
@@ -128,7 +100,7 @@ const Dashbord = () => {
               className={`${styles.tab} ${
                 activeTab === "breakfast" ? styles.activeTab : ""
               }`}
-              onClick={() => setActiveTab("breakfast")}
+              onClick={() => handleTabSwitch("breakfast")}
             >
               Breakfast Sets
             </button>
@@ -136,7 +108,7 @@ const Dashbord = () => {
               className={`${styles.tab} ${
                 activeTab === "lunch" ? styles.activeTab : ""
               }`}
-              onClick={() => setActiveTab("lunch")}
+              onClick={() => handleTabSwitch("lunch")}
             >
               Lunch Set
             </button>
@@ -144,17 +116,14 @@ const Dashbord = () => {
               className={`${styles.tab} ${
                 activeTab === "dinner" ? styles.activeTab : ""
               }`}
-              onClick={() => setActiveTab("dinner")}
+              onClick={() => handleTabSwitch("dinner")}
             >
               Dinner Set
             </button>
           </div>
         </div>
 
-        <div className={styles.content}>
-          {/* Render the card content based on the active tab */}
-          {renderTabContent()}
-        </div>
+        <div className={styles.content}>{renderTabContent()}</div>
       </div>
     </div>
   );
