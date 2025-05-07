@@ -17,7 +17,7 @@ const Serving = () => {
             key: "1",
             icon: <FontAwesomeIcon icon={faBox} />,
             label: "Oder Section",
-            link: "/MealsServing",
+            link: "/KitchenStaff",
           },
         ]}
         Comp={Dashbord}

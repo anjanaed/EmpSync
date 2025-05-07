@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Calendar, Plus, Trash2 } from "lucide-react";
 import { DatePicker, Card } from "antd"; // Import DatePicker and Card from Ant Design
+import { useNavigate } from "react-router-dom"; // Import useNavigate from react-router-dom
 import "antd/dist/reset.css"; // Import Ant Design styles
 import styles from "./Dashbord.module.css";
 
@@ -9,6 +10,7 @@ const { Meta } = Card;
 const Dashbord = () => {
   const [activeTab, setActiveTab] = useState("breakfast");
   const [currentTime, setCurrentTime] = useState(new Date());
+  const navigate = useNavigate(); // Initialize the navigate function
   const currentDate = new Date();
   const formattedDate = currentDate.toLocaleDateString("en-US", {
     month: "long",
@@ -111,6 +113,12 @@ const Dashbord = () => {
               onChange={handleDateChange}
               placeholder="Select Date"
             />
+            <button
+              className={styles.gotoDashboardButton} // Add a new style for this button
+              onClick={() => navigate("/serving")} // Navigate to /serving
+            >
+              Goto Serving
+            </button>
           </div>
         </div>
 
