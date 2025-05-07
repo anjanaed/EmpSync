@@ -4,7 +4,7 @@
 	width: 100vw;
 	color: #fff;
 	text-align: center;
-	background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('../../assets/Order/otb4.jpg') no-repeat center center;
+	background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('../../../assets/Order/otb4.jpg') no-repeat center center;
 	background-size: cover;
 }
 
@@ -14,7 +14,7 @@
 	width: 100vw;
 	color: #fff;
 	text-align: center;
-	background: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), url('../../assets/Order/otb1.jpg') no-repeat center center;
+	background: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), url('../../../assets/Order/otb1.jpg') no-repeat center center;
 	background-size: cover;
 }
 
@@ -24,7 +24,7 @@
 	width: 100vw;
 	color: #fff;
 	text-align: center;
-	background: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), url('../../assets/Order/otb3.jpg') no-repeat center center;
+	background: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), url('../../../assets/Order/otb3.jpg') no-repeat center center;
 	background-size: cover;
 }
 
