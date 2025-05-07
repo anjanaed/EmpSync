@@ -700,6 +700,8 @@ const EditMealPage = () => {
           </Form>
         </Card>
       </div>
+
+      {/* {select Ingredient Modal} */}
       <Modal
         title="Available Ingredients"
         open={isIngredientsModalVisible}
@@ -734,7 +736,7 @@ const EditMealPage = () => {
                     onChange={() => handleIngredientSelect(ingredient.id)}
                     className={styles.ingredientCheckbox}
                   >
-                    {ingredient.name} (ID: {ingredient.id})
+                    {ingredient.name} 
                   </Checkbox>
                 </div>
               </div>

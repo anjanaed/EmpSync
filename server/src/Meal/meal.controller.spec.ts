@@ -16,7 +16,7 @@ describe('MealController', () => {
   };
 
   const mockMeal = {
-    id: '1',
+    id: 1,
     nameEnglish: 'Test Meal',
     nameSinhala: 'පරික්ෂණ කෑම',
     nameTamil: 'சோதனை உணவு',
@@ -28,7 +28,7 @@ describe('MealController', () => {
     ingredients: [
       {
         id: 1,
-        mealId: '1',
+        mealId: 1,
         ingredientId: 101,
         ingredient: {
           id: 101,
@@ -39,7 +39,6 @@ describe('MealController', () => {
   };
 
   const mockCreateMealDto = {
-    id: '1',
     nameEnglish: 'Test Meal',
     nameSinhala: 'පරික්ෂණ කෑම',
     nameTamil: 'சோதனை உணவு',
@@ -80,6 +79,9 @@ describe('MealController', () => {
 
     controller = module.get<MealController>(MealController);
     service = module.get<MealService>(MealService);
+    
+    // Reset all mocks before each test
+    jest.clearAllMocks();
   });
 
   it('should be defined', () => {
@@ -98,7 +100,7 @@ describe('MealController', () => {
       );
     });
 
-    it('should throw BadRequestException on error', async () => {
+    it('should throw HttpException on error', async () => {
       mockMealService.createWithIngredients.mockRejectedValue(new Error('Error creating meal'));
       await expect(controller.create(mockCreateMealDto)).rejects.toThrow(HttpException);
     });
@@ -123,7 +125,12 @@ describe('MealController', () => {
       mockMealService.findOneWithIngredients.mockResolvedValue(mockMeal);
       
       expect(await controller.findOne('1')).toEqual(mockMeal);
-      expect(mockMealService.findOneWithIngredients).toHaveBeenCalledWith('1');
+      expect(mockMealService.findOneWithIngredients).toHaveBeenCalledWith(1);
+    });
+
+    it('should throw HttpException when ID is not a number', async () => {
+      await expect(controller.findOne('abc')).rejects.toThrow(HttpException);
+      expect(mockMealService.findOneWithIngredients).not.toHaveBeenCalled();
     });
 
     it('should throw HttpException when meal not found', async () => {
@@ -144,10 +151,15 @@ describe('MealController', () => {
       
       expect(await controller.update('1', mockUpdateMealDto)).toEqual(mockMeal);
       expect(mockMealService.updateWithIngredients).toHaveBeenCalledWith(
-        '1',
+        1,
         mealData,
         ingredients
       );
+    });
+
+    it('should throw HttpException when ID is not a number', async () => {
+      await expect(controller.update('abc', mockUpdateMealDto)).rejects.toThrow(HttpException);
+      expect(mockMealService.updateWithIngredients).not.toHaveBeenCalled();
     });
 
     it('should throw HttpException on error', async () => {
@@ -161,7 +173,12 @@ describe('MealController', () => {
       mockMealService.remove.mockResolvedValue(mockMeal);
       
       expect(await controller.remove('1')).toEqual(mockMeal);
-      expect(mockMealService.remove).toHaveBeenCalledWith('1');
+      expect(mockMealService.remove).toHaveBeenCalledWith(1);
+    });
+
+    it('should throw HttpException when ID is not a number', async () => {
+      await expect(controller.remove('abc')).rejects.toThrow(HttpException);
+      expect(mockMealService.remove).not.toHaveBeenCalled();
     });
 
     it('should throw HttpException when meal not found', async () => {

@@ -1,10 +1,12 @@
 import { Prisma } from '@prisma/client';
 import { UserService } from './user/user.service';
 import { DatabaseService } from './database/database.service';
+import { MealService } from './meal/meal.service';
 import { IngredientsService } from './ingredients/ingredients.service';
 
 const databaseService = new DatabaseService();
 const userService = new UserService(databaseService);
+const mealService = new MealService(databaseService);
 const ingredientsService = new IngredientsService(databaseService);
 
 async function main() {
@@ -1348,6 +1350,12 @@ async function main() {
     }
     console.log('Users created successfully.');
 
+    // Create meals
+    for (const meal of meals) {
+      await mealService.createWithIngredients(meal, []);
+    }
+    console.log('Meals created successfully.');
+
     // Create ingredients
     for (const ingredient of ingredients) {
       await ingredientsService.create(ingredient);
@@ -1361,4 +1369,8 @@ async function main() {
   }
 }
 
-main();
+main()
+  .catch((error) => {
+    console.error('Error running seed script:', error);
+    process.exit(1);
+  });

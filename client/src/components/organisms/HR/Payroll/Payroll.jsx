@@ -155,7 +155,6 @@ const Payroll = () => {
       //Check Availability of Pre defined Fields & Set their Existing Values
       const epfValue = res.data.find((adj) => adj.label == "EPF (Employee)");
       const etfValue = res.data.find((adj) => adj.label == "ETF");
-      console.log(epfValue);
       const employerFundValue = res.data.find(
         (adj) => adj.label == "EmployerFund"
       );

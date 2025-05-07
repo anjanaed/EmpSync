@@ -6,7 +6,7 @@ import { DatabaseService } from '../database/database.service';
 export class BudgetService {
     constructor(private readonly database: DatabaseService) {}
     
-    async getBudgets() {
+    async getAllBudgets() {
         return this.database.budget.findMany({
         select: {
             id: true,
@@ -14,6 +14,25 @@ export class BudgetService {
             budgetAmount: true,
         },
         });
+    }
+    async getBudget(id: number): Promise<any> {
+        try {
+            const budget = await this.database.budget.findUnique({
+                where: { id },
+            });
+    
+            if (!budget) {
+                throw new HttpException('Budget not found', HttpStatus.NOT_FOUND);
+            }
+    
+            return budget; 
+        } catch (error) {
+            console.log(error)
+            if (error instanceof HttpException) {
+                throw error; 
+            }
+            throw new HttpException('Error fetching budget', HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
     
     async createBudget(data: Prisma.BudgetCreateInput) {

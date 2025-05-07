@@ -275,7 +275,7 @@ const MenuSets = () => {
         // Also set available meals so getMealNameById can use them
         setAvailableMeals(Array.isArray(data) ? data : []);
       } catch (err) {
-        console.error("Failed to fetch meals", err);
+        // console.error("Failed to fetch meals", err);
         message.error("Failed to load available meals");
       } finally {
         setLoading(false);
@@ -909,9 +909,7 @@ const MenuSets = () => {
                           <span >
                             {meal.nameEnglish}
                           </span>
-                          <span style={{ color: "#b3b3b3", marginLeft: "8px" }}>
-                            (ID: {meal.id})
-                          </span>
+                          
                         </div>
                         <Checkbox
                           checked={selectedMeals.includes(meal.id)}
