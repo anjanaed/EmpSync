@@ -1,9 +1,9 @@
 import React, { useRef, useState } from 'react';
 import { Carousel } from 'antd';
 import styles from './OrderTab.module.css';
-import Page1 from '../../components/OrderTabUI/Page1/Page1';
-import Page2 from '../../components/OrderTabUI/Page2/Page2';
-import Page3 from '../../components/OrderTabUI/Page3/Page3';
+import Page1 from "../../organisms/OrderTabUI/Page1/Page1";
+import Page2 from "../../organisms/OrderTabUI/Page2/Page2";
+import Page3 from "../../organisms/OrderTabUI/Page3/Page3";
 
 const OrderTab = () => {
     const carouselRef = useRef();

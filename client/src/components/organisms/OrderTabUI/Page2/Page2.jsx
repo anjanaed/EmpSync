@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { Typography, Card, Spin } from 'antd'; // Import Spin for loading animation
 import styles from './Page2.module.css';
 import DateAndTime from '../DateAndTime/DateAndTime';
-import FingerPrint from '../../atoms/FingerPrint/FingerPrint';
+// filepath: c:\Users\hasha\Documents\GitHub\EmpSync\client\src\components\organisms\OrderTabUI\Page2\Page2.jsx
+import FingerPrint from "../../../atoms/FingerPrint/FingerPrint";
 
 const Page2 = ({ carouselRef, language, setUsername, setUserId }) => {
     const [errorMessage, setErrorMessage] = useState(""); // State for error messages
