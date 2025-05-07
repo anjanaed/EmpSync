@@ -4,7 +4,7 @@ import {
   faBell,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Dashbord from "../../organisms/KitchenStaff/Dashbord";
+import Dashbord from "../../organisms/KitchenStaff/Kitchenstaff";
 import NavBar from '../../organisms/NavBar/NavBar';
 
 const Serving = () => {

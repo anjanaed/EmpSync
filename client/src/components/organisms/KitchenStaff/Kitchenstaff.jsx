@@ -3,7 +3,7 @@ import { Calendar, Plus, Trash2 } from "lucide-react";
 import { DatePicker, Card } from "antd"; // Import DatePicker and Card from Ant Design
 import { useNavigate } from "react-router-dom"; // Import useNavigate from react-router-dom
 import "antd/dist/reset.css"; // Import Ant Design styles
-import styles from "./Dashbord.module.css";
+import styles from "./Kitchenstaff.module.css";
 
 const { Meta } = Card;
 
