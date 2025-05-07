@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { HttpException, HttpStatus } from '@nestjs/common';
-import { IngredientsController } from './ingredients.controller';
-import { IngredientsService } from './ingredients.service';
+import { IngredientsController } from './ingredient.controller';
+import { IngredientsService } from './ingredient.service';
 import { Prisma } from '@prisma/client';
 
 describe('IngredientsController', () => {

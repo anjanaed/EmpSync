@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { BudgetsController } from './Budgets.controller';
-import { BudgetService } from './Budgets.service';
+import { BudgetsController } from './budget.controller';
+import { BudgetService } from './budget.service';
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 

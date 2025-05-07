@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { BudgetService } from './Budgets.service';
+import { BudgetService } from './budget.service';
 import { DatabaseService } from '../database/database.service';
 import { HttpException, HttpStatus } from '@nestjs/common';
 

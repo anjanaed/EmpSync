@@ -2,7 +2,7 @@ import { Prisma } from '@prisma/client';
 import { UserService } from './user/user.service';
 import { DatabaseService } from './database/database.service';
 import { MealService } from './Meal/meal.service';
-import { IngredientsService } from './ingredients/ingredients.service';
+import { IngredientsService } from './ingredient/ingredient.service';
 
 const databaseService = new DatabaseService();
 const userService = new UserService(databaseService);
