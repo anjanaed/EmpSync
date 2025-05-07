@@ -7,8 +7,8 @@ import {
 import { User, CreditCard, Utensils, Sparkles, LogOut } from "lucide-react"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styles from './ResponsiveNav.module.css';
-import Companylogo from '../../../../assets/logo.png';
-import Whitelogo from '../../../../assets/Logowhite.png';
+import Companylogo from '../../../../assets/Logo/logo.png';
+import Whitelogo from '../../../../assets/Logo/Logowhite.png';
 
 const ResponsiveNav = () => {
   const [darkMode, setDarkMode] = useState(false);
