@@ -48,7 +48,7 @@ const ResponsiveNav = () => {
           </a>
         </li>
         <li>
-          <a href="#Meals" className={styles.navLink}>
+          <a href="/UserMeals" className={styles.navLink}>
             <Utensils size={18} /> Meals
           </a>
         </li>

@@ -34,6 +34,7 @@ import LoginRouting from "../components/ProtectedRoutes/LoginRouting";
 
 //UserAccout
 import ProfilePage from "../components/pages/UserAccount/ProfilePage/ProfilePage";
+import UserMeals from "../components/pages/UserAccount/MealsPage/MealsPage";
 
 const PrivateRoutes = () => (
   <>
@@ -106,22 +107,6 @@ const PrivateRoutes = () => (
       element={
         <ProtectedRoute allowedRoles={["HR_ADMIN"]}>
           <PayslipPage />
-        </ProtectedRoute>
-      }
-    />
-    <Route
-      path="/Attendance"
-      element={
-        <ProtectedRoute allowedRoles={["HR_ADMIN"]}>
-          <Attendance />
-        </ProtectedRoute>
-      }
-    />
-    <Route
-      path="/EmployeeDetails"
-      element={
-        <ProtectedRoute allowedRoles={["HR_ADMIN"]}>
-          <EmployeeDetails />
         </ProtectedRoute>
       }
     />
@@ -229,12 +214,23 @@ const PrivateRoutes = () => (
         </ProtectedRoute>
       }
     />
+
+
     {/* User account */}
     <Route
       path="/Userprofile1"
       element={
         <ProtectedRoute allowedRoles={["*"]}>
           <ProfilePage />
+        </ProtectedRoute>
+      }
+    />
+
+    <Route
+      path="/UserMeals"
+      element={
+        <ProtectedRoute allowedRoles={["*"]}>
+          <UserMeals />
         </ProtectedRoute>
       }
     />
