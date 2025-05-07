@@ -1,6 +1,6 @@
 import React from "react";
 import { Routes, Route, BrowserRouter, Navigate } from "react-router-dom";
-import PasswordReset from "../components/pages/PasswordReset/PasswordReset";
+import PasswordReset from "../components/Pages/PasswordReset/PasswordReset";
 import OrderTab from "../pages/OrderTab/OrderTab";
 import PrivateRoutes from "./PrivateRoutes";
 import { NotificationsProvider } from "../contexts/NotificationsContext";

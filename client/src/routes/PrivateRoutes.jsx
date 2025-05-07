@@ -1,8 +1,8 @@
 import React from "react";
 import { Route } from "react-router-dom";
 import ProtectedRoute from "../components/ProtectedRoutes/ProtectedRoutes";
-import LoginRole from "../components/pages/LoginRole/LoginRole";
-import Login from "../components/pages/Login/Login";
+import LoginRole from "../components/Pages/LoginRole/LoginRole";
+import Login from "../components/Pages/Login/Login";
 
 // HR_ADMIN
 import EmployeePage from "../components/Pages/H/EmployeePage/EmployeePage";
@@ -19,30 +19,30 @@ import PayslipPage from "../components/Pages/H/PayslipPage/PayslipPage";
 // import PayrollDetails from "../components/UserPortalUI/Components/payroll-details";
 
 // KITCHEN_ADMIN
-import KitchenAdmin from "../components/pages/Kitchen Admin/KitchenAdminDashBoard/kitchenAdminDash";
-import Reports from "../components/pages/Kitchen Admin/Report/report";
-import Meals from "../components/pages/Kitchen Admin/MealDash/meal";
-import MealDetailsForm from "../components/pages/Kitchen Admin/Add Meal/addMeal";
-import EditMeal from "../components/pages/Kitchen Admin/Edit Meal/editMeal";
+import KitchenAdmin from "../components/Pages/Kitchen Admin/KitchenAdminDashBoard/kitchenAdminDash";
+import Reports from "../components/Pages/Kitchen Admin/Report/report";
+import Meals from "../components/Pages/Kitchen Admin/MealDash/meal";
+import MealDetailsForm from "../components/Pages/Kitchen Admin/Add Meal/addMeal";
+import EditMeal from "../components/Pages/Kitchen Admin/Edit Meal/editMeal";
 
 // ServingStaff
-import Serving from "../../src/components/pages/Serving staff/Barcode Scan/Serving";
-import MealConform from "../../src/components/pages/Serving staff/Meal Conform/MealConform";
+import Serving from "../components/Pages/Serving staff/Barcode Scan/Serving";
+import MealConform from "../components/Pages/Serving staff/Meal Conform/MealConform";
 
 // KitchenStaff
-import KitchenStaff from "../components/pages/kitchen staff/kitchenStaff";
+import KitchenStaff from "../components/Pages/kitchen staff/kitchenStaff";
 
 // INVENTORY_ADMIN
-import Ingredients from "../components/pages/Ingredient Manager/Dashboard/Ingredients";
-import AnalysisDashboard from "../components/pages/Ingredient Manager/AnalysisDashboard/AnalysisDashboard";
-import OrderReportDashboard from "../components/pages/Ingredient Manager/OrderReportDashboard/OrderReportDashboard";
-import OrderHistory from "../components/pages/Ingredient Manager/OrderHistory/OrderHistory";
+import Ingredients from "../components/Pages/Ingredient Manager/Dashboard/Ingredients";
+import AnalysisDashboard from "../components/Pages/Ingredient Manager/AnalysisDashboard/AnalysisDashboard";
+import OrderReportDashboard from "../components/Pages/Ingredient Manager/OrderReportDashboard/OrderReportDashboard";
+import OrderHistory from "../components/Pages/Ingredient Manager/OrderHistory/OrderHistory";
 import CostAnalysis from "../components/organisms/Ingredients/Analysis/Cost Analysis/CostAnalysis";
 import LoginRouting from "../components/ProtectedRoutes/LoginRouting";
 
 //UserAccout
-import ProfilePage from "../components/pages/UserAccount/ProfilePage/ProfilePage";
-import UserMeals from "../components/pages/UserAccount/MealsPage/MealsPage";
+import ProfilePage from "../components/Pages/UserAccount/ProfilePage/ProfilePage";
+import UserMeals from "../components/Pages/UserAccount/MealsPage/MealsPage";
 
 const PrivateRoutes = () => (
   <>
