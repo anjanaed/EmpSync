@@ -14,8 +14,8 @@
 
 .flexRow {
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: space-between;
     margin-bottom: 16px;
 }
 
@@ -25,8 +25,27 @@
 
 .horizontalContainer {
     display: flex;
-    gap: 16px; /* Space between cards */
+    gap: 16px; /* Adjust spacing between carts if needed */
     justify-content: center; /* Center the cards horizontally */
     flex-wrap: wrap; /* Wrap cards to the next line if needed */
     margin: 20px;
+}
+
+.title {
+    text-align: center;
+    margin-bottom: 20px;
+    margin-top: 20px;
+}
+
+.orderText {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.marginLeftAuto {
+    margin-left: auto;
+}
+
+.cancelButton {
+    margin-top: 10px;
 }

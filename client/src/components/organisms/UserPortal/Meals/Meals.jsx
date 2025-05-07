@@ -8,8 +8,10 @@ const Cart = ({ items }) => {
   return (
     <Card className={styles.cartContainer}>
       <div className={styles.flexRow}>
-        <Text strong style={{ fontSize: '18px' }}>Order ID:</Text> <Text strong style={{ fontSize: '18px' }}>2</Text>
-        <Text strong style={{ marginLeft: 'auto', fontSize: '18px' }}>Total Price:</Text> <Text strong style={{ fontSize: '18px' }}>LKR 470.00</Text>
+        <Text strong className={styles.orderText}>Order ID:</Text> 
+        <Text strong className={styles.orderText}>2</Text>
+        <Text strong className={`${styles.orderText} ${styles.marginLeftAuto}`}>Total Price:</Text> 
+        <Text strong className={styles.orderText}>LKR 470.00</Text>
       </div>
       <div>
         <Text strong>Order Date:</Text> 5/5/2025
@@ -44,7 +46,7 @@ const Cart = ({ items }) => {
         type="default"
         block
         danger
-        style={{ marginTop: '10px' }}
+        className={styles.cancelButton}
         onClick={() => console.log('Cancel Order')}
       >
         Cancel Order
@@ -67,7 +69,7 @@ const Meals = () => {
 
   return (
     <div>
-      <Typography.Title level={2} style={{ textAlign: 'center', marginBottom: '20px' }}>
+      <Typography.Title level={2} className={styles.title}>
         Meal Order
       </Typography.Title>
       <Tabs
