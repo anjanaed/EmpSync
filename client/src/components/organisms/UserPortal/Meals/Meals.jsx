@@ -53,4 +53,20 @@ const Cart = ({ items }) => {
   );
 };
 
-export default Cart;
+const Meals = () => {
+  const items = [
+    { name: 'Meal 1', quantity: 1, price: 100 },
+    { name: 'Meal 2', quantity: 2, price: 150 },
+  ];
+
+  return (
+    <div className={styles.horizontalContainer}>
+      <Cart items={items} />
+      <Cart items={items} />
+      <Cart items={items} />
+      <Cart items={items} />
+    </div>
+  );
+};
+
+export default Meals;
