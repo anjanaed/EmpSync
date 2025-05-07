@@ -185,6 +185,22 @@
     background-color: #f5f5f5;
   }
   
+  .gotoDashboardButton {
+    margin-left: 10px;
+    padding: 8px 16px;
+    background-color: #d10000;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .gotoDashboardButton:hover {
+    background-color: #a00000;
+  }
+  
   @media (max-width: 768px) {
     .header {
       flex-direction: column;
@@ -208,4 +224,3 @@
       width: 100%;
     }
   }
-  
