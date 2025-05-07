@@ -1,7 +1,0 @@
-.horizontalContainer {
-    display: flex;
-    gap: 16px; /* Space between cards */
-    justify-content: center; /* Center the cards horizontally */
-    flex-wrap: wrap; /* Wrap cards to the next line if needed */
-    margin: 20px;
-}
