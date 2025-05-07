@@ -26,9 +26,12 @@ import Meals from "../components/pages/Kitchen Admin/MealDash/meal";
 import MealDetailsForm from "../components/pages/Kitchen Admin/Add Meal/addMeal";
 import EditMeal from "../components/pages/Kitchen Admin/Edit Meal/editMeal";
 
-// ServingStaff
+// Serving Staff
 import Serving from "../../src/pages/Serving staff/Barcode Scan/Serving";
 import MealConform from "../../src/pages/Serving staff/Meal Conform/MealConform";
+
+//Kitchen Staff
+import KitchenStaff from "../components/pages/KitchenStaff/KitchenStaff";
 
 // INVENTORY_ADMIN
 import Ingredients from "../components/pages/Ingredient Manager/Dashboard/Ingredients";
