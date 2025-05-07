@@ -1,5 +1,5 @@
-import React from 'react';
-import { Card, List, Button, Typography, Divider } from 'antd';
+import React, { useState } from 'react';
+import { Card, List, Button, Typography, Divider, Tabs } from 'antd';
 import styles from './Meals.module.css';
 
 const { Text } = Typography;
@@ -54,17 +54,36 @@ const Cart = ({ items }) => {
 };
 
 const Meals = () => {
+  const [activeTab, setActiveTab] = useState('current');
+
   const items = [
     { name: 'Meal 1', quantity: 1, price: 100 },
     { name: 'Meal 2', quantity: 2, price: 150 },
   ];
 
+  const handleTabChange = (key) => {
+    setActiveTab(key);
+  };
+
   return (
-    <div className={styles.horizontalContainer}>
-      <Cart items={items} />
-      <Cart items={items} />
-      <Cart items={items} />
-      <Cart items={items} />
+    <div>
+      <Typography.Title level={2} style={{ textAlign: 'center', marginBottom: '20px' }}>
+        Meal Order
+      </Typography.Title>
+      <Tabs
+        defaultActiveKey="current"
+        onChange={handleTabChange}
+        centered
+        items={[
+          { key: 'current', label: 'Current Order', children: <div className={styles.horizontalContainer}>
+            <Cart items={items} />
+            <Cart items={items} />
+            <Cart items={items} />
+            <Cart items={items} />
+          </div> },
+          { key: 'past', label: 'Past Order', children: <div>No past orders available.</div> },
+        ]}
+      />
     </div>
   );
 };
