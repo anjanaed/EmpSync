@@ -7,7 +7,6 @@ import PrivateRoutes from "./PrivateRoutes";
 import { NotificationsProvider } from "../contexts/NotificationsContext";
 import { PopupProvider } from "../contexts/PopupContext";
 
-import KitchenStaff from "../components/pages/kitchen staff/kitchenStaff";
 
 const AppRoutes = () => (
   <BrowserRouter>
@@ -19,7 +18,6 @@ const AppRoutes = () => (
           <Route path="/passwordReset" element={<PasswordReset />} />
           <Route path="/OrderTab" element={<OrderTab />} />
 
-          <Route path="/kitchenStaff" element={<KitchenStaff />} />
 
           {/* Private Routes */}
           {PrivateRoutes()}
