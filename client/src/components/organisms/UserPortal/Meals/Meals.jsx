@@ -6,9 +6,10 @@ const { Text } = Typography;
 
 const Cart = ({ items }) => {
   return (
-    <Card className={styles.cartContainer} title="Total Price LKR 470.00">
-      <div>
-        <Text strong>Order ID:</Text> 2
+    <Card className={styles.cartContainer}>
+      <div className={styles.flexRow}>
+        <Text strong style={{ fontSize: '18px' }}>Order ID:</Text> <Text strong style={{ fontSize: '18px' }}>2</Text>
+        <Text strong style={{ marginLeft: 'auto', fontSize: '18px' }}>Total Price:</Text> <Text strong style={{ fontSize: '18px' }}>LKR 470.00</Text>
       </div>
       <div>
         <Text strong>Order Date:</Text> 5/5/2025
