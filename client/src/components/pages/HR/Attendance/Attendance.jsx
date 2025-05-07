@@ -1,5 +1,5 @@
 import React from "react";
-import AttendanceDashboard from "../../../organisms/Attendance/Dashboard/AttendanceDashboard"; // Renamed import
+// import AttendanceDashboard from "../../../organisms/Attendance/Dashboard/AttendanceDashboard"; // Renamed import
 import NavBar from "../../../organisms/NavBar/NavBar";
 const Attendance = () => {
   return (

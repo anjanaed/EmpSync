@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, HttpException, HttpStatus, Query } from "@nestjs/common";
 import { Prisma } from "@prisma/client";
-import { BudgetService } from "./Budgets.service";
+import { BudgetService } from "./budget.service";
 
 @Controller('budgets')
 export class BudgetsController {

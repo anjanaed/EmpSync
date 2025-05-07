@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Layout, Typography, Space, message } from 'antd';
 import { useNavigate } from 'react-router-dom';
-import Header from '../../../components/Serving/Header/Header';
-import WelcomeSection from '../../../components/Serving/WelcomeSection/WelcomeSection';
-import MealSection from '../../../components/Serving/MealSection/MealSection';
-import ScanSection from '../../../components/Serving/ScanSection/ScanSection';
+import Header from '../../../organisms/Serving/Header/Header';
+import WelcomeSection from '../../../organisms/Serving/WelcomeSection/WelcomeSection';
+import MealSection from '../../../organisms/Serving/MealSection/MealSection';
+import ScanSection from '../../../organisms/Serving/ScanSection/ScanSection';
 import axios from 'axios';
 import './Serving.css';
 

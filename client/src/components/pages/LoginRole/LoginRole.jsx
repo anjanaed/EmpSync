@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./LoginRole.module.css";
-import illustration from "../../../assets/illustration2.png";
+import illustration from "../../../assets/LoginRole.svg";
 import { UserOutlined } from "@ant-design/icons";
 import { Avatar } from "antd";
 import { useAuth } from "../../../contexts/AuthContext";
@@ -24,7 +24,7 @@ const redirectRoles = [
 const roleRouteMap = {
   HR_ADMIN: "/EmployeePage",
   INVENTORY_ADMIN: "/Ingredients",
-  KITCHEN_STAFF: "/serving",
+  KITCHEN_STAFF: "/KitchenStaff",
   KITCHEN_ADMIN: "/kitchen-admin",
 };
 
