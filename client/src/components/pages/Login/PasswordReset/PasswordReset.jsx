@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Form, Input, Alert } from "antd";
 import { LoadingOutlined, ArrowRightOutlined, CheckCircleOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
 import styles from "./PasswordReset.module.css";
-import illustration from "../../../assets/Login/Password-Reset.png";
+import illustration from "../../../../assets/Login/Password-Reset.png";
 
 const PasswordReset = () => {
   const navigate = useNavigate();
