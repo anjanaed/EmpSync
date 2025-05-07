@@ -147,14 +147,12 @@ export class MealsServingService {
   // New method to get meal counts allocated by meal time (breakfast, lunch, dinner)
   async getMealCountsByMealTime(orderDate: Date) {
     try {
-      // Calculate the start and end of the day
       const startOfDay = new Date(orderDate);
       startOfDay.setHours(0, 0, 0, 0);
 
       const endOfDay = new Date(orderDate);
       endOfDay.setHours(23, 59, 59, 999);
 
-      // Query orders within the date range
       const orders = await this.databaseService.order.findMany({
         where: {
           orderDate: {
@@ -168,18 +166,16 @@ export class MealsServingService {
         throw new NotFoundException('No orders found for the specified date');
       }
 
-      // Initialize meal counts for each meal time
       const mealCounts: {
-        breakfast: { [mealId: number]: { name: string; totalCount: number } };
-        lunch: { [mealId: number]: { name: string; totalCount: number } };
-        dinner: { [mealId: number]: { name: string; totalCount: number } };
+        breakfast: { [mealId: number]: { name: string; totalCount: number; imageUrl: string | null } };
+        lunch: { [mealId: number]: { name: string; totalCount: number; imageUrl: string | null } };
+        dinner: { [mealId: number]: { name: string; totalCount: number; imageUrl: string | null } };
       } = {
         breakfast: {},
         lunch: {},
         dinner: {},
       };
 
-      // Process each order
       for (const order of orders) {
         for (const mealEntry of order.meals) {
           const [mealIdStr, countStr] = mealEntry.split(':');
@@ -190,28 +186,25 @@ export class MealsServingService {
             throw new BadRequestException(`Invalid meal entry format: ${mealEntry}`);
           }
 
-          // Fetch meal details if not already cached
           const meal = await this.databaseService.meal.findUnique({
             where: { id: mealId },
-            select: { id: true, nameEnglish: true },
+            select: { id: true, nameEnglish: true, imageUrl: true },
           });
 
           if (!meal) {
             throw new NotFoundException(`Meal with ID ${mealId} not found`);
           }
 
-          // Allocate counts based on meal time flags
           if (order.breakfast && !mealCounts.breakfast[mealId]) {
-            mealCounts.breakfast[mealId] = { name: meal.nameEnglish, totalCount: 0 };
+            mealCounts.breakfast[mealId] = { name: meal.nameEnglish, totalCount: 0, imageUrl: meal.imageUrl };
           }
           if (order.lunch && !mealCounts.lunch[mealId]) {
-            mealCounts.lunch[mealId] = { name: meal.nameEnglish, totalCount: 0 };
+            mealCounts.lunch[mealId] = { name: meal.nameEnglish, totalCount: 0, imageUrl: meal.imageUrl };
           }
           if (order.dinner && !mealCounts.dinner[mealId]) {
-            mealCounts.dinner[mealId] = { name: meal.nameEnglish, totalCount: 0 };
+            mealCounts.dinner[mealId] = { name: meal.nameEnglish, totalCount: 0, imageUrl: meal.imageUrl };
           }
 
-          // Add counts to respective meal times
           if (order.breakfast) {
             mealCounts.breakfast[mealId].totalCount += count;
           }
@@ -224,12 +217,12 @@ export class MealsServingService {
         }
       }
 
-      // Format the response
-      const formatCounts = (counts: { [mealId: number]: { name: string; totalCount: number } }) =>
-        Object.entries(counts).map(([mealId, { name, totalCount }]) => ({
+      const formatCounts = (counts: { [mealId: number]: { name: string; totalCount: number; imageUrl: string | null } }) =>
+        Object.entries(counts).map(([mealId, { name, totalCount, imageUrl }]) => ({
           mealId: Number(mealId),
           name,
           totalCount,
+          imageUrl,
         }));
 
       return {

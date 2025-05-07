@@ -64,11 +64,14 @@ const Dashbord = () => {
         cover={
           <img
             alt={meal.name}
-            src="https://os.alipayobjects.com/rmsportal/QBnOOoLaAfKPirc.png" // Placeholder image
+            src={meal.imageUrl || "https://via.placeholder.com/240"} // Use Firebase image or fallback
           />
         }
       >
-        <Meta title={meal.name} description={`Total Count: ${meal.totalCount}`} />
+        <Meta
+          title={`${meal.name} `}
+          description={`Total Count: ${meal.totalCount}`}
+        />
       </Card>
     ));
   };
