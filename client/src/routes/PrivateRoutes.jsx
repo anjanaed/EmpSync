@@ -1,16 +1,16 @@
 import React from "react";
 import { Route } from "react-router-dom";
 import ProtectedRoute from "../../src/guards/ProtectedRoutes";
-import LoginRole from "../components/Pages/LoginRole/LoginRole";
-import Login from "../components/Pages/Login/Login";
+import LoginRole from "../components/Pages/Login/LoginAsPage/LoginRole";
+import Login from "../components/Pages/Login/LoginPage/Login";
 
 // HR_ADMIN
-import EmployeePage from "../components/Pages/H/EmployeePage/EmployeePage";
-import RegisterPage from "../components/Pages/H/RegisterPage/RegisterPage";
-import ReportPage from "../components/Pages/H/ReportPage/ReportPage";
-import PayrollPage from "../components/Pages/H/PayrollPage/PayrollPage";
-import AdjustmentPage from "../components/Pages/H/AdjustmentPage/AdjustmentPage";
-import PayslipPage from "../components/Pages/H/PayslipPage/PayslipPage";
+import EmployeePage from "../components/Pages/HR/EmployeePage/EmployeePage";
+import RegisterPage from "../components/Pages/HR/RegisterPage/RegisterPage";
+import ReportPage from "../components/Pages/HR/ReportPage/ReportPage";
+import PayrollPage from "../components/Pages/HR/PayrollPage/PayrollPage";
+import AdjustmentPage from "../components/Pages/HR/AdjustmentPage/AdjustmentPage";
+import PayslipPage from "../components/Pages/HR/PayslipPage/PayslipPage";
 
 // UserPortal
 // import ProfilePage from "../components/UserPortalUI/Profile/Profile";
@@ -19,11 +19,11 @@ import PayslipPage from "../components/Pages/H/PayslipPage/PayslipPage";
 // import PayrollDetails from "../components/UserPortalUI/Components/payroll-details";
 
 // KITCHEN_ADMIN
-import KitchenAdmin from "../components/Pages/Kitchen Admin/KitchenAdminDashBoard/kitchenAdminDash";
-import Reports from "../components/Pages/Kitchen Admin/Report/report";
-import Meals from "../components/Pages/Kitchen Admin/MealDash/meal";
-import MealDetailsForm from "../components/Pages/Kitchen Admin/Add Meal/addMeal";
-import EditMeal from "../components/Pages/Kitchen Admin/Edit Meal/editMeal";
+import KitchenAdmin from "../components/Pages/KitchenAdmin/KitchenAdminDashBoard/kitchenAdminDash";
+import Reports from "../components/Pages/KitchenAdmin/Report/report";
+import Meals from "../components/Pages/KitchenAdmin/MealDash/meal";
+import MealDetailsForm from "../components/Pages/KitchenAdmin/Add Meal/addMeal";
+import EditMeal from "../components/Pages/KitchenAdmin/Edit Meal/editMeal";
 
 // ServingStaff
 import Serving from "../components/Pages/Serving staff/Barcode Scan/Serving";

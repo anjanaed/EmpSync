@@ -1,7 +1,7 @@
 import React from "react";
 import { Routes, Route, BrowserRouter, Navigate } from "react-router-dom";
 import PasswordReset from "../components/pages/Login/PasswordReset/PasswordReset";
-import OrderTab from "../components/pages/OrderTabUI/Page1";
+import Page1 from "../components/pages/OrderTabUI/Page1";
 import PrivateRoutes from "./PrivateRoutes";
 import { NotificationsProvider } from "../contexts/NotificationsContext";
 import { PopupProvider } from "../contexts/PopupContext";
@@ -13,7 +13,7 @@ const AppRoutes = () => (
         <Routes>
           {/* Public Routes */}
           <Route path="/passwordReset" element={<PasswordReset />} />
-          <Route path="/OrderTab" element={<OrderTab />} />
+          <Route path="/OrderTab" element={<Page1 />} />
 
           {/* Private Routes */}
           {PrivateRoutes()}
