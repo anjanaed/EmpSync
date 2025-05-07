@@ -16,7 +16,6 @@ import { PayeTaxModule } from './PayeTaxSlab/PayeTax.module';
 import { AuthModule } from './auth/auth.module';
 import { ScheduleModule as NestScheduleModule } from '@nestjs/schedule';
 import { ReportModule } from './Reports/reports.module';
-import { BudgetsModule } from './Budgets/Budgets.module';
 
 
 
