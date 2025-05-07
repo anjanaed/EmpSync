@@ -1,7 +1,7 @@
 import React from "react";
 import { Routes, Route, BrowserRouter, Navigate } from "react-router-dom";
 import PasswordReset from "../components/pages/Login/PasswordReset/PasswordReset";
-import OrderTab from "../components/pages/OrderTabUI/Page1";
+import OrderTab from "../components/pages/OrderTab/OrderTab";
 import PrivateRoutes from "./PrivateRoutes";
 import { NotificationsProvider } from "../contexts/NotificationsContext";
 import { PopupProvider } from "../contexts/PopupContext";
