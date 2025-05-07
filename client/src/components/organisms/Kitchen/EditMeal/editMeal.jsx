@@ -550,7 +550,7 @@ const EditMealPage = () => {
                   name="id"
                   rules={[{ required: true, message: "Please enter Meal Id" }]}
                 >
-                  <Input disabled   />
+                  <Input disabled />
                 </Form.Item>
 
                 <Form.Item
@@ -736,7 +736,7 @@ const EditMealPage = () => {
                     onChange={() => handleIngredientSelect(ingredient.id)}
                     className={styles.ingredientCheckbox}
                   >
-                    {ingredient.name} 
+                    {ingredient.name}
                   </Checkbox>
                 </div>
               </div>

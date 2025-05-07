@@ -5,18 +5,18 @@ import LoginRole from "../components/pages/LoginRole/LoginRole";
 import Login from "../components/pages/Login/Login";
 
 // HR_ADMIN
-import EmployeePage from "../components/pages/HR/EmployeePage/EmployeePage";
-import RegisterPage from "../components/pages/HR/RegisterPage/RegisterPage";
-import ReportPage from "../components/pages/HR/ReportPage/ReportPage";
-import PayrollPage from "../components/pages/HR/PayrollPage/PayrollPage";
-import AdjustmentPage from "../components/pages/HR/AdjustmentPage/AdjustmentPage";
-import PayslipPage from "../components/pages/HR/PayslipPage/PayslipPage";
+import EmployeePage from "../components/Pages/H/EmployeePage/EmployeePage";
+import RegisterPage from "../components/Pages/H/RegisterPage/RegisterPage";
+import ReportPage from "../components/Pages/H/ReportPage/ReportPage";
+import PayrollPage from "../components/Pages/H/PayrollPage/PayrollPage";
+import AdjustmentPage from "../components/Pages/H/AdjustmentPage/AdjustmentPage";
+import PayslipPage from "../components/Pages/H/PayslipPage/PayslipPage";
 
 // UserPortal
-import ProfilePage from "../components/UserPortalUI/Profile/Profile";
-import MealsPage from "../components/UserPortalUI/Meals/Meals";
-import SuggestionsPage from "../components/UserPortalUI/Suggestions/Suggestions";
-import PayrollDetails from "../components/UserPortalUI/Components/payroll-details";
+// import ProfilePage from "../components/UserPortalUI/Profile/Profile";
+// import MealsPage from "../components/UserPortalUI/Meals/Meals";
+// import SuggestionsPage from "../components/UserPortalUI/Suggestions/Suggestions";
+// import PayrollDetails from "../components/UserPortalUI/Components/payroll-details";
 
 // KITCHEN_ADMIN
 import KitchenAdmin from "../components/pages/Kitchen Admin/KitchenAdminDashBoard/kitchenAdminDash";
@@ -128,30 +128,6 @@ const PrivateRoutes = () => (
         </ProtectedRoute>
       }
     />
-    <Route
-      path="/meals"
-      element={
-        <ProtectedRoute allowedRoles={["*"]}>
-          <MealsPage />
-        </ProtectedRoute>
-      }
-    />
-    <Route
-      path="/suggestions"
-      element={
-        <ProtectedRoute allowedRoles={["*"]}>
-          <SuggestionsPage />
-        </ProtectedRoute>
-      }
-    />
-    <Route
-      path="/userpayroll"
-      element={
-        <ProtectedRoute allowedRoles={["*"]}>
-          <PayrollDetails />
-        </ProtectedRoute>
-      }
-    />
 
     {/* KITCHEN_ADMIN Routes */}
     <Route
@@ -223,7 +199,6 @@ const PrivateRoutes = () => (
       }
     />
 
-
     {/* INVENTORY_ADMIN Routes */}
     <Route
       path="/Ingredients"
@@ -266,16 +241,7 @@ const PrivateRoutes = () => (
       }
     />
 
-
     {/* User account */}
-    <Route
-      path="/Userprofile1"
-      element={
-        <ProtectedRoute allowedRoles={["*"]}>
-          <ProfilePage />
-        </ProtectedRoute>
-      }
-    />
 
     <Route
       path="/UserMeals"

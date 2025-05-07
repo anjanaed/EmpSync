@@ -202,10 +202,10 @@ const MenuSets = () => {
   };
 
   const handleMealSelection = (meal) => {
-    const mealId = typeof meal === 'object' ? Number(meal.id) : Number(meal);
+    const mealId = typeof meal === "object" ? Number(meal.id) : Number(meal);
 
     if (selectedMeals.includes(mealId)) {
-      setSelectedMeals(selectedMeals.filter(item => item !== mealId));
+      setSelectedMeals(selectedMeals.filter((item) => item !== mealId));
     } else {
       setSelectedMeals([...selectedMeals, mealId]);
     }
@@ -256,7 +256,7 @@ const MenuSets = () => {
       return `Loading meal information... (ID: ${mealId})`;
     }
 
-    const meal = availableMeals.find(m => m.id === Number(mealId));
+    const meal = availableMeals.find((m) => m.id === Number(mealId));
     return meal ? meal.nameEnglish : `Unknown Meal (ID: ${mealId})`;
   };
 
@@ -636,20 +636,26 @@ const MenuSets = () => {
       </div>
 
       <div className={styles.tabs}>
-        <div 
-          className={`${styles.tab} ${activeTab === "breakfast" ? styles.activeTab : ""}`}
+        <div
+          className={`${styles.tab} ${
+            activeTab === "breakfast" ? styles.activeTab : ""
+          }`}
           onClick={() => handleTabChange("breakfast")}
         >
           Breakfast Sets
         </div>
-        <div 
-          className={`${styles.tab} ${activeTab === "lunch" ? styles.activeTab : ""}`}
+        <div
+          className={`${styles.tab} ${
+            activeTab === "lunch" ? styles.activeTab : ""
+          }`}
           onClick={() => handleTabChange("lunch")}
         >
           Lunch Set
         </div>
-        <div 
-          className={`${styles.tab} ${activeTab === "dinner" ? styles.activeTab : ""}`}
+        <div
+          className={`${styles.tab} ${
+            activeTab === "dinner" ? styles.activeTab : ""
+          }`}
           onClick={() => handleTabChange("dinner")}
         >
           Dinner Set
@@ -671,7 +677,9 @@ const MenuSets = () => {
                     <div className={styles.menuItem}>
                       {getMealNameById(item)}
                     </div>
-                    {index < currentMenuItems.length - 1 && <div className={styles.divider}></div>}
+                    {index < currentMenuItems.length - 1 && (
+                      <div className={styles.divider}></div>
+                    )}
                   </React.Fragment>
                 ))}
               </div>
@@ -683,7 +691,7 @@ const MenuSets = () => {
           </>
         )}
       </div>
-      
+
       <div className={styles.updateMenuBtn}>
         <Button
           icon={<PlusOutlined />}

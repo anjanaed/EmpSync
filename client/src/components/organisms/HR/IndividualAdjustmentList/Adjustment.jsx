@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { Table, Space, ConfigProvider } from "antd";
 import { MdOutlineDeleteOutline } from "react-icons/md";
-import Loading from "../../../atoms/loading/loading";
+import Loading from "../../../atoms/Loading/loading";
 import styles from "./Adjustment.module.css";
 import SearchBar from "../../../molecules/SearchBar/SearchBar";
 const customTheme = {
