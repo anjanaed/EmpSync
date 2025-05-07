@@ -12,6 +12,11 @@ import PayrollPage from "../components/pages/HR/PayrollPage/PayrollPage";
 import AdjustmentPage from "../components/pages/HR/AdjustmentPage/AdjustmentPage";
 import PayslipPage from "../components/pages/HR/PayslipPage/PayslipPage";
 
+// UserPortal
+import ProfilePage from "../components/UserPortalUI/Profile/Profile";
+import MealsPage from "../components/UserPortalUI/Meals/Meals";
+import SuggestionsPage from "../components/UserPortalUI/Suggestions/Suggestions";
+import PayrollDetails from "../components/UserPortalUI/Components/payroll-details";
 
 // KITCHEN_ADMIN
 import KitchenAdmin from "../components/pages/Kitchen Admin/KitchenAdminDashBoard/kitchenAdminDash";
@@ -21,8 +26,11 @@ import MealDetailsForm from "../components/pages/Kitchen Admin/Add Meal/addMeal"
 import EditMeal from "../components/pages/Kitchen Admin/Edit Meal/editMeal";
 
 // ServingStaff
-import Serving from "../../src/pages/Serving staff/Barcode Scan/Serving";
-import MealConform from "../../src/pages/Serving staff/Meal Conform/MealConform";
+import Serving from "../../src/components/pages/Serving staff/Barcode Scan/Serving";
+import MealConform from "../../src/components/pages/Serving staff/Meal Conform/MealConform";
+
+// KitchenStaff
+import KitchenStaff from "../components/pages/kitchen staff/kitchenStaff";
 
 // INVENTORY_ADMIN
 import Ingredients from "../components/pages/Ingredient Manager/Dashboard/Ingredients";
@@ -112,6 +120,38 @@ const PrivateRoutes = () => (
     />
 
     {/* UserPortal Routes */}
+    <Route
+      path="/profile"
+      element={
+        <ProtectedRoute allowedRoles={["*"]}>
+          <ProfilePage />
+        </ProtectedRoute>
+      }
+    />
+    <Route
+      path="/meals"
+      element={
+        <ProtectedRoute allowedRoles={["*"]}>
+          <MealsPage />
+        </ProtectedRoute>
+      }
+    />
+    <Route
+      path="/suggestions"
+      element={
+        <ProtectedRoute allowedRoles={["*"]}>
+          <SuggestionsPage />
+        </ProtectedRoute>
+      }
+    />
+    <Route
+      path="/userpayroll"
+      element={
+        <ProtectedRoute allowedRoles={["*"]}>
+          <PayrollDetails />
+        </ProtectedRoute>
+      }
+    />
 
     {/* KITCHEN_ADMIN Routes */}
     <Route
@@ -172,6 +212,17 @@ const PrivateRoutes = () => (
         </ProtectedRoute>
       }
     />
+
+    {/*Kitchen Staff */}
+    <Route
+      path="/kitchenStaff"
+      element={
+        <ProtectedRoute allowedRoles={["KITCHEN_STAFF"]}>
+          <KitchenStaff />
+        </ProtectedRoute>
+      }
+    />
+
 
     {/* INVENTORY_ADMIN Routes */}
     <Route

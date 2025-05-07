@@ -16,10 +16,13 @@ const AppRoutes = () => (
             <Route path="/passwordReset" element={<PasswordReset />} />
             <Route path="/OrderTab" element={<OrderTab />} />
 
-            {/* Private Routes */}
-            {PrivateRoutes()}
-            <Route path="*" element={<Navigate to="/login" replace />} />
-          </Routes>
+
+          {/* Private Routes */}
+          {PrivateRoutes()}
+          <Route path="*" element={<Navigate to="/login" replace />} />
+
+        </Routes>
+      </RootLayout>
       </PopupProvider>
     </NotificationsProvider>
   </BrowserRouter>

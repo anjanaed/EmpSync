@@ -5,6 +5,7 @@ import IngredientList from './IngredientList/IngredientList';
 import styles from './InventoryManagement.module.css';
 import axios from 'axios';
 import { exportIngredientsToPDF } from './pdfExport/pdfExport'; 
+import CSVImportButton from './CSVImportButton/CSVimportButton';
 
 const urL = import.meta.env.VITE_BASE_URL;
 const { Search } = Input;
@@ -225,6 +226,12 @@ const InventoryManagement = () => {
             onSearch={handleSearch} 
             onChange={(e) => handleSearch(e.target.value)}
             className={styles.search} 
+          />
+          <CSVImportButton 
+            onSuccess={(newIngredients) => {
+              setIngredients(prev => [...prev, ...newIngredients]);
+              message.success(`Successfully imported ${newIngredients.length} ingredients`);
+            }}
           />
           <Button 
             type="default"

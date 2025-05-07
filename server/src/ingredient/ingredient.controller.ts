@@ -1,5 +1,5 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, HttpException, HttpStatus, Query } from '@nestjs/common';
-import { IngredientsService } from './ingredients.service';
+import { IngredientsService } from './ingredient.service';
 import { Prisma } from '@prisma/client';
 import { threadId } from 'worker_threads';
 

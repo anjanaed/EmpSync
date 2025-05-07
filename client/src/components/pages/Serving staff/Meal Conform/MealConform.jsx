@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import styles from './MealConform.module.css';
 import mealImage from './images/image.png';
 import secondary from './images/second.png';
-import DateTime from '../../../components/Serving/DateAndTime/DateTime';
+import DateTime from '../../../organisms/Serving/DateAndTime/DateTime';
 
 const urL = import.meta.env.VITE_BASE_URL;
 const { Title, Text } = Typography;

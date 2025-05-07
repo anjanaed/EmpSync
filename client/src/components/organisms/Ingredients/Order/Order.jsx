@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Typography, Tag, Spin, Button, Table } from "antd";
+import { Typography, Tag, Spin, Button, Table, Modal, Select, message } from "antd";
 import { useNavigate } from "react-router-dom";
 import { jsPDF } from 'jspdf';  
 import autoTable from 'jspdf-autotable';  
@@ -11,6 +11,9 @@ const { Title } = Typography;
 const Order = () => {
     const [ingredients, setIngredients] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [budgets, setBudgets] = useState([]);
+    const [selectedBudget, setSelectedBudget] = useState(null);
+    const [isBudgetModalVisible, setIsBudgetModalVisible] = useState(false);
     const navigate = useNavigate();
 
     const columns = [
@@ -48,6 +51,7 @@ const Order = () => {
 
     useEffect(() => {
         fetchIngredients();
+        fetchBudgets();
     }, []);
 
     const fetchIngredients = async () => {
@@ -59,6 +63,18 @@ const Order = () => {
         } catch (error) {
             console.error("Error fetching ingredients:", error);
             setLoading(false);
+        }
+    };
+
+    const fetchBudgets = async () => {
+        try {
+            const response = await fetch(`${urL}/budgets`);
+            const data = await response.json();
+            console.log("Budgets:", data);
+            setBudgets(data);
+        } catch (error) {
+            console.error("Error fetching budgets:", error);
+            message.error("Failed to fetch budgets");
         }
     };
 
@@ -111,6 +127,39 @@ const Order = () => {
         doc.save('ingredients-order.pdf');
     };
 
+    const handlePlaceOrder = async () => {
+        if (!selectedBudget) {
+            message.error("Please select a budget");
+            return;
+        }
+        console.log("Selected Budget:", selectedBudget);
+        try {
+            const response = await fetch(`${urL}/ingredients/order/budget`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    budget: selectedBudget,
+                })
+            });
+
+            if (response.ok) {
+                message.success("Order placed successfully");
+                setIsBudgetModalVisible(false);
+            } else {
+                throw new Error('Failed to place order');
+            }
+        } catch (error) {
+            console.error("Error placing order:", error);
+            message.error("Failed to place order");
+        }
+    };
+
+    const showBudgetModal = () => {
+        setIsBudgetModalVisible(true);
+    };
+
     if (loading) {
         return (
             <div className={styles.loadingContainer}>
@@ -119,18 +168,50 @@ const Order = () => {
         );
     }
 
+    const budgetModal = (
+        <Modal
+            title="Select Budget"
+            open={isBudgetModalVisible}
+            onOk={handlePlaceOrder}
+            onCancel={() => setIsBudgetModalVisible(false)}
+            okText="Confirm Order"
+            cancelText="Cancel"
+        >
+            <Select
+                style={{ width: '100%' }}
+                placeholder="Select a budget"
+                onChange={(value) => setSelectedBudget(value)}
+                options={budgets.map(budget => ({
+                    value: budget.budgetAmount,
+                    label: `${new Date(budget.budgetDate).toLocaleDateString()} - Rs. ${budget.budgetAmount}`
+                }))}
+            />
+        </Modal>
+    );
+
     return (
         <div className={styles.orderContainer}>
             <div className={styles.headerContainer}>
                 <Title level={3} className={styles.mainTitle}>Selected Ingredients for Order</Title>
-                <Button 
-                    type="default" 
-                    size="large"
-                    onClick={exportToPDF}
-                    className={styles.exportBtn}
-                >
-                    Export to PDF
-                </Button>
+                <div className={styles.buttonGroup}>
+                    <Button 
+                        type="default" 
+                        size="large"
+                        onClick={exportToPDF}
+                        className={styles.exportBtn}
+                    >
+                        Export to PDF
+                    </Button>
+                    <Button 
+                        type="primary" 
+                        size="large"
+                        className={styles.placeOrderBtn}
+                        onClick={showBudgetModal}
+                    >
+                        Place the Order
+                    </Button>
+                    {budgetModal}
+                </div>
             </div>
 
             <Title level={3} className={styles.sectionTitle}>Priority Ingredients</Title>
@@ -163,16 +244,6 @@ const Order = () => {
                 Last updated: {new Date(ingredients?.lastUpdated).toLocaleString()}
             </p>
             
-            <div className={styles.buttonContainer}>
-                <Button 
-                    type="primary" 
-                    size="large"
-                    className={styles.placeOrderBtn}
-                    onClick={() => navigate('/place-order')}
-                >
-                    Place the Order
-                </Button>
-            </div>
         </div>
     );
 };

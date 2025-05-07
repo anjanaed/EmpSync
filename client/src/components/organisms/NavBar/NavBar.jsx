@@ -16,7 +16,6 @@ const roleDisplayMap = {
   KITCHEN_ADMIN: "Kitchen Administrator",
 };
 
-
 const customTheme = {
   token: {
     colorText: "rgb(80, 80, 80)",
@@ -40,24 +39,40 @@ const NavBar = ({ Comp, titleLines = [], menuItems = [] }) => {
   const [loading, setLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState("null");
   const navigate = useNavigate();
-  const { authData, logout,authLoading } = useAuth();
+  const { authData, logout, authLoading } = useAuth();
 
-  if (authLoading){
-    return <Loading/>
-  }
+  // Ensure hooks are always called
+  useEffect(() => {
+    const handleResize = () => setCollapsed(window.innerWidth <= 1000);
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
-  const setUser = () => {
+  useEffect(() => {
+    const currentPath = location.pathname;
+    const match = menuItems.find((item) => item.link === currentPath);
+    if (match) setSelectedKey(match.key);
+  }, [location.pathname]);
+
+  useEffect(() => {
     if (authData) {
       setCurrentUser(authData.user);
     }
     setLoading(false);
-  };
+  }, [authData]);
+
+  // Return early if loading
+  if (authLoading || loading) {
+    return <Loading />;
+  }
 
   const handleLogOut = () => {
     logout();
     setCurrentUser(null);
     navigate("/login");
   };
+
   const dropdownItems = [
     {
       key: "1",
@@ -79,24 +94,6 @@ const NavBar = ({ Comp, titleLines = [], menuItems = [] }) => {
       onClick: () => handleLogOut(),
     },
   ];
-
-  // Handle responsive collapse
-  useEffect(() => {
-    const handleResize = () => setCollapsed(window.innerWidth <= 1000);
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  useEffect(() => {
-    const currentPath = location.pathname;
-    const match = menuItems.find((item) => item.link === currentPath);
-    if (match) setSelectedKey(match.key);
-  }, [location.pathname]);
-
-  useEffect(() => {
-    setUser();
-  }, [authData]);
 
   const renderTitle = () => (
     <>
@@ -124,8 +121,6 @@ const NavBar = ({ Comp, titleLines = [], menuItems = [] }) => {
       else if (item.onClick) item.onClick();
     },
   }));
-
-  if (loading) return <Loading />;
 
   return (
     <div className={styles.main}>
@@ -170,7 +165,9 @@ const NavBar = ({ Comp, titleLines = [], menuItems = [] }) => {
               />
               <div className={styles.userDetails}>
                 <div className={styles.userName}>{currentUser.name}</div>
-                <div className={styles.userPosition}>{roleDisplayMap[currentUser.role]}</div>
+                <div className={styles.userPosition}>
+                  {roleDisplayMap[currentUser.role]}
+                </div>
               </div>
             </div>
           </Dropdown>

@@ -25,6 +25,7 @@
   align-items: center;
   justify-content: center;
   padding: 2vw;
+  height: 500px;
 }
 
 .loginIllustration {
@@ -108,4 +109,75 @@
 .loginButton:hover {
   background-color: #8b0000 !important;
   transform: scale(1.05);
+}
+
+/* Add media queries for responsiveness */
+@media (max-width: 768px) {
+  .loginContainer {
+    flex-direction: column;
+    min-height: 100vh; /* Ensure it takes the full viewport height */
+    padding: 2vw;
+    justify-content: center; /* Center content vertically */
+    align-items: center; /* Center content horizontally */
+  }
+
+  .loginBox {
+    width: 90vw;
+    flex-direction: column;
+  }
+
+  .loginLeft {
+    height: auto;
+    padding: 4vw;
+    display: none;
+  }
+
+  .loginRight {
+    padding: 4vw;
+  }
+
+  .loginTitle {
+    font-size: 5vw;
+  }
+
+  .loginSubtitle {
+    font-size: 3.5vw;
+  }
+
+  .loginOptions {
+    font-size: 3vw;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .loginOptions a {
+    font-size: 3vw;
+  }
+
+  .loginForm :global(.ant-form-item-label > label),
+  .loginForm :global(.ant-input),
+  .loginForm :global(.ant-checkbox-wrapper) {
+    font-size: 3vw !important;
+  }
+
+  .loginButton {
+    font-size: 4vw;
+    padding: 12px;
+  }
+}
+
+/* Add additional media query for very small screens */
+@media (max-width: 480px) {
+  .loginTitle {
+    font-size: 6vw;
+  }
+
+  .loginSubtitle {
+    font-size: 4vw;
+  }
+
+  .loginButton {
+    font-size: 5vw;
+    padding: 14px;
+  }
 }
