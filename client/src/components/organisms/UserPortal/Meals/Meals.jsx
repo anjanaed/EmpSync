@@ -2,16 +2,11 @@ import React from 'react';
 import { Card, List, Button, Typography, Divider } from 'antd';
 import styles from './Meals.module.css';
 
-const { Title, Text } = Typography;
+const { Text } = Typography;
 
-const Cart = ({ items, onRemove, onCheckout }) => {
-  const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
-
+const Cart = ({ items }) => {
   return (
-    <Card className={styles.cartContainer} title="Your Cart">
-      <div>
-        <Text strong>Price:</Text> LKR 300.00
-      </div>
+    <Card className={styles.cartContainer} title="Total Price LKR 470.00">
       <div>
         <Text strong>Order ID:</Text> 2
       </div>
@@ -32,13 +27,7 @@ const Cart = ({ items, onRemove, onCheckout }) => {
         itemLayout="horizontal"
         dataSource={items}
         renderItem={(item) => (
-          <List.Item
-            actions={[
-              <Button type="link" danger onClick={() => onRemove(item.id)}>
-                Remove
-              </Button>,
-            ]}
-          >
+          <List.Item>
             <List.Item.Meta
               title={item.name}
               description={`Quantity: ${item.quantity}`}
@@ -49,20 +38,6 @@ const Cart = ({ items, onRemove, onCheckout }) => {
       />
 
       <Divider />
-
-      <div className={styles.totalSection}>
-        <Text strong>Total:</Text>
-        <Text strong>${total.toFixed(2)}</Text>
-      </div>
-
-      <Button
-        type="primary"
-        block
-        disabled={items.length === 0}
-        onClick={onCheckout}
-      >
-        Checkout
-      </Button>
 
       <Button
         type="default"
