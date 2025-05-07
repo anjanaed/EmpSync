@@ -1,7 +1,7 @@
 import { Prisma } from '@prisma/client';
 import { UserService } from './user/user.service';
 import { DatabaseService } from './database/database.service';
-import { MealService } from './meal/meal.service';
+import { MealService } from './Meal/meal.service';
 import { IngredientsService } from './ingredients/ingredients.service';
 
 const databaseService = new DatabaseService();
