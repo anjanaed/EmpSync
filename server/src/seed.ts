@@ -661,8 +661,7 @@ async function main() {
   ];
 
 
-    ,
-  ];
+    
 
   const meals: Prisma.MealCreateInput[] = [
     {
@@ -675,7 +674,7 @@ async function main() {
         'https://firebasestorage.googleapis.com/v0/b/empsync-af358.firebasestorage.app/o/meals%2F1746436871187-milk%20rice.jpg?alt=media&token=6ecbabc5-115b-4cbc-bff0-7183312bc57a',
       category: ['Breakfast'],
       ingredients: {
-        create: [], // Add ingredients if needed
+        create: [], 
       },
     },
     {
@@ -688,7 +687,7 @@ async function main() {
         'https://firebasestorage.googleapis.com/v0/b/empsync-af358.firebasestorage.app/o/meals%2F1746436529202-rice2.jpg?alt=media&token=1e243e98-cbfa-43e8-a385-61d3b8b31382',
       category: ['Breakfast', 'Lunch', 'Dinner'],
       ingredients: {
-        create: [], // Add ingredients if needed
+        create: [], 
       },
     },
     {
@@ -701,7 +700,7 @@ async function main() {
         'https://firebasestorage.googleapis.com/v0/b/empsync-af358.firebasestorage.app/o/meals%2F1746464953661-peas.jpg?alt=media&token=63edd9f2-c4de-4962-b152-aa3c65bba17c',
       category: ['Breakfast'],
       ingredients: {
-        create: [], // Add ingredients if needed
+        create: [], 
       },
     },
   ];
