@@ -1351,6 +1351,7 @@ async function main() {
     console.log('Users created successfully.');
 
     // Create meals
+    const meals: Prisma.MealCreateInput[] = [];
     for (const meal of meals) {
       await mealService.createWithIngredients(meal, []);
     }
