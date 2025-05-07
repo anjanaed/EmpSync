@@ -226,8 +226,7 @@ const Analysis = () => {
             <Card
               title="High Cost Items:"
               className={`${styles.costCard} ${styles.highCostCard}`}
-              headStyle={{ background: "white", borderBottom: "none", padding: "16px 16px 0" }}
-              bodyStyle={{ padding: "0 16px 16px" }}
+              styles={{ background: "white", borderBottom: "none", padding: "16px 16px 0" }}
               extra={highCostData.length > 0 ? 
                 <span className={styles.costInfo}>
                   Highest Price: Rs.{highCostData[0]?.priceComparison?.highestPrice} 
@@ -257,8 +256,7 @@ const Analysis = () => {
             <Card
               title="Low Cost Items:"
               className={`${styles.costCard} ${styles.lowCostCard}`}
-              headStyle={{ background: "white", borderBottom: "none", padding: "16px 16px 0" }}
-              bodyStyle={{ padding: "0 16px 16px" }}
+              styles={{ background: "white", borderBottom: "none", padding: "16px 16px 0" }}
               extra={lowCostData.length > 0 ? 
                 <span className={styles.costInfo}>
                   Lowest Price: Rs.{lowCostData[0]?.priceComparison?.lowestPrice}

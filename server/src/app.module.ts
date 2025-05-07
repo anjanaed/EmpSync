@@ -5,6 +5,7 @@ import { DatabaseModule } from './database/database.module';
 import { UserModule } from './user/user.module';
 import { MealModule } from './Meal/meal.module';
 import { IngredientsModule } from './ingredients/ingredients.module';
+import { BudgetsModule } from './Budgets/Budgets.module';
 import { PayrollModule } from './payroll/payroll.module';
 import { AttendanceModule } from './attendance/attendance.module';
 import {OrdersModule} from './orders/orders.module'
@@ -15,7 +16,6 @@ import { PayeTaxModule } from './PayeTaxSlab/PayeTax.module';
 import { AuthModule } from './auth/auth.module';
 import { ScheduleModule as NestScheduleModule } from '@nestjs/schedule';
 import { ReportModule } from './Reports/reports.module';
-import { BudgetsModule } from './Budgets/Budgets.module';
 
 
 
@@ -30,6 +30,7 @@ import { BudgetsModule } from './Budgets/Budgets.module';
     DatabaseModule,
     UserModule,
     IngredientsModule,
+    BudgetsModule,
     MealModule,
     PayrollModule,
     AttendanceModule,

@@ -5,7 +5,7 @@
     padding: 24px;
     background-color: #ffffff;
     min-height: 100vh;
-    max-width: 1400px;
+    max-width: 1800px;
 }
 
 .titleSection {
@@ -13,7 +13,7 @@
 }
 
 .title {
-    color: #1a3353;
+    color: brown !important;
     font-weight: 600;
     position: relative;
     padding-bottom: 12px;
@@ -26,7 +26,6 @@
     left: 0;
     width: 60px;
     height: 3px;
-    background-color: #1890ff;
 }
 
 .card {

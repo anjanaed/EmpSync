@@ -34,7 +34,7 @@ const AnalysisDashboard = () => {
                 },
                 {
                     key: "4",
-                    icon: <FontAwesomeIcon icon={faFileInvoice} />,
+                    icon: <FontAwesomeIcon icon={faHistory} />,
                     label: "Orders History",
                     link: "/OrderHistory"
                 }
