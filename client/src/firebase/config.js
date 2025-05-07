@@ -17,10 +17,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const storage = getStorage(app);
 
-// // Connect to the emulator when in development
-// if (process.env.NODE_ENV === 'development' || window.location.hostname === 'localhost') {
-//   connectStorageEmulator(storage, 'localhost', 9199); // 9199 is the default port for Storage emulator
-//   console.log('Using Firebase Storage Emulator');
-// }
+
 
 export { storage };
