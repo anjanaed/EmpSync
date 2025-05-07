@@ -10,15 +10,16 @@ describe('BudgetsController', () => {
 
     const mockBudget = {
         id: 1,
-        amount: 5000,
-        category: 'Office Supplies',
-        description: 'Monthly budget for supplies',
-        startDate: new Date(),
-        endDate: new Date()
+        name: 'Test Budget',
+        budgetAmount: 5000,
+        budgetDate: new Date(),
+        createdAt: new Date(),
+        updatedAt: new Date()
     };
 
     const mockBudgetService = {
-        getBudgets: jest.fn(),
+        getAllBudgets: jest.fn(),
+        getBudget: jest.fn(),
         createBudget: jest.fn(),
         updateBudget: jest.fn(),
         deleteBudget: jest.fn(),
@@ -45,16 +46,16 @@ describe('BudgetsController', () => {
 
     describe('getBudgets', () => {
         it('should return an array of budgets', async () => {
-            mockBudgetService.getBudgets.mockResolvedValue([mockBudget]);
+            mockBudgetService.getAllBudgets.mockResolvedValue([mockBudget]);
 
             const result = await controller.getBudgets();
 
             expect(result).toEqual([mockBudget]);
-            expect(mockBudgetService.getBudgets).toHaveBeenCalled();
+            expect(mockBudgetService.getAllBudgets).toHaveBeenCalled();
         });
 
         it('should throw an error if service fails', async () => {
-            mockBudgetService.getBudgets.mockRejectedValue(new Error());
+            mockBudgetService.getAllBudgets.mockRejectedValue(new Error());
 
             await expect(controller.getBudgets()).rejects.toThrow(
                 new HttpException('Failed to fetch budgets', HttpStatus.INTERNAL_SERVER_ERROR)
@@ -62,8 +63,29 @@ describe('BudgetsController', () => {
         });
     });
 
+    describe('getBudget', () => {
+        it('should return budget existence status', async () => {
+            mockBudgetService.getBudget.mockResolvedValue(true);
+
+            const result = await controller.getBudget('1');
+
+            expect(result).toEqual({ exists: true });
+            expect(mockBudgetService.getBudget).toHaveBeenCalledWith(1);
+        });
+
+        it('should throw an error if fetch fails', async () => {
+            mockBudgetService.getBudget.mockRejectedValue(new Error());
+
+            await expect(controller.getBudget('1')).rejects.toThrow(
+                new HttpException('Failed to fetch budget', HttpStatus.INTERNAL_SERVER_ERROR)
+            );
+        });
+    });
+
     describe('createBudget', () => {
         const createDto: Prisma.BudgetCreateInput = {
+            id: 1,
+            name: 'Test Budget',
             budgetAmount: 5000,
             budgetDate: new Date(),
         };
