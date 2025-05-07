@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
-import { useAuth } from "../../contexts/AuthContext";
-import Loading from "../atoms/loading/loading";
+import { useAuth } from "../contexts/AuthContext";
+import Loading from "../components/atoms/loading/loading";
 
 const redirectRoles = [
   "KITCHEN_ADMIN",

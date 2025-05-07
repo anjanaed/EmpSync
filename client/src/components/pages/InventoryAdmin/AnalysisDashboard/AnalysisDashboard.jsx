@@ -7,7 +7,7 @@ import {
     faHistory,
 } from "@fortawesome/free-solid-svg-icons";
 import NavBar from '../../../organisms/NavBar/NavBar';
-import Analysis from "../../../organisms/Ingredients/Analysis/Analysis";
+import Analysis from "../../../organisms/Inventory/Analysis/Analysis";
 
 const AnalysisDashboard = () => {
     return (

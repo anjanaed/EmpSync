@@ -7,7 +7,7 @@ import {
     faHistory,
 } from "@fortawesome/free-solid-svg-icons";
 import NavBar from '../../../organisms/NavBar/NavBar';
-import InventoryManagement from '../../../organisms/Ingredients/InventoryManagement/InventoryManagement';
+import InventoryManagement from '../../../organisms/Inventory/InventoryManagement/InventoryManagement';
 
 const Ingredients = () => {
     return (

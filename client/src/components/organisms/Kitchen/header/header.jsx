@@ -4,7 +4,7 @@ import { Layout, Button, Typography, Avatar, Space, Dropdown } from "antd";
 import { LeftOutlined } from "@ant-design/icons";
 import styles from "./header.module.css";
 import { UserOutlined, LogoutOutlined } from "@ant-design/icons";
-import img from "../../../../assets/logo.png";
+import img from "../../../../assets/Logo/logo.png";
 import { useNavigate } from "react-router-dom";
 
 const { Header } = Layout;

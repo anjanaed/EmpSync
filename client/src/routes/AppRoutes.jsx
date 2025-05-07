@@ -13,7 +13,7 @@ const AppRoutes = () => (
         <Routes>
           {/* Public Routes */}
           <Route path="/passwordReset" element={<PasswordReset />} />
-          <Route path="/OrderTab" element={<OrderTab />} />
+          <Route path="/OrderTab" element={<Page1 />} />
 
           {/* Private Routes */}
           {PrivateRoutes()}
