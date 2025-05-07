@@ -3,7 +3,7 @@ import styles from "./NavBar.module.css";
 import { MenuOutlined, LogoutOutlined } from "@ant-design/icons";
 import { UserOutlined } from "@ant-design/icons";
 import { Button, Layout, Menu, ConfigProvider, Dropdown, Avatar } from "antd";
-import img from "../../../assets/logo.png";
+import img from "../../../assets/Logo/logo.png";
 import { useNavigate } from "react-router-dom";
 import Loading from "../../atoms/loading/loading";
 import { useAuth } from "../../../contexts/AuthContext";
