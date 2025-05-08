@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Input, Select, Radio } from "antd";
+import { Input, Select, Radio, DatePicker } from "antd";
 import { Camera, User } from "lucide-react";
 import axios from "axios";
+import moment from "moment"; // Import moment for date formatting
 import styles from "./Userprofile.module.css";
 
 const { Option } = Select;
@@ -99,7 +100,7 @@ export default function UserProfile({ user }) {
       <div className={styles.content}>
         <div className={styles.profileCard}>
           <div className={styles.profileImageSection}>
-            <div className={styles.profileAvatar}>
+            {/* <div className={styles.profileAvatar}>
               <img
                 src={profileImage || "/placeholder.svg"}
                 alt="Profile"
@@ -121,7 +122,7 @@ export default function UserProfile({ user }) {
                   />
                 </div>
               )}
-            </div>
+            </div> */}
             <div className={styles.fixedData}>
               <p><strong>Employee ID:</strong> {userData.id}</p>
               <p><strong>Email:</strong> {userData.email}</p>
@@ -173,12 +174,13 @@ export default function UserProfile({ user }) {
 
             <div className={styles.formGroup}>
               <label htmlFor="birthday">Birthday</label>
-              <Input
+              <DatePicker
                 id="birthday"
                 className={styles.inputMaxWidth}
-                value={userData.dob}
-                onChange={(e) => handleInputChange("dob", e.target.value)}
+                value={userData.dob ? moment(userData.dob, "YYYY-MM-DD") : null} // Format the date
+                onChange={(date, dateString) => handleInputChange("dob", dateString)} // Update state with formatted date
                 disabled={!isEditing}
+                format="YYYY-MM-DD" // Ensure the date format remains consistent
               />
             </div>
 
@@ -243,11 +245,7 @@ export default function UserProfile({ user }) {
               />
             </div>
 
-            <div className={styles.formActions}>
-              <button type="submit" className={styles.submitButton} disabled={!isEditing}>
-                Save Changes
-              </button>
-            </div>
+            
           </form>
         </div>
       </div>
