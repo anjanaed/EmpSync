@@ -62,22 +62,22 @@ const Dashbord = () => {
           <Card
             key={meal.mealId}
             hoverable
-            style={{ width: 240 }}
+            className={styles.card} // Add a class for the card
             cover={
               <img
                 alt={meal.name}
                 src={meal.imageUrl || "https://via.placeholder.com/240"} // Use Firebase image or fallback
-                style={{ height: 240 }} // Set image height to 300px
+                className={styles.cardImage} // Add a class for the image
               />
             }
           >
             <Meta
               title={`${meal.name} `}
               description={
-                <span style={{ fontWeight: "bold", fontSize: "18px" }}>
+                <span className={styles.mealCountText}>
                   Total Count: {meal.totalCount}
                 </span>
-              } // Make text bold and font size 18px
+              } // Add a class for the meal count text
             />
           </Card>
         ))}

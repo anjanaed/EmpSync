@@ -237,6 +237,19 @@
     max-width: 240px; /* Limit the width of each card */
   }
 
+  .card {
+    width: 240px; /* Set card width */
+  }
+
+  .cardImage {
+    height: 200px; /* Set image height */
+  }
+
+  .mealCountText {
+    font-weight: bold; /* Make text bold */
+    font-size: 18px; /* Set font size */
+  }
+
 
 
 
