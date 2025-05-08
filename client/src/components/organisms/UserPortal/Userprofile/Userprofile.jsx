@@ -5,20 +5,31 @@ import axios from "axios";
 import moment from "moment"; // Import moment for date formatting
 import styles from "./Userprofile.module.css";
 
+// Destructuring Select component for cleaner code
 const { Option } = Select;
 
+// UserProfile component to display and edit user profile information
 export default function UserProfile({ user }) {
+  // State to toggle between edit and view mode
   const [isEditing, setIsEditing] = useState(false);
+  // Ref for file input to handle image uploads
   const fileInputRef = useRef(null);
+  // State for profile image
   const [profileImage, setProfileImage] = useState(user.profilePicture || null);
+  // State for user data fetched from the database
   const [userData, setUserData] = useState(null);
+  // State for password validation error message
   const [passwordError, setPasswordError] = useState("");
-  const [passwordUpdated, setPasswordUpdated] = useState(false); // Track if the password is updated
-  const [phoneError, setPhoneError] = useState(""); // Track phone number validation errors
-  const [heightError, setHeightError] = useState(""); // Track height validation errors
-  const [weightError, setWeightError] = useState(""); // Track weight validation errors
+  // State to track if password has been updated
+  const [passwordUpdated, setPasswordUpdated] = useState(false);
+  // State for phone number validation error message
+  const [phoneError, setPhoneError] = useState("");
+  // State for height validation error message
+  const [heightError, setHeightError] = useState("");
+  // State for weight validation error message
+  const [weightError, setWeightError] = useState("");
 
-  // Function to validate password
+  // Function to validate password complexity
   const validatePassword = (password) => {
     const minLength = 8;
     const hasUpperCase = /[A-Z]/.test(password);
@@ -44,7 +55,7 @@ export default function UserProfile({ user }) {
     return "";
   };
 
-  // Update the onChange handler
+  // Handler for password input changes with validation
   const handlePasswordChange = (value) => {
     const error = validatePassword(value);
     setPasswordError(error);
@@ -52,7 +63,7 @@ export default function UserProfile({ user }) {
     handleInputChange("password", value);
   };
 
-  // Disable the "Save Changes" button if password is invalid or not updated
+  // Determine if the Save Changes button should be disabled
   const isSaveDisabled = isEditing && (passwordError || phoneError || heightError || weightError);
 
   // Fetch user data from the database
@@ -67,14 +78,16 @@ export default function UserProfile({ user }) {
     }
   };
 
+  // Effect to fetch user data on component mount
   useEffect(() => {
-    fetchUserData(); // Fetch user data on component mount
+    fetchUserData();
   }, []);
 
+  // Toggle between edit and save modes, and save changes to the database
   const handleEditToggle = async () => {
     if (isEditing) {
       try {
-        // API call to update user data in the database
+        // Update user data via API call
         const response = await axios.put(
           `${import.meta.env.VITE_BASE_URL}/user/${userData.id}`,
           {
@@ -92,7 +105,7 @@ export default function UserProfile({ user }) {
 
         if (response.status === 200) {
           alert("User data updated successfully!");
-          fetchUserData(); // Fetch updated data after saving
+          fetchUserData(); // Refresh data after saving
         }
       } catch (error) {
         console.error("Error updating user data:", error);
@@ -102,6 +115,7 @@ export default function UserProfile({ user }) {
     setIsEditing(!isEditing);
   };
 
+  // Update user data state for input fields
   const handleInputChange = (field, value) => {
     setUserData({
       ...userData,
@@ -109,6 +123,7 @@ export default function UserProfile({ user }) {
     });
   };
 
+  // Handle profile image upload
   const handleImageUpload = (e) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -122,53 +137,36 @@ export default function UserProfile({ user }) {
     }
   };
 
+  // Trigger file input click for image upload
   const triggerFileInput = () => {
     fileInputRef.current?.click();
   };
 
+  // Show loading state until user data is fetched
   if (!userData) {
-    return <div>Loading...</div>; // Show a loading state until user data is fetched
+    return <div>Loading...</div>;
   }
 
+  // Render the user profile UI
   return (
     <div className={styles.profileContainer}>
+      {/* Header with title and edit/save button */}
       <div className={styles.header}>
         <h1 className={styles.title}>Profile</h1>
         <button
           onClick={handleEditToggle}
           className={styles.editButton}
-          disabled={isSaveDisabled} // Disable the button based on the condition
+          disabled={isSaveDisabled}
         >
           {isEditing ? "Save Changes" : "Edit Profile"}
         </button>
       </div>
 
+      {/* Main content area */}
       <div className={styles.content}>
         <div className={styles.profileCard}>
           <div className={styles.profileImageSection}>
-            {/* <div className={styles.profileAvatar}>
-              <img
-                src={profileImage || "/placeholder.svg"}
-                alt="Profile"
-                className={styles.avatarImage}
-              />
-              {!profileImage && <User />}
-              {isEditing && (
-                <div className={styles.uploadControls}>
-                  <button onClick={triggerFileInput} className={styles.uploadButton}>
-                    <Camera className="mr-2" />
-                    Upload Photo
-                  </button>
-                  <input
-                    type="file"
-                    ref={fileInputRef}
-                    onChange={handleImageUpload}
-                    accept="image/*"
-                    className={styles.fileInput}
-                  />
-                </div>
-              )}
-            </div> */}
+            {/* Fixed user data display */}
             <div className={styles.fixedData}>
               <p><strong>Employee ID:</strong> {userData.id}</p>
               <p><strong>Email:</strong> {userData.email}</p>
@@ -177,7 +175,9 @@ export default function UserProfile({ user }) {
             </div>
           </div>
 
+          {/* Form for editable user data */}
           <form className={styles.formGrid} onSubmit={(e) => e.preventDefault()}>
+            {/* Full Name Input */}
             <div className={styles.formGroup}>
               <label htmlFor="fullName">Full Name</label>
               <Input
@@ -189,18 +189,20 @@ export default function UserProfile({ user }) {
               />
             </div>
 
+            {/* Password Input with Validation */}
             <div className={styles.formGroup}>
               <label htmlFor="password">Password</label>
               <Input.Password
                 id="password"
                 className={styles.inputMaxWidth}
-                value={isEditing ? userData.password || "" : "••••••••••"} // Show 10 dots when not editing
+                value={isEditing ? userData.password || "" : "••••••••••"}
                 onChange={(e) => handlePasswordChange(e.target.value)}
                 disabled={!isEditing}
               />
               {passwordError && <p className={styles.errorText}>{passwordError}</p>}
             </div>
 
+            {/* Phone Number Input with Validation */}
             <div className={styles.formGroup}>
               <label htmlFor="phoneNumber">Phone Number</label>
               <Input
@@ -209,34 +211,35 @@ export default function UserProfile({ user }) {
                 value={userData.telephone}
                 onChange={(e) => {
                   const value = e.target.value;
-                  // Allow only numbers and ensure the length is 10 digits
                   if (/^\d{0,10}$/.test(value)) {
                     handleInputChange("telephone", value);
                     if (value.length !== 10) {
                       setPhoneError("Phone number must be exactly 10 digits.");
                     } else {
-                      setPhoneError(""); // Clear the error if valid
+                      setPhoneError("");
                     }
                   }
                 }}
                 disabled={!isEditing}
-                maxLength={10} // Ensure the input field doesn't accept more than 10 characters
+                maxLength={10}
               />
               {phoneError && <p className={styles.errorText}>{phoneError}</p>}
             </div>
 
+            {/* Birthday Input with DatePicker */}
             <div className={styles.formGroup}>
               <label htmlFor="birthday">Birthday</label>
               <DatePicker
                 id="birthday"
                 className={styles.inputMaxWidth}
-                value={userData.dob ? moment(userData.dob, "YYYY-MM-DD") : null} // Format the date
-                onChange={(date, dateString) => handleInputChange("dob", dateString)} // Update state with formatted date
+                value={userData.dob ? moment(userData.dob, "YYYY-MM-DD") : null}
+                onChange={(date, dateString) => handleInputChange("dob", dateString)}
                 disabled={!isEditing}
-                format="YYYY-MM-DD" // Ensure the date format remains consistent
+                format="YYYY-MM-DD"
               />
             </div>
 
+            {/* Preferred Language Select */}
             <div className={styles.formGroup}>
               <label htmlFor="preferredLanguage">Preferred Language</label>
               <Select
@@ -252,6 +255,7 @@ export default function UserProfile({ user }) {
               </Select>
             </div>
 
+            {/* Height Input with Validation */}
             <div className={styles.formGroup}>
               <label htmlFor="height">Height (cm)</label>
               <Input
@@ -260,12 +264,12 @@ export default function UserProfile({ user }) {
                 value={userData.height}
                 onChange={(e) => {
                   const value = e.target.value;
-                  if (/^\d*$/.test(value)) { // Allow only numbers
+                  if (/^\d*$/.test(value)) {
                     handleInputChange("height", value);
                     if (value < 50 || value > 300) {
                       setHeightError("Height must be between 50 and 300 cm.");
                     } else {
-                      setHeightError(""); // Clear the error if valid
+                      setHeightError("");
                     }
                   }
                 }}
@@ -274,6 +278,7 @@ export default function UserProfile({ user }) {
               {heightError && <p className={styles.errorText}>{heightError}</p>}
             </div>
 
+            {/* Weight Input with Validation */}
             <div className={styles.formGroup}>
               <label htmlFor="weight">Weight (kg)</label>
               <Input
@@ -282,12 +287,12 @@ export default function UserProfile({ user }) {
                 value={userData.weight}
                 onChange={(e) => {
                   const value = e.target.value;
-                  if (/^\d*$/.test(value)) { // Allow only numbers
+                  if (/^\d*$/.test(value)) {
                     handleInputChange("weight", value);
                     if (value < 10 || value > 500) {
                       setWeightError("Weight must be between 10 and 500 kg.");
                     } else {
-                      setWeightError(""); // Clear the error if valid
+                      setWeightError("");
                     }
                   }
                 }}
@@ -296,6 +301,7 @@ export default function UserProfile({ user }) {
               {weightError && <p className={styles.errorText}>{weightError}</p>}
             </div>
 
+            {/* Gender Radio Group */}
             <div className={styles.formGroup}>
               <label>Gender</label>
               <Radio.Group
@@ -309,6 +315,7 @@ export default function UserProfile({ user }) {
               </Radio.Group>
             </div>
 
+            {/* Address Input */}
             <div className={styles.formGroup}>
               <label htmlFor="address">Address</label>
               <Input
@@ -319,8 +326,6 @@ export default function UserProfile({ user }) {
                 disabled={!isEditing}
               />
             </div>
-
-            
           </form>
         </div>
       </div>
