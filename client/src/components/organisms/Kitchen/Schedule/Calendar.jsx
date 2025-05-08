@@ -57,8 +57,7 @@ const CustomDatePicker = ({ value, onChange, onClose }) => {
 
   return (
     <div className={styles.datePickerWrapper}>
-      <ConfigProvider
-      >
+      <ConfigProvider>
         <AntDatePicker
           value={internalValue}
           onChange={handleDateChange}
@@ -183,7 +182,7 @@ const MenuSets = () => {
 
   const handleMealSelection = (meal) => {
     const mealId = typeof meal === "object" ? Number(meal.id) : Number(meal);
-
+   
     if (selectedMeals.includes(mealId)) {
       setSelectedMeals(selectedMeals.filter((item) => item !== mealId));
     } else {
