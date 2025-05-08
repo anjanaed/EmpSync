@@ -1,7 +1,7 @@
 .loginContainer {
   display: flex;
   min-height: 100vh;
-  background:url('../../../assets/loginbackground.png') center/cover no-repeat;
+  background:url('../../../../assets/Login/loginbackground.png') center/cover no-repeat;
   font-family: "Figtree", sans-serif;
   justify-content: center;
   align-items: center;
