@@ -20,6 +20,7 @@ import {
   DeleteOutlined,
   CalendarOutlined,
   SearchOutlined,
+  CheckCircleFilled,
   RightOutlined,
 } from "@ant-design/icons";
 import moment from "moment";
@@ -55,7 +56,7 @@ const CustomDatePicker = ({ value, onChange, onClose }) => {
     const thirtyDaysAgo = dayjs().subtract(30, "days").startOf("day");
     return current.isBefore(thirtyDaysAgo);
   };
-  
+
   return (
     <div className={styles.datePickerWrapper}>
       <ConfigProvider
@@ -606,7 +607,10 @@ const MenuSets = () => {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <h1 className={styles.title}>Menu - {formattedDate}</h1>
+        <div className={styles.titleContainer}>
+          <h1 className={styles.title}>Menu - {formattedDate}</h1>
+          {isConfirmed && <CheckCircleFilled className={styles.confirmIcon} />}
+        </div>
         <div className={styles.dateActions}>
           <button className={styles.tomorrowBtn} onClick={shiftToTomorrow}>
             Tomorrow
@@ -868,5 +872,4 @@ const MenuSets = () => {
     </div>
   );
 };
-
 export default MenuSets;
