@@ -1,0 +1,194 @@
+.profileContainer {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1.5rem;
+  }
+  
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+  
+  .title {
+    font-size: clamp(1.5rem, 2vw, 1.75rem);
+    font-weight: 600;
+    color: #333;
+  }
+  
+  .editButton {
+    min-width: 120px;
+  }
+  
+  .content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .profileCard {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    background-color: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    padding: 1rem;
+  }
+  
+  .profileImageSection {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+    margin-bottom: 3rem;
+    flex-wrap: wrap;
+  }
+  
+  .profileAvatar {
+    width: 100px !important;
+    height: 100px;
+    border: 3px solid #f3f4f6;
+    border-radius: 50%;
+  }
+  
+  .fixedData {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    font-size: 1rem;
+    color: #555;
+  }
+  
+  .fixedData p {
+    margin: 0;
+  }
+  
+  .uploadControls {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-top: 1rem;
+  }
+  
+  .uploadButton {
+    margin-top: 0.5rem;
+  }
+  
+  .fileInput {
+    display: none;
+  }
+  
+  .tabs {
+    margin-top: 1.5rem;
+  }
+  
+  .tabContent {
+    padding: 1.5rem 0;
+  }
+  
+  .formGrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    margin-left: 0;
+  }
+  
+  .inlineGroup {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  
+  .formGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .textarea {
+    min-height: 100px;
+  }
+  
+  .radioGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding-top: 0.5rem;
+  }
+  
+  .readOnlyField {
+    background-color: #f9fafb;
+    opacity: 0.8;
+  }
+  
+  .currencyInput {
+    position: relative;
+  }
+  
+  .cardFooter {
+    border-top: 1px solid #e5e7eb;
+    padding-top: 1.5rem;
+  }
+  
+  .actionButtons {
+    display: flex;
+    gap: 1rem;
+    margin-left: auto;
+  }
+  
+  .inputMaxWidth {
+    max-width: 300px;
+    width: 100%;
+    min-height: 35px;
+  }
+  
+  /* Responsive styles */
+  @media (max-width: 640px) {
+    .profileContainer {
+      padding: 1rem;
+    }
+  
+    .header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+  
+    .editButton {
+      width: 100%;
+    }
+  
+    .profileImageSection {
+      flex-direction: column;
+      text-align: center;
+    }
+  
+    .profileAvatar {
+      width: 80px;
+      height: 80px;
+    }
+  
+    .fixedData {
+      font-size: 0.9rem;
+    }
+  
+    .formGrid {
+      grid-template-columns: 1fr;
+      margin-left: 0;
+    }
+  
+    .formGroup {
+      grid-column: span 1;
+    }
+  }
+  
+  @media (min-width: 641px) {
+    .formGrid {
+      grid-template-columns: repeat(3, 1fr);
+      margin-left: 50px;
+    }
+  }
+  

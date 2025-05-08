@@ -1,0 +1,51 @@
+.cartContainer {
+    max-width: 400px;
+    margin: 0 auto;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.totalSection {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 16px;
+}
+
+.flexRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+}
+
+.largeText {
+    font-size: 18px;
+}
+
+.horizontalContainer {
+    display: flex;
+    gap: 16px; /* Adjust spacing between carts if needed */
+    justify-content: center; /* Center the cards horizontally */
+    flex-wrap: wrap; /* Wrap cards to the next line if needed */
+    margin: 20px;
+}
+
+.title {
+    text-align: center;
+    margin-bottom: 20px;
+    margin-top: 20px;
+}
+
+.orderText {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.marginLeftAuto {
+    margin-left: auto;
+}
+
+.cancelButton {
+    margin-top: 10px;
+}

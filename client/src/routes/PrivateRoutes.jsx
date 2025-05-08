@@ -40,6 +40,10 @@ import OrderHistory from "../components/pages/Ingredient Manager/OrderHistory/Or
 import CostAnalysis from "../components/organisms/Ingredients/Analysis/Cost Analysis/CostAnalysis";
 import LoginRouting from "../components/ProtectedRoutes/LoginRouting";
 
+//UserAccout
+import ProfilePage from "../components/pages/UserAccount/ProfilePage/ProfilePage";
+import UserMeals from "../components/pages/UserAccount/MealsPage/MealsPage";
+
 const PrivateRoutes = () => (
   <>
     <Route
@@ -258,6 +262,26 @@ const PrivateRoutes = () => (
       element={
         <ProtectedRoute allowedRoles={["INVENTORY_ADMIN"]}>
           <OrderHistory />
+        </ProtectedRoute>
+      }
+    />
+
+
+    {/* User account */}
+    <Route
+      path="/Userprofile1"
+      element={
+        <ProtectedRoute allowedRoles={["*"]}>
+          <ProfilePage />
+        </ProtectedRoute>
+      }
+    />
+
+    <Route
+      path="/UserMeals"
+      element={
+        <ProtectedRoute allowedRoles={["*"]}>
+          <UserMeals />
         </ProtectedRoute>
       }
     />
