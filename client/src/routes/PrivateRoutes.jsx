@@ -12,12 +12,6 @@ import PayrollPage from "../components/Pages/HR/PayrollPage/PayrollPage";
 import AdjustmentPage from "../components/Pages/HR/AdjustmentPage/AdjustmentPage";
 import PayslipPage from "../components/Pages/HR/PayslipPage/PayslipPage";
 
-// UserPortal
-// import ProfilePage from "../components/UserPortalUI/Profile/Profile";
-// import MealsPage from "../components/UserPortalUI/Meals/Meals";
-// import SuggestionsPage from "../components/UserPortalUI/Suggestions/Suggestions";
-// import PayrollDetails from "../components/UserPortalUI/Components/payroll-details";
-
 // KITCHEN_ADMIN
 import KitchenAdmin from "../components/Pages/KitchenAdmin/KitchenAdminDashBoard/kitchenAdminDash";
 import Reports from "../components/Pages/KitchenAdmin/Report/report";
@@ -121,13 +115,14 @@ const PrivateRoutes = () => (
 
     {/* UserPortal Routes */}
     <Route
-      path="/profile"
+      path="/ProfilePage"
       element={
         <ProtectedRoute allowedRoles={["*"]}>
           <ProfilePage />
         </ProtectedRoute>
       }
     />
+    
 
     {/* KITCHEN_ADMIN Routes */}
     <Route
