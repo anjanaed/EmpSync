@@ -22,6 +22,7 @@ import { MealsServingModule } from './modules/meals-serving/meals-serving.module
     DatabaseModule,
     UserModule,
     IngredientsModule,
+    BudgetsModule,
     MealModule,
     PayrollModule,
     OrdersModule,

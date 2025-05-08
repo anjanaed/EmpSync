@@ -560,8 +560,18 @@ export class IngredientsService {
           lastUpdated: new Date(),
           ingredients: {
             create: [
-              ...priority1Orders,
-              ...otherPriorityOrders
+              ...priority1Orders.map(ing => ({
+                ...ing,
+                id: ing.id.toString(), // Convert id to string
+                price_per_unit: parseFloat(ing.price_per_unit.toString()),
+                quantity: parseInt(ing.quantity.toString())
+              })),
+              ...otherPriorityOrders.map(ing => ({
+                ...ing,
+                id: ing.id.toString(), // Convert id to string
+                price_per_unit: parseFloat(ing.price_per_unit.toString()),
+                quantity: parseInt(ing.quantity.toString())
+              }))
             ]
           }
         },
