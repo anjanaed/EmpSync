@@ -2,10 +2,12 @@ import { Controller, Post, Body, HttpException, HttpStatus } from '@nestjs/commo
 import { AuthService } from './auth.service';
 
 @Controller('auth')
+// Declares this class as a controller with the base route 'auth'.
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('login')
+  // Maps HTTP POST requests to the 'auth/login' endpoint to this method.
   async login(@Body() body: { username: string; password: string }) {
     try {
       return await this.authService.loginWithAuth0(body.username, body.password);
@@ -18,6 +20,7 @@ export class AuthController {
   }
 
   @Post('delete')
+  // Maps HTTP POST requests to the 'auth/delete' endpoint to this method.
   async remove(@Body() body: { email: string }) {
     try {
       return await this.authService.deleteAuth0UserByEmail(body.email);

@@ -28,8 +28,9 @@
 }
 
 .table :global(.ant-table-thead > tr > th) {
-  background-color: #fafafa;
+  background-color: rgba(151,0,0,0.78);
   font-weight: 600;
+  color: white;
 }
 
 .table :global(.ant-table-tbody > tr:nth-child(odd)) {

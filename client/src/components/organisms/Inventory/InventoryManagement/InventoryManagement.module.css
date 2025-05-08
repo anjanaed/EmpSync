@@ -61,8 +61,15 @@
 }
   
 .addButton {
-    background-color: #1a1a1a;
-    border-color: #1a1a1a;
+    background-color: #ffffff;
+    border-color: #d1cdcd;
+    color: rgb(0, 0, 0);
+}
+
+.addButton:hover {
+    background-color: #ffffff !important;
+    border-color: #3a84e4 !important;
+    color: #3a84e4 !important;
 }
   
 .card {
