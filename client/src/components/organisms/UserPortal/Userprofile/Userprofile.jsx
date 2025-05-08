@@ -43,6 +43,7 @@ export default function UserProfile({ user }) {
             language: userData.language,
             height: parseInt(userData.height, 10),
             weight: parseInt(userData.weight, 10),
+            password: userData.password,
           }
         );
 
@@ -142,13 +143,31 @@ export default function UserProfile({ user }) {
             </div>
 
             <div className={styles.formGroup}>
+              <label htmlFor="password">Password</label>
+              <Input.Password
+                id="password"
+                className={styles.inputMaxWidth}
+                value={userData.password || ""}
+                onChange={(e) => handleInputChange("password", e.target.value)}
+                disabled={!isEditing}
+              />
+            </div>
+
+            <div className={styles.formGroup}>
               <label htmlFor="phoneNumber">Phone Number</label>
               <Input
                 id="phoneNumber"
                 className={styles.inputMaxWidth}
                 value={userData.telephone}
-                onChange={(e) => handleInputChange("telephone", e.target.value)}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  // Allow only numbers and ensure the length is 10 digits
+                  if (/^\d{0,10}$/.test(value)) {
+                    handleInputChange("telephone", value);
+                  }
+                }}
                 disabled={!isEditing}
+                maxLength={10} // Ensure the input field doesn't accept more than 10 characters
               />
             </div>
 
