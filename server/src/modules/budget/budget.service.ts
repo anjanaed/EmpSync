@@ -35,36 +35,74 @@ export class BudgetService {
         }
     }
     
-    async createBudget(data: Prisma.BudgetCreateInput) {
+    async createBudget(data: Prisma.BudgetCreateInput | Prisma.BudgetCreateInput[]) {
         try {
-            // Validate required fields
-            if (!data.name || typeof data.name !== 'string') {
-                throw new HttpException('Valid budget name is required', HttpStatus.BAD_REQUEST);
+            if (Array.isArray(data)) {
+                // Handle multiple budget creation
+                const budgets = await Promise.all(
+                    data.map(async (budgetData) => {
+                        // Validate each budget
+                        if (!budgetData.name || typeof budgetData.name !== 'string') {
+                            throw new HttpException('Valid budget name is required', HttpStatus.BAD_REQUEST);
+                        }
+
+                        const budgetAmount = Number(budgetData.budgetAmount);
+                        if (isNaN(budgetAmount) || budgetAmount <= 0) {
+                            throw new HttpException('Valid budget amount greater than 0 is required', HttpStatus.BAD_REQUEST);
+                        }
+
+                        const budgetDate = budgetData.budgetDate ? new Date(budgetData.budgetDate) : new Date();
+                        if (isNaN(budgetDate.getTime())) {
+                            throw new HttpException('Invalid budget date', HttpStatus.BAD_REQUEST);
+                        }
+
+                        return {
+                            name: budgetData.name,
+                            budgetAmount: budgetAmount,
+                            budgetDate: budgetDate
+                        };
+                    })
+                );
+
+                // Create all budgets in a transaction
+                const createdBudgets = await this.database.$transaction(
+                    budgets.map(budget => 
+                        this.database.budget.create({ data: budget })
+                    )
+                );
+
+                return createdBudgets;
+            } else {
+                // Original single budget creation logic
+                // Validate required fields
+                if (!data.name || typeof data.name !== 'string') {
+                    throw new HttpException('Valid budget name is required', HttpStatus.BAD_REQUEST);
+                }
+
+                // Convert budgetAmount to number if it's a string
+                const budgetAmount = Number(data.budgetAmount);
+                if (isNaN(budgetAmount) || budgetAmount <= 0) {
+                    throw new HttpException('Valid budget amount greater than 0 is required', HttpStatus.BAD_REQUEST);
+                }
+
+                // Ensure budgetDate is a valid date
+                const budgetDate = data.budgetDate ? new Date(data.budgetDate) : new Date();
+                if (isNaN(budgetDate.getTime())) {
+                    throw new HttpException('Invalid budget date', HttpStatus.BAD_REQUEST);
+                }
+
+                const createData = {
+                    name: data.name,
+                    budgetAmount: budgetAmount,
+                    budgetDate: budgetDate
+                };
+
+                const createdBudget = await this.database.budget.create({
+                    data: createData
+                });
+
+                return createdBudget;
             }
-
-            // Convert budgetAmount to number if it's a string
-            const budgetAmount = Number(data.budgetAmount);
-            if (isNaN(budgetAmount) || budgetAmount <= 0) {
-                throw new HttpException('Valid budget amount greater than 0 is required', HttpStatus.BAD_REQUEST);
-            }
-
-            // Ensure budgetDate is a valid date
-            const budgetDate = data.budgetDate ? new Date(data.budgetDate) : new Date();
-            if (isNaN(budgetDate.getTime())) {
-                throw new HttpException('Invalid budget date', HttpStatus.BAD_REQUEST);
-            }
-
-            const createData = {
-                name: data.name,
-                budgetAmount: budgetAmount,
-                budgetDate: budgetDate
-            };
-
-            const createdBudget = await this.database.budget.create({
-                data: createData
-            });
-
-            return createdBudget;
 
         } catch (error) {
             console.error('Budget creation error:', error);

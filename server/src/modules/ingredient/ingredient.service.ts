@@ -561,16 +561,20 @@ export class IngredientsService {
           ingredients: {
             create: [
               ...priority1Orders.map(ing => ({
-                ...ing,
-                id: ing.id.toString(), // Convert id to string
+                name: ing.name,
                 price_per_unit: parseFloat(ing.price_per_unit.toString()),
-                quantity: parseInt(ing.quantity.toString())
+                quantity: parseInt(ing.quantity.toString()),
+                type: ing.type,
+                priority: ing.priority,
+                totalCost: ing.totalCost
               })),
               ...otherPriorityOrders.map(ing => ({
-                ...ing,
-                id: ing.id.toString(), // Convert id to string
+                name: ing.name,
                 price_per_unit: parseFloat(ing.price_per_unit.toString()),
-                quantity: parseInt(ing.quantity.toString())
+                quantity: parseInt(ing.quantity.toString()),
+                type: ing.type,
+                priority: ing.priority,
+                totalCost: ing.totalCost
               }))
             ]
           }

@@ -152,20 +152,30 @@ const Order = () => {
                 })
             });
 
-            const data = await response.json(); // Parse response first
+            const data = await response.json();
 
             if (response.ok) {
                 message.success("Order placed successfully");
                 setIsBudgetModalVisible(false);
-                // Refresh ingredients after successful order
                 await fetchIngredients();
             } else {
-                // Server returned an error message
-                throw new Error(data.message || 'Failed to place order');
+                // More detailed error handling
+                const errorMessage = data.message || data.error || 'Failed to place order';
+                throw new Error(errorMessage);
             }
         } catch (error) {
             console.error("Error placing order:", error);
-            message.error(error.message || "Failed to place order");
+            
+            // More user-friendly error messages
+            if (error.message.includes('budget')) {
+                message.error("Budget-related error. Please check if the budget is valid.");
+            } else if (!navigator.onLine) {
+                message.error("Network connection error. Please check your internet connection.");
+            } else {
+                message.error("Failed to place order. Please try again later.");
+            }
+        } finally {
+            setLoading(false); // Reset loading state
         }
     };
 
