@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Input, Select, Radio } from "antd"; // Import Ant Design Input, Select, and Radio
 import { Camera, User } from "lucide-react";
+import axios from "axios";
 import styles from "./Userprofile.module.css";
 
 const { TextArea } = Input; // Destructure TextArea from Input
@@ -28,9 +29,32 @@ export default function UserProfile({ user }) {
     weight: user.weight || "N/A",
   });
 
-  const handleEditToggle = () => {
+  const handleEditToggle = async () => {
     if (isEditing) {
-      // Save data logic here
+      try {
+        // API call to update user data in the database
+        const response = await axios.put(
+          `${import.meta.env.VITE_BASE_URL}/user/${userData.employeeId}`,
+          {
+            name: userData.fullName,
+            dob: userData.birthday,
+            telephone: userData.phoneNumber,
+            gender: userData.gender,
+            address: userData.address,
+            language: userData.preferredLanguage,
+            height: parseInt(userData.height, 10),
+            weight: parseInt(userData.weight, 10),
+          }
+        );
+
+        if (response.status === 200) {
+          alert("User data updated successfully!");
+          window.location.reload(); // Reload the page
+        }
+      } catch (error) {
+        console.error("Error updating user data:", error);
+        alert("Failed to update user data. Please try again.");
+      }
     }
     setIsEditing(!isEditing);
   };
