@@ -31,6 +31,21 @@
   letter-spacing: 0.5px;
 }
 
+/* Add these new styles after the .title class */
+.titleContainer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.confirmIcon {
+  margin-left: 10px;
+  color: #40af09;
+  font-size: 23px;
+  display: flex;
+  align-items: center;
+}
+
 .dateActions {
   display: flex;
   position: relative;
@@ -193,7 +208,7 @@
   height: 240px;
   color: #999;
 }
-/* Replace the existing updateMenuBtn styles with these */
+
 .updateMenuBtn {
   display: flex;
   justify-content: center;
@@ -402,8 +417,8 @@
 }
 
 .saveButton:hover:not(:disabled) {
-  background-color: #ee1010;
-  border-color: #ee1010;
+  background-color: #ee1010 !important;
+  border-color: #ee1010 !important;
 }
 
 /* Responsive Styles */
