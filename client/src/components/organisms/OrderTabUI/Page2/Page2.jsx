@@ -1,70 +1,85 @@
 import React, { useState } from 'react';
 import { Typography, Card, Spin } from 'antd'; // Import Spin for loading animation
-import styles from './Page2.module.css';
-import DateAndTime from '../DateAndTime/DateAndTime';
-import translations from "../../../../utils/translations";
-import FingerPrint from "../../../atoms/FingerPrint/FingerPrint";
+import styles from './Page2.module.css'; // Import CSS module for styling
+import DateAndTime from '../DateAndTime/DateAndTime'; // Import DateAndTime component
+import translations from "../../../../utils/translations"; // Import language translations
+import FingerPrint from "../../../atoms/FingerPrint/FingerPrint"; // Import FingerPrint component
 
+// Page2 component for user authentication via fingerprint or PIN
 const Page2 = ({ carouselRef, language, setUsername, setUserId }) => {
-    const [errorMessage, setErrorMessage] = useState(""); // State for error messages
+    // State for error messages
+    const [errorMessage, setErrorMessage] = useState("");
+    // State for PIN input
     const [pin, setPin] = useState("");
-    const text = translations[language]; // Use the imported translations
+    // Access translations based on selected language
+    const text = translations[language];
+    // State to indicate fingerprint scanning status
     const [scanning, setScanning] = useState(false);
-    const [showFingerprint, setShowFingerprint] = useState(true); // State to toggle views
-    const [loading, setLoading] = useState(false); // State for loading animation
+    // State to toggle between fingerprint and PIN input views
+    const [showFingerprint, setShowFingerprint] = useState(true);
+    // State to control loading animation
+    const [loading, setLoading] = useState(false);
 
+    // Handle PIN digit input
     const handlePinInput = (digit) => {
         if (pin.length < 4) {
-            setPin(pin + digit);
+            setPin(pin + digit); // Append digit to PIN
         }
     };
 
+    // Handle backspace to remove last PIN digit
     const handleBackspace = () => {
-        setPin(pin.slice(0, -1));
+        setPin(pin.slice(0, -1)); // Remove last character
     };
 
+    // Handle fingerprint authentication
     const handleFingerprint = () => {
-        setScanning(true);
+        setScanning(true); // Show scanning animation
         setTimeout(() => {
-            setScanning(false);
+            setScanning(false); // Stop scanning
             carouselRef.current.goTo(2); // Navigate to Page 3
-        }, 3000);
+        }, 3000); // Simulate 3-second scan
     };
 
+    // Handle PIN submission and user authentication
     const handlePinSubmit = async () => {
         if (pin.length === 4) {
-            setScanning(true);
+            setScanning(true); // Show loading state
             try {
+                // Fetch user data based on PIN
                 const response = await fetch(`http://localhost:3000/user/${pin}`);
                 if (!response.ok) {
                     throw new Error("User not found");
                 }
                 const user = await response.json();
-                setUsername(user.name); // Pass the username to OrderTab.jsx
-                setUserId(user.id); // Pass the user ID to OrderTab.jsx
-                console.log("Retrieved Username:", user.name); // Log the username
-                console.log("Retrieved User ID:", user.id); // Log the user ID
+                setUsername(user.name); // Set username in parent component
+                setUserId(user.id); // Set user ID in parent component
+                console.log("Retrieved Username:", user.name); // Log username
+                console.log("Retrieved User ID:", user.id); // Log user ID
 
-                // Navigate to Page 3
+                // Navigate to Page 3 after a short delay
                 setTimeout(() => {
-                    carouselRef.current.goTo(2); // Navigate to Page 3
+                    carouselRef.current.goTo(2);
                 }, 100);
             } catch (error) {
                 console.error("Error fetching user:", error);
-                setErrorMessage(text.invalidPin); // Set the error message
-                setTimeout(() => setErrorMessage(""), 2000); // Clear the error message after 3 seconds
+                setErrorMessage(text.invalidPin); // Display error message
+                setTimeout(() => setErrorMessage(""), 2000); // Clear error after 2 seconds
             } finally {
-                setScanning(false);
+                setScanning(false); // Stop loading state
             }
         }
     };
 
+    // Render the authentication page
     return (
-        <Spin spinning={loading} tip="Loading..."> {/* Show loading animation */}
+        <Spin spinning={loading} tip="Loading..."> {/* Show loading animation when loading */}
+            {/* Date and time display */}
             <div className={styles.dateAndTime}>
                 <DateAndTime />
             </div>
 
+            {/* Main card for authentication interface */}
             <div>
                 <Card className={styles.card}>
                     <Typography.Title level={1}>
@@ -73,12 +88,13 @@ const Page2 = ({ carouselRef, language, setUsername, setUserId }) => {
                     </Typography.Title>
                     <div className={styles.content}>
                         {showFingerprint ? (
+                            // Fingerprint authentication section
                             <div className={styles.fingerprintSection}>
                                 <div
                                     className={styles.fingerprintScanner}
                                     onClick={handleFingerprint}
                                 >
-                                    <FingerPrint />
+                                    <FingerPrint /> {/* Fingerprint icon */}
                                 </div>
                                 <p>
                                     {scanning ? (
@@ -87,10 +103,11 @@ const Page2 = ({ carouselRef, language, setUsername, setUserId }) => {
                                         </span>
                                     ) : (
                                         <span className={styles.SectionTexts}>
-                                            {text.fingerprint}
+                                            {text.fingerprint} {/* Prompt for fingerprint scan */}
                                         </span>
                                     )}
                                 </p>
+                                {/* Button to switch to PIN input */}
                                 <button
                                     className={styles.toggleButton}
                                     onClick={() => setShowFingerprint(false)}
@@ -99,16 +116,18 @@ const Page2 = ({ carouselRef, language, setUsername, setUserId }) => {
                                 </button>
                             </div>
                         ) : (
+                            // PIN input section
                             <div className={styles.pinSection}>
                                 <div className={styles.SectionTexts}>
-                                    {text.enterPin}
+                                    {text.enterPin} {/* Prompt for PIN entry */}
                                 </div>
                                 <Typography.Text
                                     className={styles.pinInput}
-                                    strong // Makes the text bold
+                                    strong // Bold text for PIN display
                                 >
-                                    {pin.padEnd(4, '•')} {/* Display the PIN with placeholders for missing digits */}
+                                    {pin.padEnd(4, '•')} {/* Display PIN with dots for missing digits */}
                                 </Typography.Text>
+                                {/* Numeric keypad for PIN input */}
                                 <div className={styles.pinButtons}>
                                     {[1, 2, 3, 4, 5, 6, 7, 8, 9, 0].map((digit) => (
                                         <button
@@ -121,15 +140,16 @@ const Page2 = ({ carouselRef, language, setUsername, setUserId }) => {
                                             {digit}
                                         </button>
                                     ))}
+                                    {/* Button to append "E" to PIN */}
                                     <button
                                         type="default"
                                         shape="circle"
                                         size="large"
-                                        onClick={() => handlePinInput("E")} // Append "E" to the pin
+                                        onClick={() => handlePinInput("E")}
                                     >
                                         E
                                     </button>
-
+                                    {/* Backspace button */}
                                     <button
                                         type="default"
                                         shape="circle"
@@ -139,14 +159,15 @@ const Page2 = ({ carouselRef, language, setUsername, setUserId }) => {
                                         ⮌
                                     </button>
                                 </div>
+                                {/* Submit PIN button */}
                                 <button
                                     className={styles.toggleButton}
                                     onClick={handlePinSubmit}
-                                    disabled={pin.length !== 4}
+                                    disabled={pin.length !== 4} // Disable until PIN is 4 characters
                                 >
                                     {text.submit}
                                 </button>
-
+                                {/* Button to switch to fingerprint authentication */}
                                 <button
                                     className={styles.toggleButton}
                                     onClick={() => setShowFingerprint(true)}
@@ -157,6 +178,7 @@ const Page2 = ({ carouselRef, language, setUsername, setUserId }) => {
                         )}
                     </div>
                     <br />
+                    {/* Back button to reload the page */}
                     <div className={styles.backButtonContainer}>
                         <button
                             className={styles.backButton}
@@ -169,7 +191,7 @@ const Page2 = ({ carouselRef, language, setUsername, setUserId }) => {
                 </Card>
             </div>
 
-            {/* Move the errorPopup outside the Card */}
+            {/* Error message popup */}
             {errorMessage && (
                 <div className={styles.errorPopup}>
                     {errorMessage}
@@ -179,4 +201,5 @@ const Page2 = ({ carouselRef, language, setUsername, setUserId }) => {
     );
 };
 
+// Export the Page2 component
 export default Page2;
