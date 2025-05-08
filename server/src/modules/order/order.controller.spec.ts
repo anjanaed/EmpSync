@@ -38,7 +38,6 @@ describe('OrdersController', () => {
   describe('create', () => {
     it('should create an order successfully', async () => {
       const dto: Prisma.OrderCreateInput = {
-        orderNumber: '12345',
         orderDate: new Date(),
         price: 100.0,
         employeeId: '1',
@@ -55,7 +54,6 @@ describe('OrdersController', () => {
 
       await expect(
         controller.create({
-          orderNumber: '12345',
           orderDate: new Date(),
           price: 100.0,
           employeeId: '1',
@@ -71,7 +69,6 @@ describe('OrdersController', () => {
       const mockOrders = [
         {
           id: 1,
-          orderNumber: '12345',
           orderDate: new Date(),
           price: 100.0,
           employeeId: '1',
@@ -95,7 +92,6 @@ describe('OrdersController', () => {
     it('should return an order by ID', async () => {
       const mockOrder = {
         id: 1,
-        orderNumber: '12345',
         orderDate: new Date(),
         price: 100.0,
         employeeId: '1',
@@ -117,7 +113,6 @@ describe('OrdersController', () => {
     it('should update an order if found', async () => {
       const mockOrder = {
         id: 1,
-        orderNumber: '12345',
         orderDate: new Date(),
         price: 100.0,
         employeeId: '1',
@@ -144,7 +139,6 @@ describe('OrdersController', () => {
     it('should delete an order if found', async () => {
       const mockOrder = {
         id: 1,
-        orderNumber: '12345',
         orderDate: new Date(),
         price: 100.0,
         employeeId: '1',
