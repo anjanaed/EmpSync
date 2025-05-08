@@ -27,9 +27,6 @@ import {
   faUtensils,
 } from "@fortawesome/free-solid-svg-icons";
 
-// Then in your JSX:
-<FontAwesomeIcon icon={faUtensils} className={styles.emptyIcon} />;
-
 // Import Firebase storage related functions
 import { getStorage, ref, deleteObject } from "firebase/storage";
 
@@ -51,8 +48,6 @@ const AvailableMeals = () => {
   const [fetchingIngredients, setFetchingIngredients] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(12); // Number of meals per page
-
-  // Initialize Firebase storage
   const storage = getStorage();
 
   const navigate = useNavigate();
@@ -103,9 +98,7 @@ const AvailableMeals = () => {
     if (!imageUrl) return true; // No image to delete
 
     try {
-      // Extract the file path from the URL
-      // This assumes your imageUrl is in a Firebase Storage format
-      // Example: https://firebasestorage.googleapis.com/v0/b/your-project.appspot.com/o/meals%2Fimage1.jpg?alt=media&token=abc123
+      // Extract the file path from the URL     
       const urlPath = decodeURIComponent(
         imageUrl.split("/o/")[1]?.split("?")[0]
       );
@@ -128,8 +121,8 @@ const AvailableMeals = () => {
     }
   };
 
-   // Add this new function for handling page changes
-   const handlePageChange = (page, size) => {
+  // Handle page changes
+  const handlePageChange = (page, size) => {
     setCurrentPage(page);
     setPageSize(size);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -150,7 +143,6 @@ const AvailableMeals = () => {
 
       // Check if the meal has ingredients and delete them first
       if (meal.ingredients && meal.ingredients.length > 0) {
-        // Option 1: Delete ingredients one by one
         for (const ingredient of meal.ingredients) {
           try {
             const ingredientResponse = await fetch(
@@ -160,7 +152,7 @@ const AvailableMeals = () => {
                 headers: {
                   "Content-Type": "application/json",
                 },
-                credentials: "include", // Important for cookies/auth headers
+                credentials: "include", // auth headers
               }
             );
 
@@ -173,17 +165,15 @@ const AvailableMeals = () => {
             console.error("Error deleting meal ingredient:", ingredientError);
           }
         }
-
-        
       }
 
-      // Then delete the meal from the database
+      // delete the meal from the database
       const response = await fetch(`http://localhost:3000/meal/${meal.id}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
         },
-        credentials: "include", // Important for cookies/auth headers
+        credentials: "include", 
       });
 
       if (!response.ok) {
@@ -194,7 +184,7 @@ const AvailableMeals = () => {
         );
       }
 
-      // Remove meal from state if deletion was successful
+      
       setMeals(meals.filter((m) => m.id !== meal.id));
       message.success("Meal deleted successfully");
     } catch (error) {
@@ -209,31 +199,12 @@ const AvailableMeals = () => {
     navigate("/edit-meal", { state: { meal } });
   };
 
-  // Update the fetchIngredientDetails function to work with the new schema
-  const fetchIngredientDetails = async (ingredientId) => {
-    try {
-      const response = await fetch(
-        `http://localhost:3000/Ingredients/${ingredientId}`
-      );
-      if (!response.ok) {
-        throw new Error(`Failed to fetch ingredient ${ingredientId}`);
-      }
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      console.error(`Error fetching ingredient ${ingredientId}:`, error);
-      return null;
-    }
-  };
-
-  // Update the showIngredientsModal function
   const showIngredientsModal = async (meal) => {
     setSelectedMeal(meal);
     setIngredientsModalVisible(true);
     setFetchingIngredients(true);
 
     try {
-      // No need to fetch ingredients separately since they're included in the meal data
       const detailsMap = {};
       if (meal.ingredients && meal.ingredients.length > 0) {
         meal.ingredients.forEach((item) => {
@@ -279,7 +250,7 @@ const AvailableMeals = () => {
     return matchesSearch && matchesCategory;
   });
 
-  // Add pagination logic here
+  // Calculate paginated meals from filtered meals
   const paginatedMeals = filteredMeals.slice(
     (currentPage - 1) * pageSize,
     currentPage * pageSize
@@ -463,7 +434,6 @@ const AvailableMeals = () => {
                   pageSize={pageSize}
                   total={filteredMeals.length}
                   onChange={handlePageChange}
-                  
                 />
               </div>
             </Col>
@@ -471,7 +441,7 @@ const AvailableMeals = () => {
         </Row>
       )}
 
-      {/* {Ingredient modal} */}
+      {/* Ingredients modal */}
       <Modal
         title={
           selectedMeal
