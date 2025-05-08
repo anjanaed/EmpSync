@@ -5,61 +5,10 @@ import { LeftOutlined, FilterOutlined, PlusOutlined, CheckCircleOutlined, CloseO
 import { motion } from "framer-motion";
 import styles from "./Page3.module.css";
 import DateAndTime from "../DateAndTime/DateAndTime";
-
+import translations from "../../../../utils/translations";
 
 const { Content } = Layout;
 const { Title, Text } = Typography;
-
-const translations = {
-    english: {
-        orderSuccess: "Your order has been placed successfully!",
-        orderFailed: "Failed to place your order. Please try again.",
-        title: "Order Your Meal",
-        back: "Change Language",
-        today: "Today",
-        tomorrow: "Tomorrow",
-        breakfast: "Breakfast",
-        lunch: "Lunch",
-        dinner: "Dinner",
-        filter: "Personalized Suggestions",
-        yourOrder: "Your Order",
-        noMealsSelected: "No meals selected.",
-        placeOrder: "Place Order",
-        add: "Add",
-    },
-    sinhala: {
-        orderSuccess: "ඔබේ ඇණවුම සාර්ථකව ඉදිරිපත් කර ඇත!",
-        orderFailed: "ඔබේ ඇණවුම ඉදිරිපත් කිරීමට අසමත් විය. කරුණාකර නැවත උත්සාහ කරන්න.",
-        title: "ඔබේ ආහාරය ඇණවුම් කරන්න",
-        back: "භාෂාව වෙනස් කරන්න",
-        today: "අද",
-        tomorrow: "හෙට",
-        breakfast: "උදේ ආහාරය",
-        lunch: "දවල් ආහාරය",
-        dinner: "රාත්‍රී ආහාරය",
-        filter: "පුද්ගලාරෝපිත යෝජනා",
-        yourOrder: "ඔබේ ඇණවුම",
-        noMealsSelected: "ආහාරයක් තෝරාගෙන නැත.",
-        placeOrder: "ඇණවුම ඉදිරිපත් කරන්න",
-        add: "එකතු කරන්න",
-    },
-    tamil: {
-        orderSuccess: "உங்கள் ஆர்டர் வெற்றிகரமாக சமர்ப்பிக்கப்பட்டது!",
-        orderFailed: "உங்கள் ஆர்டரை சமர்ப்பிக்க முடியவில்லை. தயவுசெய்து மீண்டும் முயற்சிக்கவும்.",
-        title: "உங்கள் உணவை ஆர்டர் செய்யவும்",
-        back: "மொழியை மாற்றவும்",
-        today: "இன்று",
-        tomorrow: "நாளை",
-        breakfast: "காலை உணவு",
-        lunch: "மதிய உணவு",
-        dinner: "இரவு உணவு",
-        filter: "AI பரிந்துரைகள்",
-        yourOrder: "உங்கள் ஆர்டர்",
-        noMealsSelected: "உணவுகள் தேர்ந்தெடுக்கப்படவில்லை.",
-        placeOrder: "ஆர்டர் செய்யவும்",
-        add: "சேர்க்கவும்",
-    },
-};
 
 const Page3 = ({ carouselRef, language = "english", username, userId }) => {
     const navigate = useNavigate();
@@ -71,9 +20,8 @@ const Page3 = ({ carouselRef, language = "english", username, userId }) => {
     const [showError, setShowError] = useState(false); // New state for error card
     const [meals, setMeals] = useState([]);
     const [allMeals, setAllMeals] = useState([]);
-
-
-
+    const text = translations[language];
+    
     useEffect(() => {
         // Set the current time
         const timer = setInterval(() => {
@@ -295,7 +243,7 @@ const Page3 = ({ carouselRef, language = "english", username, userId }) => {
             }, 3000);
         }
     };
-    const text = translations[language];
+
 
     return (
         <Layout className={styles.layout}>
