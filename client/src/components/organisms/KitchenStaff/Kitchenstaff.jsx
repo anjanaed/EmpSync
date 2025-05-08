@@ -84,10 +84,6 @@ const Dashbord = () => {
           <p className={styles.time}>{formattedTime}</p>
           <div className={styles.dateControls}>
             <button className={styles.dateButton}>Tomorrow</button>
-            <DatePicker
-              className={styles.datePicker}
-              placeholder="Select Date"
-            />
             <button
               className={styles.gotoDashboardButton}
               onClick={() => navigate("/serving")}
