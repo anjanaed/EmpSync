@@ -1,205 +1,241 @@
+/* Main container for the profile page */
 .profileContainer {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 1.5rem;
-  }
-  
-  .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1.5rem;
-  }
-  
-  .title {
-    font-size: clamp(1.5rem, 2vw, 1.75rem);
-    font-weight: 600;
-    color: #333;
-  }
-  
-  .editButton {
-    min-width: 120px;
-  }
-  
-  .content {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
-  
-  .profileCard {
-    width: 100%;
-    max-width: 100%;
-    height: auto;
-    background-color: white;
-    border-radius: 0.5rem;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+/* Header section with title and edit/save button */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+/* Styling for the profile page title */
+.title {
+  font-size: clamp(1.5rem, 2vw, 1.75rem);
+  font-weight: 600;
+  color: #333;
+}
+
+/* Styling for the edit/save button */
+.editButton {
+  min-width: 120px;
+}
+
+/* Content area for profile card and form */
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Profile card containing image section and form */
+.profileCard {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  background-color: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  padding: 1rem;
+}
+
+/* Section for profile image and fixed data */
+.profileImageSection {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  margin-bottom: 3rem;
+  flex-wrap: wrap;
+}
+
+/* Styling for the profile avatar image */
+.profileAvatar {
+  width: 100px !important;
+  height: 100px;
+  border: 3px solid #f3f4f6;
+  border-radius: 50%;
+}
+
+/* Container for fixed user data (non-editable fields) */
+.fixedData {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 1rem;
+  color: #555;
+}
+
+/* Remove default margin from fixed data paragraphs */
+.fixedData p {
+  margin: 0;
+}
+
+/* Controls for uploading a new profile image */
+.uploadControls {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-top: 1rem;
+}
+
+/* Styling for the upload button */
+.uploadButton {
+  margin-top: 0.5rem;
+}
+
+/* Hide the file input element */
+.fileInput {
+  display: none;
+}
+
+/* Styling for tabs (if used) */
+.tabs {
+  margin-top: 1.5rem;
+}
+
+/* Content area within tabs */
+.tabContent {
+  padding: 1.5rem 0;
+}
+
+/* Grid layout for the form fields */
+.formGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  margin-left: 0;
+}
+
+/* Inline group for form fields that need to be side-by-side */
+.inlineGroup {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+/* Styling for individual form groups (label + input) */
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* Styling for textarea fields */
+.textarea {
+  min-height: 100px;
+}
+
+/* Styling for radio button groups */
+.radioGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding-top: 0.5rem;
+}
+
+/* Styling for read-only input fields */
+.readOnlyField {
+  background-color: #f9fafb;
+  opacity: 0.8;
+}
+
+/* Container for currency input fields */
+.currencyInput {
+  position: relative;
+}
+
+/* Footer section for the card */
+.cardFooter {
+  border-top: 1px solid #e5e7eb;
+  padding-top: 1.5rem;
+}
+
+/* Container for action buttons */
+.actionButtons {
+  display: flex;
+  gap: 1rem;
+  margin-left: auto;
+}
+
+/* Maximum width for input fields */
+.inputMaxWidth {
+  max-width: 300px;
+  width: 100%;
+  min-height: 35px;
+}
+
+/* Responsive styles for smaller screens (max-width: 640px) */
+@media (max-width: 640px) {
+  /* Adjust padding for profile container */
+  .profileContainer {
     padding: 1rem;
   }
-  
-  .profileImageSection {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    gap: 2rem;
-    margin-bottom: 3rem;
-    flex-wrap: wrap;
-  }
-  
-  .profileAvatar {
-    width: 100px !important;
-    height: 100px;
-    border: 3px solid #f3f4f6;
-    border-radius: 50%;
-  }
-  
-  .fixedData {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    font-size: 1rem;
-    color: #555;
-  }
-  
-  .fixedData p {
-    margin: 0;
-  }
-  
-  .uploadControls {
-    display: flex;
+
+  /* Stack header elements vertically */
+  .header {
     flex-direction: column;
     align-items: flex-start;
-    margin-top: 1rem;
+    gap: 1rem;
   }
-  
-  .uploadButton {
-    margin-top: 0.5rem;
+
+  /* Make edit button full-width */
+  .editButton {
+    width: 100%;
   }
-  
-  .fileInput {
-    display: none;
+
+  /* Stack profile image and fixed data vertically */
+  .profileImageSection {
+    flex-direction: column;
+    text-align: center;
   }
-  
-  .tabs {
-    margin-top: 1.5rem;
+
+  /* Reduce avatar size */
+  .profileAvatar {
+    width: 80px;
+    height: 80px;
   }
-  
-  .tabContent {
-    padding: 1.5rem 0;
+
+  /* Reduce font size for fixed data */
+  .fixedData {
+    font-size: 0.9rem;
   }
-  
+
+  /* Ensure form grid remains single-column */
   .formGrid {
-    display: grid;
     grid-template-columns: 1fr;
-    gap: 1.5rem;
     margin-left: 0;
   }
-  
-  .inlineGroup {
-    display: flex;
-    gap: 1rem;
-    flex-wrap: wrap;
-  }
-  
+
+  /* Ensure form groups span full width */
   .formGroup {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
+    grid-column: span 1;
   }
-  
-  .textarea {
-    min-height: 100px;
-  }
-  
-  .radioGroup {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    padding-top: 0.5rem;
-  }
-  
-  .readOnlyField {
-    background-color: #f9fafb;
-    opacity: 0.8;
-  }
-  
-  .currencyInput {
-    position: relative;
-  }
-  
-  .cardFooter {
-    border-top: 1px solid #e5e7eb;
-    padding-top: 1.5rem;
-  }
-  
-  .actionButtons {
-    display: flex;
-    gap: 1rem;
-    margin-left: auto;
-  }
-  
-  .inputMaxWidth {
-    max-width: 300px;
-    width: 100%;
-    min-height: 35px;
-  }
-  
-  /* Responsive styles */
-  @media (max-width: 640px) {
-    .profileContainer {
-      padding: 1rem;
-    }
-  
-    .header {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 1rem;
-    }
-  
-    .editButton {
-      width: 100%;
-    }
-  
-    .profileImageSection {
-      flex-direction: column;
-      text-align: center;
-    }
-  
-    .profileAvatar {
-      width: 80px;
-      height: 80px;
-    }
-  
-    .fixedData {
-      font-size: 0.9rem;
-    }
-  
-    .formGrid {
-      grid-template-columns: 1fr;
-      margin-left: 0;
-    }
-  
-    .formGroup {
-      grid-column: span 1;
-    }
-  }
-  
-  @media (min-width: 641px) {
-    .formGrid {
-      grid-template-columns: repeat(3, 1fr);
-      margin-left: 50px;
-    }
-  }
-  
+}
 
-  .errorText {
-    color: red;
-    font-size: 0.875rem;
-    margin-top: 0.25rem;
+/* Responsive styles for larger screens (min-width: 641px) */
+@media (min-width: 641px) {
+  /* Use three-column grid for form fields */
+  .formGrid {
+    grid-template-columns: repeat(3, 1fr);
+    margin-left: 50px;
   }
+}
 
-  .editButton:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
-  }
+/* Styling for error text below input fields */
+.errorText {
+  color: red;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+/* Styling for disabled edit button */
+.editButton:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
