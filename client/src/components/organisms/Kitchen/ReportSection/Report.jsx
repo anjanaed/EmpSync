@@ -19,32 +19,22 @@ const Report = () => {
 
   return (
     <div className={styles.container}>
-      {/* Analysis Section */}
+  
       <div className={styles.analysisContainer}>
         <h2 className={styles.heading}> Analysis</h2>
 
         <div className={styles.cardsContainer}>
           <Card title="High Demand Meals" className={styles.card}>
-            {highDemandMeals.map((meal) => (
-              <div key={meal.name} className={styles.mealItem}>
-                <span>{meal.name}</span>
-                <Progress percent={meal.percentage} showInfo={false} strokeColor="rgb(224, 0, 0)" />
-              </div>
-            ))}
+            
           </Card>
 
           <Card title="Low Demand Meals" className={styles.card}>
-            {lowDemandMeals.map((meal) => (
-              <div key={meal.name} className={styles.mealItem}>
-                <span>{meal.name}</span>
-                <Progress percent={meal.percentage} showInfo={false} strokeColor="rgb(224, 0, 0)" />
-              </div>
-            ))}
+            
           </Card>
         </div>
       </div>
 
-      {/* Report Section */}
+  
       <div className={styles.reportContainer}>
         <div className={styles.reportHeader}>
           <div className={styles.iconTitle}>
@@ -77,9 +67,7 @@ const Report = () => {
         <div className={styles.reportPanel}>
           <div className={styles.reportContent}>
             <div className={styles.reportIconContainer}>
-              {/* <div className={styles.circleIcon}> */}
-                {/* <span className={styles.chartIcon}>📊</span> */}
-              {/* </div> */}
+              
             </div>
             <h3 className={styles.reportTitle}>Meal Consumption Report</h3>
             <p className={styles.reportDescription}>

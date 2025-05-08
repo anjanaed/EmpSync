@@ -463,8 +463,7 @@ const AvailableMeals = () => {
                   pageSize={pageSize}
                   total={filteredMeals.length}
                   onChange={handlePageChange}
-                  // showSizeChanger
-                  // showTotal={(total, range) => `${range[0]}-${range[1]} of ${total} meals`}
+                  
                 />
               </div>
             </Col>
