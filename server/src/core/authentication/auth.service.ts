@@ -10,6 +10,7 @@ export class AuthService {
   clientId = process.env.AUTH0_CLIENT_ID;
   clientSecret = process.env.AUTH0_CLIENT_SECRET;
 
+ // Method to log in a user with Auth0 using username and password
   async loginWithAuth0(username: string, password: string) {
     try {
       const response = await axios.post(
@@ -28,22 +29,23 @@ export class AuthService {
           headers: { 'Content-Type': 'application/json' },
         },
       );
-      return response.data;
+      return response.data;// Return the response data on success
     } catch (error) {
       console.error(
-        'Error during Auth0 login:',
+        'Error during Auth0 login:',// Log the error
         error.response?.data || error.message,
       );
       throw new HttpException(
-        error.response?.data?.error_description ||
+        error.response?.data?.error_description || // Use error description if available
           'Failed to authenticate with Auth0',
         error.response?.status || HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
   }
-
+  // Method to delete an Auth0 user by their email
   async deleteAuth0UserByEmail(email: string) {
     try {
+      // Step 1: Obtain a management API token
       const tokenRes = await axios.post(
         `https://${this.url}/oauth/token`, // Use the env variable for the URL
         {
@@ -56,6 +58,7 @@ export class AuthService {
 
       const mgmtToken = tokenRes.data.access_token;
 
+      // Step 2: Retrieve the user by email
       const usersRes = await axios.get(
         `https://${this.url}/api/v2/users-by-email?email=${encodeURIComponent(email)}`,
         {
@@ -68,18 +71,19 @@ export class AuthService {
       const user = usersRes.data[0];
       const userId = user.user_id;
 
+      // Step 3: Delete the user by their ID
       await axios.delete(
         `https://${this.url}/api/v2/users/${userId}`,
         {
           headers: {
-            Authorization: `Bearer ${mgmtToken}`,
+            Authorization: `Bearer ${mgmtToken}`,// Authorization header with management token
           },
         },
       );
-      console.log(`User ${userId} deleted`)
+      console.log(`User ${userId} deleted`) // Log success message
     } catch (error) {
       console.error(
-        'Error deleting user from Auth0:',
+        'Error deleting user from Auth0:',// Log the error
         error.response?.data || error.message,
       );
     }
