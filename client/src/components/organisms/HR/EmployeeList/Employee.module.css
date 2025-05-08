@@ -65,7 +65,6 @@
   margin-right: 1vw;
 }
 
-
 .headRight select {
   font-size: 1vw;
   padding: 9px;
@@ -107,9 +106,8 @@ Table {
   background-color: rgb(245, 245, 245);
 }
 
-@media(max-width:768px){
-
-  .headLeft{
+@media (max-width: 768px) {
+  .headLeft {
     font-size: 15px;
   }
 }
