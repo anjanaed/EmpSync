@@ -56,29 +56,33 @@ const Dashbord = () => {
   // Render content based on the active tab
   const renderTabContent = () => {
     const meals = mealData[activeTab] || [];
-    return meals.map((meal) => (
-      <Card
-        key={meal.mealId}
-        hoverable
-        style={{ width: 240 }}
-        cover={
-          <img
-            alt={meal.name}
-            src={meal.imageUrl || "https://via.placeholder.com/240"} // Use Firebase image or fallback
-            style={{ height: 200 }} // Set image height to 300px
-          />
-        }
-      >
-        <Meta
-          title={`${meal.name} `}
-          description={
-            <span style={{ fontWeight: "bold", fontSize: "18px" }}>
-              Total Count: {meal.totalCount}
-            </span>
-          } // Make text bold and font size 18px
-        />
-      </Card>
-    ));
+    return (
+      <div className={styles.cardContainer}>
+        {meals.map((meal) => (
+          <Card
+            key={meal.mealId}
+            hoverable
+            style={{ width: 240 }}
+            cover={
+              <img
+                alt={meal.name}
+                src={meal.imageUrl || "https://via.placeholder.com/240"} // Use Firebase image or fallback
+                style={{ height: 240 }} // Set image height to 300px
+              />
+            }
+          >
+            <Meta
+              title={`${meal.name} `}
+              description={
+                <span style={{ fontWeight: "bold", fontSize: "18px" }}>
+                  Total Count: {meal.totalCount}
+                </span>
+              } // Make text bold and font size 18px
+            />
+          </Card>
+        ))}
+      </div>
+    );
   };
 
   return (
