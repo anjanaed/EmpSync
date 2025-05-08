@@ -65,12 +65,17 @@ const Dashbord = () => {
           <img
             alt={meal.name}
             src={meal.imageUrl || "https://via.placeholder.com/240"} // Use Firebase image or fallback
+            style={{ height: 200 }} // Set image height to 300px
           />
         }
       >
         <Meta
           title={`${meal.name} `}
-          description={`Total Count: ${meal.totalCount}`}
+          description={
+            <span style={{ fontWeight: "bold", fontSize: "18px" }}>
+              Total Count: {meal.totalCount}
+            </span>
+          } // Make text bold and font size 18px
         />
       </Card>
     ));
