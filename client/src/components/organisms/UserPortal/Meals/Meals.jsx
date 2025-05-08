@@ -92,21 +92,21 @@ const Meals = () => {
       message.error("Employee ID is missing. Please log in again.");
       return;
     }
-  
+
     // Store employee ID in local storage
     localStorage.setItem("employeeId", employeeId);
-  
+
     // Function to fetch orders and meal details
     const fetchOrders = async () => {
       try {
         // Fetch orders for the employee
         const response = await axios.get(`http://localhost:3000/orders?employeeId=${employeeId}`);
         const orders = response.data;
-  
+
         // Get today's date for filtering
         const today = new Date();
         today.setHours(0, 0, 0, 0); // Set time to the start of the day
-  
+
         // Filter current orders (not served and from today or later)
         const current = orders.filter((order) => {
           const orderDate = new Date(order.orderDate);
@@ -116,10 +116,10 @@ const Meals = () => {
             orderDate >= today
           );
         });
-  
+
         // Filter past orders (served)
         const past = orders.filter((order) => order.employeeId === employeeId && order.serve === true);
-  
+
         // Extract unique meal IDs from orders
         const mealIdCounts = orders.flatMap((order) =>
           Object.entries(order.meals || {}).map(([mealId, count]) => ({
@@ -127,9 +127,9 @@ const Meals = () => {
             count,
           }))
         );
-  
+
         const uniqueMealIds = [...new Set(mealIdCounts.map((item) => item.mealId))];
-  
+
         // Fetch meal details for unique meal IDs
         const mealResponses = await Promise.all(
           uniqueMealIds.map((mealId) =>
@@ -139,7 +139,7 @@ const Meals = () => {
               .catch(() => null)
           )
         );
-  
+
         // Create meal details map
         const mealDetailsMap = {};
         mealResponses.forEach((meal) => {
@@ -147,7 +147,7 @@ const Meals = () => {
             mealDetailsMap[meal.id] = meal.nameEnglish;
           }
         });
-  
+
         // Update state with fetched data
         setMealDetails(mealDetailsMap);
         setCurrentOrders(current);
@@ -157,7 +157,7 @@ const Meals = () => {
         message.error("Failed to fetch orders or meal details. Please try again.");
       }
     };
-  
+
     fetchOrders();
   }, [employeeId]);
 
@@ -226,7 +226,7 @@ const Meals = () => {
     <div style={{ margin: "20px" }}>
       <Title level={4}>Orders</Title>
       {/* Tabs for switching between current and past orders */}
-      <Tabs 
+      <Tabs
         defaultActiveKey="current"
         tabBarStyle={{ display: "flex", justifyContent: "center" }}
       >
@@ -251,10 +251,10 @@ const Meals = () => {
                       {order.breakfast
                         ? "Breakfast"
                         : order.lunch
-                        ? "Lunch"
-                        : order.dinner
-                        ? "Dinner"
-                        : "Unknown"}
+                          ? "Lunch"
+                          : order.dinner
+                            ? "Dinner"
+                            : "Unknown"}
                     </p>
                     <p>
                       <strong>Ordered At:</strong>{" "}
@@ -325,10 +325,10 @@ const Meals = () => {
                         {order.breakfast
                           ? "Breakfast"
                           : order.lunch
-                          ? "Lunch"
-                          : order.dinner
-                          ? "Dinner"
-                          : "Unknown"}
+                            ? "Lunch"
+                            : order.dinner
+                              ? "Dinner"
+                              : "Unknown"}
                       </p>
                       <p>
                         <strong>Ordered At:</strong>{" "}

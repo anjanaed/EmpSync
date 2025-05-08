@@ -58,18 +58,6 @@ const CustomDatePicker = ({ value, onChange, onClose }) => {
   return (
     <div className={styles.datePickerWrapper}>
       <ConfigProvider
-        theme={{
-          components: {
-            DatePicker: {
-              cellActiveWithRangeBg: "#fafafa",
-              cellHoverWithRangeBg: "#f0f0f0",
-              cellBgDisabled: "#f5f5f5",
-              cellInViewBg: "#ffffff",
-              cellSelectedBg: "#ff4d4f",
-              cellSelectedHoverBg: "#ff7875",
-            },
-          },
-        }}
       >
         <AntDatePicker
           value={internalValue}
