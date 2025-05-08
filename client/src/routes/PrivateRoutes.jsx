@@ -2,7 +2,7 @@ import React from "react";
 import { Route } from "react-router-dom";
 import ProtectedRoute from "../../src/guards/ProtectedRoutes";
 import LoginRole from "../components/Pages/Login/LoginAsPage/LoginRole";
-import Login from "../components/Pages/Login/LoginPage/Login";
+import Login from "../components/pages/Login/LoginPage/Login";
 
 // HR_ADMIN
 import EmployeePage from "../components/Pages/HR/EmployeePage/EmployeePage";
