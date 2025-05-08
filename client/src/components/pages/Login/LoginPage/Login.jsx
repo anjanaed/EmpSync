@@ -16,7 +16,7 @@ const redirectRoles = [
 
 const LoginPage = () => {
   const { login } = useAuth();
-  const [loading,setLoading]=useState(false)
+  const [loading, setLoading] = useState(false);
   const urL = import.meta.env.VITE_BASE_URL;
   const navigate = useNavigate();
 
@@ -25,7 +25,7 @@ const LoginPage = () => {
   };
 
   const handleLogin = async (username, password) => {
-    setLoading(true)
+    setLoading(true);
     try {
       const response = await axios.post(`${urL}/auth/login`, {
         username,
@@ -34,22 +34,18 @@ const LoginPage = () => {
 
       const { access_token, id_token } = response.data;
       await login({ access_token, id_token });
-
-
-      navigate("/loginrole")
-
+      navigate("/loginrole");
     } catch (error) {
       console.error("Login error:", error);
       message.error(`Login Failed: ${error.response.data.message}`);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false)
   };
 
-  if(loading){
-    return <Loading/>
+  if (loading) {
+    return <Loading />;
   }
-
-
 
   return (
     <div className={styles.loginContainer}>

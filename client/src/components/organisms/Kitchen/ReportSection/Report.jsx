@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Card, Progress } from "antd";
-import styles from "./reportSection.module.css";
+import styles from "./Report.module.css";
 
 const Report = () => {
   const [activeTab, setActiveTab] = useState("daily");

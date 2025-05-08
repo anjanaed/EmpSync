@@ -6,13 +6,14 @@ import {
   faBowlFood,
 } from "@fortawesome/free-solid-svg-icons";
 import { BellOutlined } from "@ant-design/icons";
+
 import NavBar from "../../../organisms/NavBar/NavBar";
+import Section from "../../../organisms/Kitchen/ReportSection/Report";
 import NotificationPanel from "../../../organisms/Kitchen/NotificationPanel/NotificationPanel";
 import { useNotifications } from "../../../../contexts/NotificationsContext";
 import styles from "../../../organisms/Kitchen/NotificationPanel/NotificationPanel.module.css";
-import MealSection from "../../../organisms/Kitchen/Meals/meals";
 
-const MealDash = () => {
+const Report = () => {
   const { getUnreadCount, toggleNotifications } = useNotifications();
 
   // Create notification menu item
@@ -55,13 +56,13 @@ const MealDash = () => {
             link: "/kitchen-report",
           },
 
-          notificationMenuItem, // Add the notification menu item
+          notificationMenuItem // Add the notification menu item
         ]}
-        Comp={MealSection}
+        Comp={Section}
       />
       <NotificationPanel /> {/* Add the notification panel */}
     </>
   );
 };
 
-export default MealDash;
+export default Report;
