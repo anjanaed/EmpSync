@@ -40,6 +40,11 @@ jobs:
           cd server
           npm install
 
+      - name: Reset Database
+        run: |
+          cd server
+          npx prisma migrate reset --force --skip-seed
+
       - name: Prisma Generate & Run Migrations 
         run: |
           cd server
