@@ -27,7 +27,7 @@ export class OrdersService {
     try {
       // Fetch all orders from the database
       const orders = await this.databaseService.order.findMany();
-      if (orders.length > 0) {
+      if (orders && orders.length > 0) {
         return orders; // Return orders if found
       } else {
         throw new HttpException('No Orders Found', HttpStatus.NOT_FOUND);
