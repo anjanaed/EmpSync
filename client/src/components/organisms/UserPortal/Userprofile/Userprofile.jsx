@@ -148,7 +148,7 @@ export default function UserProfile({ user }) {
               <Input.Password
                 id="password"
                 className={styles.inputMaxWidth}
-                value={userData.password || ""}
+                value={isEditing ? userData.password || "" : "••••••••••"} // Show 10 dots when not editing
                 onChange={(e) => handleInputChange("password", e.target.value)}
                 disabled={!isEditing}
               />
