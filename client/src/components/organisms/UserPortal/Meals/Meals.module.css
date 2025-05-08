@@ -1,9 +1,23 @@
 .cartContainer {
     max-width: 400px;
+    height: 400px; /* Set a fixed height for the card */
     margin: 0 auto;
     background-color: #ffffff;
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+    position: relative; /* Add relative positioning for the container */
+}
+
+.cartContent {
+    flex: 1;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px; /* Add spacing between sections */
 }
 
 .totalSection {
@@ -16,7 +30,6 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 16px;
 }
 
 .largeText {
@@ -40,6 +53,18 @@
 .orderText {
     font-size: 18px;
     font-weight: bold;
+    color: red;
+}
+
+.mealsOrderText {
+    font-size: 12px;
+    font-weight: bold;
+
+}
+
+.orderTextId {
+    font-size: 11px;
+    font-weight: bold;
 }
 
 .marginLeftAuto {
@@ -47,5 +72,20 @@
 }
 
 .cancelButton {
-    margin-top: 10px;
+    
+    position: absolute; /* Position the button absolutely */
+    bottom: 0; /* Align it to the bottom of the card */
+    left: 0;
+    right: 0;
+    padding: 10px 16px;
+    background-color: #ffffff;
+    border-top: 1px solid #f0f0f0; /* Optional: Add a border to separate the button */
+}
+
+.MealsOrdered {
+    flex: 1; /* Allow this section to grow and take available space */
+    overflow-y: auto; /* Enable vertical scrolling for meals */
+    padding-right: 8px; /* Add padding for better spacing */
+ 
+    border-top: 1px solid #f0f0f0; /* Optional: Add a border to separate the meals section */
 }
