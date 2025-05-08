@@ -37,18 +37,50 @@ export class BudgetService {
     
     async createBudget(data: Prisma.BudgetCreateInput) {
         try {
-            if (typeof data.budgetAmount !== 'number' || data.budgetAmount <= 0) {
-                throw new HttpException('Budget amount must be greater than 0', HttpStatus.BAD_REQUEST);
+            // Validate required fields
+            if (!data.name || typeof data.name !== 'string') {
+                throw new HttpException('Valid budget name is required', HttpStatus.BAD_REQUEST);
             }
-            
-            return await this.database.budget.create({
-                data,
+
+            // Convert budgetAmount to number if it's a string
+            const budgetAmount = Number(data.budgetAmount);
+            if (isNaN(budgetAmount) || budgetAmount <= 0) {
+                throw new HttpException('Valid budget amount greater than 0 is required', HttpStatus.BAD_REQUEST);
+            }
+
+            // Ensure budgetDate is a valid date
+            const budgetDate = data.budgetDate ? new Date(data.budgetDate) : new Date();
+            if (isNaN(budgetDate.getTime())) {
+                throw new HttpException('Invalid budget date', HttpStatus.BAD_REQUEST);
+            }
+
+            const createData = {
+                name: data.name,
+                budgetAmount: budgetAmount,
+                budgetDate: budgetDate
+            };
+
+            const createdBudget = await this.database.budget.create({
+                data: createData
             });
+
+            return createdBudget;
+
         } catch (error) {
+            console.error('Budget creation error:', error);
+            
             if (error instanceof HttpException) {
                 throw error;
             }
-            throw new HttpException('Error creating budget', HttpStatus.BAD_REQUEST);
+            
+            if (error?.code === 'P2002') {
+                throw new HttpException('Budget with this name already exists', HttpStatus.CONFLICT);
+            }
+
+            throw new HttpException(
+                'Failed to create budget: ' + (error.message || 'Unknown error'),
+                HttpStatus.BAD_REQUEST
+            );
         }
     }
     

@@ -70,10 +70,18 @@ const Order = () => {
         try {
             const response = await fetch(`${urL}/budgets`);
             const data = await response.json();
-            console.log("Budgets:", data);
-            setBudgets(data);
+            
+            // Verify that data is an array before setting state
+            if (Array.isArray(data)) {
+                setBudgets(data);
+            } else {
+                console.error("Expected array but received:", data);
+                setBudgets([]);
+                message.error("Invalid budget data received");
+            }
         } catch (error) {
             console.error("Error fetching budgets:", error);
+            setBudgets([]);
             message.error("Failed to fetch budgets");
         }
     };
@@ -132,7 +140,7 @@ const Order = () => {
             message.error("Please select a budget");
             return;
         }
-        console.log("Selected Budget:", selectedBudget);
+        
         try {
             const response = await fetch(`${urL}/ingredients/order/budget`, {
                 method: 'POST',
@@ -144,15 +152,20 @@ const Order = () => {
                 })
             });
 
+            const data = await response.json(); // Parse response first
+
             if (response.ok) {
                 message.success("Order placed successfully");
                 setIsBudgetModalVisible(false);
+                // Refresh ingredients after successful order
+                await fetchIngredients();
             } else {
-                throw new Error('Failed to place order');
+                // Server returned an error message
+                throw new Error(data.message || 'Failed to place order');
             }
         } catch (error) {
             console.error("Error placing order:", error);
-            message.error("Failed to place order");
+            message.error(error.message || "Failed to place order");
         }
     };
 
@@ -181,7 +194,7 @@ const Order = () => {
                 style={{ width: '100%' }}
                 placeholder="Select a budget"
                 onChange={(value) => setSelectedBudget(value)}
-                options={budgets.map(budget => ({
+                options={(Array.isArray(budgets) ? budgets : []).map(budget => ({
                     value: budget.budgetAmount,
                     label: `${new Date(budget.budgetDate).toLocaleDateString()} - Rs. ${budget.budgetAmount}`
                 }))}
