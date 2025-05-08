@@ -12,6 +12,48 @@ export default function UserProfile({ user }) {
   const fileInputRef = useRef(null);
   const [profileImage, setProfileImage] = useState(user.profilePicture || null);
   const [userData, setUserData] = useState(null);
+  const [passwordError, setPasswordError] = useState("");
+  const [passwordUpdated, setPasswordUpdated] = useState(false); // Track if the password is updated
+  const [phoneError, setPhoneError] = useState(""); // Track phone number validation errors
+  const [heightError, setHeightError] = useState(""); // Track height validation errors
+  const [weightError, setWeightError] = useState(""); // Track weight validation errors
+
+  // Function to validate password
+  const validatePassword = (password) => {
+    const minLength = 8;
+    const hasUpperCase = /[A-Z]/.test(password);
+    const hasLowerCase = /[a-z]/.test(password);
+    const hasNumber = /\d/.test(password);
+    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+    if (password.length < minLength) {
+      return `Password must be at least ${minLength} characters long.`;
+    }
+    if (!hasUpperCase) {
+      return "Password must contain at least one uppercase letter.";
+    }
+    if (!hasLowerCase) {
+      return "Password must contain at least one lowercase letter.";
+    }
+    if (!hasNumber) {
+      return "Password must contain at least one number.";
+    }
+    if (!hasSpecialChar) {
+      return "Password must contain at least one special character.";
+    }
+    return "";
+  };
+
+  // Update the onChange handler
+  const handlePasswordChange = (value) => {
+    const error = validatePassword(value);
+    setPasswordError(error);
+    setPasswordUpdated(true); // Mark password as updated
+    handleInputChange("password", value);
+  };
+
+  // Disable the "Save Changes" button if password is invalid or not updated
+  const isSaveDisabled = isEditing && (passwordError || phoneError || heightError || weightError);
 
   // Fetch user data from the database
   const fetchUserData = async () => {
@@ -92,7 +134,11 @@ export default function UserProfile({ user }) {
     <div className={styles.profileContainer}>
       <div className={styles.header}>
         <h1 className={styles.title}>Profile</h1>
-        <button onClick={handleEditToggle} className={styles.editButton}>
+        <button
+          onClick={handleEditToggle}
+          className={styles.editButton}
+          disabled={isSaveDisabled} // Disable the button based on the condition
+        >
           {isEditing ? "Save Changes" : "Edit Profile"}
         </button>
       </div>
@@ -149,9 +195,10 @@ export default function UserProfile({ user }) {
                 id="password"
                 className={styles.inputMaxWidth}
                 value={isEditing ? userData.password || "" : "••••••••••"} // Show 10 dots when not editing
-                onChange={(e) => handleInputChange("password", e.target.value)}
+                onChange={(e) => handlePasswordChange(e.target.value)}
                 disabled={!isEditing}
               />
+              {passwordError && <p className={styles.errorText}>{passwordError}</p>}
             </div>
 
             <div className={styles.formGroup}>
@@ -165,11 +212,17 @@ export default function UserProfile({ user }) {
                   // Allow only numbers and ensure the length is 10 digits
                   if (/^\d{0,10}$/.test(value)) {
                     handleInputChange("telephone", value);
+                    if (value.length !== 10) {
+                      setPhoneError("Phone number must be exactly 10 digits.");
+                    } else {
+                      setPhoneError(""); // Clear the error if valid
+                    }
                   }
                 }}
                 disabled={!isEditing}
                 maxLength={10} // Ensure the input field doesn't accept more than 10 characters
               />
+              {phoneError && <p className={styles.errorText}>{phoneError}</p>}
             </div>
 
             <div className={styles.formGroup}>
@@ -205,9 +258,20 @@ export default function UserProfile({ user }) {
                 id="height"
                 className={styles.inputMaxWidth}
                 value={userData.height}
-                onChange={(e) => handleInputChange("height", e.target.value)}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (/^\d*$/.test(value)) { // Allow only numbers
+                    handleInputChange("height", value);
+                    if (value < 50 || value > 300) {
+                      setHeightError("Height must be between 50 and 300 cm.");
+                    } else {
+                      setHeightError(""); // Clear the error if valid
+                    }
+                  }
+                }}
                 disabled={!isEditing}
               />
+              {heightError && <p className={styles.errorText}>{heightError}</p>}
             </div>
 
             <div className={styles.formGroup}>
@@ -216,9 +280,20 @@ export default function UserProfile({ user }) {
                 id="weight"
                 className={styles.inputMaxWidth}
                 value={userData.weight}
-                onChange={(e) => handleInputChange("weight", e.target.value)}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (/^\d*$/.test(value)) { // Allow only numbers
+                    handleInputChange("weight", value);
+                    if (value < 10 || value > 500) {
+                      setWeightError("Weight must be between 10 and 500 kg.");
+                    } else {
+                      setWeightError(""); // Clear the error if valid
+                    }
+                  }
+                }}
                 disabled={!isEditing}
               />
+              {weightError && <p className={styles.errorText}>{weightError}</p>}
             </div>
 
             <div className={styles.formGroup}>

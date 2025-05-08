@@ -5,22 +5,29 @@
   background-color: #fff;
   border-radius: 8px;
   box-shadow: 1px 0px 1px 2px rgba(0, 0, 0, 0.1);
+  width: 90%;
+  margin: 0 auto; 
+  flex-direction: column; 
+  justify-content: center;
+  align-items: center;
+  margin-top: 50px;
 }
 
-/* Analysis Section */
+
 .analysisContainer {
   padding: 20px;
   background: white;
   border-radius: 8px;
   box-shadow: 1px 0px 1px 2px rgba(0, 0, 0, 0.1);
-  margin-bottom: 20px; /* Add spacing between sections */
+  margin-bottom: 50px; 
 }
 
 .heading {
-  font-size: 24px;
+  font-size: 20px;
   font-weight: bold;
-  margin-bottom: 20px;
+  margin-bottom: 30px;
   font-family: "Roboto Slab", serif;
+  color: black !important;
 }
 
 .cardsContainer {

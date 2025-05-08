@@ -11,7 +11,6 @@ export class MealService {
   constructor(private readonly databaseService: DatabaseService) {}
 
   // Create a meal with ingredient relationships
-  // ...existing code...
   async createWithIngredients(
     mealData: Omit<Prisma.MealCreateInput, 'ingredients'>,
     ingredients: Array<{ ingredientId: number }>,
@@ -43,7 +42,7 @@ export class MealService {
       throw new BadRequestException(`Failed to create meal: ${error.message}`);
     }
   }
-  // ...existing code...
+  
 
   // Create method which now will route to createWithIngredients
   async create(createMealDto: Prisma.MealCreateInput) {
@@ -69,7 +68,7 @@ export class MealService {
     }
   }
 
-  // Regular findAll method
+ 
   async findAll() {
     try {
       return await this.databaseService.meal.findMany({});
@@ -78,7 +77,7 @@ export class MealService {
     }
   }
 
-  // Find one meal with its ingredients
+ 
   async findOneWithIngredients(id: number) {
     try {
       const meal = await this.databaseService.meal.findUnique({

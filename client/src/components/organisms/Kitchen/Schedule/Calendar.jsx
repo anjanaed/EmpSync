@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from "react";
 import {
-  Layout,
   Button,
   List,
-  Typography,
   Divider,
   DatePicker as AntDatePicker,
   Modal,
@@ -234,7 +232,7 @@ const MenuSets = () => {
       }
     };
 
-    console.log("Date changed in effect:", selectedDate.format("YYYY-MM-DD"));
+    // console.log("Date changed in effect:", selectedDate.format("YYYY-MM-DD"));
 
     fetchMeals().then(() => {
       fetchScheduleData(selectedDate);
@@ -372,7 +370,7 @@ const MenuSets = () => {
       }
 
       const data = await response.json();
-      console.log("Schedule API response:", data);
+      // console.log("Schedule API response:", data);
 
       const newScheduleData = {
         breakfast: data.breakfast || [],
@@ -702,7 +700,6 @@ const MenuSets = () => {
       </div>
 
       <div className={styles.scheduleActions}>
-        {/* <div className={styles.actionLabel}>Schedule Actions:</div> */}
         <Button
           danger
           icon={<DeleteOutlined />}
