@@ -18,10 +18,9 @@ import {
   FileImageOutlined,
   SearchOutlined,
 } from "@ant-design/icons";
-import styles from "./editMeal.module.css";
+import styles from "./Edit.module.css";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
-// Import Firebase services
 import { storage } from "../../../../firebase/config";
 import {
   ref,

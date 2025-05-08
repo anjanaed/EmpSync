@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import {
   Layout,
   Button,
-  Card,
   List,
   Typography,
   Divider,
@@ -21,16 +20,12 @@ import {
   DeleteOutlined,
   CalendarOutlined,
   SearchOutlined,
-  CheckCircleOutlined,
   RightOutlined,
 } from "@ant-design/icons";
 import moment from "moment";
 import dayjs from "dayjs";
-import styles from "./calender.module.css";
+import styles from "./Calendar.module.css";
 import enUS from "antd/es/date-picker/locale/en_US";
-
-const { Content } = Layout;
-const { Title } = Typography;
 
 const CustomDatePicker = ({ value, onChange, onClose }) => {
   const [internalValue, setInternalValue] = useState(
@@ -60,7 +55,7 @@ const CustomDatePicker = ({ value, onChange, onClose }) => {
     const thirtyDaysAgo = dayjs().subtract(30, "days").startOf("day");
     return current.isBefore(thirtyDaysAgo);
   };
-
+  
   return (
     <div className={styles.datePickerWrapper}>
       <ConfigProvider

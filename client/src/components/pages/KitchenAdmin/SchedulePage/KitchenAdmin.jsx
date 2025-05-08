@@ -7,7 +7,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { BellOutlined } from "@ant-design/icons";
 import NavBar from "../../../organisms/NavBar/NavBar";
-import Menu from "../../../Organisms/Kitchen/Calender/Calender";
+import Menu from "../../../organisms/Kitchen/Schedule/Calendar";
 import NotificationPanel from "../../../organisms/Kitchen/NotificationPanel/NotificationPanel";
 import { useNotifications } from "../../../../contexts/NotificationsContext";
 import styles from "../../../organisms/Kitchen/NotificationPanel/NotificationPanel.module.css";
