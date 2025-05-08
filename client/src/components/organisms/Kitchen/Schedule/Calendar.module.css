@@ -1,0 +1,461 @@
+
+@import url("https://fonts.googleapis.com/css2?family=Bree+Serif&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Itim&family=Roboto+Slab:wght@100..900&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap");
+
+/* Main Container */
+.container {
+  max-width: 1200px;
+  margin: 60px auto 0;
+  padding: 24px;
+  font-family: "Ubuntu", -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  background-color: #ffffff;
+}
+
+/* Header Section */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin: 0;
+  color: #333;
+  font-family: "Ubuntu", sans-serif;
+  letter-spacing: 0.5px;
+}
+
+/* Add these new styles after the .title class */
+.titleContainer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.confirmIcon {
+  margin-left: 10px;
+  color: #40af09;
+  font-size: 23px;
+  display: flex;
+  align-items: center;
+}
+
+.dateActions {
+  display: flex;
+  position: relative;
+  gap: 12px;
+}
+
+.tomorrowBtn,
+.datePickerBtn {
+  width: 150px !important;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgb(230, 74, 74);
+  border: 2px solid rgb(230, 74, 74);
+  font-size: 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  background-color: white;
+  transition: all 0.3s ease;
+  gap: 8px;
+  font-weight: 500;
+  box-shadow: 0 2px 4px rgba(230, 74, 74, 0.1);
+}
+
+.tomorrowBtn:hover,
+.datePickerBtn:hover {
+  color: white;
+  background-color: rgb(230, 74, 74);
+  border-color: rgb(230, 74, 74);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(230, 74, 74, 0.2);
+}
+
+.tomorrowBtn:active,
+.datePickerBtn:active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 2px rgba(230, 74, 74, 0.2);
+}
+
+.datePickerDropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: white;
+  padding: 12px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+}
+
+/* Tabs Section */
+.tabs {
+  display: flex;
+  background-color: #f9f9f9;
+  margin-bottom: 24px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.tab {
+  flex: 1;
+  padding: 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: #555;
+  border-bottom: 3px solid transparent;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.tab:hover {
+  background-color: #f0f0f0;
+  color: rgb(190, 0, 0);
+}
+
+.activeTab {
+  background-color: white;
+  color: rgb(190, 0, 0);
+  box-shadow: 0 -3px 0 rgb(190, 0, 0) inset;
+  border-bottom: none;
+}
+
+/* Menu Content */
+.menuContent {
+  border: 1px solid #f0f0f0;
+  border-radius: 8px;
+  min-height: 240px;
+  padding: 20px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+  background-color: #fafafa;
+}
+
+.menuItems {
+  width: 100%;
+  max-height: 40vh !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(126, 16, 16, 0.5) transparent;
+}
+
+.menuItems::-webkit-scrollbar {
+  width: 4px;
+  background-color: transparent;
+}
+
+.menuItems::-webkit-scrollbar-track {
+  background-color :transparent !important;
+}
+
+.menuItems::-webkit-scrollbar-thumb {
+  background-color: rgba(126, 16, 16, 0.5) !important;
+  border-radius: 3px !important;
+
+}
+.menuItems::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(126, 16, 16, 0.8) !important;
+}
+
+.menuItem {
+  padding: 18px !important;
+  transition: all 0.2s ease;
+  font-size: 16px !important;
+  border-radius: 6px;
+  margin: 4px 0;
+  background-color: white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.menuItem:hover {
+  background-color: #f7f7f7;
+  transform: translateX(4px);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+}
+
+.divider {
+  margin: 8px 0;
+  border-top: 1px solid #eaeaea;
+  opacity: 0.6;
+}
+
+.loadingContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 240px;
+  gap: 16px;
+}
+
+.loadingContainer p {
+  color: #666;
+  font-size: 16px;
+}
+
+.emptyState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 240px;
+  color: #999;
+}
+
+.updateMenuBtn {
+  display: flex;
+  justify-content: center;
+  margin: 16px auto;
+  width: fit-content;
+
+}
+
+.updateMenuBtn button {
+  height: 38px;
+  padding: 0 20px;
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background-color: white;
+  color: #5c0a1f;
+  border: 1.5px solid #5c0a1f;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.updateMenuBtn button:hover:not(:disabled) {
+  background-color: black !important;
+  color: white !important;
+  transform: translateY(-1px) !important;
+  /* box-shadow: 0 2px 4px rgba(92, 10, 31, 0.15); */
+  border-color: black !important;
+}
+
+.updateMenuBtn button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.updateMenuBtn button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background-color: #f5f5f5;
+  border-color: #d9d9d9;
+  color: #999;
+}
+.scheduleActions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 16px;
+  border-top: 1px solid #f0f0f0;
+  padding-top: 24px;
+  margin-top: 8px;
+}
+
+.actionLabel {
+  margin-right: 16px;
+  font-weight: 600;
+  color: #444;
+}
+
+.scheduleActions button {
+  height: 40px;
+  padding: 0 20px;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.removeBtn {
+  border-color: #ff4d4f !important;
+  color: #ff4d4f !important;
+}
+
+.removeBtn:hover:not(:disabled) {
+  background-color: #ff4d4f !important;
+  color: white !important;
+  box-shadow: 0 4px 8px rgba(255, 77, 79, 0.2);
+}
+
+.confirmBtn {
+  border-color: #ff4d4f !important;
+  background-color: #ff4d4f !important;
+}
+
+.confirmBtn:hover:not(:disabled) {
+  background-color: #ee1010 !important;
+  border-color: #ee1010!important;
+}
+
+.scheduleActions button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Modal Styles */
+.modal .ant-modal-content {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.modal .ant-modal-header {
+  background-color: #fafafa;
+  padding: 16px 24px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.modalContainer {
+  padding: 8px 0;
+}
+
+.modalHeader {
+  margin-bottom: 16px;
+}
+
+.sectionTitle {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 16px;
+}
+
+.searchContainer {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.searchInput {
+  flex-grow: 1;
+  height: 40px;
+  border-radius: 6px;
+}
+
+.searchButton {
+  height: 40px;
+  border-radius: 6px;
+  padding: 0 16px;
+  background-color: #ff4d4f !important;
+  border-color: #ff4d4f !important;
+}
+
+.mealListContainer {
+  max-height: 50vh;
+  overflow-y: auto;
+  margin-bottom: 20px;
+  border: 1px solid #f0f0f0;
+  border-radius: 8px;
+}
+
+.mealList {
+  padding: 8px;
+}
+
+.mealItem {
+  padding: 12px 16px !important;
+  transition: all 0.2s ease;
+  border-radius: 6px;
+}
+
+.mealItem:hover {
+  background-color: #f5f5f5;
+}
+
+.mealItemContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.mealName {
+  font-size: 16px;
+}
+
+.mealCheckbox {
+  transform: scale(1.2);
+}
+
+.modalDivider {
+  margin: 0;
+}
+
+.modalButtonContainer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.clearButton {
+  border-color: #ff4d4f !important;
+  color: #ff4d4f !important;
+}
+
+.clearButton:hover:not(:disabled) {
+  color: white;
+  background-color: #ff4d4f;
+  border-color: #ff4d4f;
+}
+
+.saveButton {
+  background-color: #ff4d4f;
+  border-color: #ff4d4f;
+}
+
+.saveButton:hover:not(:disabled) {
+  background-color: #ee1010 !important;
+  border-color: #ee1010 !important;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .container {
+    padding: 16px;
+    margin-top: 40px;
+  }
+  
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  
+  .dateActions {
+    width: 100%;
+  }
+  
+  .tomorrowBtn, 
+  .datePickerBtn {
+    flex: 1;
+  }
+  
+  .tabs {
+    flex-direction: column;
+  }
+  
+  .scheduleActions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .actionLabel {
+    margin-bottom: 12px;
+  }
+}

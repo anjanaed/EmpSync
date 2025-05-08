@@ -11,7 +11,6 @@ import {
 import styles from "./Payroll.module.css";
 import { useNavigate } from "react-router-dom";
 import { BsPlusCircle } from "react-icons/bs";
-import { toast, Toaster } from "sonner";
 import { FaRegSave } from "react-icons/fa";
 import { LuEye } from "react-icons/lu";
 import Gbutton from "../../../atoms/button/Button";
@@ -272,24 +271,6 @@ const Payroll = () => {
       const employerFundRecord = adjustment.find(
         (adj) => adj.label == "EmployerFund"
       );
-      const epfPayload = {
-        label: "EPF (Employee)",
-        isPercentage: true,
-        allowance: false,
-        amount: parseFloat(epf),
-      };
-      const etfPayload = {
-        label: "ETF",
-        isPercentage: true,
-        allowance: false,
-        amount: parseFloat(etf),
-      };
-      const employerPayload = {
-        label: "EmployerFund",
-        isPercentage: true,
-        allowance: false,
-        amount: parseFloat(employerFund),
-      };
 
       // Update the record if changes are detected, or create a new one if it doesn't exist
       if (epfRecord) {
@@ -297,6 +278,12 @@ const Payroll = () => {
           await axios.put(`${urL}/adjustment/${epfRecord.id}`, epfPayload);
         }
       } else {
+        const epfPayload = {
+          label: "EPF (Employee)",
+          isPercentage: true,
+          allowance: false,
+          amount: parseFloat(epf),
+        };
         await axios.post(`${urL}/adjustment`, epfPayload);
       }
       if (employerFundRecord) {
@@ -307,6 +294,12 @@ const Payroll = () => {
           );
         }
       } else {
+        const employerPayload = {
+          label: "EmployerFund",
+          isPercentage: true,
+          allowance: false,
+          amount: parseFloat(employerFund),
+        };
         await axios.post(`${urL}/adjustment`, employerPayload);
       }
 
@@ -318,6 +311,12 @@ const Payroll = () => {
           );
         }
       } else {
+        const etfPayload = {
+          label: "ETF",
+          isPercentage: true,
+          allowance: false,
+          amount: parseFloat(etf),
+        };
         await axios.post(`${urL}/adjustment`, etfPayload);
       }
       fetchAdjustments();
@@ -336,7 +335,7 @@ const Payroll = () => {
   }
 
   if (pdfLoading) {
-    return <Loading />;
+    return <Loading text="Generating Payslips..." />;
   }
 
   return (
@@ -370,7 +369,6 @@ const Payroll = () => {
           success={success}
         />
       </Modal>
-      <Toaster richColors />
       <div className={styles.mainBox}>
         <div className={styles.topTitle}>
           Payroll Configuration & Salary Adjustments

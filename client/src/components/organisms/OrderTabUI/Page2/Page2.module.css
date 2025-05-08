@@ -1,0 +1,207 @@
+/* Main card container for authentication interface */
+.card {
+  max-width: 500px;
+  margin: 0 auto; /* Center the card */
+  padding: 20px;
+  padding-top: 0px; /* Remove top padding for tighter layout */
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  background: rgba(255, 255, 255, 0.2); /* Semi-transparent white background */
+  backdrop-filter: blur(10px); /* Glassmorphism blur effect */
+  -webkit-backdrop-filter: blur(10px); /* Safari support for blur */
+}
+
+/* Styling for the card title */
+.title {
+  margin-top: -20px; /* Adjust position to align with card */
+  margin-bottom: -20px;
+  text-align: center;
+  color: #ffffff; /* White text for contrast */
+  font-weight: bold;
+}
+
+/* Content area within the card */
+.content {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px; /* Space between fingerprint and PIN sections */
+}
+
+/* Fingerprint authentication section */
+.fingerprintSection {
+  flex: 1; /* Take equal space */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px; /* Space between elements */
+  padding: 20px;
+  border: 1px solid #ddd; /* Light border */
+  border-radius: 10px;
+  background-color: #f9f9f9; /* Light background */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Shadow for depth */
+  height: 500px; /* Fixed height */
+}
+
+/* Fingerprint scanner area */
+.fingerprintScanner {
+  width: 100px;
+  height: 500px; /* Full height of section */
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out; /* Smooth scale animation */
+}
+
+/* Hover effect for fingerprint scanner */
+.fingerprintScanner:hover {
+  transform: scale(1.1); /* Scale up on hover */
+}
+
+/* PIN input section */
+.pinSection {
+  flex: 1; /* Take equal space */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px; /* Space between elements */
+  padding: 20px;
+  border: 1px solid #ddd; /* Light border */
+  border-radius: 10px;
+  background-color: #f9f9f9; /* Light background */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Shadow for depth */
+  height: 100%; /* Full height */
+}
+
+/* Styling for PIN input display */
+.pinInput {
+  width: 80%;
+  text-align: center;
+  font-size: 25px;
+  font-weight: bold; /* Bold text */
+  letter-spacing: 5px; /* Space between characters */
+  border: 2px solid #000000; /* Black border */
+  border-radius: 5px;
+  background-color: #f9f9f9; /* Light background */
+  color: #333; /* Dark text */
+}
+
+/* Grid layout for PIN keypad buttons */
+.pinButtons {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3 columns */
+  gap: 10px; /* Space between buttons */
+  width: 100%;
+  max-width: 300px;
+  margin-left: 10.712px; /* Slight offset for alignment */
+}
+
+/* Styling for PIN keypad buttons */
+.pinButtons button {
+  height: 50px;
+  border: none;
+  border-radius: 10%; /* Rounded corners */
+  background: linear-gradient(
+    to bottom right,
+    #000000,
+    #555555
+  ); /* Black to gray gradient */
+  color: #fff; /* White text */
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out, transform 0.2s ease-in-out; /* Smooth transitions */
+}
+
+/* Hover effect for PIN buttons */
+.pinButtons button:hover {
+  transform: scale(1.05); /* Scale up on hover */
+}
+
+/* Disabled state for PIN buttons */
+.pinButtons button:disabled {
+  background: #ccc; /* Gray background */
+  cursor: not-allowed;
+}
+
+/* Styling for section text (e.g., prompts) */
+.SectionTexts {
+  font-size: 1.5rem;
+  color: #000000; /* Black text */
+  text-align: center;
+  margin-top: -20px; /* Adjust position */
+  font-weight: bold;
+}
+
+/* Container for back button */
+.backButtonContainer {
+  position: absolute;
+  bottom: 20px;
+  right: 20px; /* Position in bottom-right corner */
+}
+
+/* Styling for back button */
+.backButtonContainer button {
+  padding: 10px 20px;
+  font-size: 1rem !important; /* Consistent font size */
+  border: 1px solid #ff0000; /* Red border */
+  border-radius: 15px;
+  background: #ff3b3e; /* Red background */
+  color: #fff; /* White text */
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out, transform 0.2s ease-in-out; /* Smooth transitions */
+}
+
+/* Hover effect for back button */
+.backButtonContainer button:hover {
+  transform: scale(1.05); /* Scale up on hover */
+}
+
+/* Styling for toggle buttons (e.g., switch between fingerprint and PIN) */
+.toggleButton {
+  padding: 10px 20px;
+  font-size: 1.2rem !important; /* Slightly larger font */
+  border: none;
+  border-radius: 10px;
+  background: #ff3b3e; /* Red background */
+  color: #fff; /* White text */
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out, transform 0.2s ease-in-out; /* Smooth transitions */
+  text-align: center;
+  width: 100%;
+  max-width: 300px;
+  margin-top: 20px;
+}
+
+/* Hover effect for toggle buttons */
+.toggleButton:hover {
+  transform: scale(1.05); /* Scale up on hover */
+}
+
+/* Disabled state for toggle buttons */
+.toggleButton:disabled {
+  background: #ccc; /* Gray background */
+  cursor: not-allowed;
+}
+
+/* Styling for date and time display */
+.dateAndTime {
+  text-align: left;
+  margin-left: 10px; /* Slight left margin */
+}
+
+/* Styling for error message popup */
+.errorPopup {
+  position: fixed;
+  top: 10%;
+  right: 31%; /* Center horizontally with offset */
+  transform: translate(-50%, -50%); /* Center relative to its position */
+  background-color: #ff3b3e; /* Red background */
+  color: #fff; /* White text */
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow for depth */
+  text-align: center;
+  font-size: 1.2rem;
+}

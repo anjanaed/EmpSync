@@ -1,0 +1,52 @@
+/* Styling for the first carousel slide (Page 1) */
+.contentStyle1 {
+  margin: 0;
+  height: 100vh; /* Full viewport height */
+  width: 100vw; /* Full viewport width */
+  color: #fff; /* White text color */
+  text-align: center;
+  /* Background with dark overlay and image */
+  background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+    url("../../../assets/Order/otb4.jpg") no-repeat center center;
+  background-size: cover; /* Cover the entire container */
+}
+
+/* Styling for the second carousel slide (Page 2) */
+.contentStyle2 {
+  margin: 0;
+  height: 100vh; /* Full viewport height */
+  width: 100vw; /* Full viewport width */
+  color: #fff; /* White text color */
+  text-align: center;
+  /* Background with darker overlay and image */
+  background: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)),
+    url("../../../assets/Order/otb1.jpg") no-repeat center center;
+  background-size: cover; /* Cover the entire container */
+}
+
+/* Styling for the third carousel slide (Page 3) */
+.contentStyle3 {
+  margin: 0;
+  height: 100vh; /* Full viewport height */
+  width: 100vw; /* Full viewport width */
+  color: #fff; /* White text color */
+  text-align: center;
+  /* Background with darker overlay and image */
+  background: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)),
+    url("../../../assets/Order/otb3.jpg") no-repeat center center;
+  background-size: cover; /* Cover the entire container */
+}
+
+/* Generic content style (not used in the provided JSX but included for completeness) */
+.contentStyle {
+  margin: 0;
+  height: 100vh; /* Full viewport height */
+  width: 100vw; /* Full viewport width */
+  color: #fff; /* White text color */
+  line-height: 160px;
+  text-align: center;
+  background: brown; /* Brown background */
+  min-height: 120px;
+  line-height: 120px;
+  background-color: #0958d9; /* Blue background (overrides brown) */
+}

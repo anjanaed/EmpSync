@@ -1,51 +1,101 @@
+/* Container for individual cart card */
 .cartContainer {
     max-width: 400px;
+    height: 400px; /* Fixed height for consistent card size */
     margin: 0 auto;
     background-color: #ffffff;
     border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+    position: relative; /* Relative positioning for absolute child elements */
 }
 
+/* Content area within the cart card */
+.cartContent {
+    flex: 1;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px; /* Spacing between content sections */
+}
+
+/* Section for displaying total price or similar content */
 .totalSection {
     display: flex;
     justify-content: space-between;
     margin-bottom: 16px;
 }
 
+/* Flex row for aligning items horizontally */
 .flexRow {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 16px;
 }
 
+/* Styling for large text, e.g., total price */
 .largeText {
     font-size: 18px;
 }
 
+/* Container for multiple cart cards */
 .horizontalContainer {
     display: flex;
-    gap: 16px; /* Adjust spacing between carts if needed */
-    justify-content: center; /* Center the cards horizontally */
-    flex-wrap: wrap; /* Wrap cards to the next line if needed */
+    gap: 16px; /* Spacing between cart cards */
+    justify-content: center; /* Center cards horizontally */
+    flex-wrap: wrap; /* Allow cards to wrap to next line */
     margin: 20px;
 }
 
+/* Styling for section title */
 .title {
     text-align: center;
     margin-bottom: 20px;
     margin-top: 20px;
 }
 
+/* Styling for order price text */
 .orderText {
     font-size: 18px;
     font-weight: bold;
+    color: red; /* Highlight price in red */
 }
 
+/* Styling for meals order text */
+.mealsOrderText {
+    font-size: 12px;
+    font-weight: bold;
+}
+
+/* Styling for order ID text */
+.orderTextId {
+    font-size: 11px;
+    font-weight: bold;
+}
+
+/* Utility class to push element to the right */
 .marginLeftAuto {
     margin-left: auto;
 }
 
+/* Styling for cancel order button */
 .cancelButton {
-    margin-top: 10px;
+    position: absolute; /* Absolute positioning to stick to bottom */
+    bottom: 0; /* Align to bottom of card */
+    left: 0;
+    right: 0;
+    padding: 10px 16px;
+    background-color: #ffffff;
+    border-top: 1px solid #f0f0f0; /* Border to separate button from content */
+}
+
+/* Section for listing ordered meals */
+.MealsOrdered {
+    flex: 1; /* Grow to fill available space */
+    overflow-y: auto; /* Enable vertical scrolling for long lists */
+    padding-right: 8px; /* Padding for better spacing */
+    border-top: 1px solid #f0f0f0; /* Border to separate meals section */
 }
