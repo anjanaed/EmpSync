@@ -3,6 +3,7 @@ import { Typography, Card } from 'antd';
 import styles from './Page1.module.css'; 
 import DateAndTime from '../DateAndTime/DateAndTime';
 
+
 const Page1 = ({ carouselRef, setLanguage }) => { // Accept setLanguage as a prop
     const handleLanguageSelect = (language) => {
         console.log(`${language} selected`);

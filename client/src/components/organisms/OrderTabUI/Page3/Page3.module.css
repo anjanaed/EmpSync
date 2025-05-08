@@ -1,73 +1,151 @@
 .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    padding: 0 20px;
-    margin-left: 12px;
-    
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 0 20px;
+  margin-left: 12px;
 }
 
 .dateAndTime {
-    text-align: left;
-  
-   
- 
- }
+  text-align: left;
+}
 
 .userName {
-    font-size: 1.5em;
-    font-weight: 600;
-    color: #ffffff !important;
-    text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
-    margin-right: 20px;
+  font-size: 1.5em;
+  font-weight: 600;
+  color: #ffffff !important;
+  text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
+  margin-right: 20px;
 }
 
 .layout {
-    
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    background: rgba(255, 255, 255, 0);
-    backdrop-filter: blur(1px);
-    -webkit-backdrop-filter: blur(1px);
-    border-radius: 10px;
-   
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0);
+  backdrop-filter: blur(1px);
+  -webkit-backdrop-filter: blur(1px);
+  border-radius: 10px;
 }
 
-
 .successCard {
-    width: 600px;
-    text-align: center;
-    border: 2px solid #ffd591;
+  width: 600px;
+  text-align: center;
+  border: 2px solid #ffd591;
 }
 
 .successIcon {
-    font-size: 80px;
-    color: #52c41a;
-    margin-bottom: 24px;
+  font-size: 80px;
+  color: #52c41a;
+  margin-bottom: 24px;
 }
 
 .cardTitle {
-    
-    font-weight: 700!important;
-    color: #333!important;
-    margin-bottom: 0px!important;
+  font-weight: 700 !important;
+  color: #333 !important;
+  margin-bottom: 0px !important;
 }
 
 .cardContainer {
-    border-radius: 8px;
-    
-    height: 90vh; /* Set a fixed height */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    background: rgba(255, 255, 255, 0.671);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border-radius: 10px;
-    
-  
+  border-radius: 8px;
+  height: 90vh; /* Set a fixed height */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.671);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 10px;
 }
 
 .dateButtonGroup {
-    width: 100%;
+  width: 100%;
+}
+
+
+
+
+.tabContent {
+  margin-bottom: 16px;
+}
+
+.mealList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background-color: #f9f9f95e;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  height: 55vh; /* Set a fixed height */
+  overflow-y: auto; /* Enable vertical scrolling */
+  overflow-x: hidden; /* Disable horizontal scrolling */
+}
+
+.orderSummaryContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background-color: #f9f9f95e;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  height: 75vh; /* Set a fixed height */
+}
+
+.orderSummary {
+  height: 100vh; /* Set a fixed height */
+  overflow-y: auto; /* Enable vertical scrolling */
+  overflow-x: hidden; /* Disable horizontal scrolling */
+}
+
+.orderCard {
+  margin-bottom: 16px;
+}
+
+.orderDetails {
+  display: flex;
+  justify-content: space-between;
+}
+
+.removeButton {
+  width: 40px;
+  height: 35px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: red;
+  color: white;
+  border-radius: 10px;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  border: none;
+}
+
+.errorCard {
+  width: 600px;
+  text-align: center;
+  border: 2px solid #ffa39e;
+}
+
+.errorIcon {
+  font-size: 80px;
+  color: #ff4d4f;
+  margin-bottom: 24px;
+}
+
+.successContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80vh;
+}
+
+.errorContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80vh;
 }
 
 .dateButton {
@@ -75,83 +153,197 @@
     width: 50%;
     font-size: 20px !important;
     font-weight: 700 !important; /* Ensure font size is applied */
+    background-color: #f0f0f0; /* Default background color */
+    color: #000; /* Default text color */
+    border-color: #d9d9d9; /* Default border color */
+  }
+  
+  /* Remove hover and focus effects for .dateButton */
+  .dateButton:hover,
+  .dateButton:focus {
+    background-color: #ffffff !important; /* Keep the same background color */
+    color: #000000 !important;              /* Keep the same text color */
+    border-color: #d9d9d9 !important;    /* Keep the same border color */
+    box-shadow: none !important;         /* Remove the box shadow */
+  }
+
+  .selectedDateButton {
+    background-color: #ff4d4f; /* Red for selected */
+    color: #fff; /* White text for selected */
+    border-color: #d9363e; /* Darker red border for selected */
+  }
+  
+  /* Remove hover and focus effects for .selectedDateButton */
+  .selectedDateButton:hover,
+  .selectedDateButton:focus {
+    background-color: #ff4d4f !important; /* Keep the same background color */
+    color: #fff !important;              /* Keep the same text color */
+    border-color: #d9363e !important;    /* Keep the same border color */
+    box-shadow: none !important;         /* Remove the box shadow */
+  }
+
+  
+.filterButton {
+  background-color: #f0f0f0;
+  color: #ff4d4f;
+  border-color: #ff4d4f;
 }
 
-.tabContent {
-    margin-bottom: 16px;
-    
+.tabLabel {
+  color: #000; /* Default color */
 }
 
-.mealList{
-   
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    background-color: #f9f9f95e;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    height: 55vh; /* Set a fixed height */
-    overflow-y: auto; /* Enable vertical scrolling */
-    overflow-x: hidden; /* Disable horizontal scrolling */
+.unavailableTab {
+  color: gray; /* Gray for unavailable times */
 }
 
-.orderSummaryContainer{
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    padding: 20px;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    background-color: #f9f9f95e;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    height: 75vh; /* Set a fixed height */
-    
+.selectedTab {
+  color: #ff4d4f; /* Red for selected tab */
 }
 
-.orderSummary{
-    height: 100vh; /* Set a fixed height */
-    overflow-y: auto; /* Enable vertical scrolling */
-    overflow-x: hidden; /* Disable horizontal scrolling */
+.mealImage {
+  height: 200px;
+  object-fit: cover;
+  border: 1px solid rgb(0, 0, 0);
+  border-radius: 4px;
 }
 
-.orderCard {
-    margin-bottom: 16px;
-    
-    
+.pastDueImage {
+  filter: grayscale(100%); /* Gray out the image if past due */
 }
 
-.orderDetails {
-    display: flex;
-    justify-content: space-between;
-    
+.mealCard {
+  cursor: pointer;
+  opacity: 1;
 }
 
-.removeButton{
-width: 40px;
-height: 35px;
-display: flex;
-justify-content: center;
-align-items: center;
-background-color: red;
-color: white;
-border-radius: 10px;
-font-size: 20px;
-font-weight: bold;
-cursor: pointer;
-border: none;
+.pastDueCard {
+  cursor: not-allowed;
+  opacity: 0.5; /* Reduce opacity if past due */
+}
+
+.addButton {
+  margin-top: 8px;
+  background-color: #ff4d4f; /* Red for enabled */
+  color: #fff; /* White text for enabled */
+  border-color: #d9363e; /* Darker red border for enabled */
+  cursor: pointer;
+}
+
+.disabledButton {
+  background-color: #d9d9d9; /* Gray for disabled */
+  color: #8c8c8c; /* Light gray text for disabled */
+  border-color: #d9d9d9; /* Gray border for disabled */
+  cursor: not-allowed; /* Change cursor for disabled state */
+}
+
+.priceContainer {
+  margin-top: 8px;
+}
+
+.addButton {
+  margin-top: 8px;
+  background-color: #ff4d4f; /* Red for enabled */
+  color: #fff; /* White text for enabled */
+  border-color: #d9363e; /* Darker red border for enabled */
+  cursor: pointer;
+}
+
+.addButton:hover,
+.addButton:focus {
+  background-color: #ff4d4f !important; /* Keep the same background color */
+  color: #fff !important;              /* Keep the same text color */
+  border-color: #d9363e !important;    /* Keep the same border color */
+  box-shadow: none !important;         /* Remove the box shadow */
+}
+
+.disabledButton {
+  background-color: #d9d9d9; /* Gray for disabled */
+  color: #8c8c8c; /* Light gray text for disabled */
+  border-color: #d9d9d9; /* Gray border for disabled */
+  cursor: not-allowed; /* Change cursor for disabled state */
+}
+
+.secondRow {
+  margin-top: 8px;
+}
+
+.mealTimeBadge {
+  margin-left: 8px;
+}
+
+.rightAligned {
+  text-align: right;
+}
+
+.actionButton {
+  margin-right: 8px;
+  background-color: #f0f0f0;
+  border: 1px solid #d9d9d9;
+  cursor: pointer;
+}
+
+.itemCountBadge {
+  margin-right: 8px;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.placeOrderButton {
+    margin-top: 5px;
+    height: 70px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 4px;
+    background-color: #ff4d4f; /* Default background color */
+    color: #fff; /* Default text color */
+    border: 1px solid #d9363e; /* Default border color */
+    cursor: pointer;
+  }
+  
+  /* Remove hover and focus effects for .placeOrderButton */
+  .placeOrderButton:hover,
+  .placeOrderButton:focus {
+    background-color: #ff4d4f !important; /* Keep the same background color */
+    color: #fff !important;              /* Keep the same text color */
+    border-color: #d9363e !important;    /* Keep the same border color */
+    box-shadow: none !important;         /* Remove the box shadow */
+  }
+
+.enabledButton {
+  background-color: #ff4d4f; /* Red for enabled */
+  color: #fff; /* White text for enabled */
+  border-color: #d9363e; /* Darker red border for enabled */
+  cursor: pointer;
+}
+
+.disabledButton {
+  background-color: #d9d9d9; /* Gray for disabled */
+  color: #8c8c8c; /* Light gray text for disabled */
+  border-color: #d9d9d9; /* Gray border for disabled */
+  cursor: not-allowed; /* Change cursor for disabled state */
+}
+
+.totalContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+}
+
+.backButton {
+  background-color: #ffffff; /* Default background color */
+  color: #ff4d4f; /* Default text color */
+  border-color: #ff4d4f; /* Default border color */
+  cursor: pointer;
 }
 
 
-.errorCard {
-    width: 600px;
-    text-align: center;
-    border: 2px solid #ffa39e;
-}
-
-.errorIcon {
-    font-size: 80px;
-    color: #ff4d4f;
-    margin-bottom: 24px;
+/* Remove hover effects for all Ant Design buttons */
+.ant-btn:hover, 
+.ant-btn:focus {
+    background-color: inherit !important; /* Keep the background color unchanged */
+    border-color: inherit !important;    /* Keep the border color unchanged */
+    color: inherit !important;           /* Keep the text color unchanged */
+    box-shadow: none !important;         /* Remove the box shadow */
 }
