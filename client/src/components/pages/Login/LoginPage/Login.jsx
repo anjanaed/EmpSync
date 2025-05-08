@@ -7,12 +7,6 @@ import axios from "axios";
 import { useAuth } from "../../../../contexts/AuthContext";
 import Loading from "../../../atoms/loading/loading";
 
-const redirectRoles = [
-  "KITCHEN_ADMIN",
-  "KITCHEN_STAFF",
-  "INVENTORY_ADMIN",
-  "HR_ADMIN",
-];
 
 const LoginPage = () => {
   const { login } = useAuth();

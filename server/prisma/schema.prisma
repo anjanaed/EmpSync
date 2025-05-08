@@ -92,7 +92,7 @@ model Payroll {
 }
 
 model Meal {
-  id           Int            @id @default(autoincrement()) // Changed from String to Int
+  id           Int            @id @default(autoincrement()) 
   nameEnglish  String
   nameSinhala  String
   nameTamil    String
@@ -107,7 +107,7 @@ model Meal {
 model MealIngredient {
   id           Int         @id @default(autoincrement())
   meal         Meal        @relation(fields: [mealId], references: [id], onDelete: Cascade)
-  mealId       Int         // Changed to match Meal.id's new type
+  mealId       Int         
   ingredient   Ingredient  @relation(fields: [ingredientId], references: [id])
   ingredientId Int
 }
@@ -164,9 +164,9 @@ model LeaveApplication {
 model ScheduledMeal {
   id        Int      @id @default(autoincrement())
   date      DateTime @unique @db.Date // Store as DATE (without time)
-  breakfast Int[]    // Changed from String[] to Int[]
-  lunch     Int[]    // Changed from String[] to Int[]
-  dinner    Int[]    // Changed from String[] to Int[]
+  breakfast Int[]    
+  lunch     Int[]    
+  dinner    Int[]    
   confirmed Boolean  @default(false) 
   createdAt DateTime @default(now())
 }
