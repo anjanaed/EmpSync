@@ -11,7 +11,7 @@ const Serving = () => {
   return (
     <>
       <NavBar
-        titleLines={["Meals Serving Admin"]}
+        titleLines={["Kitchen Staff"]}
         menuItems={[
           {
             key: "1",

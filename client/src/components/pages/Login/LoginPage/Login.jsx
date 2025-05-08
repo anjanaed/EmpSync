@@ -73,13 +73,13 @@ const LoginPage = () => {
             }
           >
             <Form.Item
-              label="Employee ID"
+              label="Employee ID / Email"
               name="employeeID"
               rules={[
                 { required: true, message: "Please Input Your Employee ID !" },
               ]}
             >
-              <Input placeholder="Enter Employee ID" />
+              <Input placeholder="Enter Employee ID Or Email" />
             </Form.Item>
 
             <Form.Item
