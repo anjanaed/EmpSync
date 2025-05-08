@@ -13,11 +13,11 @@ import AdjustmentPage from "../components/Pages/HR/AdjustmentPage/AdjustmentPage
 import PayslipPage from "../components/Pages/HR/PayslipPage/PayslipPage";
 
 // KITCHEN_ADMIN
-import KitchenAdmin from "../components/Pages/KitchenAdmin/KitchenAdminDashBoard/kitchenAdminDash";
-import Reports from "../components/Pages/KitchenAdmin/Report/report";
-import Meals from "../components/Pages/KitchenAdmin/MealDash/meal";
-import MealDetailsForm from "../components/Pages/KitchenAdmin/Add Meal/addMeal";
-import EditMeal from "../components/Pages/KitchenAdmin/Edit Meal/editMeal";
+import KitchenAdmin from "../components/pages/KitchenAdmin/SchedulePage/KitchenAdmin";
+import Reports from "../components/pages/KitchenAdmin/ReportPage/Report";
+import Meals from "../components/pages/KitchenAdmin/MealPage/Meal";
+import MealDetailsForm from "../components/pages/KitchenAdmin/AddMealPage/AddMeal";
+import EditMeal from "../components/pages/KitchenAdmin/EditMealPage/EditMeal";
 
 // ServingStaff
 import Serving from "../components/Pages/ServingStaff/BarcodeScan/Serving";
