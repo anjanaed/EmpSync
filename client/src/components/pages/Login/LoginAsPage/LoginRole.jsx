@@ -39,7 +39,7 @@ const LoginPage = () => {
   useEffect(() => {
     const userRole = authData.user.role;
     if (!redirectRoles.includes(userRole)) {
-      navigate("/Userprofile1");
+      navigate("/ProfilePage");
     }
   }, []);
 
@@ -51,7 +51,7 @@ const LoginPage = () => {
   };
 
   const handleEmployeeLogin = () => {
-    navigate("/Userprofile1");
+    navigate("/ProfilePage");
   };
 
   return (
