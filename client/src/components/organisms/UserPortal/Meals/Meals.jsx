@@ -177,7 +177,9 @@ const Meals = () => {
 
   return (
     <div style={{ margin: "20px" }}>
-      <Title level={4}>Orders</Title>
+      <div style={{ textAlign: "center" }}>
+        <Title level={4}>Orders</Title>
+      </div>
       <Tabs 
         defaultActiveKey="current"
         tabBarStyle={{ display: "flex", justifyContent: "center" }}
