@@ -38,7 +38,7 @@ const ResponsiveNav = () => {
       </div>
       <ul className={`${styles.navLinks} ${menuOpen ? styles.active : ''}`}>
         <li>
-          <a href="/Userprofile1" className={styles.navLink}>
+          <a href="/ProfilePage" className={styles.navLink}>
             <User size={18} /> Profile
           </a>
         </li>
