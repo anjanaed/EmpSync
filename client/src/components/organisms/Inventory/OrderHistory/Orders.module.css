@@ -38,8 +38,8 @@
 }
 
 .table :global(.ant-table-thead > tr > th) {
-    background: #f0f5ff;
-    color: #1a3353;
+    background:  rgba(151,0,0,0.78);
+    color: white;
     font-weight: 600;
 }
 

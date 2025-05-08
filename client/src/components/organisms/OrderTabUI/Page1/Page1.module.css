@@ -1,38 +1,44 @@
+/* Main content container for the page */
 .contentStyle1 {
-	margin: 0;
-	height: 100vh;
-	width: 100vw;
-	color: #fff;
-	text-align: center;
-	background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('../../../assets/otb4.jpg') no-repeat center center;
-	background-size: cover;
+    margin: 0;
+    height: 100vh; /* Full viewport height */
+    width: 100vw; /* Full viewport width */
+    color: #fff; /* White text color */
+    text-align: center;
+    /* Background with dark overlay and image */
+    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('../../../assets/otb4.jpg') no-repeat center center;
+    background-size: cover; /* Cover the entire container */
 }
 
+/* Styling for greeting text */
 .getGreeting {
-	font-size: 2em;
-	font-weight: 600;
-	color: #ffffff !important;
-	text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
+    font-size: 2em;
+    font-weight: 600;
+    color: #ffffff !important; /* Force white color */
+    text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5); /* Shadow for text visibility */
 }
 
+/* Styling for the main title */
 .mainTitle1 {
-	margin: 0%;
-	font-size: 5em !important;
-	font-weight: 800 !important;
-	color: #ffffff !important;
-	text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
+    margin: 0%;
+    font-size: 5em !important; /* Large font size */
+    font-weight: 800 !important; /* Extra bold */
+    color: #ffffff !important; /* Force white color */
+    text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5); /* Shadow for text visibility */
 }
 
+/* Styling for the card container */
 .cardStyle {
-    background: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.2); /* Semi-transparent white background */
+    backdrop-filter: blur(10px); /* Blur effect for glassmorphism */
+    -webkit-backdrop-filter: blur(10px); /* Safari support for blur */
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow */
     padding: 20px;
     margin-left: auto;
     margin-right: auto;
-    max-width: 60%;
+    max-width: 60%; /* Limit max width */
+    /* Responsive width adjustments */
     @media (max-width: 768px) {
         width: calc(90%);
     }
@@ -41,47 +47,48 @@
     }
 }
 
+/* Inner content of the card */
 .cardPartl {
-	margin: 10px 0;
-	font-size: 1.2em;
-	color: #333;
-	width: 90%;
-	display: inline-block;
-	box-sizing: border-box;
+    margin: 10px 0;
+    font-size: 1.2em;
+    color: #333; /* Dark text color */
+    width: 90%;
+    display: inline-block;
+    box-sizing: border-box;
 }
 
+/* Main container for the page content */
 .mainbox {
-    
-    height: 100vh;
-    width: 100vw;
+    height: 100vh; /* Full viewport height */
+    width: 100vw; /* Full viewport width */
 }
 
+/* Styling for language selection buttons */
 .languageButton {
-    background: #ff3b3e;
-    border: 1px solid rgb(255, 0, 0);
-    color: white;
+    background: #ff3b3e; /* Red background */
+    border: 1px solid rgb(255, 0, 0); /* Red border */
+    color: white; /* White text */
     margin: 20px;
     padding: 20px;
     text-align: center;
     text-decoration: none;
     display: inline-block;
-    font-size: 40px !important;
+    font-size: 40px !important; /* Large font size */
     cursor: pointer;
     border-radius: 12px;
-    transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+    transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease; /* Smooth transitions */
     line-height: 1.5;
-    width: 400px;
-    /* text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000; */
+    width: 400px; /* Fixed width for consistency */
 }
 
+/* Hover effect for language buttons */
 .languageButton:hover {
-
-    transform: scale(1.05);
+    transform: scale(1.05); /* Slight scale-up effect */
 }
 
-
+/* Container for language buttons */
 .languageButtonContainer {
     display: flex;
-    justify-content: center; 
-    gap: 10px; 
+    justify-content: center; /* Center buttons horizontally */
+    gap: 10px; /* Space between buttons */
 }

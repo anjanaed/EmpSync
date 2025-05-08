@@ -58,18 +58,6 @@ const CustomDatePicker = ({ value, onChange, onClose }) => {
   return (
     <div className={styles.datePickerWrapper}>
       <ConfigProvider
-        theme={{
-          components: {
-            DatePicker: {
-              cellActiveWithRangeBg: "#fafafa",
-              cellHoverWithRangeBg: "#f0f0f0",
-              cellBgDisabled: "#f5f5f5",
-              cellInViewBg: "#ffffff",
-              cellSelectedBg: "#ff4d4f",
-              cellSelectedHoverBg: "#ff7875",
-            },
-          },
-        }}
       >
         <AntDatePicker
           value={internalValue}
@@ -109,7 +97,6 @@ const MenuSets = () => {
   const [availableMeals, setAvailableMeals] = useState([]);
   const [hasExistingSchedule, setHasExistingSchedule] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [mealList, setMealList] = useState([]);
   const [fetchingSchedule, setFetchingSchedule] = useState(true);
   const [scheduleData, setScheduleData] = useState({
     breakfast: [],
@@ -182,7 +169,6 @@ const MenuSets = () => {
         throw new Error("Failed to fetch meals");
       }
       const data = await response.json();
-      console.log("Fetched available meals:", data);
       setAvailableMeals(Array.isArray(data) ? data : []);
       return data;
     } catch (error) {
@@ -223,7 +209,6 @@ const MenuSets = () => {
           throw new Error("Failed to fetch meals");
         }
         const data = await res.json();
-        setMealList(data);
         setAvailableMeals(Array.isArray(data) ? data : []);
       } catch (err) {
         message.error("Failed to load available meals");
@@ -231,8 +216,6 @@ const MenuSets = () => {
         setLoading(false);
       }
     };
-
-    // console.log("Date changed in effect:", selectedDate.format("YYYY-MM-DD"));
 
     fetchMeals().then(() => {
       fetchScheduleData(selectedDate);
@@ -257,7 +240,6 @@ const MenuSets = () => {
   const handleDateChange = (date) => {
     if (date) {
       const newDate = moment(date);
-      console.log("Date changed to:", newDate.format("YYYY-MM-DD"));
       setSelectedDate(newDate);
       setIsDatePickerOpen(false);
       fetchScheduleData(newDate);
@@ -354,14 +336,12 @@ const MenuSets = () => {
       }
 
       const formattedDate = date.format("YYYY-MM-DD");
-      console.log("Fetching schedule for date:", formattedDate);
 
       const response = await fetch(
         `http://localhost:3000/schedule/${formattedDate}`
       );
 
       if (response.status === 404 || response.status === 400) {
-        console.log("No scheduled data for that day");
         return;
       }
 
@@ -370,7 +350,6 @@ const MenuSets = () => {
       }
 
       const data = await response.json();
-      // console.log("Schedule API response:", data);
 
       const newScheduleData = {
         breakfast: data.breakfast || [],
@@ -478,8 +457,6 @@ const MenuSets = () => {
           activeTab === "dinner" ? selectedMeals : scheduleData.dinner || [],
       };
 
-      console.log("Sending data to API:", JSON.stringify(updateData));
-
       let response;
 
       if (hasExistingSchedule) {
@@ -538,10 +515,6 @@ const MenuSets = () => {
     }
   };
 
-  const handleSearch = () => {
-    console.log("Searching for:", searchText);
-  };
-
   const handleClearActiveTabMenu = async () => {
     try {
       const formattedDate = selectedDate.format("YYYY-MM-DD");
@@ -553,8 +526,6 @@ const MenuSets = () => {
         lunch: activeTab === "lunch" ? [] : scheduleData.lunch || [],
         dinner: activeTab === "dinner" ? [] : scheduleData.dinner || [],
       };
-
-      console.log(`Clearing ${activeTab} menu for ${formattedDate}`);
 
       if (hasExistingSchedule) {
         const response = await fetch(
@@ -622,7 +593,6 @@ const MenuSets = () => {
               <CustomDatePicker
                 value={selectedDate}
                 onChange={(date) => {
-                  console.log("Date selected:", date.format("YYYY-MM-DD"));
                   handleDateChange(date);
                 }}
                 onClose={() => setIsDatePickerOpen(false)}
@@ -746,13 +716,6 @@ const MenuSets = () => {
               className={styles.searchInput}
               prefix={<SearchOutlined />}
             />
-            <Button
-              className={styles.searchButton}
-              onClick={handleSearch}
-              type="primary"
-            >
-              Search
-            </Button>
           </div>
 
           <div className={styles.mealListContainer}>

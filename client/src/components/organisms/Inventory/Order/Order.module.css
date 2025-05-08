@@ -90,8 +90,9 @@
 }
 
 .table :global(.ant-table-thead > tr > th) {
-    background: #fafafa;
+    background:  rgba(151,0,0,0.78);
     font-weight: 600;
+    color: white;
 }
 
 .lastUpdated {

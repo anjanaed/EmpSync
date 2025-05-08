@@ -1,3 +1,4 @@
+/* Header section with date/time and username */
 .header {
   display: flex;
   justify-content: space-between;
@@ -7,114 +8,125 @@
   margin-left: 12px;
 }
 
+/* Date and time display alignment */
 .dateAndTime {
   text-align: left;
 }
 
+/* Username display styling */
 .userName {
   font-size: 1.5em;
   font-weight: 600;
-  color: #ffffff !important;
-  text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
+  color: #ffffff !important; /* White text color */
+  text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5); /* Shadow for visibility */
   margin-right: 20px;
 }
 
+/* Main layout container */
 .layout {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  background: rgba(255, 255, 255, 0);
-  backdrop-filter: blur(1px);
-  -webkit-backdrop-filter: blur(1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  background: rgba(255, 255, 255, 0); /* Transparent background */
+  backdrop-filter: blur(1px); /* Slight blur effect */
+  -webkit-backdrop-filter: blur(1px); /* Safari support */
   border-radius: 10px;
 }
 
+/* Success message card */
 .successCard {
   width: 600px;
   text-align: center;
-  border: 2px solid #ffd591;
+  border: 2px solid #ffd591; /* Yellow border */
 }
 
+/* Success icon styling */
 .successIcon {
   font-size: 80px;
-  color: #52c41a;
+  color: #52c41a; /* Green color */
   margin-bottom: 24px;
 }
 
+/* Card title styling */
 .cardTitle {
-  font-weight: 700 !important;
-  color: #333 !important;
-  margin-bottom: 0px !important;
+  font-weight: 700 !important; /* Bold text */
+  color: #333 !important; /* Dark text */
+  margin-bottom: 0px !important; /* Remove bottom margin */
 }
 
+/* Main card container for meal selection */
 .cardContainer {
   border-radius: 8px;
-  height: 90vh; /* Set a fixed height */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  background: rgba(255, 255, 255, 0.671);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-radius: 10px;
+  height: 90vh; /* Fixed height */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  background: rgba(255, 255, 255, 0.671); /* Semi-transparent white */
+  backdrop-filter: blur(10px); /* Glassmorphism blur */
+  -webkit-backdrop-filter: blur(10px); /* Safari support */
 }
 
+/* Date button group container */
 .dateButtonGroup {
   width: 100%;
 }
 
-
-
-
+/* Meal tab content */
 .tabContent {
   margin-bottom: 16px;
 }
 
+/* Meal list container */
 .mealList {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 10px; /* Space between meal cards */
   padding: 10px;
-  border: 1px solid #ddd;
+  border: 1px solid #ddd; /* Light border */
   border-radius: 10px;
-  background-color: #f9f9f95e;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  height: 55vh; /* Set a fixed height */
+  background-color: #f9f9f95e; /* Semi-transparent light background */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Shadow for depth */
+  height: 55vh; /* Fixed height */
   overflow-y: auto; /* Enable vertical scrolling */
   overflow-x: hidden; /* Disable horizontal scrolling */
 }
 
+/* Order summary container */
 .orderSummaryContainer {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 10px; /* Space between elements */
   padding: 20px;
-  border: 1px solid #ddd;
+  border: 1px solid #ddd; /* Light border */
   border-radius: 10px;
-  background-color: #f9f9f95e;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  height: 75vh; /* Set a fixed height */
+  background-color: #f9f9f95e; /* Semi-transparent light background */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Shadow for depth */
+  height: 75vh; /* Fixed height */
 }
 
+/* Order summary scrolling area */
 .orderSummary {
-  height: 100vh; /* Set a fixed height */
+  height: 100vh; /* Full height */
   overflow-y: auto; /* Enable vertical scrolling */
   overflow-x: hidden; /* Disable horizontal scrolling */
 }
 
+/* Individual order card */
 .orderCard {
   margin-bottom: 16px;
 }
 
+/* Order details layout */
 .orderDetails {
   display: flex;
   justify-content: space-between;
 }
 
+/* Remove button for order items */
 .removeButton {
   width: 40px;
   height: 35px;
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: red;
-  color: white;
+  background-color: red; /* Red background */
+  color: white; /* White text/icon */
   border-radius: 10px;
   font-size: 20px;
   font-weight: bold;
@@ -122,208 +134,211 @@
   border: none;
 }
 
+/* Error message card */
 .errorCard {
   width: 600px;
   text-align: center;
-  border: 2px solid #ffa39e;
+  border: 2px solid #ffa39e; /* Red border */
 }
 
+/* Error icon styling */
 .errorIcon {
   font-size: 80px;
-  color: #ff4d4f;
+  color: #ff4d4f; /* Red color */
   margin-bottom: 24px;
 }
 
+/* Success message container */
 .successContainer {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 80vh;
+  height: 80vh; /* Center vertically */
 }
 
+/* Error message container */
 .errorContainer {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 80vh;
+  height: 80vh; /* Center vertically */
 }
 
+/* Date selection button */
 .dateButton {
-    height: 56px;
-    width: 50%;
-    font-size: 20px !important;
-    font-weight: 700 !important; /* Ensure font size is applied */
-    background-color: #f0f0f0; /* Default background color */
-    color: #000; /* Default text color */
-    border-color: #d9d9d9; /* Default border color */
-  }
-  
-  /* Remove hover and focus effects for .dateButton */
-  .dateButton:hover,
-  .dateButton:focus {
-    background-color: #ffffff !important; /* Keep the same background color */
-    color: #000000 !important;              /* Keep the same text color */
-    border-color: #d9d9d9 !important;    /* Keep the same border color */
-    box-shadow: none !important;         /* Remove the box shadow */
-  }
+  height: 56px;
+  width: 50%;
+  font-size: 20px !important;
+  font-weight: 700 !important; /* Bold text */
+  background-color: #f0f0f0; /* Light gray background */
+  color: #000; /* Black text */
+  border-color: #d9d9d9; /* Gray border */
+}
 
-  .selectedDateButton {
-    background-color: #ff4d4f; /* Red for selected */
-    color: #fff; /* White text for selected */
-    border-color: #d9363e; /* Darker red border for selected */
-  }
-  
-  /* Remove hover and focus effects for .selectedDateButton */
-  .selectedDateButton:hover,
-  .selectedDateButton:focus {
-    background-color: #ff4d4f !important; /* Keep the same background color */
-    color: #fff !important;              /* Keep the same text color */
-    border-color: #d9363e !important;    /* Keep the same border color */
-    box-shadow: none !important;         /* Remove the box shadow */
-  }
+/* Remove hover and focus effects for date button */
+.dateButton:hover,
+.dateButton:focus {
+  background-color: #ffffff !important; /* White background */
+  color: #000000 !important; /* Black text */
+  border-color: #d9d9d9 !important; /* Gray border */
+  box-shadow: none !important; /* No shadow */
+}
 
-  
+/* Selected date button styling */
+.selectedDateButton {
+  background-color: #ff4d4f; /* Red background */
+  color: #fff; /* White text */
+  border-color: #d9363e; /* Darker red border */
+}
+
+/* Remove hover and focus effects for selected date button */
+.selectedDateButton:hover,
+.selectedDateButton:focus {
+  background-color: #ff4d4f !important; /* Keep red background */
+  color: #fff !important; /* Keep white text */
+  border-color: #d9363e !important; /* Keep darker red border */
+  box-shadow: none !important; /* No shadow */
+}
+
+/* Filter button styling */
 .filterButton {
-  background-color: #f0f0f0;
-  color: #ff4d4f;
-  border-color: #ff4d4f;
+  background-color: #f0f0f0; /* Light gray background */
+  color: #ff4d4f; /* Red text */
+  border-color: #ff4d4f; /* Red border */
 }
 
+/* Tab label default styling */
 .tabLabel {
-  color: #000; /* Default color */
+  color: #000; /* Black text */
 }
 
+/* Unavailable tab styling */
 .unavailableTab {
-  color: gray; /* Gray for unavailable times */
+  color: gray; /* Gray text for unavailable */
 }
 
+/* Selected tab styling */
 .selectedTab {
-  color: #ff4d4f; /* Red for selected tab */
+  color: #ff4d4f; /* Red text for selected */
 }
 
+/* Meal image styling */
 .mealImage {
   height: 200px;
   object-fit: cover;
-  border: 1px solid rgb(0, 0, 0);
+  border: 1px solid rgb(0, 0, 0); /* Black border */
   border-radius: 4px;
 }
 
+/* Past due meal image styling */
 .pastDueImage {
-  filter: grayscale(100%); /* Gray out the image if past due */
+  filter: grayscale(100%); /* Gray out image */
 }
 
+/* Meal card styling */
 .mealCard {
   cursor: pointer;
-  opacity: 1;
+  opacity: 1; /* Full opacity */
 }
 
+/* Past due meal card styling */
 .pastDueCard {
   cursor: not-allowed;
-  opacity: 0.5; /* Reduce opacity if past due */
+  opacity: 0.5; /* Reduced opacity */
 }
 
+/* Add button styling */
 .addButton {
   margin-top: 8px;
-  background-color: #ff4d4f; /* Red for enabled */
-  color: #fff; /* White text for enabled */
-  border-color: #d9363e; /* Darker red border for enabled */
+  background-color: #ff4d4f; /* Red background */
+  color: #fff; /* White text */
+  border-color: #d9363e; /* Darker red border */
   cursor: pointer;
 }
 
-.disabledButton {
-  background-color: #d9d9d9; /* Gray for disabled */
-  color: #8c8c8c; /* Light gray text for disabled */
-  border-color: #d9d9d9; /* Gray border for disabled */
-  cursor: not-allowed; /* Change cursor for disabled state */
+/* Remove hover and focus effects for add button */
+.addButton:hover,
+.addButton:focus {
+  background-color: #ff4d4f !important; /* Keep red background */
+  color: #fff !important; /* Keep white text */
+  border-color: #d9363e !important; /* Keep darker red border */
+  box-shadow: none !important; /* No shadow */
 }
 
+/* Disabled button styling */
+.disabledButton {
+  background-color: #d9d9d9; /* Gray background */
+  color: #8c8c8c; /* Light gray text */
+  border-color: #d9d9d9; /* Gray border */
+  cursor: not-allowed; /* Not-allowed cursor */
+}
+
+/* Price container styling */
 .priceContainer {
   margin-top: 8px;
 }
 
-.addButton {
-  margin-top: 8px;
-  background-color: #ff4d4f; /* Red for enabled */
-  color: #fff; /* White text for enabled */
-  border-color: #d9363e; /* Darker red border for enabled */
-  cursor: pointer;
-}
-
-.addButton:hover,
-.addButton:focus {
-  background-color: #ff4d4f !important; /* Keep the same background color */
-  color: #fff !important;              /* Keep the same text color */
-  border-color: #d9363e !important;    /* Keep the same border color */
-  box-shadow: none !important;         /* Remove the box shadow */
-}
-
-.disabledButton {
-  background-color: #d9d9d9; /* Gray for disabled */
-  color: #8c8c8c; /* Light gray text for disabled */
-  border-color: #d9d9d9; /* Gray border for disabled */
-  cursor: not-allowed; /* Change cursor for disabled state */
-}
-
+/* Second row in order card */
 .secondRow {
   margin-top: 8px;
 }
 
+/* Meal time badge styling */
 .mealTimeBadge {
   margin-left: 8px;
 }
 
+/* Right-aligned elements */
 .rightAligned {
   text-align: right;
 }
 
+/* Action button styling (e.g., + and - buttons) */
 .actionButton {
   margin-right: 8px;
-  background-color: #f0f0f0;
-  border: 1px solid #d9d9d9;
+  background-color: #f0f0f0; /* Light gray background */
+  border: 1px solid #d9d9d9; /* Gray border */
   cursor: pointer;
 }
 
+/* Item count badge styling */
 .itemCountBadge {
   margin-right: 8px;
   font-size: 16px;
   font-weight: bold;
 }
 
+/* Place order button styling */
 .placeOrderButton {
-    margin-top: 5px;
-    height: 70px;
-    font-size: 16px;
-    font-weight: bold;
-    border-radius: 4px;
-    background-color: #ff4d4f; /* Default background color */
-    color: #fff; /* Default text color */
-    border: 1px solid #d9363e; /* Default border color */
-    cursor: pointer;
-  }
-  
-  /* Remove hover and focus effects for .placeOrderButton */
-  .placeOrderButton:hover,
-  .placeOrderButton:focus {
-    background-color: #ff4d4f !important; /* Keep the same background color */
-    color: #fff !important;              /* Keep the same text color */
-    border-color: #d9363e !important;    /* Keep the same border color */
-    box-shadow: none !important;         /* Remove the box shadow */
-  }
-
-.enabledButton {
-  background-color: #ff4d4f; /* Red for enabled */
-  color: #fff; /* White text for enabled */
-  border-color: #d9363e; /* Darker red border for enabled */
+  margin-top: 5px;
+  height: 70px;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 4px;
+  background-color: #ff4d4f; /* Red background */
+  color: #fff; /* White text */
+  border: 1px solid #d9363e; /* Darker red border */
   cursor: pointer;
 }
 
-.disabledButton {
-  background-color: #d9d9d9; /* Gray for disabled */
-  color: #8c8c8c; /* Light gray text for disabled */
-  border-color: #d9d9d9; /* Gray border for disabled */
-  cursor: not-allowed; /* Change cursor for disabled state */
+/* Remove hover and focus effects for place order button */
+.placeOrderButton:hover,
+.placeOrderButton:focus {
+  background-color: #ff4d4f !important; /* Keep red background */
+  color: #fff !important; /* Keep white text */
+  border-color: #d9363e !important; /* Keep darker red border */
+  box-shadow: none !important; /* No shadow */
 }
 
+/* Enabled place order button styling */
+.enabledButton {
+  background-color: #ff4d4f; /* Red background */
+  color: #fff; /* White text */
+  border-color: #d9363e; /* Darker red border */
+  cursor: pointer;
+}
+
+/* Total container styling */
 .totalContainer {
   display: flex;
   justify-content: space-between;
@@ -331,19 +346,19 @@
   margin-top: 16px;
 }
 
+/* Back button styling */
 .backButton {
-  background-color: #ffffff; /* Default background color */
-  color: #ff4d4f; /* Default text color */
-  border-color: #ff4d4f; /* Default border color */
+  background-color: #ffffff; /* White background */
+  color: #ff4d4f; /* Red text */
+  border-color: #ff4d4f; /* Red border */
   cursor: pointer;
 }
 
-
 /* Remove hover effects for all Ant Design buttons */
-.ant-btn:hover, 
+.ant-btn:hover,
 .ant-btn:focus {
-    background-color: inherit !important; /* Keep the background color unchanged */
-    border-color: inherit !important;    /* Keep the border color unchanged */
-    color: inherit !important;           /* Keep the text color unchanged */
-    box-shadow: none !important;         /* Remove the box shadow */
+  background-color: inherit !important; /* Keep original background */
+  border-color: inherit !important; /* Keep original border */
+  color: inherit !important; /* Keep original text color */
+  box-shadow: none !important; /* No shadow */
 }
