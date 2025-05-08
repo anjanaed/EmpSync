@@ -47,7 +47,7 @@ export class IngredientsService {
   }
 
   async findOne(id: number) {
-    // Ensure id is converted to number
+    // id is converted to number
     const parsedId = parseInt(id.toString(), 10);
     
     if (isNaN(parsedId)) {
