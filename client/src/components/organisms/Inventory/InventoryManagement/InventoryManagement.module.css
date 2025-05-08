@@ -63,7 +63,7 @@
 .addButton {
     background-color: #ffffff;
     border-color: #d1cdcd;
-    color: rgb(223, 212, 212);
+    color: rgb(0, 0, 0);
 }
 
 .addButton:hover {
