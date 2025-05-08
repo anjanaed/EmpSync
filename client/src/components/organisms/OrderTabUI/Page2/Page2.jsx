@@ -207,11 +207,11 @@ const Page2 = ({ carouselRef, language, setUsername, setUserId }) => {
             </div>
 
             {/* Move the errorPopup outside the Card */}
-                        {errorMessage && (
-                            <div className={styles.errorPopup}>
-                                {errorMessage}
-                            </div>
-                        )}
+            {errorMessage && (
+                <div className={styles.errorPopup}>
+                    {errorMessage}
+                </div>
+            )}
         </Spin>
     );
 };

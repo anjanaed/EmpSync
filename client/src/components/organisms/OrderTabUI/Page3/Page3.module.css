@@ -1,3 +1,5 @@
+
+
 .header {
     display: flex;
     justify-content: space-between;
@@ -154,4 +156,173 @@ border: none;
     font-size: 80px;
     color: #ff4d4f;
     margin-bottom: 24px;
+}
+
+
+.successContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 80vh;
+}
+
+.errorContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 80vh;
+}
+
+.dateButton {
+    height: 56px;
+    width: 50%;
+    font-size: 20px !important;
+    font-weight: 700 !important;
+    background-color: #f0f0f0; /* Default background color */
+    color: #000; /* Default text color */
+    border-color: #d9d9d9; /* Default border color */
+}
+
+.selectedDateButton {
+    background-color: #ff4d4f; /* Red for selected */
+    color: #fff; /* White text for selected */
+    border-color: #d9363e; /* Darker red border for selected */
+}
+
+.filterButton {
+    background-color: #f0f0f0;
+    color: #000;
+    border-color: #d9d9d9;
+}
+
+.tabLabel {
+    color: #000; /* Default color */
+}
+
+.unavailableTab {
+    color: gray; /* Gray for unavailable times */
+}
+
+.selectedTab {
+    color: #ff4d4f; /* Red for selected tab */
+}
+
+.mealImage {
+    height: 200px;
+    object-fit: cover;
+    border: 1px solid rgb(0, 0, 0);
+    border-radius: 4px;
+}
+
+.pastDueImage {
+    filter: grayscale(100%); /* Gray out the image if past due */
+}
+
+.mealCard {
+    cursor: pointer;
+    opacity: 1;
+}
+
+.pastDueCard {
+    cursor: not-allowed;
+    opacity: 0.5; /* Reduce opacity if past due */
+}
+
+.addButton {
+    margin-top: 8px;
+    background-color: #ff4d4f; /* Red for enabled */
+    color: #fff; /* White text for enabled */
+    border-color: #d9363e; /* Darker red border for enabled */
+    cursor: pointer;
+}
+
+.disabledButton {
+    background-color: #d9d9d9; /* Gray for disabled */
+    color: #8c8c8c; /* Light gray text for disabled */
+    border-color: #d9d9d9; /* Gray border for disabled */
+    cursor: not-allowed; /* Change cursor for disabled state */
+}
+
+.priceContainer {
+    margin-top: 8px;
+}
+
+.addButton {
+    margin-top: 8px;
+    background-color: #ff4d4f; /* Red for enabled */
+    color: #fff; /* White text for enabled */
+    border-color: #d9363e; /* Darker red border for enabled */
+    cursor: pointer;
+}
+
+.disabledButton {
+    background-color: #d9d9d9; /* Gray for disabled */
+    color: #8c8c8c; /* Light gray text for disabled */
+    border-color: #d9d9d9; /* Gray border for disabled */
+    cursor: not-allowed; /* Change cursor for disabled state */
+}
+
+
+.secondRow {
+    margin-top: 8px;
+}
+
+.mealTimeBadge {
+    margin-left: 8px;
+}
+
+.rightAligned {
+    text-align: right;
+}
+
+.actionButton {
+    margin-right: 8px;
+    background-color: #f0f0f0;
+    border: 1px solid #d9d9d9;
+    cursor: pointer;
+}
+
+.itemCountBadge {
+    margin-right: 8px;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+
+
+.placeOrderButton {
+    margin-top: 5px;
+    height: 70px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 4px;
+}
+
+.enabledButton {
+    background-color: #ff4d4f; /* Red for enabled */
+    color: #fff; /* White text for enabled */
+    border-color: #d9363e; /* Darker red border for enabled */
+    cursor: pointer;
+}
+
+.disabledButton {
+    background-color: #d9d9d9; /* Gray for disabled */
+    color: #8c8c8c; /* Light gray text for disabled */
+    border-color: #d9d9d9; /* Gray border for disabled */
+    cursor: not-allowed; /* Change cursor for disabled state */
+}
+
+
+.totalContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 16px;
+}
+
+.backButton {
+    background-color: #f0f0f0; /* Default background color */
+    color: #000; /* Default text color */
+    border-color: #d9d9d9; /* Default border color */
+    cursor: pointer;
 }
