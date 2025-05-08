@@ -59,12 +59,8 @@
   width: 100%;
 }
 
-.dateButton {
-  height: 56px;
-  width: 50%;
-  font-size: 20px !important;
-  font-weight: 700 !important; /* Ensure font size is applied */
-}
+
+
 
 .tabContent {
   margin-bottom: 16px;
@@ -153,25 +149,44 @@
 }
 
 .dateButton {
-  height: 56px;
-  width: 50%;
-  font-size: 20px !important;
-  font-weight: 700 !important;
-  background-color: #f0f0f0; /* Default background color */
-  color: #000; /* Default text color */
-  border-color: #d9d9d9; /* Default border color */
-}
+    height: 56px;
+    width: 50%;
+    font-size: 20px !important;
+    font-weight: 700 !important; /* Ensure font size is applied */
+    background-color: #f0f0f0; /* Default background color */
+    color: #000; /* Default text color */
+    border-color: #d9d9d9; /* Default border color */
+  }
+  
+  /* Remove hover and focus effects for .dateButton */
+  .dateButton:hover,
+  .dateButton:focus {
+    background-color: #ffffff !important; /* Keep the same background color */
+    color: #000000 !important;              /* Keep the same text color */
+    border-color: #d9d9d9 !important;    /* Keep the same border color */
+    box-shadow: none !important;         /* Remove the box shadow */
+  }
 
-.selectedDateButton {
-  background-color: #ff4d4f; /* Red for selected */
-  color: #fff; /* White text for selected */
-  border-color: #d9363e; /* Darker red border for selected */
-}
+  .selectedDateButton {
+    background-color: #ff4d4f; /* Red for selected */
+    color: #fff; /* White text for selected */
+    border-color: #d9363e; /* Darker red border for selected */
+  }
+  
+  /* Remove hover and focus effects for .selectedDateButton */
+  .selectedDateButton:hover,
+  .selectedDateButton:focus {
+    background-color: #ff4d4f !important; /* Keep the same background color */
+    color: #fff !important;              /* Keep the same text color */
+    border-color: #d9363e !important;    /* Keep the same border color */
+    box-shadow: none !important;         /* Remove the box shadow */
+  }
 
+  
 .filterButton {
   background-color: #f0f0f0;
-  color: #000;
-  border-color: #d9d9d9;
+  color: #ff4d4f;
+  border-color: #ff4d4f;
 }
 
 .tabLabel {
@@ -234,6 +249,14 @@
   cursor: pointer;
 }
 
+.addButton:hover,
+.addButton:focus {
+  background-color: #ff4d4f !important; /* Keep the same background color */
+  color: #fff !important;              /* Keep the same text color */
+  border-color: #d9363e !important;    /* Keep the same border color */
+  box-shadow: none !important;         /* Remove the box shadow */
+}
+
 .disabledButton {
   background-color: #d9d9d9; /* Gray for disabled */
   color: #8c8c8c; /* Light gray text for disabled */
@@ -267,12 +290,25 @@
 }
 
 .placeOrderButton {
-  margin-top: 5px;
-  height: 70px;
-  font-size: 16px;
-  font-weight: bold;
-  border-radius: 4px;
-}
+    margin-top: 5px;
+    height: 70px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 4px;
+    background-color: #ff4d4f; /* Default background color */
+    color: #fff; /* Default text color */
+    border: 1px solid #d9363e; /* Default border color */
+    cursor: pointer;
+  }
+  
+  /* Remove hover and focus effects for .placeOrderButton */
+  .placeOrderButton:hover,
+  .placeOrderButton:focus {
+    background-color: #ff4d4f !important; /* Keep the same background color */
+    color: #fff !important;              /* Keep the same text color */
+    border-color: #d9363e !important;    /* Keep the same border color */
+    box-shadow: none !important;         /* Remove the box shadow */
+  }
 
 .enabledButton {
   background-color: #ff4d4f; /* Red for enabled */
@@ -296,8 +332,18 @@
 }
 
 .backButton {
-  background-color: #f0f0f0; /* Default background color */
-  color: #000; /* Default text color */
-  border-color: #d9d9d9; /* Default border color */
+  background-color: #ffffff; /* Default background color */
+  color: #ff4d4f; /* Default text color */
+  border-color: #ff4d4f; /* Default border color */
   cursor: pointer;
+}
+
+
+/* Remove hover effects for all Ant Design buttons */
+.ant-btn:hover, 
+.ant-btn:focus {
+    background-color: inherit !important; /* Keep the background color unchanged */
+    border-color: inherit !important;    /* Keep the border color unchanged */
+    color: inherit !important;           /* Keep the text color unchanged */
+    box-shadow: none !important;         /* Remove the box shadow */
 }
