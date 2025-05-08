@@ -1,5 +1,6 @@
 .loadingWrapper {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   height: 100vh; 
@@ -14,8 +15,9 @@
 
 
 .loadingText {
-  margin-top: 20px; 
-  font-size: 18px;
+  margin-top: 1vw; 
+  font-size: 1vw;
+  font-family: "Figtree", sans-serif;
   color: #5d071c;
   text-align: center;
 }
