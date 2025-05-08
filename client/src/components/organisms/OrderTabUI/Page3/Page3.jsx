@@ -10,7 +10,7 @@ import translations from "../../../../utils/translations";
 const { Content } = Layout;
 const { Title, Text } = Typography;
 
-const Page3 = ({ carouselRef, language = "english", username, userId }) => {
+const Page3 = ({ language = "english", username, userId }) => {
     const navigate = useNavigate();
     const [currentTime, setCurrentTime] = useState(new Date());
     const [selectedDate, setSelectedDate] = useState("today");
@@ -21,7 +21,7 @@ const Page3 = ({ carouselRef, language = "english", username, userId }) => {
     const [meals, setMeals] = useState([]);
     const [allMeals, setAllMeals] = useState([]);
     const text = translations[language];
-    
+
     useEffect(() => {
         // Set the current time
         const timer = setInterval(() => {
