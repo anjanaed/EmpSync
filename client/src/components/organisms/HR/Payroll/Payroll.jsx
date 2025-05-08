@@ -335,7 +335,7 @@ const Payroll = () => {
   }
 
   if (pdfLoading) {
-    return <Loading />;
+    return <Loading text="Generating Payslips..." />;
   }
 
   return (

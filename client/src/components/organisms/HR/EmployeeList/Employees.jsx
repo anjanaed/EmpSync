@@ -164,19 +164,19 @@ const Employees = () => {
           />
           <Popconfirm
             title={
-              <span style={{ fontSize: "0.75vw" }}>
+              <span style={{ fontSize: "0.9vw" }}>
                 Delete User {record.id}
               </span>
             }
             placement="bottom"
             onConfirm={() => handleDelete(record.id, record.email)}
             description={
-              <span style={{ fontStyle: "italic", fontSize: "0.6vw" }}>
+              <span style={{ fontStyle: "italic", fontSize: "0.8vw" }}>
                 Are You Sure to Delete
               </span>
             }
-            okText={<span style={{ fontSize: "0.6vw" }}>Yes</span>}
-            cancelText={<span style={{ fontSize: "0.6vw" }}>No</span>}
+            okText={<span style={{ fontSize: "0.8vw" }}>Yes</span>}
+            cancelText={<span style={{ fontSize: "0.8vw" }}>No</span>}
           >
             {" "}
             <MdOutlineDeleteOutline className={styles.icons} size="17px" />
