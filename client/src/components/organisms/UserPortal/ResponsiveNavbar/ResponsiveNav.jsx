@@ -59,8 +59,8 @@ const ResponsiveNav = () => {
           </a>
         </li>
         <li>
-          <a href="#AI Suggestions" className={styles.navLink}>
-            <Sparkles size={18} /> AI Suggestions
+          <a href="#personalized Suggestions" className={styles.navLink}>
+            <Sparkles size={18} /> personalized Suggestions
           </a>
         </li>
         <li className={styles.mobileLogout}>
