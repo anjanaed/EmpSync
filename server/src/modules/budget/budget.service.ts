@@ -57,6 +57,7 @@ export class BudgetService {
                         }
 
                         return {
+                            id: Date.now(), // Generate a unique ID, e.g., using the current timestamp
                             name: budgetData.name,
                             budgetAmount: budgetAmount,
                             budgetDate: budgetDate
@@ -92,6 +93,7 @@ export class BudgetService {
                 }
 
                 const createData = {
+                    id: Date.now(), // Generate a unique ID, e.g., using the current timestamp
                     name: data.name,
                     budgetAmount: budgetAmount,
                     budgetDate: budgetDate
