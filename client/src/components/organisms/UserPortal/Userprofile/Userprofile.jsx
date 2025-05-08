@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Input, Select, Radio } from "antd"; // Import Ant Design Input, Select, and Radio
 import { Camera, User } from "lucide-react";
 import styles from "./Userprofile.module.css";
@@ -6,27 +6,26 @@ import styles from "./Userprofile.module.css";
 const { TextArea } = Input; // Destructure TextArea from Input
 const { Option } = Select; // Destructure Option from Select
 
-export default function UserProfile() {
+export default function UserProfile({ user }) {
   const [isEditing, setIsEditing] = useState(false);
   const fileInputRef = useRef(null);
-  const [profileImage, setProfileImage] = useState(null);
+  const [profileImage, setProfileImage] = useState(user.profilePicture || null);
 
-  // Mock user data
   const [userData, setUserData] = useState({
-    employeeId: "EMP12345",
-    email: "john.doe@empsync.com",
-    jobRole: "Senior Developer",
-    joinDate: "2023-01-15",
-    fullName: "John Doe",
-    password: "••••••••",
-    salary: "75000",
-    phoneNumber: "+1 (555) 123-4567",
-    birthday: "1990-05-15",
-    preferredLanguage: "English",
-    address: "123 Main Street, Anytown, USA",
-    gender: "male",
-    height: "175",
-    weight: "70",
+    employeeId: user.id,
+    email: user.email,
+    jobRole: user.role,
+    joinDate: user.createdAt.split("T")[0], // Format date
+    fullName: user.name,
+    password: "••••••••", // Masked password
+    salary: user.salary || "N/A",
+    phoneNumber: user.telephone || "N/A",
+    birthday: user.dob || "N/A",
+    preferredLanguage: user.language || "N/A",
+    address: user.address || "N/A",
+    gender: user.gender || "N/A",
+    height: user.height || "N/A",
+    weight: user.weight || "N/A",
   });
 
   const handleEditToggle = () => {
@@ -80,20 +79,20 @@ export default function UserProfile() {
               />
               {!profileImage && <User />}
               {isEditing && (
-              <div className={styles.uploadControls}>
-                <button onClick={triggerFileInput} className={styles.uploadButton}>
-                  <Camera className="mr-2" />
-                  Upload Photo
-                </button>
-                <input
-                  type="file"
-                  ref={fileInputRef}
-                  onChange={handleImageUpload}
-                  accept="image/*"
-                  className={styles.fileInput}
-                />
-              </div>
-            )}
+                <div className={styles.uploadControls}>
+                  <button onClick={triggerFileInput} className={styles.uploadButton}>
+                    <Camera className="mr-2" />
+                    Upload Photo
+                  </button>
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleImageUpload}
+                    accept="image/*"
+                    className={styles.fileInput}
+                  />
+                </div>
+              )}
             </div>
             <div className={styles.fixedData}>
               <p><strong>Employee ID:</strong> {userData.employeeId}</p>
@@ -103,12 +102,12 @@ export default function UserProfile() {
             </div>
           </div>
 
-          <div className={styles.formGrid}>
+          <form className={styles.formGrid} onSubmit={(e) => e.preventDefault()}>
             <div className={styles.formGroup}>
               <label htmlFor="fullName">Full Name</label>
               <Input
                 id="fullName"
-                className={styles.inputMaxWidth} // Apply the max-width class
+                className={styles.inputMaxWidth}
                 value={userData.fullName}
                 onChange={(e) => handleInputChange("fullName", e.target.value)}
                 disabled={!isEditing}
@@ -119,7 +118,7 @@ export default function UserProfile() {
               <label htmlFor="password">Password</label>
               <Input.Password
                 id="password"
-                className={styles.inputMaxWidth} // Apply the max-width class
+                className={styles.inputMaxWidth}
                 value={userData.password}
                 onChange={(e) => handleInputChange("password", e.target.value)}
                 disabled={!isEditing}
@@ -130,7 +129,7 @@ export default function UserProfile() {
               <label htmlFor="phoneNumber">Phone Number</label>
               <Input
                 id="phoneNumber"
-                className={styles.inputMaxWidth} // Apply the max-width class
+                className={styles.inputMaxWidth}
                 value={userData.phoneNumber}
                 onChange={(e) => handleInputChange("phoneNumber", e.target.value)}
                 disabled={!isEditing}
@@ -141,7 +140,7 @@ export default function UserProfile() {
               <label htmlFor="birthday">Birthday</label>
               <Input
                 id="birthday"
-                className={styles.inputMaxWidth} // Apply the max-width class
+                className={styles.inputMaxWidth}
                 value={userData.birthday}
                 onChange={(e) => handleInputChange("birthday", e.target.value)}
                 disabled={!isEditing}
@@ -152,7 +151,7 @@ export default function UserProfile() {
               <label htmlFor="preferredLanguage">Preferred Language</label>
               <Select
                 id="preferredLanguage"
-                className={styles.inputMaxWidth} // Apply the max-width class
+                className={styles.inputMaxWidth}
                 value={userData.preferredLanguage}
                 onChange={(value) => handleInputChange("preferredLanguage", value)}
                 disabled={!isEditing}
@@ -167,7 +166,7 @@ export default function UserProfile() {
               <label htmlFor="height">Height (cm)</label>
               <Input
                 id="height"
-                className={styles.inputMaxWidth} // Apply the max-width class
+                className={styles.inputMaxWidth}
                 value={userData.height}
                 onChange={(e) => handleInputChange("height", e.target.value)}
                 disabled={!isEditing}
@@ -202,13 +201,19 @@ export default function UserProfile() {
               <label htmlFor="address">Address</label>
               <Input
                 id="address"
-                className={styles.inputMaxWidth} // Apply the max-width class
+                className={styles.inputMaxWidth}
                 value={userData.address}
                 onChange={(e) => handleInputChange("address", e.target.value)}
                 disabled={!isEditing}
               />
             </div>
-          </div>
+
+            <div className={styles.formActions}>
+              <button type="submit" className={styles.submitButton} disabled={!isEditing}>
+                Save Changes
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </div>

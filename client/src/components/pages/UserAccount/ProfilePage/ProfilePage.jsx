@@ -1,20 +1,19 @@
 import React from "react";
 import UserProfile from "../../../organisms/UserPortal/Userprofile/Userprofile";
 import NavBar from "../../../organisms/UserPortal/ResponsiveNavbar/ResponsiveNav";
+import { useAuth } from "../../../../contexts/AuthContext";
 
 const ProfilePage = () => {
-  const user = {
-    name: "John Doe",
-    email: "johndoe@example.com",
-    phone: "123-456-7890",
-    address: "123 Main St, Springfield",
-    profilePicture: "/path-to-profile-picture.jpg", // Optional
-  };
+  const { authData } = useAuth();
+
+  if (!authData || !authData.user) {
+    return <div>Loading...</div>; // Handle loading or unauthenticated state
+  }
 
   return (
     <>
       <NavBar />
-      <UserProfile user={user} />
+      <UserProfile user={authData.user} />
     </>
   );
 };
