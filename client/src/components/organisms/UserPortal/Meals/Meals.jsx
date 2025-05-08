@@ -78,26 +78,37 @@ const Meals = () => {
       message.error("Employee ID is missing. Please log in again.");
       return;
     }
-
+  
     localStorage.setItem("employeeId", employeeId);
-
+  
     const fetchOrders = async () => {
       try {
         const response = await axios.get(`http://localhost:3000/orders?employeeId=${employeeId}`);
         const orders = response.data;
-
-        const current = orders.filter((order) => order.employeeId === employeeId && order.serve === false);
+  
+        const today = new Date();
+        today.setHours(0, 0, 0, 0); // Set time to the start of the day
+  
+        const current = orders.filter((order) => {
+          const orderDate = new Date(order.orderDate);
+          return (
+            order.employeeId === employeeId &&
+            order.serve === false &&
+            orderDate >= today // Only include orders from today or later
+          );
+        });
+  
         const past = orders.filter((order) => order.employeeId === employeeId && order.serve === true);
-
+  
         const mealIdCounts = orders.flatMap((order) =>
           Object.entries(order.meals || {}).map(([mealId, count]) => ({
             mealId,
             count,
           }))
         );
-
+  
         const uniqueMealIds = [...new Set(mealIdCounts.map((item) => item.mealId))];
-
+  
         const mealResponses = await Promise.all(
           uniqueMealIds.map((mealId) =>
             axios
@@ -106,14 +117,14 @@ const Meals = () => {
               .catch(() => null)
           )
         );
-
+  
         const mealDetailsMap = {};
         mealResponses.forEach((meal) => {
           if (meal) {
             mealDetailsMap[meal.id] = meal.nameEnglish;
           }
         });
-
+  
         setMealDetails(mealDetailsMap);
         setCurrentOrders(current);
         setPastOrders(past);
@@ -121,7 +132,7 @@ const Meals = () => {
         message.error("Failed to fetch orders or meal details. Please try again.");
       }
     };
-
+  
     fetchOrders();
   }, [employeeId]);
 
