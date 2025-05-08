@@ -1,47 +1,46 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Input, Select, Radio } from "antd"; // Import Ant Design Input, Select, and Radio
+import { Input, Select, Radio } from "antd";
 import { Camera, User } from "lucide-react";
 import axios from "axios";
 import styles from "./Userprofile.module.css";
 
-const { TextArea } = Input; // Destructure TextArea from Input
-const { Option } = Select; // Destructure Option from Select
+const { Option } = Select;
 
 export default function UserProfile({ user }) {
   const [isEditing, setIsEditing] = useState(false);
   const fileInputRef = useRef(null);
   const [profileImage, setProfileImage] = useState(user.profilePicture || null);
+  const [userData, setUserData] = useState(null);
 
-  const [userData, setUserData] = useState({
-    employeeId: user.id,
-    email: user.email,
-    jobRole: user.role,
-    joinDate: user.createdAt.split("T")[0], // Format date
-    fullName: user.name,
-    password: "••••••••", // Masked password
-    salary: user.salary || "N/A",
-    phoneNumber: user.telephone || "N/A",
-    birthday: user.dob || "N/A",
-    preferredLanguage: user.language || "N/A",
-    address: user.address || "N/A",
-    gender: user.gender || "N/A",
-    height: user.height || "N/A",
-    weight: user.weight || "N/A",
-  });
+  // Fetch user data from the database
+  const fetchUserData = async () => {
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_BASE_URL}/user/${user.id}`
+      );
+      setUserData(response.data);
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchUserData(); // Fetch user data on component mount
+  }, []);
 
   const handleEditToggle = async () => {
     if (isEditing) {
       try {
         // API call to update user data in the database
         const response = await axios.put(
-          `${import.meta.env.VITE_BASE_URL}/user/${userData.employeeId}`,
+          `${import.meta.env.VITE_BASE_URL}/user/${userData.id}`,
           {
-            name: userData.fullName,
-            dob: userData.birthday,
-            telephone: userData.phoneNumber,
+            name: userData.name,
+            dob: userData.dob,
+            telephone: userData.telephone,
             gender: userData.gender,
             address: userData.address,
-            language: userData.preferredLanguage,
+            language: userData.language,
             height: parseInt(userData.height, 10),
             weight: parseInt(userData.weight, 10),
           }
@@ -49,7 +48,7 @@ export default function UserProfile({ user }) {
 
         if (response.status === 200) {
           alert("User data updated successfully!");
-          window.location.reload(); // Reload the page
+          fetchUserData(); // Fetch updated data after saving
         }
       } catch (error) {
         console.error("Error updating user data:", error);
@@ -82,6 +81,10 @@ export default function UserProfile({ user }) {
   const triggerFileInput = () => {
     fileInputRef.current?.click();
   };
+
+  if (!userData) {
+    return <div>Loading...</div>; // Show a loading state until user data is fetched
+  }
 
   return (
     <div className={styles.profileContainer}>
@@ -119,10 +122,10 @@ export default function UserProfile({ user }) {
               )}
             </div>
             <div className={styles.fixedData}>
-              <p><strong>Employee ID:</strong> {userData.employeeId}</p>
+              <p><strong>Employee ID:</strong> {userData.id}</p>
               <p><strong>Email:</strong> {userData.email}</p>
-              <p><strong>Job Role:</strong> {userData.jobRole}</p>
-              <p><strong>Join Date:</strong> {userData.joinDate}</p>
+              <p><strong>Job Role:</strong> {userData.role}</p>
+              <p><strong>Join Date:</strong> {userData.createdAt.split("T")[0]}</p>
             </div>
           </div>
 
@@ -132,19 +135,8 @@ export default function UserProfile({ user }) {
               <Input
                 id="fullName"
                 className={styles.inputMaxWidth}
-                value={userData.fullName}
-                onChange={(e) => handleInputChange("fullName", e.target.value)}
-                disabled={!isEditing}
-              />
-            </div>
-
-            <div className={styles.formGroup}>
-              <label htmlFor="password">Password</label>
-              <Input.Password
-                id="password"
-                className={styles.inputMaxWidth}
-                value={userData.password}
-                onChange={(e) => handleInputChange("password", e.target.value)}
+                value={userData.name}
+                onChange={(e) => handleInputChange("name", e.target.value)}
                 disabled={!isEditing}
               />
             </div>
@@ -154,8 +146,8 @@ export default function UserProfile({ user }) {
               <Input
                 id="phoneNumber"
                 className={styles.inputMaxWidth}
-                value={userData.phoneNumber}
-                onChange={(e) => handleInputChange("phoneNumber", e.target.value)}
+                value={userData.telephone}
+                onChange={(e) => handleInputChange("telephone", e.target.value)}
                 disabled={!isEditing}
               />
             </div>
@@ -165,8 +157,8 @@ export default function UserProfile({ user }) {
               <Input
                 id="birthday"
                 className={styles.inputMaxWidth}
-                value={userData.birthday}
-                onChange={(e) => handleInputChange("birthday", e.target.value)}
+                value={userData.dob}
+                onChange={(e) => handleInputChange("dob", e.target.value)}
                 disabled={!isEditing}
               />
             </div>
@@ -176,8 +168,8 @@ export default function UserProfile({ user }) {
               <Select
                 id="preferredLanguage"
                 className={styles.inputMaxWidth}
-                value={userData.preferredLanguage}
-                onChange={(value) => handleInputChange("preferredLanguage", value)}
+                value={userData.language}
+                onChange={(value) => handleInputChange("language", value)}
                 disabled={!isEditing}
               >
                 <Option value="English">English</Option>
