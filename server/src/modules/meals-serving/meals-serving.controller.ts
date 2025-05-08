@@ -18,7 +18,7 @@ export class MealsServingController {
     }
   }
 
-  @Get('meal-order-counts')
+  @Get('meal-order-counts') // New endpoint to get meal order counts by date
   async getMealOrderCountsByDate(@Query('date') date: string) {
     try {
       const parsedDate = new Date(date);

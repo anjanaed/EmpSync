@@ -33,7 +33,7 @@ import {
 // Import Firebase storage related functions
 import { getStorage, ref, deleteObject } from "firebase/storage";
 
-import styles from "./meals.module.css";
+import styles from "./Meals.module.css";
 
 const { Title } = Typography;
 const { Search } = Input;

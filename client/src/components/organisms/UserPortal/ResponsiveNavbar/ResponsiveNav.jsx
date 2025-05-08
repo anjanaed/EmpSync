@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useAuth } from '../../../../contexts/AuthContext'; // Import useAuth
 import {
   faBars,
   faMoon,
   faSun,
 } from "@fortawesome/free-solid-svg-icons";
-import { User, CreditCard, Utensils, Sparkles, LogOut } from "lucide-react"
+import { User, CreditCard, Utensils, Sparkles, LogOut } from "lucide-react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styles from './ResponsiveNav.module.css';
 import Companylogo from '../../../../assets/Logo/logo.png';
@@ -13,6 +15,8 @@ import Whitelogo from '../../../../assets/Logo/Logowhite.png';
 const ResponsiveNav = () => {
   const [darkMode, setDarkMode] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const navigate = useNavigate(); // Initialize useNavigate
+  const { logout } = useAuth(); // Get the logout function from useAuth
 
   const toggleDarkMode = () => {
     setDarkMode(!darkMode);
@@ -24,7 +28,9 @@ const ResponsiveNav = () => {
   };
 
   const handleLogout = () => {
+    logout(); // Call the logout function to clear user data
     console.log("User logged out");
+    navigate('/login'); // Redirect to the login page
   };
 
   return (
