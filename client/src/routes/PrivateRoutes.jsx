@@ -122,6 +122,15 @@ const PrivateRoutes = () => (
         </ProtectedRoute>
       }
     />
+
+    <Route
+      path="/UserMeals"
+      element={
+        <ProtectedRoute allowedRoles={["*"]}>
+          <UserMeals />
+        </ProtectedRoute>
+      }
+    />
     
 
     {/* KITCHEN_ADMIN Routes */}
