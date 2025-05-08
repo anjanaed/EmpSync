@@ -60,7 +60,7 @@ export class MealsServingService {
         orders.map(async (order) => {
           const mealDetails = await Promise.all(
             order.meals.map(async (mealEntry) => {
-              const [mealId, count] = mealEntry.split(':').map((value) => Number(value));
+              const [mealId, count] = mealEntry.split(':').map((value) => Number(value));// Split the meal entry into ID and count
               const meal = await this.databaseService.meal.findUnique({ where: { id: mealId } });
               return { ...meal, count };
             })
