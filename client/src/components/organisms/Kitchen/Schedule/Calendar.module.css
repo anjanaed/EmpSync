@@ -295,9 +295,8 @@
 }
 
 .confirmBtn:hover:not(:disabled) {
-  background-color: #ff4d4f !important;
-  border-color: #ff4d4f!important;
-  box-shadow: 0 4px 8px rgba(24, 144, 255, 0.2);
+  background-color: #ee1010 !important;
+  border-color: #ee1010!important;
 }
 
 .scheduleActions button:disabled {
