@@ -27,7 +27,7 @@ const Cart = ({ order, mealDetails, onCancelOrder, isCancelable }) => {
       hoverable
       onClick={handleCardClick}
     >
-      <div>
+      <div className={styles.cardHeaderMain1}>
         <Text strong className={styles.cardHeaderMain}>
           {showQR ? "  Tap to Show Details  " : (
             <>
@@ -217,6 +217,7 @@ const Meals = () => {
     setIsModalVisible(false);
     setSelectedDateOrders([]);
   };
+  
 
   return (
     <div className={styles.container}>

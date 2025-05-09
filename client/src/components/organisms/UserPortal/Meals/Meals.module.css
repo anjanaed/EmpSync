@@ -49,6 +49,15 @@
   margin-bottom: 0.75rem;
 }
 
+.cardHeaderMain1 {
+  border-radius: 8px;
+  text-align: center !important;
+  color: rgb(0, 58, 58) !important;
+  font-size: 1rem !important;
+  font-weight: bold;
+
+}
+
 .cardHeaderMain {
   border-radius: 8px;
   text-align: center !important;
@@ -216,3 +225,6 @@
     height: auto !important;
   }
 }
+
+
+
