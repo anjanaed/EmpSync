@@ -3,6 +3,7 @@
 
 .card {
   width: 700px;
+  height: 450px;
   font-family: "Figtree", sans-serif;
   border: none;
   margin: auto;
@@ -46,7 +47,7 @@
 /* Fingerprint authentication section */
 .fingerprintSection {
   display: flex;
-  height: 470px !important;
+  height: 430px !important;
   flex-direction: column;
   margin: auto;
   align-items: center;
@@ -125,7 +126,7 @@
 /* Styling for section text (e.g., prompts) */
 .SectionTexts {
   font-size: 1.75rem;
-  color: #630000; /* Black text */
+  color: #000000; /* Black text */
   text-align: center;
   font-weight: 700;
 }
@@ -161,6 +162,8 @@
 .backButtonContainer button:hover {
   transform: scale(1.05); /* Scale up on hover */
 }
+
+
 
 .backButton {
   display: flex;

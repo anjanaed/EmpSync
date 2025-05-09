@@ -54,7 +54,7 @@ const Page2 = ({ carouselRef, language, setUsername, setUserId }) => {
           throw new Error("User not found");
         }
         const user = await response.json();
-        setUsername(user.name); // Set username in parent component
+        setUsername({ name: user.name, gender: user.gender });
         setUserId(user.id); // Set user ID in parent component
         console.log("Retrieved Username:", user.name); // Log username
         console.log("Retrieved User ID:", user.id); // Log user ID
