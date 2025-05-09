@@ -29,14 +29,20 @@ const Cart = ({ order, mealDetails, onCancelOrder, isCancelable }) => {
     >
       <div className={styles.cardHeaderMain}>
         <Text strong className={styles.cardHeaderMain}>
-          {showQR ? "Tap to Show Details" : "Tap to Show Token"} <QrcodeOutlined style={{ marginLeft: 8 }} />
+          {showQR ? "Tap to Show Details" : (
+            <>
+              Tap to Show Token <QrcodeOutlined />
+            </>
+          )}
         </Text>
       </div>
       <br />
       {showQR ? (
         <div className={styles.qrContainer}>
-          <QRCodeCanvas value={order.id.toString()} size={200} />
+          <QRCodeCanvas value={order.id.toString()} size={232} />
+          
         </div>
+        
       ) : (
         <>
           <div className={styles.orderedAt}>
@@ -264,7 +270,7 @@ const Meals = () => {
                       key={order.id}
                       order={order}
                       mealDetails={mealDetails}
-                      onCancelOrder={() => {}}
+                      onCancelOrder={() => { }}
                       isCancelable={() => false}
                     />
                   ))
