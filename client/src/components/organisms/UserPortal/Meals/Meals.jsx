@@ -30,7 +30,7 @@ const Cart = ({ order, mealDetails, onCancelOrder, isCancelable }) => {
       <div className={styles.cardHeaderMain}>
         <Text strong className={styles.cardHeaderMain}>
           {showQR ? "Tap to Show Details" : (
-            <>
+            < >
               Tap to Show Token <QrcodeOutlined />
             </>
           )}
@@ -46,7 +46,7 @@ const Cart = ({ order, mealDetails, onCancelOrder, isCancelable }) => {
       ) : (
         <>
           <div className={styles.orderedAt}>
-            <Text style={{ fontSize: "8px" }}>{new Date(order.orderPlacedTime).toLocaleString()}</Text>
+            <Text style={{ fontSize: "10px" }}>{new Date(order.orderPlacedTime).toLocaleString()}</Text>
           </div>
           <div className={styles.cardHeader}>
             <Text strong className={styles.orderId}>Order ID: {order.id}</Text>

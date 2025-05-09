@@ -42,8 +42,27 @@
     align-items: center;
 }
 .cardHeaderMain {
-    text-align: center!important;
+    text-align: center !important;
     color: rgb(0, 58, 58);
+    animation: pulse 1.5s infinite; /* Add animation */
+    animation-iteration-count: 3; /* Play only 3 seconds (2 iterations of 1.5s each) */
+}
+
+/* Define the pulsing animation */
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.05);
+        opacity: 0.9;
+        color: #003b3f;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
 }
 
 .orderPrice {
@@ -112,7 +131,7 @@
 }
 
 .mealType {
-    color: green; /* Set font color to blue */
+    color: rgb(14, 135, 14); /* Set font color to blue */
 }
 
 .orderDate {
