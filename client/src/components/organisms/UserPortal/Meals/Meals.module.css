@@ -106,3 +106,15 @@
   align-items: center;
   padding: 16px;
 }
+
+.orderId {
+    color: gray; /* Set font color to blue */
+}
+
+.mealType {
+    color: green; /* Set font color to blue */
+}
+
+.orderDate {
+    color: rgb(0, 0, 90); /* Set font color to blue */
+}

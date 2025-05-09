@@ -40,25 +40,27 @@ const Cart = ({ order, mealDetails, onCancelOrder, isCancelable }) => {
       {showQR ? (
         <div className={styles.qrContainer}>
           <QRCodeCanvas value={order.id.toString()} size={232} />
-          
+
         </div>
-        
+
       ) : (
         <>
           <div className={styles.orderedAt}>
             <Text style={{ fontSize: "8px" }}>{new Date(order.orderPlacedTime).toLocaleString()}</Text>
           </div>
           <div className={styles.cardHeader}>
-            <Text strong>Order ID: {order.id}</Text>
+            <Text strong className={styles.orderId}>Order ID: {order.id}</Text>
             <Text strong className={styles.orderPrice}>LKR {order.price.toFixed(2)}</Text>
           </div>
           <br />
           <div className={styles.cartContent}>
             <div className={styles.orderDetails}>
-              <Text strong style={{ float: "left" }}>
+              <Text strong className={styles.mealType} style={{ float: "left" }}>
                 {order.breakfast ? "Breakfast" : order.lunch ? "Lunch" : "Dinner"}
               </Text>
-              <Text strong style={{ float: "right" }}>{new Date(order.orderDate).toLocaleDateString()}</Text>
+              <Text strong className={styles.orderDate} style={{ float: "right" }}>
+                {new Date(order.orderDate).toLocaleDateString()}
+              </Text>
             </div>
             <div className={styles.mealsOrdered}>
               <List
