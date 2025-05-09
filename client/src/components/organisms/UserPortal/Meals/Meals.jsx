@@ -9,11 +9,13 @@ import { QRCodeCanvas } from "qrcode.react";
 const { Text, Title } = Typography;
 const { TabPane } = Tabs;
 
-const Cart = ({ order, mealDetails, onCancelOrder, isCancelable }) => {
+const Cart = ({ order, mealDetails, onCancelOrder, isCancelable, isReadOnly = false }) => {
   const [showQR, setShowQR] = useState(false);
 
   const handleCardClick = () => {
-    setShowQR((prev) => !prev);
+    if (!isReadOnly) {
+      setShowQR((prev) => !prev);
+    }
   };
 
   const handleCancelClick = (e) => {
@@ -24,20 +26,22 @@ const Cart = ({ order, mealDetails, onCancelOrder, isCancelable }) => {
   return (
     <Card
       className={styles.cartContainer}
-      hoverable
+      hoverable={!isReadOnly}
       onClick={handleCardClick}
     >
-      <div className={styles.cardHeaderMain1}>
-        <Text strong className={styles.cardHeaderMain}>
-          {showQR ? "  Tap to Show Details  " : (
-            <>
-              Tap to Show Token <QrcodeOutlined />
-            </>
-          )}
-        </Text>
-      </div>
+      {!isReadOnly && (
+        <div className={styles.cardHeaderMain1}>
+          <Text strong className={styles.cardHeaderMain}>
+            {showQR ? "  Tap to Show Details  " : (
+              <>
+                Tap to Show Token <QrcodeOutlined />
+              </>
+            )}
+          </Text>
+        </div>
+      )}
       <br />
-      {showQR ? (
+      {showQR && !isReadOnly ? (
         <div className={styles.qrContainer}>
           <QRCodeCanvas value={order.id.toString()} size={235} />
         </div>
@@ -47,7 +51,7 @@ const Cart = ({ order, mealDetails, onCancelOrder, isCancelable }) => {
             <Text style={{ fontSize: "10px" }}>{new Date(order.orderPlacedTime).toLocaleString()}</Text>
           </div>
           <div className={styles.cardHeader}>
-            <Text strong className={styles.orderId}>Order ID: {order.id}</Text>
+            <Text strong className={styles.orderId}>ID: 651654{order.id}</Text>
             <Text strong className={styles.orderPrice}>LKR {order.price.toFixed(2)}</Text>
           </div>
           <div className={styles.cartContent}>
@@ -80,16 +84,18 @@ const Cart = ({ order, mealDetails, onCancelOrder, isCancelable }) => {
           </div>
         </>
       )}
-      <Button
-        type="primary"
-        danger
-        block
-        className={styles.cancelButton}
-        onClick={handleCancelClick}
-        disabled={!isCancelable(order)}
-      >
-        Cancel Order
-      </Button>
+      {!isReadOnly && (
+        <Button
+          type="primary"
+          danger
+          block
+          className={styles.cancelButton}
+          onClick={handleCancelClick}
+          disabled={!isCancelable(order)}
+        >
+          Cancel Order
+        </Button>
+      )}
     </Card>
   );
 };
@@ -270,8 +276,7 @@ const Meals = () => {
                       key={order.id}
                       order={order}
                       mealDetails={mealDetails}
-                      onCancelOrder={() => {}}
-                      isCancelable={() => false}
+                      isReadOnly={true} // Pass the new prop to disable cancel button and QR code
                     />
                   ))
                 ) : (
