@@ -29,7 +29,7 @@ const Cart = ({ order, mealDetails, onCancelOrder, isCancelable }) => {
     >
       <div className={styles.cardHeaderMain}>
         <Text strong className={styles.cardHeaderMain}>
-          {showQR ? "Tap to Show Details" : (
+          {showQR ? "  Tap to Show Details  " : (
             < >
               Tap to Show Token <QrcodeOutlined />
             </>
@@ -39,7 +39,7 @@ const Cart = ({ order, mealDetails, onCancelOrder, isCancelable }) => {
       <br />
       {showQR ? (
         <div className={styles.qrContainer}>
-          <QRCodeCanvas value={order.id.toString()} size={232} />
+          <QRCodeCanvas value={order.id.toString()} size={235} />
 
         </div>
 
@@ -52,7 +52,7 @@ const Cart = ({ order, mealDetails, onCancelOrder, isCancelable }) => {
             <Text strong className={styles.orderId}>Order ID: {order.id}</Text>
             <Text strong className={styles.orderPrice}>LKR {order.price.toFixed(2)}</Text>
           </div>
-          <br />
+
           <div className={styles.cartContent}>
             <div className={styles.orderDetails}>
               <Text strong className={styles.mealType} style={{ float: "left" }}>
