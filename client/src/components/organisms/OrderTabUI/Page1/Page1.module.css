@@ -1,94 +1,94 @@
-/* Main content container for the page */
-.contentStyle1 {
-    margin: 0;
-    height: 100vh; /* Full viewport height */
-    width: 100vw; /* Full viewport width */
-    color: #fff; /* White text color */
-    text-align: center;
-    /* Background with dark overlay and image */
-    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('../../../assets/otb4.jpg') no-repeat center center;
-    background-size: cover; /* Cover the entire container */
-}
+/* .contentStyle1 {
+  margin: 0;
+  height: 100vh;
+  width: 100vw;
+  color: #fff;
+  text-align: center;
+  background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+    url("../../../assets/otb4.jpg") no-repeat center center;
+  background-size: cover;
+} */
 
-/* Styling for greeting text */
 .getGreeting {
-    font-size: 2em;
-    font-weight: 600;
-    color: #ffffff !important; /* Force white color */
-    text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5); /* Shadow for text visibility */
+  color: #ffffff !important;
+    text-shadow: 2px 2px 6px rgba(65, 65, 65, 0.4);
+
 }
 
-/* Styling for the main title */
 .mainTitle1 {
-    margin: 0%;
-    font-size: 5em !important; /* Large font size */
-    font-weight: 800 !important; /* Extra bold */
-    color: #ffffff !important; /* Force white color */
-    text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5); /* Shadow for text visibility */
+  margin: 0%;
+  font-size: 5em !important;
+  font-weight: 800 !important;
+  color: #ffffff !important;
+  text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
 }
 
-/* Styling for the card container */
 .cardStyle {
-    background: rgba(255, 255, 255, 0.2); /* Semi-transparent white background */
-    backdrop-filter: blur(10px); /* Blur effect for glassmorphism */
-    -webkit-backdrop-filter: blur(10px); /* Safari support for blur */
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow */
-    padding: 20px;
-    margin-left: auto;
-    margin-right: auto;
-    max-width: 60%; /* Limit max width */
-    /* Responsive width adjustments */
-    @media (max-width: 768px) {
-        width: calc(90%);
-    }
-    @media (max-width: 480px) {
-        width: calc(95%);
-    }
+  background: rgba(255, 255, 255, 0.164);
+  font-family: "Figtree", sans-serif !important;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 10px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  padding: 20px;
+  margin: auto;
+  border: none;
+  width: 950px;
 }
 
-/* Inner content of the card */
+@media (max-width: 768px) {
+  .cardStyle {
+    width: calc(90%);
+  }
+}
+
+@media (max-width: 480px) {
+  .cardStyle {
+    width: calc(95%);
+  }
+}
+
 .cardPartl {
-    margin: 10px 0;
-    font-size: 1.2em;
-    color: #333; /* Dark text color */
-    width: 90%;
-    display: inline-block;
-    box-sizing: border-box;
+  margin: 10px 0;
+  font-size: 1.2em;
+  color: #333;
+  width: 90%;
+  display: inline-block;
+  box-sizing: border-box;
 }
 
-/* Main container for the page content */
 .mainbox {
-    height: 100vh; /* Full viewport height */
-    width: 100vw; /* Full viewport width */
+  height: 100vh;
+  font-family: "Figtree", sans-serif !important;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 50px;
 }
 
-/* Styling for language selection buttons */
 .languageButton {
-    background: #ff3b3e; /* Red background */
-    border: 1px solid rgb(255, 0, 0); /* Red border */
-    color: white; /* White text */
-    margin: 20px;
-    padding: 20px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 40px !important; /* Large font size */
-    cursor: pointer;
-    border-radius: 12px;
-    transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease; /* Smooth transitions */
-    line-height: 1.5;
-    width: 400px; /* Fixed width for consistency */
+  background: linear-gradient(135deg, #9d0000, #e30000);
+  color: white;
+  border: none;
+  padding: 8px ;
+  display: flex;
+    text-shadow: 2px 2px 6px rgba(65, 65, 65, 0.4);
+
+  justify-content: center;
+  align-items: center;
+  font-size: 30px !important;
+  cursor: pointer;
+  border-radius: 500px;
+  width: 450px;
 }
 
-/* Hover effect for language buttons */
-.languageButton:hover {
-    transform: scale(1.05); /* Slight scale-up effect */
+.languageButton:active {
+  transform: scale(1.1);
 }
 
-/* Container for language buttons */
 .languageButtonContainer {
-    display: flex;
-    justify-content: center; /* Center buttons horizontally */
-    gap: 10px; /* Space between buttons */
+  display: flex;
+  justify-content: center;
+  gap: 10px;
 }
