@@ -4,34 +4,34 @@ import { useAuth } from "../../../../contexts/AuthContext";
 import axios from "axios";
 import styles from "./Meals.module.css";
 import { QrcodeOutlined } from "@ant-design/icons";
-import { QRCodeCanvas } from "qrcode.react"; // Corrected to use QRCodeCanvas
+import { QRCodeCanvas } from "qrcode.react";
 
 const { Text, Title } = Typography;
 const { TabPane } = Tabs;
 
 const Cart = ({ order, mealDetails, onCancelOrder, isCancelable }) => {
-  const [showQR, setShowQR] = useState(false); // State to toggle QR code display
+  const [showQR, setShowQR] = useState(false);
 
   const handleCardClick = () => {
-    setShowQR((prev) => !prev); // Toggle QR code visibility
+    setShowQR((prev) => !prev);
   };
 
   const handleCancelClick = (e) => {
-    e.stopPropagation(); // Prevent the card's onClick from firing
-    onCancelOrder(order.id); // Call the cancel order function
+    e.stopPropagation();
+    onCancelOrder(order.id);
   };
 
   return (
     <Card
       className={styles.cartContainer}
       hoverable
-      onClick={handleCardClick} // Toggle QR on card click
+      onClick={handleCardClick}
     >
-      <div >
+      <div>
         <Text strong className={styles.cardHeaderMain}>
           {showQR ? "  Tap to Show Details  " : (
-            < >
-               Tap to Show Token <QrcodeOutlined />
+            <>
+              Tap to Show Token <QrcodeOutlined />
             </>
           )}
         </Text>
@@ -40,9 +40,7 @@ const Cart = ({ order, mealDetails, onCancelOrder, isCancelable }) => {
       {showQR ? (
         <div className={styles.qrContainer}>
           <QRCodeCanvas value={order.id.toString()} size={235} />
-
         </div>
-
       ) : (
         <>
           <div className={styles.orderedAt}>
@@ -52,7 +50,6 @@ const Cart = ({ order, mealDetails, onCancelOrder, isCancelable }) => {
             <Text strong className={styles.orderId}>Order ID: {order.id}</Text>
             <Text strong className={styles.orderPrice}>LKR {order.price.toFixed(2)}</Text>
           </div>
-
           <div className={styles.cartContent}>
             <div className={styles.orderDetails}>
               <Text strong className={styles.mealType} style={{ float: "left" }}>
@@ -88,7 +85,7 @@ const Cart = ({ order, mealDetails, onCancelOrder, isCancelable }) => {
         danger
         block
         className={styles.cancelButton}
-        onClick={handleCancelClick} // Use separate handler to stop propagation
+        onClick={handleCancelClick}
         disabled={!isCancelable(order)}
       >
         Cancel Order
@@ -272,7 +269,7 @@ const Meals = () => {
                       key={order.id}
                       order={order}
                       mealDetails={mealDetails}
-                      onCancelOrder={() => { }}
+                      onCancelOrder={() => {}}
                       isCancelable={() => false}
                     />
                   ))

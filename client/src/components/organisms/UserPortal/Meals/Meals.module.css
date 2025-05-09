@@ -1,149 +1,136 @@
 .container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 24px;
+  width: 100%;
+  padding: 1rem;
   background-color: #f5f5f5;
   min-height: 100vh;
+  box-sizing: border-box;
 }
 
 .title {
   text-align: center;
   color: #1a1a1a;
-  margin-bottom: 32px;
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
 }
 
 .tabs {
   background-color: #ffffff;
   border-radius: 8px;
-  padding: 16px;
+  padding: 1rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .cartContainer {
-  width: 260px;
-  background: linear-gradient(
-    145deg,
-    #ffffff,
-    #f0f0f0
-  ); /* Add a soft gradient */
-  border-radius: 16px; /* Increase border radius for a rounded look */
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.06); /* Add layered shadows */
-  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth hover effect */
+  width: 100%;
+  max-width: 260px;
+  background: linear-gradient(145deg, #ffffff, #f0f0f0);
+  border-radius: 16px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.06);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
   display: flex;
-  flex-direction: column; /* Stack children vertically */
-  justify-content: space-between; /* Ensure spacing between content and button */
-  height: 100%; /* Make the card take full height */
-  padding: 16px; /* Add padding inside the card */
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  padding: 1rem;
+  margin: 0 auto;
+  box-sizing: border-box;
 }
 
 .cartContainer:hover {
-  transform: translateY(-6px); /* Slightly lift the card on hover */
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15), 0 6px 8px rgba(0, 0, 0, 0.1); /* Enhance shadow on hover */
-  background: linear-gradient(
-    145deg,
-    #f9f9f9,
-    #ffffff
-  ); /* Slightly brighten the gradient on hover */
+  transform: translateY(-6px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15), 0 6px 8px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(145deg, #f9f9f9, #ffffff);
 }
 
 .cardHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
+  margin-bottom: 0.75rem;
 }
 
 .cardHeaderMain {
   border-radius: 8px;
   text-align: center !important;
   color: rgb(0, 58, 58) !important;
-  font-size: 18px !important;
+  font-size: 1rem !important;
   font-weight: bold;
-  animation: iphoneNotification 2s ease-in-out infinite; /* Add iPhone-like animation */
+  animation: iphoneNotification 2s ease-in-out infinite;
   animation-iteration-count: 2;
 }
 
-/* Define the iPhone-like notification animation */
 @keyframes iphoneNotification {
   0% {
     transform: scale(1);
     opacity: 1;
-    box-shadow: 0 0 0 rgba(0, 0, 0, 0); /* No shadow initially */
+    box-shadow: 0 0 0 rgba(0, 0, 0, 0);
   }
   50% {
-    transform: scale(1.5); /* Slightly enlarge */
-    opacity: 1; /* Slightly fade */
-    box-shadow: 0 0 10px rgb(255, 0, 0); /* Add a glowing shadow */
+    transform: scale(1.5);
+    opacity: 1;
+    box-shadow: 0 0 50px rgb(255, 0, 0);
     border-radius: 8px;
   }
   100% {
     transform: scale(1);
     opacity: 1;
-    box-shadow: 0 0 0 rgba(0, 0, 0, 0); /* Reset shadow */
+    box-shadow: 0 0 0 rgba(0, 0, 0, 0);
   }
 }
 
 .orderPrice {
   color: #ff1818;
-  font-size: 16px;
+  font-size: 1rem;
   font-weight: bold;
 }
 
 .cartContent {
-  padding-bottom: 12px;
+  padding-bottom: 0.75rem;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 0.75rem;
 }
 
 .mealsOrdered {
-  margin-top: 12px;
-  padding-top: 12px;
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
   border-top: 1px solid #e8e8e8;
-  min-height: 150px; /* Minimum height for the meals list */
+  min-height: 150px;
   max-height: 150px;
   overflow-y: auto;
 }
 
 .cancelButton {
-  border-radius: 8px; /* Rounded button */
-  background: linear-gradient(
-    145deg,
-    #ff4d4f,
-    #ff7875
-  ); /* Gradient for the button */
+  border-radius: 8px;
+  background: linear-gradient(145deg, #ff4d4f, #ff7875);
   color: white;
   font-weight: bold;
   transition: background 0.3s ease, transform 0.2s ease;
 }
 
 .cancelButton:hover {
-  background: linear-gradient(
-    145deg,
-    #ff7875,
-    #ff4d4f
-  ); /* Reverse gradient on hover */
-  transform: scale(1.05); /* Slightly enlarge the button on hover */
+  background: linear-gradient(145deg, #ff7875, #ff4d4f);
+  transform: scale(1.05);
 }
 
 .orderGrid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 24px;
-  padding: 24px 0;
+  gap: 1.5rem;
+  padding: 1.5rem 0;
 }
 
 .emptyCard {
-  max-width: 600px;
-  margin: 24px auto;
+  max-width: 90%;
+  margin: 1.5rem auto;
   text-align: center;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .calendar {
-  max-width: 800px;
-  margin: 24px auto;
+  max-width: 100%;
+  margin: 1.5rem auto;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   background-color: #ffffff;
@@ -157,7 +144,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 16px;
+  padding: 1rem;
   background: #f9f9f9;
   border-radius: 12px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -165,18 +152,67 @@
 
 .orderId {
   color: gray;
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: bold;
 }
 
 .mealType {
   color: rgb(14, 135, 14);
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: bold;
 }
 
 .orderDate {
   color: rgb(0, 0, 90);
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: bold;
+}
+
+/* Media Queries for Mobile Responsiveness */
+@media (max-width: 768px) {
+  .container {
+    padding: 0.5rem;
+  }
+
+  .title {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+  }
+
+  .cartContainer {
+    max-width: 100%;
+    padding: 0.75rem;
+  }
+
+  .cardHeaderMain {
+    font-size: 0.875rem !important;
+  }
+
+  .orderPrice {
+    font-size: 0.875rem;
+  }
+
+  .orderGrid {
+    grid-template-columns: 1fr; /* Single column on mobile */
+    gap: 1rem;
+    padding: 1rem 0;
+  }
+
+  .emptyCard {
+    max-width: 100%;
+    margin: 1rem auto;
+  }
+
+  .calendar {
+    margin: 1rem auto;
+  }
+
+  .qrContainer {
+    padding: 0.5rem;
+  }
+
+  .qrContainer canvas {
+    width: 100% !important;
+    height: auto !important;
+  }
 }
