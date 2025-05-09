@@ -44,27 +44,29 @@
 .cardHeaderMain {
     text-align: center !important;
     color: rgb(0, 58, 58);
-    animation: pulse 1.5s infinite; /* Add animation */
-    animation-iteration-count: 3; /* Play only 3 seconds (2 iterations of 1.5s each) */
+     animation: iphoneNotification 2s ease-in-out infinite; /* Add iPhone-like animation */
+    animation-iteration-count: 2; /* Play only 3 seconds (2 iterations of 1.5s each) */
 }
 
 /* Define the pulsing animation */
-@keyframes pulse {
+@keyframes iphoneNotification {
     0% {
         transform: scale(1);
         opacity: 1;
+        box-shadow: 0 0 0 rgba(0, 0, 0, 0); /* No shadow initially */
     }
     50% {
-        transform: scale(1.05);
-        opacity: 0.9;
-        color: #003b3f;
+        transform: scale(1.18); /* Slightly enlarge */
+        opacity: 0.8; /* Slightly fade */
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.2); /* Add a glowing shadow */
+        border-radius: 15px;
     }
     100% {
         transform: scale(1);
         opacity: 1;
+        box-shadow: 0 0 0 rgba(0, 0, 0, 0); /* Reset shadow */
     }
 }
-
 .orderPrice {
     color: #ff1818;
 
