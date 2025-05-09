@@ -1,101 +1,91 @@
-/* Container for individual cart card */
-.cartContainer {
-    max-width: 400px;
-    height: 400px; /* Fixed height for consistent card size */
+.container {
+    max-width: 1200px;
     margin: 0 auto;
-    background-color: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    overflow: hidden;
-    position: relative; /* Relative positioning for absolute child elements */
+    padding: 24px;
+    background-color: #f5f5f5;
+    min-height: 100vh;
 }
 
-/* Content area within the cart card */
-.cartContent {
-    flex: 1;
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 16px; /* Spacing between content sections */
-}
-
-/* Section for displaying total price or similar content */
-.totalSection {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 16px;
-}
-
-/* Flex row for aligning items horizontally */
-.flexRow {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-/* Styling for large text, e.g., total price */
-.largeText {
-    font-size: 18px;
-}
-
-/* Container for multiple cart cards */
-.horizontalContainer {
-    display: flex;
-    gap: 16px; /* Spacing between cart cards */
-    justify-content: center; /* Center cards horizontally */
-    flex-wrap: wrap; /* Allow cards to wrap to next line */
-    margin: 20px;
-}
-
-/* Styling for section title */
 .title {
     text-align: center;
-    margin-bottom: 20px;
-    margin-top: 20px;
+    color: #1a1a1a;
+    margin-bottom: 32px;
 }
 
-/* Styling for order price text */
-.orderText {
-    font-size: 18px;
-    font-weight: bold;
-    color: red; /* Highlight price in red */
-}
-
-/* Styling for meals order text */
-.mealsOrderText {
-    font-size: 12px;
-    font-weight: bold;
-}
-
-/* Styling for order ID text */
-.orderTextId {
-    font-size: 11px;
-    font-weight: bold;
-}
-
-/* Utility class to push element to the right */
-.marginLeftAuto {
-    margin-left: auto;
-}
-
-/* Styling for cancel order button */
-.cancelButton {
-    position: absolute; /* Absolute positioning to stick to bottom */
-    bottom: 0; /* Align to bottom of card */
-    left: 0;
-    right: 0;
-    padding: 10px 16px;
+.tabs {
     background-color: #ffffff;
-    border-top: 1px solid #f0f0f0; /* Border to separate button from content */
+    border-radius: 8px;
+    padding: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
-/* Section for listing ordered meals */
-.MealsOrdered {
-    flex: 1; /* Grow to fill available space */
-    overflow-y: auto; /* Enable vertical scrolling for long lists */
-    padding-right: 8px; /* Padding for better spacing */
-    border-top: 1px solid #f0f0f0; /* Border to separate meals section */
+.cartContainer {
+    width: 260px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+    
+}
+
+.cartContainer:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+.cardHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.orderPrice {
+    color: #ff1818;
+
+}
+
+.cartContent {
+    padding-bottom: 2px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.mealsOrdered {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid #e8e8e8;
+    max-height: 150px;
+    overflow-y: auto;
+}
+
+.cancelButton {
+    border-radius: 4px;
+}
+
+.orderGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 24px;
+    padding: 24px 0;
+}
+
+.emptyCard {
+    max-width: 600px;
+    margin: 24px auto;
+    text-align: center;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.calendar {
+    max-width: 800px;
+    margin: 24px auto;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    background-color: #ffffff;
+}
+
+.modal .ant-modal-content {
+    border-radius: 8px;
 }
