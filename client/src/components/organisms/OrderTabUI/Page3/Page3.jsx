@@ -380,7 +380,7 @@ const Page3 = ({ language = "english", username, userId }) => {
                                                                             <>
                                                                                 <Text ellipsis>{meal.description || "No description available"}</Text>
                                                                                 <div className={styles.priceContainer}>
-                                                                                    <Text strong>${meal.price ? meal.price.toFixed(2) : "0.00"}</Text>
+                                                                                    <Text strong>LKR{meal.price ? meal.price.toFixed(2) : "0.00"}</Text>
                                                                                 </div>
                                                                                 <Button
                                                                                     type="primary"
