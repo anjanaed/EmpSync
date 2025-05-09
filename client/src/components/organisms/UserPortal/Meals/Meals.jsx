@@ -27,11 +27,11 @@ const Cart = ({ order, mealDetails, onCancelOrder, isCancelable }) => {
       hoverable
       onClick={handleCardClick} // Toggle QR on card click
     >
-      <div className={styles.cardHeaderMain}>
+      <div >
         <Text strong className={styles.cardHeaderMain}>
           {showQR ? "  Tap to Show Details  " : (
             < >
-              Tap to Show Token <QrcodeOutlined />
+               Tap to Show Token <QrcodeOutlined />
             </>
           )}
         </Text>

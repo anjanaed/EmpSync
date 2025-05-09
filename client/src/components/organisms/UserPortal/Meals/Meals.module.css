@@ -1,167 +1,182 @@
 .container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 24px;
-    background-color: #f5f5f5;
-    min-height: 100vh;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+  background-color: #f5f5f5;
+  min-height: 100vh;
 }
 
 .title {
-    text-align: center;
-    color: #1a1a1a;
-    margin-bottom: 32px;
+  text-align: center;
+  color: #1a1a1a;
+  margin-bottom: 32px;
 }
 
 .tabs {
-    background-color: #ffffff;
-    border-radius: 8px;
-    padding: 16px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .cartContainer {
-    width: 260px;
-    background: linear-gradient(145deg, #ffffff, #f0f0f0); /* Add a soft gradient */
-    border-radius: 16px; /* Increase border radius for a rounded look */
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.06); /* Add layered shadows */
-    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth hover effect */
-    display: flex;
-    flex-direction: column; /* Stack children vertically */
-    justify-content: space-between; /* Ensure spacing between content and button */
-    height: 100%; /* Make the card take full height */
-    padding: 16px; /* Add padding inside the card */
+  width: 260px;
+  background: linear-gradient(
+    145deg,
+    #ffffff,
+    #f0f0f0
+  ); /* Add a soft gradient */
+  border-radius: 16px; /* Increase border radius for a rounded look */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.06); /* Add layered shadows */
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth hover effect */
+  display: flex;
+  flex-direction: column; /* Stack children vertically */
+  justify-content: space-between; /* Ensure spacing between content and button */
+  height: 100%; /* Make the card take full height */
+  padding: 16px; /* Add padding inside the card */
 }
 
 .cartContainer:hover {
-    transform: translateY(-6px); /* Slightly lift the card on hover */
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15), 0 6px 8px rgba(0, 0, 0, 0.1); /* Enhance shadow on hover */
-    background: linear-gradient(145deg, #f9f9f9, #ffffff); /* Slightly brighten the gradient on hover */
+  transform: translateY(-6px); /* Slightly lift the card on hover */
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15), 0 6px 8px rgba(0, 0, 0, 0.1); /* Enhance shadow on hover */
+  background: linear-gradient(
+    145deg,
+    #f9f9f9,
+    #ffffff
+  ); /* Slightly brighten the gradient on hover */
 }
 
 .cardHeader {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
 }
 
 .cardHeaderMain {
-    text-align: center !important;
-    color: rgb(0, 58, 58);
-    font-size: 18px;
-    font-weight: bold;
-    animation: iphoneNotification 2s ease-in-out infinite; /* Add iPhone-like animation */
-     animation-iteration-count: 2
+  border-radius: 8px;
+  text-align: center !important;
+  color: rgb(0, 58, 58) !important;
+  font-size: 18px !important;
+  font-weight: bold;
+  animation: iphoneNotification 2s ease-in-out infinite; /* Add iPhone-like animation */
+  animation-iteration-count: 2;
 }
-
-
 
 /* Define the iPhone-like notification animation */
 @keyframes iphoneNotification {
-    0% {
-        transform: scale(1);
-        opacity: 1;
-        box-shadow: 0 0 0 rgba(0, 0, 0, 0); /* No shadow initially */
-    }
-    50% {
-        transform: scale(1.1); /* Slightly enlarge */
-        opacity: 0.9; /* Slightly fade */
-        box-shadow: 0 0 20px rgba(0, 0, 0, 0.2); /* Add a glowing shadow */
-        border-radius: 10px;
-    }
-    100% {
-        transform: scale(1);
-        opacity: 1;
-        box-shadow: 0 0 0 rgba(0, 0, 0, 0); /* Reset shadow */
-    }
+  0% {
+    transform: scale(1);
+    opacity: 1;
+    box-shadow: 0 0 0 rgba(0, 0, 0, 0); /* No shadow initially */
+  }
+  50% {
+    transform: scale(1.5); /* Slightly enlarge */
+    opacity: 1; /* Slightly fade */
+    box-shadow: 0 0 10px rgb(255, 0, 0); /* Add a glowing shadow */
+    border-radius: 8px;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+    box-shadow: 0 0 0 rgba(0, 0, 0, 0); /* Reset shadow */
+  }
 }
 
 .orderPrice {
-    color: #ff1818;
-    font-size: 16px;
-    font-weight: bold;
+  color: #ff1818;
+  font-size: 16px;
+  font-weight: bold;
 }
 
 .cartContent {
-    padding-bottom: 12px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+  padding-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .mealsOrdered {
-    margin-top: 12px;
-    padding-top: 12px;
-    border-top: 1px solid #e8e8e8;
-    min-height: 150px; /* Minimum height for the meals list */
-    max-height: 150px;
-    overflow-y: auto;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #e8e8e8;
+  min-height: 150px; /* Minimum height for the meals list */
+  max-height: 150px;
+  overflow-y: auto;
 }
 
 .cancelButton {
-    border-radius: 8px; /* Rounded button */
-    background: linear-gradient(145deg, #ff4d4f, #ff7875); /* Gradient for the button */
-    color: white;
-    font-weight: bold;
-    transition: background 0.3s ease, transform 0.2s ease;
+  border-radius: 8px; /* Rounded button */
+  background: linear-gradient(
+    145deg,
+    #ff4d4f,
+    #ff7875
+  ); /* Gradient for the button */
+  color: white;
+  font-weight: bold;
+  transition: background 0.3s ease, transform 0.2s ease;
 }
 
 .cancelButton:hover {
-    background: linear-gradient(145deg, #ff7875, #ff4d4f); /* Reverse gradient on hover */
-    transform: scale(1.05); /* Slightly enlarge the button on hover */
+  background: linear-gradient(
+    145deg,
+    #ff7875,
+    #ff4d4f
+  ); /* Reverse gradient on hover */
+  transform: scale(1.05); /* Slightly enlarge the button on hover */
 }
 
 .orderGrid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 24px;
-    padding: 24px 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 24px;
+  padding: 24px 0;
 }
 
 .emptyCard {
-    max-width: 600px;
-    margin: 24px auto;
-    text-align: center;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  max-width: 600px;
+  margin: 24px auto;
+  text-align: center;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .calendar {
-    max-width: 800px;
-    margin: 24px auto;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    background-color: #ffffff;
+  max-width: 800px;
+  margin: 24px auto;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  background-color: #ffffff;
 }
 
 .modal .ant-modal-content {
-    border-radius: 8px;
+  border-radius: 8px;
 }
 
 .qrContainer {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 16px;
-    background: #f9f9f9;
-    border-radius: 12px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+  background: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .orderId {
-    color: gray;
-    font-size: 14px;
-    font-weight: bold;
+  color: gray;
+  font-size: 14px;
+  font-weight: bold;
 }
 
 .mealType {
-    color: rgb(14, 135, 14);
-    font-size: 14px;
-    font-weight: bold;
+  color: rgb(14, 135, 14);
+  font-size: 14px;
+  font-weight: bold;
 }
 
 .orderDate {
-    color: rgb(0, 0, 90);
-    font-size: 14px;
-    font-weight: bold;
+  color: rgb(0, 0, 90);
+  font-size: 14px;
+  font-weight: bold;
 }
