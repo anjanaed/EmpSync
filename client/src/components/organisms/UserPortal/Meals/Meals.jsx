@@ -3,53 +3,84 @@ import { Card, List, Button, Typography, Modal, message, Tabs, Calendar } from "
 import { useAuth } from "../../../../contexts/AuthContext";
 import axios from "axios";
 import styles from "./Meals.module.css";
+import { QrcodeOutlined } from "@ant-design/icons";
+import { QRCodeCanvas } from "qrcode.react"; // Corrected to use QRCodeCanvas
 
 const { Text, Title } = Typography;
 const { TabPane } = Tabs;
 
 const Cart = ({ order, mealDetails, onCancelOrder, isCancelable }) => {
+  const [showQR, setShowQR] = useState(false); // State to toggle QR code display
+
+  const handleCardClick = () => {
+    setShowQR((prev) => !prev); // Toggle QR code visibility
+  };
+
+  const handleCancelClick = (e) => {
+    e.stopPropagation(); // Prevent the card's onClick from firing
+    onCancelOrder(order.id); // Call the cancel order function
+  };
+
   return (
-    <Card className={styles.cartContainer} hoverable>
-      <div className={styles.orderedAt}>
-        <Text style={{ fontSize: "8px" }}>{new Date(order.orderPlacedTime).toLocaleString()}</Text>
-      </div>
-      <div className={styles.cardHeader}>
-        <Text strong>Order ID: {order.id}</Text>
-        <Text strong className={styles.orderPrice}>LKR {order.price.toFixed(2)}</Text>
+    <Card
+      className={styles.cartContainer}
+      hoverable
+      onClick={handleCardClick} // Toggle QR on card click
+    >
+      <div className={styles.cardHeaderMain}>
+        <Text strong className={styles.cardHeaderMain}>
+          {showQR ? "Tap to Show Details" : "Tap to Show Token"} <QrcodeOutlined style={{ marginLeft: 8 }} />
+        </Text>
       </div>
       <br />
-      <div className={styles.cartContent}>
-        <div className={styles.orderDetails}>
-          <Text strong style={{ float: "left" }}>
-            {order.breakfast ? "Breakfast" : order.lunch ? "Lunch" : "Dinner"}
-          </Text>
-          <Text strong style={{ float: "right" }}>{new Date(order.orderDate).toLocaleDateString()}</Text>
+      {showQR ? (
+        <div className={styles.qrContainer}>
+          <QRCodeCanvas value={order.id.toString()} size={200} />
         </div>
-        <div className={styles.mealsOrdered}>
-          <List
-            itemLayout="horizontal"
-            dataSource={order.meals.map((meal) => {
-              const [mealId, count] = meal.split(":");
-              return {
-                name: mealDetails[mealId] || "Unknown Meal",
-                quantity: count,
-              };
-            })}
-            renderItem={(item) => (
-              <List.Item>
-                <List.Item.Meta title={<div style={{ float: "left" }}>{item.name}</div>} />
-                <List.Item.Meta title={<div style={{ float: "right" }}>{item.quantity}</div>} />
-              </List.Item>
-            )}
-          />
-        </div>
-      </div>
+      ) : (
+        <>
+          <div className={styles.orderedAt}>
+            <Text style={{ fontSize: "8px" }}>{new Date(order.orderPlacedTime).toLocaleString()}</Text>
+          </div>
+          <div className={styles.cardHeader}>
+            <Text strong>Order ID: {order.id}</Text>
+            <Text strong className={styles.orderPrice}>LKR {order.price.toFixed(2)}</Text>
+          </div>
+          <br />
+          <div className={styles.cartContent}>
+            <div className={styles.orderDetails}>
+              <Text strong style={{ float: "left" }}>
+                {order.breakfast ? "Breakfast" : order.lunch ? "Lunch" : "Dinner"}
+              </Text>
+              <Text strong style={{ float: "right" }}>{new Date(order.orderDate).toLocaleDateString()}</Text>
+            </div>
+            <div className={styles.mealsOrdered}>
+              <List
+                itemLayout="horizontal"
+                dataSource={order.meals.map((meal) => {
+                  const [mealId, count] = meal.split(":");
+                  return {
+                    name: mealDetails[mealId] || "Unknown Meal",
+                    quantity: count,
+                  };
+                })}
+                renderItem={(item) => (
+                  <List.Item>
+                    <List.Item.Meta title={<div style={{ float: "left" }}>{item.name}</div>} />
+                    <List.Item.Meta title={<div style={{ float: "right" }}>{item.quantity}</div>} />
+                  </List.Item>
+                )}
+              />
+            </div>
+          </div>
+        </>
+      )}
       <Button
         type="primary"
         danger
         block
         className={styles.cancelButton}
-        onClick={() => onCancelOrder(order.id)}
+        onClick={handleCancelClick} // Use separate handler to stop propagation
         disabled={!isCancelable(order)}
       >
         Cancel Order
@@ -233,7 +264,7 @@ const Meals = () => {
                       key={order.id}
                       order={order}
                       mealDetails={mealDetails}
-                      onCancelOrder={() => { }}
+                      onCancelOrder={() => {}}
                       isCancelable={() => false}
                     />
                   ))

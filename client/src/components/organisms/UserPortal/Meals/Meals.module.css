@@ -41,6 +41,10 @@
     justify-content: space-between;
     align-items: center;
 }
+.cardHeaderMain {
+    text-align: center!important;
+    color: rgb(0, 58, 58);
+}
 
 .orderPrice {
     color: #ff1818;
@@ -58,6 +62,7 @@
     margin-top: 12px;
     padding-top: 12px;
     border-top: 1px solid #e8e8e8;
+    min-height: 150px; /* Minimum height for the meals list */
     max-height: 150px;
     overflow-y: auto;
 }
@@ -92,4 +97,12 @@
 
 .modal .ant-modal-content {
     border-radius: 8px;
+}
+
+
+.qrContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
 }
