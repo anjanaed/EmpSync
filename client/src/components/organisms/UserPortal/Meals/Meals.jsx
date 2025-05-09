@@ -51,7 +51,7 @@ const Cart = ({ order, mealDetails, onCancelOrder, isCancelable, isReadOnly = fa
             <Text style={{ fontSize: "10px" }}>{new Date(order.orderPlacedTime).toLocaleString()}</Text>
           </div>
           <div className={styles.cardHeader}>
-            <Text strong className={styles.orderId}>ID: 651654{order.id}</Text>
+            <Text strong className={styles.orderId}>ID: {order.id}</Text>
             <Text strong className={styles.orderPrice}>LKR {order.price.toFixed(2)}</Text>
           </div>
           <div className={styles.cartContent}>
