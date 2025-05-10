@@ -211,7 +211,7 @@ body {
 
 @media (max-width: 1024px) {
   body {
-    background: rgb(29, 29, 29); /* Remove background image and set background color to red */
+    background: #FFFDED; /* Remove background image and set background color to red */
   }
   .formGrid {
     grid-template-columns: repeat(2, 1fr);
@@ -225,7 +225,7 @@ body {
   }
   .title {
     font-size: 1.5rem;
-    color: white; /* Set text color to white */
+    color: black; /* Set text color to black for light mode */
   }
   .editButton {
     width: 100%;
@@ -243,19 +243,19 @@ body {
     flex-direction: column;
     align-items: center;
     text-align: center;
-    color: white; /* Set text color to white */
+    color: black; /* Set text color to black for light mode */
   }
 }
 @media (max-width: 480px) {
   .title {
     font-size: 1.25rem; /* Smaller font size for very small screens */
-    color: white; /* Set text color to white */
+    color: black; /* Set text color to black for light mode */
   }
   .editButton {
     padding: 0.5rem; /* Reduce padding for smaller screens */
   }
   .infoCard {
     padding: 1rem; /* Adjust padding for compact view */
-    color: white; /* Set text color to white */
+    color: black; /* Set text color to black for light mode */
   }
 }
