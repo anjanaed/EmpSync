@@ -1,3 +1,9 @@
+body {
+  background: url('../../../../assets/Login/loginbackground.png') center/cover no-repeat;
+  justify-content: center;
+  align-items: center;
+}
+
 .container {
   width: 100%;
   max-width: 1200px;
@@ -199,6 +205,9 @@
 }
 
 @media (max-width: 1024px) {
+  body {
+    background: rgb(85, 14, 14); /* Remove background image and set background color to red */
+  }
   .formGrid {
     grid-template-columns: repeat(2, 1fr);
   }
