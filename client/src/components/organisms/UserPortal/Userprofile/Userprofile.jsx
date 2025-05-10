@@ -153,6 +153,7 @@ export default function UserProfile({ user }) {
       {/* Header with title and edit/save button */}
       <div className={styles.header}>
         <h1 className={styles.title}>Profile</h1>
+        <div className={styles.badge}>KITCHEN_STAFF</div>
         <button
           onClick={handleEditToggle}
           className={styles.editButton}
