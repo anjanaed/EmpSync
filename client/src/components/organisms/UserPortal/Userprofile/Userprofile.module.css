@@ -1,252 +1,217 @@
-/* Main container for the profile page */
-.profileContainer {
+.container {
+  width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 1.5rem;
+  padding: 2rem;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
-
-/* Header section with title and edit/save button */
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1.5rem;
-}
-
-/* Styling for the profile page title */
-.title {
-  font-size: clamp(1.5rem, 2vw, 1.75rem);
-  font-weight: 600;
-  color: #333;
-}
-
-/* Styling for the edit/save button */
-.editButton {
-  min-width: 120px;
-}
-
-/* Content area for profile card and form */
-.content {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-/* Profile card containing image section and form */
-.profileCard {
-  width: 100%;
-  max-width: 100%;
-  height: auto;
-  background-color: white;
-  border-radius: 0.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  padding: 1rem;
-}
-
-/* Section for profile image and fixed data */
-.profileImageSection {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  gap: 2rem;
-  margin-bottom: 3rem;
+  margin-bottom: 2rem;
   flex-wrap: wrap;
+  gap: 1rem;
 }
-
-/* Styling for the profile avatar image */
-.profileAvatar {
-  width: 100px !important;
-  height: 100px;
-  border: 3px solid #f3f4f6;
-  border-radius: 50%;
-}
-
-/* Container for fixed user data (non-editable fields) */
-.fixedData {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  font-size: 1rem;
-  color: #555;
-}
-
-/* Remove default margin from fixed data paragraphs */
-.fixedData p {
+.title {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #1a1a1a;
   margin: 0;
 }
-
-/* Controls for uploading a new profile image */
-.uploadControls {
+.badge {
+  background-color: #f0f4f8;
+  color: #4a6fa5;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 0.875rem;
+  white-space: nowrap;
+}
+.editButton {
+  background-color: #4a6fa5;
+  color: white;
+  border: none;
+  padding: 0.625rem 1.5rem;
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  min-width: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+.editButton:hover {
+  background-color: #3d5d8f;
+  transform: translateY(-1px);
+}
+.editButton:active {
+  transform: translateY(0);
+}
+.infoCard {
+  background-color: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  margin-bottom: 2rem;
+  display: flex;
+  gap: 2rem;
+}
+.avatar {
+  width: 120px;
+  height: 120px;
+  background-color: #f0f4f8;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #9aa5b1;
+  flex-shrink: 0;
+}
+.infoDetails {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  width: 100%;
+}
+.infoGroup {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  margin-top: 1rem;
 }
-
-/* Styling for the upload button */
-.uploadButton {
-  margin-top: 0.5rem;
+.infoLabel {
+  color: #6b7280;
+  font-size: 0.875rem;
+  margin-bottom: 0.25rem;
 }
-
-/* Hide the file input element */
-.fileInput {
-  display: none;
+.infoValue {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #1a1a1a;
 }
-
-/* Styling for tabs (if used) */
-.tabs {
-  margin-top: 1.5rem;
-}
-
-/* Content area within tabs */
-.tabContent {
-  padding: 1.5rem 0;
-}
-
-/* Grid layout for the form fields */
 .formGrid {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: repeat(3, 1fr);
   gap: 1.5rem;
-  margin-left: 0;
 }
-
-/* Inline group for form fields that need to be side-by-side */
-.inlineGroup {
-  display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
-}
-
-/* Styling for individual form groups (label + input) */
 .formGroup {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  margin-bottom: 1.5rem;
 }
-
-/* Styling for textarea fields */
-.textarea {
-  min-height: 100px;
-}
-
-/* Styling for radio button groups */
-.radioGroup {
+.formLabel {
   display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  padding-top: 0.5rem;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+  color: #4b5563;
 }
-
-/* Styling for read-only input fields */
-.readOnlyField {
-  background-color: #f9fafb;
-  opacity: 0.8;
+.required {
+  color: #ef4444;
+  margin-right: 0.25rem;
 }
-
-/* Container for currency input fields */
-.currencyInput {
+.input {
+  padding: 0.75rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  transition: border-color 0.2s ease;
+  width: 100%;
+  height: 35px; /* Ensures consistent height */
+}
+.input:focus {
+  outline: none;
+  border-color: #4a6fa5;
+  box-shadow: 0 0 0 1px rgba(74, 111, 165, 0.2);
+}
+.inputSmall {
+  height: 35px;
+}
+.inputWithIcon {
   position: relative;
 }
-
-/* Footer section for the card */
-.cardFooter {
-  border-top: 1px solid #e5e7eb;
-  padding-top: 1.5rem;
+.inputIcon {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #9aa5b1;
+  cursor: pointer;
 }
-
-/* Container for action buttons */
-.actionButtons {
-  display: flex;
-  gap: 1rem;
-  margin-left: auto;
-}
-
-/* Maximum width for input fields */
-.inputMaxWidth {
-  max-width: 300px;
+.select {
+  padding: 0.75rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  font-size: 0.875rem;
   width: 100%;
-  min-height: 35px;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%239aa5b1' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 16px;
+  height: 35px; /* Ensures consistent height */
 }
-
-/* Responsive styles for smaller screens (max-width: 640px) */
-@media (max-width: 640px) {
-  /* Adjust padding for profile container */
-  .profileContainer {
-    padding: 1rem;
+.formItem {
+  height: 35px;
+}
+.radioGroup {
+  display: flex;
+  gap: 1.5rem;
+  margin-top: 0.5rem;
+}
+.radioOption {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.radio {
+  width: 1rem;
+  height: 1rem;
+  accent-color: #4a6fa5;
+}
+.preferredLanguage {
+  padding: 0.75rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  width: 100%;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%239aa5b1' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 16px;
+  height: 50px; /* Ensures consistent height */
+}
+@media (max-width: 1024px) {
+  .formGrid {
+    grid-template-columns: repeat(2, 1fr);
   }
-
-  /* Stack header elements vertically */
+}
+@media (max-width: 640px) {
   .header {
     flex-direction: column;
     align-items: flex-start;
     gap: 1rem;
   }
-
-  /* Make edit button full-width */
+  .title {
+    font-size: 1.5rem;
+  }
   .editButton {
     width: 100%;
+    padding: 0.75rem;
   }
-
-  /* Stack profile image and fixed data vertically */
-  .profileImageSection {
-    flex-direction: column;
-    text-align: center;
-  }
-
-  /* Reduce avatar size */
-  .profileAvatar {
-    width: 80px;
-    height: 80px;
-  }
-
-  /* Reduce font size for fixed data */
-  .fixedData {
-    font-size: 0.9rem;
-  }
-
-  /* Ensure form grid remains single-column */
   .formGrid {
     grid-template-columns: 1fr;
-    margin-left: 0;
   }
-
-  /* Ensure form groups span full width */
-  .formGroup {
-    grid-column: span 1;
+  .infoDetails {
+    grid-template-columns: 1fr;
   }
-}
-
-/* Responsive styles for larger screens (min-width: 641px) */
-@media (min-width: 641px) {
-  /* Use three-column grid for form fields */
-  .formGrid {
-    grid-template-columns: repeat(3, 1fr);
-    margin-left: 50px;
+  .infoCard {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
   }
-}
-
-/* Styling for error text below input fields */
-.errorText {
-  color: red;
-  font-size: 0.875rem;
-  margin-top: 0.25rem;
-}
-
-/* Styling for disabled edit button */
-.editButton:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
-}
-
-
-.badge {
-  background-color: #f3f4f6;
-  color: #4b5563;
-  font-size: 0.75rem;
-  font-weight: 600;
-  padding: 0.25rem 0.5rem;
-  border-radius: 0.375rem;
-  align-items: left;
 }
