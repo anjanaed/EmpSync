@@ -24,25 +24,25 @@ export default function UserProfile() {
       {/* New wrapper div for infoCard and form */}
       <div className={styles.profileBox}>
         <div className={styles.infoCard}>
-          <div className={styles.avatar}>
+          {/* <div className={styles.avatar}>
             <UserIcon size={48} aria-label="User Avatar" />
-          </div>
+          </div> */}
           <div className={styles.infoDetails}>
             <div className={styles.infoGroup}>
-              <div className={styles.infoLabel}>Employee ID</div>
-              <div className={styles.infoValue}>E999</div>
+              <span className={styles.infoLabel}>Employee ID:</span>
+              <span className={styles.infoValue}>E999</span>
             </div>
             <div className={styles.infoGroup}>
-              <div className={styles.infoLabel}>Email</div>
-              <div className={styles.infoValue}>ganguleldishma@gmail.com</div>
+              <span className={styles.infoLabel}>Email:</span>
+              <span className={styles.infoValue}>ganguleldishma@gmail.com</span>
             </div>
             <div className={styles.infoGroup}>
-              <div className={styles.infoLabel}>Job Role</div>
-              <div className={styles.infoValue}>KITCHEN_STAFF</div>
+              <span className={styles.infoLabel}>Job Role:</span>
+              <span className={styles.infoValue}>KITCHEN_STAFF</span>
             </div>
             <div className={styles.infoGroup}>
-              <div className={styles.infoLabel}>Join Date</div>
-              <div className={styles.infoValue}>2025-05-08</div>
+              <span className={styles.infoLabel}>Join Date:</span>
+              <span className={styles.infoValue}>2025-05-08</span>
             </div>
           </div>
         </div>
@@ -111,11 +111,6 @@ export default function UserProfile() {
           </Form.Item>
           <Form.Item label="Address" name="address">
             <Input className={styles.inputSmall} />
-          </Form.Item>
-          <Form.Item>
-            <Button type="primary" htmlType="submit">
-              Submit
-            </Button>
           </Form.Item>
         </Form>
       </div>

@@ -57,7 +57,7 @@
   border-radius: 12px;
   padding: 1.5rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  margin-bottom: 2rem;
+  margin-bottom: 10px;
   display: flex;
   gap: 2rem;
 }
@@ -73,24 +73,26 @@
   flex-shrink: 0;
 }
 .infoDetails {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10%; /* Adjust spacing between groups */
   width: 100%;
 }
 .infoGroup {
   display: flex;
-  flex-direction: column;
+  align-items: center; /* Align items vertically in the center */
+  gap: 10px; /* Add spacing between the label and value */
 }
 .infoLabel {
   color: #6b7280;
   font-size: 0.875rem;
   margin-bottom: 0.25rem;
+  font-weight: bold; /* Optional: Make the label bold */
 }
 .infoValue {
   font-size: 1rem;
   font-weight: 500;
-  color: #1a1a1a;
+  color: #555; /* Optional: Add a different color for the value */
 }
 .formGrid {
   display: grid;
@@ -218,10 +220,23 @@
   }
   .infoDetails {
     grid-template-columns: 1fr;
+    flex-direction: column; /* Stack items vertically */
+    gap: 1rem; /* Reduce spacing for smaller screens */
   }
   .infoCard {
     flex-direction: column;
     align-items: center;
     text-align: center;
+  }
+}
+@media (max-width: 480px) {
+  .title {
+    font-size: 1.25rem; /* Smaller font size for very small screens */
+  }
+  .editButton {
+    padding: 0.5rem; /* Reduce padding for smaller screens */
+  }
+  .infoCard {
+    padding: 1rem; /* Adjust padding for compact view */
   }
 }
