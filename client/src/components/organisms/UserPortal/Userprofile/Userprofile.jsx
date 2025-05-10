@@ -198,7 +198,6 @@ export default function UserProfile({ user }) {
                 className={styles.inputMaxWidth}
                 value={isEditing ? userData.password || "" : "••••••••••"}
                 onChange={(e) => handlePasswordChange(e.target.value)}
-                disabled={!isEditing}
               />
               {passwordError && <p className={styles.errorText}>{passwordError}</p>}
             </div>
