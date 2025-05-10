@@ -1,0 +1,157 @@
+.loginContainer {
+  display: flex;
+  min-height: 100vh;
+  background:url('../../../../assets/Login/loginbackground.png') center/cover no-repeat;
+  font-family: "Figtree", sans-serif;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+.loginBox {
+  display: flex;
+  width: 55vw;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+
+.loginLeft {
+  flex: 1;
+  background-color: #FFFDED;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1vw;
+  height: 500px;
+}
+
+.loginIllustration {
+  width: 90%;
+}
+
+.loginRight {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.loginTitle {
+  font-size: 2.2rem;
+  margin-bottom: 3vw;
+  text-align: center;
+  font-weight: bold;
+  color: #353535;
+}
+
+.logindetails {
+  display: flex;
+  align-items: center;
+ justify-content: center;
+ gap: 1vw;
+}
+
+
+.username {
+  font-size: 1.1rem;
+  font-weight: bold;
+  line-height: 0;
+  padding-top: 20px;
+}
+
+.userpost {
+  font-size: 0.8rem;
+  color: #888;
+  line-height: 0;
+
+}
+
+.divider {
+  margin: 1vw ;
+  
+  border: 2;
+  border-top: 1px solid #676767;
+}
+
+
+
+.buttonGroup {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-direction: column;
+  align-items: center;
+}
+
+.customButton {
+  flex: 1;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  height: 40px; 
+  width: 60%;
+  font-size: 16px;
+  padding: 10px;
+  transition: all 0.3s ease-in-out;
+  margin: 5px;
+  border-radius: 5px;
+  color: #8b0000;
+  background-color: #ffffff;
+  border: 2px solid #8b0000;
+  cursor: pointer;
+  
+}
+
+.customButton:hover,
+.selectedButton {
+  background-color: #8b0000;
+  color: white;
+  border-color: #8b0000;
+}
+
+.loginSubtitle {
+  color: #8b0000;
+margin: 0 auto;
+font-weight: bold;
+padding-top: 2vw;
+
+
+}
+
+.loginButton {
+  margin-top: 10px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  width: 100%;
+  background-color: #a52a2a;
+  transition-duration: 0.5s;
+  border: none;
+  font-size: 16px;
+  color: white; 
+  cursor: pointer;
+  border-radius: 5px; 
+}
+
+.loginButton:hover {
+  background-color: #8b0000;
+  transform: scale(1.05); 
+}
+
+@media (max-width: 768px) {
+  .loginIllustration {
+    display: none;
+  }
+
+  .loginLeft {
+    height: auto; /* Adjust height for better responsiveness */
+    padding: 2vw; /* Adjust padding for smaller screens */
+  }
+
+  .loginBox {
+    flex-direction: column; /* Stack the left and right sections vertically */
+    width: 90vw; /* Adjust width for smaller screens */
+  }
+}

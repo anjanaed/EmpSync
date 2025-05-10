@@ -1,7 +1,7 @@
 import { React, useState,useEffect } from "react";
 import styles from "./ReportDashboard.module.css";
 import ReportCard from "../../../templates/HR/ReportCard/ReportCard";
-import img from "../../../../assets/report.png";
+import img from "../../../../assets/Report/report.png";
 import { InputNumber, Button } from "antd";
 import axios from "axios";
 import Loading from "../../../atoms/loading/loading";

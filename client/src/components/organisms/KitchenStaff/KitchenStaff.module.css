@@ -224,3 +224,32 @@
       width: 100%;
     }
   }
+
+  .cardContainer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px; /* Space between cards */
+    justify-content: center; /* Center the cards */
+  }
+  
+  .cardContainer > div {
+    flex: 1 1 calc(20% - 16px); /* Ensure 5 cards per row */
+    max-width: 240px; /* Limit the width of each card */
+  }
+
+  .card {
+    width: 240px; /* Set card width */
+  }
+
+  .cardImage {
+    height: 200px; /* Set image height */
+  }
+
+  .mealCountText {
+    font-weight: bold; /* Make text bold */
+    font-size: 18px; /* Set font size */
+  }
+
+
+
+

@@ -1,11 +1,6 @@
-// src/components/NotificationPanel/NotificationPanel.js
 import React from "react";
 import { Button } from "antd";
-import {
-  CloseOutlined,
-  CalendarOutlined,
-  CheckCircleOutlined,
-} from "@ant-design/icons";
+import { CloseOutlined, CalendarOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { useNotifications } from "../../../../contexts/NotificationsContext";
 import styles from "./NotificationPanel.module.css";
@@ -17,7 +12,6 @@ const NotificationPanel = () => {
     toggleNotifications,
     markAllAsRead,
     handleNotificationAction,
-    confirmSchedule,
   } = useNotifications();
 
   const navigate = useNavigate();
@@ -59,7 +53,7 @@ const NotificationPanel = () => {
                     : styles.dotUpdate
                 }`}
               ></div>
-  
+
               <div className={styles.notificationContent}>
                 <div className={styles.notificationTitle}>
                   {notification.title}
@@ -68,7 +62,7 @@ const NotificationPanel = () => {
                   {notification.message}
                 </div>
                 <div className={styles.notificationTime}>
-                  {notification.displayTime || 'Just now'}
+                  {notification.displayTime || "Just now"}
                 </div>
               </div>
               {notification.title === "Schedule Alert" ||

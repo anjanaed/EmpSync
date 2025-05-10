@@ -1,0 +1,183 @@
+.loginContainer {
+  display: flex;
+  min-height: 100vh;
+  background: url("../../../../assets/Login/loginbackground.png") center/cover no-repeat;
+  font-family: "Figtree", sans-serif;
+  justify-content: center;
+  align-items: center;
+}
+
+
+
+.loginBox {
+  display: flex;
+  width: 55vw;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.loginLeft {
+  flex: 1;
+  background-color: #fffded;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2vw;
+  height: 500px;
+}
+
+.loginIllustration {
+  width: 100%;
+}
+
+.loginRight {
+  flex: 1;
+  padding: 3vw;
+}
+
+.loginTitle {
+  font-size: 2.2vw;
+  font-weight: bold;
+  margin: 0.4vw;
+  color: #313131;
+  text-align: center;
+}
+
+.loginSubtitle {
+  color: #474747;
+  margin-bottom: 2vw;
+  text-align: center;
+}
+
+.loginOptions {
+  display: flex;
+  font-family: "Figtree", sans-serif;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1vw;
+  font-size: 0.8vw ;
+  font-weight: 550;
+
+}
+
+.loginForm :global(.ant-form-item-label > label) {
+  font-size: 0.8vw !important;
+}
+
+.loginForm :global(.ant-input) {
+  font-size: 0.8vw !important;
+}
+
+
+.loginForm :global(.ant-checkbox-wrapper) {
+  font-size: 0.8vw;
+}
+
+
+
+
+
+.loginOptions a {
+  transition: all 0.4s ease-in-out;
+}
+
+.loginOptions a:hover {
+  color: #8b0000;
+  transform: scale(1.02);
+}
+
+.forgotPassword {
+  color: #8b0000;
+}
+
+.loginButton {
+  margin-top: 10px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  width: 100%;
+  background-color: #a52a2a;
+  transition-duration: 0.5s;
+  border: none;
+  font-size: 16px;
+  color: white;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.loginButton:hover {
+  background-color: #8b0000 !important;
+  transform: scale(1.05);
+}
+
+/* Add media queries for responsiveness */
+@media (max-width: 768px) {
+  .loginContainer {
+    flex-direction: column;
+    min-height: 100vh; /* Ensure it takes the full viewport height */
+    padding: 2vw;
+    justify-content: center; /* Center content vertically */
+    align-items: center; /* Center content horizontally */
+  }
+
+  .loginBox {
+    width: 90vw;
+    flex-direction: column;
+  }
+
+  .loginLeft {
+    height: auto;
+    padding: 4vw;
+    display: none;
+  }
+
+  .loginRight {
+    padding: 4vw;
+  }
+
+  .loginTitle {
+    font-size: 5vw;
+  }
+
+  .loginSubtitle {
+    font-size: 3.5vw;
+  }
+
+  .loginOptions {
+    font-size: 3vw;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .loginOptions a {
+    font-size: 3vw;
+  }
+
+  .loginForm :global(.ant-form-item-label > label),
+  .loginForm :global(.ant-input),
+  .loginForm :global(.ant-checkbox-wrapper) {
+    font-size: 3vw !important;
+  }
+
+  .loginButton {
+    font-size: 4vw;
+    padding: 12px;
+  }
+}
+
+/* Add additional media query for very small screens */
+@media (max-width: 480px) {
+  .loginTitle {
+    font-size: 6vw;
+  }
+
+  .loginSubtitle {
+    font-size: 4vw;
+  }
+
+  .loginButton {
+    font-size: 5vw;
+    padding: 14px;
+  }
+}

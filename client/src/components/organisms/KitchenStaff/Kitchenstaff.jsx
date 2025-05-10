@@ -56,24 +56,33 @@ const Dashbord = () => {
   // Render content based on the active tab
   const renderTabContent = () => {
     const meals = mealData[activeTab] || [];
-    return meals.map((meal) => (
-      <Card
-        key={meal.mealId}
-        hoverable
-        style={{ width: 240 }}
-        cover={
-          <img
-            alt={meal.name}
-            src={meal.imageUrl || "https://via.placeholder.com/240"} // Use Firebase image or fallback
-          />
-        }
-      >
-        <Meta
-          title={`${meal.name} `}
-          description={`Total Count: ${meal.totalCount}`}
-        />
-      </Card>
-    ));
+    return (
+      <div className={styles.cardContainer}>
+        {meals.map((meal) => (
+          <Card
+            key={meal.mealId}
+            hoverable
+            className={styles.card} // Add a class for the card
+            cover={
+              <img
+                alt={meal.name}
+                src={meal.imageUrl || "https://via.placeholder.com/240"} // Use Firebase image or fallback
+                className={styles.cardImage} // Add a class for the image
+              />
+            }
+          >
+            <Meta
+              title={`${meal.name} `}
+              description={
+                <span className={styles.mealCountText}>
+                  Total Count: {meal.totalCount}
+                </span>
+              } // Add a class for the meal count text
+            />
+          </Card>
+        ))}
+      </div>
+    );
   };
 
   return (
@@ -84,10 +93,6 @@ const Dashbord = () => {
           <p className={styles.time}>{formattedTime}</p>
           <div className={styles.dateControls}>
             <button className={styles.dateButton}>Tomorrow</button>
-            <DatePicker
-              className={styles.datePicker}
-              placeholder="Select Date"
-            />
             <button
               className={styles.gotoDashboardButton}
               onClick={() => navigate("/serving")}

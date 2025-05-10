@@ -2,45 +2,32 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { DatabaseModule } from './database/database.module';
-import { UserModule } from './user/user.module';
-import { MealModule } from './Meal/meal.module';
-import { IngredientsModule } from './ingredient/ingredient.module';
-import { BudgetsModule } from './budget/budget.module';
-import { PayrollModule } from './payroll/payroll.module';
-import { AttendanceModule } from './attendance/attendance.module';
-import {OrdersModule} from './orders/orders.module'
-import { ScheduleModule } from './schedule/schedule.module';
-import { AdjustmentModule } from './SalaryAdjustments/adjustment.module';
-import { IndiAdjustmentModule } from './IndividualSalaryAdjustments/inAdjustment.module';
-import { PayeTaxModule } from './PayeTaxSlab/PayeTax.module';
-import { AuthModule } from './auth/auth.module';
+import { UserModule } from './core/user/user.module';
+import { MealModule } from './modules/meal/meal.module';
+import { IngredientsModule } from './modules/ingredient/ingredient.module';
+import { BudgetsModule } from './modules/budget/budget.module';
+import { PayrollModule } from './modules/payroll/payroll.module';
+import { OrdersModule } from './modules/order/order.module';
+import { ScheduleModule } from './modules/schedule/schedule.module';
+import { AdjustmentModule } from './modules/salary-adjustment/adjustment.module';
+import { IndiAdjustmentModule } from './modules/individual-salary-adjustment/in-adjustment.module';
+import { PayeTaxModule } from './modules/paye-tax-slab/paye-tax.module';
+import { AuthModule } from './core/authentication/auth.module';
 import { ScheduleModule as NestScheduleModule } from '@nestjs/schedule';
-import { ReportModule } from './Reports/reports.module';
-import { MealsServingModule } from './meals-serving/meals-serving.module';
-
-
-
-
-
-
-
+import { MealsServingModule } from './modules/meals-serving/meals-serving.module';
 
 @Module({
-
   imports: [
-    NestScheduleModule.forRoot(), 
+    NestScheduleModule.forRoot(),
     DatabaseModule,
     UserModule,
     IngredientsModule,
     BudgetsModule,
     MealModule,
     PayrollModule,
-    AttendanceModule,
     OrdersModule,
-    BudgetsModule,
-    ScheduleModule, 
+    ScheduleModule,
     AdjustmentModule,
-    ReportModule,
     IndiAdjustmentModule,
     PayeTaxModule,
     AuthModule,
@@ -50,5 +37,3 @@ import { MealsServingModule } from './meals-serving/meals-serving.module';
   providers: [AppService],
 })
 export class AppModule {}
-
-

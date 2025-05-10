@@ -1,5 +1,6 @@
 .loadingWrapper {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   height: 100vh; 
@@ -10,4 +11,13 @@
   backdrop-filter: blur(4px);
   left: 0;
   z-index: 9999;
+}
+
+
+.loadingText {
+  margin-top: 1vw; 
+  font-size: 1vw;
+  font-family: "Figtree", sans-serif;
+  color: #5d071c;
+  text-align: center;
 }

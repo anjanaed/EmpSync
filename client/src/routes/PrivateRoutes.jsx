@@ -1,48 +1,42 @@
 import React from "react";
 import { Route } from "react-router-dom";
-import ProtectedRoute from "../components/ProtectedRoutes/ProtectedRoutes";
-import LoginRole from "../components/pages/LoginRole/LoginRole";
-import Login from "../components/pages/Login/Login";
+import ProtectedRoute from "../../src/guards/ProtectedRoutes";
+import LoginRole from "../components/Pages/Login/LoginAsPage/LoginRole";
+import Login from "../components/pages/Login/LoginPage/Login";
 
 // HR_ADMIN
-import EmployeePage from "../components/pages/HR/EmployeePage/EmployeePage";
-import RegisterPage from "../components/pages/HR/RegisterPage/RegisterPage";
-import ReportPage from "../components/pages/HR/ReportPage/ReportPage";
-import PayrollPage from "../components/pages/HR/PayrollPage/PayrollPage";
-import AdjustmentPage from "../components/pages/HR/AdjustmentPage/AdjustmentPage";
-import PayslipPage from "../components/pages/HR/PayslipPage/PayslipPage";
-
-// UserPortal
-import ProfilePage from "../components/UserPortalUI/Profile/Profile";
-import MealsPage from "../components/UserPortalUI/Meals/Meals";
-import SuggestionsPage from "../components/UserPortalUI/Suggestions/Suggestions";
-import PayrollDetails from "../components/UserPortalUI/Components/payroll-details";
+import EmployeePage from "../components/Pages/HR/EmployeePage/EmployeePage";
+import RegisterPage from "../components/Pages/HR/RegisterPage/RegisterPage";
+import ReportPage from "../components/Pages/HR/ReportPage/ReportPage";
+import PayrollPage from "../components/Pages/HR/PayrollPage/PayrollPage";
+import AdjustmentPage from "../components/Pages/HR/AdjustmentPage/AdjustmentPage";
+import PayslipPage from "../components/Pages/HR/PayslipPage/PayslipPage";
 
 // KITCHEN_ADMIN
-import KitchenAdmin from "../components/pages/Kitchen Admin/KitchenAdminDashBoard/kitchenAdminDash";
-import Reports from "../components/pages/Kitchen Admin/Report/report";
-import Meals from "../components/pages/Kitchen Admin/MealDash/meal";
-import MealDetailsForm from "../components/pages/Kitchen Admin/Add Meal/addMeal";
-import EditMeal from "../components/pages/Kitchen Admin/Edit Meal/editMeal";
+import KitchenAdmin from "../components/pages/KitchenAdmin/SchedulePage/KitchenAdmin";
+import Reports from "../components/pages/KitchenAdmin/ReportPage/Report";
+import Meals from "../components/pages/KitchenAdmin/MealPage/Meal";
+import MealDetailsForm from "../components/pages/KitchenAdmin/AddMealPage/AddMeal";
+import EditMeal from "../components/pages/KitchenAdmin/EditMealPage/EditMeal";
 
 // ServingStaff
-import Serving from "../../src/components/pages/Serving staff/Barcode Scan/Serving";
-import MealConform from "../../src/components/pages/Serving staff/Meal Conform/MealConform";
+import Serving from "../components/Pages/ServingStaff/BarcodeScan/Serving";
+import MealConform from "../components/pages/ServingStaff/MealConfirm/MealConform";
 
 // KitchenStaff
-import KitchenStaff from "../components/pages/kitchen staff/kitchenStaff";
+import KitchenStaff from "../components/Pages/kitchenStaff/kitchenStaff";
 
 // INVENTORY_ADMIN
-import Ingredients from "../components/pages/Ingredient Manager/Dashboard/Ingredients";
-import AnalysisDashboard from "../components/pages/Ingredient Manager/AnalysisDashboard/AnalysisDashboard";
-import OrderReportDashboard from "../components/pages/Ingredient Manager/OrderReportDashboard/OrderReportDashboard";
-import OrderHistory from "../components/pages/Ingredient Manager/OrderHistory/OrderHistory";
-import CostAnalysis from "../components/organisms/Ingredients/Analysis/Cost Analysis/CostAnalysis";
-import LoginRouting from "../components/ProtectedRoutes/LoginRouting";
+import Ingredients from "../components/Pages/InventoryAdmin/Dashboard/Ingredients";
+import AnalysisDashboard from "../components/Pages/InventoryAdmin/AnalysisDashboard/AnalysisDashboard";
+import OrderReportDashboard from "../components/Pages/InventoryAdmin/OrderReportDashboard/OrderReportDashboard";
+import OrderHistory from "../components/Pages/InventoryAdmin/OrderHistory/OrderHistory";
+import CostAnalysis from "../components/organisms/Inventory/Analysis/Cost Analysis/CostAnalysis";
+import LoginRouting from "../guards/LoginRouting";
 
 //UserAccout
-import ProfilePage from "../components/pages/UserAccount/ProfilePage/ProfilePage";
-import UserMeals from "../components/pages/UserAccount/MealsPage/MealsPage";
+import ProfilePage from "../components/Pages/UserAccount/ProfilePage/ProfilePage";
+import UserMeals from "../components/Pages/UserAccount/MealsPage/MealsPage";
 
 const PrivateRoutes = () => (
   <>
@@ -121,37 +115,23 @@ const PrivateRoutes = () => (
 
     {/* UserPortal Routes */}
     <Route
-      path="/profile"
+      path="/ProfilePage"
       element={
         <ProtectedRoute allowedRoles={["*"]}>
           <ProfilePage />
         </ProtectedRoute>
       }
     />
+
     <Route
-      path="/meals"
+      path="/UserMeals"
       element={
         <ProtectedRoute allowedRoles={["*"]}>
-          <MealsPage />
+          <UserMeals />
         </ProtectedRoute>
       }
     />
-    <Route
-      path="/suggestions"
-      element={
-        <ProtectedRoute allowedRoles={["*"]}>
-          <SuggestionsPage />
-        </ProtectedRoute>
-      }
-    />
-    <Route
-      path="/userpayroll"
-      element={
-        <ProtectedRoute allowedRoles={["*"]}>
-          <PayrollDetails />
-        </ProtectedRoute>
-      }
-    />
+    
 
     {/* KITCHEN_ADMIN Routes */}
     <Route
@@ -223,7 +203,6 @@ const PrivateRoutes = () => (
       }
     />
 
-
     {/* INVENTORY_ADMIN Routes */}
     <Route
       path="/Ingredients"
@@ -266,16 +245,7 @@ const PrivateRoutes = () => (
       }
     />
 
-
     {/* User account */}
-    <Route
-      path="/Userprofile1"
-      element={
-        <ProtectedRoute allowedRoles={["*"]}>
-          <ProfilePage />
-        </ProtectedRoute>
-      }
-    />
 
     <Route
       path="/UserMeals"
