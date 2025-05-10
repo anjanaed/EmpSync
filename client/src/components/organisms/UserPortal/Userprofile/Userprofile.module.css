@@ -59,13 +59,16 @@ body {
   transform: translateY(0);
 }
 .infoCard {
-  background-color: white;
-  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.2); /* Semi-transparent background */
+  border-radius: 5px;
   padding: 1.5rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   margin-bottom: 10px;
   display: flex;
   gap: 2rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  backdrop-filter: blur(30px); /* Blur effect */
+  -webkit-backdrop-filter: blur(30px); /* For Safari support */
 }
 .avatar {
   width: 120px;
@@ -90,7 +93,7 @@ body {
   gap: 10px; /* Add spacing between the label and value */
 }
 .infoLabel {
-  color: #6b7280;
+  color: #482020;
   font-size: 0.875rem;
   margin-bottom: 0.25rem;
   font-weight: bold; /* Optional: Make the label bold */
@@ -115,7 +118,7 @@ body {
   align-items: center;
   margin-bottom: 0.5rem;
   font-size: 0.875rem;
-  color: #4b5563;
+  color: #412020;
 }
 .required {
   color: #ef4444;
@@ -198,15 +201,17 @@ body {
   flex-direction: column;
   gap: 20px;
   padding: 20px;
-  border: 1px solid #ddd;
+  border: 1px solid rgba(255, 255, 255, 0.3); /* Semi-transparent border */
   border-radius: 8px;
-  background-color: #ffffff;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  background: rgba(255, 255, 255, 0.2); /* Semi-transparent background */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  backdrop-filter: blur(10px); /* Blur effect */
+  -webkit-backdrop-filter: blur(10px); /* For Safari support */
 }
 
 @media (max-width: 1024px) {
   body {
-    background: rgb(85, 14, 14); /* Remove background image and set background color to red */
+    background: rgb(29, 29, 29); /* Remove background image and set background color to red */
   }
   .formGrid {
     grid-template-columns: repeat(2, 1fr);
@@ -220,6 +225,7 @@ body {
   }
   .title {
     font-size: 1.5rem;
+    color: white; /* Set text color to white */
   }
   .editButton {
     width: 100%;
@@ -237,16 +243,19 @@ body {
     flex-direction: column;
     align-items: center;
     text-align: center;
+    color: white; /* Set text color to white */
   }
 }
 @media (max-width: 480px) {
   .title {
     font-size: 1.25rem; /* Smaller font size for very small screens */
+    color: white; /* Set text color to white */
   }
   .editButton {
     padding: 0.5rem; /* Reduce padding for smaller screens */
   }
   .infoCard {
     padding: 1rem; /* Adjust padding for compact view */
+    color: white; /* Set text color to white */
   }
 }
