@@ -1,101 +1,231 @@
-/* Container for individual cart card */
-.cartContainer {
-    max-width: 400px;
-    height: 400px; /* Fixed height for consistent card size */
-    margin: 0 auto;
-    background-color: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    overflow: hidden;
-    position: relative; /* Relative positioning for absolute child elements */
+.container {
+  width: 100%;
+  padding: 1rem;
+  background-color: #f5f5f5;
+  min-height: 100vh;
+  box-sizing: border-box;
 }
 
-/* Content area within the cart card */
-.cartContent {
-    flex: 1;
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 16px; /* Spacing between content sections */
-}
-
-/* Section for displaying total price or similar content */
-.totalSection {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 16px;
-}
-
-/* Flex row for aligning items horizontally */
-.flexRow {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-/* Styling for large text, e.g., total price */
-.largeText {
-    font-size: 18px;
-}
-
-/* Container for multiple cart cards */
-.horizontalContainer {
-    display: flex;
-    gap: 16px; /* Spacing between cart cards */
-    justify-content: center; /* Center cards horizontally */
-    flex-wrap: wrap; /* Allow cards to wrap to next line */
-    margin: 20px;
-}
-
-/* Styling for section title */
 .title {
-    text-align: center;
-    margin-bottom: 20px;
-    margin-top: 20px;
+  text-align: center;
+  color: #1a1a1a;
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
 }
 
-/* Styling for order price text */
-.orderText {
-    font-size: 18px;
-    font-weight: bold;
-    color: red; /* Highlight price in red */
+.tabs {
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.06);
 }
 
-/* Styling for meals order text */
-.mealsOrderText {
-    font-size: 12px;
-    font-weight: bold;
+.cartContainer {
+  width: 100%;
+  max-width: 260px;
+  background: linear-gradient(145deg, #ffffff, #f0f0f0);
+  border-radius: 16px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.06);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  padding: 1rem;
+  margin: 0 auto;
+  box-sizing: border-box;
 }
 
-/* Styling for order ID text */
-.orderTextId {
-    font-size: 11px;
-    font-weight: bold;
+.cartContainer:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15), 0 6px 8px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(145deg, #f9f9f9, #ffffff);
 }
 
-/* Utility class to push element to the right */
-.marginLeftAuto {
-    margin-left: auto;
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
 }
 
-/* Styling for cancel order button */
+.cardHeaderMain1 {
+  border-radius: 8px;
+  text-align: center !important;
+  color: rgb(0, 58, 58) !important;
+  font-size: 1rem !important;
+  font-weight: bold;
+
+}
+
+.cardHeaderMain {
+  border-radius: 8px;
+  text-align: center !important;
+  color: rgb(0, 58, 58) !important;
+  font-size: 1rem !important;
+  font-weight: bold;
+  animation: iphoneNotification 2s ease-in-out infinite;
+  animation-iteration-count: 2;
+}
+
+@keyframes iphoneNotification {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+    box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+  }
+  50% {
+    transform: scale(1.5);
+    opacity: 1;
+    box-shadow: 0 0 50px rgb(255, 0, 0);
+    border-radius: 8px;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+    box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+  }
+}
+
+.orderPrice {
+  color: #ff1818;
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.cartContent {
+  padding-bottom: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.mealsOrdered {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid #e8e8e8;
+  min-height: 150px;
+  max-height: 150px;
+  overflow-y: auto;
+}
+
 .cancelButton {
-    position: absolute; /* Absolute positioning to stick to bottom */
-    bottom: 0; /* Align to bottom of card */
-    left: 0;
-    right: 0;
-    padding: 10px 16px;
-    background-color: #ffffff;
-    border-top: 1px solid #f0f0f0; /* Border to separate button from content */
+  border-radius: 8px;
+  background: linear-gradient(145deg, #ff4d4f, #ff7875);
+  color: white;
+  font-weight: bold;
+  transition: background 0.3s ease, transform 0.2s ease;
 }
 
-/* Section for listing ordered meals */
-.MealsOrdered {
-    flex: 1; /* Grow to fill available space */
-    overflow-y: auto; /* Enable vertical scrolling for long lists */
-    padding-right: 8px; /* Padding for better spacing */
-    border-top: 1px solid #f0f0f0; /* Border to separate meals section */
+.cancelButton:hover {
+  background: linear-gradient(145deg, #ff7875, #ff4d4f);
+  transform: scale(1.05);
 }
+
+.orderGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.5rem;
+  padding: 1.5rem 0;
+}
+
+.emptyCard {
+  max-width: 90%;
+  margin: 1.5rem auto;
+  text-align: center;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.calendar {
+  max-width: 100%;
+  margin: 1.5rem auto;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  background-color: #ffffff;
+}
+
+.modal .ant-modal-content {
+  border-radius: 8px;
+}
+
+.qrContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  background: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.orderId {
+  color: gray;
+  font-size: 0.875rem;
+  font-weight: bold;
+}
+
+.mealType {
+  color: rgb(14, 135, 14);
+  font-size: 0.875rem;
+  font-weight: bold;
+}
+
+.orderDate {
+  color: rgb(0, 0, 90);
+  font-size: 0.875rem;
+  font-weight: bold;
+}
+
+/* Media Queries for Mobile Responsiveness */
+@media (max-width: 768px) {
+  .container {
+    padding: 0.5rem;
+  }
+
+  .title {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+  }
+
+  .cartContainer {
+    max-width: 100%;
+    padding: 0.75rem;
+  }
+
+  .cardHeaderMain {
+    font-size: 0.875rem !important;
+  }
+
+  .orderPrice {
+    font-size: 0.875rem;
+  }
+
+  .orderGrid {
+    grid-template-columns: 1fr; /* Single column on mobile */
+    gap: 1rem;
+    padding: 1rem 0;
+  }
+
+  .emptyCard {
+    max-width: 100%;
+    margin: 1rem auto;
+  }
+
+  .calendar {
+    margin: 1rem auto;
+  }
+
+  .qrContainer {
+    padding: 0.5rem;
+  }
+
+  .qrContainer canvas {
+    width: 100% !important;
+    height: auto !important;
+  }
+}
+
+
+
