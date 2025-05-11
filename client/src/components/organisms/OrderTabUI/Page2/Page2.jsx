@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Typography, Card, Spin } from "antd"; // Import Spin for loading animation
 import styles from "./Page2.module.css"; // Import CSS module for styling
 import DateAndTime from "../DateAndTime/DateAndTime"; // Import DateAndTime component
@@ -73,11 +73,11 @@ const Page2 = ({ carouselRef, language, setUsername, setUserId }) => {
       }
     }
   };
-   useEffect(() => {
+  useEffect(() => {
     if (pin.length === 4) {
       handlePinSubmit();
     }
-  }, [pin]); 
+  }, [pin]);
 
   // Render the authentication page
   return (
@@ -95,8 +95,8 @@ const Page2 = ({ carouselRef, language, setUsername, setUserId }) => {
           <DateAndTime />
         </div>
         {/* Main card for authentication interface */}
-        <div>
-          <Card className={styles.card} bodyStyle={{ padding:3 }}>
+        <div className={styles.full}>
+          <Card className={styles.card} bodyStyle={{ padding: 3 }}>
             <div className={styles.content}>
               {showFingerprint ? (
                 // Fingerprint authentication section
@@ -119,7 +119,6 @@ const Page2 = ({ carouselRef, language, setUsername, setUserId }) => {
                       </span>
                     )}
                   </p>
-                  {/* Button to switch to PIN input */}
                 </div>
               ) : (
                 // PIN input section
@@ -134,7 +133,6 @@ const Page2 = ({ carouselRef, language, setUsername, setUserId }) => {
                     {pin.padEnd(4, "•")}{" "}
                     {/* Display PIN with dots for missing digits */}
                   </Typography.Text>
-                  {/* Numeric keypad for PIN input */}
                   <div className={styles.pinButtons}>
                     {[1, 2, 3, 4, 5, 6, 7, 8, 9, 0].map((digit) => (
                       <button
@@ -147,7 +145,6 @@ const Page2 = ({ carouselRef, language, setUsername, setUserId }) => {
                         {digit}
                       </button>
                     ))}
-                    {/* Button to append "E" to PIN */}
                     <button
                       type="default"
                       shape="circle"
@@ -156,7 +153,6 @@ const Page2 = ({ carouselRef, language, setUsername, setUserId }) => {
                     >
                       E
                     </button>
-                    {/* Backspace button */}
                     <button
                       type="default"
                       shape="circle"
@@ -166,26 +162,18 @@ const Page2 = ({ carouselRef, language, setUsername, setUserId }) => {
                       ⮌
                     </button>
                   </div>
-                  {/* Submit PIN button */}
-
-                  {/* Button to switch to fingerprint authentication */}
-
                 </div>
               )}
             </div>
-            <br />
-            {/* Back button to reload the page */}
-
-            <br />
           </Card>
         </div>
         <div className={styles.backButtonContainer}>
-<button
-  className={styles.toggleButton}
-  onClick={() => setShowFingerprint((prev) => !prev)} // Toggle the state
->
-  {showFingerprint ? <IoKeypadSharp size={30} /> : <BiFingerprint size={30} />} {/* Toggle icon */}
-</button>
+          <button
+            className={styles.toggleButton}
+            onClick={() => setShowFingerprint((prev) => !prev)} // Toggle the state
+          >
+            {showFingerprint ? <IoKeypadSharp size={30} /> : <BiFingerprint size={30} />} {/* Toggle icon */}
+          </button>
           <button
             className={styles.backButton}
             onClick={() => window.location.reload()}
