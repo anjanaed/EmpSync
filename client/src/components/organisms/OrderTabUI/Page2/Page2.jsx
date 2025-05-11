@@ -6,6 +6,7 @@ import translations from "../../../../utils/translations"; // Import language tr
 import FingerPrint from "../../../atoms/FingerPrint/FingerPrint"; // Import FingerPrint component
 import { MdLanguage } from "react-icons/md";
 import { IoKeypadSharp } from "react-icons/io5";
+import { BiFingerprint } from "react-icons/bi";
 
 // Page2 component for user authentication via fingerprint or PIN
 const Page2 = ({ carouselRef, language, setUsername, setUserId }) => {
@@ -179,12 +180,12 @@ const Page2 = ({ carouselRef, language, setUsername, setUserId }) => {
           </Card>
         </div>
         <div className={styles.backButtonContainer}>
-          <button
-            className={styles.toggleButton}
-            onClick={() => setShowFingerprint(false)}
-          >
-            <IoKeypadSharp size={30} />
-          </button>
+<button
+  className={styles.toggleButton}
+  onClick={() => setShowFingerprint((prev) => !prev)} // Toggle the state
+>
+  {showFingerprint ? <IoKeypadSharp size={30} /> : <BiFingerprint size={30} />} {/* Toggle icon */}
+</button>
           <button
             className={styles.backButton}
             onClick={() => window.location.reload()}
