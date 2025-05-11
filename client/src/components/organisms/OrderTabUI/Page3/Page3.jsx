@@ -293,9 +293,12 @@ const Page3 = ({ language = "english", username, userId }) => {
       {/* Header with date/time and username */}
       <div className={styles.header}>
         <div className={styles.name}>B i z &nbsp; S o l u t i o n</div>
+        <div className={styles.dateAndTime}>
+  <DateAndTime />
+</div>
         <div className={styles.userName}>
           <div>
-            Good Afternoon {username.gender == "Male" ? "Mr" : "Mrs"}.{" "}
+
             {username.name || "Guest"}
           </div>{" "}
           {/* Fallback to "Guest" if no username */}
@@ -354,29 +357,27 @@ const Page3 = ({ language = "english", username, userId }) => {
           >
             <Row gutter={24}>
               {/* Meal selection section */}
-              <Col span={16}>
+              <Col span={18}>
                 {/* Date selection buttons */}
                 <div style={{ marginBottom: 5 }}>
                   <Space.Compact className={styles.dateButtonGroup}>
                     <Button
                       type="default"
                       onClick={() => setSelectedDate("today")}
-                      className={`${styles.dateButton} ${
-                        selectedDate === "today"
+                      className={`${styles.dateButton} ${selectedDate === "today"
                           ? styles.selectedDateButton
                           : ""
-                      }`}
+                        }`}
                     >
                       {text.today} ({formatDateForDisplay(currentTime)})
                     </Button>
                     <Button
                       type="default"
                       onClick={() => setSelectedDate("tomorrow")}
-                      className={`${styles.dateButton} ${
-                        selectedDate === "tomorrow"
+                      className={`${styles.dateButton} ${selectedDate === "tomorrow"
                           ? styles.selectedDateButton
                           : ""
-                      }`}
+                        }`}
                     >
                       {text.tomorrow} ({formatDateForDisplay(getTomorrowDate())}
                       )
@@ -403,13 +404,12 @@ const Page3 = ({ language = "english", username, userId }) => {
                     key: mealTime,
                     label: (
                       <span
-                        className={`${styles.tabLabel} ${
-                          !isMealTimeAvailable(mealTime, selectedDate)
+                        className={`${styles.tabLabel} ${!isMealTimeAvailable(mealTime, selectedDate)
                             ? styles.unavailableTab
                             : selectedMealTime === mealTime
-                            ? styles.selectedTab
-                            : ""
-                        }`}
+                              ? styles.selectedTab
+                              : ""
+                          }`}
                       >
                         {text[mealTime]}
                       </span>
@@ -419,7 +419,6 @@ const Page3 = ({ language = "english", username, userId }) => {
                       <div className={styles.mealList}>
                         <Row gutter={16}>
                           {meals.map((meal) => {
-                            // Check if meal is past due
                             const isPastDue = (() => {
                               if (selectedDate === "tomorrow") return false;
                               const currentHour = currentTime.getHours();
@@ -443,7 +442,7 @@ const Page3 = ({ language = "english", username, userId }) => {
 
                             return (
                               <Col
-                                span={8}
+                                span={4} // Adjusted to fit 5 cards per row
                                 key={meal.id}
                                 className={styles.tabContent}
                               >
@@ -453,24 +452,23 @@ const Page3 = ({ language = "english", username, userId }) => {
                                     <img
                                       alt={
                                         meal[
-                                          `name${
-                                            language.charAt(0).toUpperCase() +
-                                            language.slice(1)
-                                          }`
+                                        `name${language.charAt(0).toUpperCase() +
+                                        language.slice(1)
+                                        }`
                                         ] || "Meal"
                                       }
                                       src={
                                         meal.imageUrl ||
                                         "https://via.placeholder.com/200"
                                       }
-                                      className={`${styles.mealImage} ${
-                                        isPastDue ? styles.pastDueImage : ""
-                                      }`}
+                                      className={`${styles.mealImage} ${isPastDue ? styles.pastDueImage : ""
+                                        }`}
                                     />
                                   }
-                                  className={`${styles.mealCard} ${
-                                    isPastDue ? styles.pastDueCard : ""
-                                  }`}
+                                  className={`${styles.mealCard} ${isPastDue ? styles.pastDueCard : ""
+                                    }`}
+                                  onClick={() => !isPastDue && addToOrder(meal.id)} // Add click handler here
+                                  hoverable // Makes the card visually interactive on hover
                                 >
                                   <hr className={styles.mealCardhr} />
                                   <Card.Meta
@@ -481,11 +479,10 @@ const Page3 = ({ language = "english", username, userId }) => {
                                         >
                                           <Text className={styles.mealTitle}>
                                             {meal[
-                                              `name${
-                                                language
-                                                  .charAt(0)
-                                                  .toUpperCase() +
-                                                language.slice(1)
+                                              `name${language
+                                                .charAt(0)
+                                                .toUpperCase() +
+                                              language.slice(1)
                                               }`
                                             ] || "Unnamed Meal"}
                                           </Text>
@@ -508,7 +505,7 @@ const Page3 = ({ language = "english", username, userId }) => {
                                             strong
                                             className={styles.priceText}
                                           >
-                                            $
+                                            Rs.
                                             {meal.price
                                               ? meal.price.toFixed(2)
                                               : "0.00"}
@@ -521,18 +518,16 @@ const Page3 = ({ language = "english", username, userId }) => {
                                           type="primary"
                                           block
                                           icon={<PlusOutlined />}
-                                          className={`${styles.addButton} ${
-                                            isPastDue
+                                          className={`${styles.addButton} ${isPastDue
                                               ? styles.disabledButton
                                               : ""
-                                          }`}
+                                            }`}
                                           disabled={isPastDue}
                                         >
                                           {text.add}
                                         </Button>
                                       </div>
                                     }
-                                    // Remove description completely
                                   />
                                 </Card>
                               </Col>
@@ -546,7 +541,7 @@ const Page3 = ({ language = "english", username, userId }) => {
               </Col>
 
               {/* Order summary section */}
-              <Col span={8}>
+              <Col span={6}>
                 <div className={styles.orderSummaryContainer}>
                   <div className={styles.orderSummary}>
                     <Card
@@ -576,7 +571,7 @@ const Page3 = ({ language = "english", username, userId }) => {
                             return (
                               <Col span={24} key={index}>
                                 <div className={styles.orderCard}>
-                                <Row  justify="space-between" >
+                                  <Row justify="space-between" >
                                     {/* First Row: Meal name, price, remove button */}
                                     <Col
                                       span={10}
@@ -585,13 +580,12 @@ const Page3 = ({ language = "english", username, userId }) => {
                                       <Text strong style={{ fontSize: 15 }}>
                                         {meal
                                           ? meal[
-                                              `name${
-                                                language
-                                                  .charAt(0)
-                                                  .toUpperCase() +
-                                                language.slice(1)
-                                              }`
-                                            ] || "Unnamed Meal"
+                                          `name${language
+                                            .charAt(0)
+                                            .toUpperCase() +
+                                          language.slice(1)
+                                          }`
+                                          ] || "Unnamed Meal"
                                           : "Meal not found"}
                                       </Text>
                                     </Col>
@@ -672,22 +666,22 @@ const Page3 = ({ language = "english", username, userId }) => {
                                         </Button>
                                       </div>
                                       <div
-                                      className={styles.priceDiv}
+                                        className={styles.priceDiv}
 
                                       >
                                         <Text strong>
-                                          $
+                                          Rs.
                                           {meal
                                             ? (meal.price * item.count).toFixed(
-                                                2
-                                              )
+                                              2
+                                            )
                                             : "0.00"}
                                         </Text>
                                       </div>
                                     </Col>
                                   </Row>
                                   <hr style={{ margin: '20px 0px 5px 0px' }} />
-                                  </div>
+                                </div>
                               </Col>
                             );
                           })}
@@ -702,18 +696,17 @@ const Page3 = ({ language = "english", username, userId }) => {
                     size="large"
                     onClick={placeOrder}
                     disabled={orderItems.length === 0}
-                    className={`${styles.placeOrderButton} ${
-                      orderItems.length === 0
+                    className={`${styles.placeOrderButton} ${orderItems.length === 0
                         ? styles.disabledButton
                         : styles.enabledButton
-                    }`}
+                      }`}
                   >
                     {text.placeOrder}
                   </Button>
                   {/* Total and back button */}
                   <div className={styles.totalContainer}>
                     <Text strong>
-                      Total: $
+                      Total: Rs. 
                       {orderItems
                         .reduce((total, item) => {
                           const meal = allMeals.find(
@@ -724,7 +717,7 @@ const Page3 = ({ language = "english", username, userId }) => {
                         .toFixed(2)}
                     </Text>
                     <Button
-                      
+
                       onClick={() => {
                         window.location.reload();
                       }}

@@ -6,13 +6,20 @@
 
 /* Date and time display alignment */
 .dateAndTime {
-  text-align: left;
+  font-size: 0.8em; /* Small font size */
+  position: absolute; /* Position it relative to the window */
+  top: 10px; /* Distance from the top of the window */
+  left: 50%; /* Center horizontally */
+  transform: translateX(-50%); /* Adjust for centering */
+  text-align: center; /* Center the text */
+  color: #555; /* Optional: Adjust text color */
+  z-index: 1000; /* Ensure it stays on top of other elements */
 }
-
 .name {
-  color: rgb(197, 0, 0);
+  color: rgb(255, 0, 0); /* Red font color */
   font-weight: 900;
   font-size: 1.3em;
+  text-shadow: 1px 1px 1px white; /* Small white outline */
 }
 
 /* Username display styling */
@@ -257,7 +264,7 @@
 
 /* Meal image styling */
 .mealImage {
-  height: 100px; /* Fixed height */
+  height: 130px; /* Reduced height */
   object-fit: cover; /* Ensures the image fills the container while maintaining aspect ratio */
   border-radius: 8px; /* Optional: Add rounded corners */
 }
@@ -273,10 +280,12 @@
 
 /* Meal card styling */
 .mealCard {
+  height: 250px; /* Reduced height */
   display: flex;
-  margin-bottom: 20px;
   flex-direction: column;
+  justify-content: space-between;
   opacity: 1; /* Full opacity */
+  margin-bottom: 20px;
 }
 
 .tabContent Card {
@@ -292,7 +301,7 @@
 /* Add button styling */
 .addButton {
   margin: 8px;
-  width: 50% !important;
+  width: 90% !important;
   background-color: #b40003; /* Red background */
   color: #fff; /* White text */
   border: none;

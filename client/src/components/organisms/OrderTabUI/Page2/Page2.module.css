@@ -81,8 +81,9 @@
 
 /* Styling for PIN input display */
 .pinInput {
-  width: 40%;
+  width: 200px;
   text-align: center;
+  margin-right: 10px;
   font-size: 25px;
   margin-bottom: 20px;
   font-weight: bold; /* Bold text */
