@@ -5,6 +5,7 @@ import axios from "axios";
 import styles from "./Meals.module.css";
 import { QrcodeOutlined } from "@ant-design/icons";
 import { QRCodeCanvas } from "qrcode.react";
+import Barcode from "react-barcode"; // Import the Barcode component
 
 const { Text, Title } = Typography;
 const { TabPane } = Tabs;
@@ -43,7 +44,7 @@ const Cart = ({ order, mealDetails, onCancelOrder, isCancelable, isReadOnly = fa
       <br />
       {showQR && !isReadOnly ? (
         <div className={styles.qrContainer}>
-          <QRCodeCanvas value={order.id.toString()} size={235} />
+          <Barcode value={order.id.toString()} width={5} height={215} displayValue={false} />
         </div>
       ) : (
         <>
