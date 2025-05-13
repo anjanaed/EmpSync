@@ -1,25 +1,34 @@
 /* Header section with date/time and username */
+
 .header {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  padding: 0 20px;
-  margin-left: 12px;
 }
 
 /* Date and time display alignment */
 .dateAndTime {
-  text-align: left;
+  font-size: 0.8em; /* Small font size */
+  position: absolute; /* Position it relative to the window */
+  top: 10px; /* Distance from the top of the window */
+  left: 50%; /* Center horizontally */
+  transform: translateX(-50%); /* Adjust for centering */
+  text-align: center; /* Center the text */
+  color: #555; /* Optional: Adjust text color */
+  z-index: 1000; /* Ensure it stays on top of other elements */
+}
+.name {
+  color: rgb(255, 0, 0); /* Red font color */
+  font-weight: 900;
+  font-size: 1.3em;
+  text-shadow: 1px 1px 1px white; /* Small white outline */
 }
 
 /* Username display styling */
 .userName {
-  font-size: 1.5em;
+  font-size: 1.2em;
+  margin-left: auto;
   font-weight: 600;
   color: #ffffff !important; /* White text color */
   text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5); /* Shadow for visibility */
-  margin-right: 20px;
 }
 
 /* Main layout container */
@@ -29,6 +38,11 @@
   backdrop-filter: blur(1px); /* Slight blur effect */
   -webkit-backdrop-filter: blur(1px); /* Safari support */
   border-radius: 10px;
+  display: flex;
+  font-family: "Figtree", sans-serif;
+  height: 100vh;
+  width: 100vw;
+  padding: 10px 20px;
 }
 
 /* Success message card */
@@ -49,13 +63,16 @@
 .cardTitle {
   font-weight: 700 !important; /* Bold text */
   color: #333 !important; /* Dark text */
-  margin-bottom: 0px !important; /* Remove bottom margin */
+  margin-bottom: 0px !important;
+  font-family: "Figtree", sans-serif;
+  /* Remove bottom margin */
 }
 
 /* Main card container for meal selection */
 .cardContainer {
   border-radius: 8px;
-  height: 90vh; /* Fixed height */
+  border: none;
+  min-height: 92vh; /* Fixed height */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
   background: rgba(255, 255, 255, 0.671); /* Semi-transparent white */
   backdrop-filter: blur(10px); /* Glassmorphism blur */
@@ -65,12 +82,11 @@
 /* Date button group container */
 .dateButtonGroup {
   width: 100%;
+  display: flex;
+  justify-content: space-between; /* Space between buttons */
 }
 
 /* Meal tab content */
-.tabContent {
-  margin-bottom: 16px;
-}
 
 /* Meal list container */
 .mealList {
@@ -78,11 +94,11 @@
   flex-direction: column;
   gap: 10px; /* Space between meal cards */
   padding: 10px;
-  border: 1px solid #ddd; /* Light border */
+  border: none; /* Light border */
   border-radius: 10px;
-  background-color: #f9f9f95e; /* Semi-transparent light background */
+  background-color: #f9f9f971; /* Semi-transparent light background */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Shadow for depth */
-  height: 55vh; /* Fixed height */
+  height: 64vh; /* Fixed height */
   overflow-y: auto; /* Enable vertical scrolling */
   overflow-x: hidden; /* Disable horizontal scrolling */
 }
@@ -92,12 +108,12 @@
   display: flex;
   flex-direction: column;
   gap: 10px; /* Space between elements */
-  padding: 20px;
+  padding: 10px;
   border: 1px solid #ddd; /* Light border */
   border-radius: 10px;
   background-color: #f9f9f95e; /* Semi-transparent light background */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Shadow for depth */
-  height: 75vh; /* Fixed height */
+  height: 78.3vh; /* Fixed height */
 }
 
 /* Order summary scrolling area */
@@ -108,8 +124,8 @@
 }
 
 /* Individual order card */
-.orderCard {
-  margin-bottom: 16px;
+.orderCard .hr {
+  margin: 0 !important;
 }
 
 /* Order details layout */
@@ -117,21 +133,32 @@
   display: flex;
   justify-content: space-between;
 }
+.mealTitle {
+  font-size: 15px;
+  font-weight: bold;
+  color: #000000;
+  font-family: "Figtree", sans-serif;
+}
 
-/* Remove button for order items */
-.removeButton {
-  width: 40px;
-  height: 35px;
+.titleWithTooltip {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: red; /* Red background */
-  color: white; /* White text/icon */
-  border-radius: 10px;
-  font-size: 20px;
-  font-weight: bold;
-  cursor: pointer;
-  border: none;
+  gap: 10px;
+}
+
+.descriptionText {
+  color: #666;
+  font-size: 14px;
+}
+
+.priceText {
+  font-size: 13px;
+  color: #000;
+}
+
+/* Remove button for order items */
+.removeButton {
 }
 
 /* Error message card */
@@ -166,13 +193,13 @@
 
 /* Date selection button */
 .dateButton {
-  height: 56px;
-  width: 50%;
+  flex: 1;
+  padding: 20px;
   font-size: 20px !important;
   font-weight: 700 !important; /* Bold text */
   background-color: #f0f0f0; /* Light gray background */
   color: #000; /* Black text */
-  border-color: #d9d9d9; /* Gray border */
+  border: none; /* Gray border */
 }
 
 /* Remove hover and focus effects for date button */
@@ -180,36 +207,49 @@
 .dateButton:focus {
   background-color: #ffffff !important; /* White background */
   color: #000000 !important; /* Black text */
-  border-color: #d9d9d9 !important; /* Gray border */
-  box-shadow: none !important; /* No shadow */
+  box-shadow: none !important;
+  border: none; /* No shadow */
 }
 
 /* Selected date button styling */
 .selectedDateButton {
-  background-color: #ff4d4f; /* Red background */
-  color: #fff; /* White text */
-  border-color: #d9363e; /* Darker red border */
+  background: linear-gradient(135deg, #8f0101, #e30000);
+  color: #fff;
+  padding: 20px;
+
+  border: none; /* White text */
 }
 
 /* Remove hover and focus effects for selected date button */
 .selectedDateButton:hover,
 .selectedDateButton:focus {
-  background-color: #ff4d4f !important; /* Keep red background */
+  background: linear-gradient(135deg, #8f0101, #e30000) !important;
   color: #fff !important; /* Keep white text */
-  border-color: #d9363e !important; /* Keep darker red border */
-  box-shadow: none !important; /* No shadow */
+  box-shadow: none !important;
+  border: none; /* No shadow */
+}
+
+.Tabs Button {
+  margin-right: 0 !important;
 }
 
 /* Filter button styling */
 .filterButton {
   background-color: #f0f0f0; /* Light gray background */
-  color: #ff4d4f; /* Red text */
-  border-color: #ff4d4f; /* Red border */
+  color: #c41114; /* Red text */
+  display: flex;
+  margin-right: 0 !important;
+  justify-content: center;
+  align-items: center;
+  border-color: #da1114; /* Red border */
 }
 
 /* Tab label default styling */
 .tabLabel {
-  color: #000; /* Black text */
+  color: #000000;
+  text-shadow: none !important;
+  font-size: 15px;
+  font-family: "Figtree", sans-serif;
 }
 
 /* Unavailable tab styling */
@@ -219,15 +259,18 @@
 
 /* Selected tab styling */
 .selectedTab {
-  color: #ff4d4f; /* Red text for selected */
+  color: #a80003; /* Red text for selected */
 }
 
 /* Meal image styling */
 .mealImage {
-  height: 200px;
-  object-fit: cover;
-  border: 1px solid rgb(0, 0, 0); /* Black border */
-  border-radius: 4px;
+  height: 130px; /* Reduced height */
+  object-fit: cover; /* Ensures the image fills the container while maintaining aspect ratio */
+  border-radius: 8px; /* Optional: Add rounded corners */
+}
+
+.mealCardhr {
+  margin: 5px 5px 15px 5px;
 }
 
 /* Past due meal image styling */
@@ -237,8 +280,16 @@
 
 /* Meal card styling */
 .mealCard {
-  cursor: pointer;
+  height: 250px; /* Reduced height */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   opacity: 1; /* Full opacity */
+  margin-bottom: 20px;
+}
+
+.tabContent Card {
+  padding: 0 !important;
 }
 
 /* Past due meal card styling */
@@ -249,11 +300,11 @@
 
 /* Add button styling */
 .addButton {
-  margin-top: 8px;
-  background-color: #ff4d4f; /* Red background */
+  margin: 8px;
+  width: 90% !important;
+  background-color: #b40003; /* Red background */
   color: #fff; /* White text */
-  border-color: #d9363e; /* Darker red border */
-  cursor: pointer;
+  border: none;
 }
 
 /* Remove hover and focus effects for add button */
@@ -274,9 +325,6 @@
 }
 
 /* Price container styling */
-.priceContainer {
-  margin-top: 8px;
-}
 
 /* Second row in order card */
 .secondRow {
@@ -284,9 +332,6 @@
 }
 
 /* Meal time badge styling */
-.mealTimeBadge {
-  margin-left: 8px;
-}
 
 /* Right-aligned elements */
 .rightAligned {
@@ -294,16 +339,41 @@
 }
 
 /* Action button styling (e.g., + and - buttons) */
+.counter {
+  display: flex;
+  margin-left: auto; /* Push the counter to the right */
+  justify-content: end; /* Center the content horizontally */
+  align-items: center; /* Center the content vertically */
+}
+
+.orderInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.priceDiv{
+  margin-right: 20px;
+  
+}
+
 .actionButton {
-  margin-right: 8px;
-  background-color: #f0f0f0; /* Light gray background */
-  border: 1px solid #d9d9d9; /* Gray border */
-  cursor: pointer;
+  padding: 5 !important;
+  margin: 0 !important;
+  border: none !important;
+  background: none !important;
+  border-radius: 0 !important;
+  height: auto !important;
+  line-height: normal !important;
+  box-shadow: none !important;
+  min-width: 0 !important;
+}
+
+.dateButtonGroup Button {
+  margin-right: 0px !important;
 }
 
 /* Item count badge styling */
 .itemCountBadge {
-  margin-right: 8px;
   font-size: 16px;
   font-weight: bold;
 }
@@ -315,7 +385,7 @@
   font-size: 16px;
   font-weight: bold;
   border-radius: 4px;
-  background-color: #ff4d4f; /* Red background */
+  background: linear-gradient(135deg, #a10000, #e30000);
   color: #fff; /* White text */
   border: 1px solid #d9363e; /* Darker red border */
   cursor: pointer;
@@ -348,10 +418,17 @@
 
 /* Back button styling */
 .backButton {
-  background-color: #ffffff; /* White background */
-  color: #ff4d4f; /* Red text */
-  border-color: #ff4d4f; /* Red border */
-  cursor: pointer;
+  display: flex;
+  flex-direction: row;
+  color: white;
+  background-color: #b40003;
+  gap: 4px;
+  justify-content: center;
+  align-items: center;
+}
+
+.totalContainer Button{
+  margin: 0 !important;
 }
 
 /* Remove hover effects for all Ant Design buttons */
