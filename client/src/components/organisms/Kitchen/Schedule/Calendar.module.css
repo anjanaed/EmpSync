@@ -2,95 +2,122 @@
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 16px;
+  padding: 20px;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
 }
 
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
-  border-bottom: 1px solid #f0f0f0;
-  padding-bottom: 16px;
+  margin-bottom: 30px;
+  border-bottom: 2px solid #f2f2f2;
+  padding-bottom: 20px;
 }
 
 .title {
-  font-size: 24px;
-  font-weight: 600;
-  color: #000;
+  font-size: 28px;
+  font-weight: 700;
+  color: #333;
   margin: 0;
 }
 
 .dateControls {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
 }
 
 .tomorrowBtn {
   display: flex;
   align-items: center;
-  color: #000;
-  font-weight: 500;
+  color: #e53935;
+  font-weight: 600;
+  font-size: 16px;
+  border: 2px solid #e53935;
+  border-radius: 6px;
+  padding: 6px 14px;
+  transition: all 0.3s ease;
+}
+
+.tomorrowBtn:hover {
+  background-color: rgba(229, 57, 53, 0.1);
 }
 
 .rightArrow {
-  font-size: 18px;
-  margin-left: 4px;
+  font-size: 16px;
+  margin-left: 6px;
 }
 
 .datePicker {
-  min-width: 150px;
+  min-width: 160px;
+  border: 2px solid #e53935;
+  border-radius: 6px;
+}
+
+.datePicker :global(.ant-picker-input > input) {
+  color: #e53935;
+  font-weight: 500;
+}
+
+.calendarIcon {
+  color: #e53935;
 }
 
 .mealTypeSelection {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  margin-bottom: 24px;
-  padding: 12px 0;
-  border-bottom: 1px solid #f0f0f0;
+  gap: 20px;
+  margin-bottom: 30px;
+  padding: 15px 0;
+  border-bottom: 2px solid #f2f2f2;
 }
 
 .horizontalMealContainer {
   display: flex;
   flex-wrap: wrap;
-  gap: 16px;
+  gap: 20px;
 }
 
 .mealItems {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: 8px 16px;
-  border: 1px solid #f0f0f0;
-  border-radius: 6px;
-  min-width: 200px;
+  gap: 10px;
+  padding: 12px 18px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  min-width: 220px;
+  background-color: #fafafa;
+  transition: all 0.3s ease;
+}
+
+.mealItems:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .mealCheckbox {
-  font-size: 16px;
-  font-weight: 500;
+  font-size: 17px;
+  font-weight: 600;
 }
 
 .timePickerGroup {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-top: 8px;
+  margin-top: 10px;
 }
 
 .timePicker {
-  width: 110px;
+  width: 120px;
+  border-color: #e0e0e0;
 }
 
 .timePickerSeparator {
-  margin: 0 2px;
-  color: #999;
+  margin: 0 4px;
+  color: #777;
 }
 
 .customMealHeader {
@@ -101,32 +128,70 @@
 }
 
 .deleteMealBtn {
-  color: #ff4d4f;
+  color: #e53935;
+  font-size: 16px;
+}
+
+.deleteMealBtn:hover {
+  background-color: rgba(229, 57, 53, 0.1);
 }
 
 .toggleTimeBtn {
-  font-size: 12px;
-  padding: 0;
-  height: 20px;
+  font-size: 13px;
+  padding: 0 8px;
+  height: 24px;
+  background-color: #f5f5f5;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
   color: #1890ff;
-  margin-left: 8px;
+  margin-left: 0;
   align-self: flex-start;
+  transition: all 0.3s ease;
+}
+
+.toggleTimeBtn:hover {
+  background-color: #e8f4ff;
+}
+
+.showTimeBtn {
+  color: #e53935;
+  background-color: #fff0f0;
+  border-color: #ffcdd2;
+}
+
+.showTimeBtn:hover {
+  background-color: #ffe7e7;
 }
 
 .addMealBtn {
   margin-left: auto;
   display: flex;
   align-items: center;
-  color: #000;
+  color: #333;
   font-weight: 500;
+  font-size: 15px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  padding: 6px 14px;
+  background-color: #f9f9f9;
+  transition: all 0.3s ease;
+}
+
+.addMealBtn:hover {
+  background-color: #f0f0f0;
+  border-color: #d5d5d5;
 }
 
 .contentArea {
-  margin-bottom: 24px;
+  margin-bottom: 30px;
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  border: 1px solid #eaeaea;
 }
 
 .mealTabs {
-  margin-bottom: 16px;
+  margin-bottom: 20px;
 }
 
 .mealTabs :global(.ant-tabs-nav::before) {
@@ -134,13 +199,15 @@
 }
 
 .mealTabs :global(.ant-tabs-tab) {
-  padding: 12px 16px;
+  padding: 12px 20px;
   font-size: 16px;
+  font-weight: 500;
+  transition: all 0.3s ease;
 }
 
 .mealTabs :global(.ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn) {
   color: #000;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .mealTabs :global(.ant-tabs-ink-bar) {
@@ -155,9 +222,14 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 0;
+  padding: 16px 10px;
   border-bottom: 1px solid #f0f0f0;
   font-size: 16px;
+  transition: background-color 0.2s ease;
+}
+
+.menuItem:hover {
+  background-color: #fafafa;
 }
 
 .menuItem:last-child {
@@ -166,76 +238,71 @@
 
 .removeBtn {
   color: rgba(0, 0, 0, 0.45);
+  transition: all 0.3s ease;
+}
+
+.removeBtn:hover {
+  color: #e53935;
+  background-color: rgba(229, 57, 53, 0.1);
 }
 
 .updateBtnContainer {
   display: flex;
   justify-content: center;
-  margin-top: 24px;
+  margin-top: 30px;
 }
 
 .updateBtn {
   padding: 0 32px;
-  height: 40px;
+  height: 44px;
   font-size: 16px;
+  font-weight: 600;
   display: flex;
   align-items: center;
+  background-color: #e53935;
+  border-color: #e53935;
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgba(229, 57, 53, 0.3);
+  transition: all 0.3s ease;
 }
 
-/* Tab indicator colors */
-.mealTabs :global(.ant-tabs-ink-bar) {
-  background: linear-gradient(to right, 
-    #dc3545 0%, 
-    #dc3545 33%, 
-    #ffc107 33%, 
-    #ffc107 66%, 
-    #28a745 66%, 
-    #28a745 100%
-  );
+.updateBtn:hover {
+  background-color: #d32f2f;
+  border-color: #d32f2f;
 }
 
-/* Custom state for active tabs */
-.mealTabs :global(.ant-tabs-tab:nth-child(1).ant-tabs-tab-active .ant-tabs-tab-btn) {
-  color: #dc3545;
-}
 
-.mealTabs :global(.ant-tabs-tab:nth-child(2).ant-tabs-tab-active .ant-tabs-tab-btn) {
-  color: #ffc107;
-}
 
-.mealTabs :global(.ant-tabs-tab:nth-child(3).ant-tabs-tab-active .ant-tabs-tab-btn) {
-  color: #28a745;
-}
+
 
 /* Make checkbox square like in design */
 .mealCheckbox :global(.ant-checkbox-inner) {
   border-radius: 2px;
+  border-color: #999;
 }
 
-/* Style for the Update Menu button */
-.updateBtn {
-  background-color: #fff;
-  color: #000;
-  border: 1px solid #d9d9d9;
-  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.02);
-}
-
-.updateBtn:hover {
-  color: #1890ff;
-  border-color: #1890ff;
+.mealCheckbox :global(.ant-checkbox-checked .ant-checkbox-inner) {
+  background-color: #e53935;
+  border-color: #e53935;
 }
 
 /* Custom Meal Modal Styles */
 .customMealModal :global(.ant-modal-content) {
-  border-radius: 8px;
+  border-radius: 12px;
+}
+
+.customMealModal :global(.ant-modal-header) {
+  border-radius: 12px 12px 0 0;
+  background-color: #fafafa;
+  border-bottom: 1px solid #f0f0f0;
+  padding: 16px 24px;
+}
+
+.customMealModal :global(.ant-modal-title) {
+  font-weight: 600;
+  font-size: 18px;
 }
 
 .modalTimePicker {
   width: 100%;
-}
-
-/* Add margin to add meal button */
-.addMealBtn {
-  margin-top: 8px;
-  align-self: flex-start;
 }

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { DatePicker, Button, Checkbox, TimePicker, Tabs, Input, Modal, Form } from 'antd';
-import { PlusOutlined, CloseOutlined, CalendarOutlined, DeleteOutlined } from '@ant-design/icons';
+import { PlusOutlined, CloseOutlined, CalendarOutlined, DeleteOutlined, RightOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import styles from './Calendar.module.css';
 
@@ -73,6 +73,13 @@ const MealPlanner = () => {
         ...mealTime[meal],
         end: time,
       },
+    });
+  };
+
+  const toggleTimePicker = (meal) => {
+    setShowTimePickers({
+      ...showTimePickers,
+      [meal]: !showTimePickers[meal]
     });
   };
 
@@ -187,14 +194,14 @@ const MealPlanner = () => {
             className={styles.tomorrowBtn} 
             onClick={goToNextDay}
           >
-            Tomorrow <span className={styles.rightArrow}>›</span>
+            Tomorrow <RightOutlined className={styles.rightArrow} />
           </Button>
           <DatePicker 
             value={currentDate}
             onChange={handleDateChange}
             bordered={true}
             className={styles.datePicker}
-            suffixIcon={<CalendarOutlined />}
+            suffixIcon={<CalendarOutlined className={styles.calendarIcon} />}
             renderExtraFooter={() => "Select Date"}
           />
         </div>
@@ -216,7 +223,7 @@ const MealPlanner = () => {
                 type="text"
                 size="small"
                 onClick={() => toggleTimePicker('breakfast')}
-                className={styles.toggleTimeBtn}
+                className={`${styles.toggleTimeBtn} ${!showTimePickers.breakfast ? styles.showTimeBtn : ''}`}
               >
                 {showTimePickers.breakfast ? 'Hide time' : 'Show time'}
               </Button>
@@ -257,7 +264,7 @@ const MealPlanner = () => {
                 type="text"
                 size="small"
                 onClick={() => toggleTimePicker('lunch')}
-                className={styles.toggleTimeBtn}
+                className={`${styles.toggleTimeBtn} ${!showTimePickers.lunch ? styles.showTimeBtn : ''}`}
               >
                 {showTimePickers.lunch ? 'Hide time' : 'Show time'}
               </Button>
@@ -298,7 +305,7 @@ const MealPlanner = () => {
                 type="text"
                 size="small"
                 onClick={() => toggleTimePicker('dinner')}
-                className={styles.toggleTimeBtn}
+                className={`${styles.toggleTimeBtn} ${!showTimePickers.dinner ? styles.showTimeBtn : ''}`}
               >
                 {showTimePickers.dinner ? 'Hide time' : 'Show time'}
               </Button>
@@ -350,7 +357,7 @@ const MealPlanner = () => {
                   type="text"
                   size="small"
                   onClick={() => toggleTimePicker(mealId)}
-                  className={styles.toggleTimeBtn}
+                  className={`${styles.toggleTimeBtn} ${!showTimePickers[mealId] ? styles.showTimeBtn : ''}`}
                 >
                   {showTimePickers[mealId] ? 'Hide time' : 'Show time'}
                 </Button>
