@@ -15,6 +15,7 @@ import { PayeTaxModule } from './modules/paye-tax-slab/paye-tax.module';
 import { AuthModule } from './core/authentication/auth.module';
 import { ScheduleModule as NestScheduleModule } from '@nestjs/schedule';
 import { MealsServingModule } from './modules/meals-serving/meals-serving.module';
+import { MealTypeModule } from './modules/meal-type/meal-type.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { MealsServingModule } from './modules/meals-serving/meals-serving.module
     PayrollModule,
     OrdersModule,
     ScheduleModule,
+    MealTypeModule,
     AdjustmentModule,
     IndiAdjustmentModule,
     PayeTaxModule,
