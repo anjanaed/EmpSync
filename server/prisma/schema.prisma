@@ -180,3 +180,10 @@ model PayeTaxSlab{
   taxRate Float
 }
 
+model MealType{
+  id Int @id @default(autoincrement())
+  name String
+  date DateTime @default(now())
+  duration Float
+  isDefault Boolean
+}
