@@ -31,19 +31,18 @@ export class ScheduledMealController {
     }
   }
 
-  @Get()
-  findAll(@Query('date') date?: string) {
-    return this.scheduledMealService.findAll(date);
-  }
-
-  @Get('date/:date')
+  @Get(':date')
   findByDate(@Param('date') date: string) {
+    // Validate date format
+    if (!date.match(/^\d{4}-\d{2}-\d{2}$/)) {
+      throw new BadRequestException('Invalid date format. Use YYYY-MM-DD');
+    }
     return this.scheduledMealService.findByDate(date);
   }
 
-  @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.scheduledMealService.findOne(id);
+  @Get()
+  findAll() {
+    return this.scheduledMealService.findAll();
   }
 
   @Patch(':id')

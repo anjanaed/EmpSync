@@ -52,13 +52,25 @@ export class ScheduledMealService {
     }
   }
 
-  // Find all scheduled meals, optionally filtered by date
-  async findAll(date?: string) {
-    try {
-      const where = date ? { date: new Date(date) } : {};
+  // Replace the findAll method
+async findAll(date?: string) {
+  try {
+    if (date) {
+      const targetDate = new Date(date);
       
+      // First check if there are any schedules for this date
+      const schedulesExist = await this.databaseService.scheduledMeal.findFirst({
+        where: { date: targetDate }
+      });
+
+      // If no schedules exist for this date, return empty array
+      if (!schedulesExist) {
+        return [];
+      }
+
+      // If schedules exist, get all meals for that date
       return this.databaseService.scheduledMeal.findMany({
-        where,
+        where: { date: targetDate },
         include: {
           mealType: true,
           meals: {
@@ -74,14 +86,36 @@ export class ScheduledMealService {
           },
         },
         orderBy: [
-          { date: 'asc' },
           { mealType: { name: 'asc' } },
         ],
       });
-    } catch (error) {
-      throw new BadRequestException('Failed to retrieve scheduled meals');
     }
+
+    // If no date provided, return all scheduled meals
+    return this.databaseService.scheduledMeal.findMany({
+      include: {
+        mealType: true,
+        meals: {
+          select: {
+            id: true,
+            nameEnglish: true,
+            nameSinhala: true,
+            nameTamil: true,
+            price: true,
+            imageUrl: true,
+            category: true,
+          },
+        },
+      },
+      orderBy: [
+        { date: 'asc' },
+        { mealType: { name: 'asc' } },
+      ],
+    });
+  } catch (error) {
+    throw new BadRequestException('Failed to retrieve scheduled meals');
   }
+}
 
   // Find a single scheduled meal by ID
   async findOne(id: number) {
