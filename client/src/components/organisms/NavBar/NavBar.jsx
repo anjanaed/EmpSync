@@ -4,6 +4,7 @@ import { MenuOutlined, LogoutOutlined } from "@ant-design/icons";
 import { UserOutlined, BulbOutlined, MoonOutlined } from "@ant-design/icons";
 import { Button, Layout, Menu, ConfigProvider, Dropdown, Avatar } from "antd";
 import img from "../../../assets/Logo/logo.png";
+import imgWhite from "../../../assets/Logo/LOgowhite.png"; // Add this line
 import { useNavigate } from "react-router-dom";
 import Loading from "../../atoms/loading/loading";
 import { useAuth } from "../../../contexts/AuthContext";
@@ -81,20 +82,6 @@ const NavBar = ({ Comp, titleLines = [], menuItems = [] }) => {
 
   const dropdownItems = [
     {
-      key: "darkmode",
-      label: (
-        <div className={styles.profileMenuItem}>
-          {darkMode ? (
-            <MoonOutlined className={styles.menuItemIcon} />
-          ) : (
-            <BulbOutlined className={styles.menuItemIcon} />
-          )}
-          &nbsp;Dark Mode
-        </div>
-      ),
-      onClick: handleToggleDarkMode,
-    },
-    {
       key: "1",
       label: (
         <div className={styles.profileMenuItem}>
@@ -143,7 +130,7 @@ const NavBar = ({ Comp, titleLines = [], menuItems = [] }) => {
   }));
 
   return (
-    <div className={styles.main}>
+    <div className={`${styles.main} ${darkMode ? styles.dark : ""}`}>
       <ConfigProvider theme={customTheme}>
         <Sider
           className={styles.sider}
@@ -171,7 +158,11 @@ const NavBar = ({ Comp, titleLines = [], menuItems = [] }) => {
             onClick={() => setCollapsed(!collapsed)}
             style={{ fontSize: "16px", width: 55, height: 55 }}
           />
-          <img className={styles.logo} src={img} alt="Logo" />
+          <img
+            className={styles.logo}
+            src={darkMode ? imgWhite : img}
+            alt="Logo"
+          />
           <Button
             type="text"
             icon={darkMode ? <MoonOutlined /> : <BulbOutlined />}
