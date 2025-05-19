@@ -154,7 +154,9 @@ const NavBar = ({ Comp, titleLines = [], menuItems = [] }) => {
         <div className={styles.headerContent}>
           <Button
             type="text"
-            icon={<MenuOutlined />}
+            icon={
+              <MenuOutlined style={{ color: darkMode ? "#fff" : undefined }} />
+            }
             onClick={() => setCollapsed(!collapsed)}
             style={{ fontSize: "16px", width: 55, height: 55 }}
           />
@@ -165,7 +167,13 @@ const NavBar = ({ Comp, titleLines = [], menuItems = [] }) => {
           />
           <Button
             type="text"
-            icon={darkMode ? <MoonOutlined /> : <BulbOutlined />}
+            icon={
+              darkMode ? (
+                <BulbOutlined style={{ color: "#fff" }} />
+              ) : (
+                <MoonOutlined />
+              )
+            }
             onClick={handleToggleDarkMode}
             className={styles.darkModeBtn}
             style={{ fontSize: "20px", marginLeft: 12 }}
