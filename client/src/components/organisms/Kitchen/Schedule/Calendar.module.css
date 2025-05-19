@@ -1,11 +1,9 @@
 .container {
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
+  margin: 1vw;
   padding: 20px;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  background-color: #fff;
-  border-radius: 12px;
+  font-family: "Figtree", sans-serif ;
+  background-color: #ffffff;
+  border-radius: 5px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
 }
 
@@ -79,17 +77,16 @@
 .horizontalMealContainer {
   display: flex;
   flex-wrap: wrap;
-  gap: 20px;
+  gap: 5px;
 }
 
 .mealItems {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  padding: 12px 18px;
+  padding: 12px;
   border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  min-width: 220px;
+  border-radius: 5px;
   background-color: #fafafa;
   transition: all 0.3s ease;
 }
@@ -293,7 +290,7 @@
 
 .customMealModal :global(.ant-modal-header) {
   border-radius: 12px 12px 0 0;
-  background-color: #fafafa;
+  background-color: #ffffff;
   border-bottom: 1px solid #f0f0f0;
   padding: 16px 24px;
 }
@@ -305,4 +302,9 @@
 
 .modalTimePicker {
   width: 100%;
+}
+
+.boxTop{
+  display: flex;
+  justify-content: space-between;
 }

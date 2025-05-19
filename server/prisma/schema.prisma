@@ -185,7 +185,7 @@ model PayeTaxSlab{
 model MealType{
   id Int @id @default(autoincrement())
   name String // "Breakfast", "Lunch", "Dinner", or custom names
-  time String? // Optional time in HH:MM format
+  time String[] // Optional time in HH:MM format
   isDefault Boolean @default(false) // To mark system defaults
   schedules ScheduledMeal[]
   createdAt DateTime @default(now())

@@ -45,6 +45,11 @@ export class MealTypeController {
     }
   }
 
+  @Patch(':id/toggle-default')
+async toggleDefault(@Param('id', ParseIntPipe) id: number) {
+  return this.mealTypeService.toggleIsDefault(id);
+}
+
   @Patch(':id')
   update(
     @Param('id', ParseIntPipe) id: number,

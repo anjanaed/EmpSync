@@ -1,59 +1,99 @@
-import React, { useState } from 'react';
-import { DatePicker, Button, Checkbox, TimePicker, Tabs, Input, Modal, Form } from 'antd';
-import { PlusOutlined, CloseOutlined, CalendarOutlined, DeleteOutlined, RightOutlined } from '@ant-design/icons';
-import dayjs from 'dayjs';
-import styles from './Calendar.module.css';
+import React, { useState, useEffect } from "react";
+import {
+  DatePicker,
+  Button,
+  Checkbox,
+  TimePicker,
+  Tabs,
+  Input,
+  Modal,
+  Form,
+} from "antd";
+import {
+  PlusOutlined,
+  CloseOutlined,
+  CalendarOutlined,
+  PushpinOutlined,
+  DeleteOutlined,
+  RightOutlined,
+  PushpinFilled,
+} from "@ant-design/icons";
+import dayjs from "dayjs";
+import styles from "./Calendar.module.css";
+import { use } from "react";
+import Loading from "../../../atoms/loading/loading";
+import axios from "axios";
 
 const { TabPane } = Tabs;
 
 const MealPlanner = () => {
   const [currentDate, setCurrentDate] = useState(dayjs());
-  const [selectedMeals, setSelectedMeals] = useState(['breakfast']);
-  const [mealTime, setMealTime] = useState({
-    breakfast: {
-      start: dayjs('07:30', 'HH:mm'),
-      end: dayjs('08:30', 'HH:mm')
-    },
-    lunch: {
-      start: null,
-      end: null
-    },
-    dinner: {
-      start: null,
-      end: null
-    }
-  });
-  const [showTimePickers, setShowTimePickers] = useState({
-    breakfast: true,
-    lunch: true,
-    dinner: true
-  });
-  const [customMeals, setCustomMeals] = useState({});
-  const [activeTab, setActiveTab] = useState('breakfast');
-  const [menuItems, setMenuItems] = useState({
-    breakfast: ['Milk Rice', 'Peas', 'Hoppers', 'Noodles'],
-    lunch: [],
-    dinner: [],
-  });
+  const urL = import.meta.env.VITE_BASE_URL;
+  const [defaultMeals, setDefaultMeals] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState("breakfast");
+  const [menuItems, setMenuItems] = useState({});
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [newMealName, setNewMealName] = useState('');
+  const [newMealName, setNewMealName] = useState("");
   const [form] = Form.useForm();
+
+  const fetchDefaultMeals = async () => {
+    try {
+      const response = await fetch(`${urL}/meal-types/defaults`);
+      const data = await response.json();
+      setDefaultMeals(data);
+    } catch (error) {
+      console.error("Error fetching default meals:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleDateChange = (date) => {
     setCurrentDate(date);
   };
+  const modalStyles = {
+    mask: {
+      backdropFilter: "blur(12px)",
+    },
+  };
 
   const handleMealSelection = (meal) => {
     const updatedMeals = [...selectedMeals];
-    
+
     if (updatedMeals.includes(meal)) {
       const index = updatedMeals.indexOf(meal);
       updatedMeals.splice(index, 1);
     } else {
       updatedMeals.push(meal);
     }
-    
+
     setSelectedMeals(updatedMeals);
+  };
+
+  const handlePinMeal = async (id) => {
+    try {
+      await axios.patch(`${urL}/meal-types/${id}/toggle-default`);
+      setDefaultMeals((prevMeals) =>
+        prevMeals.map((meal) =>
+          meal.id === id ? { ...meal, isDefault: !meal.isDefault } : meal
+        )
+      );
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const handleDeleteMeal = async (meal) => {
+    try {
+      if (!meal.isDefault) {
+        await axios.delete(`${urL}/meal-types/${meal.id}`);
+      }
+
+      setDefaultMeals((prevMeals) => prevMeals.filter((m) => m.id !== meal.id));
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const handleStartTimeChange = (time, meal) => {
@@ -79,7 +119,7 @@ const MealPlanner = () => {
   const toggleTimePicker = (meal) => {
     setShowTimePickers({
       ...showTimePickers,
-      [meal]: !showTimePickers[meal]
+      [meal]: !showTimePickers[meal],
     });
   };
 
@@ -89,12 +129,14 @@ const MealPlanner = () => {
 
   const removeMenuItem = (item) => {
     const updatedItems = { ...menuItems };
-    updatedItems[activeTab] = updatedItems[activeTab].filter(menuItem => menuItem !== item);
+    updatedItems[activeTab] = updatedItems[activeTab].filter(
+      (menuItem) => menuItem !== item
+    );
     setMenuItems(updatedItems);
   };
 
   const goToNextDay = () => {
-    setCurrentDate(currentDate.add(1, 'day'));
+    setCurrentDate(currentDate.add(1, "day"));
   };
 
   const showAddMealModal = () => {
@@ -107,76 +149,37 @@ const MealPlanner = () => {
   };
 
   const handleModalOk = () => {
-    form.validateFields().then(values => {
-      const mealId = `custom_${Date.now()}`;
-      
-      // Add new custom meal to state
-      setCustomMeals(prev => ({
-        ...prev,
-        [mealId]: {
+    console.log("Clickked OK");
+    form.validateFields().then(async (values) => {
+      try {
+        setLoading(true);
+        const payload = {
           name: values.mealName,
-        }
-      }));
-
-      // Add to selected meals
-      setSelectedMeals(prev => [...prev, mealId]);
-      
-      // Add time slots
-      setMealTime(prev => ({
-        ...prev,
-        [mealId]: {
-          start: values.startTime,
-          end: values.endTime
-        }
-      }));
-
-      // Initialize menu items
-      setMenuItems(prev => ({
-        ...prev,
-        [mealId]: []
-      }));
-      
-      // Set time picker visibility
-      setShowTimePickers(prev => ({
-        ...prev,
-        [mealId]: true
-      }));
-
+          time: [
+            values.startTime ? values.startTime.format("HH:mm") : null,
+            values.endTime ? values.endTime.format("HH:mm") : null,
+          ],
+          isDefault: values.isDefault,
+        };
+        await axios.post(`${urL}/meal-types`, payload);
+        await fetchDefaultMeals();
+      } catch (err) {
+        console.log(err);
+      } finally {
+        setLoading(false);
+      }
       setIsModalVisible(false);
-      setActiveTab(mealId);
     });
   };
-  
+
   const removeMealTime = (mealId) => {
-    // Remove the custom meal
-    const updatedSelectedMeals = selectedMeals.filter(meal => meal !== mealId);
+    const updatedSelectedMeals = selectedMeals.filter(
+      (meal) => meal !== mealId
+    );
     setSelectedMeals(updatedSelectedMeals);
-    
-    // Update active tab if needed
+
     if (activeTab === mealId) {
-      setActiveTab(updatedSelectedMeals[0] || 'breakfast');
-    }
-    
-    // Remove from customMeals if it's a custom meal
-    if (mealId.startsWith('custom_')) {
-      const updatedCustomMeals = { ...customMeals };
-      delete updatedCustomMeals[mealId];
-      setCustomMeals(updatedCustomMeals);
-      
-      // Remove from menuItems
-      const updatedMenuItems = { ...menuItems };
-      delete updatedMenuItems[mealId];
-      setMenuItems(updatedMenuItems);
-      
-      // Remove from mealTime
-      const updatedMealTime = { ...mealTime };
-      delete updatedMealTime[mealId];
-      setMealTime(updatedMealTime);
-      
-      // Remove from showTimePickers
-      const updatedShowTimePickers = { ...showTimePickers };
-      delete updatedShowTimePickers[mealId];
-      setShowTimePickers(updatedShowTimePickers);
+      setActiveTab(updatedSelectedMeals[0] || "breakfast");
     }
   };
 
@@ -184,342 +187,184 @@ const MealPlanner = () => {
     console.log("Menu updated");
   };
 
+  useEffect(() => {
+    fetchDefaultMeals();
+  }, []);
+
+  useEffect(() => {
+    console.log(defaultMeals);
+  }, [defaultMeals]);
+
+  if (loading) {
+    return <Loading />;
+  }
+
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <h1 className={styles.title}>Menu - {currentDate.format('MMMM D, YYYY')}</h1>
+        <h1 className={styles.title}>
+          Meal Menu - {currentDate.format("MMMM D, YYYY")}
+        </h1>
         <div className={styles.dateControls}>
-          <Button 
-            type="text" 
-            className={styles.tomorrowBtn} 
+          <Button
+            type="text"
+            className={styles.tomorrowBtn}
             onClick={goToNextDay}
           >
-            Tomorrow <RightOutlined className={styles.rightArrow} />
+            Next Day <RightOutlined className={styles.rightArrow} />
           </Button>
-          <DatePicker 
+          <DatePicker
             value={currentDate}
             onChange={handleDateChange}
             bordered={true}
             className={styles.datePicker}
             suffixIcon={<CalendarOutlined className={styles.calendarIcon} />}
             renderExtraFooter={() => "Select Date"}
+            allowClear={false}
           />
         </div>
       </div>
 
       <div className={styles.mealTypeSelection}>
-        <div className={styles.horizontalMealContainer}>
-          <div className={styles.mealItems}>
-            <Checkbox 
-              checked={selectedMeals.includes('breakfast')}
-              onChange={() => handleMealSelection('breakfast')}
-              className={styles.mealCheckbox}
-            >
-              Breakfast
-            </Checkbox>
-            
-            {selectedMeals.includes('breakfast') && (
-              <Button
-                type="text"
-                size="small"
-                onClick={() => toggleTimePicker('breakfast')}
-                className={`${styles.toggleTimeBtn} ${!showTimePickers.breakfast ? styles.showTimeBtn : ''}`}
-              >
-                {showTimePickers.breakfast ? 'Hide time' : 'Show time'}
-              </Button>
-            )}
-            
-            {selectedMeals.includes('breakfast') && showTimePickers.breakfast && (
-              <div className={styles.timePickerGroup}>
-                <TimePicker 
-                  value={mealTime.breakfast.start}
-                  format="HH:mm"
-                  onChange={(time) => handleStartTimeChange(time, 'breakfast')}
-                  className={styles.timePicker}
-                  placeholder="Start time"
-                />
-                <span className={styles.timePickerSeparator}>to</span>
-                <TimePicker 
-                  value={mealTime.breakfast.end}
-                  format="HH:mm"
-                  onChange={(time) => handleEndTimeChange(time, 'breakfast')}
-                  className={styles.timePicker}
-                  placeholder="End time"
-                />
-              </div>
-            )}
-          </div>
-          
-          <div className={styles.mealItems}>
-            <Checkbox 
-              checked={selectedMeals.includes('lunch')}
-              onChange={() => handleMealSelection('lunch')}
-              className={styles.mealCheckbox}
-            >
-              Lunch
-            </Checkbox>
-            
-            {selectedMeals.includes('lunch') && (
-              <Button
-                type="text"
-                size="small"
-                onClick={() => toggleTimePicker('lunch')}
-                className={`${styles.toggleTimeBtn} ${!showTimePickers.lunch ? styles.showTimeBtn : ''}`}
-              >
-                {showTimePickers.lunch ? 'Hide time' : 'Show time'}
-              </Button>
-            )}
-            
-            {selectedMeals.includes('lunch') && showTimePickers.lunch && (
-              <div className={styles.timePickerGroup}>
-                <TimePicker 
-                  value={mealTime.lunch.start}
-                  format="HH:mm"
-                  onChange={(time) => handleStartTimeChange(time, 'lunch')}
-                  className={styles.timePicker}
-                  placeholder="Start time"
-                />
-                <span className={styles.timePickerSeparator}>to</span>
-                <TimePicker 
-                  value={mealTime.lunch.end}
-                  format="HH:mm"
-                  onChange={(time) => handleEndTimeChange(time, 'lunch')}
-                  className={styles.timePicker}
-                  placeholder="End time"
-                />
-              </div>
-            )}
-          </div>
-          
-          <div className={styles.mealItems}>
-            <Checkbox 
-              checked={selectedMeals.includes('dinner')}
-              onChange={() => handleMealSelection('dinner')}
-              className={styles.mealCheckbox}
-            >
-              Dinner
-            </Checkbox>
-            
-            {selectedMeals.includes('dinner') && (
-              <Button
-                type="text"
-                size="small"
-                onClick={() => toggleTimePicker('dinner')}
-                className={`${styles.toggleTimeBtn} ${!showTimePickers.dinner ? styles.showTimeBtn : ''}`}
-              >
-                {showTimePickers.dinner ? 'Hide time' : 'Show time'}
-              </Button>
-            )}
-            
-            {selectedMeals.includes('dinner') && showTimePickers.dinner && (
-              <div className={styles.timePickerGroup}>
-                <TimePicker 
-                  value={mealTime.dinner.start}
-                  format="HH:mm"
-                  onChange={(time) => handleStartTimeChange(time, 'dinner')}
-                  className={styles.timePicker}
-                  placeholder="Start time"
-                />
-                <span className={styles.timePickerSeparator}>to</span>
-                <TimePicker 
-                  value={mealTime.dinner.end}
-                  format="HH:mm"
-                  onChange={(time) => handleEndTimeChange(time, 'dinner')}
-                  className={styles.timePicker}
-                  placeholder="End time"
-                />
-              </div>
-            )}
-          </div>
-          
-          {/* Display custom meal times */}
-          {Object.entries(customMeals).map(([mealId, mealDetails]) => (
-            <div key={mealId} className={styles.mealItems}>
-              <div className={styles.customMealHeader}>
-                <Checkbox 
-                  checked={selectedMeals.includes(mealId)}
-                  onChange={() => handleMealSelection(mealId)}
-                  className={styles.mealCheckbox}
-                >
-                  {mealDetails.name}
-                </Checkbox>
-                
-                <Button 
-                  type="text" 
-                  icon={<DeleteOutlined />} 
-                  onClick={() => removeMealTime(mealId)}
-                  className={styles.deleteMealBtn}
-                />
-              </div>
-              
-              {selectedMeals.includes(mealId) && (
-                <Button
-                  type="text"
-                  size="small"
-                  onClick={() => toggleTimePicker(mealId)}
-                  className={`${styles.toggleTimeBtn} ${!showTimePickers[mealId] ? styles.showTimeBtn : ''}`}
-                >
-                  {showTimePickers[mealId] ? 'Hide time' : 'Show time'}
-                </Button>
-              )}
-              
-              {selectedMeals.includes(mealId) && showTimePickers[mealId] && (
-                <div className={styles.timePickerGroup}>
-                  <TimePicker 
-                    value={mealTime[mealId]?.start}
-                    format="HH:mm"
-                    onChange={(time) => handleStartTimeChange(time, mealId)}
-                    className={styles.timePicker}
-                    placeholder="Start time"
-                  />
-                  <span className={styles.timePickerSeparator}>to</span>
-                  <TimePicker 
-                    value={mealTime[mealId]?.end}
-                    format="HH:mm"
-                    onChange={(time) => handleEndTimeChange(time, mealId)}
-                    className={styles.timePicker}
-                    placeholder="End time"
-                  />
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-        
-        <Button 
-          icon={<PlusOutlined />} 
+        <Button
+          icon={<PlusOutlined />}
           type="text"
           className={styles.addMealBtn}
           onClick={showAddMealModal}
         >
           Add Meal Time
         </Button>
+        <div className={styles.horizontalMealContainer}>
+          {defaultMeals.map((meal) => (
+            <div className={styles.mealItems}>
+              <div className={styles.boxTop}>
+                <div className={styles.boxTopLeft}>{meal.name}</div>
+
+                <div className={styles.boxTopRight}>
+                  <Button
+                    type="text"
+                    icon={
+                      meal.isDefault ? (
+                        <PushpinFilled style={{ color: "red" }} />
+                      ) : (
+                        <PushpinOutlined />
+                      )
+                    }
+                    onClick={() => handlePinMeal(meal.id)}
+                    size="small"
+                  />
+                  <Button
+                    type="text"
+                    icon={<DeleteOutlined />}
+                    onClick={() => handleDeleteMeal(meal)}
+                    size="small"
+                    danger
+                  />
+                </div>
+              </div>
+              <div className={styles.timePickerGroup}>
+                <TimePicker
+                  value={meal.time[0] ? dayjs(meal.time[0], "HH:mm") : null}
+                  format="HH:mm"
+                  onChange={(time) => handleStartTimeChange(time, "breakfast")}
+                  className={styles.timePicker}
+                  placeholder="Start time"
+                />
+                <span className={styles.timePickerSeparator}>to</span>
+                <TimePicker
+                  value={meal.time[1] ? dayjs(meal.time[1], "HH:mm") : null}
+                  format="HH:mm"
+                  onChange={(time) => handleEndTimeChange(time, "breakfast")}
+                  className={styles.timePicker}
+                  placeholder="End time"
+                />
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
 
       <div className={styles.contentArea}>
-        <Tabs 
-          activeKey={activeTab} 
-          onChange={handleTabChange}
-          className={styles.mealTabs}
-        >
-          {selectedMeals.includes('breakfast') && (
-            <TabPane tab="Breakfast" key="breakfast" className={styles.tabPane}>
-              {menuItems.breakfast.map((item, index) => (
-                <div key={index} className={styles.menuItem}>
-                  <span>{item}</span>
-                  <Button 
-                    type="text" 
-                    icon={<CloseOutlined />} 
-                    onClick={() => removeMenuItem(item)}
-                    className={styles.removeBtn}
-                  />
-                </div>
-              ))}
-            </TabPane>
-          )}
-          
-          {selectedMeals.includes('lunch') && (
-            <TabPane tab="Lunch" key="lunch" className={styles.tabPane}>
-              {menuItems.lunch.map((item, index) => (
-                <div key={index} className={styles.menuItem}>
-                  <span>{item}</span>
-                  <Button 
-                    type="text" 
-                    icon={<CloseOutlined />} 
-                    onClick={() => removeMenuItem(item)}
-                    className={styles.removeBtn}
-                  />
-                </div>
-              ))}
-            </TabPane>
-          )}
-          
-          {selectedMeals.includes('dinner') && (
-            <TabPane tab="Dinner" key="dinner" className={styles.tabPane}>
-              {menuItems.dinner.map((item, index) => (
-                <div key={index} className={styles.menuItem}>
-                  <span>{item}</span>
-                  <Button 
-                    type="text" 
-                    icon={<CloseOutlined />} 
-                    onClick={() => removeMenuItem(item)}
-                    className={styles.removeBtn}
-                  />
-                </div>
-              ))}
-            </TabPane>
-          )}
-          
-          {/* Render custom meal tabs */}
-          {Object.entries(customMeals).map(([mealId, mealDetails]) => 
-            selectedMeals.includes(mealId) && (
-              <TabPane tab={mealDetails.name} key={mealId} className={styles.tabPane}>
-                {menuItems[mealId]?.map((item, index) => (
-                  <div key={index} className={styles.menuItem}>
-                    <span>{item}</span>
-                    <Button 
-                      type="text" 
-                      icon={<CloseOutlined />} 
-                      onClick={() => removeMenuItem(item)}
-                      className={styles.removeBtn}
-                    />
-                  </div>
-                ))}
-              </TabPane>
-            )
-          )}
-        </Tabs>
+              <Tabs
+        activeKey={activeTab}
+        onChange={handleTabChange}
+        className={styles.mealTabs}
+        centered
+      >
+        {defaultMeals.map((meal) => (
+          <Tabs.TabPane
+            tab={meal.name}
+            key={meal.id}
+            className={styles.tabPane}
+          >
+
+          </Tabs.TabPane>
+        ))}
+      </Tabs>
       </div>
 
+
       <div className={styles.updateBtnContainer}>
-        <Button 
-          type="primary" 
-          icon={<PlusOutlined />} 
+        <Button
+          type="primary"
+          icon={<PlusOutlined />}
           className={styles.updateBtn}
           onClick={updateMenu}
         >
           Update Menu
         </Button>
       </div>
-      
+
       {/* Add Custom Meal Modal */}
       <Modal
-        title="Add Custom Meal Time"
+        title="Add Meal Time"
         visible={isModalVisible}
         onOk={handleModalOk}
         onCancel={handleModalCancel}
         className={styles.customMealModal}
+        styles={modalStyles}
       >
-        <Form
-          form={form}
-          layout="vertical"
-        >
+        <Form form={form} layout="vertical">
           <Form.Item
-            name="mealName"
             label="Meal Name"
-            rules={[{ required: true, message: 'Please enter a meal name' }]}
+            name="mealName"
+            rules={[{ required: true, message: "Please enter a meal name" }]}
           >
-            <Input 
+            <Input
               placeholder="Enter meal name (e.g., Snack, Tea Time)"
               value={newMealName}
               onChange={(e) => setNewMealName(e.target.value)}
             />
           </Form.Item>
-          
-          <Form.Item
-            name="startTime"
-            label="Start Time"
-            rules={[{ required: true, message: 'Please select a start time' }]}
-          >
-            <TimePicker format="HH:mm" className={styles.modalTimePicker} />
+
+          <Form.Item label="Meal Time" required>
+            <div style={{ display: "flex", gap: 8 }}>
+              <Form.Item
+                name="startTime"
+                rules={[
+                  { required: true, message: "Please Enter Time Duration  " },
+                ]}
+                noStyle
+              >
+                <TimePicker
+                  format="HH:mm"
+                  className={styles.modalTimePicker}
+                  placeholder="Start time"
+                />
+              </Form.Item>
+              <span style={{ alignSelf: "center" }}>to</span>
+              <Form.Item name="endTime" rules={[{ required: true }]} noStyle>
+                <TimePicker
+                  format="HH:mm"
+                  className={styles.modalTimePicker}
+                  placeholder="End time"
+                />
+              </Form.Item>
+            </div>
           </Form.Item>
-          
-          <Form.Item
-            name="endTime"
-            label="End Time"
-            rules={[{ required: true, message: 'Please select an end time' }]}
-          >
-            <TimePicker format="HH:mm" className={styles.modalTimePicker} />
+
+          <Form.Item name="isDefault" valuePropName="checked" noStyle>
+            <Checkbox placeholder="">Default Meal </Checkbox>
           </Form.Item>
         </Form>
       </Modal>
