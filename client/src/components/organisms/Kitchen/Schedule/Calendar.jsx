@@ -8,6 +8,11 @@ import {
   Input,
   Modal,
   Form,
+  List,
+  Divider,
+  Spin,
+  Empty,
+  message,
 } from "antd";
 import {
   PlusOutlined,
@@ -17,10 +22,10 @@ import {
   DeleteOutlined,
   RightOutlined,
   PushpinFilled,
+  SearchOutlined,
 } from "@ant-design/icons";
 import dayjs from "dayjs";
 import styles from "./Calendar.module.css";
-import { use } from "react";
 import Loading from "../../../atoms/loading/loading";
 import axios from "axios";
 
@@ -31,17 +36,30 @@ const MealPlanner = () => {
   const urL = import.meta.env.VITE_BASE_URL;
   const [defaultMeals, setDefaultMeals] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState("breakfast");
+  const [activeTab, setActiveTab] = useState("");
   const [menuItems, setMenuItems] = useState({});
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isUpdateModalVisible, setIsUpdateModalVisible] = useState(false);
   const [newMealName, setNewMealName] = useState("");
+  const [availableMeals, setAvailableMeals] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [showSearchResults, setShowSearchResults] = useState(false);
   const [form] = Form.useForm();
+  const [selectedMeals, setSelectedMeals] = useState([]);
+  const [fetchingMeals, setFetchingMeals] = useState(false);
+  const [activeMealType, setActiveMealType] = useState(null);
 
   const fetchDefaultMeals = async () => {
     try {
       const response = await fetch(`${urL}/meal-types/defaults`);
       const data = await response.json();
       setDefaultMeals(data);
+      // Set default active tab to first meal type if available
+      if (data.length > 0) {
+        setActiveTab(data[0].id);
+        setActiveMealType(data[0]);
+        console.log(`Initial meal type set to: ${data[0].name}`);
+      }
     } catch (error) {
       console.error("Error fetching default meals:", error);
     } finally {
@@ -49,26 +67,40 @@ const MealPlanner = () => {
     }
   };
 
+  const fetchAvailableMeals = async () => {
+    setFetchingMeals(true);
+    try {
+      const response = await fetch(`${urL}/meal`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch meals");
+      }
+      const data = await response.json();
+      setAvailableMeals(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error("Error fetching meals:", error);
+      message.error("Failed to load available meals");
+      setAvailableMeals([]);
+    } finally {
+      setFetchingMeals(false);
+    }
+  };
+
   const handleDateChange = (date) => {
     setCurrentDate(date);
   };
+  
   const modalStyles = {
     mask: {
       backdropFilter: "blur(12px)",
     },
   };
 
-  const handleMealSelection = (meal) => {
-    const updatedMeals = [...selectedMeals];
-
-    if (updatedMeals.includes(meal)) {
-      const index = updatedMeals.indexOf(meal);
-      updatedMeals.splice(index, 1);
+  const handleMealSelection = (mealId) => {
+    if (selectedMeals.includes(mealId)) {
+      setSelectedMeals(selectedMeals.filter(id => id !== mealId));
     } else {
-      updatedMeals.push(meal);
+      setSelectedMeals([...selectedMeals, mealId]);
     }
-
-    setSelectedMeals(updatedMeals);
   };
 
   const handlePinMeal = async (id) => {
@@ -97,42 +129,26 @@ const MealPlanner = () => {
   };
 
   const handleStartTimeChange = (time, meal) => {
-    setMealTime({
-      ...mealTime,
-      [meal]: {
-        ...mealTime[meal],
-        start: time,
-      },
-    });
+    // Implementation of time change logic
   };
 
   const handleEndTimeChange = (time, meal) => {
-    setMealTime({
-      ...mealTime,
-      [meal]: {
-        ...mealTime[meal],
-        end: time,
-      },
-    });
+    // Implementation of time change logic
   };
 
-  const toggleTimePicker = (meal) => {
-    setShowTimePickers({
-      ...showTimePickers,
-      [meal]: !showTimePickers[meal],
-    });
-  };
-
+  // Convert activeTab from string to number if needed
   const handleTabChange = (key) => {
-    setActiveTab(key);
-  };
-
-  const removeMenuItem = (item) => {
-    const updatedItems = { ...menuItems };
-    updatedItems[activeTab] = updatedItems[activeTab].filter(
-      (menuItem) => menuItem !== item
-    );
-    setMenuItems(updatedItems);
+    const numericKey = typeof key === 'string' ? parseInt(key, 10) : key;
+    setActiveTab(numericKey);
+    
+    // Find the meal type for the active tab
+    const mealType = defaultMeals.find(meal => meal.id === numericKey);
+    if (mealType) {
+      setActiveMealType(mealType);
+      console.log(`Tab changed to: ${mealType.name}`);
+    }
+    // Clear selected meals when changing tabs
+    setSelectedMeals([]);
   };
 
   const goToNextDay = () => {
@@ -149,7 +165,6 @@ const MealPlanner = () => {
   };
 
   const handleModalOk = () => {
-    console.log("Clickked OK");
     form.validateFields().then(async (values) => {
       try {
         setLoading(true);
@@ -172,28 +187,75 @@ const MealPlanner = () => {
     });
   };
 
-  const removeMealTime = (mealId) => {
-    const updatedSelectedMeals = selectedMeals.filter(
-      (meal) => meal !== mealId
-    );
-    setSelectedMeals(updatedSelectedMeals);
-
-    if (activeTab === mealId) {
-      setActiveTab(updatedSelectedMeals[0] || "breakfast");
+  const showUpdateMenuModal = async () => {
+    setIsUpdateModalVisible(true);
+    setSearchTerm("");
+    setSelectedMeals([]);
+    
+    // Make sure activeMealType is set correctly before showing modal
+    const mealType = defaultMeals.find(meal => meal.id === activeTab);
+    if (mealType) {
+      setActiveMealType(mealType);
+      console.log(`Update menu modal opened for: ${mealType.name}`);
     }
+    
+    await fetchAvailableMeals();
   };
 
-  const updateMenu = () => {
-    console.log("Menu updated");
+  const handleUpdateMenuCancel = () => {
+    setIsUpdateModalVisible(false);
+    setSearchTerm("");
+  };
+
+  const handleUpdateMenuOk = () => {
+    // Save the selected meals
+    console.log("Selected meals:", selectedMeals);
+    const mealName = activeMealType ? activeMealType.name : "meal";
+    message.success(`${mealName} menu updated successfully`);
+    setIsUpdateModalVisible(false);
+  };
+
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const filterMeals = () => {
+    if (!activeMealType) {
+      return [];
+    }
+    
+    // Use active meal type name for proper category filtering
+    const categoryName = activeMealType.name;
+    console.log(`Filtering meals for category: ${categoryName}`);
+    
+    // First filter by category - case insensitive matching
+    let filteredByCategory = availableMeals.filter(meal => 
+      meal.category && 
+      Array.isArray(meal.category) && 
+      meal.category.some(cat => cat.toLowerCase() === categoryName.toLowerCase())
+    );
+
+    // Then filter by search term if present
+    if (searchTerm) {
+      return filteredByCategory.filter(meal => 
+        meal.nameEnglish.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    return filteredByCategory;
   };
 
   useEffect(() => {
     fetchDefaultMeals();
   }, []);
 
+  // Update activeMealType when activeTab or defaultMeals change
   useEffect(() => {
-    console.log(defaultMeals);
-  }, [defaultMeals]);
+    const mealType = defaultMeals.find(meal => meal.id === activeTab);
+    if (mealType) {
+      setActiveMealType(mealType);
+    }
+  }, [activeTab, defaultMeals]);
 
   if (loading) {
     return <Loading />;
@@ -236,7 +298,7 @@ const MealPlanner = () => {
         </Button>
         <div className={styles.horizontalMealContainer}>
           {defaultMeals.map((meal) => (
-            <div className={styles.mealItems}>
+            <div key={meal.id} className={styles.mealItems}>
               <div className={styles.boxTop}>
                 <div className={styles.boxTopLeft}>{meal.name}</div>
 
@@ -264,17 +326,17 @@ const MealPlanner = () => {
               </div>
               <div className={styles.timePickerGroup}>
                 <TimePicker
-                  value={meal.time[0] ? dayjs(meal.time[0], "HH:mm") : null}
+                  value={meal.time?.[0] ? dayjs(meal.time[0], "HH:mm") : null}
                   format="HH:mm"
-                  onChange={(time) => handleStartTimeChange(time, "breakfast")}
+                  onChange={(time) => handleStartTimeChange(time, meal.id)}
                   className={styles.timePicker}
                   placeholder="Start time"
                 />
                 <span className={styles.timePickerSeparator}>to</span>
                 <TimePicker
-                  value={meal.time[1] ? dayjs(meal.time[1], "HH:mm") : null}
+                  value={meal.time?.[1] ? dayjs(meal.time[1], "HH:mm") : null}
                   format="HH:mm"
-                  onChange={(time) => handleEndTimeChange(time, "breakfast")}
+                  onChange={(time) => handleEndTimeChange(time, meal.id)}
                   className={styles.timePicker}
                   placeholder="End time"
                 />
@@ -285,31 +347,30 @@ const MealPlanner = () => {
       </div>
 
       <div className={styles.contentArea}>
-              <Tabs
-        activeKey={activeTab}
-        onChange={handleTabChange}
-        className={styles.mealTabs}
-        centered
-      >
-        {defaultMeals.map((meal) => (
-          <Tabs.TabPane
-            tab={meal.name}
-            key={meal.id}
-            className={styles.tabPane}
-          >
-
-          </Tabs.TabPane>
-        ))}
-      </Tabs>
+        <Tabs
+          activeKey={activeTab}
+          onChange={handleTabChange}
+          className={styles.mealTabs}
+          centered
+        >
+          {defaultMeals.map((meal) => (
+            <TabPane
+              tab={meal.name}
+              key={meal.id.toString()}
+              className={styles.tabPane}
+            >
+              {/* Tab content would go here */}
+            </TabPane>
+          ))}
+        </Tabs>
       </div>
-
 
       <div className={styles.updateBtnContainer}>
         <Button
           type="primary"
           icon={<PlusOutlined />}
           className={styles.updateBtn}
-          onClick={updateMenu}
+          onClick={showUpdateMenuModal}
         >
           Update Menu
         </Button>
@@ -318,7 +379,7 @@ const MealPlanner = () => {
       {/* Add Custom Meal Modal */}
       <Modal
         title="Add Meal Time"
-        visible={isModalVisible}
+        open={isModalVisible}
         onOk={handleModalOk}
         onCancel={handleModalCancel}
         className={styles.customMealModal}
@@ -342,7 +403,7 @@ const MealPlanner = () => {
               <Form.Item
                 name="startTime"
                 rules={[
-                  { required: true, message: "Please Enter Time Duration  " },
+                  { required: true, message: "Please Enter Time Duration" },
                 ]}
                 noStyle
               >
@@ -364,9 +425,94 @@ const MealPlanner = () => {
           </Form.Item>
 
           <Form.Item name="isDefault" valuePropName="checked" noStyle>
-            <Checkbox placeholder="">Default Meal </Checkbox>
+            <Checkbox>Default Meal</Checkbox>
           </Form.Item>
         </Form>
+      </Modal>
+
+      {/* Update Menu Modal */}
+      <Modal
+        title={`Update ${activeMealType ? activeMealType.name : ''} Menu`}
+        open={isUpdateModalVisible}
+        onCancel={handleUpdateMenuCancel}
+        className={styles.mealSelectionModal}
+        closable={true}
+        footer={null}
+        styles={modalStyles}
+        width={650}
+      >
+        <div className={styles.updateMealModalContent}>
+          <h3 className={styles.modalSectionTitle}>
+            Available {activeMealType ? activeMealType.name : ''} Meals
+          </h3>
+          
+          <div className={styles.searchContainer}>
+            <Input
+              placeholder="Search meals..."
+              onChange={handleSearchChange}
+              className={styles.searchInput}
+              value={searchTerm}
+              prefix={<SearchOutlined />}
+            />
+          </div>
+          
+          <div className={styles.mealsContainer}>
+            {fetchingMeals ? (
+              <div className={styles.loadingContainer}>
+                <Spin size="large" />
+                <p>Loading available meals...</p>
+              </div>
+            ) : (
+              <List
+                className={styles.mealList}
+                dataSource={filterMeals()}
+                renderItem={(meal) => (
+                  <>
+                    <List.Item className={styles.mealItem}>
+                      <div className={styles.mealItemContent}>
+                        <div className={styles.mealName}>
+                          {meal.nameEnglish}
+                        </div>
+                        <Checkbox
+                          checked={selectedMeals.includes(meal.id)}
+                          onChange={() => handleMealSelection(meal.id)}
+                          className={styles.mealCheckbox}
+                        />
+                      </div>
+                    </List.Item>
+                    <Divider className={styles.modalDivider} />
+                  </>
+                )}
+                locale={{
+                  emptyText: (
+                    <Empty
+                      description={`No ${activeMealType ? activeMealType.name : ''} meals found`}
+                      image={Empty.PRESENTED_IMAGE_SIMPLE}
+                    />
+                  ),
+                }}
+              />
+            )}
+          </div>
+          
+          <div className={styles.modalFooter}>
+            <Button 
+              key="cancel" 
+              onClick={handleUpdateMenuCancel} 
+              className={styles.cancelButton}
+            >
+              Cancel
+            </Button>
+            <Button 
+              key="update" 
+              type="primary" 
+              onClick={handleUpdateMenuOk} 
+              className={styles.updateModalBtn}
+            >
+              Update
+            </Button>
+          </div>
+        </div>
       </Modal>
     </div>
   );

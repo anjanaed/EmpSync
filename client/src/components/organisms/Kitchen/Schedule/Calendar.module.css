@@ -268,10 +268,6 @@
   border-color: #d32f2f;
 }
 
-
-
-
-
 /* Make checkbox square like in design */
 .mealCheckbox :global(.ant-checkbox-inner) {
   border-radius: 2px;
@@ -307,4 +303,112 @@
 .boxTop{
   display: flex;
   justify-content: space-between;
+}
+
+/* Update Meal Plan Modal Styles */
+.mealSelectionModal {
+  min-width: 500px;
+}
+
+.mealSelectionModal :global(.ant-modal-content) {
+  border-radius: 0;
+  background: white;
+}
+
+.mealSelectionModal :global(.ant-modal-header) {
+  /* background-color: #500; */
+  color: white;
+ 
+}
+
+.mealSelectionModal :global(.ant-modal-title) {
+  /* color: #500; */
+  font-weight: 600;
+  font-size: 20px;
+}
+
+.mealSelectionModal :global(.ant-modal-body) {
+  padding: 0;
+}
+
+.updateMealModalContent {
+  padding: 0;
+}
+
+.modalSectionTitle {
+  font-weight: 600;
+  font-size: 18px;
+  color: #333;
+  padding: 16px 20px;
+  border-bottom: 1px solid #e8e8e8;
+  margin: 0;
+}
+
+.searchContainer {
+  display: flex;
+  padding: 16px 20px;
+  border-bottom: 1px solid #e8e8e8;
+}
+
+.searchInput {
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  flex-grow: 1;
+  margin-right: 10px;
+}
+
+.searchButton {
+  background-color: rgb(223, 31, 31);
+  border-color:rgb(223, 31, 31);
+  border-radius: 4px;
+}
+
+.searchButton:hover {
+  background-color: rgb(223, 31, 31);
+  border-color: rgb(219, 22, 22);
+}
+
+.mealsContainer {
+  padding: 10px 0;
+  max-height: 300px;
+  overflow-y: auto;
+  border-bottom: 1px solid #e8e8e8;
+  background-color: white;
+  border-radius: 4px;
+  margin: 16px 20px;
+}
+
+.mealItem {
+  padding: 10px 20px;
+  border-bottom: 1px solid #f5f5f5;
+}
+
+.mealItem:last-child {
+  border-bottom: none;
+}
+
+.modalFooter {
+  display: flex;
+  justify-content: flex-end;
+  padding: 16px 20px;
+  gap: 10px;
+}
+
+.cancelButton {
+  border-radius: 4px;
+  padding: 0 20px;
+  background: #fff;
+  border: 1px solid #d9d9d9;
+}
+
+.updateModalBtn {
+  background-color:rgb(223, 31, 31);;
+  border-color: rgb(223, 31, 31);;
+  border-radius: 4px;
+  padding: 0 20px;
+}
+
+.updateModalBtn:hover {
+  background-color:rgb(223, 31, 31);;
+  border-color: rgb(223, 31, 31);;
 }
