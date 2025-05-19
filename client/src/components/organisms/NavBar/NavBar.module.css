@@ -92,7 +92,7 @@
   display: flex;
   height: 100vh;
   overflow: hidden;
-  background: #fff;
+  background: #ffffff;
   color: #222;
 }
 
@@ -149,7 +149,6 @@
   padding: 10px 14px;
   font-size: 12px;
   font-family: "Figtree", sans-serif !important;
-
   font-weight: 550;
   border-radius: 0;
 }
@@ -200,23 +199,6 @@
   color: #f1f1f1 !important;
 }
 
-
-.dark .userDropdownMenu .ant-dropdown-menu {
-  background: #232323 !important;
-  color: #f1f1f1 !important;
-}
-
-.dark .userDropdownMenu .ant-dropdown-menu-item {
-  background: #232323 !important;
-  color: #f1f1f1 !important;
-}
-
-.dark .userDropdownMenu .ant-dropdown-menu-item:hover {
-  background: #333 !important;
-  color: #fff !important;
-}
-
-/* Add more overrides as needed for dropdowns, buttons, etc. */
 
 @media (max-width: 768px){
   .logo{
