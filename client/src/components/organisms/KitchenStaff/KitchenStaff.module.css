@@ -14,8 +14,14 @@
   .title {
     font-size: 24px;
     font-weight: 700;
-    color: #333;
+    color: #333 !important;
     margin: 0;
+  }
+  
+  @media (prefers-color-scheme: dark) {
+    .title {
+      color: #fff;
+    }
   }
   
   .dateControls {
