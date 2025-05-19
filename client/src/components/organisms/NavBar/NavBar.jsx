@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import styles from "./NavBar.module.css";
 import { MenuOutlined, LogoutOutlined } from "@ant-design/icons";
-import { UserOutlined } from "@ant-design/icons";
+import { UserOutlined, BulbOutlined, MoonOutlined } from "@ant-design/icons";
 import { Button, Layout, Menu, ConfigProvider, Dropdown, Avatar } from "antd";
 import img from "../../../assets/Logo/logo.png";
 import { useNavigate } from "react-router-dom";
 import Loading from "../../atoms/loading/loading";
 import { useAuth } from "../../../contexts/AuthContext";
+import { useDarkMode } from "../../../contexts/DarkModeContext"; // Import context
 const { Sider } = Layout;
 
 const roleDisplayMap = {
@@ -40,6 +41,7 @@ const NavBar = ({ Comp, titleLines = [], menuItems = [] }) => {
   const [currentUser, setCurrentUser] = useState("null");
   const navigate = useNavigate();
   const { authData, logout, authLoading } = useAuth();
+  const { darkMode, toggleDarkMode } = useDarkMode(); // Use context
 
   // Ensure hooks are always called
   useEffect(() => {
@@ -73,7 +75,25 @@ const NavBar = ({ Comp, titleLines = [], menuItems = [] }) => {
     navigate("/login");
   };
 
+  const handleToggleDarkMode = () => {
+    toggleDarkMode();
+  };
+
   const dropdownItems = [
+    {
+      key: "darkmode",
+      label: (
+        <div className={styles.profileMenuItem}>
+          {darkMode ? (
+            <MoonOutlined className={styles.menuItemIcon} />
+          ) : (
+            <BulbOutlined className={styles.menuItemIcon} />
+          )}
+          &nbsp;Dark Mode
+        </div>
+      ),
+      onClick: handleToggleDarkMode,
+    },
     {
       key: "1",
       label: (
@@ -152,6 +172,14 @@ const NavBar = ({ Comp, titleLines = [], menuItems = [] }) => {
             style={{ fontSize: "16px", width: 55, height: 55 }}
           />
           <img className={styles.logo} src={img} alt="Logo" />
+          <Button
+            type="text"
+            icon={darkMode ? <MoonOutlined /> : <BulbOutlined />}
+            onClick={handleToggleDarkMode}
+            className={styles.darkModeBtn}
+            style={{ fontSize: "20px", marginLeft: 12 }}
+            aria-label="Toggle dark mode"
+          />
           <Dropdown
             menu={{ items: dropdownItems }}
             placement="bottomRight"
