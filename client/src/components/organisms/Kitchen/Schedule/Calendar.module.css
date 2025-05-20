@@ -305,26 +305,26 @@
   justify-content: space-between;
 }
 
-/* Update Meal Plan Modal Styles */
 .mealSelectionModal {
   min-width: 500px;
 }
 
 .mealSelectionModal :global(.ant-modal-content) {
-  border-radius: 0;
-  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .mealSelectionModal :global(.ant-modal-header) {
-  /* background-color: #500; */
-  color: white;
- 
+  border-bottom: 1px solid #f0f0f0;
+  padding: 16px 24px;
+  background-color: #fff;
+  border-radius: 8px 8px 0 0;
 }
 
 .mealSelectionModal :global(.ant-modal-title) {
-  /* color: #500; */
   font-weight: 600;
-  font-size: 20px;
+  font-size: 18px;
+  color: #333;
 }
 
 .mealSelectionModal :global(.ant-modal-body) {
@@ -337,78 +337,129 @@
 
 .modalSectionTitle {
   font-weight: 600;
-  font-size: 18px;
+  font-size: 16px;
   color: #333;
   padding: 16px 20px;
-  border-bottom: 1px solid #e8e8e8;
+  border-bottom: 1px solid #f0f0f0;
   margin: 0;
+  background-color: #fafafa;
 }
 
 .searchContainer {
   display: flex;
   padding: 16px 20px;
-  border-bottom: 1px solid #e8e8e8;
+  border-bottom: 1px solid #f0f0f0;
+  background-color: #fff;
 }
 
 .searchInput {
-  border-radius: 4px;
-  border: 1px solid #ddd;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
   flex-grow: 1;
-  margin-right: 10px;
+  height: 40px;
+  transition: all 0.3s ease;
 }
 
-.searchButton {
-  background-color: rgb(223, 31, 31);
-  border-color:rgb(223, 31, 31);
-  border-radius: 4px;
-}
-
-.searchButton:hover {
-  background-color: rgb(223, 31, 31);
-  border-color: rgb(219, 22, 22);
+.searchInput:hover,
+.searchInput:focus {
+  border-color: #e53935;
+  box-shadow: 0 0 0 2px rgba(229, 57, 53, 0.1);
 }
 
 .mealsContainer {
-  padding: 10px 0;
-  max-height: 300px;
+  max-height: 350px;
   overflow-y: auto;
-  border-bottom: 1px solid #e8e8e8;
-  background-color: white;
-  border-radius: 4px;
-  margin: 16px 20px;
+  padding: 8px 0;
+  background-color: #fff;
+}
+
+.mealList {
+  padding: 0 12px;
 }
 
 .mealItem {
-  padding: 10px 20px;
-  border-bottom: 1px solid #f5f5f5;
+  padding: 12px 8px !important;
+  transition: background-color 0.2s ease;
+  border-radius: 4px;
+  border-bottom: none !important;
 }
 
-.mealItem:last-child {
-  border-bottom: none;
+.mealItem:hover {
+  background-color: #f9f9f9;
+}
+
+.mealItemContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.mealName {
+  font-size: 15px;
+  color: #333;
+  font-weight: 500;
+}
+
+.loadingContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 0;
+}
+
+.loadingContainer p {
+  margin-top: 16px;
+  color: #666;
 }
 
 .modalFooter {
   display: flex;
   justify-content: flex-end;
   padding: 16px 20px;
-  gap: 10px;
+  gap: 12px;
+  border-top: 1px solid #f0f0f0;
+  background-color: #fafafa;
+  border-radius: 0 0 8px 8px;
 }
 
 .cancelButton {
-  border-radius: 4px;
+  border-radius: 6px;
   padding: 0 20px;
-  background: #fff;
-  border: 1px solid #d9d9d9;
+  height: 38px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.cancelButton:hover {
+  border-color: #d0d0d0;
+  color: #333;
 }
 
 .updateModalBtn {
-  background-color:rgb(223, 31, 31);;
-  border-color: rgb(223, 31, 31);;
-  border-radius: 4px;
-  padding: 0 20px;
+  background-color: #e53935;
+  border-color: #e53935;
+  border-radius: 6px;
+  padding: 0 24px;
+  height: 38px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 6px rgba(229, 57, 53, 0.2);
 }
 
 .updateModalBtn:hover {
-  background-color:rgb(223, 31, 31);;
-  border-color: rgb(223, 31, 31);;
+  background-color: #d32f2f;
+  border-color: #d32f2f;
+}
+
+/* Make checkbox square like in design */
+.mealCheckbox :global(.ant-checkbox-inner) {
+  border-radius: 2px;
+  border-color: #d9d9d9;
+}
+
+.mealCheckbox :global(.ant-checkbox-checked .ant-checkbox-inner) {
+  background-color: #e53935;
+  border-color: #e53935;
 }
