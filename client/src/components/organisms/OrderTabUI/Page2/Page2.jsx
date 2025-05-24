@@ -9,7 +9,13 @@ import { IoKeypadSharp } from "react-icons/io5";
 import { BiFingerprint } from "react-icons/bi";
 
 // Page2 component for user authentication via fingerprint or PIN
-const Page2 = ({ carouselRef, language, setLanguage, setUsername, setUserId }) => {
+const Page2 = ({
+  carouselRef,
+  language,
+  setLanguage,
+  setUsername,
+  setUserId,
+}) => {
   // State for error messages
   const [errorMessage, setErrorMessage] = useState("");
   // State for PIN input
@@ -38,13 +44,22 @@ const Page2 = ({ carouselRef, language, setLanguage, setUsername, setUserId }) =
         borderRadius: "8px",
       }}
     >
-      <Menu.Item key="English" style={{ fontSize: "16px", padding: "10px 20px", color: "white" }}>
+      <Menu.Item
+        key="English"
+        style={{ fontSize: "16px", padding: "10px 20px", color: "white" }}
+      >
         English
       </Menu.Item>
-      <Menu.Item key="සිංහල" style={{ fontSize: "16px", padding: "10px 20px", color: "white" }}>
+      <Menu.Item
+        key="සිංහල"
+        style={{ fontSize: "16px", padding: "10px 20px", color: "white" }}
+      >
         සිංහල
       </Menu.Item>
-      <Menu.Item key="தமிழ்" style={{ fontSize: "16px", padding: "10px 20px", color: "white" }}>
+      <Menu.Item
+        key="தமிழ்"
+        style={{ fontSize: "16px", padding: "10px 20px", color: "white" }}
+      >
         தமிழ்
       </Menu.Item>
     </Menu>
@@ -199,13 +214,22 @@ const Page2 = ({ carouselRef, language, setLanguage, setUsername, setUserId }) =
             className={styles.toggleButton}
             onClick={() => setShowFingerprint((prev) => !prev)} // Toggle the state
           >
-            {showFingerprint ? <IoKeypadSharp size={30} /> : <BiFingerprint size={30} />} {/* Toggle icon */}
+            {showFingerprint ? (
+              <IoKeypadSharp size={30} />
+            ) : (
+              <BiFingerprint size={30} />
+            )}{" "}
+            {/* Toggle icon */}
           </button>
-          <Dropdown overlay={languageMenu} trigger={["click"]}>
-            <button className={styles.backButton}>
-              <MdLanguage size={20} /> <div>{selectedLanguage}</div> {/* Display selected language */}
+            <button
+              onClick={() => {
+                carouselRef.current.goTo(0);
+              }}
+              className={styles.backButton}
+            >
+              <MdLanguage size={20} /> <div>{selectedLanguage}</div>{" "}
+              {/* Display selected language */}
             </button>
-          </Dropdown>
         </div>
       </div>
       {/* Error message popup */}

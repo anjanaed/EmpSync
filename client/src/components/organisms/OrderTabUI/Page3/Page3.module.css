@@ -1,42 +1,34 @@
-/* Header section with date/time and username */
-
 .header {
   display: flex;
 }
-
-/* Date and time display alignment */
 .dateAndTime {
-  font-size: 0.8em; /* Small font size */
-  position: absolute; /* Position it relative to the window */
-  top: 10px; /* Distance from the top of the window */
-  left: 50%; /* Center horizontally */
-  transform: translateX(-50%); /* Adjust for centering */
-  text-align: center; /* Center the text */
-  color: #555; /* Optional: Adjust text color */
-  z-index: 1000; /* Ensure it stays on top of other elements */
+  font-size: 0.8em;
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  color: #555;
+  z-index: 1000;
 }
 .name {
-  color: rgb(255, 0, 0); /* Red font color */
+  color: rgb(255, 0, 0);
   font-weight: 900;
   font-size: 1.3em;
-  text-shadow: 1px 1px 1px white; /* Small white outline */
+  text-shadow: 1px 1px 1px 1px white;
 }
-
-/* Username display styling */
 .userName {
   font-size: 1.2em;
   margin-left: auto;
   font-weight: 600;
-  color: #ffffff !important; /* White text color */
-  text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5); /* Shadow for visibility */
+  color: #ffffff !important;
+  text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
 }
-
-/* Main layout container */
 .layout {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-  background: rgba(255, 255, 255, 0); /* Transparent background */
-  backdrop-filter: blur(1px); /* Slight blur effect */
-  -webkit-backdrop-filter: blur(1px); /* Safari support */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0);
+  backdrop-filter: blur(1px);
+  -webkit-backdrop-filter: blur(1px);
   border-radius: 10px;
   display: flex;
   font-family: "Figtree", sans-serif;
@@ -44,318 +36,229 @@
   width: 100vw;
   padding: 10px 20px;
 }
-
-/* Success message card */
 .successCard {
   width: 600px;
   text-align: center;
-  border: 2px solid #ffd591; /* Yellow border */
+  border: 2px solid #ffd591;
 }
-
-/* Success icon styling */
 .successIcon {
   font-size: 80px;
-  color: #52c41a; /* Green color */
+  color: #52c41a;
   margin-bottom: 24px;
 }
-
-/* Card title styling */
 .cardTitle {
-  font-weight: 700 !important; /* Bold text */
-  color: #333 !important; /* Dark text */
+  font-weight: 700 !important;
+  color: #333 !important;
   margin-bottom: 0px !important;
   font-family: "Figtree", sans-serif;
-  /* Remove bottom margin */
 }
-
-/* Main card container for meal selection */
 .cardContainer {
   border-radius: 8px;
   border: none;
-  min-height: 92vh; /* Fixed height */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-  background: rgba(255, 255, 255, 0.671); /* Semi-transparent white */
-  backdrop-filter: blur(10px); /* Glassmorphism blur */
-  -webkit-backdrop-filter: blur(10px); /* Safari support */
+  min-height: 92vh;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.671);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
-
-/* Date button group container */
 .dateButtonGroup {
   width: 100%;
   display: flex;
-  justify-content: space-between; /* Space between buttons */
+  justify-content: space-between;
 }
-
-/* Meal tab content */
-
-/* Meal list container */
 .mealList {
   display: flex;
   flex-direction: column;
-  gap: 10px; /* Space between meal cards */
+  gap: 10px;
   padding: 10px;
-  border: none; /* Light border */
+  border: none;
   border-radius: 10px;
-  background-color: #f9f9f971; /* Semi-transparent light background */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Shadow for depth */
-  height: 64vh; /* Fixed height */
-  overflow-y: auto; /* Enable vertical scrolling */
-  overflow-x: hidden; /* Disable horizontal scrolling */
+  background-color: #f9f9f971;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  height: 68vh;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
-
-/* Order summary container */
 .orderSummaryContainer {
   display: flex;
   flex-direction: column;
-  gap: 10px; /* Space between elements */
+  gap: 10px;
   padding: 10px;
-  border: 1px solid #ddd; /* Light border */
+  border: 1px solid #ddd;
   border-radius: 10px;
-  background-color: #f9f9f95e; /* Semi-transparent light background */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Shadow for depth */
-  height: 78.3vh; /* Fixed height */
+  background-color: #f9f9f95e;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  height: 82vh;
 }
-
-/* Order summary scrolling area */
 .orderSummary {
-  height: 100vh; /* Full height */
-  overflow-y: auto; /* Enable vertical scrolling */
-  overflow-x: hidden; /* Disable horizontal scrolling */
+  height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
-
-/* Individual order card */
 .orderCard .hr {
   margin: 0 !important;
 }
-
-/* Order details layout */
 .orderDetails {
   display: flex;
   justify-content: space-between;
 }
 .mealTitle {
-  font-size: 15px;
+  font-size: 16px;
   font-weight: bold;
   color: #000000;
   font-family: "Figtree", sans-serif;
 }
 
-.titleWithTooltip {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-}
-
 .descriptionText {
   color: #666;
-  font-size: 14px;
+  font-size: 12px;
+    word-break: break-word;
+  white-space: pre-line;
 }
-
 .priceText {
-  font-size: 13px;
+  font-size: 15px;
   color: #000;
 }
-
-/* Remove button for order items */
 .removeButton {
 }
-
-/* Error message card */
 .errorCard {
   width: 600px;
   text-align: center;
-  border: 2px solid #ffa39e; /* Red border */
+  border: 2px solid #ffa39e;
 }
-
-/* Error icon styling */
 .errorIcon {
   font-size: 80px;
-  color: #ff4d4f; /* Red color */
+  color: #ff4d4f;
   margin-bottom: 24px;
 }
-
-/* Success message container */
 .successContainer {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 80vh; /* Center vertically */
+  height: 80vh;
 }
-
-/* Error message container */
 .errorContainer {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 80vh; /* Center vertically */
+  height: 80vh;
 }
-
-/* Date selection button */
 .dateButton {
   flex: 1;
   padding: 20px;
   font-size: 20px !important;
-  font-weight: 700 !important; /* Bold text */
-  background-color: #f0f0f0; /* Light gray background */
-  color: #000; /* Black text */
-  border: none; /* Gray border */
+  font-weight: 700 !important;
+  background-color: #f0f0f0;
+  color: #000;
+  border: none;
 }
-
-/* Remove hover and focus effects for date button */
 .dateButton:hover,
 .dateButton:focus {
-  background-color: #ffffff !important; /* White background */
-  color: #000000 !important; /* Black text */
+  background-color: #ffffff !important;
+  color: #000000 !important;
   box-shadow: none !important;
-  border: none; /* No shadow */
+  border: none;
 }
-
-/* Selected date button styling */
 .selectedDateButton {
   background: linear-gradient(135deg, #8f0101, #e30000);
   color: #fff;
   padding: 20px;
-
-  border: none; /* White text */
+  border: none;
 }
-
-/* Remove hover and focus effects for selected date button */
 .selectedDateButton:hover,
 .selectedDateButton:focus {
   background: linear-gradient(135deg, #8f0101, #e30000) !important;
-  color: #fff !important; /* Keep white text */
+  color: #fff !important;
   box-shadow: none !important;
-  border: none; /* No shadow */
+  border: none;
 }
-
 .Tabs Button {
   margin-right: 0 !important;
 }
-
-/* Filter button styling */
 .filterButton {
-  background-color: #f0f0f0; /* Light gray background */
-  color: #c41114; /* Red text */
+  background-color: #f0f0f0;
+  color: #c41114;
   display: flex;
   margin-right: 0 !important;
   justify-content: center;
   align-items: center;
-  border-color: #da1114; /* Red border */
+  border-color: #da1114;
 }
-
-/* Tab label default styling */
 .tabLabel {
   color: #000000;
   text-shadow: none !important;
   font-size: 15px;
   font-family: "Figtree", sans-serif;
 }
-
-/* Unavailable tab styling */
 .unavailableTab {
-  color: gray; /* Gray text for unavailable */
+  color: gray;
 }
-
-/* Selected tab styling */
 .selectedTab {
-  color: #a80003; /* Red text for selected */
+  color: #a80003;
 }
-
-/* Meal image styling */
 .mealImage {
-  height: 130px; /* Reduced height */
-  object-fit: cover; /* Ensures the image fills the container while maintaining aspect ratio */
-  border-radius: 8px; /* Optional: Add rounded corners */
+  height: 110px;
+  object-fit: cover;
 }
-
 .mealCardhr {
-  margin: 5px 5px 15px 5px;
+  margin: 15px;
 }
-
-/* Past due meal image styling */
 .pastDueImage {
-  filter: grayscale(100%); /* Gray out image */
+  filter: grayscale(100%);
 }
-
-/* Meal card styling */
 .mealCard {
-  height: 250px; /* Reduced height */
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  opacity: 1; /* Full opacity */
-  margin-bottom: 20px;
+  padding-bottom: 15px;
+  opacity: 1;
+  overflow: hidden;
+  border: 2px solid #ff000000 !important;
+  margin-bottom: 10px;
 }
-
 .tabContent Card {
   padding: 0 !important;
 }
-
-/* Past due meal card styling */
 .pastDueCard {
   cursor: not-allowed;
-  opacity: 0.5; /* Reduced opacity */
+  opacity: 0.5;
 }
-
-/* Add button styling */
 .addButton {
   margin: 8px;
   width: 90% !important;
-  background-color: #b40003; /* Red background */
-  color: #fff; /* White text */
+  background-color: #b40003;
+  color: #fff;
   border: none;
 }
-
-/* Remove hover and focus effects for add button */
 .addButton:hover,
 .addButton:focus {
-  background-color: #ff4d4f !important; /* Keep red background */
-  color: #fff !important; /* Keep white text */
-  border-color: #d9363e !important; /* Keep darker red border */
-  box-shadow: none !important; /* No shadow */
+  background-color: #ff4d4f !important;
+  color: #fff !important;
+  border-color: #d9363e !important;
+  box-shadow: none !important;
 }
-
-/* Disabled button styling */
 .disabledButton {
-  background-color: #d9d9d9; /* Gray background */
-  color: #8c8c8c; /* Light gray text */
-  border-color: #d9d9d9; /* Gray border */
-  cursor: not-allowed; /* Not-allowed cursor */
+  background-color: #d9d9d9;
+  color: #8c8c8c;
+  border-color: #d9d9d9;
+  cursor: not-allowed;
 }
-
-/* Price container styling */
-
-/* Second row in order card */
 .secondRow {
   margin-top: 8px;
 }
-
-/* Meal time badge styling */
-
-/* Right-aligned elements */
 .rightAligned {
   text-align: right;
 }
-
-/* Action button styling (e.g., + and - buttons) */
 .counter {
   display: flex;
-  margin-left: auto; /* Push the counter to the right */
-  justify-content: end; /* Center the content horizontally */
-  align-items: center; /* Center the content vertically */
+  margin-left: auto;
+  justify-content: end;
+  align-items: center;
 }
-
 .orderInfo {
   display: flex;
   flex-direction: column;
 }
-
-.priceDiv{
+.priceDiv {
   margin-right: 20px;
-  
 }
-
 .actionButton {
   padding: 5 !important;
   margin: 0 !important;
@@ -367,18 +270,13 @@
   box-shadow: none !important;
   min-width: 0 !important;
 }
-
 .dateButtonGroup Button {
   margin-right: 0px !important;
 }
-
-/* Item count badge styling */
 .itemCountBadge {
   font-size: 16px;
   font-weight: bold;
 }
-
-/* Place order button styling */
 .placeOrderButton {
   margin-top: 5px;
   height: 70px;
@@ -386,29 +284,23 @@
   font-weight: bold;
   border-radius: 4px;
   background: linear-gradient(135deg, #a10000, #e30000);
-  color: #fff; /* White text */
-  border: 1px solid #d9363e; /* Darker red border */
+  color: #fff;
+  border: 1px solid #d9363e;
   cursor: pointer;
 }
-
-/* Remove hover and focus effects for place order button */
 .placeOrderButton:hover,
 .placeOrderButton:focus {
-  background-color: #ff4d4f !important; /* Keep red background */
-  color: #fff !important; /* Keep white text */
-  border-color: #d9363e !important; /* Keep darker red border */
-  box-shadow: none !important; /* No shadow */
+  background-color: #ff4d4f !important;
+  color: #fff !important;
+  border-color: #d9363e !important;
+  box-shadow: none !important;
 }
-
-/* Enabled place order button styling */
 .enabledButton {
-  background-color: #ff4d4f; /* Red background */
-  color: #fff; /* White text */
-  border-color: #d9363e; /* Darker red border */
+  background-color: #ff4d4f;
+  color: #fff;
+  border-color: #d9363e;
   cursor: pointer;
 }
-
-/* Total container styling */
 .totalContainer {
   display: flex;
   justify-content: space-between;
@@ -416,7 +308,11 @@
   margin-top: 16px;
 }
 
-/* Back button styling */
+.selectedMealCard {
+  border: 2px solid #e30000 !important;
+  box-shadow: 0 0 5px #e3000033;
+  background: #fff5f5;
+}
 .backButton {
   display: flex;
   flex-direction: row;
@@ -426,16 +322,13 @@
   justify-content: center;
   align-items: center;
 }
-
-.totalContainer Button{
+.totalContainer Button {
   margin: 0 !important;
 }
-
-/* Remove hover effects for all Ant Design buttons */
 .ant-btn:hover,
 .ant-btn:focus {
-  background-color: inherit !important; /* Keep original background */
-  border-color: inherit !important; /* Keep original border */
-  color: inherit !important; /* Keep original text color */
-  box-shadow: none !important; /* No shadow */
+  background-color: inherit !important;
+  border-color: inherit !important;
+  color: inherit !important;
+  box-shadow: none !important;
 }

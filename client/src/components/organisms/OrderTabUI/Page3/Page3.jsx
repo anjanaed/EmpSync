@@ -13,7 +13,6 @@ import {
   Alert,
   Space,
 } from "antd";
-
 import {
   LeftOutlined,
   InfoCircleOutlined,
@@ -25,54 +24,47 @@ import {
 import { motion } from "framer-motion";
 import { IoClose } from "react-icons/io5";
 import { MdLanguage } from "react-icons/md";
-
 import { RiAiGenerate } from "react-icons/ri";
 import { HiOutlineInformationCircle } from "react-icons/hi2";
-
-import styles from "./Page3.module.css"; // Import CSS module for styling
-import DateAndTime from "../DateAndTime/DateAndTime"; // Import DateAndTime component
-import translations from "../../../../utils/translations"; // Import language translations
+import styles from "./Page3.module.css";
+import DateAndTime from "../DateAndTime/DateAndTime";
+import translations from "../../../../utils/translations";
 
 const { Content } = Layout;
 const { Title, Text } = Typography;
 
-// Page3 component for meal selection and order placement
-const Page3 = ({ language = "english", username, userId }) => {
-  const navigate = useNavigate(); // Hook for navigation
-  const [currentTime, setCurrentTime] = useState(new Date()); // State for current time
-  const [selectedDate, setSelectedDate] = useState("today"); // State for selected date (today/tomorrow)
-  const [selectedMealTime, setSelectedMealTime] = useState("breakfast"); // State for selected meal time
-  const [orderItems, setOrderItems] = useState([]); // State for items in the order
-  const [showSuccess, setShowSuccess] = useState(false); // State for success message visibility
-  const [showError, setShowError] = useState(false); // State for error message visibility
-  const [meals, setMeals] = useState([]); // State for available meals
-  const [allMeals, setAllMeals] = useState([]); // State for all fetched meals
-  const text = translations[language]; // Access translations based on language
+const Page3 = ({ language = "english", username, userId, carouselRef }) => {
+  const navigate = useNavigate();
+  const [currentTime, setCurrentTime] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState("today");
+  const [selectedMealTime, setSelectedMealTime] = useState("breakfast");
+  const [orderItems, setOrderItems] = useState([]);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [showError, setShowError] = useState(false);
+  const [meals, setMeals] = useState([]);
+  const [allMeals, setAllMeals] = useState([]);
+  const text = translations[language];
 
-  // Effect to update current time and set initial meal time
   useEffect(() => {
     const timer = setInterval(() => {
-      setCurrentTime(new Date()); // Update time every second
+      setCurrentTime(new Date());
     }, 1000);
 
-    // Determine initial meal time based on current hour
     const determineMealTime = () => {
       const currentHour = new Date().getHours();
-      if (currentHour < 10) return "breakfast"; // Before 10 AM
-      else if (currentHour < 15) return "lunch"; // Before 3 PM
-      else if (currentHour < 22) return "dinner"; // Before 10 PM
-      else return "breakfast"; // Default for late-night
+      if (currentHour < 10) return "breakfast";
+      else if (currentHour < 15) return "lunch";
+      else if (currentHour < 22) return "dinner";
+      else return "breakfast";
     };
 
-    setSelectedMealTime(determineMealTime()); // Set initial meal time
-    return () => clearInterval(timer); // Cleanup timer on unmount
+    setSelectedMealTime(determineMealTime());
+    return () => clearInterval(timer);
   }, []);
 
-  // Effect to fetch meals based on selected date and meal time
   useEffect(() => {
     const fetchMeals = async () => {
       try {
-        // Determine date for fetching schedule
         const date =
           selectedDate === "today"
             ? new Date()
@@ -87,9 +79,8 @@ const Page3 = ({ language = "english", username, userId }) => {
         }
 
         const scheduleData = await scheduleResponse.json();
-        const mealIds = scheduleData[selectedMealTime] || []; // Get meal IDs for selected meal time
+        const mealIds = scheduleData[selectedMealTime] || [];
 
-        // Fetch meal details for each ID
         const mealDetailsPromises = mealIds.map((id) =>
           fetch(`http://localhost:3000/meal/${id}`).then((res) => {
             if (!res.ok) throw new Error(`Failed to fetch meal with ID: ${id}`);
@@ -98,9 +89,8 @@ const Page3 = ({ language = "english", username, userId }) => {
         );
 
         const mealDetails = await Promise.all(mealDetailsPromises);
-        setMeals(mealDetails); // Update meals state
+        setMeals(mealDetails);
 
-        // Update allMeals with new meals
         setAllMeals((prevAllMeals) => {
           const newMeals = mealDetails.filter(
             (meal) => !prevAllMeals.some((m) => m.id === meal.id)
@@ -109,17 +99,16 @@ const Page3 = ({ language = "english", username, userId }) => {
         });
       } catch (error) {
         console.error("Error fetching meals:", error);
-        setMeals([]); // Clear meals on error
+        setMeals([]);
       }
     };
 
     fetchMeals();
   }, [selectedDate, selectedMealTime]);
 
-  // Effect to clear localStorage on page refresh
   useEffect(() => {
     const clearLocalStorageOnRefresh = () => {
-      localStorage.clear(); // Clear all localStorage items
+      localStorage.clear();
     };
 
     window.addEventListener("beforeunload", clearLocalStorageOnRefresh);
@@ -127,20 +116,16 @@ const Page3 = ({ language = "english", username, userId }) => {
       window.removeEventListener("beforeunload", clearLocalStorageOnRefresh);
   }, []);
 
-  // Format date for display
   const formatDateForDisplay = (date) => date.toLocaleDateString();
 
-  // Get tomorrow's date
   const getTomorrowDate = () => {
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     return tomorrow;
   };
 
-  // Check if a meal time is available based on current time and date
   const isMealTimeAvailable = (mealTime, date) => {
-    if (date !== "today") return true; // All meal times available for tomorrow
-
+    if (date !== "today") return true;
     const currentHour = currentTime.getHours();
     if (mealTime === "breakfast") return currentHour < 10;
     if (mealTime === "lunch") return currentHour < 15;
@@ -148,20 +133,36 @@ const Page3 = ({ language = "english", username, userId }) => {
     return false;
   };
 
-  // Add a meal to the order
   const addToOrder = (mealId, date = selectedDate) => {
-    setOrderItems((prev) => [
-      ...prev,
-      { mealId, date, mealTime: selectedMealTime, count: 1 },
-    ]);
+    setOrderItems((prev) => {
+      const exists = prev.some(
+        (item) =>
+          item.mealId === mealId &&
+          item.mealTime === selectedMealTime &&
+          item.date === date
+      );
+      if (exists) {
+        return prev.filter(
+          (item) =>
+            !(
+              item.mealId === mealId &&
+              item.mealTime === selectedMealTime &&
+              item.date === date
+            )
+        );
+      } else {
+        return [
+          ...prev,
+          { mealId, date, mealTime: selectedMealTime, count: 1 },
+        ];
+      }
+    });
   };
 
-  // Add a meal to the order with specific date and meal time
   const addToOrder2 = (mealId, date, mealTime = selectedMealTime) => {
     setOrderItems((prev) => [...prev, { mealId, date, mealTime, count: 1 }]);
   };
 
-  // Remove a meal from the order or decrease its count
   const removeFromOrder = (mealId, date, mealTime = selectedMealTime) => {
     setOrderItems((prev) => {
       const index = prev.findIndex(
@@ -171,23 +172,22 @@ const Page3 = ({ language = "english", username, userId }) => {
           item.mealTime === mealTime
       );
 
-      if (index === -1) return prev; // Item not found
+      if (index === -1) return prev;
 
       const updatedItems = [...prev];
       if (updatedItems[index].count > 1) {
         updatedItems[index] = {
           ...updatedItems[index],
           count: updatedItems[index].count - 1,
-        }; // Decrease count
+        };
       } else {
-        updatedItems.splice(index, 1); // Remove item
+        updatedItems.splice(index, 1);
       }
 
       return updatedItems;
     });
   };
 
-  // Completely remove a meal from the order
   const disappearFromOrder = (mealId, date, mealTime = selectedMealTime) => {
     setOrderItems((prev) =>
       prev.filter(
@@ -201,9 +201,7 @@ const Page3 = ({ language = "english", username, userId }) => {
     );
   };
 
-  // Place the order by sending it to the backend
   const placeOrder = async () => {
-    // Group order items by date and meal time
     const groupedOrders = orderItems.reduce((acc, item) => {
       const key = `${item.date}-${item.mealTime}`;
       if (!acc[key]) {
@@ -215,21 +213,18 @@ const Page3 = ({ language = "english", username, userId }) => {
         };
       }
       acc[key].meals[item.mealId] =
-        (acc[key].meals[item.mealId] || 0) + item.count; // Increment meal count
+        (acc[key].meals[item.mealId] || 0) + item.count;
       const meal = allMeals.find((meal) => meal.id === item.mealId);
-      acc[key].totalPrice += meal ? meal.price * item.count : 0; // Calculate total price
+      acc[key].totalPrice += meal ? meal.price * item.count : 0;
       return acc;
     }, {});
 
-    // Send each grouped order to the backend
     try {
       for (const key in groupedOrders) {
         const { date, mealTime, meals, totalPrice } = groupedOrders[key];
-        // Format meals as array of strings (e.g., "010:2,011:1")
         const mealsArray = Object.entries(meals).map(
           ([mealId, count]) => `${mealId}:${count}`
         );
-        // Determine order date
         const now = new Date();
         const orderDate =
           date === "today"
@@ -250,7 +245,6 @@ const Page3 = ({ language = "english", username, userId }) => {
         console.log("Sending orderData to backend:", orderData);
         console.log("Order placed at:", now.toISOString());
 
-        // Send order to backend
         const response = await fetch("http://localhost:3000/orders", {
           method: "POST",
           headers: {
@@ -270,7 +264,6 @@ const Page3 = ({ language = "english", username, userId }) => {
         }
       }
 
-      // Show success message and reset state
       setShowSuccess(true);
       setTimeout(() => {
         setShowSuccess(false);
@@ -287,27 +280,28 @@ const Page3 = ({ language = "english", username, userId }) => {
     }
   };
 
-  // Render the meal selection and order interface
+  const isMealSelected = (mealId) =>
+    orderItems.some(
+      (item) =>
+        item.mealId === mealId &&
+        item.mealTime === selectedMealTime &&
+        item.date === selectedDate
+    );
+
   return (
     <Layout className={styles.layout}>
-      {/* Header with date/time and username */}
       <div className={styles.header}>
         <div className={styles.name}>B i z &nbsp; S o l u t i o n</div>
         <div className={styles.dateAndTime}>
-  <DateAndTime />
-</div>
+          <DateAndTime />
+        </div>
         <div className={styles.userName}>
-          <div>
-
-            {username.name || "Guest"}
-          </div>{" "}
-          {/* Fallback to "Guest" if no username */}
+          <div>{username.name || "Guest"}</div>
         </div>
       </div>
 
       <Content style={{ padding: 0 }}>
         {showSuccess ? (
-          // Success message card
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -326,7 +320,6 @@ const Page3 = ({ language = "english", username, userId }) => {
             </Card>
           </motion.div>
         ) : showError ? (
-          // Error message card
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -345,7 +338,6 @@ const Page3 = ({ language = "english", username, userId }) => {
             </Card>
           </motion.div>
         ) : (
-          // Main meal selection card
           <Card
             bodyStyle={{ padding: 10 }}
             title={
@@ -355,37 +347,35 @@ const Page3 = ({ language = "english", username, userId }) => {
             }
             className={styles.cardContainer}
           >
-            <Row gutter={24}>
-              {/* Meal selection section */}
-              <Col span={18}>
-                {/* Date selection buttons */}
+            <Row gutter={10}>
+              <Col span={17}>
                 <div style={{ marginBottom: 5 }}>
                   <Space.Compact className={styles.dateButtonGroup}>
                     <Button
                       type="default"
                       onClick={() => setSelectedDate("today")}
-                      className={`${styles.dateButton} ${selectedDate === "today"
+                      className={`${styles.dateButton} ${
+                        selectedDate === "today"
                           ? styles.selectedDateButton
                           : ""
-                        }`}
+                      }`}
                     >
                       {text.today} ({formatDateForDisplay(currentTime)})
                     </Button>
                     <Button
                       type="default"
                       onClick={() => setSelectedDate("tomorrow")}
-                      className={`${styles.dateButton} ${selectedDate === "tomorrow"
+                      className={`${styles.dateButton} ${
+                        selectedDate === "tomorrow"
                           ? styles.selectedDateButton
                           : ""
-                        }`}
+                      }`}
                     >
                       {text.tomorrow} ({formatDateForDisplay(getTomorrowDate())}
                       )
                     </Button>
                   </Space.Compact>
                 </div>
-
-                {/* Meal time tabs */}
                 <Tabs
                   activeKey={selectedMealTime}
                   onChange={setSelectedMealTime}
@@ -404,12 +394,13 @@ const Page3 = ({ language = "english", username, userId }) => {
                     key: mealTime,
                     label: (
                       <span
-                        className={`${styles.tabLabel} ${!isMealTimeAvailable(mealTime, selectedDate)
+                        className={`${styles.tabLabel} ${
+                          !isMealTimeAvailable(mealTime, selectedDate)
                             ? styles.unavailableTab
                             : selectedMealTime === mealTime
-                              ? styles.selectedTab
-                              : ""
-                          }`}
+                            ? styles.selectedTab
+                            : ""
+                        }`}
                       >
                         {text[mealTime]}
                       </span>
@@ -417,7 +408,7 @@ const Page3 = ({ language = "english", username, userId }) => {
                     disabled: !isMealTimeAvailable(mealTime, selectedDate),
                     children: (
                       <div className={styles.mealList}>
-                        <Row gutter={16}>
+                        <Row gutter={8}>
                           {meals.map((meal) => {
                             const isPastDue = (() => {
                               if (selectedDate === "tomorrow") return false;
@@ -442,7 +433,7 @@ const Page3 = ({ language = "english", username, userId }) => {
 
                             return (
                               <Col
-                                span={4} // Adjusted to fit 5 cards per row
+                                span={6}
                                 key={meal.id}
                                 className={styles.tabContent}
                               >
@@ -452,53 +443,50 @@ const Page3 = ({ language = "english", username, userId }) => {
                                     <img
                                       alt={
                                         meal[
-                                        `name${language.charAt(0).toUpperCase() +
-                                        language.slice(1)
-                                        }`
+                                          `name${
+                                            language.charAt(0).toUpperCase() +
+                                            language.slice(1)
+                                          }`
                                         ] || "Meal"
                                       }
                                       src={
                                         meal.imageUrl ||
                                         "https://via.placeholder.com/200"
                                       }
-                                      className={`${styles.mealImage} ${isPastDue ? styles.pastDueImage : ""
-                                        }`}
+                                      className={`${styles.mealImage} ${
+                                        isPastDue ? styles.pastDueImage : ""
+                                      }`}
                                     />
                                   }
-                                  className={`${styles.mealCard} ${isPastDue ? styles.pastDueCard : ""
-                                    }`}
-                                  onClick={() => !isPastDue && addToOrder(meal.id)} // Add click handler here
-                                  hoverable // Makes the card visually interactive on hover
+                                  className={`
+                                    ${styles.mealCard}
+                                    ${isPastDue ? styles.pastDueCard : ""}
+                                    ${
+                                      isMealSelected(meal.id)
+                                        ? styles.selectedMealCard
+                                        : ""
+                                    }
+                                  `}
+                                  onClick={() =>
+                                    !isPastDue && addToOrder(meal.id)
+                                  }
+                                  hoverable
                                 >
                                   <hr className={styles.mealCardhr} />
                                   <Card.Meta
                                     title={
                                       <div>
-                                        <div
-                                          className={styles.titleWithTooltip}
-                                        >
-                                          <Text className={styles.mealTitle}>
-                                            {meal[
-                                              `name${language
-                                                .charAt(0)
-                                                .toUpperCase() +
+                                        <Text className={styles.mealTitle}>
+                                          {meal[
+                                            `name${
+                                              language.charAt(0).toUpperCase() +
                                               language.slice(1)
-                                              }`
-                                            ] || "Unnamed Meal"}
-                                          </Text>
-                                          <Tooltip
-                                            title={
-                                              meal.description ||
-                                              "No description available"
-                                            }
-                                            placement="right"
-                                          >
-                                            <HiOutlineInformationCircle
-                                              size={22}
-                                              color="brown"
-                                              className={styles.infoIcon}
-                                            />
-                                          </Tooltip>
+                                            }`
+                                          ] || "Unnamed Meal"}
+                                        </Text>
+                                        <div className={styles.descriptionText}>
+                                          {meal.description ||
+                                            "No description available"}
                                         </div>
                                         <div className={styles.priceContainer}>
                                           <Text
@@ -511,21 +499,6 @@ const Page3 = ({ language = "english", username, userId }) => {
                                               : "0.00"}
                                           </Text>
                                         </div>
-                                        <Button
-                                          onClick={() =>
-                                            !isPastDue && addToOrder(meal.id)
-                                          }
-                                          type="primary"
-                                          block
-                                          icon={<PlusOutlined />}
-                                          className={`${styles.addButton} ${isPastDue
-                                              ? styles.disabledButton
-                                              : ""
-                                            }`}
-                                          disabled={isPastDue}
-                                        >
-                                          {text.add}
-                                        </Button>
                                       </div>
                                     }
                                   />
@@ -539,14 +512,10 @@ const Page3 = ({ language = "english", username, userId }) => {
                   }))}
                 />
               </Col>
-
-              {/* Order summary section */}
-              <Col span={6}>
+              <Col span={7}>
                 <div className={styles.orderSummaryContainer}>
                   <div className={styles.orderSummary}>
-                    <Card
-                      title={<Title level={4}>{text.yourOrder}</Title>}
-                    >
+                    <Card title={<Title level={3}>{text.yourOrder}</Title>}>
                       {orderItems.length === 0 ? (
                         <Alert
                           message={text.noMealsSelected}
@@ -571,8 +540,7 @@ const Page3 = ({ language = "english", username, userId }) => {
                             return (
                               <Col span={24} key={index}>
                                 <div className={styles.orderCard}>
-                                  <Row justify="space-between" >
-                                    {/* First Row: Meal name, price, remove button */}
+                                  <Row justify="space-between">
                                     <Col
                                       span={10}
                                       style={{ textAlign: "left" }}
@@ -580,16 +548,16 @@ const Page3 = ({ language = "english", username, userId }) => {
                                       <Text strong style={{ fontSize: 15 }}>
                                         {meal
                                           ? meal[
-                                          `name${language
-                                            .charAt(0)
-                                            .toUpperCase() +
-                                          language.slice(1)
-                                          }`
-                                          ] || "Unnamed Meal"
+                                              `name${
+                                                language
+                                                  .charAt(0)
+                                                  .toUpperCase() +
+                                                language.slice(1)
+                                              }`
+                                            ] || "Unnamed Meal"
                                           : "Meal not found"}
                                       </Text>
                                     </Col>
-
                                     <Col
                                       span={4}
                                       style={{ textAlign: "right" }}
@@ -612,7 +580,6 @@ const Page3 = ({ language = "english", username, userId }) => {
                                     gutter={[16, 16]}
                                     className={styles.secondRow}
                                   >
-                                    {/* Second Row: Date, meal time, quantity controls */}
                                     <Col className={styles.orderInfo} span={12}>
                                       <Badge
                                         status="processing"
@@ -646,11 +613,9 @@ const Page3 = ({ language = "english", username, userId }) => {
                                         >
                                           -
                                         </Button>
-                                        <Badge
-                                          status="default"
-                                          text={`${item.count}`}
-                                          className={styles.itemCountBadge}
-                                        />
+                                        <Text className={styles.itemCountBadge}>
+                                          {item.count}
+                                        </Text>
                                         <Button
                                           type="text"
                                           onClick={() =>
@@ -665,22 +630,19 @@ const Page3 = ({ language = "english", username, userId }) => {
                                           +
                                         </Button>
                                       </div>
-                                      <div
-                                        className={styles.priceDiv}
-
-                                      >
+                                      <div className={styles.priceDiv}>
                                         <Text strong>
                                           Rs.
                                           {meal
                                             ? (meal.price * item.count).toFixed(
-                                              2
-                                            )
+                                                2
+                                              )
                                             : "0.00"}
                                         </Text>
                                       </div>
                                     </Col>
                                   </Row>
-                                  <hr style={{ margin: '20px 0px 5px 0px' }} />
+                                  <hr style={{ margin: "20px 0px 5px 0px" }} />
                                 </div>
                               </Col>
                             );
@@ -689,24 +651,23 @@ const Page3 = ({ language = "english", username, userId }) => {
                       )}
                     </Card>
                   </div>
-                  {/* Place order button */}
                   <Button
                     type="primary"
                     block
                     size="large"
                     onClick={placeOrder}
                     disabled={orderItems.length === 0}
-                    className={`${styles.placeOrderButton} ${orderItems.length === 0
+                    className={`${styles.placeOrderButton} ${
+                      orderItems.length === 0
                         ? styles.disabledButton
                         : styles.enabledButton
-                      }`}
+                    }`}
                   >
                     {text.placeOrder}
                   </Button>
-                  {/* Total and back button */}
                   <div className={styles.totalContainer}>
                     <Text strong>
-                      Total: Rs. 
+                      Total: Rs.
                       {orderItems
                         .reduce((total, item) => {
                           const meal = allMeals.find(
@@ -717,9 +678,8 @@ const Page3 = ({ language = "english", username, userId }) => {
                         .toFixed(2)}
                     </Text>
                     <Button
-
                       onClick={() => {
-                        window.location.reload();
+                        carouselRef.current.goTo(0);
                       }}
                       className={styles.backButton}
                     >
@@ -736,5 +696,4 @@ const Page3 = ({ language = "english", username, userId }) => {
   );
 };
 
-// Export the Page3 component
 export default Page3;
