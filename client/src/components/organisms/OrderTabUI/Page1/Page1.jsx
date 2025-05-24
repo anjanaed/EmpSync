@@ -1,5 +1,7 @@
 import React from 'react';
 import { Typography, Card } from 'antd';
+import { MdLanguage } from "react-icons/md";
+
 import styles from './Page1.module.css'; // Import CSS module for styling
 import DateAndTime from '../DateAndTime/DateAndTime'; // Import DateAndTime component
 
@@ -29,30 +31,30 @@ const Page1 = ({ carouselRef, setLanguage }) => {
     // Render the welcome page
     return (
         <div className={styles.mainbox}>
-            {/* Greeting section */}
-            <div>
+            {/* <div>
                 <br />
                 <Typography.Title level={2} className={styles.getGreeting}>
                     {getGreeting()}
                 </Typography.Title>
-            </div>
-            {/* Main title */}
-            <div>
+            </div> */}
+            {/* <div>
                 <Typography.Title level={1} className={styles.mainTitle1}>
                     Welcome to Helix Food Ordering
                 </Typography.Title>
-            </div>
+            </div> */}
             {/* Date and time display */}
-            <div>
+            {/* <div>
                 <DateAndTime />
-            </div>
+            </div> */}
             <br />
             {/* Language selection card */}
+                            <MdLanguage color='#ababab' size={125}/>
+
             <div>
                 <Card className={styles.cardStyle}>
                     <div className={styles.cardPartl}>
                         <Typography.Title level={2} className={styles.getGreeting}>
-                            Select your language | භාෂාව තෝරන්න | மொழியை தேர்ந்தெடுக்கவும்
+                            Select Your Language | භාෂාව තෝරන්න <br/> மொழியை தேர்ந்தெடுக்கவும்
                         </Typography.Title>
                         <br /><br />
                         {/* Language selection buttons */}

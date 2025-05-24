@@ -2,8 +2,8 @@ const translations = {
     english: {
         orderSuccess: "Your order has been placed successfully!",
         orderFailed: "Failed to place your order. Please try again.",
-        title: "Order Your Meal",
-        back: "Change Language",
+        title: "Place Your Order",
+        back: "English",
         today: "Today",
         tomorrow: "Tomorrow",
         breakfast: "Breakfast",

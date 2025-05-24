@@ -88,8 +88,8 @@
 }
 
 :global(.ant-input-group-addon) {
-  font-size: 1px !important; 
-  margin: 0px 4px !important; 
+  font-size: 1px !important;
+  margin: 0px 4px !important;
 }
 
 :global(.ant-form-item-explain-error) {
@@ -150,7 +150,7 @@
     font-size: 22px;
     margin-bottom: 1vw;
   }
-  body{
+  body {
     font-size: 8px;
   }
 }
