@@ -210,7 +210,7 @@ const Page2 = ({
   return (
     <Spin spinning={loading} tip="Loading...">
       {/* ESP32 Connect Button */}
-      <div style={{ textAlign: "center", marginBottom: 16 }}>
+      <div className={styles.esp32ButtonContainer}>
         <button
           onClick={connectToESP32}
           disabled={esp32Connected}

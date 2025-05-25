@@ -221,3 +221,11 @@
   text-align: center;
   font-size: 1.2rem;
 }
+
+.esp32ButtonContainer {
+  position: fixed;
+  bottom: 24px;
+
+  margin-left: 20px;
+  margin-bottom: -15px;
+}
