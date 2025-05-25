@@ -4,7 +4,7 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { DatabaseService } from '../../database/database.service';
-import { startOfDay, endOfDay } from 'date-fns';
+import { startOfDay, endOfDay, addDays, subMinutes, addMinutes, parseISO } from 'date-fns';
 
 @Injectable()
 export class MealTypeService {
@@ -82,7 +82,7 @@ export class MealTypeService {
           OR: [
             { isDefault: true },
             {
-              createdAt: {
+              date: {
                 gte: todayStart,
                 lte: todayEnd,
               },
@@ -97,7 +97,12 @@ export class MealTypeService {
   }
 
   // Create a new meal type
-  async create(name: string, time?: string[] | string, isDefault?: boolean) {
+  async create(
+    name: string,
+    time?: string[] | string,
+    isDefault?: boolean,
+    date?: Date | string
+  ) {
     try {
       // Always store time as an array of strings
       let timeArr: string[] | undefined = undefined;
@@ -108,12 +113,22 @@ export class MealTypeService {
           timeArr = [time];
         }
       }
+
+      // Prepare the data object
+      const data: any = {
+        name,
+        time: timeArr,
+        isDefault: isDefault ?? false,
+        date: date
+      };
+
+      // If date is provided, add it to the data object
+      if (date) {
+        data.date = new Date(date);
+      }
+
       return this.databaseService.mealType.create({
-        data: {
-          name,
-          time: timeArr,
-          isDefault: isDefault ?? false,
-        },
+        data,
       });
     } catch (error) {
       throw new BadRequestException(
@@ -197,6 +212,96 @@ export class MealTypeService {
         throw error;
       }
       throw new BadRequestException(error.message);
+    }
+  }
+
+  // Get meal types created today and tomorrow
+  async findTodayAndTomorrow() {
+    try {
+      // Shift current time by +5:30 (330 minutes) to get IST "now"
+      const nowIST = addMinutes(new Date(), 330);
+
+      // Calculate IST day boundaries, then convert back to UTC for querying
+      const todayStartIST = startOfDay(nowIST);
+      const todayEndIST = endOfDay(nowIST);
+      const tomorrowStartIST = startOfDay(addDays(nowIST, 1));
+      const tomorrowEndIST = endOfDay(addDays(nowIST, 1));
+
+      // Convert IST boundaries back to UTC for DB query
+      const todayStartUTC = subMinutes(todayStartIST, 330);
+      const todayEndUTC = subMinutes(todayEndIST, 330);
+      const tomorrowStartUTC = subMinutes(tomorrowStartIST, 330);
+      const tomorrowEndUTC = subMinutes(tomorrowEndIST, 330);
+
+      const todayMeals = await this.databaseService.mealType.findMany({
+        where: {
+          OR: [
+            { isDefault: true },
+            {
+              date: {
+                gte: todayStartUTC,
+                lte: todayEndUTC,
+              },
+            },
+          ],
+        },
+        orderBy: { name: 'asc' },
+      });
+
+      const tomorrowMeals = await this.databaseService.mealType.findMany({
+        where: {
+          OR: [
+            { isDefault: true },
+            {
+              date: {
+                gte: tomorrowStartUTC,
+                lte: tomorrowEndUTC,
+              },
+            },
+          ],
+        },
+        orderBy: { name: 'asc' },
+      });
+
+      return [todayMeals, tomorrowMeals];
+    } catch (error) {
+      throw new BadRequestException(
+        'Failed to retrieve today and tomorrow meal types',
+      );
+    }
+  }
+
+  // Get meal types created at a specific date (IST) and all default meals
+  async findByDateOrDefault(dateString: string) {
+    try {
+      // Parse the date string (e.g., "2024-05-25") as IST
+      // Shift to IST by adding 5:30 (330 minutes)
+      const dateIST = addMinutes(parseISO(dateString), 330);
+
+      // Get start and end of the day in IST, then convert back to UTC
+      const dayStartIST = startOfDay(dateIST);
+      const dayEndIST = endOfDay(dateIST);
+      const dayStartUTC = subMinutes(dayStartIST, 330);
+      const dayEndUTC = subMinutes(dayEndIST, 330);
+
+      const meals = await this.databaseService.mealType.findMany({
+        where: {
+          OR: [
+            { isDefault: true },
+            {
+              date: {
+                gte: dayStartUTC,
+                lte: dayEndUTC,
+              },
+            },
+          ],
+        },
+        orderBy: { name: 'asc' },
+      });
+
+      return meals;
+    } catch (error) {
+      throw new BadRequestException('Failed to retrieve meal types for the given date');
     }
   }
 }

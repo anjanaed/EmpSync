@@ -25,6 +25,16 @@ export class MealTypeController {
     return this.mealTypeService.findDefaults();
   }
 
+  @Get('fetch')
+  async fetchTodayAndTomorrow() {
+    return this.mealTypeService.findTodayAndTomorrow();
+  }
+
+  @Get('by-date/:date')
+  async findByDateOrDefault(@Param('date') date: string) {
+    return this.mealTypeService.findByDateOrDefault(date);
+  }
+
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.mealTypeService.findOne(id);
@@ -46,9 +56,9 @@ export class MealTypeController {
   }
 
   @Patch(':id/toggle-default')
-async toggleDefault(@Param('id', ParseIntPipe) id: number) {
-  return this.mealTypeService.toggleIsDefault(id);
-}
+  async toggleDefault(@Param('id', ParseIntPipe) id: number) {
+    return this.mealTypeService.toggleIsDefault(id);
+  }
 
   @Patch(':id')
   update(

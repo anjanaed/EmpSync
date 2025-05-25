@@ -7,28 +7,21 @@ import {
   Badge,
   Row,
   Col,
-  Tooltip,
   Typography,
   Layout,
   Alert,
   Space,
 } from "antd";
 import {
-  LeftOutlined,
-  InfoCircleOutlined,
-  FilterOutlined,
-  PlusOutlined,
   CheckCircleOutlined,
   CloseOutlined,
+
 } from "@ant-design/icons";
 import { motion } from "framer-motion";
-import { IoClose } from "react-icons/io5";
-import { MdLanguage } from "react-icons/md";
-import { RiAiGenerate } from "react-icons/ri";
-import { HiOutlineInformationCircle } from "react-icons/hi2";
 import styles from "./Page3.module.css";
 import DateAndTime from "../DateAndTime/DateAndTime";
 import translations from "../../../../utils/translations";
+import axios from "axios";
 
 const { Content } = Layout;
 const { Title, Text } = Typography;
@@ -37,11 +30,12 @@ const Page3 = ({ language = "english", username, userId, carouselRef }) => {
   const navigate = useNavigate();
   const [currentTime, setCurrentTime] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState("today");
-  const [selectedMealTime, setSelectedMealTime] = useState("breakfast");
+  const [selectedMealTime, setSelectedMealTime] = useState(null);
   const [orderItems, setOrderItems] = useState([]);
   const [showSuccess, setShowSuccess] = useState(false);
   const [showError, setShowError] = useState(false);
   const [meals, setMeals] = useState([]);
+  const [mealTime, setMealTime] = useState([[], []]); // [[todayMealTypes], [tomorrowMealTypes]]
   const [allMeals, setAllMeals] = useState([]);
   const text = translations[language];
 
@@ -50,17 +44,54 @@ const Page3 = ({ language = "english", username, userId, carouselRef }) => {
       setCurrentTime(new Date());
     }, 1000);
 
-    const determineMealTime = () => {
-      const currentHour = new Date().getHours();
-      if (currentHour < 10) return "breakfast";
-      else if (currentHour < 15) return "lunch";
-      else if (currentHour < 22) return "dinner";
-      else return "breakfast";
+    const fetchAndDetermineMealTime = async () => {
+      try {
+        const res = await axios.get(`http://localhost:3000/meal-types/fetch`);
+        setMealTime(res.data || [[], []]); // Set default to [[], []] if null
+        const todayMeals = res.data[0] || [];
+        console.log(res)
+
+        const now = new Date();
+        const currentMinutes = now.getHours() * 60 + now.getMinutes();
+
+        for (const meal of todayMeals) {
+          if (!meal.time || meal.time.length < 2) continue;
+
+          const [startStr, endStr] = meal.time;
+          const [startHour, startMinute] = startStr.split(":").map(Number);
+          const [endHour, endMinute] = endStr.split(":").map(Number);
+
+          const startMinutes = startHour * 60 + startMinute;
+          const endMinutes = endHour * 60 + endMinute;
+
+          if (currentMinutes >= startMinutes && currentMinutes <= endMinutes) {
+            return meal.id; // Return the meal type ID
+          }
+        }
+
+        // Default to first meal type if available, otherwise null
+        return todayMeals.length > 0 ? todayMeals[0].id : null;
+      } catch (error) {
+        console.error("Error fetching meal times:", error);
+        setMealTime([[], []]);
+        return null;
+      }
     };
 
-    setSelectedMealTime(determineMealTime());
+    fetchAndDetermineMealTime().then((mealTimeId) => {
+      setSelectedMealTime(mealTimeId);
+    });
+
     return () => clearInterval(timer);
   }, []);
+
+  useEffect(() => {
+    // Set default selectedMealTime when switching dates
+    const availableMealTimes = selectedDate === "today" ? mealTime[0] : mealTime[1];
+    if (availableMealTimes.length > 0 && !availableMealTimes.some(meal => meal.id === selectedMealTime)) {
+      setSelectedMealTime(availableMealTimes[0].id);
+    }
+  }, [selectedDate, mealTime]);
 
   useEffect(() => {
     const fetchMeals = async () => {
@@ -103,18 +134,10 @@ const Page3 = ({ language = "english", username, userId, carouselRef }) => {
       }
     };
 
-    fetchMeals();
+    if (selectedMealTime) {
+      fetchMeals();
+    }
   }, [selectedDate, selectedMealTime]);
-
-  useEffect(() => {
-    const clearLocalStorageOnRefresh = () => {
-      localStorage.clear();
-    };
-
-    window.addEventListener("beforeunload", clearLocalStorageOnRefresh);
-    return () =>
-      window.removeEventListener("beforeunload", clearLocalStorageOnRefresh);
-  }, []);
 
   const formatDateForDisplay = (date) => date.toLocaleDateString();
 
@@ -124,13 +147,20 @@ const Page3 = ({ language = "english", username, userId, carouselRef }) => {
     return tomorrow;
   };
 
-  const isMealTimeAvailable = (mealTime, date) => {
+  const isMealTimeAvailable = (mealTimeItem, date) => {
     if (date !== "today") return true;
-    const currentHour = currentTime.getHours();
-    if (mealTime === "breakfast") return currentHour < 10;
-    if (mealTime === "lunch") return currentHour < 15;
-    if (mealTime === "dinner") return currentHour < 22;
-    return false;
+    if (!mealTimeItem.time || mealTimeItem.time.length < 2) return false;
+
+    const now = new Date();
+    const currentMinutes = now.getHours() * 60 + now.getMinutes();
+    const [startStr, endStr] = mealTimeItem.time;
+    const [startHour, startMinute] = startStr.split(":").map(Number);
+    const [endHour, endMinute] = endStr.split(":").map(Number);
+
+    const startMinutes = startHour * 60 + startMinute;
+    const endMinutes = endHour * 60 + endMinute;
+
+    return currentMinutes <= endMinutes;
   };
 
   const addToOrder = (mealId, date = selectedDate) => {
@@ -235,9 +265,7 @@ const Page3 = ({ language = "english", username, userId, carouselRef }) => {
           employeeId: userId,
           meals: mealsArray,
           orderDate,
-          breakfast: mealTime === "breakfast",
-          lunch: mealTime === "lunch",
-          dinner: mealTime === "dinner",
+          mealTimeId: mealTime, // Use mealTime ID instead of fixed flags
           price: totalPrice,
           serve: false,
         };
@@ -291,7 +319,7 @@ const Page3 = ({ language = "english", username, userId, carouselRef }) => {
   return (
     <Layout className={styles.layout}>
       <div className={styles.header}>
-        <div className={styles.name}>B i z &nbsp; S o l u t i o n</div>
+        <div className={styles.name}>B i z   S o l u t i o n</div>
         <div className={styles.dateAndTime}>
           <DateAndTime />
         </div>
@@ -355,9 +383,7 @@ const Page3 = ({ language = "english", username, userId, carouselRef }) => {
                       type="default"
                       onClick={() => setSelectedDate("today")}
                       className={`${styles.dateButton} ${
-                        selectedDate === "today"
-                          ? styles.selectedDateButton
-                          : ""
+                        selectedDate === "today" ? styles.selectedDateButton : ""
                       }`}
                     >
                       {text.today} ({formatDateForDisplay(currentTime)})
@@ -366,13 +392,10 @@ const Page3 = ({ language = "english", username, userId, carouselRef }) => {
                       type="default"
                       onClick={() => setSelectedDate("tomorrow")}
                       className={`${styles.dateButton} ${
-                        selectedDate === "tomorrow"
-                          ? styles.selectedDateButton
-                          : ""
+                        selectedDate === "tomorrow" ? styles.selectedDateButton : ""
                       }`}
                     >
-                      {text.tomorrow} ({formatDateForDisplay(getTomorrowDate())}
-                      )
+                      {text.tomorrow} ({formatDateForDisplay(getTomorrowDate())})
                     </Button>
                   </Space.Compact>
                 </div>
@@ -383,133 +406,103 @@ const Page3 = ({ language = "english", username, userId, carouselRef }) => {
                   tabBarExtraContent={
                     <Button
                       type="default"
-                      icon={<RiAiGenerate />}
+                      icon={<CloseOutlined />}
                       onClick={() => console.log("Filter button clicked")}
                       className={styles.filterButton}
                     >
                       Suggestions
                     </Button>
                   }
-                  items={["breakfast", "lunch", "dinner"].map((mealTime) => ({
-                    key: mealTime,
-                    label: (
-                      <span
-                        className={`${styles.tabLabel} ${
-                          !isMealTimeAvailable(mealTime, selectedDate)
-                            ? styles.unavailableTab
-                            : selectedMealTime === mealTime
-                            ? styles.selectedTab
-                            : ""
-                        }`}
-                      >
-                        {text[mealTime]}
-                      </span>
-                    ),
-                    disabled: !isMealTimeAvailable(mealTime, selectedDate),
-                    children: (
-                      <div className={styles.mealList}>
-                        <Row gutter={8}>
-                          {meals.map((meal) => {
-                            const isPastDue = (() => {
-                              if (selectedDate === "tomorrow") return false;
-                              const currentHour = currentTime.getHours();
-                              if (
-                                selectedMealTime === "breakfast" &&
-                                currentHour >= 10
-                              )
-                                return true;
-                              if (
-                                selectedMealTime === "lunch" &&
-                                currentHour >= 15
-                              )
-                                return true;
-                              if (
-                                selectedMealTime === "dinner" &&
-                                currentHour >= 22
-                              )
-                                return true;
-                              return false;
-                            })();
+                  items={(selectedDate === "today" ? mealTime[0] : mealTime[1] || []).map(
+                    (mealTimeItem) => {
+                      const isAvailable = isMealTimeAvailable(mealTimeItem, selectedDate);
+                      const isSelected = selectedMealTime === mealTimeItem.id;
 
-                            return (
-                              <Col
-                                span={6}
-                                key={meal.id}
-                                className={styles.tabContent}
-                              >
-                                <Card
-                                  bodyStyle={{ padding: 5 }}
-                                  cover={
-                                    <img
-                                      alt={
-                                        meal[
-                                          `name${
-                                            language.charAt(0).toUpperCase() +
-                                            language.slice(1)
-                                          }`
-                                        ] || "Meal"
+                      return {
+                        key: mealTimeItem.id,
+                        label: (
+                          <span
+                            className={`${styles.tabLabel} ${
+                              !isAvailable
+                                ? styles.unavailableTab
+                                : isSelected
+                                ? styles.selectedTab
+                                : ""
+                            }`}
+                          >
+                            {text[mealTimeItem.name] || mealTimeItem.name}
+                          </span>
+                        ),
+                        disabled: !isAvailable,
+                        children: (
+                          <div className={styles.mealList}>
+                            <Row gutter={8}>
+                              {meals.map((meal) => {
+                                const isPastDue = (() => {
+                                  if (selectedDate === "tomorrow") return false;
+                                  if (!mealTimeItem.time || mealTimeItem.time.length < 2) return true;
+                                  const now = new Date();
+                                  const currentMinutes = now.getHours() * 60 + now.getMinutes();
+                                  const [startStr, endStr] = mealTimeItem.time;
+                                  const [startHour, startMinute] = startStr.split(":").map(Number);
+                                  const [endHour, endMinute] = endStr.split(":").map(Number);
+                                  const endMinutes = endHour * 60 + endMinute;
+                                  return currentMinutes > endMinutes;
+                                })();
+
+                                return (
+                                  <Col span={6} key={meal.id} className={styles.tabContent}>
+                                    <Card
+                                      bodyStyle={{ padding: 5 }}
+                                      cover={
+                                        <img
+                                          alt={
+                                            meal[
+                                              `name${language.charAt(0).toUpperCase() + language.slice(1)}`
+                                            ] || "Meal"
+                                          }
+                                          src={meal.imageUrl || "https://via.placeholder.com/200"}
+                                          className={`${styles.mealImage} ${isPastDue ? styles.pastDueImage : ""}`}
+                                        />
                                       }
-                                      src={
-                                        meal.imageUrl ||
-                                        "https://via.placeholder.com/200"
-                                      }
-                                      className={`${styles.mealImage} ${
-                                        isPastDue ? styles.pastDueImage : ""
-                                      }`}
-                                    />
-                                  }
-                                  className={`
-                                    ${styles.mealCard}
-                                    ${isPastDue ? styles.pastDueCard : ""}
-                                    ${
-                                      isMealSelected(meal.id)
-                                        ? styles.selectedMealCard
-                                        : ""
-                                    }
-                                  `}
-                                  onClick={() =>
-                                    !isPastDue && addToOrder(meal.id)
-                                  }
-                                  hoverable
-                                >
-                                  <hr className={styles.mealCardhr} />
-                                  <Card.Meta
-                                    title={
-                                      <div>
-                                        <Text className={styles.mealTitle}>
-                                          {meal[
-                                            `name${
-                                              language.charAt(0).toUpperCase() +
-                                              language.slice(1)
-                                            }`
-                                          ] || "Unnamed Meal"}
-                                        </Text>
-                                        <div className={styles.descriptionText}>
-                                          {meal.description ||
-                                            "No description available"}
-                                        </div>
-                                        <div className={styles.priceContainer}>
-                                          <Text
-                                            strong
-                                            className={styles.priceText}
-                                          >
-                                            Rs.
-                                            {meal.price
-                                              ? meal.price.toFixed(2)
-                                              : "0.00"}
-                                          </Text>
-                                        </div>
-                                      </div>
-                                    }
-                                  />
-                                </Card>
-                              </Col>
-                            );
-                          })}
-                        </Row>
-                      </div>
-                    ),
-                  }))}
+                                      className={`
+                                        ${styles.mealCard}
+                                        ${isPastDue ? styles.pastDueCard : ""}
+                                        ${isMealSelected(meal.id) ? styles.selectedMealCard : ""}
+                                      `}
+                                      onClick={() => !isPastDue && addToOrder(meal.id)}
+                                      hoverable
+                                    >
+                                      <hr className={styles.mealCardhr} />
+                                      <Card.Meta
+                                        title={
+                                          <div>
+                                            <Text className={styles.mealTitle}>
+                                              {meal[
+                                                `name${language.charAt(0).toUpperCase() + language.slice(1)}`
+                                              ] || "Unnamed Meal"}
+                                            </Text>
+                                            <div className={styles.descriptionText}>
+                                              {meal.description || "No description available"}
+                                            </div>
+                                            <div className={styles.priceContainer}>
+                                              <Text strong className={styles.priceText}>
+                                                Rs. {meal.price ? meal.price.toFixed(2) : "0.00"}
+                                              </Text>
+                                            </div>
+                                          </div>
+                                        }
+                                      />
+                                    </Card>
+                                  </Col>
+                                );
+                              })}
+                            </Row>
+                          </div>
+                        ),
+                      };
+                    }
+                  )}
                 />
               </Col>
               <Col span={7}>
@@ -517,11 +510,7 @@ const Page3 = ({ language = "english", username, userId, carouselRef }) => {
                   <div className={styles.orderSummary}>
                     <Card title={<Title level={3}>{text.yourOrder}</Title>}>
                       {orderItems.length === 0 ? (
-                        <Alert
-                          message={text.noMealsSelected}
-                          type="info"
-                          showIcon
-                        />
+                        <Alert message={text.noMealsSelected} type="info" showIcon />
                       ) : (
                         <Row gutter={[16, 16]}>
                           {Object.entries(
@@ -534,38 +523,25 @@ const Page3 = ({ language = "english", username, userId, carouselRef }) => {
                               return acc;
                             }, {})
                           ).map(([key, item], index) => {
-                            const meal = allMeals.find(
-                              (meal) => meal.id === item.mealId
-                            );
+                            const meal = allMeals.find((meal) => meal.id === item.mealId);
                             return (
                               <Col span={24} key={index}>
                                 <div className={styles.orderCard}>
                                   <Row justify="space-between">
-                                    <Col
-                                      span={10}
-                                      style={{ textAlign: "left" }}
-                                    >
+                                    <Col span={10} style={{ textAlign: "left" }}>
                                       <Text strong style={{ fontSize: 15 }}>
                                         {meal
                                           ? meal[
-                                              `name${
-                                                language
-                                                  .charAt(0)
-                                                  .toUpperCase() +
-                                                language.slice(1)
-                                              }`
+                                              `name${language.charAt(0).toUpperCase() + language.slice(1)}`
                                             ] || "Unnamed Meal"
                                           : "Meal not found"}
                                       </Text>
                                     </Col>
-                                    <Col
-                                      span={4}
-                                      style={{ textAlign: "right" }}
-                                    >
+                                    <Col span={4} style={{ textAlign: "right" }}>
                                       <Button
                                         className={styles.removeButton}
                                         type="text"
-                                        icon={<IoClose size={20} color="red" />}
+                                        icon={<CloseOutlined size={20} color="red" />}
                                         onClick={() =>
                                           disappearFromOrder(
                                             orderItems[index].mealId,
@@ -576,55 +552,39 @@ const Page3 = ({ language = "english", username, userId, carouselRef }) => {
                                       />
                                     </Col>
                                   </Row>
-                                  <Row
-                                    gutter={[16, 16]}
-                                    className={styles.secondRow}
-                                  >
+                                  <Row gutter={[16, 16]} className={styles.secondRow}>
                                     <Col className={styles.orderInfo} span={12}>
                                       <Badge
                                         status="processing"
-                                        text={
-                                          item.date === "today"
-                                            ? text.today
-                                            : text.tomorrow
-                                        }
+                                        text={item.date === "today" ? text.today : text.tomorrow}
                                       />
                                       <Badge
                                         status="success"
-                                        text={text[item.mealTime]}
+                                        text={
+                                          text[
+                                            (selectedDate === "today" ? mealTime[0] : mealTime[1]).find(
+                                              (m) => m.id === item.mealTime
+                                            )?.name
+                                          ] || item.mealTime
+                                        }
                                         className={styles.mealTimeBadge}
                                       />
                                     </Col>
-                                    <Col
-                                      span={12}
-                                      className={styles.rightAligned}
-                                    >
+                                    <Col span={12} className={styles.rightAligned}>
                                       <div className={styles.counter}>
                                         <Button
                                           type="text"
                                           onClick={() =>
-                                            removeFromOrder(
-                                              meal.id,
-                                              item.date,
-                                              item.mealTime
-                                            )
+                                            removeFromOrder(meal.id, item.date, item.mealTime)
                                           }
                                           className={styles.actionButton}
                                         >
                                           -
                                         </Button>
-                                        <Text className={styles.itemCountBadge}>
-                                          {item.count}
-                                        </Text>
+                                        <Text className={styles.itemCountBadge}>{item.count}</Text>
                                         <Button
                                           type="text"
-                                          onClick={() =>
-                                            addToOrder2(
-                                              meal.id,
-                                              item.date,
-                                              item.mealTime
-                                            )
-                                          }
+                                          onClick={() => addToOrder2(meal.id, item.date, item.mealTime)}
                                           className={styles.actionButton}
                                         >
                                           +
@@ -632,12 +592,7 @@ const Page3 = ({ language = "english", username, userId, carouselRef }) => {
                                       </div>
                                       <div className={styles.priceDiv}>
                                         <Text strong>
-                                          Rs.
-                                          {meal
-                                            ? (meal.price * item.count).toFixed(
-                                                2
-                                              )
-                                            : "0.00"}
+                                          Rs. {meal ? (meal.price * item.count).toFixed(2) : "0.00"}
                                         </Text>
                                       </div>
                                     </Col>
@@ -658,9 +613,7 @@ const Page3 = ({ language = "english", username, userId, carouselRef }) => {
                     onClick={placeOrder}
                     disabled={orderItems.length === 0}
                     className={`${styles.placeOrderButton} ${
-                      orderItems.length === 0
-                        ? styles.disabledButton
-                        : styles.enabledButton
+                      orderItems.length === 0 ? styles.disabledButton : styles.enabledButton
                     }`}
                   >
                     {text.placeOrder}
@@ -670,9 +623,7 @@ const Page3 = ({ language = "english", username, userId, carouselRef }) => {
                       Total: Rs.
                       {orderItems
                         .reduce((total, item) => {
-                          const meal = allMeals.find(
-                            (meal) => meal.id === item.mealId
-                          );
+                          const meal = allMeals.find((meal) => meal.id === item.mealId);
                           return total + (meal ? meal.price : 0);
                         }, 0)
                         .toFixed(2)}
@@ -683,7 +634,7 @@ const Page3 = ({ language = "english", username, userId, carouselRef }) => {
                       }}
                       className={styles.backButton}
                     >
-                      <MdLanguage size={20} /> <div>{text.back}</div>
+                      <CloseOutlined size={20} /> <div>{text.back}</div>
                     </Button>
                   </div>
                 </div>

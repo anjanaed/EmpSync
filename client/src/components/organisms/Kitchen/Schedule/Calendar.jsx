@@ -56,23 +56,21 @@ const MealPlanner = () => {
   const [scheduledMeals, setScheduledMeals] = useState({});
   const [loadingSchedules, setLoadingSchedules] = useState(false);
 
-  const fetchDefaultMeals = async () => {
-    try {
-      const response = await fetch(`${urL}/meal-types/defaults`);
-      const data = await response.json();
-      setDefaultMeals(data);
-      // Set default active tab to first meal type if available
-      if (data.length > 0) {
-        setActiveTab(data[0].id);
-        setActiveMealType(data[0]);
-        console.log(`Initial meal type set to: ${data[0].name}`);
-      }
-    } catch (error) {
-      console.error("Error fetching default meals:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+const fetchDefaultMeals = async (date) => {
+  try {
+    const formattedDate = date.format("YYYY-MM-DD");
+    const response = await fetch(`${urL}/meal-types/by-date/${formattedDate}`);
+    console.log(response);
+    const data = await response.json();
+    setDefaultMeals(data);
+    // Set default active tab to first meal type if available
+
+  } catch (error) {
+    console.error("Error fetching default meals:", error);
+  } finally {
+    setLoading(false);
+  }
+};
 
   const fetchAvailableMeals = async () => {
     setFetchingMeals(true);
@@ -129,7 +127,7 @@ const MealPlanner = () => {
     if (!activeTab || !currentDate) return;
     
     try {
-      const formattedDate = currentDate.format('YYYY-MM-DD');
+      const formattedDate = currentDate.format("YYYY-MM-DD");
       const response = await axios.get(`${urL}/schedule`, {
         params: {
           date: formattedDate,
@@ -247,9 +245,10 @@ const MealPlanner = () => {
             values.endTime ? values.endTime.format("HH:mm") : null,
           ],
           isDefault: values.isDefault,
+          date:currentDate.format("YYYY-MM-DD"),
         };
         await axios.post(`${urL}/meal-types`, payload);
-        await fetchDefaultMeals();
+        await fetchDefaultMeals(currentDate);
       } catch (err) {
         console.log(err);
       } finally {
@@ -348,8 +347,9 @@ const MealPlanner = () => {
   };
 
   useEffect(() => {
-    fetchDefaultMeals();
-  }, []);
+    fetchDefaultMeals(currentDate);
+    console.log(currentDate.format("YYYY-MM-DD"));
+  }, [currentDate]);
 
   // Update activeMealType when activeTab or defaultMeals change
   useEffect(() => {

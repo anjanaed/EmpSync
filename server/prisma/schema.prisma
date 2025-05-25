@@ -26,7 +26,7 @@ model User {
   email      String       @unique
   password   String
   salary     Int?
-  thumbId    Bytes?       @unique
+  thumbId    Int?       @unique
   supId      String?
   language   String?
   height     Int?
@@ -188,5 +188,5 @@ model MealType{
   time String[] // Optional time in HH:MM format
   isDefault Boolean @default(false) // To mark system defaults
   schedules ScheduledMeal[]
-  createdAt DateTime @default(now())
+  date DateTime 
 }
