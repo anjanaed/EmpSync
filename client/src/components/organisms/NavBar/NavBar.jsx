@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 import styles from "./NavBar.module.css";
 import { MenuOutlined, LogoutOutlined } from "@ant-design/icons";
-import { UserOutlined } from "@ant-design/icons";
+import { UserOutlined, BulbOutlined, MoonOutlined } from "@ant-design/icons";
 import { Button, Layout, Menu, ConfigProvider, Dropdown, Avatar } from "antd";
 import img from "../../../assets/Logo/logo.png";
+import imgWhite from "../../../assets/Logo/LOgowhite.png"; // Add this line
 import { useNavigate } from "react-router-dom";
 import Loading from "../../atoms/loading/loading";
 import { useAuth } from "../../../contexts/AuthContext";
+import { useDarkMode } from "../../../contexts/DarkModeContext"; // Import context
 const { Sider } = Layout;
 
 const roleDisplayMap = {
@@ -40,6 +42,7 @@ const NavBar = ({ Comp, titleLines = [], menuItems = [] }) => {
   const [currentUser, setCurrentUser] = useState("null");
   const navigate = useNavigate();
   const { authData, logout, authLoading } = useAuth();
+  const { darkMode, toggleDarkMode } = useDarkMode(); // Use context
 
   // Ensure hooks are always called
   useEffect(() => {
@@ -71,6 +74,10 @@ const NavBar = ({ Comp, titleLines = [], menuItems = [] }) => {
     logout();
     setCurrentUser(null);
     navigate("/login");
+  };
+
+  const handleToggleDarkMode = () => {
+    toggleDarkMode();
   };
 
   const dropdownItems = [
@@ -123,7 +130,7 @@ const NavBar = ({ Comp, titleLines = [], menuItems = [] }) => {
   }));
 
   return (
-    <div className={styles.main}>
+    <div className={`${styles.main} ${darkMode ? styles.dark : ""}`}>
       <ConfigProvider theme={customTheme}>
         <Sider
           className={styles.sider}
@@ -147,11 +154,31 @@ const NavBar = ({ Comp, titleLines = [], menuItems = [] }) => {
         <div className={styles.headerContent}>
           <Button
             type="text"
-            icon={<MenuOutlined />}
+            icon={
+              <MenuOutlined style={{ color: darkMode ? "#fff" : undefined }} />
+            }
             onClick={() => setCollapsed(!collapsed)}
             style={{ fontSize: "16px", width: 55, height: 55 }}
           />
-          <img className={styles.logo} src={img} alt="Logo" />
+          <img
+            className={styles.logo}
+            src={darkMode ? imgWhite : img}
+            alt="Logo"
+          />
+          <Button
+            type="text"
+            icon={
+              darkMode ? (
+                <BulbOutlined style={{ color: "#fff" }} />
+              ) : (
+                <MoonOutlined />
+              )
+            }
+            onClick={handleToggleDarkMode}
+            className={styles.darkModeBtn}
+            style={{ fontSize: "20px", marginLeft: 12 }}
+            aria-label="Toggle dark mode"
+          />
           <Dropdown
             menu={{ items: dropdownItems }}
             placement="bottomRight"

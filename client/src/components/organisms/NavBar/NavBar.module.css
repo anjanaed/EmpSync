@@ -92,6 +92,8 @@
   display: flex;
   height: 100vh;
   overflow: hidden;
+  background: #ffffff;
+  color: #222;
 }
 
 .homeContent {
@@ -147,7 +149,6 @@
   padding: 10px 14px;
   font-size: 12px;
   font-family: "Figtree", sans-serif !important;
-
   font-weight: 550;
   border-radius: 0;
 }
@@ -169,6 +170,35 @@
   font-family: "Inter", sans-serif;
   font-size: 0.8vw;
 }
+
+.dark {
+  background: #181818;
+  color: #f1f1f1;
+}
+
+.dark .sider {
+  background-color: #232323 !important;
+}
+
+.dark .headerContent {
+  background-color: #232323 !important;
+  color: #f1f1f1;
+}
+
+.dark .menu {
+  background: #232323 !important;
+  color: #f1f1f1 !important;
+}
+
+.dark .navHeader {
+  color: #f1f1f1 !important;
+}
+
+.dark .userName,
+.dark .userPosition {
+  color: #f1f1f1 !important;
+}
+
 
 @media (max-width: 768px){
   .logo{

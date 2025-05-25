@@ -1,16 +1,27 @@
 /* Main card container for authentication interface */
+
+
 .card {
-  max-width: 500px;
-  margin: 0 auto; /* Center the card */
-  padding: 20px;
-  padding-top: 0px; /* Remove top padding for tighter layout */
-  border-radius: 10px;
+  width: 700px;
+  height: 450px;
+  font-family: "Figtree", sans-serif;
+  border: none;
+  margin: auto;
+  border-radius: 5px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-  background: rgba(255, 255, 255, 0.2); /* Semi-transparent white background */
-  backdrop-filter: blur(10px); /* Glassmorphism blur effect */
-  -webkit-backdrop-filter: blur(10px); /* Safari support for blur */
+  background: rgba(255, 255, 255, 0.441); /* Semi-transparent white background */
+  backdrop-filter: blur(5px); /* Glassmorphism blur effect */
+  -webkit-backdrop-filter: blur(5px); /* Safari support for blur */
 }
 
+.mainTitle1 {
+  margin: 0%;
+  font-size: 3.5em !important;
+  font-weight: 750 !important;
+  font-family: "Figtree", sans-serif;
+  color: #ffffff !important;
+  text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
+}
 /* Styling for the card title */
 .title {
   margin-top: -20px; /* Adjust position to align with card */
@@ -26,22 +37,21 @@
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  gap: 20px; /* Space between fingerprint and PIN sections */
+}
+
+.mainTitle1 span{
+  color: rgb(196, 0, 0);
+  text-shadow: none;
 }
 
 /* Fingerprint authentication section */
 .fingerprintSection {
-  flex: 1; /* Take equal space */
   display: flex;
+  height: 430px !important;
   flex-direction: column;
+  margin: auto;
   align-items: center;
-  gap: 10px; /* Space between elements */
-  padding: 20px;
-  border: 1px solid #ddd; /* Light border */
-  border-radius: 10px;
-  background-color: #f9f9f9; /* Light background */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Shadow for depth */
-  height: 500px; /* Fixed height */
+  border: none;
 }
 
 /* Fingerprint scanner area */
@@ -56,34 +66,28 @@
   transition: transform 0.2s ease-in-out; /* Smooth scale animation */
 }
 
-/* Hover effect for fingerprint scanner */
-.fingerprintScanner:hover {
-  transform: scale(1.1); /* Scale up on hover */
-}
+
 
 /* PIN input section */
 .pinSection {
-  flex: 1; /* Take equal space */
   display: flex;
+  width: 100%;
+  padding-top: 10px;
   flex-direction: column;
   align-items: center;
   gap: 10px; /* Space between elements */
-  padding: 20px;
-  border: 1px solid #ddd; /* Light border */
   border-radius: 10px;
-  background-color: #f9f9f9; /* Light background */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Shadow for depth */
-  height: 100%; /* Full height */
 }
 
 /* Styling for PIN input display */
 .pinInput {
-  width: 80%;
+  width: 200px;
   text-align: center;
+  margin-right: 10px;
   font-size: 25px;
+  margin-bottom: 20px;
   font-weight: bold; /* Bold text */
   letter-spacing: 5px; /* Space between characters */
-  border: 2px solid #000000; /* Black border */
   border-radius: 5px;
   background-color: #f9f9f9; /* Light background */
   color: #333; /* Dark text */
@@ -93,24 +97,19 @@
 .pinButtons {
   display: grid;
   grid-template-columns: repeat(3, 1fr); /* 3 columns */
-  gap: 10px; /* Space between buttons */
-  width: 100%;
-  max-width: 300px;
-  margin-left: 10.712px; /* Slight offset for alignment */
+  gap: 15px; /* Space between buttons */
 }
 
 /* Styling for PIN keypad buttons */
 .pinButtons button {
-  height: 50px;
+  
   border: none;
-  border-radius: 10%; /* Rounded corners */
-  background: linear-gradient(
-    to bottom right,
-    #000000,
-    #555555
-  ); /* Black to gray gradient */
+  border-radius: 5px; /* Rounded corners */
+  background: linear-gradient(135deg, #720000, #e30000);
+/* Black to gray gradient */
   color: #fff; /* White text */
   cursor: pointer;
+  padding: 10px 20px;
   transition: background-color 0.2s ease-in-out, transform 0.2s ease-in-out; /* Smooth transitions */
 }
 
@@ -127,27 +126,35 @@
 
 /* Styling for section text (e.g., prompts) */
 .SectionTexts {
-  font-size: 1.5rem;
+  font-size: 1.75rem;
   color: #000000; /* Black text */
   text-align: center;
-  margin-top: -20px; /* Adjust position */
-  font-weight: bold;
+  font-weight: 700;
 }
 
 /* Container for back button */
 .backButtonContainer {
-  position: absolute;
-  bottom: 20px;
-  right: 20px; /* Position in bottom-right corner */
+  margin-left: auto;
+  margin-top: auto;
+  display: flex;
+ 
+}
+
+.full {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+  padding: 10px 0;
 }
 
 /* Styling for back button */
 .backButtonContainer button {
-  padding: 10px 20px;
+  padding: 8px 25px;
   font-size: 1rem !important; /* Consistent font size */
-  border: 1px solid #ff0000; /* Red border */
-  border-radius: 15px;
-  background: #ff3b3e; /* Red background */
+  border-radius: 10px;
+  border: none;
+  background: linear-gradient(135deg, #9d0000, #e30000);
   color: #fff; /* White text */
   cursor: pointer;
   transition: background-color 0.2s ease-in-out, transform 0.2s ease-in-out; /* Smooth transitions */
@@ -158,20 +165,27 @@
   transform: scale(1.05); /* Scale up on hover */
 }
 
+
+
+.backButton {
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+  justify-content: center;
+  align-items: center;
+   width: 150px; /* Fixed width for the container */
+}
+
 /* Styling for toggle buttons (e.g., switch between fingerprint and PIN) */
 .toggleButton {
-  padding: 10px 20px;
-  font-size: 1.2rem !important; /* Slightly larger font */
   border: none;
+  margin-left: auto;
   border-radius: 10px;
-  background: #ff3b3e; /* Red background */
+  background: linear-gradient(135deg, #9d0000, #e30000);
   color: #fff; /* White text */
   cursor: pointer;
-  transition: background-color 0.2s ease-in-out, transform 0.2s ease-in-out; /* Smooth transitions */
+  padding: 10px 8px 3px 8px !important;
   text-align: center;
-  width: 100%;
-  max-width: 300px;
-  margin-top: 20px;
 }
 
 /* Hover effect for toggle buttons */
@@ -187,8 +201,10 @@
 
 /* Styling for date and time display */
 .dateAndTime {
-  text-align: left;
-  margin-left: 10px; /* Slight left margin */
+  text-align: center;
+  font-family: "Figtree", sans-serif;
+  font-size: 10px;
+
 }
 
 /* Styling for error message popup */
