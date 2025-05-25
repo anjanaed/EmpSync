@@ -15,6 +15,7 @@ import { PayeTaxModule } from './modules/paye-tax-slab/paye-tax.module';
 import { AuthModule } from './core/authentication/auth.module';
 import { ScheduleModule as NestScheduleModule } from '@nestjs/schedule';
 import { MealsServingModule } from './modules/meals-serving/meals-serving.module';
+import { OrderTabFingerprintModule } from './modules/orderTab-fingerprint/order-tab-fingerprint/order-tab-fingerprint.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { MealsServingModule } from './modules/meals-serving/meals-serving.module
     PayeTaxModule,
     AuthModule,
     MealsServingModule,
+    OrderTabFingerprintModule,
   ],
   controllers: [AppController],
   providers: [AppService],

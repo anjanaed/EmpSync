@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Typography, Card, Spin, Dropdown, Menu } from "antd"; // Import Spin for loading animation and Dropdown, Menu for language selection
 import styles from "./Page2.module.css"; // Import CSS module for styling
 import DateAndTime from "../DateAndTime/DateAndTime"; // Import DateAndTime component
@@ -30,6 +30,9 @@ const Page2 = ({
   const [loading, setLoading] = useState(false);
   // State to track the selected language
   const [selectedLanguage, setSelectedLanguage] = useState("English");
+  const [esp32Connected, setEsp32Connected] = useState(false);
+  const portRef = useRef(null);
+  const readerRef = useRef(null);
 
   // Menu for language selection with custom styles
   const languageMenu = (
@@ -121,11 +124,110 @@ const Page2 = ({
     }
   }, [pin]);
 
+  // Connect to ESP32 via Web Serial API
+  const connectToESP32 = async () => {
+    try {
+      if (!("serial" in navigator)) {
+        alert("Web Serial API not supported in this browser.");
+        return;
+      }
+      const port = await navigator.serial.requestPort({});
+      await port.open({ baudRate: 9600 });
+      portRef.current = port;
+      setEsp32Connected(true);
+
+      // Send SCAN command to ESP32
+      const writer = port.writable.getWriter();
+      await writer.write(new TextEncoder().encode("SCAN\n"));
+      writer.releaseLock();
+
+      // Start reading data
+      const textDecoder = new TextDecoderStream();
+      const readableStreamClosed = port.readable.pipeTo(textDecoder.writable);
+      const reader = textDecoder.readable.getReader();
+      readerRef.current = reader;
+
+      // Listen for fingerprint IDs
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+        if (value && value.includes("ID:")) {
+          // Example: "ID:5,Confidence:123"
+          const match = value.match(/ID:(\d+),Confidence:(\d+)/);
+          if (match) {
+            const id = match[1];
+            const confidence = match[2];
+            // Convert numeric ID to ASCII hex (bytea format)
+            const bytea = "\\x" + id.charCodeAt(0).toString(16).padStart(2, "0");
+            console.log(`Scanned ID: ${id} (bytea: ${bytea})`);
+
+            // Fetch user by thumbId from backend
+            try {
+              const response = await fetch(
+                `http://localhost:3000/order-tab-fingerprint/by-thumbid?thumbId=${encodeURIComponent(
+                  bytea
+                )}`
+              );
+              if (!response.ok) {
+                // Show alert for unregistered user
+                setErrorMessage("Unregistered user");
+                setTimeout(() => setErrorMessage(""), 2000); // Hide after 2 seconds
+                throw new Error("User not found for Thumb ID: " + bytea);
+              }
+              const user = await response.json();
+              // Print user name and ID to console
+              console.log(
+                `Authenticated User: ${user.name} (User ID: ${user.id})`
+              );
+              // Set user info in parent state
+              setUsername({ name: user.name });
+              setUserId(user.id);
+              // Navigate to Page 3 (simulate successful login)
+              setTimeout(() => {
+                carouselRef.current.goTo(2);
+              }, 100);
+            } catch (err) {
+              console.error(err.message);
+            }
+          }
+        }
+      }
+    } catch (err) {
+      setEsp32Connected(false);
+      alert("Failed to connect to ESP32: " + err.message);
+    }
+  };
+
+  // Clean up on unmount
+  useEffect(() => {
+    return () => {
+      if (readerRef.current) readerRef.current.cancel();
+      if (portRef.current) portRef.current.close();
+    };
+  }, []);
+
   // Render the authentication page
   return (
     <Spin spinning={loading} tip="Loading...">
-      {" "}
-      {/* Show loading animation when loading */}
+      {/* ESP32 Connect Button */}
+      <div style={{ textAlign: "center", marginBottom: 16 }}>
+        <button
+          onClick={connectToESP32}
+          disabled={esp32Connected}
+          style={{
+            background: esp32Connected ? "#aaa" : "#0066cc",
+            color: "white",
+            padding: "10px 24px",
+            border: "none",
+            borderRadius: "6px",
+            cursor: esp32Connected ? "not-allowed" : "pointer",
+            fontWeight: "bold",
+            fontSize: "1em",
+          }}
+        >
+          {esp32Connected ? "Connected to ESP32" : "Connect to ESP32"}
+        </button>
+      </div>
       {/* Date and time display */}
       <div className={styles.full}>
         <div>
@@ -221,15 +323,15 @@ const Page2 = ({
             )}{" "}
             {/* Toggle icon */}
           </button>
-            <button
-              onClick={() => {
-                carouselRef.current.goTo(0);
-              }}
-              className={styles.backButton}
-            >
-              <MdLanguage size={20} /> <div>{selectedLanguage}</div>{" "}
-              {/* Display selected language */}
-            </button>
+          <button
+            onClick={() => {
+              carouselRef.current.goTo(0);
+            }}
+            className={styles.backButton}
+          >
+            <MdLanguage size={20} /> <div>{selectedLanguage}</div>{" "}
+            {/* Display selected language */}
+          </button>
         </div>
       </div>
       {/* Error message popup */}
