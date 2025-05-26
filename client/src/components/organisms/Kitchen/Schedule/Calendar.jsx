@@ -57,6 +57,7 @@ const MealPlanner = () => {
   const [loadingSchedules, setLoadingSchedules] = useState(false);
 
 const fetchDefaultMeals = async (date) => {
+  setLoading(true);
   try {
     const formattedDate = date.format("YYYY-MM-DD");
     const response = await fetch(`${urL}/meal-types/by-date/${formattedDate}`);
@@ -141,7 +142,6 @@ const fetchDefaultMeals = async (date) => {
         
         // Pre-select meals if there's an existing schedule
         if (schedule.mealIds && Array.isArray(schedule.mealIds)) {
-          console.log("Pre-selecting meals:", schedule.mealIds);
           setSelectedMeals(schedule.mealIds);
         }
       } else {
@@ -215,7 +215,6 @@ const fetchDefaultMeals = async (date) => {
     const mealType = defaultMeals.find(meal => meal.id === numericKey);
     if (mealType) {
       setActiveMealType(mealType);
-      console.log(`Tab changed to: ${mealType.name}`);
     }
     // Clear selected meals when changing tabs
     setSelectedMeals([]);
@@ -266,7 +265,6 @@ const fetchDefaultMeals = async (date) => {
     const mealType = defaultMeals.find(meal => meal.id === activeTab);
     if (mealType) {
       setActiveMealType(mealType);
-      console.log(`Update menu modal opened for: ${mealType.name}`);
     }
     
     // First fetch available meals, then check for existing schedule
@@ -325,9 +323,7 @@ const fetchDefaultMeals = async (date) => {
       return [];
     }
     
-    // Use active meal type name for proper category filtering
     const categoryName = activeMealType.name;
-    console.log(`Filtering meals for category: ${categoryName}`);
     
     // First filter by category - case insensitive matching
     let filteredByCategory = availableMeals.filter(meal => 
@@ -348,7 +344,6 @@ const fetchDefaultMeals = async (date) => {
 
   useEffect(() => {
     fetchDefaultMeals(currentDate);
-    console.log(currentDate.format("YYYY-MM-DD"));
   }, [currentDate]);
 
   // Update activeMealType when activeTab or defaultMeals change
