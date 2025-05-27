@@ -1,0 +1,9 @@
+:root {
+  --primary-color: #1890ff; /* Ant Design's default primary color */
+  --secondary-color: #f5222d;
+  --background-color: #ffffff;
+  --text-color: #333333;
+  --success-color: #52c41a;
+  --error-color: #ff4d4f;
+  /* Add more as needed */
+}
