@@ -64,8 +64,8 @@
 
 .filter {
   width: 10vw;
-  background: var(--secondary-color);
-  color: var(--text-color);
+  color: var(--text-color) !important;
+  border: 1px solid var(--primary-color) !important;
 }
 
 .searchBar {
@@ -147,6 +147,20 @@ Table {
 
 :global(.ant-table-tbody > tr:hover > td) {
   background-color: var(--table-row-hover-bg, #e6f7ff) !important;
+}
+
+/* Fix Ant Design select dropdown background */
+:global(.ant-select-dropdown) {
+  background-color: rgb(255, 255, 255) !important;
+}
+
+:global(.ant-select-item-option) {
+  color: var(--text-color) !important;
+}
+
+:global(.ant-select-item-option-selected) {
+  background-color: var(--primary-color) !important;
+  color: var(--text-color) !important;
 }
 
 @media(max-width:768px){

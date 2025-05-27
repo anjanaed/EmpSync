@@ -2,3 +2,14 @@ body{
   margin: 0;
   overflow-x: hidden;
 }
+
+/* Use .dark as a parent selector for dark mode */
+.dark .ant-select-dropdown {
+  background-color: #232325 !important;
+  color: #fff !important;
+}
+
+/* Optional: style dropdown items for better contrast */
+.dark .ant-select-dropdown .ant-select-item {
+  color: #fff !important;
+}

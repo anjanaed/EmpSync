@@ -18,7 +18,8 @@ export const DarkModeProvider = ({ children }) => {
       root.style.setProperty("--secondary-color", "#232325");
       root.style.setProperty("--danger-color", "#ff1111");
       root.style.setProperty("--text-color", "#ffffff");
-      root.style.setProperty("--table-bg-color", "#232325"); // dark table background
+      root.style.setProperty("--icon-color", "#fff"); // icon color for dark mode
+      root.style.setProperty("--table-bg-color", "#202020"); // dark table background
       root.style.setProperty("--table-cell-bg-color", "#2c2c2e"); // slightly lighter for cells
       root.style.setProperty("--table-row-hover-bg", "#1e40af"); // blue for dark mode
       localStorage.setItem("theme", "dark");
@@ -27,7 +28,8 @@ export const DarkModeProvider = ({ children }) => {
       root.style.setProperty("--secondary-color", "#fffbfb");
       root.style.setProperty("--danger-color", "#dc3545");
       root.style.setProperty("--text-color", "#000000");
-      root.style.setProperty("--table-bg-color", "rgb(235, 235, 232)"); // light table background
+      root.style.setProperty("--icon-color", "#222"); // icon color for light mode
+      root.style.setProperty("--table-bg-color", "#ebebe8"); // light table background
       root.style.setProperty("--table-cell-bg-color", "#fff"); // white for cells
       root.style.setProperty("--table-row-hover-bg", "#e6f7ff"); // default Ant Design blue
       localStorage.setItem("theme", "light");
@@ -42,5 +44,4 @@ export const DarkModeProvider = ({ children }) => {
     </DarkModeContext.Provider>
   );
 };
-
 export const useDarkMode = () => useContext(DarkModeContext);
