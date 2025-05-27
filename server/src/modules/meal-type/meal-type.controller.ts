@@ -16,39 +16,60 @@ export class MealTypeController {
   constructor(private readonly mealTypeService: MealTypeService) {}
 
   @Get()
-  findAll() {
-    return this.mealTypeService.findAll();
+  async findAll() {
+    try {
+      return await this.mealTypeService.findAll();
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   @Get('defaults')
-  findDefaults() {
-    return this.mealTypeService.findDefaults();
+  async findDefaults() {
+    try {
+      return await this.mealTypeService.findDefaults();
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   @Get('fetch')
   async fetchTodayAndTomorrow() {
-    return this.mealTypeService.findTodayAndTomorrow();
+    try {
+      return await this.mealTypeService.findTodayAndTomorrow();
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   @Get('by-date/:date')
   async findByDateOrDefault(@Param('date') date: string) {
-    return this.mealTypeService.findByDateOrDefault(date);
+    try {
+      return await this.mealTypeService.findByDateOrDefault(date);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.mealTypeService.findOne(id);
+  async findOne(@Param('id', ParseIntPipe) id: number) {
+    try {
+      return await this.mealTypeService.findOne(id);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   @Post()
-  create(
-    @Body() body: { name: string; time?: string; isDefault?: boolean },
+  async create(
+    @Body() body: { name: string; time?: string; isDefault?: boolean; date: string },
   ) {
     try {
-      return this.mealTypeService.create(
+      return await this.mealTypeService.create(
         body.name,
         body.time,
         body.isDefault,
+        body.date
       );
     } catch (error) {
       throw new BadRequestException(error.message);
@@ -57,19 +78,31 @@ export class MealTypeController {
 
   @Patch(':id/toggle-default')
   async toggleDefault(@Param('id', ParseIntPipe) id: number) {
-    return this.mealTypeService.toggleIsDefault(id);
+    try {
+      return await this.mealTypeService.toggleIsDefault(id);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   @Patch(':id')
-  update(
+  async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() body: { name?: string; time?: string; isDefault?: boolean },
   ) {
-    return this.mealTypeService.update(id, body);
+    try {
+      return await this.mealTypeService.update(id, body);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number) {
-    return this.mealTypeService.remove(id);
+  async remove(@Param('id', ParseIntPipe) id: number) {
+    try {
+      return await this.mealTypeService.remove(id);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 }
