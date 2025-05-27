@@ -1,4 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Itim&family=Roboto+Slab:wght@100..900&display=swap");
+@import "../../../../styles/variables.css";
 
 .home {
   display: flex;
@@ -9,6 +10,8 @@
 .empty {
   font-weight: 650;
   font-size: 1vw;
+  padding: 3vw;
+  color: var(--text-color);
 }
 
 .homeNav {
@@ -19,29 +22,31 @@
   flex: 5;
   padding: 1vw;
   overflow: hidden;
-  background-color: rgb(255, 255, 255);
+  background-color: var(--secondary-color);
   display: flex;
   flex-direction: column;
   overflow-y: auto;
 }
 
 :global(.ant-select-selector) {
-  border: 1px solid rgb(219, 218, 218) !important;
-  background-color: white !important;
+  border: 1px solid var(--secondary-color) !important;
+  background-color: var(--secondary-color) !important;
 }
 
 :global(.ant-select-focused .ant-select-selector) {
-  border-color: rgb(87, 99, 255) !important;
+  border-color: var(--primary-color) !important;
 }
 
 :global(.ant-select:hover .ant-select-selector) {
-  border-color: #1890ff !important;
+  border-color: var(--primary-color) !important;
 }
 
 .homeHead {
   display: flex;
   flex-direction: row;
   padding: 0.5vw;
+  /* background: var(--primary-color); */
+  /* color: var(--text-color); */
 }
 
 .headLeft {
@@ -50,7 +55,7 @@
   font-size: 20px;
   font-weight: 600;
   margin: auto 0;
-  color: #d10000;
+  color: var(--danger-color,); /* fallback if not defined */
 }
 .headRight {
   margin-left: auto;
@@ -59,12 +64,13 @@
 
 .filter {
   width: 10vw;
+  background: var(--secondary-color);
+  color: var(--text-color);
 }
 
 .searchBar {
   margin-right: 1vw;
 }
-
 
 .headRight select {
   font-size: 1vw;
@@ -72,20 +78,21 @@
   width: 120px;
   text-align: center;
   border-radius: 10px;
-  border: 2px solid rgb(0, 0, 0);
+  border: 2px solid var(--primary-color);
+  color: var(--text-color);
+  background: var(--secondary-color);
 }
 
-.empty {
-  padding: 3vw;
-}
 .icons {
   margin: 0vw 0.5vw;
   cursor: pointer;
   transition: all 0.2s ease-in-out;
+  color: var(--icon-color);
 }
 
 .icons:hover {
   transform: scale(1.2);
+  color: var(--danger-color, #000ed1); /* fallback if not defined */
 }
 
 .headRight select {
@@ -93,7 +100,7 @@
 }
 
 .contentBox {
-  background-color: rgb(255, 255, 255);
+  background-color: var(--secondary-color);
   margin: 0.5vw;
   border-radius: 10px;
   padding: 0.5vw;
@@ -104,11 +111,45 @@
 
 Table {
   margin-top: 1vw;
-  background-color: rgb(245, 245, 245);
+  /* background-color: rgb(174, 174, 26); */
+}
+
+:global(.ant-table) {
+  background-color: var(--table-bg-color, rgb(235, 235, 232)) !important;
+}
+
+:global(.ant-table-thead > tr > th),
+:global(.ant-table-tbody > tr > td) {
+  background-color: var(--table-cell-bg-color, #fff) !important;
+}
+
+:global(.ant-table-thead > tr > th) {
+  background: var(--table-header-bg) !important;
+  color: var(--table-header-color) !important;
+  font-family: var(--table-font-family) !important;
+  font-size: var(--table-font-size) !important;
+  padding-block: var(--table-cell-padding-block) !important;
+}
+
+:global(.ant-table-thead > tr > th.ant-table-column-sort) {
+  background: var(--table-header-sort-active-bg) !important;
+}
+
+:global(.ant-table-thead > tr > th:hover) {
+  background: var(--table-header-sort-hover-bg) !important;
+}
+
+:global(.ant-table-tbody > tr > td) {
+  color: var(--text-color) !important;
+  font-family: var(--table-font-family) !important;
+  font-size: var(--table-font-size) !important;
+}
+
+:global(.ant-table-tbody > tr:hover > td) {
+  background-color: var(--table-row-hover-bg, #e6f7ff) !important;
 }
 
 @media(max-width:768px){
-
   .headLeft{
     font-size: 15px;
   }

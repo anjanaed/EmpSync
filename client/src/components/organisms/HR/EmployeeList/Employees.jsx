@@ -14,13 +14,7 @@ import { usePopup } from "../../../../contexts/PopupContext";
 const customTheme = {
   components: {
     Table: {
-      headerBg: "rgba(151, 0, 0, 0.78)",
-      headerColor: "white",
-      headerSortActiveBg: "rgba(151, 0, 0, 0.78)",
-      headerSortHoverBg: "rgba(183, 0, 0, 0.78)",
-      fontSize: 12,
-      cellPaddingBlock: 12,
-      fontFamily: '"Figtree", sans-serif',
+      // Remove color/font settings, now handled by CSS variables
     },
   },
 };

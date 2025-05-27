@@ -1,9 +1,30 @@
 :root {
-  --primary-color: #1890ff; /* Ant Design's default primary color */
-  --secondary-color: #f5222d;
+  --primary-color: #ffffff;
+  --secondary-color: #bd4545;
   --background-color: #ffffff;
-  --text-color: #333333;
+  --text-color: #1257c6;
   --success-color: #52c41a;
-  --error-color: #ff4d4f;
-  /* Add more as needed */
+  --error-color: #0e1b93;
+  --danger-color: #990000c7;
+  --icon-color:#970000c7;
+
+  /* Table theme variables */
+  --table-header-bg: #970000c7;
+  --table-header-color: #fff;
+  --table-header-sort-active-bg: #970000c7;
+  --table-header-sort-hover-bg: #b70000c7;
+  --table-font-size: 12px;
+  --table-cell-padding-block: 12px;
+  --table-font-family: "Figtree", sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --secondary-color: #111111;
+  }
+}
+
+/* Manual dark mode override */
+.dark {
+  --secondary-color: #111111;
 }
