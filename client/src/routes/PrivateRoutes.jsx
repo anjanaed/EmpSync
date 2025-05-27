@@ -134,14 +134,14 @@ const PrivateRoutes = () => (
     
 
     {/* KITCHEN_ADMIN Routes */}
-    <Route
+    {/* <Route
       path="/kitchen-admin"
       element={
         <ProtectedRoute allowedRoles={["KITCHEN_ADMIN"]}>
           <KitchenAdmin />
         </ProtectedRoute>
       }
-    />
+    /> */}
     <Route
       path="/kitchen-report"
       element={
@@ -150,22 +150,22 @@ const PrivateRoutes = () => (
         </ProtectedRoute>
       }
     />
-    <Route
+    {/* <Route
       path="/kitchen-meal"
       element={
         <ProtectedRoute allowedRoles={["KITCHEN_ADMIN"]}>
           <Meals />
         </ProtectedRoute>
       }
-    />
-    <Route
+    /> */}
+    {/* <Route
       path="/meal-details"
       element={
         <ProtectedRoute allowedRoles={["KITCHEN_ADMIN"]}>
           <MealDetailsForm />
         </ProtectedRoute>
       }
-    />
+    /> */}
     <Route
       path="/edit-meal"
       element={
