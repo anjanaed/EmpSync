@@ -166,14 +166,14 @@ const PrivateRoutes = () => (
         </ProtectedRoute>
       }
     /> */}
-    <Route
+    {/* <Route
       path="/edit-meal"
       element={
         <ProtectedRoute allowedRoles={["KITCHEN_ADMIN"]}>
           <EditMeal />
         </ProtectedRoute>
       }
-    />
+    /> */}
 
     {/* ServingStaff Routes */}
     <Route

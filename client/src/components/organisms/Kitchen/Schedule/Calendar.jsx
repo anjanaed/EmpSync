@@ -104,34 +104,34 @@ const MealPlanner = () => {
 
     setLoadingSchedules(true);
     setScheduledMeals({});
-    
+
     try {
       const formattedDate = date.format("YYYY-MM-DD");
       console.log("Fetching schedules for date:", formattedDate);
 
       // Use the correct endpoint format
       const response = await axios.get(`${urL}/schedule/${formattedDate}`);
-      
+
       console.log("Schedule response:", response.data);
 
       if (response.data && Array.isArray(response.data)) {
         const schedulesMap = {};
-        
+
         response.data.forEach((schedule) => {
           // Extract date from ISO string and compare
           const scheduleDate = dayjs(schedule.date).format("YYYY-MM-DD");
-          
+
           if (scheduleDate === formattedDate) {
             schedulesMap[schedule.mealTypeId] = {
               id: schedule.id,
               mealTypeId: schedule.mealTypeId,
               meals: schedule.meals || [],
               date: schedule.date,
-              mealType: schedule.mealType || null
+              mealType: schedule.mealType || null,
             };
           }
         });
-        
+
         setScheduledMeals(schedulesMap);
         console.log("Processed schedules:", schedulesMap);
       } else {
@@ -154,22 +154,23 @@ const MealPlanner = () => {
 
     try {
       const formattedDate = currentDate.format("YYYY-MM-DD");
-      
+
       // Use the correct endpoint to get schedules for the date
       const response = await axios.get(`${urL}/schedule/${formattedDate}`);
 
       if (response.data && Array.isArray(response.data)) {
         // Find schedule for the current meal type
         const schedule = response.data.find(
-          (s) => s.mealTypeId === parseInt(activeTab) && 
-                 dayjs(s.date).format("YYYY-MM-DD") === formattedDate
+          (s) =>
+            s.mealTypeId === parseInt(activeTab) &&
+            dayjs(s.date).format("YYYY-MM-DD") === formattedDate
         );
 
         if (schedule) {
           setExistingSchedule(schedule);
           // Pre-select meals if there's an existing schedule
           if (schedule.meals && Array.isArray(schedule.meals)) {
-            const mealIds = schedule.meals.map(meal => meal.id);
+            const mealIds = schedule.meals.map((meal) => meal.id);
             setSelectedMeals(mealIds);
           }
         } else {
@@ -387,22 +388,44 @@ const MealPlanner = () => {
     setSearchTerm(e.target.value);
   };
 
+  // Updated filterMeals function to include snack fallback logic
   const filterMeals = () => {
     if (!activeMealType) {
       return [];
     }
 
     const categoryName = activeMealType.name;
+    const standardMealTypes = ["breakfast", "lunch", "dinner"];
 
-    // First filter by category - case insensitive matching
-    let filteredByCategory = availableMeals.filter(
-      (meal) =>
-        meal.category &&
-        Array.isArray(meal.category) &&
-        meal.category.some(
-          (cat) => cat.toLowerCase() === categoryName.toLowerCase()
-        )
+    // Check if the active meal type is one of the standard meal types
+    const isStandardMealType = standardMealTypes.includes(
+      categoryName.toLowerCase()
     );
+
+    let filteredByCategory;
+
+    if (isStandardMealType) {
+      // For standard meal types (Breakfast, Lunch, Dinner), only show meals from their specific category
+      filteredByCategory = availableMeals.filter(
+        (meal) =>
+          meal.category &&
+          Array.isArray(meal.category) &&
+          meal.category.some(
+            (cat) => cat.toLowerCase() === categoryName.toLowerCase()
+          )
+      );
+    } else {
+      // For any other meal type names (Tea Time, Snack Time, etc.), show snack category
+      console.log(
+        `Non-standard meal type "${categoryName}" detected, showing Snack category meals`
+      );
+      filteredByCategory = availableMeals.filter(
+        (meal) =>
+          meal.category &&
+          Array.isArray(meal.category) &&
+          meal.category.some((cat) => cat.toLowerCase() === "snack")
+      );
+    }
 
     // Then filter by search term if present
     if (searchTerm) {
@@ -412,6 +435,28 @@ const MealPlanner = () => {
     }
 
     return filteredByCategory;
+  };
+
+  // Helper function to determine if we're showing snack meals as fallback
+  const isShowingSnackFallback = () => {
+    if (!activeMealType || !availableMeals.length) return false;
+
+    const categoryName = activeMealType.name;
+
+    // Check if original category has meals
+    const originalCategoryMeals = availableMeals.filter(
+      (meal) =>
+        meal.category &&
+        Array.isArray(meal.category) &&
+        meal.category.some(
+          (cat) => cat.toLowerCase() === categoryName.toLowerCase()
+        )
+    );
+
+    return (
+      originalCategoryMeals.length === 0 &&
+      categoryName.toLowerCase() !== "snack"
+    );
   };
 
   useEffect(() => {
@@ -433,7 +478,10 @@ const MealPlanner = () => {
   // Fixed: Fetch all schedules when date changes
   useEffect(() => {
     if (currentDate) {
-      console.log("Date changed, fetching schedules for:", currentDate.format("YYYY-MM-DD"));
+      console.log(
+        "Date changed, fetching schedules for:",
+        currentDate.format("YYYY-MM-DD")
+      );
       fetchAllSchedules(currentDate);
     }
   }, [currentDate]);
@@ -723,11 +771,7 @@ const MealPlanner = () => {
                   emptyText: (
                     <Empty
                       description={
-                        fetchingMeals
-                          ? "Loading..."
-                          : `No ${
-                              activeMealType ? activeMealType.name : ""
-                            } meals found`
+                        fetchingMeals ? "Loading..." : `No meals found`
                       }
                       image={Empty.PRESENTED_IMAGE_SIMPLE}
                     />
