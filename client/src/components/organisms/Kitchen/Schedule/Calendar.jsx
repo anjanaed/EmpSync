@@ -56,22 +56,29 @@ const MealPlanner = () => {
   const [scheduledMeals, setScheduledMeals] = useState({});
   const [loadingSchedules, setLoadingSchedules] = useState(false);
 
-const fetchDefaultMeals = async (date) => {
-  setLoading(true);
-  try {
-    const formattedDate = date.format("YYYY-MM-DD");
-    const response = await fetch(`${urL}/meal-types/by-date/${formattedDate}`);
-    console.log(response);
-    const data = await response.json();
-    setDefaultMeals(data);
-    // Set default active tab to first meal type if available
+  const fetchDefaultMeals = async (date) => {
+    setLoading(true);
+    try {
+      const formattedDate = date.format("YYYY-MM-DD");
+      const response = await fetch(
+        `${urL}/meal-types/by-date/${formattedDate}`
+      );
+      console.log(response);
+      const data = await response.json();
+      setDefaultMeals(data);
 
-  } catch (error) {
-    console.error("Error fetching default meals:", error);
-  } finally {
-    setLoading(false);
-  }
-};
+      // Set default active tab to first meal type if available and no active tab is set
+      if (data.length > 0 && !activeTab) {
+        const firstMealId = data[0].id;
+        setActiveTab(firstMealId.toString());
+        setActiveMealType(data[0]);
+      }
+    } catch (error) {
+      console.error("Error fetching default meals:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const fetchAvailableMeals = async () => {
     setFetchingMeals(true);
@@ -94,23 +101,32 @@ const fetchDefaultMeals = async (date) => {
   // Fetch all meal schedules for the current date
   const fetchAllSchedules = async () => {
     if (!currentDate) return;
-    
+
     setLoadingSchedules(true);
     try {
-      const formattedDate = currentDate.format('YYYY-MM-DD');
+      const formattedDate = currentDate.format("YYYY-MM-DD");
+      console.log("Fetching schedules for date:", formattedDate); // Debug log
+
       const response = await axios.get(`${urL}/schedule`, {
         params: {
-          date: formattedDate
-        }
+          date: formattedDate,
+        },
       });
-      
+
+      console.log("Schedule response:", response.data); // Debug log
+
       if (response.data && Array.isArray(response.data)) {
-        // Convert array of schedules to object with mealTypeId as key
         const schedulesMap = {};
-        response.data.forEach(schedule => {
-          schedulesMap[schedule.mealTypeId] = schedule;
+        response.data.forEach((schedule) => {
+          schedulesMap[schedule.mealTypeId] = {
+            id: schedule.id,
+            mealTypeId: schedule.mealTypeId,
+            meals: schedule.meals || [],
+            date: schedule.date,
+          };
         });
         setScheduledMeals(schedulesMap);
+        console.log("Processed schedules:", schedulesMap); // Debug log
       } else {
         setScheduledMeals({});
       }
@@ -122,24 +138,23 @@ const fetchDefaultMeals = async (date) => {
       setLoadingSchedules(false);
     }
   };
-
   // Fetch existing schedule for the current date and meal type
   const fetchExistingSchedule = async () => {
     if (!activeTab || !currentDate) return;
-    
+
     try {
       const formattedDate = currentDate.format("YYYY-MM-DD");
       const response = await axios.get(`${urL}/schedule`, {
         params: {
           date: formattedDate,
-          mealTypeId: activeTab
-        }
+          mealTypeId: activeTab,
+        },
       });
-      
+
       if (response.data && response.data.length > 0) {
         const schedule = response.data[0];
         setExistingSchedule(schedule);
-        
+
         // Pre-select meals if there's an existing schedule
         if (schedule.mealIds && Array.isArray(schedule.mealIds)) {
           setSelectedMeals(schedule.mealIds);
@@ -157,8 +172,13 @@ const fetchDefaultMeals = async (date) => {
 
   const handleDateChange = (date) => {
     setCurrentDate(date);
+    // Reset active tab when date changes to ensure fresh data
+    setActiveTab("");
+    setActiveMealType(null);
+    // Clear scheduled meals when date changes
+    setScheduledMeals({});
   };
-  
+
   const modalStyles = {
     mask: {
       backdropFilter: "blur(12px)",
@@ -167,7 +187,7 @@ const fetchDefaultMeals = async (date) => {
 
   const handleMealSelection = (mealId) => {
     if (selectedMeals.includes(mealId)) {
-      setSelectedMeals(selectedMeals.filter(id => id !== mealId));
+      setSelectedMeals(selectedMeals.filter((id) => id !== mealId));
     } else {
       setSelectedMeals([...selectedMeals, mealId]);
     }
@@ -206,18 +226,20 @@ const fetchDefaultMeals = async (date) => {
     // Implementation of time change logic
   };
 
-  // Convert activeTab from string to number if needed
+  // Modified handleTabChange to load existing schedule for the selected tab
   const handleTabChange = (key) => {
-    const numericKey = typeof key === 'string' ? parseInt(key, 10) : key;
-    setActiveTab(numericKey);
-    
+    const stringKey = key.toString();
+    const numericKey = parseInt(key, 10);
+    setActiveTab(stringKey);
+
     // Find the meal type for the active tab
-    const mealType = defaultMeals.find(meal => meal.id === numericKey);
+    const mealType = defaultMeals.find((meal) => meal.id === numericKey);
     if (mealType) {
       setActiveMealType(mealType);
     }
-    // Clear selected meals when changing tabs
-    setSelectedMeals([]);
+
+    // Load existing schedule for this meal type instead of clearing
+    // The fetchExistingSchedule will be called by useEffect when activeTab changes
   };
 
   const goToNextDay = () => {
@@ -244,7 +266,7 @@ const fetchDefaultMeals = async (date) => {
             values.endTime ? values.endTime.format("HH:mm") : null,
           ],
           isDefault: values.isDefault,
-          date:currentDate.format("YYYY-MM-DD"),
+          date: currentDate.format("YYYY-MM-DD"),
         };
         await axios.post(`${urL}/meal-types`, payload);
         await fetchDefaultMeals(currentDate);
@@ -258,17 +280,23 @@ const fetchDefaultMeals = async (date) => {
   };
 
   const showUpdateMenuModal = async () => {
+    if (!activeTab) {
+      message.warning("Please select a meal time first");
+      return;
+    }
+
     setIsUpdateModalVisible(true);
     setSearchTerm("");
-    
+
     // Make sure activeMealType is set correctly before showing modal
-    const mealType = defaultMeals.find(meal => meal.id === activeTab);
+    const mealType = defaultMeals.find(
+      (meal) => meal.id === parseInt(activeTab)
+    );
     if (mealType) {
       setActiveMealType(mealType);
     }
-    
+
     // First fetch available meals, then check for existing schedule
-    // This ensures meals are loaded before we try to select them
     await fetchAvailableMeals();
     await fetchExistingSchedule();
   };
@@ -284,30 +312,43 @@ const fetchDefaultMeals = async (date) => {
       return;
     }
 
+    if (selectedMeals.length === 0) {
+      message.warning("Please select at least one meal");
+      return;
+    }
+
     const payload = {
-      date: currentDate.format('YYYY-MM-DD'),
-      mealTypeId: activeTab,
-      mealIds: selectedMeals
+      date: currentDate.format("YYYY-MM-DD"),
+      mealTypeId: parseInt(activeTab),
+      mealIds: selectedMeals,
     };
 
     setSavingSchedule(true);
     try {
+      console.log("Sending payload:", payload); // Debug log
+
       if (existingSchedule) {
         // Update existing schedule
-        await axios.patch(`${urL}/schedule/${existingSchedule.id}`, payload);
+        const response = await axios.patch(
+          `${urL}/schedule/${existingSchedule.id}`,
+          payload
+        );
+        console.log("Update response:", response.data); // Debug log
         message.success(`${activeMealType.name} menu updated successfully`);
       } else {
         // Create new schedule
-        await axios.post(`${urL}/schedule`, payload);
+        const response = await axios.post(`${urL}/schedule`, payload);
+        console.log("Create response:", response.data); // Debug log
         message.success(`${activeMealType.name} menu created successfully`);
       }
-      
+
       // Refetch all schedules to update the UI
       await fetchAllSchedules();
-      
     } catch (error) {
-      console.error("Error saving meal schedule:", error);
-      message.error("Failed to update meal schedule");
+      console.error("Error details:", error.response?.data); // Debug log
+      message.error(
+        error.response?.data?.message || "Failed to update meal schedule"
+      );
     } finally {
       setSavingSchedule(false);
       setIsUpdateModalVisible(false);
@@ -322,19 +363,22 @@ const fetchDefaultMeals = async (date) => {
     if (!activeMealType) {
       return [];
     }
-    
+
     const categoryName = activeMealType.name;
-    
+
     // First filter by category - case insensitive matching
-    let filteredByCategory = availableMeals.filter(meal => 
-      meal.category && 
-      Array.isArray(meal.category) && 
-      meal.category.some(cat => cat.toLowerCase() === categoryName.toLowerCase())
+    let filteredByCategory = availableMeals.filter(
+      (meal) =>
+        meal.category &&
+        Array.isArray(meal.category) &&
+        meal.category.some(
+          (cat) => cat.toLowerCase() === categoryName.toLowerCase()
+        )
     );
 
     // Then filter by search term if present
     if (searchTerm) {
-      return filteredByCategory.filter(meal => 
+      return filteredByCategory.filter((meal) =>
         meal.nameEnglish.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
@@ -348,9 +392,13 @@ const fetchDefaultMeals = async (date) => {
 
   // Update activeMealType when activeTab or defaultMeals change
   useEffect(() => {
-    const mealType = defaultMeals.find(meal => meal.id === activeTab);
-    if (mealType) {
-      setActiveMealType(mealType);
+    if (activeTab && defaultMeals.length > 0) {
+      const mealType = defaultMeals.find(
+        (meal) => meal.id === parseInt(activeTab)
+      );
+      if (mealType) {
+        setActiveMealType(mealType);
+      }
     }
   }, [activeTab, defaultMeals]);
 
@@ -361,12 +409,21 @@ const fetchDefaultMeals = async (date) => {
     }
   }, [currentDate]);
 
-  // Fetch existing schedule when date or activeTab changes
+  // Modified: Fetch existing schedule when activeTab changes (don't clear selected meals immediately)
   useEffect(() => {
     if (activeTab && currentDate) {
       fetchExistingSchedule();
     }
   }, [activeTab, currentDate]);
+
+  // Set default active tab when defaultMeals are loaded
+  useEffect(() => {
+    if (defaultMeals.length > 0 && !activeTab) {
+      const firstMealId = defaultMeals[0].id;
+      setActiveTab(firstMealId.toString());
+      setActiveMealType(defaultMeals[0]);
+    }
+  }, [defaultMeals, activeTab]);
 
   if (loading) {
     return <Loading />;
@@ -470,7 +527,6 @@ const fetchDefaultMeals = async (date) => {
               key={meal.id.toString()}
               className={styles.tabPane}
             >
-              {/* Display scheduled meals for this tab/date */}
               <div className={styles.scheduledMeals}>
                 {loadingSchedules ? (
                   <div className={styles.loadingContainer}>
@@ -479,48 +535,35 @@ const fetchDefaultMeals = async (date) => {
                   </div>
                 ) : scheduledMeals[meal.id] ? (
                   <div className={styles.mealCardContainer}>
-                    <h2>{meal.name} Menu</h2>
-                    {scheduledMeals[meal.id].meals && scheduledMeals[meal.id].meals.length > 0 ? (
-                      <div className={styles.mealsGrid}>
-                        {scheduledMeals[meal.id].meals.map(scheduledMeal => (
-                          <Card 
-                            key={scheduledMeal.id} 
-                            className={styles.mealCard}
-                            hoverable
-                          >
-                            <div className={styles.mealCardContent}>
-                              {scheduledMeal.imageUrl && (
-                                <Avatar 
-                                  size={64} 
-                                  src={scheduledMeal.imageUrl} 
-                                  className={styles.mealImage}
-                                />
-                              )}
-                              <div className={styles.mealInfo}>
-                                <h3>{scheduledMeal.nameEnglish}</h3>
-                                {scheduledMeal.nameSinhala && (
-                                  <p className={styles.localName}>{scheduledMeal.nameSinhala}</p>
-                                )}
-                                {scheduledMeal.nameTamil && (
-                                  <p className={styles.localName}>{scheduledMeal.nameTamil}</p>
-                                )}
-                                {scheduledMeal.price && (
-                                  <Tag color="green">Rs. {scheduledMeal.price}</Tag>
-                                )}
-                              </div>
+                    {scheduledMeals[meal.id].meals &&
+                    scheduledMeals[meal.id].meals.length > 0 ? (
+                      <div className={styles.simpleMealsContainer}>
+                        {scheduledMeals[meal.id].meals.map(
+                          (scheduledMeal, index) => (
+                            <div
+                              key={scheduledMeal.id}
+                              className={styles.simpleMealItem}
+                            >
+                              {scheduledMeal.nameEnglish}
                             </div>
-                          </Card>
-                        ))}
+                          )
+                        )}
                       </div>
                     ) : (
                       <div className={styles.noMealsMessage}>
-                        No meals scheduled for this meal time.
+                        <Empty
+                          description="No meals scheduled for this meal time."
+                          image={Empty.PRESENTED_IMAGE_SIMPLE}
+                        />
                       </div>
                     )}
                   </div>
                 ) : (
                   <div className={styles.noMealsMessage}>
-                    No meals scheduled for this day. Click "Update Menu" to add meals.
+                    <Empty
+                      description="No meals scheduled for this day. Click 'Update Menu' to add meals."
+                      image={Empty.PRESENTED_IMAGE_SIMPLE}
+                    />
                   </div>
                 )}
               </div>
@@ -535,6 +578,7 @@ const fetchDefaultMeals = async (date) => {
           icon={<PlusOutlined />}
           className={styles.updateBtn}
           onClick={showUpdateMenuModal}
+          disabled={!activeTab}
         >
           Update Menu
         </Button>
@@ -594,93 +638,96 @@ const fetchDefaultMeals = async (date) => {
         </Form>
       </Modal>
 
-     {/* Update Menu Modal */}
-<Modal
-  title={`Update ${activeMealType ? activeMealType.name : ''} Menu for ${currentDate.format("MMMM D, YYYY")}`}
-  open={isUpdateModalVisible}
-  onCancel={handleUpdateMenuCancel}
-  className={styles.mealSelectionModal}
-  closable={true}
-  footer={null}
-  styles={modalStyles}
-  width={600}
->
-  <div className={styles.updateMealModalContent}>
-    <h3 className={styles.modalSectionTitle}>
-      Available {activeMealType ? activeMealType.name : ''} Meals
-    </h3>
-    
-    <div className={styles.searchContainer}>
-      <Input
-        placeholder="Search meals..."
-        onChange={handleSearchChange}
-        className={styles.searchInput}
-        value={searchTerm}
-        prefix={<SearchOutlined />}
-      />
-    </div>
-    
-    <div className={styles.mealsContainer}>
-      {fetchingMeals ? (
-        <div className={styles.loadingContainer}>
-          <Spin size="large" />
-          <p>Loading available meals...</p>
-        </div>
-      ) : (
-        <List
-          className={styles.mealList}
-          dataSource={filterMeals()}
-          renderItem={(meal) => (
-            <List.Item 
-              className={styles.mealItem}
-              key={meal.id}
-            >
-              <div className={styles.mealItemContent}>
-                <span className={styles.mealName}>{meal.nameEnglish}</span>
-                <Checkbox
-                  checked={selectedMeals.includes(meal.id)}
-                  onChange={() => handleMealSelection(meal.id)}
-                  className={styles.mealCheckbox}
-                />
+      {/* Update Menu Modal */}
+      <Modal
+        title={`Update ${
+          activeMealType ? activeMealType.name : ""
+        } Menu for ${currentDate.format("MMMM D, YYYY")}`}
+        open={isUpdateModalVisible}
+        onCancel={handleUpdateMenuCancel}
+        className={styles.mealSelectionModal}
+        closable={true}
+        footer={null}
+        styles={modalStyles}
+        width={600}
+      >
+        <div className={styles.updateMealModalContent}>
+          <h3 className={styles.modalSectionTitle}>
+            Available {activeMealType ? activeMealType.name : ""} Meals
+          </h3>
+
+          <div className={styles.searchContainer}>
+            <Input
+              placeholder="Search meals..."
+              onChange={handleSearchChange}
+              className={styles.searchInput}
+              value={searchTerm}
+              prefix={<SearchOutlined />}
+            />
+          </div>
+
+          <div className={styles.mealsContainer}>
+            {fetchingMeals ? (
+              <div className={styles.loadingContainer}>
+                <Spin size="large" />
+                <p>Loading available meals...</p>
               </div>
-            </List.Item>
-          )}
-          locale={{
-            emptyText: (
-              <Empty
-                description={
-                  fetchingMeals 
-                    ? "Loading..." 
-                    : `No ${activeMealType ? activeMealType.name : ''} meals found`
-                }
-                image={Empty.PRESENTED_IMAGE_SIMPLE}
+            ) : (
+              <List
+                className={styles.mealList}
+                dataSource={filterMeals()}
+                renderItem={(meal) => (
+                  <List.Item className={styles.mealItem} key={meal.id}>
+                    <div className={styles.mealItemContent}>
+                      <span className={styles.mealName}>
+                        {meal.nameEnglish}
+                      </span>
+                      <Checkbox
+                        checked={selectedMeals.includes(meal.id)}
+                        onChange={() => handleMealSelection(meal.id)}
+                        className={styles.mealCheckbox}
+                      />
+                    </div>
+                  </List.Item>
+                )}
+                locale={{
+                  emptyText: (
+                    <Empty
+                      description={
+                        fetchingMeals
+                          ? "Loading..."
+                          : `No ${
+                              activeMealType ? activeMealType.name : ""
+                            } meals found`
+                      }
+                      image={Empty.PRESENTED_IMAGE_SIMPLE}
+                    />
+                  ),
+                }}
               />
-            ),
-          }}
-        />
-      )}
-    </div>
-    
-    <div className={styles.modalFooter}>
-      <Button 
-        key="cancel" 
-        onClick={handleUpdateMenuCancel} 
-        className={styles.cancelButton}
-      >
-        Cancel
-      </Button>
-      <Button 
-        key="update" 
-        type="primary" 
-        onClick={handleUpdateMenuOk} 
-        loading={savingSchedule}
-        className={styles.updateModalBtn}
-      >
-        {existingSchedule ? "Update" : "Save"}
-      </Button>
-    </div>
-  </div>
-</Modal>
+            )}
+          </div>
+
+          <div className={styles.modalFooter}>
+            <Button
+              key="cancel"
+              onClick={handleUpdateMenuCancel}
+              className={styles.cancelButton}
+            >
+              Cancel
+            </Button>
+            <Button
+              key="update"
+              type="primary"
+              onClick={handleUpdateMenuOk}
+              loading={savingSchedule}
+              className={styles.updateModalBtn}
+            >
+              {existingSchedule ? "Update" : "Save"}
+            </Button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 };
