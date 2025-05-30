@@ -11,6 +11,7 @@ const OrderTab = () => {
     const [language, setLanguage] = useState('english'); // State for selected language
     const [username, setUsername] = useState(""); // State to store the username
     const [userId, setUserId] = useState(""); // State to store the user ID
+    const [resetPin, setResetPin] = useState(false); // Add this state
 
     // Render the carousel with three pages
     return (
@@ -20,6 +21,7 @@ const OrderTab = () => {
                 infinite={false} // Disable infinite looping
                 dots={false} // Hide navigation dots
                 accessibility={false} // Disable default accessibility features
+                speed={0}
             >
                 {/* Page 1: Language selection */}
                 <div className={styles.contentStyle1}>
@@ -35,6 +37,8 @@ const OrderTab = () => {
                         language={language}
                         setUsername={setUsername} // Pass function to update username
                         setUserId={setUserId} // Pass function to update user ID
+                        resetPin={resetPin}        // Add this prop
+                        setResetPin={setResetPin}  // Add this prop
                     />
                 </div>
                 {/* Page 3: Meal selection and ordering */}
@@ -44,6 +48,7 @@ const OrderTab = () => {
                         language={language}
                         username={username}
                         userId={userId} // Pass user ID to Page3
+                        setResetPin={setResetPin}  // Add this prop
                     />
                 </div>
             </Carousel>

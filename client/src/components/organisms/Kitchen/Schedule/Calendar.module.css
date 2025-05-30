@@ -1,380 +1,392 @@
-
-@import url("https://fonts.googleapis.com/css2?family=Bree+Serif&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Itim&family=Roboto+Slab:wght@100..900&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap");
-
-/* Main Container */
 .container {
-  max-width: 1200px;
-  margin: 60px auto 0;
-  padding: 24px;
-  font-family: "Ubuntu", -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-  border-radius: 12px;
+  margin: 1vw;
+  padding: 20px;
+  font-family: "Figtree", sans-serif ;
   background-color: #ffffff;
+  border-radius: 5px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
 }
 
-/* Header Section */
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid #f0f0f0;
+  margin-bottom: 30px;
+  border-bottom: 2px solid #f2f2f2;
+  padding-bottom: 20px;
 }
 
 .title {
-  font-size: 1.8rem;
+  font-size: 28px;
   font-weight: 700;
-  margin: 0;
   color: #333;
-  font-family: "Ubuntu", sans-serif;
-  letter-spacing: 0.5px;
+  margin: 0;
 }
 
-/* Add these new styles after the .title class */
-.titleContainer {
+.dateControls {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 16px;
 }
 
-.confirmIcon {
-  margin-left: 10px;
-  color: #40af09;
-  font-size: 23px;
+.tomorrowBtn {
   display: flex;
   align-items: center;
-}
-
-.dateActions {
-  display: flex;
-  position: relative;
-  gap: 12px;
-}
-
-.tomorrowBtn,
-.datePickerBtn {
-  width: 150px !important;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: rgb(230, 74, 74);
-  border: 2px solid rgb(230, 74, 74);
-  font-size: 15px;
-  border-radius: 8px;
-  cursor: pointer;
-  background-color: white;
-  transition: all 0.3s ease;
-  gap: 8px;
-  font-weight: 500;
-  box-shadow: 0 2px 4px rgba(230, 74, 74, 0.1);
-}
-
-.tomorrowBtn:hover,
-.datePickerBtn:hover {
-  color: white;
-  background-color: rgb(230, 74, 74);
-  border-color: rgb(230, 74, 74);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(230, 74, 74, 0.2);
-}
-
-.tomorrowBtn:active,
-.datePickerBtn:active {
-  transform: translateY(1px);
-  box-shadow: 0 1px 2px rgba(230, 74, 74, 0.2);
-}
-
-.datePickerDropdown {
-  position: absolute;
-  top: calc(100% + 8px);
-  right: 0;
-  background: white;
-  padding: 12px;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  z-index: 1000;
-}
-
-/* Tabs Section */
-.tabs {
-  display: flex;
-  background-color: #f9f9f9;
-  margin-bottom: 24px;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-.tab {
-  flex: 1;
-  padding: 16px;
-  text-align: center;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  color: #555;
-  border-bottom: 3px solid transparent;
+  color: #e53935;
   font-weight: 600;
+  font-size: 16px;
+  border: 2px solid #e53935;
+  border-radius: 6px;
+  padding: 6px 14px;
+  transition: all 0.3s ease;
+}
+
+.tomorrowBtn:hover {
+  background-color: rgba(229, 57, 53, 0.1);
+}
+
+.rightArrow {
+  font-size: 16px;
+  margin-left: 6px;
+}
+
+.datePicker {
+  min-width: 160px;
+  border: 2px solid #e53935;
+  border-radius: 6px;
+}
+
+.datePicker :global(.ant-picker-input > input) {
+  color: #e53935;
+  font-weight: 500;
+}
+
+.calendarIcon {
+  color: #e53935;
+}
+
+.mealTypeSelection {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-bottom: 30px;
+  padding: 15px 0;
+  border-bottom: 2px solid #f2f2f2;
+}
+
+.horizontalMealContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.mealItems {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 5px;
+  background-color: #fafafa;
+  transition: all 0.3s ease;
+}
+
+.mealItems:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.mealCheckbox {
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.timePickerGroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.timePicker {
+  width: 120px;
+  border-color: #e0e0e0;
+}
+
+.timePickerSeparator {
+  margin: 0 4px;
+  color: #777;
+}
+
+.customMealHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.deleteMealBtn {
+  color: #e53935;
   font-size: 16px;
 }
 
-.tab:hover {
-  background-color: #f0f0f0;
-  color: rgb(190, 0, 0);
+.deleteMealBtn:hover {
+  background-color: rgba(229, 57, 53, 0.1);
 }
 
-.activeTab {
-  background-color: white;
-  color: rgb(190, 0, 0);
-  box-shadow: 0 -3px 0 rgb(190, 0, 0) inset;
+.toggleTimeBtn {
+  font-size: 13px;
+  padding: 0 8px;
+  height: 24px;
+  background-color: #f5f5f5;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  color: #1890ff;
+  margin-left: 0;
+  align-self: flex-start;
+  transition: all 0.3s ease;
+}
+
+.toggleTimeBtn:hover {
+  background-color: #e8f4ff;
+}
+
+.showTimeBtn {
+  color: #e53935;
+  background-color: #fff0f0;
+  border-color: #ffcdd2;
+}
+
+.showTimeBtn:hover {
+  background-color: #ffe7e7;
+}
+
+.addMealBtn {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  color: #333;
+  font-weight: 500;
+  font-size: 15px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  padding: 6px 14px;
+  background-color: #f9f9f9;
+  transition: all 0.3s ease;
+}
+
+.addMealBtn:hover {
+  background-color: #f0f0f0;
+  border-color: #d5d5d5;
+}
+
+.contentArea {
+  margin-bottom: 30px;
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  border: 1px solid #eaeaea;
+}
+
+.mealTabs {
+  margin-bottom: 20px;
+}
+
+.mealTabs :global(.ant-tabs-nav::before) {
   border-bottom: none;
 }
 
-/* Menu Content */
-.menuContent {
-  border: 1px solid #f0f0f0;
-  border-radius: 8px;
-  min-height: 240px;
-  padding: 20px;
-  margin-bottom: 24px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
-  background-color: #fafafa;
+.mealTabs :global(.ant-tabs-tab) {
+  padding: 12px 20px;
+  font-size: 16px;
+  font-weight: 500;
+  transition: all 0.3s ease;
 }
 
-.menuItems {
-  width: 100%;
-  max-height: 40vh !important;
-  overflow-y: auto !important;
-  overflow-x: hidden !important;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(126, 16, 16, 0.5) transparent;
+.mealTabs :global(.ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn) {
+  color: #000;
+  font-weight: 600;
 }
 
-.menuItems::-webkit-scrollbar {
-  width: 4px;
-  background-color: transparent;
+.mealTabs :global(.ant-tabs-ink-bar) {
+  height: 3px;
 }
 
-.menuItems::-webkit-scrollbar-track {
-  background-color :transparent !important;
-}
-
-.menuItems::-webkit-scrollbar-thumb {
-  background-color: rgba(126, 16, 16, 0.5) !important;
-  border-radius: 3px !important;
-
-}
-.menuItems::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(126, 16, 16, 0.8) !important;
+.tabPane {
+  padding: 12px 0;
 }
 
 .menuItem {
-  padding: 18px !important;
-  transition: all 0.2s ease;
-  font-size: 16px !important;
-  border-radius: 6px;
-  margin: 4px 0;
-  background-color: white;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 10px;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 16px;
+  transition: background-color 0.2s ease;
 }
 
 .menuItem:hover {
-  background-color: #f7f7f7;
-  transform: translateX(4px);
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+  background-color: #fafafa;
 }
 
-.divider {
-  margin: 8px 0;
-  border-top: 1px solid #eaeaea;
-  opacity: 0.6;
-}
-
-.loadingContainer {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 240px;
-  gap: 16px;
-}
-
-.loadingContainer p {
-  color: #666;
-  font-size: 16px;
-}
-
-.emptyState {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 240px;
-  color: #999;
-}
-
-.updateMenuBtn {
-  display: flex;
-  justify-content: center;
-  margin: 16px auto;
-  width: fit-content;
-
-}
-
-.updateMenuBtn button {
-  height: 38px;
-  padding: 0 20px;
-  font-size: 14px;
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  background-color: white;
-  color: #5c0a1f;
-  border: 1.5px solid #5c0a1f;
-  border-radius: 6px;
-  transition: all 0.2s ease;
-}
-
-.updateMenuBtn button:hover:not(:disabled) {
-  background-color: black !important;
-  color: white !important;
-  transform: translateY(-1px) !important;
-  /* box-shadow: 0 2px 4px rgba(92, 10, 31, 0.15); */
-  border-color: black !important;
-}
-
-.updateMenuBtn button:active:not(:disabled) {
-  transform: translateY(0);
-}
-
-.updateMenuBtn button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  background-color: #f5f5f5;
-  border-color: #d9d9d9;
-  color: #999;
-}
-.scheduleActions {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 16px;
-  border-top: 1px solid #f0f0f0;
-  padding-top: 24px;
-  margin-top: 8px;
-}
-
-.actionLabel {
-  margin-right: 16px;
-  font-weight: 600;
-  color: #444;
-}
-
-.scheduleActions button {
-  height: 40px;
-  padding: 0 20px;
-  border-radius: 8px;
-  font-weight: 500;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+.menuItem:last-child {
+  border-bottom: none;
 }
 
 .removeBtn {
-  border-color: #ff4d4f !important;
-  color: #ff4d4f !important;
+  color: rgba(0, 0, 0, 0.45);
+  transition: all 0.3s ease;
 }
 
-.removeBtn:hover:not(:disabled) {
-  background-color: #ff4d4f !important;
-  color: white !important;
-  box-shadow: 0 4px 8px rgba(255, 77, 79, 0.2);
+.removeBtn:hover {
+  color: #e53935;
+  background-color: rgba(229, 57, 53, 0.1);
 }
 
-.confirmBtn {
-  border-color: #ff4d4f !important;
-  background-color: #ff4d4f !important;
+.updateBtnContainer {
+  display: flex;
+  justify-content: center;
+  margin-top: 30px;
 }
 
-.confirmBtn:hover:not(:disabled) {
-  background-color: #ee1010 !important;
-  border-color: #ee1010!important;
-}
-
-.scheduleActions button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-/* Modal Styles */
-.modal .ant-modal-content {
-  border-radius: 12px;
-  overflow: hidden;
-}
-
-.modal .ant-modal-header {
-  background-color: #fafafa;
-  padding: 16px 24px;
-  border-bottom: 1px solid #f0f0f0;
-}
-
-.modalContainer {
-  padding: 8px 0;
-}
-
-.modalHeader {
-  margin-bottom: 16px;
-}
-
-.sectionTitle {
-  font-size: 18px;
+.updateBtn {
+  padding: 0 32px;
+  height: 44px;
+  font-size: 16px;
   font-weight: 600;
+  display: flex;
+  align-items: center;
+  background-color: #e53935;
+  border-color: #e53935;
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgba(229, 57, 53, 0.3);
+  transition: all 0.3s ease;
+}
+
+.updateBtn:hover {
+  background-color: #d32f2f;
+  border-color: #d32f2f;
+}
+
+/* Make checkbox square like in design */
+.mealCheckbox :global(.ant-checkbox-inner) {
+  border-radius: 2px;
+  border-color: #999;
+}
+
+.mealCheckbox :global(.ant-checkbox-checked .ant-checkbox-inner) {
+  background-color: #e53935;
+  border-color: #e53935;
+}
+
+/* Custom Meal Modal Styles */
+.customMealModal :global(.ant-modal-content) {
+  border-radius: 12px;
+}
+
+.customMealModal :global(.ant-modal-header) {
+  border-radius: 12px 12px 0 0;
+  background-color: #ffffff;
+  border-bottom: 1px solid #f0f0f0;
+  padding: 16px 24px;
+}
+
+.customMealModal :global(.ant-modal-title) {
+  font-weight: 600;
+  font-size: 18px;
+}
+
+.modalTimePicker {
+  width: 100%;
+}
+
+.boxTop{
+  display: flex;
+  justify-content: space-between;
+}
+
+.mealSelectionModal {
+  min-width: 500px;
+}
+
+.mealSelectionModal :global(.ant-modal-content) {
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.mealSelectionModal :global(.ant-modal-header) {
+  border-bottom: 1px solid #f0f0f0;
+  padding: 16px 24px;
+  background-color: #fff;
+  border-radius: 8px 8px 0 0;
+}
+
+.mealSelectionModal :global(.ant-modal-title) {
+  font-weight: 600;
+  font-size: 18px;
   color: #333;
-  margin-bottom: 16px;
+}
+
+.mealSelectionModal :global(.ant-modal-body) {
+  padding: 0;
+}
+
+.updateMealModalContent {
+  padding: 0;
+}
+
+.modalSectionTitle {
+  font-weight: 600;
+  font-size: 16px;
+  color: #333;
+  padding: 16px 20px;
+  border-bottom: 1px solid #f0f0f0;
+  margin: 0;
+  background-color: #fafafa;
 }
 
 .searchContainer {
   display: flex;
-  gap: 12px;
-  margin-bottom: 16px;
+  padding: 16px 20px;
+  border-bottom: 1px solid #f0f0f0;
+  background-color: #fff;
 }
 
 .searchInput {
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
   flex-grow: 1;
   height: 40px;
-  border-radius: 6px;
+  transition: all 0.3s ease;
 }
 
-.searchButton {
-  height: 40px;
-  border-radius: 6px;
-  padding: 0 16px;
-  background-color: #ff4d4f !important;
-  border-color: #ff4d4f !important;
+.searchInput:hover,
+.searchInput:focus {
+  border-color: #e53935;
+  box-shadow: 0 0 0 2px rgba(229, 57, 53, 0.1);
 }
 
-.mealListContainer {
-  max-height: 50vh;
+.mealsContainer {
+  max-height: 350px;
   overflow-y: auto;
-  margin-bottom: 20px;
-  border: 1px solid #f0f0f0;
-  border-radius: 8px;
+  padding: 8px 0;
+  width: 100%;
+  background-color: #fff;
 }
 
 .mealList {
-  padding: 8px;
+  padding: 0 12px;
 }
 
 .mealItem {
-  padding: 12px 16px !important;
-  transition: all 0.2s ease;
-  border-radius: 6px;
+  padding: 12px 8px !important;
+  transition: background-color 0.2s ease;
+  border-radius: 4px;
+  border-bottom: none !important;
 }
 
 .mealItem:hover {
-  background-color: #f5f5f5;
+  background-color: #f9f9f9;
 }
 
 .mealItemContent {
@@ -385,77 +397,106 @@
 }
 
 .mealName {
-  font-size: 16px;
+  font-size: 15px;
+  color: #333;
+  font-weight: 500;
 }
 
-.mealCheckbox {
-  transform: scale(1.2);
+.loadingContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 0;
 }
 
-.modalDivider {
-  margin: 0;
+.loadingContainer p {
+  margin-top: 16px;
+  color: #666;
 }
 
-.modalButtonContainer {
+.modalFooter {
   display: flex;
   justify-content: flex-end;
+  padding: 16px 20px;
   gap: 12px;
-  margin-top: 16px;
+  border-top: 1px solid #f0f0f0;
+  background-color: #fafafa;
+  border-radius: 0 0 8px 8px;
 }
 
-.clearButton {
-  border-color: #ff4d4f !important;
-  color: #ff4d4f !important;
+.cancelButton {
+  border-radius: 6px;
+  padding: 0 20px;
+  height: 38px;
+  font-weight: 500;
+  transition: all 0.3s ease;
 }
 
-.clearButton:hover:not(:disabled) {
-  color: white;
-  background-color: #ff4d4f;
-  border-color: #ff4d4f;
+.cancelButton:hover {
+  border-color: #d0d0d0;
+  color: #333;
 }
 
-.saveButton {
-  background-color: #ff4d4f;
-  border-color: #ff4d4f;
+.updateModalBtn {
+  background-color: #e53935;
+  border-color: #e53935;
+  border-radius: 6px;
+  padding: 0 24px;
+  height: 38px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 6px rgba(229, 57, 53, 0.2);
 }
 
-.saveButton:hover:not(:disabled) {
-  background-color: #ee1010 !important;
-  border-color: #ee1010 !important;
+.updateModalBtn:hover {
+  background-color: #d32f2f;
+  border-color: #d32f2f;
 }
 
-/* Responsive Styles */
-@media (max-width: 768px) {
-  .container {
-    padding: 16px;
-    margin-top: 40px;
-  }
-  
-  .header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 16px;
-  }
-  
-  .dateActions {
-    width: 100%;
-  }
-  
-  .tomorrowBtn, 
-  .datePickerBtn {
-    flex: 1;
-  }
-  
-  .tabs {
-    flex-direction: column;
-  }
-  
-  .scheduleActions {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  
-  .actionLabel {
-    margin-bottom: 12px;
-  }
+/* Make checkbox square like in design */
+.mealCheckbox :global(.ant-checkbox-inner) {
+  border-radius: 2px;
+  border-color: #d9d9d9;
 }
+
+.mealCheckbox :global(.ant-checkbox-checked .ant-checkbox-inner) {
+  background-color: #e53935;
+  border-color: #e53935;
+}
+
+.simpleMealsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin: 20px 0;
+  border: 1px solid #f0f0f0;
+  border-radius: 6px;
+  background-color: #fff;
+  overflow: hidden;
+}
+
+.simpleMealItem {
+  padding: 16px 20px;
+  font-size: 16px;
+  color: #333;
+  background-color: #fff;
+  border-bottom: 1px solid #f8f8f8;
+  transition: background-color 0.2s ease;
+  cursor: default;
+}
+
+.simpleMealItem:last-child {
+  border-bottom: none;
+}
+
+.simpleMealItem:hover {
+  background-color: #fafafa;
+}
+
+.scheduledMeals {
+  padding: 20px 0;
+  min-height: 200px;
+}
+
+
