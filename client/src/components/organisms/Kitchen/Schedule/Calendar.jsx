@@ -98,66 +98,83 @@ const MealPlanner = () => {
     }
   };
 
-  // Fetch all meal schedules for the current date
-  const fetchAllSchedules = async () => {
-    if (!currentDate) return;
+  // Fixed: Fetch all meal schedules for the current date using the correct endpoint
+  const fetchAllSchedules = async (date = currentDate) => {
+    if (!date) return;
 
     setLoadingSchedules(true);
+    setScheduledMeals({});
+    
     try {
-      const formattedDate = currentDate.format("YYYY-MM-DD");
-      console.log("Fetching schedules for date:", formattedDate); // Debug log
+      const formattedDate = date.format("YYYY-MM-DD");
+      console.log("Fetching schedules for date:", formattedDate);
 
-      const response = await axios.get(`${urL}/schedule`, {
-        params: {
-          date: formattedDate,
-        },
-      });
-
-      console.log("Schedule response:", response.data); // Debug log
+      // Use the correct endpoint format
+      const response = await axios.get(`${urL}/schedule/${formattedDate}`);
+      
+      console.log("Schedule response:", response.data);
 
       if (response.data && Array.isArray(response.data)) {
         const schedulesMap = {};
+        
         response.data.forEach((schedule) => {
-          schedulesMap[schedule.mealTypeId] = {
-            id: schedule.id,
-            mealTypeId: schedule.mealTypeId,
-            meals: schedule.meals || [],
-            date: schedule.date,
-          };
+          // Extract date from ISO string and compare
+          const scheduleDate = dayjs(schedule.date).format("YYYY-MM-DD");
+          
+          if (scheduleDate === formattedDate) {
+            schedulesMap[schedule.mealTypeId] = {
+              id: schedule.id,
+              mealTypeId: schedule.mealTypeId,
+              meals: schedule.meals || [],
+              date: schedule.date,
+              mealType: schedule.mealType || null
+            };
+          }
         });
+        
         setScheduledMeals(schedulesMap);
-        console.log("Processed schedules:", schedulesMap); // Debug log
+        console.log("Processed schedules:", schedulesMap);
       } else {
         setScheduledMeals({});
       }
     } catch (error) {
       console.error("Error fetching schedules:", error);
-      message.error("Failed to load meal schedules");
+      if (error.response?.status !== 404) {
+        message.error("Failed to load meal schedules");
+      }
       setScheduledMeals({});
     } finally {
       setLoadingSchedules(false);
     }
   };
-  // Fetch existing schedule for the current date and meal type
+
+  // Fixed: Fetch existing schedule for the current date and meal type
   const fetchExistingSchedule = async () => {
     if (!activeTab || !currentDate) return;
 
     try {
       const formattedDate = currentDate.format("YYYY-MM-DD");
-      const response = await axios.get(`${urL}/schedule`, {
-        params: {
-          date: formattedDate,
-          mealTypeId: activeTab,
-        },
-      });
+      
+      // Use the correct endpoint to get schedules for the date
+      const response = await axios.get(`${urL}/schedule/${formattedDate}`);
 
-      if (response.data && response.data.length > 0) {
-        const schedule = response.data[0];
-        setExistingSchedule(schedule);
+      if (response.data && Array.isArray(response.data)) {
+        // Find schedule for the current meal type
+        const schedule = response.data.find(
+          (s) => s.mealTypeId === parseInt(activeTab) && 
+                 dayjs(s.date).format("YYYY-MM-DD") === formattedDate
+        );
 
-        // Pre-select meals if there's an existing schedule
-        if (schedule.mealIds && Array.isArray(schedule.mealIds)) {
-          setSelectedMeals(schedule.mealIds);
+        if (schedule) {
+          setExistingSchedule(schedule);
+          // Pre-select meals if there's an existing schedule
+          if (schedule.meals && Array.isArray(schedule.meals)) {
+            const mealIds = schedule.meals.map(meal => meal.id);
+            setSelectedMeals(mealIds);
+          }
+        } else {
+          setExistingSchedule(null);
+          setSelectedMeals([]);
         }
       } else {
         setExistingSchedule(null);
@@ -165,6 +182,9 @@ const MealPlanner = () => {
       }
     } catch (error) {
       console.error("Error fetching existing schedule:", error);
+      if (error.response?.status !== 404) {
+        message.error("Failed to load existing schedule");
+      }
       setExistingSchedule(null);
       setSelectedMeals([]);
     }
@@ -175,8 +195,11 @@ const MealPlanner = () => {
     // Reset active tab when date changes to ensure fresh data
     setActiveTab("");
     setActiveMealType(null);
-    // Clear scheduled meals when date changes
+    // Clear scheduled meals immediately when date changes
     setScheduledMeals({});
+    // Clear any selected meals and existing schedule
+    setSelectedMeals([]);
+    setExistingSchedule(null);
   };
 
   const modalStyles = {
@@ -238,12 +261,14 @@ const MealPlanner = () => {
       setActiveMealType(mealType);
     }
 
-    // Load existing schedule for this meal type instead of clearing
-    // The fetchExistingSchedule will be called by useEffect when activeTab changes
+    // Clear selected meals when switching tabs
+    setSelectedMeals([]);
+    setExistingSchedule(null);
   };
 
   const goToNextDay = () => {
-    setCurrentDate(currentDate.add(1, "day"));
+    const nextDay = currentDate.add(1, "day");
+    setCurrentDate(nextDay);
   };
 
   const showAddMealModal = () => {
@@ -304,6 +329,8 @@ const MealPlanner = () => {
   const handleUpdateMenuCancel = () => {
     setIsUpdateModalVisible(false);
     setSearchTerm("");
+    // Clear selected meals when canceling
+    setSelectedMeals([]);
   };
 
   const handleUpdateMenuOk = async () => {
@@ -325,7 +352,7 @@ const MealPlanner = () => {
 
     setSavingSchedule(true);
     try {
-      console.log("Sending payload:", payload); // Debug log
+      console.log("Sending payload:", payload);
 
       if (existingSchedule) {
         // Update existing schedule
@@ -333,25 +360,26 @@ const MealPlanner = () => {
           `${urL}/schedule/${existingSchedule.id}`,
           payload
         );
-        console.log("Update response:", response.data); // Debug log
+        console.log("Update response:", response.data);
         message.success(`${activeMealType.name} menu updated successfully`);
       } else {
         // Create new schedule
         const response = await axios.post(`${urL}/schedule`, payload);
-        console.log("Create response:", response.data); // Debug log
+        console.log("Create response:", response.data);
         message.success(`${activeMealType.name} menu created successfully`);
       }
 
       // Refetch all schedules to update the UI
-      await fetchAllSchedules();
+      await fetchAllSchedules(currentDate);
     } catch (error) {
-      console.error("Error details:", error.response?.data); // Debug log
+      console.error("Error details:", error.response?.data);
       message.error(
         error.response?.data?.message || "Failed to update meal schedule"
       );
     } finally {
       setSavingSchedule(false);
       setIsUpdateModalVisible(false);
+      setSelectedMeals([]);
     }
   };
 
@@ -402,14 +430,15 @@ const MealPlanner = () => {
     }
   }, [activeTab, defaultMeals]);
 
-  // Fetch all schedules when date changes
+  // Fixed: Fetch all schedules when date changes
   useEffect(() => {
     if (currentDate) {
-      fetchAllSchedules();
+      console.log("Date changed, fetching schedules for:", currentDate.format("YYYY-MM-DD"));
+      fetchAllSchedules(currentDate);
     }
   }, [currentDate]);
 
-  // Modified: Fetch existing schedule when activeTab changes (don't clear selected meals immediately)
+  // Fetch existing schedule when activeTab changes
   useEffect(() => {
     if (activeTab && currentDate) {
       fetchExistingSchedule();
