@@ -184,17 +184,17 @@ export class MealTypeService {
   async remove(id: number) {
     try {
       // Check if this meal type is used in any schedules
-      const usedInSchedule = await this.databaseService.scheduledMeal.findFirst(
-        {
-          where: { mealTypeId: id },
-        },
-      );
+      // const usedInSchedule = await this.databaseService.scheduledMeal.findFirst(
+      //   {
+      //     where: { mealTypeId: id },
+      //   },
+      // );
 
-      if (usedInSchedule) {
-        throw new BadRequestException(
-          'Cannot delete meal type that is used in schedules',
-        );
-      }
+      // if (usedInSchedule) {
+      //   throw new BadRequestException(
+      //     'Cannot delete meal type that is used in schedules',
+      //   );
+      // }
 
       const mealType = await this.databaseService.mealType.findUnique({
         where: { id },

@@ -140,11 +140,11 @@ model Order {
 
 model ScheduledMeal {
   id         Int      @id @default(autoincrement())
-  date       DateTime @db.Date // Store as DATE (without time)
+  date       DateTime @db.Date
   mealTypeId Int
-  mealType   MealType @relation(fields: [mealTypeId], references: [id])
-  meals      Meal[] // Many-to-many relation with meals
-  @@unique([date, mealTypeId]) // Ensures no duplicate schedules for the same date and meal time
+  mealType   MealType @relation(fields: [mealTypeId], references: [id], onDelete: Cascade)
+  meals      Meal[]
+  @@unique([date, mealTypeId])
 }
 
 model PayeTaxSlab {
