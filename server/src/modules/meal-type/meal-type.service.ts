@@ -119,12 +119,12 @@ export class MealTypeService {
         name,
         time: timeArr,
         isDefault: isDefault ?? false,
-        date: date
       };
 
-      // If date is provided, add it to the data object
+      // If date is provided, add it to the data object as UTC+5:30
       if (date) {
-        data.date = new Date(date);
+        const baseDate = new Date(date);
+        data.date = addMinutes(baseDate, 330); // Shift to UTC+5:30
       }
 
       return this.databaseService.mealType.create({

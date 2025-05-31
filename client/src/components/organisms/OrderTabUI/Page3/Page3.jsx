@@ -291,10 +291,20 @@ const placeOrder = async () => {
       const mealsArray = Object.entries(meals).map(
         ([mealId, count]) => `${mealId}:${count}`
       );
-      const orderDate =
-        date === "today"
-          ? new Date().toISOString()
-          : new Date(new Date().setDate(new Date().getDate() + 1)).toISOString();
+
+      // UTC+5:30 offset in ms
+      const offsetMs = 5.5 * 60 * 60 * 1000;
+
+      // Order placed time in UTC+5:30
+      const orderPlacedTime = new Date(Date.now() + offsetMs).toISOString();
+
+      // Order date in UTC+5:30
+      let baseDate = new Date();
+      if (date !== "today") {
+        baseDate = new Date();
+        baseDate.setDate(baseDate.getDate() + 1);
+      }
+      const orderDate = new Date(baseDate.getTime() + offsetMs).toISOString();
 
       const orderData = {
         employeeId: userId || "unknown",
@@ -303,11 +313,12 @@ const placeOrder = async () => {
         mealTypeId: mealTime,
         price: 0,
         serve: true,
+        orderPlacedTime,
       };
 
       console.log("Sending order payload:", JSON.stringify(orderData, null, 2));
       const response = await axios.post("http://localhost:3000/orders", orderData);
-      
+
       console.log("Order response:", {
         status: response.status,
         data: response.data,
