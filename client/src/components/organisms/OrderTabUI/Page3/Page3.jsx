@@ -68,7 +68,13 @@ const Loading = ({ text }) => (
   </div>
 );
 
-const Page3 = ({ language = "english", username, userId, carouselRef,setResetPin }) => {
+const Page3 = ({
+  language = "english",
+  username,
+  userId,
+  carouselRef,
+  setResetPin,
+}) => {
   const navigate = useNavigate();
   const [currentTime, setCurrentTime] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState("today");
@@ -189,8 +195,11 @@ const Page3 = ({ language = "english", username, userId, carouselRef,setResetPin
     fetchMeals();
   }, [selectedDate, selectedMealTime]);
 
-  const formatDateForDisplay = (date) => date.toLocaleDateString();
-
+  const formatDateForDisplay = (date) => {
+    // Convert to IST
+    const istDate = new Date(date.getTime() + 5.5 * 60 * 60 * 1000);
+    return istDate.toLocaleDateString("en-IN", { timeZone: "Asia/Kolkata" });
+  };
   const getTomorrowDate = () => {
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
@@ -206,7 +215,7 @@ const Page3 = ({ language = "english", username, userId, carouselRef,setResetPin
     ) {
       return false;
     }
-    const now = new Date();
+    const now = new Date(Date.now() + 5.5 * 60 * 60 * 1000);
     const currentMinutes = now.getHours() * 60 + now.getMinutes();
     const [startStr, endStr] = mealTimeItem.time;
     const [, endMinute] = endStr.split(":").map(Number);
@@ -268,85 +277,92 @@ const Page3 = ({ language = "english", username, userId, carouselRef,setResetPin
     });
   };
 
-const placeOrder = async () => {
-  const groupedOrders = orderItems.reduce((acc, item) => {
-    const key = `${item.date}-${item.mealTime}`;
-    if (!acc[key]) {
-      acc[key] = {
-        date: `${item.date}`,
-        mealTime: item.mealTime,
-        meals: {},
-        totalPrice: 0,
-      };
-    }
-    acc[key].meals[item.mealId] = (acc[key].meals[item.mealId] || 0) + item.count;
-    const meal = allMeals.find((meal) => meal.id === item.mealId);
-    acc[key].totalPrice += meal ? meal.price * item.count : 0;
-    return acc;
-  }, {});
-
-  try {
-    for (const key in groupedOrders) {
-      const { date, mealTime, meals } = groupedOrders[key];
-      const mealsArray = Object.entries(meals).map(
-        ([mealId, count]) => `${mealId}:${count}`
-      );
-
-      // UTC+5:30 offset in ms
-      const offsetMs = 5.5 * 60 * 60 * 1000;
-
-      // Order placed time in UTC+5:30
-      const orderPlacedTime = new Date(Date.now() + offsetMs).toISOString();
-
-      // Order date in UTC+5:30
-      let baseDate = new Date();
-      if (date !== "today") {
-        baseDate = new Date();
-        baseDate.setDate(baseDate.getDate() + 1);
+  const placeOrder = async () => {
+    const groupedOrders = orderItems.reduce((acc, item) => {
+      const key = `${item.date}-${item.mealTime}`;
+      if (!acc[key]) {
+        acc[key] = {
+          date: `${item.date}`,
+          mealTime: item.mealTime,
+          meals: {},
+          totalPrice: 0,
+        };
       }
-      const orderDate = new Date(baseDate.getTime() + offsetMs).toISOString();
+      acc[key].meals[item.mealId] =
+        (acc[key].meals[item.mealId] || 0) + item.count;
+      const meal = allMeals.find((meal) => meal.id === item.mealId);
+      acc[key].totalPrice += meal ? meal.price * item.count : 0;
+      return acc;
+    }, {});
 
-      const orderData = {
-        employeeId: userId || "unknown",
-        meals: mealsArray,
-        orderDate,
-        mealTypeId: mealTime,
-        price: 0,
-        serve: true,
-        orderPlacedTime,
-      };
+    try {
+      for (const key in groupedOrders) {
+        const { date, mealTime, meals } = groupedOrders[key];
+        const mealsArray = Object.entries(meals).map(
+          ([mealId, count]) => `${mealId}:${count}`
+        );
 
-      console.log("Sending order payload:", JSON.stringify(orderData, null, 2));
-      const response = await axios.post("http://localhost:3000/orders", orderData);
+        // UTC+5:30 offset in ms
+        const offsetMs = 5.5 * 60 * 60 * 1000;
 
-      console.log("Order response:", {
-        status: response.status,
-        data: response.data,
-      });
+        // Order placed time in UTC+5:30
+        const orderPlacedTime = new Date(Date.now() + offsetMs).toISOString();
 
-      if (response.status < 200 || response.status >= 300) {
-        console.error("Order failed:", {
+        // Order date in UTC+5:30
+        let baseDate = new Date();
+        if (date !== "today") {
+          baseDate = new Date();
+          baseDate.setDate(baseDate.getDate() + 1);
+        }
+        const orderDate = new Date(baseDate.getTime() + offsetMs).toISOString();
+
+        const orderData = {
+          employeeId: userId || "unknown",
+          meals: mealsArray,
+          orderDate,
+          mealTypeId: mealTime,
+          price: 0,
+          serve: true,
+          orderPlacedTime,
+        };
+
+        console.log(
+          "Sending order payload:",
+          JSON.stringify(orderData, null, 2)
+        );
+        const response = await axios.post(
+          "http://localhost:3000/orders",
+          orderData
+        );
+
+        console.log("Order response:", {
           status: response.status,
           data: response.data,
-          message: response.statusText,
         });
-        throw new Error(`Failed to place order: ${response.statusText}`);
-      }
-    }
 
-    setShowSuccess(true);
-    setTimeout(() => {
-      setShowSuccess(false);
-      setOrderItems([]);
-      setResetPin(true); // Trigger PIN reset
-      carouselRef.current?.goTo(1); // Redirect to Page 2
-    }, 1000);
-  } catch (error) {
-    console.log(error);
-    setShowError(true);
-    setTimeout(() => setShowError(false), 1000); // Stay on Page 3
-  }
-};
+        if (response.status < 200 || response.status >= 300) {
+          console.error("Order failed:", {
+            status: response.status,
+            data: response.data,
+            message: response.statusText,
+          });
+          throw new Error(`Failed to place order: ${response.statusText}`);
+        }
+      }
+
+      setShowSuccess(true);
+      setTimeout(() => {
+        carouselRef.current?.goTo(1); // Go to Page 2 first
+        setResetPin(true);
+        setShowSuccess(false);
+        setOrderItems([]);
+      }, 1000);
+    } catch (error) {
+      console.log(error);
+      setShowError(true);
+      setTimeout(() => setShowError(false), 1000); // Stay on Page 3
+    }
+  };
 
   const isMealSelected = (mealId) =>
     orderItems.some(
@@ -680,8 +696,9 @@ const placeOrder = async () => {
                                         <Badge
                                           status="success"
                                           text={
-                                            availableMealTimes.find((m) => m.id === item.mealTime)?.name || 
-                                            "Unknown Meal Time"
+                                            availableMealTimes.find(
+                                              (m) => m.id === item.mealTime
+                                            )?.name || "Unknown Meal Time"
                                           }
                                           className={styles.mealTimeBadge}
                                         />
