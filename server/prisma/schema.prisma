@@ -73,6 +73,15 @@ model OrderIngredient {
   orderId       String
 }
 
+model stock {
+  id          Int      @id @default(autoincrement())
+  ingredientId Int
+  ingredient Ingredient @relation(fields: [ingredientId], references: [id])
+  quantity    Int
+  reorderLevel Int
+  createdAt   DateTime @default(now())
+}
+
 model Budget {
   id Int @id @default(autoincrement())
   name String
