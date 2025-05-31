@@ -257,7 +257,7 @@ const AvailableMeals = () => {
   );
 
   // Fixed category options
-  const categoryOptions = ["All", "Breakfast", "Lunch", "Dinner"];
+  const categoryOptions = ["All", "Breakfast", "Lunch", "Dinner","Snack"];
 
   // Function to render category tags
   const renderCategoryTags = (categories) => {
