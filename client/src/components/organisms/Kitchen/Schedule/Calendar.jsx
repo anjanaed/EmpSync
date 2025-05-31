@@ -742,7 +742,7 @@ const MealPlanner = () => {
         </Form>
       </Modal>
 
-      {/* Update Menu Modal */}
+      {/* Update Menu Modal - MODIFIED */}
       <Modal
         title={`Update ${
           activeMealType ? activeMealType.name : ""
@@ -808,6 +808,7 @@ const MealPlanner = () => {
             )}
           </div>
 
+          {/* MODIFIED FOOTER - Changed Cancel to Clear */}
           <div className={styles.modalFooter}>
             <Button
               key="clear"
