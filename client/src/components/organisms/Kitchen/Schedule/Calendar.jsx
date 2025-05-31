@@ -26,6 +26,7 @@ import {
   RightOutlined,
   PushpinFilled,
   SearchOutlined,
+  ClearOutlined,
 } from "@ant-design/icons";
 import dayjs from "dayjs";
 import styles from "./Calendar.module.css";
@@ -55,6 +56,7 @@ const MealPlanner = () => {
   const [savingSchedule, setSavingSchedule] = useState(false);
   const [scheduledMeals, setScheduledMeals] = useState({});
   const [loadingSchedules, setLoadingSchedules] = useState(false);
+  const [clearingSchedule, setClearingSchedule] = useState(false);
 
   const fetchDefaultMeals = async (date) => {
     setLoading(true);
@@ -332,6 +334,49 @@ const MealPlanner = () => {
     setSearchTerm("");
     // Clear selected meals when canceling
     setSelectedMeals([]);
+  };
+
+  // NEW: Handle clear schedule functionality
+  const handleClearSchedule = async () => {
+    if (!activeTab || !currentDate || !activeMealType) {
+      message.error("Missing required information (date or meal type)");
+      return;
+    }
+
+    // Check if there's an existing schedule to clear
+    if (!existingSchedule) {
+      message.info(`No scheduled meals found for ${activeMealType.name}`);
+      setIsUpdateModalVisible(false);
+      return;
+    }
+
+    setClearingSchedule(true);
+    try {
+      console.log("Clearing schedule for:", existingSchedule.id);
+
+      // Delete the existing schedule
+      await axios.delete(`${urL}/schedule/${existingSchedule.id}`);
+      
+      message.success(`${activeMealType.name} menu cleared successfully`);
+
+      // Clear local state
+      setSelectedMeals([]);
+      setExistingSchedule(null);
+
+      // Refetch all schedules to update the UI
+      await fetchAllSchedules(currentDate);
+
+      // Close the modal
+      setIsUpdateModalVisible(false);
+      setSearchTerm("");
+    } catch (error) {
+      console.error("Error clearing schedule:", error);
+      message.error(
+        error.response?.data?.message || "Failed to clear meal schedule"
+      );
+    } finally {
+      setClearingSchedule(false);
+    }
   };
 
   const handleUpdateMenuOk = async () => {
@@ -715,7 +760,7 @@ const MealPlanner = () => {
         </Form>
       </Modal>
 
-      {/* Update Menu Modal */}
+      {/* Update Menu Modal - MODIFIED */}
       <Modal
         title={`Update ${
           activeMealType ? activeMealType.name : ""
@@ -781,13 +826,17 @@ const MealPlanner = () => {
             )}
           </div>
 
+          {/* MODIFIED FOOTER - Changed Cancel to Clear */}
           <div className={styles.modalFooter}>
             <Button
-              key="cancel"
-              onClick={handleUpdateMenuCancel}
-              className={styles.cancelButton}
+              key="clear"
+              onClick={handleClearSchedule}
+              loading={clearingSchedule}
+              className={styles.clearButton}
+              icon={<ClearOutlined />}
+              danger
             >
-              Cancel
+              Clear
             </Button>
             <Button
               key="update"
