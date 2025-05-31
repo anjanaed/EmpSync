@@ -26,6 +26,7 @@ import {
   RightOutlined,
   PushpinFilled,
   SearchOutlined,
+  ClearOutlined,
 } from "@ant-design/icons";
 import dayjs from "dayjs";
 import styles from "./Calendar.module.css";
@@ -55,6 +56,7 @@ const MealPlanner = () => {
   const [savingSchedule, setSavingSchedule] = useState(false);
   const [scheduledMeals, setScheduledMeals] = useState({});
   const [loadingSchedules, setLoadingSchedules] = useState(false);
+  const [clearingSchedule, setClearingSchedule] = useState(false);
 
   const fetchDefaultMeals = async (date) => {
     setLoading(true);
@@ -63,7 +65,6 @@ const MealPlanner = () => {
       const response = await fetch(
         `${urL}/meal-types/by-date/${formattedDate}`
       );
-      console.log(response);
       const data = await response.json();
       setDefaultMeals(data);
 
@@ -107,12 +108,9 @@ const MealPlanner = () => {
 
     try {
       const formattedDate = date.format("YYYY-MM-DD");
-      console.log("Fetching schedules for date:", formattedDate);
 
       // Use the correct endpoint format
       const response = await axios.get(`${urL}/schedule/${formattedDate}`);
-
-      console.log("Schedule response:", response.data);
 
       if (response.data && Array.isArray(response.data)) {
         const schedulesMap = {};
@@ -133,7 +131,6 @@ const MealPlanner = () => {
         });
 
         setScheduledMeals(schedulesMap);
-        console.log("Processed schedules:", schedulesMap);
       } else {
         setScheduledMeals({});
       }
@@ -226,7 +223,7 @@ const MealPlanner = () => {
         )
       );
     } catch (err) {
-      console.log(err);
+      console.error("Error toggling meal pin:", err);
     }
   };
 
@@ -238,7 +235,7 @@ const MealPlanner = () => {
 
       setDefaultMeals((prevMeals) => prevMeals.filter((m) => m.id !== meal.id));
     } catch (err) {
-      console.log(err);
+      console.error("Error deleting meal:", err);
     }
   };
 
@@ -297,7 +294,7 @@ const MealPlanner = () => {
         await axios.post(`${urL}/meal-types`, payload);
         await fetchDefaultMeals(currentDate);
       } catch (err) {
-        console.log(err);
+        console.error("Error creating meal type:", err);
       } finally {
         setLoading(false);
       }
@@ -334,6 +331,47 @@ const MealPlanner = () => {
     setSelectedMeals([]);
   };
 
+  // NEW: Handle clear schedule functionality
+  const handleClearSchedule = async () => {
+    if (!activeTab || !currentDate || !activeMealType) {
+      message.error("Missing required information (date or meal type)");
+      return;
+    }
+
+    // Check if there's an existing schedule to clear
+    if (!existingSchedule) {
+      message.info(`No scheduled meals found for ${activeMealType.name}`);
+      setIsUpdateModalVisible(false);
+      return;
+    }
+
+    setClearingSchedule(true);
+    try {
+      // Delete the existing schedule
+      await axios.delete(`${urL}/schedule/${existingSchedule.id}`);
+      
+      message.success(`${activeMealType.name} menu cleared successfully`);
+
+      // Clear local state
+      setSelectedMeals([]);
+      setExistingSchedule(null);
+
+      // Refetch all schedules to update the UI
+      await fetchAllSchedules(currentDate);
+
+      // Close the modal
+      setIsUpdateModalVisible(false);
+      setSearchTerm("");
+    } catch (error) {
+      console.error("Error clearing schedule:", error);
+      message.error(
+        error.response?.data?.message || "Failed to clear meal schedule"
+      );
+    } finally {
+      setClearingSchedule(false);
+    }
+  };
+
   const handleUpdateMenuOk = async () => {
     if (!activeTab || !currentDate || !activeMealType) {
       message.error("Missing required information (date or meal type)");
@@ -353,27 +391,23 @@ const MealPlanner = () => {
 
     setSavingSchedule(true);
     try {
-      console.log("Sending payload:", payload);
-
       if (existingSchedule) {
         // Update existing schedule
         const response = await axios.patch(
           `${urL}/schedule/${existingSchedule.id}`,
           payload
         );
-        console.log("Update response:", response.data);
         message.success(`${activeMealType.name} menu updated successfully`);
       } else {
         // Create new schedule
         const response = await axios.post(`${urL}/schedule`, payload);
-        console.log("Create response:", response.data);
         message.success(`${activeMealType.name} menu created successfully`);
       }
 
       // Refetch all schedules to update the UI
       await fetchAllSchedules(currentDate);
     } catch (error) {
-      console.error("Error details:", error.response?.data);
+      console.error("Error updating menu:", error);
       message.error(
         error.response?.data?.message || "Failed to update meal schedule"
       );
@@ -416,9 +450,6 @@ const MealPlanner = () => {
       );
     } else {
       // For any other meal type names (Tea Time, Snack Time, etc.), show snack category
-      console.log(
-        `Non-standard meal type "${categoryName}" detected, showing Snack category meals`
-      );
       filteredByCategory = availableMeals.filter(
         (meal) =>
           meal.category &&
@@ -478,10 +509,6 @@ const MealPlanner = () => {
   // Fixed: Fetch all schedules when date changes
   useEffect(() => {
     if (currentDate) {
-      console.log(
-        "Date changed, fetching schedules for:",
-        currentDate.format("YYYY-MM-DD")
-      );
       fetchAllSchedules(currentDate);
     }
   }, [currentDate]);
@@ -783,11 +810,14 @@ const MealPlanner = () => {
 
           <div className={styles.modalFooter}>
             <Button
-              key="cancel"
-              onClick={handleUpdateMenuCancel}
-              className={styles.cancelButton}
+              key="clear"
+              onClick={handleClearSchedule}
+              loading={clearingSchedule}
+              className={styles.clearButton}
+              icon={<ClearOutlined />}
+              danger
             >
-              Cancel
+              Clear
             </Button>
             <Button
               key="update"
