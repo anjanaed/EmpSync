@@ -4,7 +4,14 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { DatabaseService } from '../../database/database.service';
-import { startOfDay, endOfDay, addDays, subMinutes, addMinutes, parseISO } from 'date-fns';
+import {
+  startOfDay,
+  endOfDay,
+  addDays,
+  subMinutes,
+  addMinutes,
+  parseISO,
+} from 'date-fns';
 
 @Injectable()
 export class MealTypeService {
@@ -101,7 +108,7 @@ export class MealTypeService {
     name: string,
     time?: string[] | string,
     isDefault?: boolean,
-    date?: Date | string
+    date?: Date | string,
   ) {
     try {
       // Always store time as an array of strings
@@ -215,23 +222,17 @@ export class MealTypeService {
     }
   }
 
-  // Get meal types created today and tomorrow
-  async findTodayAndTomorrow() {
+async findTodayAndTomorrow() {
     try {
-      // Shift current time by +5:30 (330 minutes) to get IST "now"
-      const nowIST = addMinutes(new Date(), 330);
+      // Initialize timezone offset (in minutes); 0 = use local time (IST), 330 = UTC to IST
+      const timezoneOffsetMinutes = 0;
 
-      // Calculate IST day boundaries, then convert back to UTC for querying
-      const todayStartIST = startOfDay(nowIST);
-      const todayEndIST = endOfDay(nowIST);
-      const tomorrowStartIST = startOfDay(addDays(nowIST, 1));
-      const tomorrowEndIST = endOfDay(addDays(nowIST, 1));
+      const now = addMinutes(new Date(), timezoneOffsetMinutes);
 
-      // Convert IST boundaries back to UTC for DB query
-      const todayStartUTC = subMinutes(todayStartIST, 330);
-      const todayEndUTC = subMinutes(todayEndIST, 330);
-      const tomorrowStartUTC = subMinutes(tomorrowStartIST, 330);
-      const tomorrowEndUTC = subMinutes(tomorrowEndIST, 330);
+      const todayStart = startOfDay(now);
+      const todayEnd = endOfDay(now);
+      const tomorrowStart = startOfDay(addDays(now, 1));
+      const tomorrowEnd = endOfDay(addDays(now, 1));
 
       const todayMeals = await this.databaseService.mealType.findMany({
         where: {
@@ -239,8 +240,8 @@ export class MealTypeService {
             { isDefault: true },
             {
               date: {
-                gte: todayStartUTC,
-                lte: todayEndUTC,
+                gte: todayStart,
+                lte: todayEnd,
               },
             },
           ],
@@ -254,8 +255,8 @@ export class MealTypeService {
             { isDefault: true },
             {
               date: {
-                gte: tomorrowStartUTC,
-                lte: tomorrowEndUTC,
+                gte: tomorrowStart,
+                lte: tomorrowEnd,
               },
             },
           ],
@@ -270,7 +271,6 @@ export class MealTypeService {
       );
     }
   }
-
   // Get meal types created at a specific date (IST) and all default meals
   async findByDateOrDefault(dateString: string) {
     try {
@@ -301,7 +301,9 @@ export class MealTypeService {
 
       return meals;
     } catch (error) {
-      throw new BadRequestException('Failed to retrieve meal types for the given date');
+      throw new BadRequestException(
+        'Failed to retrieve meal types for the given date',
+      );
     }
   }
 }
