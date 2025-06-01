@@ -4,6 +4,7 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { DatabaseService } from '../../database/database.service';
+import { ScheduledMealService } from '../schedule/schedule.service';
 import {
   startOfDay,
   endOfDay,
@@ -15,7 +16,10 @@ import {
 
 @Injectable()
 export class MealTypeService {
-  constructor(private readonly databaseService: DatabaseService) {}
+  constructor(
+    private readonly databaseService: DatabaseService,
+    private readonly scheduledMealService: ScheduledMealService,
+  ) {}
 
   // Get all meal types, with defaults first
   async findAll() {
@@ -222,55 +226,67 @@ export class MealTypeService {
     }
   }
 
+ 
+
 async findTodayAndTomorrow() {
-    try {
-      // Initialize timezone offset (in minutes); 0 = use local time (IST), 330 = UTC to IST
-      const timezoneOffsetMinutes = 0;
+  try {
+    const timezoneOffsetMinutes = 330;
+    const now = addMinutes(new Date(), timezoneOffsetMinutes);
 
-      const now = addMinutes(new Date(), timezoneOffsetMinutes);
+    const todayStart = startOfDay(now);
+    const todayEnd = endOfDay(now);
+    const tomorrow = addDays(now, 1);
+    const tomorrowStart = startOfDay(tomorrow);
+    const tomorrowEnd = endOfDay(tomorrow);
 
-      const todayStart = startOfDay(now);
-      const todayEnd = endOfDay(now);
-      const tomorrowStart = startOfDay(addDays(now, 1));
-      const tomorrowEnd = endOfDay(addDays(now, 1));
+    const todayIST = now.toISOString().split('T')[0];
+    const tomorrowIST = tomorrow.toISOString().split('T')[0];
 
-      const todayMeals = await this.databaseService.mealType.findMany({
-        where: {
-          OR: [
-            { isDefault: true },
-            {
-              date: {
-                gte: todayStart,
-                lte: todayEnd,
-              },
-            },
-          ],
-        },
-        orderBy: { name: 'asc' },
-      });
+    const defaultMeals = await this.databaseService.mealType.findMany({
+      where: { isDefault: true },
+      orderBy: { name: 'asc' },
+    });
 
-      const tomorrowMeals = await this.databaseService.mealType.findMany({
-        where: {
-          OR: [
-            { isDefault: true },
-            {
-              date: {
-                gte: tomorrowStart,
-                lte: tomorrowEnd,
-              },
-            },
-          ],
-        },
-        orderBy: { name: 'asc' },
-      });
+    // Helper to get merged meals for a given date range
+    const getMergedMeals = async (
+      start: Date,
+      end: Date,
+      dateString: string,
+    ): Promise<any[]> => {
+      const scheduledMeals = await this.scheduledMealService.findByDate(dateString);
 
-      return [todayMeals, tomorrowMeals];
-    } catch (error) {
-      throw new BadRequestException(
-        'Failed to retrieve today and tomorrow meal types',
+      const usedDefaultMeals = defaultMeals.filter((defaultMeal) =>
+        scheduledMeals.some((schedule) => schedule.mealTypeId === defaultMeal.id),
       );
-    }
+
+      const mealsWithDate = await this.databaseService.mealType.findMany({
+        where: {
+          date: { gte: start, lte: end },
+        },
+        orderBy: { name: 'asc' },
+      });
+
+      const mealMap = new Map<number, any>();
+      [...mealsWithDate, ...usedDefaultMeals].forEach((meal) =>
+        mealMap.set(meal.id, meal),
+      );
+
+      return Array.from(mealMap.values());
+    };
+
+    const [mergedTodayMeals, mergedTomorrowMeals] = await Promise.all([
+      getMergedMeals(todayStart, todayEnd, todayIST),
+      getMergedMeals(tomorrowStart, tomorrowEnd, tomorrowIST),
+    ]);
+
+    return [mergedTodayMeals, mergedTomorrowMeals];
+  } catch (error) {
+    console.error('Error in findTodayAndTomorrow:', error);
+    return [[], []];
   }
+}
+
+
   // Get meal types created at a specific date (IST) and all default meals
   async findByDateOrDefault(dateString: string) {
     try {

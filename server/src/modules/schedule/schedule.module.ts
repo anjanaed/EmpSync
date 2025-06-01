@@ -8,5 +8,6 @@ import { ScheduleCleanupService } from './schedule-cleanup.service';
 @Module({
   controllers: [ScheduledMealController],
   providers: [ScheduledMealService,ScheduleCleanupService],
+  exports: [ScheduledMealService],
 })
 export class ScheduleModule {}
