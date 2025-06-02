@@ -286,6 +286,41 @@ async findTodayAndTomorrow() {
   }
 }
 
+async patchTimeElement(id: number, index: 0 | 1, newTime: string) {
+  try {
+    const mealType = await this.databaseService.mealType.findUnique({
+      where: { id },
+    });
+
+    if (!mealType) {
+      throw new NotFoundException('Meal type not found');
+    }
+
+    // Always ensure time is an array of 2 elements
+    let updatedTime: string[] = Array.isArray(mealType.time)
+      ? [...mealType.time]
+      : ['', ''];
+
+    // Fill missing elements if needed
+    while (updatedTime.length < 2) {
+      updatedTime.push('');
+    }
+
+    // Update only the requested index
+    updatedTime[index] = newTime;
+
+    return await this.databaseService.mealType.update({
+      where: { id },
+      data: { time: updatedTime },
+    });
+  } catch (error) {
+    if (error instanceof NotFoundException) throw error;
+    throw new BadRequestException(
+      `Failed to patch time element: ${error.message}`,
+    );
+  }
+}
+
 
   // Get meal types created at a specific date (IST) and all default meals
   async findByDateOrDefault(dateString: string) {

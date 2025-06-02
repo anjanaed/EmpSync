@@ -62,14 +62,20 @@ export class MealTypeController {
 
   @Post()
   async create(
-    @Body() body: { name: string; time?: string; isDefault?: boolean; date: string },
+    @Body()
+    body: {
+      name: string;
+      time?: string;
+      isDefault?: boolean;
+      date: string;
+    },
   ) {
     try {
       return await this.mealTypeService.create(
         body.name,
         body.time,
         body.isDefault,
-        body.date
+        body.date,
       );
     } catch (error) {
       throw new BadRequestException(error.message);
@@ -80,6 +86,26 @@ export class MealTypeController {
   async toggleDefault(@Param('id', ParseIntPipe) id: number) {
     try {
       return await this.mealTypeService.toggleIsDefault(id);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
+
+  @Patch('timeupdate/:id/:index')
+  async patchTimeElement(
+    @Param('id', ParseIntPipe) id: number,
+    @Param('index', ParseIntPipe) index: number, // 0 for first, 1 for second
+    @Body() body: { newTime: string },
+  ) {
+    try {
+      if (index !== 0 && index !== 1) {
+        throw new BadRequestException('Index must be 0 or 1');
+      }
+      return await this.mealTypeService.patchTimeElement(
+        id,
+        index,
+        body.newTime,
+      );
     } catch (error) {
       throw new BadRequestException(error.message);
     }
