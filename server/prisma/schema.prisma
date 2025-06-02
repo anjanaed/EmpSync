@@ -16,100 +16,97 @@ datasource db {
 }
 
 model User {
-  id         String       @id
-  name       String       
-  role       String
-  dob        String?
-  telephone  String?
-  gender     String?
-  address    String?
-  email      String       @unique
-  password   String
-  salary     Int?
-  thumbId    Int?       @unique
-  supId      String?
-  language   String?
-  height     Int?
-  weight     Int?
-  payrolls   Payroll[]
-  attendance Attendance[]
-  createdAt  DateTime     @default(now())
-  
+  id        String    @id
+  name      String
+  role      String
+  dob       String?
+  telephone String?
+  gender    String?
+  address   String?
+  email     String    @unique
+  password  String
+  salary    Int?
+  thumbId   Int?      @unique
+  supId     String?
+  language  String?
+  height    Int?
+  weight    Int?
+  payrolls  Payroll[]
+  createdAt DateTime  @default(now())
 }
 
 model Ingredient {
-  id              Int      @id @default(autoincrement())
-  name            String 
-  price_per_unit  Decimal @db.Decimal(10, 2)
-  quantity        Decimal @db.Decimal(10, 2)
-  type            String
-  priority        Int
-  createdAt       DateTime @default(now())
-  usedInMeals     MealIngredient[]  
+  id             Int              @id @default(autoincrement())
+  name           String
+  price_per_unit Decimal          @db.Decimal(10, 2)
+  quantity       Decimal          @db.Decimal(10, 2)
+  type           String
+  priority       Int
+  createdAt      DateTime         @default(now())
+  usedInMeals    MealIngredient[]
 }
 
 model IngredientOrder {
-  id                  String      @id @default(uuid())
-  lastUpdated         DateTime    @default(now())
-  budget              Float?     
-  priority1Budget     Float?      
-  otherPriorityBudget Float?      
-  totalCost           Float?      
+  id                  String            @id @default(uuid())
+  lastUpdated         DateTime          @default(now())
+  budget              Float?
+  priority1Budget     Float?
+  otherPriorityBudget Float?
+  totalCost           Float?
   ingredients         OrderIngredient[]
 }
 
-
 model OrderIngredient {
-  id            String          @id @default(uuid())
-  ingredientId  Int?          
-  name          String
+  id             String          @id @default(uuid())
+  ingredientId   Int?
+  name           String
   price_per_unit Float
-  quantity      Int
-  type          String
-  priority      Int
-  totalCost     Float
-  createdAt     DateTime       @default(now())
-  order         IngredientOrder @relation(fields: [orderId], references: [id])
-  orderId       String
+  quantity       Int
+  type           String
+  priority       Int
+  totalCost      Float
+  createdAt      DateTime        @default(now())
+  order          IngredientOrder @relation(fields: [orderId], references: [id])
+  orderId        String
 }
 
 model Budget {
-  id Int @id @default(autoincrement())
-  name String
-  budgetDate DateTime @default(now())
+  id           Int      @id @default(autoincrement())
+  name         String
+  budgetDate   DateTime @default(now())
   budgetAmount Float
 }
 
 model Payroll {
-  id         Int   @id @default(autoincrement())
+  id         Int        @id @default(autoincrement())
   empId      String
-  employee   User     @relation(fields: [empId], references: [id],onDelete: Cascade)
-  range DateTime[]
+  employee   User       @relation(fields: [empId], references: [id], onDelete: Cascade)
+  range      DateTime[]
   month      String
-  netPay Float
+  netPay     Float
   payrollPdf String
-  createdAt  DateTime @default(now())
+  createdAt  DateTime   @default(now())
 }
 
 model Meal {
-  id           Int            @id @default(autoincrement()) 
-  nameEnglish  String
-  nameSinhala  String
-  nameTamil    String
-  description  String?
-  price        Float
-  imageUrl     String?
-  category     String[]
-  createdAt    DateTime       @default(now())
-  ingredients  MealIngredient[]
-  schedules ScheduledMeal[]
+  id          Int              @id @default(autoincrement())
+  nameEnglish String
+  nameSinhala String
+  nameTamil   String
+  description String?
+  price       Float
+  imageUrl    String?
+  category    String[]
+  createdAt   DateTime         @default(now())
+  ingredients MealIngredient[]
+  schedules   ScheduledMeal[]
 }
 
 model MealIngredient {
-  id           Int         @id @default(autoincrement())
-  meal         Meal        @relation(fields: [mealId], references: [id], onDelete: Cascade)
-  mealId       Int         
-  ingredient   Ingredient  @relation(fields: [ingredientId], references: [id])
+  id           Int        @id @default(autoincrement())
+  meal         Meal       @relation(fields: [mealId], references: [id], onDelete: Cascade)
+  mealId       Int
+  ingredient   Ingredient @relation(fields: [ingredientId], references: [id])
   ingredientId Int
 }
 
@@ -118,17 +115,16 @@ model SalaryAdjustments {
   label        String
   isPercentage Boolean //Percentage or Value
   allowance    Boolean //Allowance or Deduction
-  amount Float?
+  amount       Float?
 }
 
-
-model IndividualSalaryAdjustments{
-  id Int @id @default(autoincrement())
-  empId String
-  label String
+model IndividualSalaryAdjustments {
+  id           Int     @id @default(autoincrement())
+  empId        String
+  label        String
   isPercentage Boolean
-  allowance Boolean
-  amount Float
+  allowance    Boolean
+  amount       Float
 }
 
 model Order {
@@ -136,55 +132,34 @@ model Order {
   employeeId      String
   mealTypeId      Int
   meals           String[] // Array of meal IDs
-  orderDate       DateTime
-  orderPlacedTime DateTime @default(now()) @db.Timestamptz // Store the exact time the order was placed in Sri Lankan time zone
+  orderDate       DateTime @db.Date
+  orderPlacedTime DateTime @default(now()) // Store the exact time the order was placed in Sri Lankan time zone
   price           Float
   serve           Boolean  @default(false)
 }
 
-model Attendance {
-  id       String   @id
-  empId    String
-  employee User     @relation(fields: [empId], references: [id])
-  dateTime DateTime
-  status   String
-}
-
-model LeaveApplication {
-  id          Int      @id @default(autoincrement())
-  appliedDate DateTime @default(now())
-  duration    Float
-  empId       String
-  reason      String
-  status      Boolean  @default(false)
-  reviewedBy  String
-}
-
 model ScheduledMeal {
-  id        Int      @id @default(autoincrement())
-  date      DateTime @db.Date // Store as DATE (without time)
+  id         Int      @id @default(autoincrement())
+  date       DateTime @db.Date
   mealTypeId Int
-  mealType MealType @relation(fields: [mealTypeId], references: [id])
-  meals Meal[] // Many-to-many relation with meals
-  createdAt DateTime @default(now())
-  @@unique([date, mealTypeId]) // Ensures no duplicate schedules for the same date and meal time
+  mealType   MealType @relation(fields: [mealTypeId], references: [id], onDelete: Cascade)
+  meals      Meal[]
+  @@unique([date, mealTypeId])
 }
 
-
-
-model PayeTaxSlab{
-  id Int @id @default(autoincrement())
-  orderId Int
+model PayeTaxSlab {
+  id         Int    @id @default(autoincrement())
+  orderId    Int
   lowerLimit Float
   upperLimit Float?
-  taxRate Float
+  taxRate    Float
 }
 
-model MealType{
-  id Int @id @default(autoincrement())
-  name String // "Breakfast", "Lunch", "Dinner", or custom names
-  time String[] // Optional time in HH:MM format
-  isDefault Boolean @default(false) // To mark system defaults
+model MealType {
+  id        Int             @id @default(autoincrement())
+  name      String // "Breakfast", "Lunch", "Dinner", or custom names
+  time      String[] // Optional time in HH:MM format
+  isDefault Boolean         @default(false) // To mark system defaults
   schedules ScheduledMeal[]
-  date DateTime 
+  date      DateTime
 }
