@@ -144,7 +144,7 @@ export class MealsServingService {
     }
   }
 
-  // New method to get meal counts allocated by meal time (breakfast, lunch, dinner)
+  // New method to get meal counts allocated by meal time (dynamic)
   async getMealCountsByMealTime(orderDate: Date) {
     try {
       const startOfDay = new Date(orderDate);
@@ -160,23 +160,45 @@ export class MealsServingService {
             lte: endOfDay,
           },
         },
+        // Remove the include if the relation does not exist in your Prisma schema
+        // and instead join or fetch mealType separately if needed
       });
 
       if (!orders || orders.length === 0) {
         throw new NotFoundException('No orders found for the specified date');
       }
 
+      // Dynamic meal counts object
       const mealCounts: {
-        breakfast: { [mealId: number]: { name: string; totalCount: number; imageUrl: string | null } };
-        lunch: { [mealId: number]: { name: string; totalCount: number; imageUrl: string | null } };
-        dinner: { [mealId: number]: { name: string; totalCount: number; imageUrl: string | null } };
-      } = {
-        breakfast: {},
-        lunch: {},
-        dinner: {},
-      };
+        [mealTypeName: string]: { 
+          [mealId: number]: { 
+            name: string; 
+            totalCount: number; 
+            imageUrl: string | null;
+            mealTypeId: number;
+          } 
+        };
+      } = {};
 
       for (const order of orders) {
+        // Fetch meal type name using mealTypeId
+        let mealTypeName = 'unknown';
+        let mealTypeId = order.mealTypeId;
+        if (mealTypeId !== undefined && mealTypeId !== null) {
+          const mealType = await this.databaseService.mealType.findUnique({
+            where: { id: mealTypeId },
+            select: { name: true },
+          });
+          if (mealType && mealType.name) {
+            mealTypeName = mealType.name.toLowerCase();
+          }
+        }
+        
+        // Initialize meal type if not exists
+        if (!mealCounts[mealTypeName]) {
+          mealCounts[mealTypeName] = {};
+        }
+
         for (const mealEntry of order.meals) {
           const [mealIdStr, countStr] = mealEntry.split(':');
           const mealId = Number(mealIdStr);
@@ -195,41 +217,42 @@ export class MealsServingService {
             throw new NotFoundException(`Meal with ID ${mealId} not found`);
           }
 
-          if (order.breakfast && !mealCounts.breakfast[mealId]) {
-            mealCounts.breakfast[mealId] = { name: meal.nameEnglish, totalCount: 0, imageUrl: meal.imageUrl };
-          }
-          if (order.lunch && !mealCounts.lunch[mealId]) {
-            mealCounts.lunch[mealId] = { name: meal.nameEnglish, totalCount: 0, imageUrl: meal.imageUrl };
-          }
-          if (order.dinner && !mealCounts.dinner[mealId]) {
-            mealCounts.dinner[mealId] = { name: meal.nameEnglish, totalCount: 0, imageUrl: meal.imageUrl };
+          // Initialize meal in this meal type if not exists
+          if (!mealCounts[mealTypeName][mealId]) {
+            mealCounts[mealTypeName][mealId] = { 
+              name: meal.nameEnglish, 
+              totalCount: 0, 
+              imageUrl: meal.imageUrl,
+              mealTypeId: order.mealTypeId
+            };
           }
 
-          if (order.breakfast) {
-            mealCounts.breakfast[mealId].totalCount += count;
-          }
-          if (order.lunch) {
-            mealCounts.lunch[mealId].totalCount += count;
-          }
-          if (order.dinner) {
-            mealCounts.dinner[mealId].totalCount += count;
-          }
+          mealCounts[mealTypeName][mealId].totalCount += count;
         }
       }
 
-      const formatCounts = (counts: { [mealId: number]: { name: string; totalCount: number; imageUrl: string | null } }) =>
-        Object.entries(counts).map(([mealId, { name, totalCount, imageUrl }]) => ({
+      // Format the result
+      const result: {
+        [mealTypeName: string]: Array<{
+          mealId: number;
+          name: string;
+          totalCount: number;
+          imageUrl: string | null;
+          mealTypeId: number;
+        }>;
+      } = {};
+
+      for (const [mealTypeName, meals] of Object.entries(mealCounts)) {
+        result[mealTypeName] = Object.entries(meals).map(([mealId, { name, totalCount, imageUrl, mealTypeId }]) => ({
           mealId: Number(mealId),
           name,
           totalCount,
           imageUrl,
+          mealTypeId,
         }));
+      }
 
-      return {
-        breakfast: formatCounts(mealCounts.breakfast),
-        lunch: formatCounts(mealCounts.lunch),
-        dinner: formatCounts(mealCounts.dinner),
-      };
+      return result;
     } catch (error) {
       if (error instanceof NotFoundException || error instanceof BadRequestException) {
         throw error;

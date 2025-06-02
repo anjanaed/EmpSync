@@ -15,6 +15,7 @@ import { PayeTaxModule } from './modules/paye-tax-slab/paye-tax.module';
 import { AuthModule } from './core/authentication/auth.module';
 import { ScheduleModule as NestScheduleModule } from '@nestjs/schedule';
 import { MealsServingModule } from './modules/meals-serving/meals-serving.module';
+import { MealTypeModule } from './modules/meal-type/meal-type.module';
 import { OrderTabFingerprintModule } from './modules/orderTab-fingerprint/order-tab-fingerprint/order-tab-fingerprint.module';
 
 @Module({
@@ -28,6 +29,7 @@ import { OrderTabFingerprintModule } from './modules/orderTab-fingerprint/order-
     PayrollModule,
     OrdersModule,
     ScheduleModule,
+    MealTypeModule,
     AdjustmentModule,
     IndiAdjustmentModule,
     PayeTaxModule,

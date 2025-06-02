@@ -374,6 +374,7 @@ const AddMealPage = () => {
                     <Option value="Breakfast">Breakfast</Option>
                     <Option value="Lunch">Lunch</Option>
                     <Option value="Dinner">Dinner</Option>
+                    <Option value="Snack">Snack</Option>
                   </Select>
                 </Form.Item>
 

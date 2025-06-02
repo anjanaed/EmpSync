@@ -10,7 +10,7 @@ CREATE TABLE "User" (
     "email" TEXT NOT NULL,
     "password" TEXT NOT NULL,
     "salary" INTEGER,
-    "thumbId" BYTEA,
+    "thumbId" INTEGER,
     "supId" TEXT,
     "language" TEXT,
     "height" INTEGER,
@@ -64,6 +64,7 @@ CREATE TABLE "OrderIngredient" (
 -- CreateTable
 CREATE TABLE "Budget" (
     "id" SERIAL NOT NULL,
+    "name" TEXT NOT NULL,
     "budgetDate" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "budgetAmount" DOUBLE PRECISION NOT NULL,
 
@@ -85,18 +86,26 @@ CREATE TABLE "Payroll" (
 
 -- CreateTable
 CREATE TABLE "Meal" (
-    "id" TEXT NOT NULL,
+    "id" SERIAL NOT NULL,
     "nameEnglish" TEXT NOT NULL,
     "nameSinhala" TEXT NOT NULL,
     "nameTamil" TEXT NOT NULL,
     "description" TEXT,
     "price" DOUBLE PRECISION NOT NULL,
     "imageUrl" TEXT,
-    "ingredients" TEXT[],
     "category" TEXT[],
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Meal_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "MealIngredient" (
+    "id" SERIAL NOT NULL,
+    "mealId" INTEGER NOT NULL,
+    "ingredientId" INTEGER NOT NULL,
+
+    CONSTRAINT "MealIngredient_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -165,10 +174,7 @@ CREATE TABLE "LeaveApplication" (
 CREATE TABLE "ScheduledMeal" (
     "id" SERIAL NOT NULL,
     "date" DATE NOT NULL,
-    "breakfast" TEXT[],
-    "lunch" TEXT[],
-    "dinner" TEXT[],
-    "confirmed" BOOLEAN NOT NULL DEFAULT false,
+    "mealTypeId" INTEGER NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "ScheduledMeal_pkey" PRIMARY KEY ("id")
@@ -186,13 +192,22 @@ CREATE TABLE "PayeTaxSlab" (
 );
 
 -- CreateTable
-CREATE TABLE "Reports" (
+CREATE TABLE "MealType" (
     "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
-    "requestStatus" BOOLEAN NOT NULL,
-    "link" TEXT NOT NULL,
+    "time" TEXT[],
+    "isDefault" BOOLEAN NOT NULL DEFAULT false,
+    "date" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "Reports_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "MealType_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "_MealToScheduledMeal" (
+    "A" INTEGER NOT NULL,
+    "B" INTEGER NOT NULL,
+
+    CONSTRAINT "_MealToScheduledMeal_AB_pkey" PRIMARY KEY ("A","B")
 );
 
 -- CreateIndex
@@ -202,10 +217,10 @@ CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 CREATE UNIQUE INDEX "User_thumbId_key" ON "User"("thumbId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Meal_id_key" ON "Meal"("id");
+CREATE UNIQUE INDEX "ScheduledMeal_date_mealTypeId_key" ON "ScheduledMeal"("date", "mealTypeId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "ScheduledMeal_date_key" ON "ScheduledMeal"("date");
+CREATE INDEX "_MealToScheduledMeal_B_index" ON "_MealToScheduledMeal"("B");
 
 -- AddForeignKey
 ALTER TABLE "OrderIngredient" ADD CONSTRAINT "OrderIngredient_orderId_fkey" FOREIGN KEY ("orderId") REFERENCES "IngredientOrder"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -214,4 +229,19 @@ ALTER TABLE "OrderIngredient" ADD CONSTRAINT "OrderIngredient_orderId_fkey" FORE
 ALTER TABLE "Payroll" ADD CONSTRAINT "Payroll_empId_fkey" FOREIGN KEY ("empId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "MealIngredient" ADD CONSTRAINT "MealIngredient_mealId_fkey" FOREIGN KEY ("mealId") REFERENCES "Meal"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "MealIngredient" ADD CONSTRAINT "MealIngredient_ingredientId_fkey" FOREIGN KEY ("ingredientId") REFERENCES "Ingredient"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "Attendance" ADD CONSTRAINT "Attendance_empId_fkey" FOREIGN KEY ("empId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "ScheduledMeal" ADD CONSTRAINT "ScheduledMeal_mealTypeId_fkey" FOREIGN KEY ("mealTypeId") REFERENCES "MealType"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "_MealToScheduledMeal" ADD CONSTRAINT "_MealToScheduledMeal_A_fkey" FOREIGN KEY ("A") REFERENCES "Meal"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "_MealToScheduledMeal" ADD CONSTRAINT "_MealToScheduledMeal_B_fkey" FOREIGN KEY ("B") REFERENCES "ScheduledMeal"("id") ON DELETE CASCADE ON UPDATE CASCADE;

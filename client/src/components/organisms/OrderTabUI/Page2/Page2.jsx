@@ -15,6 +15,8 @@ const Page2 = ({
   setLanguage,
   setUsername,
   setUserId,
+  resetPin, // Add this prop
+  setResetPin, // Add this prop
 }) => {
   // State for error messages
   const [errorMessage, setErrorMessage] = useState("");
@@ -74,6 +76,21 @@ const Page2 = ({
       setPin(pin + digit); // Append digit to PIN
     }
   };
+
+  useEffect(() => {
+    // Clear PIN when component mounts (when navigating back to Page2)
+    setPin("");
+    setErrorMessage("");
+  }, []);
+
+  // Clear PIN when resetPin prop becomes true
+  useEffect(() => {
+    if (resetPin) {
+      setPin("");
+      setErrorMessage("");
+      setResetPin(false); // Reset the trigger
+    }
+  }, [resetPin, setResetPin]);
 
   // Handle backspace to remove last PIN digit
   const handleBackspace = () => {

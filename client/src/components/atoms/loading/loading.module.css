@@ -7,10 +7,11 @@
   width: 100vw; 
   position: fixed; 
   top: 0;
+  left: 0;
+  z-index: 9999999;
+  background: rgba(255,255,255,0.7); /* Add this line */
   -webkit-backdrop-filter: blur(4px);
   backdrop-filter: blur(4px);
-  left: 0;
-  z-index: 9999;
 }
 
 

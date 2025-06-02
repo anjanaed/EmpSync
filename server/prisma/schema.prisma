@@ -26,7 +26,7 @@ model User {
   email      String       @unique
   password   String
   salary     Int?
-  thumbId    Bytes?       @unique
+  thumbId    Int?       @unique
   supId      String?
   language   String?
   height     Int?
@@ -102,6 +102,7 @@ model Meal {
   category     String[]
   createdAt    DateTime       @default(now())
   ingredients  MealIngredient[]
+  schedules ScheduledMeal[]
 }
 
 model MealIngredient {
@@ -133,12 +134,10 @@ model IndividualSalaryAdjustments{
 model Order {
   id              Int      @id @default(autoincrement())
   employeeId      String
+  mealTypeId      Int
   meals           String[] // Array of meal IDs
-  orderDate       DateTime @default(now()) @db.Date // Store only the date
+  orderDate       DateTime
   orderPlacedTime DateTime @default(now()) @db.Timestamptz // Store the exact time the order was placed in Sri Lankan time zone
-  breakfast       Boolean  @default(false)
-  lunch           Boolean  @default(false)
-  dinner          Boolean  @default(false)
   price           Float
   serve           Boolean  @default(false)
 }
@@ -163,13 +162,14 @@ model LeaveApplication {
 
 model ScheduledMeal {
   id        Int      @id @default(autoincrement())
-  date      DateTime @unique @db.Date // Store as DATE (without time)
-  breakfast Int[]    
-  lunch     Int[]    
-  dinner    Int[]    
-  confirmed Boolean  @default(false) 
+  date      DateTime @db.Date // Store as DATE (without time)
+  mealTypeId Int
+  mealType MealType @relation(fields: [mealTypeId], references: [id])
+  meals Meal[] // Many-to-many relation with meals
   createdAt DateTime @default(now())
+  @@unique([date, mealTypeId]) // Ensures no duplicate schedules for the same date and meal time
 }
+
 
 
 model PayeTaxSlab{
@@ -180,3 +180,11 @@ model PayeTaxSlab{
   taxRate Float
 }
 
+model MealType{
+  id Int @id @default(autoincrement())
+  name String // "Breakfast", "Lunch", "Dinner", or custom names
+  time String[] // Optional time in HH:MM format
+  isDefault Boolean @default(false) // To mark system defaults
+  schedules ScheduledMeal[]
+  date DateTime 
+}

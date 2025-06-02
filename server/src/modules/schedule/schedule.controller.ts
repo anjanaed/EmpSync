@@ -6,119 +6,56 @@ import {
   Patch,
   Param,
   Delete,
-  HttpException,
-  HttpStatus,
+  Query,
+  ParseIntPipe,
+  BadRequestException,
 } from '@nestjs/common';
-import { ScheduleService } from './schedule.service';
-import { Prisma } from '@prisma/client';
+import { ScheduledMealService } from './schedule.service';
 
 @Controller('schedule')
-export class ScheduleController {
-  constructor(private readonly scheduleService: ScheduleService) {}
+export class ScheduledMealController {
+  constructor(private readonly scheduledMealService: ScheduledMealService) {}
 
   @Post()
-  async create(@Body() createScheduleDto: Prisma.ScheduledMealCreateInput) {
+  async create(
+    @Body() body: { date: string; mealTypeId: number; mealIds: number[] },
+  ) {
     try {
-      return await this.scheduleService.create(createScheduleDto);
-    } catch (error) {
-      throw new HttpException(
-        {
-          status: HttpStatus.BAD_REQUEST,
-          error: 'Bad Request',
-          message: error.message,
-        },
-        HttpStatus.BAD_REQUEST,
+      return await this.scheduledMealService.create(
+        body.date,
+        body.mealTypeId,
+        body.mealIds,
       );
-    }
-  }
-
-  @Get()
-  async findAll() {
-    try {
-      return await this.scheduleService.findAll();
     } catch (error) {
-      throw new HttpException(
-        {
-          status: HttpStatus.INTERNAL_SERVER_ERROR,
-          error: 'Failed to retrieve scheduled meals',
-          message: error.message,
-        },
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new BadRequestException(error.message);
     }
   }
 
   @Get(':date')
-  async findOne(@Param('date') date: string) {
-    try {
-      const scheduledMeal = await this.scheduleService.findOne(date);
-      if (!scheduledMeal) {
-        throw new HttpException(
-          'Scheduled meal not found',
-          HttpStatus.NOT_FOUND,
-        );
-      }
-      return scheduledMeal;
-    } catch (error) {
-      throw new HttpException(
-        {
-          status: HttpStatus.BAD_REQUEST,
-          error: 'Not Found',
-          message: error.message,
-        },
-        HttpStatus.BAD_REQUEST,
-      );
+  findByDate(@Param('date') date: string) {
+    // Validate date format
+    if (!date.match(/^\d{4}-\d{2}-\d{2}$/)) {
+      throw new BadRequestException('Invalid date format. Use YYYY-MM-DD');
     }
+    return this.scheduledMealService.findByDate(date);
   }
 
-  @Patch(':date')
+  @Get()
+  findAll() {
+    return this.scheduledMealService.findAll();
+  }
+
+  @Patch(':id')
   async update(
-    @Param('date') date: string,
-    @Body() updateScheduleDto: Prisma.ScheduledMealUpdateInput,
+    @Param('id', ParseIntPipe) id: number,
+    @Body() body: { date?: string; mealTypeId?: number; mealIds?: number[] },
   ) {
-    try {
-      return await this.scheduleService.update(date, updateScheduleDto);
-    } catch (error) {
-      throw new HttpException(
-        {
-          status: HttpStatus.BAD_REQUEST,
-          error: 'Bad Request',
-          message: error.message,
-        },
-        HttpStatus.BAD_REQUEST,
-      );
-    }
+    const { mealIds, ...data } = body;
+    return this.scheduledMealService.update(id, data, mealIds);
   }
 
-  @Patch(':date/confirm')
-  async confirm(@Param('date') date: string) {
-    try {
-      return await this.scheduleService.confirm(date);
-    } catch (error) {
-      throw new HttpException(
-        {
-          status: HttpStatus.BAD_REQUEST,
-          error: 'Confirmation failed',
-          message: error.message,
-        },
-        HttpStatus.BAD_REQUEST,
-      );
-    }
-  }
-
-  @Delete(':date')
-  async remove(@Param('date') date: string) {
-    try {
-      return await this.scheduleService.remove(date);
-    } catch (error) {
-      throw new HttpException(
-        {
-          status: HttpStatus.NOT_FOUND,
-          error: 'Not Found',
-          message: error.message,
-        },
-        HttpStatus.NOT_FOUND,
-      );
-    }
+  @Delete(':id')
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.scheduledMealService.remove(id);
   }
 }
