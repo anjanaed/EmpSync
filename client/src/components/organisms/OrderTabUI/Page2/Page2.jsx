@@ -185,13 +185,16 @@ const Page2 = ({
                   <div className={styles.SectionTexts}>
                     {text.enterPin} {/* Prompt for PIN entry */}
                   </div>
-                  <Typography.Text
-                    className={styles.pinInput}
-                    strong // Bold text for PIN display
-                  >
-                    {pin.padEnd(4, "•")}{" "}
-                    {/* Display PIN with dots for missing digits */}
-                  </Typography.Text>
+                  <div className={styles.pinDots}>
+                    {[0, 1, 2, 3].map((idx) => (
+                      <span
+                        key={idx}
+                        className={`${styles.pinDot} ${
+                          pin.length > idx ? styles.filled : ""
+                        }`}
+                      />
+                    ))}
+                  </div>
                   <div className={styles.pinButtons}>
                     {[1, 2, 3, 4, 5, 6, 7, 8, 9, 0].map((digit) => (
                       <button

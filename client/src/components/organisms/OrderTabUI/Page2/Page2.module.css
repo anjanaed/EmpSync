@@ -1,6 +1,5 @@
 /* Main card container for authentication interface */
 
-
 .card {
   width: 700px;
   height: 450px;
@@ -9,7 +8,12 @@
   margin: auto;
   border-radius: 5px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-  background: rgba(255, 255, 255, 0.441); /* Semi-transparent white background */
+  background: rgba(
+    255,
+    255,
+    255,
+    0.441
+  ); /* Semi-transparent white background */
   backdrop-filter: blur(5px); /* Glassmorphism blur effect */
   -webkit-backdrop-filter: blur(5px); /* Safari support for blur */
 }
@@ -39,7 +43,7 @@
   align-items: center;
 }
 
-.mainTitle1 span{
+.mainTitle1 span {
   color: rgb(196, 0, 0);
   text-shadow: none;
 }
@@ -66,16 +70,14 @@
   transition: transform 0.2s ease-in-out; /* Smooth scale animation */
 }
 
-
-
 /* PIN input section */
 .pinSection {
   display: flex;
-  width: 100%;
-  padding-top: 10px;
+  background-color: #ffffff1a;
+  margin: auto;
+  padding: 20px;
+  margin-top: 30px;
   flex-direction: column;
-  align-items: center;
-  gap: 10px; /* Space between elements */
   border-radius: 10px;
 }
 
@@ -97,20 +99,46 @@
 .pinButtons {
   display: grid;
   grid-template-columns: repeat(3, 1fr); /* 3 columns */
-  gap: 15px; /* Space between buttons */
+  gap: 20px; /* Space between buttons */
 }
 
 /* Styling for PIN keypad buttons */
 .pinButtons button {
-  
-  border: none;
-  border-radius: 5px; /* Rounded corners */
+  width: 50px; /* Set width and height to the same value */
+  height: 50px;
+  border-radius: 50%; /* Make it a perfect circle */
   background: linear-gradient(135deg, #720000, #e30000);
-/* Black to gray gradient */
-  color: #fff; /* White text */
+  color: #fff;
+  border: none;
   cursor: pointer;
-  padding: 10px 20px;
-  transition: background-color 0.2s ease-in-out, transform 0.2s ease-in-out; /* Smooth transitions */
+  padding: 0; /* Remove extra padding */
+  font-size: 1.1rem !important; /* Make the digit larger */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s, transform 0.2s;
+}
+
+.pinDots {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  margin-bottom: 26px;
+}
+
+.pinDot {
+  width: 15px;
+  height: 15px;
+  border: 2px solid #000000;
+  border-radius: 50%;
+  background: transparent;
+  display: inline-block;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.pinDot.filled {
+  background: #000000;
+  border-color: #000000;
 }
 
 /* Hover effect for PIN buttons */
@@ -126,7 +154,8 @@
 
 /* Styling for section text (e.g., prompts) */
 .SectionTexts {
-  font-size: 1.75rem;
+  font-size: 1.2rem;
+  margin-bottom: 20px;
   color: #000000; /* Black text */
   text-align: center;
   font-weight: 700;
@@ -138,7 +167,6 @@
   margin-top: auto;
   display: flex;
   gap: 1vw;
- 
 }
 
 .full {
@@ -166,15 +194,13 @@
   transform: scale(1.05); /* Scale up on hover */
 }
 
-
-
 .backButton {
   display: flex;
   flex-direction: row;
   gap: 4px;
   justify-content: center;
   align-items: center;
-   width: 150px; /* Fixed width for the container */
+  width: 150px; /* Fixed width for the container */
 }
 
 /* Styling for toggle buttons (e.g., switch between fingerprint and PIN) */
@@ -205,7 +231,6 @@
   text-align: center;
   font-family: "Figtree", sans-serif;
   font-size: 10px;
-
 }
 
 /* Styling for error message popup */
