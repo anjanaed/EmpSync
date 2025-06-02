@@ -66,16 +66,27 @@ const MealPlanner = () => {
         `${urL}/meal-types/by-date/${formattedDate}`
       );
       const data = await response.json();
-      setDefaultMeals(data);
-
-      // Set default active tab to first meal type if available and no active tab is set
-      if (data.length > 0 && !activeTab) {
-        const firstMealId = data[0].id;
+      // Normalize time data to ensure valid format
+      const normalizedData = data.map((meal) => ({
+        ...meal,
+        time: [
+          meal.time?.[0] && dayjs(meal.time[0], "HH:mm", true).isValid()
+            ? meal.time[0]
+            : null,
+          meal.time?.[1] && dayjs(meal.time[1], "HH:mm", true).isValid()
+            ? meal.time[1]
+            : null,
+        ],
+      }));
+      setDefaultMeals(normalizedData);
+      if (normalizedData.length > 0 && !activeTab) {
+        const firstMealId = normalizedData[0].id;
         setActiveTab(firstMealId.toString());
-        setActiveMealType(data[0]);
+        setActiveMealType(normalizedData[0]);
       }
     } catch (error) {
       console.error("Error fetching default meals:", error);
+      message.error("Failed to load meal types");
     } finally {
       setLoading(false);
     }
@@ -99,26 +110,17 @@ const MealPlanner = () => {
     }
   };
 
-  // Fixed: Fetch all meal schedules for the current date using the correct endpoint
   const fetchAllSchedules = async (date = currentDate) => {
     if (!date) return;
-
     setLoadingSchedules(true);
     setScheduledMeals({});
-
     try {
       const formattedDate = date.format("YYYY-MM-DD");
-
-      // Use the correct endpoint format
       const response = await axios.get(`${urL}/schedule/${formattedDate}`);
-
       if (response.data && Array.isArray(response.data)) {
         const schedulesMap = {};
-
         response.data.forEach((schedule) => {
-          // Extract date from ISO string and compare
           const scheduleDate = dayjs(schedule.date).format("YYYY-MM-DD");
-
           if (scheduleDate === formattedDate) {
             schedulesMap[schedule.mealTypeId] = {
               id: schedule.id,
@@ -129,7 +131,6 @@ const MealPlanner = () => {
             };
           }
         });
-
         setScheduledMeals(schedulesMap);
       } else {
         setScheduledMeals({});
@@ -145,27 +146,19 @@ const MealPlanner = () => {
     }
   };
 
-  // Fixed: Fetch existing schedule for the current date and meal type
   const fetchExistingSchedule = async () => {
     if (!activeTab || !currentDate) return;
-
     try {
       const formattedDate = currentDate.format("YYYY-MM-DD");
-
-      // Use the correct endpoint to get schedules for the date
       const response = await axios.get(`${urL}/schedule/${formattedDate}`);
-
       if (response.data && Array.isArray(response.data)) {
-        // Find schedule for the current meal type
         const schedule = response.data.find(
           (s) =>
             s.mealTypeId === parseInt(activeTab) &&
             dayjs(s.date).format("YYYY-MM-DD") === formattedDate
         );
-
         if (schedule) {
           setExistingSchedule(schedule);
-          // Pre-select meals if there's an existing schedule
           if (schedule.meals && Array.isArray(schedule.meals)) {
             const mealIds = schedule.meals.map((meal) => meal.id);
             setSelectedMeals(mealIds);
@@ -190,12 +183,9 @@ const MealPlanner = () => {
 
   const handleDateChange = (date) => {
     setCurrentDate(date);
-    // Reset active tab when date changes to ensure fresh data
     setActiveTab("");
     setActiveMealType(null);
-    // Clear scheduled meals immediately when date changes
     setScheduledMeals({});
-    // Clear any selected meals and existing schedule
     setSelectedMeals([]);
     setExistingSchedule(null);
   };
@@ -232,34 +222,76 @@ const MealPlanner = () => {
       if (!meal.isDefault) {
         await axios.delete(`${urL}/meal-types/${meal.id}`);
       }
-
       setDefaultMeals((prevMeals) => prevMeals.filter((m) => m.id !== meal.id));
     } catch (err) {
       console.error("Error deleting meal:", err);
     }
   };
 
-  const handleStartTimeChange = (time, meal) => {
-    // Implementation of time change logic
+  const handleStartTimeChange = async (time, mealId) => {
+    try {
+      // Update local state to reflect the change
+      const formattedTime = time ? time.format("HH:mm") : null;
+      setDefaultMeals((prevMeals) =>
+        prevMeals.map((meal) =>
+          meal.id === mealId
+            ? { ...meal, time: [formattedTime, meal.time?.[1] || null] }
+            : meal
+        )
+      );
+      setLoading(true);
+      await axios.patch(`${urL}/meal-types/timeupdate/${mealId}/0`, {
+        newTime: formattedTime,
+      });
+      await fetchDefaultMeals(currentDate);
+    } catch (err) {
+      console.error("Error changing start time:", err);
+      message.error(
+        err.response?.data?.message || "Failed to update start time"
+      );
+      await fetchDefaultMeals(currentDate); // Revert on error
+    } finally {
+      message.success("Time Updated successfully");
+
+      setLoading(false);
+    }
   };
 
-  const handleEndTimeChange = (time, meal) => {
-    // Implementation of time change logic
+  const handleEndTimeChange = async (time, mealId) => {
+    try {
+      // Update local state to reflect the change
+      const formattedTime = time ? time.format("HH:mm") : null;
+      setDefaultMeals((prevMeals) =>
+        prevMeals.map((meal) =>
+          meal.id === mealId
+            ? { ...meal, time: [meal.time?.[0] || null, formattedTime] }
+            : meal
+        )
+      );
+      setLoading(true);
+      await axios.patch(`${urL}/meal-types/timeupdate/${mealId}/1`, {
+        newTime: formattedTime,
+      });
+      await fetchDefaultMeals(currentDate);
+    } catch (err) {
+      console.error("Error changing end time:", err);
+      message.error(err.response?.data?.message || "Failed to update end time");
+      await fetchDefaultMeals(currentDate); // Revert on error
+    } finally {
+      message.success("Time Updated successfully");
+
+      setLoading(false);
+    }
   };
 
-  // Modified handleTabChange to load existing schedule for the selected tab
   const handleTabChange = (key) => {
     const stringKey = key.toString();
     const numericKey = parseInt(key, 10);
     setActiveTab(stringKey);
-
-    // Find the meal type for the active tab
     const mealType = defaultMeals.find((meal) => meal.id === numericKey);
     if (mealType) {
       setActiveMealType(mealType);
     }
-
-    // Clear selected meals when switching tabs
     setSelectedMeals([]);
     setExistingSchedule(null);
   };
@@ -295,6 +327,7 @@ const MealPlanner = () => {
         await fetchDefaultMeals(currentDate);
       } catch (err) {
         console.error("Error creating meal type:", err);
+        message.error("Failed to create meal type");
       } finally {
         setLoading(false);
       }
@@ -307,19 +340,14 @@ const MealPlanner = () => {
       message.warning("Please select a meal time first");
       return;
     }
-
     setIsUpdateModalVisible(true);
     setSearchTerm("");
-
-    // Make sure activeMealType is set correctly before showing modal
     const mealType = defaultMeals.find(
       (meal) => meal.id === parseInt(activeTab)
     );
     if (mealType) {
       setActiveMealType(mealType);
     }
-
-    // First fetch available meals, then check for existing schedule
     await fetchAvailableMeals();
     await fetchExistingSchedule();
   };
@@ -327,39 +355,26 @@ const MealPlanner = () => {
   const handleUpdateMenuCancel = () => {
     setIsUpdateModalVisible(false);
     setSearchTerm("");
-    // Clear selected meals when canceling
     setSelectedMeals([]);
   };
 
-  // NEW: Handle clear schedule functionality
   const handleClearSchedule = async () => {
     if (!activeTab || !currentDate || !activeMealType) {
       message.error("Missing required information (date or meal type)");
       return;
     }
-
-    // Check if there's an existing schedule to clear
     if (!existingSchedule) {
       message.info(`No scheduled meals found for ${activeMealType.name}`);
       setIsUpdateModalVisible(false);
       return;
     }
-
     setClearingSchedule(true);
     try {
-      // Delete the existing schedule
       await axios.delete(`${urL}/schedule/${existingSchedule.id}`);
-      
       message.success(`${activeMealType.name} menu cleared successfully`);
-
-      // Clear local state
       setSelectedMeals([]);
       setExistingSchedule(null);
-
-      // Refetch all schedules to update the UI
       await fetchAllSchedules(currentDate);
-
-      // Close the modal
       setIsUpdateModalVisible(false);
       setSearchTerm("");
     } catch (error) {
@@ -377,34 +392,24 @@ const MealPlanner = () => {
       message.error("Missing required information (date or meal type)");
       return;
     }
-
     if (selectedMeals.length === 0) {
       message.warning("Please select at least one meal");
       return;
     }
-
     const payload = {
       date: currentDate.format("YYYY-MM-DD"),
       mealTypeId: parseInt(activeTab),
       mealIds: selectedMeals,
     };
-
     setSavingSchedule(true);
     try {
       if (existingSchedule) {
-        // Update existing schedule
-        const response = await axios.patch(
-          `${urL}/schedule/${existingSchedule.id}`,
-          payload
-        );
+        await axios.patch(`${urL}/schedule/${existingSchedule.id}`, payload);
         message.success(`${activeMealType.name} menu updated successfully`);
       } else {
-        // Create new schedule
-        const response = await axios.post(`${urL}/schedule`, payload);
+        await axios.post(`${urL}/schedule`, payload);
         message.success(`${activeMealType.name} menu created successfully`);
       }
-
-      // Refetch all schedules to update the UI
       await fetchAllSchedules(currentDate);
     } catch (error) {
       console.error("Error updating menu:", error);
@@ -422,24 +427,17 @@ const MealPlanner = () => {
     setSearchTerm(e.target.value);
   };
 
-  // Updated filterMeals function to include snack fallback logic
   const filterMeals = () => {
     if (!activeMealType) {
       return [];
     }
-
     const categoryName = activeMealType.name;
     const standardMealTypes = ["breakfast", "lunch", "dinner"];
-
-    // Check if the active meal type is one of the standard meal types
     const isStandardMealType = standardMealTypes.includes(
       categoryName.toLowerCase()
     );
-
     let filteredByCategory;
-
     if (isStandardMealType) {
-      // For standard meal types (Breakfast, Lunch, Dinner), only show meals from their specific category
       filteredByCategory = availableMeals.filter(
         (meal) =>
           meal.category &&
@@ -449,7 +447,6 @@ const MealPlanner = () => {
           )
       );
     } else {
-      // For any other meal type names (Tea Time, Snack Time, etc.), show snack category
       filteredByCategory = availableMeals.filter(
         (meal) =>
           meal.category &&
@@ -457,24 +454,17 @@ const MealPlanner = () => {
           meal.category.some((cat) => cat.toLowerCase() === "snack")
       );
     }
-
-    // Then filter by search term if present
     if (searchTerm) {
       return filteredByCategory.filter((meal) =>
         meal.nameEnglish.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
-
     return filteredByCategory;
   };
 
-  // Helper function to determine if we're showing snack meals as fallback
   const isShowingSnackFallback = () => {
     if (!activeMealType || !availableMeals.length) return false;
-
     const categoryName = activeMealType.name;
-
-    // Check if original category has meals
     const originalCategoryMeals = availableMeals.filter(
       (meal) =>
         meal.category &&
@@ -483,7 +473,6 @@ const MealPlanner = () => {
           (cat) => cat.toLowerCase() === categoryName.toLowerCase()
         )
     );
-
     return (
       originalCategoryMeals.length === 0 &&
       categoryName.toLowerCase() !== "snack"
@@ -494,7 +483,6 @@ const MealPlanner = () => {
     fetchDefaultMeals(currentDate);
   }, [currentDate]);
 
-  // Update activeMealType when activeTab or defaultMeals change
   useEffect(() => {
     if (activeTab && defaultMeals.length > 0) {
       const mealType = defaultMeals.find(
@@ -506,21 +494,18 @@ const MealPlanner = () => {
     }
   }, [activeTab, defaultMeals]);
 
-  // Fixed: Fetch all schedules when date changes
   useEffect(() => {
     if (currentDate) {
       fetchAllSchedules(currentDate);
     }
   }, [currentDate]);
 
-  // Fetch existing schedule when activeTab changes
   useEffect(() => {
     if (activeTab && currentDate) {
       fetchExistingSchedule();
     }
   }, [activeTab, currentDate]);
 
-  // Set default active tab when defaultMeals are loaded
   useEffect(() => {
     if (defaultMeals.length > 0 && !activeTab) {
       const firstMealId = defaultMeals[0].id;
@@ -532,6 +517,15 @@ const MealPlanner = () => {
   if (loading) {
     return <Loading />;
   }
+
+  // Validate time to ensure valid dayjs object for defaultValue
+  const validateTime = (time) => {
+    if (!time) return null;
+    const parsed = dayjs(time, "HH:mm", true);
+    if (parsed.isValid()) return parsed;
+    console.warn(`Invalid time format: ${time}`);
+    return null;
+  };
 
   return (
     <div className={styles.container}>
@@ -573,7 +567,6 @@ const MealPlanner = () => {
             <div key={meal.id} className={styles.mealItems}>
               <div className={styles.boxTop}>
                 <div className={styles.boxTopLeft}>{meal.name}</div>
-
                 <div className={styles.boxTopRight}>
                   <Button
                     type="text"
@@ -598,19 +591,21 @@ const MealPlanner = () => {
               </div>
               <div className={styles.timePickerGroup}>
                 <TimePicker
-                  value={meal.time?.[0] ? dayjs(meal.time[0], "HH:mm") : null}
+                  defaultValue={validateTime(meal.time?.[0])}
                   format="HH:mm"
                   onChange={(time) => handleStartTimeChange(time, meal.id)}
                   className={styles.timePicker}
                   placeholder="Start time"
+                  allowClear={false}
                 />
                 <span className={styles.timePickerSeparator}>to</span>
                 <TimePicker
-                  value={meal.time?.[1] ? dayjs(meal.time[1], "HH:mm") : null}
+                  defaultValue={validateTime(meal.time?.[1])}
                   format="HH:mm"
                   onChange={(time) => handleEndTimeChange(time, meal.id)}
                   className={styles.timePicker}
                   placeholder="End time"
+                  allowClear={false}
                 />
               </div>
             </div>
@@ -688,7 +683,6 @@ const MealPlanner = () => {
         </Button>
       </div>
 
-      {/* Add Custom Meal Modal */}
       <Modal
         title="Add Meal Time"
         open={isModalVisible}
@@ -709,7 +703,6 @@ const MealPlanner = () => {
               onChange={(e) => setNewMealName(e.target.value)}
             />
           </Form.Item>
-
           <Form.Item label="Meal Time" required>
             <div style={{ display: "flex", gap: 8 }}>
               <Form.Item
@@ -735,14 +728,12 @@ const MealPlanner = () => {
               </Form.Item>
             </div>
           </Form.Item>
-
           <Form.Item name="isDefault" valuePropName="checked" noStyle>
             <Checkbox>Default Meal</Checkbox>
           </Form.Item>
         </Form>
       </Modal>
 
-      {/* Update Menu Modal - MODIFIED */}
       <Modal
         title={`Update ${
           activeMealType ? activeMealType.name : ""
@@ -759,7 +750,6 @@ const MealPlanner = () => {
           <h3 className={styles.modalSectionTitle}>
             Available {activeMealType ? activeMealType.name : ""} Meals
           </h3>
-
           <div className={styles.searchContainer}>
             <Input
               placeholder="Search meals..."
@@ -769,7 +759,6 @@ const MealPlanner = () => {
               prefix={<SearchOutlined />}
             />
           </div>
-
           <div className={styles.mealsContainer}>
             {fetchingMeals ? (
               <div className={styles.loadingContainer}>
@@ -798,7 +787,7 @@ const MealPlanner = () => {
                   emptyText: (
                     <Empty
                       description={
-                        fetchingMeals ? "Loading..." : `No meals found`
+                        fetchingMeals ? "Loading..." : "No meals found"
                       }
                       image={Empty.PRESENTED_IMAGE_SIMPLE}
                     />
@@ -807,8 +796,6 @@ const MealPlanner = () => {
               />
             )}
           </div>
-
-          {/* MODIFIED FOOTER - Changed Cancel to Clear */}
           <div className={styles.modalFooter}>
             <Button
               key="clear"
