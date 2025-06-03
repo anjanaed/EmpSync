@@ -5,6 +5,7 @@ import {
   Get,
   HttpException,
   HttpStatus,
+  UseGuards,
   Param,
   Query,
   Post,
@@ -12,6 +13,9 @@ import {
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { Prisma } from '@prisma/client';
+import { AuthGuard } from '@nestjs/passport';
+import { RolesGuard } from '../authentication/roles.guard';
+import { Roles } from '../authentication/roles.decorator';
 
 @Controller('user')
 export class UserController {
@@ -35,6 +39,8 @@ export class UserController {
   }
 
   @Get()
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('HR_ADMIN') // Accessible by admin or manager
   async findAll(
     @Query('search') search?: string,
     @Query('role') role?: string,
