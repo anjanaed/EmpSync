@@ -22,6 +22,8 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post()
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('HR_ADMIN')
   async create(@Body() dto: Prisma.UserCreateInput) {
     try {
       await this.userService.create(dto);
@@ -40,7 +42,7 @@ export class UserController {
 
   @Get()
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles('HR_ADMIN') // Accessible by admin or manager
+  @Roles('HR_ADMIN')
   async findAll(
     @Query('search') search?: string,
     @Query('role') role?: string,
@@ -60,6 +62,8 @@ export class UserController {
   }
 
   @Get(':id')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('HR_ADMIN')
   async findOne(@Param('id') id: string) {
     try {
       return await this.userService.findOne(id);
@@ -76,6 +80,8 @@ export class UserController {
   }
 
   @Get('/fetchrole/:id')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('HR_ADMIN')
   async findRole(@Param('id') id: string) {
     try {
       return await this.userService.fetchRole(id);
@@ -92,6 +98,8 @@ export class UserController {
   }
 
   @Put(':id')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('HR_ADMIN')
   async update(@Param('id') id: string, @Body() dto: Prisma.UserUpdateInput) {
     try {
       await this.userService.update(id, dto);
@@ -109,6 +117,8 @@ export class UserController {
   }
 
   @Delete(':id')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('HR_ADMIN')
   async delete(@Param('id') id: string) {
     try {
       await this.userService.delete(id);

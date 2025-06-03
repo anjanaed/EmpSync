@@ -1,13 +1,16 @@
-// src/auth/jwt.strategy.ts
 import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { passportJwtSecret } from 'jwks-rsa';
-import axios from 'axios';
+import { UserService } from '../user/user.service'; 
+import * as dotenv from 'dotenv';
+dotenv.config();
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor() {
+  constructor(private readonly userService: UserService) {
+    const url = process.env.AUTH0_URL; 
+
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
@@ -15,24 +18,33 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         cache: true,
         rateLimit: true,
         jwksRequestsPerMinute: 5,
-        jwksUri: `https://dev-77pr5yqzs0m53x77.us.auth0.com/.well-known/jwks.json`,
+        jwksUri: `https://${url}/.well-known/jwks.json`,
       }),
-      issuer: `https://dev-77pr5yqzs0m53x77.us.auth0.com/`,
-      audience: 'https://dev-77pr5yqzs0m53x77.us.auth0.com/api/v2/',
+      issuer: `https://${url}/`,
+      audience: `https://${url}/api/v2/`,
+      
     });
   }
 
   async validate(payload: any) {
-    const employeeId = payload['https://empidReceiver.com'];
-    const response = await axios.get(
-      `http://localhost:3000/user/${employeeId.toUpperCase()}`,
-    );
-    const currentUser = response.data;
-    const userRole = currentUser.role;
+    try {
+      const employeeId = payload['https://empidReceiver.com'];
 
-    return {
-      employeeId,
-      role: userRole,
-    };
+      if (!employeeId || typeof employeeId !== 'string') {
+        throw new Error('Invalid or missing employeeId in JWT payload');
+      }
+
+      const currentUser = await this.userService.findOne(employeeId.toUpperCase());
+      const userRole = currentUser.role;
+
+      return {
+        employeeId,
+        role: userRole,
+      };
+    } catch (error) {
+      console.error('JWT validation error:', error);
+      // Return null to indicate failed validation without crashing the app
+      return null;
+    }
   }
 }

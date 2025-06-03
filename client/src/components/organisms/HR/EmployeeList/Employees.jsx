@@ -8,6 +8,7 @@ import Loading from "../../../atoms/loading/loading";
 import styles from "./Employee.module.css";
 import SearchBar from "../../../molecules/SearchBar/SearchBar";
 import { Toaster, toast } from "sonner";
+import { useAuth } from "../../../../contexts/AuthContext";
 import { debounce } from "lodash";
 import { usePopup } from "../../../../contexts/PopupContext";
 
@@ -40,6 +41,9 @@ const Employees = () => {
   const [employee, setEmployee] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const urL = import.meta.env.VITE_BASE_URL;
+  const { authData } = useAuth();
+  const token = authData?.accessToken;
+
   const { success, error } = usePopup();
 
   const openModal = (empId) => {
@@ -53,10 +57,15 @@ const Employees = () => {
 
   const fetchEmployee = async (searchValue, roleValue) => {
     try {
+      
+
       const response = await axios.get(`${urL}/user`, {
         params: {
           search: searchValue || undefined,
           role: roleValue || undefined,
+        },
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
       });
       const fetchedEmployee = response.data.map((emp) => ({
@@ -88,11 +97,14 @@ const Employees = () => {
     },
   };
 
-
   const handleDelete = async (id, email) => {
     setLoading(true);
     try {
-      await axios.delete(`${urL}/user/${id}`);
+      await axios.delete(`${urL}/user/${id}`,{
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       await axios.post(`${urL}/auth/delete`, { email: email });
       fetchEmployee();
       success("User Removed Successfully!");
@@ -164,9 +176,7 @@ const Employees = () => {
           />
           <Popconfirm
             title={
-              <span style={{ fontSize: "0.9vw" }}>
-                Delete User {record.id}
-              </span>
+              <span style={{ fontSize: "0.9vw" }}>Delete User {record.id}</span>
             }
             placement="bottom"
             onConfirm={() => handleDelete(record.id, record.email)}

@@ -17,6 +17,8 @@ import axios from "axios";
 import Gbutton from "../../../atoms/button/Button";
 import { RiFingerprintLine } from "react-icons/ri";
 import { usePopup } from "../../../../contexts/PopupContext";
+import { useAuth } from "../../../../contexts/AuthContext";
+
 
 const formItemLayout = {
   labelCol: {
@@ -41,6 +43,8 @@ const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
   const [customRole, setCustomRole] = useState("");
   const [form] = Form.useForm();
   const { success, error } = usePopup();
+    const { authData } = useAuth();
+
 
   const [currentEmployee, setCurrentEmployee] = useState({
     id: "",
@@ -83,9 +87,15 @@ const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
 
   const handleUpdate = async () => {
     try {
+            const token = authData?.accessToken;
+
       await form.validateFields();
       setLoading(true);
-      await axios.put(`${urL}/user/${empId}`, currentEmployee);
+      await axios.put(`${urL}/user/${empId}`, currentEmployee,{
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },  
+      });
       handleCancel();
       fetchEmployee();
       success("User Information Updated Successfully!");

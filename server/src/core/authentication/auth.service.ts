@@ -29,7 +29,9 @@ export class AuthService {
           headers: { 'Content-Type': 'application/json' },
         },
       );
+      console.log(response.data);
       return response.data;// Return the response data on success
+
     } catch (error) {
       console.error(
         'Error during Auth0 login:',// Log the error

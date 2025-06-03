@@ -8,6 +8,8 @@ import { useNavigate } from "react-router-dom";
 import moment from "moment";
 import { AiOutlineCaretRight } from "react-icons/ai";
 import Gbutton from "../../../atoms/button/Button";
+import { useAuth } from "../../../../contexts/AuthContext";
+
 import axios from "axios";
 import { usePopup } from "../../../../contexts/PopupContext";
 
@@ -54,6 +56,7 @@ const Register = () => {
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
   const { success, error } = usePopup();
+  const { authData } = useAuth();
 
   //Registering Process
   const handleRegister = async () => {
@@ -64,6 +67,8 @@ const Register = () => {
     }
 
     try {
+      const token = authData?.accessToken;
+
       const payload = {
         id,
         name,
@@ -78,7 +83,11 @@ const Register = () => {
         language: lang,
         salary: parseInt(salary),
       };
-      await axios.post(`${urL}/user`, payload);
+      await axios.post(`${urL}/user`, payload, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
     } catch (err) {
       error(
         `Registration Failed: ${err.response?.data?.message || "Unknown error"}`
