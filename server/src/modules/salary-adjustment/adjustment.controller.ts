@@ -5,18 +5,24 @@ import {
   Get,
   Param,
   Post,
+  UseGuards,
   Put,
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { AdjustmentService } from './adjustment.service';
+import { AuthGuard } from '@nestjs/passport';
+import { RolesGuard } from '../../core/authentication/roles.guard';
+import { Roles } from '../../core/authentication/roles.decorator';
 
 @Controller('adjustment')
 export class AdjustmentController {
   constructor(private readonly adjustmentService: AdjustmentService) {}
 
   @Post()
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('HR_ADMIN')
   async create(@Body() dto: Prisma.SalaryAdjustmentsCreateInput) {
     try {
       return await this.adjustmentService.create(dto);
@@ -33,6 +39,8 @@ export class AdjustmentController {
   }
 
   @Get()
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('HR_ADMIN')
   async findAll() {
     try {
       return await this.adjustmentService.findAll();
@@ -49,6 +57,8 @@ export class AdjustmentController {
   }
 
   @Get(':id')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('HR_ADMIN')
   async findOne(@Param('id') id: number) {
     try {
       const adjustment = await this.adjustmentService.findOne(id);
@@ -69,6 +79,8 @@ export class AdjustmentController {
   }
 
   @Put(':id')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('HR_ADMIN')
   async update(
     @Param('id') id: string,
     @Body() dto: Prisma.SalaryAdjustmentsUpdateInput,
@@ -88,6 +100,8 @@ export class AdjustmentController {
   }
 
   @Delete(':id')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('HR_ADMIN')
   async remove(@Param('id') id: string) {
     try {
       return await this.adjustmentService.remove(id);

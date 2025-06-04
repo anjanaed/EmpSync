@@ -5,6 +5,8 @@ import Gbutton from "../../../atoms/button/Button";
 import { FaRegSave } from "react-icons/fa";
 import Loading from "../../../atoms/loading/loading";
 import axios from "axios";
+import { useAuth } from "../../../../contexts/AuthContext";
+
 
 const AdjustmentModal = ({ handleCancel, fetch, success, error }) => {
   const [isAllowanceChecked, setIsAllowanceChecked] = useState(true);
@@ -13,6 +15,8 @@ const AdjustmentModal = ({ handleCancel, fetch, success, error }) => {
   const [description, setDescription] = useState();
   const [amount, setAmount] = useState();
   const [form] = Form.useForm();
+      const { authData } = useAuth();
+  const token = authData?.accessToken;
 
   const urL = import.meta.env.VITE_BASE_URL;
 
@@ -33,7 +37,11 @@ const AdjustmentModal = ({ handleCancel, fetch, success, error }) => {
         allowance: isAllowanceChecked,
         amount: parseFloat(amount),
       };
-      await axios.post(`${urL}/adjustment`, payload);
+      await axios.post(`${urL}/adjustment`, payload, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       fetch();
       handleCancel();
       success(`${description} Added Successfully`);

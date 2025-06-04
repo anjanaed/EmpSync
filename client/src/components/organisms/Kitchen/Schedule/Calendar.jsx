@@ -32,6 +32,7 @@ import dayjs from "dayjs";
 import styles from "./Calendar.module.css";
 import Loading from "../../../atoms/loading/loading";
 import axios from "axios";
+import { useAuth } from "../../../../contexts/AuthContext";
 
 const { TabPane } = Tabs;
 
@@ -57,6 +58,8 @@ const MealPlanner = () => {
   const [scheduledMeals, setScheduledMeals] = useState({});
   const [loadingSchedules, setLoadingSchedules] = useState(false);
   const [clearingSchedule, setClearingSchedule] = useState(false);
+  const { authData } = useAuth();
+  const token = authData?.accessToken;
 
   const fetchDefaultMeals = async (date) => {
     setLoading(true);
@@ -206,7 +209,11 @@ const MealPlanner = () => {
 
   const handlePinMeal = async (id) => {
     try {
-      await axios.patch(`${urL}/meal-types/${id}/toggle-default`);
+      await axios.patch(`${urL}/meal-types/${id}/toggle-default`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setDefaultMeals((prevMeals) =>
         prevMeals.map((meal) =>
           meal.id === id ? { ...meal, isDefault: !meal.isDefault } : meal
@@ -220,7 +227,11 @@ const MealPlanner = () => {
   const handleDeleteMeal = async (meal) => {
     try {
       if (!meal.isDefault) {
-        await axios.delete(`${urL}/meal-types/${meal.id}`);
+        await axios.delete(`${urL}/meal-types/${meal.id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
       }
       setDefaultMeals((prevMeals) => prevMeals.filter((m) => m.id !== meal.id));
     } catch (err) {
@@ -242,6 +253,10 @@ const MealPlanner = () => {
       setLoading(true);
       await axios.patch(`${urL}/meal-types/timeupdate/${mealId}/0`, {
         newTime: formattedTime,
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
       await fetchDefaultMeals(currentDate);
     } catch (err) {
@@ -271,6 +286,10 @@ const MealPlanner = () => {
       setLoading(true);
       await axios.patch(`${urL}/meal-types/timeupdate/${mealId}/1`, {
         newTime: formattedTime,
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
       await fetchDefaultMeals(currentDate);
     } catch (err) {
@@ -323,7 +342,11 @@ const MealPlanner = () => {
           isDefault: values.isDefault,
           date: currentDate.format("YYYY-MM-DD"),
         };
-        await axios.post(`${urL}/meal-types`, payload);
+        await axios.post(`${urL}/meal-types`, payload, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         await fetchDefaultMeals(currentDate);
       } catch (err) {
         console.error("Error creating meal type:", err);
@@ -370,7 +393,11 @@ const MealPlanner = () => {
     }
     setClearingSchedule(true);
     try {
-      await axios.delete(`${urL}/schedule/${existingSchedule.id}`);
+      await axios.delete(`${urL}/schedule/${existingSchedule.id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       message.success(`${activeMealType.name} menu cleared successfully`);
       setSelectedMeals([]);
       setExistingSchedule(null);
@@ -404,10 +431,18 @@ const MealPlanner = () => {
     setSavingSchedule(true);
     try {
       if (existingSchedule) {
-        await axios.patch(`${urL}/schedule/${existingSchedule.id}`, payload);
+        await axios.patch(`${urL}/schedule/${existingSchedule.id}`, payload, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         message.success(`${activeMealType.name} menu updated successfully`);
       } else {
-        await axios.post(`${urL}/schedule`, payload);
+        await axios.post(`${urL}/schedule`, payload, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         message.success(`${activeMealType.name} menu created successfully`);
       }
       await fetchAllSchedules(currentDate);

@@ -1,12 +1,28 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, HttpException, HttpStatus } from "@nestjs/common";
-import { Prisma } from "@prisma/client";
-import { PayeTaxService } from "./paye-tax.service";
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  UseGuards,
+  Post,
+  Put,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
+import { Prisma } from '@prisma/client';
+import { PayeTaxService } from './paye-tax.service';
+import { AuthGuard } from '@nestjs/passport';
+import { RolesGuard } from '../../core/authentication/roles.guard';
+import { Roles } from '../../core/authentication/roles.decorator';
 
 @Controller('paye')
 export class PayeTaxController {
   constructor(private readonly payeTaxService: PayeTaxService) {}
 
   @Post()
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('HR_ADMIN')
   async create(@Body() dto: Prisma.PayeTaxSlabCreateInput) {
     try {
       return await this.payeTaxService.create(dto);
@@ -23,6 +39,8 @@ export class PayeTaxController {
   }
 
   @Get()
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('HR_ADMIN')
   async findAll() {
     try {
       return await this.payeTaxService.findAll();
@@ -39,6 +57,8 @@ export class PayeTaxController {
   }
 
   @Get(':id')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('HR_ADMIN')
   async findOne(@Param('id') id: number) {
     try {
       const tax = await this.payeTaxService.findOne(id);
@@ -59,6 +79,8 @@ export class PayeTaxController {
   }
 
   @Put()
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('HR_ADMIN')
   async update(@Body() dto: Prisma.PayeTaxSlabCreateManyInput[]) {
     try {
       return await this.payeTaxService.update(dto);
@@ -75,6 +97,8 @@ export class PayeTaxController {
   }
 
   @Delete(':id')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('HR_ADMIN')
   async remove(@Param('id') id: string) {
     try {
       return await this.payeTaxService.remove(id);
