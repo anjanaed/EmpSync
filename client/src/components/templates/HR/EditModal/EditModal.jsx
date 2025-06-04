@@ -43,7 +43,8 @@ const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
   const [customRole, setCustomRole] = useState("");
   const [form] = Form.useForm();
   const { success, error } = usePopup();
-    const { authData } = useAuth();
+        const { authData } = useAuth();
+  const token = authData?.accessToken;
 
 
   const [currentEmployee, setCurrentEmployee] = useState({
@@ -69,7 +70,11 @@ const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
 
   const fetchRecord = async () => {
     try {
-      const res = await axios.get(`${urL}/user/${empId}`);
+      const res = await axios.get(`${urL}/user/${empId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       const employee = res.data;
       employee.dob = dayjs(employee.dob);
       setCurrentEmployee(employee);

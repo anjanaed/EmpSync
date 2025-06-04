@@ -7,6 +7,8 @@ import { FaRegSave } from "react-icons/fa";
 import { BsPlusCircle } from "react-icons/bs";
 import { LuCircleMinus } from "react-icons/lu";
 import Loading from "../../../atoms/loading/loading";
+import { useAuth } from "../../../../contexts/AuthContext";
+
 
 const customTheme = {
   components: {
@@ -26,6 +28,8 @@ const PayeModal = ({ handleCancel, success, error }) => {
   const urL = import.meta.env.VITE_BASE_URL;
   const [form] = Form.useForm();
   const [dataSource, setDataSource] = useState([]);
+      const { authData } = useAuth();
+  const token = authData?.accessToken;
 
   const handleChange = (orderId, field, value) => {
     setDataSource((prev) =>
@@ -37,7 +41,11 @@ const PayeModal = ({ handleCancel, success, error }) => {
 
   const fetchRecord = async () => {
     try {
-      const res = await axios.get(`${urL}/paye`);
+      const res = await axios.get(`${urL}/paye`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setDataSource(res.data);
 
       const formValues = {
@@ -85,7 +93,11 @@ const PayeModal = ({ handleCancel, success, error }) => {
     await form.validateFields();
     setLoading(true);
     try {
-      await axios.put(`${urL}/paye`, dataSource);
+      await axios.put(`${urL}/paye`, dataSource, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       handleCancel();
       success("PAYE Slab Updated");
     } catch (err) {

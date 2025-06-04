@@ -4,6 +4,8 @@ import { Camera, User } from "lucide-react";
 import axios from "axios";
 import moment from "moment"; // Import moment for date formatting
 import styles from "./Userprofile.module.css";
+import { useAuth } from "../../../../contexts/AuthContext";
+
 
 // Destructuring Select component for cleaner code
 const { Option } = Select;
@@ -28,6 +30,8 @@ export default function UserProfile({ user }) {
   const [heightError, setHeightError] = useState("");
   // State for weight validation error message
   const [weightError, setWeightError] = useState("");
+      const { authData } = useAuth();
+  const token = authData?.accessToken;
 
   // Function to validate password complexity
   const validatePassword = (password) => {
@@ -70,7 +74,10 @@ export default function UserProfile({ user }) {
   const fetchUserData = async () => {
     try {
       const response = await axios.get(
-        `${import.meta.env.VITE_BASE_URL}/user/${user.id}`
+        `${import.meta.env.VITE_BASE_URL}/user/${user.id}`,{headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
       );
       setUserData(response.data);
     } catch (error) {
@@ -100,7 +107,10 @@ export default function UserProfile({ user }) {
             height: parseInt(userData.height, 10),
             weight: parseInt(userData.weight, 10),
             password: userData.password,
-          }
+          },{headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
         );
 
         if (response.status === 200) {

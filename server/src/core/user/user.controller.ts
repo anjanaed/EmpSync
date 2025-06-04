@@ -42,7 +42,6 @@ export class UserController {
 
   @Get()
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles('HR_ADMIN')
   async findAll(
     @Query('search') search?: string,
     @Query('role') role?: string,
@@ -62,8 +61,7 @@ export class UserController {
   }
 
   @Get(':id')
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles('HR_ADMIN')
+  // @UseGuards(AuthGuard('jwt'), RolesGuard)
   async findOne(@Param('id') id: string) {
     try {
       return await this.userService.findOne(id);
@@ -81,7 +79,6 @@ export class UserController {
 
   @Get('/fetchrole/:id')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles('HR_ADMIN')
   async findRole(@Param('id') id: string) {
     try {
       return await this.userService.fetchRole(id);

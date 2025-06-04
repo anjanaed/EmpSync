@@ -22,6 +22,8 @@ import { IoOpenOutline } from "react-icons/io5";
 import Loading from "../../../atoms/loading/loading";
 import { IoMdRemoveCircleOutline } from "react-icons/io";
 import PayeModal from "../../../templates/HR/PayeModal/PayeModal";
+import { useAuth } from "../../../../contexts/AuthContext";
+
 import { usePopup } from "../../../../contexts/PopupContext";
 const { RangePicker } = DatePicker;
 
@@ -38,6 +40,8 @@ const Payroll = () => {
   const urL = import.meta.env.VITE_BASE_URL;
   const [form] = Form.useForm();
   const navigate = useNavigate();
+  const { authData } = useAuth();
+  const token = authData?.accessToken;
   const { success, error } = usePopup();
 
   const [individualAdjustment, setIndividualAdjustment] = useState([
@@ -94,13 +98,25 @@ const Payroll = () => {
       await handleEtfEpf();
 
       //Remove Existing Payrolls with same month
-      await axios.delete(`${urL}/payroll/delete-by-month/${month}`);
+      await axios.delete(`${urL}/payroll/delete-by-month/${month}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       //Start calculations
-      await axios.post(`${urL}/payroll/calculate-all`, {
-        range: range,
-        month: month,
-      });
+      await axios.post(
+        `${urL}/payroll/calculate-all`,
+        {
+          range: range,
+          month: month,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       success("Payrolls Generated Successfully");
     } catch (err) {
       console.log(err);
@@ -137,7 +153,11 @@ const Payroll = () => {
     setLoading(true);
     try {
       const intId = parseInt(id, 10);
-      await axios.delete(`${urL}/adjustment/${intId}`);
+      await axios.delete(`${urL}/adjustment/${intId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       fetchAdjustments();
       success("Adjustment Removed Successfully");
     } catch (err) {
@@ -150,7 +170,11 @@ const Payroll = () => {
   //Fetch Data
   const fetchAdjustments = async () => {
     try {
-      const res = await axios.get(`${urL}/adjustment`);
+      const res = await axios.get(`${urL}/adjustment`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       //Check Availability of Pre defined Fields & Set their Existing Values
       const epfValue = res.data.find((adj) => adj.label == "EPF (Employee)");
       const etfValue = res.data.find((adj) => adj.label == "ETF");
@@ -193,7 +217,11 @@ const Payroll = () => {
     setLoading(true);
 
     try {
-      const userRes = await axios.get(`${urL}/user`);
+      const userRes = await axios.get(`${urL}/user`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       const userIds = userRes.data.map((user) => user.id);
       const processedIds = new Set();
 
@@ -228,7 +256,11 @@ const Payroll = () => {
             amount: parseFloat(adj.amount),
           };
 
-          await axios.post(`${urL}/indiadjustment`, payload);
+          await axios.post(`${urL}/indiadjustment`, payload, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
           processedIds.add(id);
         }
       }
@@ -264,7 +296,11 @@ const Payroll = () => {
     setLoading(true);
     try {
       //Retrieve Pre defined field values
-      const res = await axios.get(`${urL}/adjustment`);
+      const res = await axios.get(`${urL}/adjustment`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       const adjustment = res.data;
       const epfRecord = adjustment.find((adj) => adj.label == "EPF (Employee)");
       const etfRecord = adjustment.find((adj) => adj.label == "ETF");
@@ -275,7 +311,11 @@ const Payroll = () => {
       // Update the record if changes are detected, or create a new one if it doesn't exist
       if (epfRecord) {
         if (epfRecord.amount != parseFloat(epf)) {
-          await axios.put(`${urL}/adjustment/${epfRecord.id}`, epfPayload);
+          await axios.put(`${urL}/adjustment/${epfRecord.id}`, epfPayload, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
         }
       } else {
         const epfPayload = {
@@ -284,13 +324,22 @@ const Payroll = () => {
           allowance: false,
           amount: parseFloat(epf),
         };
-        await axios.post(`${urL}/adjustment`, epfPayload);
+        await axios.post(`${urL}/adjustment`, epfPayload, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
       }
       if (employerFundRecord) {
         if (employerFundRecord.amount != parseFloat(employerFund)) {
           await axios.put(
             `${urL}/adjustment/${employerFundRecord.id}`,
-            employerPayload
+            employerPayload,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
           );
         }
       } else {
@@ -300,14 +349,22 @@ const Payroll = () => {
           allowance: false,
           amount: parseFloat(employerFund),
         };
-        await axios.post(`${urL}/adjustment`, employerPayload);
+        await axios.post(`${urL}/adjustment`, employerPayload, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
       }
 
       if (etfRecord) {
         if (etfRecord.amount != parseFloat(etf)) {
           await axios.put(
             `${urL}/adjustment/${parseInt(etfRecord.id)}`,
-            etfPayload
+            etfPayload,{
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
           );
         }
       } else {
@@ -317,7 +374,11 @@ const Payroll = () => {
           allowance: false,
           amount: parseFloat(etf),
         };
-        await axios.post(`${urL}/adjustment`, etfPayload);
+        await axios.post(`${urL}/adjustment`, etfPayload, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
       }
       fetchAdjustments();
     } catch (err) {

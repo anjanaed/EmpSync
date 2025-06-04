@@ -28,6 +28,8 @@ import {
   getDownloadURL,
   deleteObject,
 } from "firebase/storage";
+import { useAuth } from "../../../../contexts/AuthContext";
+
 
 const { TextArea } = Input;
 const { Title } = Typography;
@@ -48,6 +50,8 @@ const EditMealPage = () => {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [imageFile, setImageFile] = useState(null);
+    const { authData } = useAuth();
+  const token = authData?.accessToken;
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -360,6 +364,7 @@ const EditMealPage = () => {
         {
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
         }
       );

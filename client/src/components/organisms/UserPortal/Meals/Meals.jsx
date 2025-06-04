@@ -1,5 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { Card, List, Button, Typography, Modal, message, Tabs, Calendar } from "antd";
+import {
+  Card,
+  List,
+  Button,
+  Typography,
+  Modal,
+  message,
+  Tabs,
+  Calendar,
+} from "antd";
 import { useAuth } from "../../../../contexts/AuthContext";
 import axios from "axios";
 import styles from "./Meals.module.css";
@@ -9,7 +18,13 @@ import { QRCodeCanvas } from "qrcode.react";
 const { Text, Title } = Typography;
 const { TabPane } = Tabs;
 
-const Cart = ({ order, mealDetails, onCancelOrder, isCancelable, isReadOnly = false }) => {
+const Cart = ({
+  order,
+  mealDetails,
+  onCancelOrder,
+  isCancelable,
+  isReadOnly = false,
+}) => {
   const [showQR, setShowQR] = useState(false);
 
   const handleCardClick = () => {
@@ -32,7 +47,9 @@ const Cart = ({ order, mealDetails, onCancelOrder, isCancelable, isReadOnly = fa
       {!isReadOnly && (
         <div className={styles.cardHeaderMain1}>
           <Text strong className={styles.cardHeaderMain}>
-            {showQR ? "  Tap to Show Details  " : (
+            {showQR ? (
+              "  Tap to Show Details  "
+            ) : (
               <>
                 Tap to Show Token <QrcodeOutlined />
               </>
@@ -48,18 +65,36 @@ const Cart = ({ order, mealDetails, onCancelOrder, isCancelable, isReadOnly = fa
       ) : (
         <>
           <div className={styles.orderedAt}>
-            <Text style={{ fontSize: "10px" }}>{new Date(order.orderPlacedTime).toLocaleString()}</Text>
+            <Text style={{ fontSize: "10px" }}>
+              {new Date(order.orderPlacedTime).toLocaleString()}
+            </Text>
           </div>
           <div className={styles.cardHeader}>
-            <Text strong className={styles.orderId}>ID: {order.id}</Text>
-            <Text strong className={styles.orderPrice}>LKR {order.price.toFixed(2)}</Text>
+            <Text strong className={styles.orderId}>
+              ID: {order.id}
+            </Text>
+            <Text strong className={styles.orderPrice}>
+              LKR {order.price.toFixed(2)}
+            </Text>
           </div>
           <div className={styles.cartContent}>
             <div className={styles.orderDetails}>
-              <Text strong className={styles.mealType} style={{ float: "left" }}>
-                {order.breakfast ? "Breakfast" : order.lunch ? "Lunch" : "Dinner"}
+              <Text
+                strong
+                className={styles.mealType}
+                style={{ float: "left" }}
+              >
+                {order.breakfast
+                  ? "Breakfast"
+                  : order.lunch
+                  ? "Lunch"
+                  : "Dinner"}
               </Text>
-              <Text strong className={styles.orderDate} style={{ float: "right" }}>
+              <Text
+                strong
+                className={styles.orderDate}
+                style={{ float: "right" }}
+              >
                 {new Date(order.orderDate).toLocaleDateString()}
               </Text>
             </div>
@@ -75,8 +110,14 @@ const Cart = ({ order, mealDetails, onCancelOrder, isCancelable, isReadOnly = fa
                 })}
                 renderItem={(item) => (
                   <List.Item>
-                    <List.Item.Meta title={<div style={{ float: "left" }}>{item.name}</div>} />
-                    <List.Item.Meta title={<div style={{ float: "right" }}>{item.quantity}</div>} />
+                    <List.Item.Meta
+                      title={<div style={{ float: "left" }}>{item.name}</div>}
+                    />
+                    <List.Item.Meta
+                      title={
+                        <div style={{ float: "right" }}>{item.quantity}</div>
+                      }
+                    />
                   </List.Item>
                 )}
               />
@@ -108,6 +149,7 @@ const Meals = () => {
   const [mealDetails, setMealDetails] = useState({});
   const [selectedDateOrders, setSelectedDateOrders] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const token = authData?.accessToken;
 
   const employeeId = authData?.user?.id || localStorage.getItem("employeeId");
 
@@ -121,7 +163,14 @@ const Meals = () => {
 
     const fetchOrders = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/orders?employeeId=${employeeId}`);
+        const response = await axios.get(
+          `http://localhost:3000/orders?employeeId=${employeeId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
         const orders = response.data;
 
         const mealIdCounts = orders.flatMap((order) =>
@@ -131,7 +180,9 @@ const Meals = () => {
           })
         );
 
-        const uniqueMealIds = [...new Set(mealIdCounts.map((item) => item.mealId))];
+        const uniqueMealIds = [
+          ...new Set(mealIdCounts.map((item) => item.mealId)),
+        ];
 
         const mealResponses = await Promise.all(
           uniqueMealIds.map((mealId) =>
@@ -161,13 +212,17 @@ const Meals = () => {
           );
         });
 
-        const past = orders.filter((order) => order.employeeId === employeeId && order.serve === true);
+        const past = orders.filter(
+          (order) => order.employeeId === employeeId && order.serve === true
+        );
 
         setMealDetails(mealDetailsMap);
         setCurrentOrders(current);
         setPastOrders(past);
       } catch (error) {
-        message.error("Failed to fetch orders or meal details. Please try again.");
+        message.error(
+          "Failed to fetch orders or meal details. Please try again."
+        );
       }
     };
 
@@ -176,7 +231,11 @@ const Meals = () => {
 
   const handleCancelOrder = async (orderId) => {
     try {
-      await axios.delete(`http://localhost:3000/orders/${orderId}`);
+      await axios.delete(`http://localhost:3000/orders/${orderId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       message.success("Order canceled successfully.");
       setCurrentOrders((prev) => prev.filter((order) => order.id !== orderId));
     } catch (error) {
@@ -190,7 +249,8 @@ const Meals = () => {
 
     if (
       orderDate.getFullYear() > now.getFullYear() ||
-      (orderDate.getFullYear() === now.getFullYear() && orderDate.getMonth() > now.getMonth()) ||
+      (orderDate.getFullYear() === now.getFullYear() &&
+        orderDate.getMonth() > now.getMonth()) ||
       (orderDate.getFullYear() === now.getFullYear() &&
         orderDate.getMonth() === now.getMonth() &&
         orderDate.getDate() >= now.getDate())
@@ -213,7 +273,8 @@ const Meals = () => {
   const handleDateSelect = (date) => {
     const selectedDate = date.format("YYYY-MM-DD");
     const ordersForDate = pastOrders.filter(
-      (order) => new Date(order.orderDate).toISOString().split("T")[0] === selectedDate
+      (order) =>
+        new Date(order.orderDate).toISOString().split("T")[0] === selectedDate
     );
     setSelectedDateOrders(ordersForDate);
     setIsModalVisible(true);
@@ -223,11 +284,12 @@ const Meals = () => {
     setIsModalVisible(false);
     setSelectedDateOrders([]);
   };
-  
 
   return (
     <div className={styles.container}>
-      <Title level={3} className={styles.title}>Your Orders</Title>
+      <Title level={3} className={styles.title}>
+        Your Orders
+      </Title>
       <Tabs
         activeKey={activeTab}
         onChange={setActiveTab}

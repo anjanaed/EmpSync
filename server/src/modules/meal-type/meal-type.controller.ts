@@ -6,16 +6,21 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
   ParseIntPipe,
   BadRequestException,
 } from '@nestjs/common';
 import { MealTypeService } from './meal-type.service';
+import { AuthGuard } from '@nestjs/passport';
+import { RolesGuard } from '../../core/authentication/roles.guard';
+import { Roles } from '../../core/authentication/roles.decorator';
 
 @Controller('meal-types')
 export class MealTypeController {
   constructor(private readonly mealTypeService: MealTypeService) {}
 
   @Get()
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   async findAll() {
     try {
       return await this.mealTypeService.findAll();
@@ -61,6 +66,8 @@ export class MealTypeController {
   }
 
   @Post()
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('KITCHEN_ADMIN')
   async create(
     @Body()
     body: {
@@ -83,6 +90,8 @@ export class MealTypeController {
   }
 
   @Patch(':id/toggle-default')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('KITCHEN_ADMIN')
   async toggleDefault(@Param('id', ParseIntPipe) id: number) {
     try {
       return await this.mealTypeService.toggleIsDefault(id);
@@ -92,6 +101,8 @@ export class MealTypeController {
   }
 
   @Patch('timeupdate/:id/:index')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('KITCHEN_ADMIN')
   async patchTimeElement(
     @Param('id', ParseIntPipe) id: number,
     @Param('index', ParseIntPipe) index: number, // 0 for first, 1 for second
@@ -112,6 +123,8 @@ export class MealTypeController {
   }
 
   @Patch(':id')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('KITCHEN_ADMIN')
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() body: { name?: string; time?: string; isDefault?: boolean },
@@ -124,6 +137,8 @@ export class MealTypeController {
   }
 
   @Delete(':id')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('KITCHEN_ADMIN')
   async remove(@Param('id', ParseIntPipe) id: number) {
     try {
       return await this.mealTypeService.remove(id);

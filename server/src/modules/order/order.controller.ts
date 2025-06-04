@@ -1,16 +1,20 @@
-import { 
-  Controller, 
-  Get, 
-  Post, 
-  Body, 
-  Patch, 
-  Param, 
-  Delete, 
-  HttpException, 
-  HttpStatus 
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  UseGuards,
+  Param,
+  Delete,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { OrdersService } from './order.service';
 import { Prisma } from '@prisma/client';
+import { AuthGuard } from '@nestjs/passport';
+import { RolesGuard } from '../../core/authentication/roles.guard';
+import { Roles } from '../../core/authentication/roles.decorator';
 
 // Controller for handling order-related HTTP requests
 @Controller('orders')
@@ -73,7 +77,10 @@ export class OrdersController {
 
   // PATCH endpoint to update an existing order
   @Patch(':id')
-  async update(@Param('id') id: string, @Body() updateOrderDto: Prisma.OrderUpdateInput) {
+  async update(
+    @Param('id') id: string,
+    @Body() updateOrderDto: Prisma.OrderUpdateInput,
+  ) {
     try {
       return await this.ordersService.update(+id, updateOrderDto); // Call service to update order
     } catch (err) {
@@ -91,6 +98,7 @@ export class OrdersController {
 
   // DELETE endpoint to remove an order by ID
   @Delete(':id')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   async remove(@Param('id') id: string) {
     try {
       return await this.ordersService.remove(+id); // Call service to delete order

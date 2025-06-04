@@ -8,18 +8,24 @@ import {
   Param,
   Post,
   Put,
+  UseGuards,
   Query,
   Res,
 } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { Response } from 'express';
 import { PayrollService } from './payroll.service';
+import { AuthGuard } from '@nestjs/passport';
+import { RolesGuard } from '../../core/authentication/roles.guard';
+import { Roles } from '../../core/authentication/roles.decorator';
 
 @Controller('payroll')
 export class PayrollController {
   constructor(private readonly payrollService: PayrollService) {}
 
   @Post('calculate-all')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('HR_ADMIN')
   async generatePayrollsForAll(
     @Body() dto: Prisma.PayrollCreateInput,
     @Res() res: Response,
@@ -37,6 +43,8 @@ export class PayrollController {
   }
 
   @Get()
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('HR_ADMIN')
   async findAll(@Query('search') search?: string) {
     try {
       return await this.payrollService.findAll(search);
@@ -53,6 +61,8 @@ export class PayrollController {
   }
 
   @Get(':empId/:month')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('HR_ADMIN')
   async findOne(@Param('empId') empId: string, @Param('month') month: string) {
     try {
       const payroll = await this.payrollService.findOne(empId, month);
@@ -73,7 +83,12 @@ export class PayrollController {
   }
 
   @Put(':id')
-  async update(@Param('id') id: number, @Body() dto: Prisma.PayrollUpdateInput) {
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('HR_ADMIN')
+  async update(
+    @Param('id') id: number,
+    @Body() dto: Prisma.PayrollUpdateInput,
+  ) {
     try {
       return await this.payrollService.update(id, dto);
     } catch (err) {
@@ -89,6 +104,8 @@ export class PayrollController {
   }
 
   @Delete(':id')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('HR_ADMIN')
   async remove(@Param('id') id: number) {
     try {
       return await this.payrollService.remove(id);
@@ -105,6 +122,8 @@ export class PayrollController {
   }
 
   @Delete('delete-by-month/:month')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('HR_ADMIN')
   async deletePayrollsByMonth(@Param('month') month: string) {
     try {
       return await this.payrollService.deleteByMonth(month);

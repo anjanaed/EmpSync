@@ -5,18 +5,24 @@ import {
   Body,
   Patch,
   Param,
+  UseGuards,
   Delete,
   Query,
   ParseIntPipe,
   BadRequestException,
 } from '@nestjs/common';
 import { ScheduledMealService } from './schedule.service';
+import { AuthGuard } from '@nestjs/passport';
+import { RolesGuard } from '../../core/authentication/roles.guard';
+import { Roles } from '../../core/authentication/roles.decorator';
 
 @Controller('schedule')
 export class ScheduledMealController {
   constructor(private readonly scheduledMealService: ScheduledMealService) {}
 
   @Post()
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('KITCHEN_ADMIN')
   async create(
     @Body() body: { date: string; mealTypeId: number; mealIds: number[] },
   ) {
@@ -46,6 +52,8 @@ export class ScheduledMealController {
   }
 
   @Patch(':id')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('KITCHEN_ADMIN')
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() body: { date?: string; mealTypeId?: number; mealIds?: number[] },
@@ -55,6 +63,8 @@ export class ScheduledMealController {
   }
 
   @Delete(':id')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('KITCHEN_ADMIN')
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.scheduledMealService.remove(id);
   }

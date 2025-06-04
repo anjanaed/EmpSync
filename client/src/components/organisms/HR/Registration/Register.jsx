@@ -100,7 +100,11 @@ const Register = () => {
       success("User Registered Successfully");
       navigate("/EmployeePage");
     } catch (err) {
-      await axios.delete(`${urL}/user/${id}`);
+      await axios.delete(`${urL}/user/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       console.error("Registration Error:", err);
       error(
         `Registration Failed: ${err.response?.data?.message || "Unknown error"}`

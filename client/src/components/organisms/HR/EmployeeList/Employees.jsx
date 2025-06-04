@@ -105,7 +105,11 @@ const Employees = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-      await axios.post(`${urL}/auth/delete`, { email: email });
+      await axios.post(`${urL}/auth/delete`, { email: email },{
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       fetchEmployee();
       success("User Removed Successfully!");
     } catch (err) {
