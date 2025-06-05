@@ -11,17 +11,25 @@ import {
   UseGuards,
   Query,
   Res,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { Response } from 'express';
+import { Multer } from 'multer';
 import { PayrollService } from './payroll.service';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from '../../core/authentication/roles.guard';
 import { Roles } from '../../core/authentication/roles.decorator';
+import { FirebaseService } from './firebase.service';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('payroll')
 export class PayrollController {
-  constructor(private readonly payrollService: PayrollService) {}
+  constructor(
+    private readonly payrollService: PayrollService,
+    private readonly firebaseService: FirebaseService,
+  ) {}
 
   @Post('calculate-all')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
@@ -132,6 +140,52 @@ export class PayrollController {
         {
           status: HttpStatus.INTERNAL_SERVER_ERROR,
           error: 'Failed to delete payrolls by month',
+          message: err.message,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  @Post('upload-pdf/:employeeId')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('HR_ADMIN')
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadPayrollPdf(
+    @Param('employeeId') employeeId: string,
+    @UploadedFile() file: Multer.File,
+  ) {
+    try {
+      const filePath = await this.firebaseService.uploadFile(
+        employeeId,
+        file.originalname,
+        file.buffer,
+      );
+      return { filePath };
+    } catch (err) {
+      throw new HttpException(
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          error: 'Failed to upload file',
+          message: err.message,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  @Get('geturl/:emmpId')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('HR_ADMIN')
+  async getSignedUrl(@Param('empId') empId: string) {
+    try {
+      const url = await this.firebaseService.getSignedUrl(empId);
+      return { url };
+    } catch (err) {
+      throw new HttpException(
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          error: 'Failed to get signed URL',
           message: err.message,
         },
         HttpStatus.INTERNAL_SERVER_ERROR,
