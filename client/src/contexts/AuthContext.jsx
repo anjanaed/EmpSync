@@ -32,7 +32,7 @@ export const AuthProvider = ({ children }) => {
       const decoded = jwtDecode(id_token);
       const employeeId = decoded["https://empidReceiver.com"];
 
-      const response = await axios.get(`${urL}/user/${employeeId.toUpperCase()}`);
+      const response = await axios.get(`${urL}/user/${employeeId.toUpperCase()}`,);
       const currentUser = response.data;
 
       const userRole = currentUser.role;

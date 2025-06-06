@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Button,
   Card,
@@ -20,15 +19,11 @@ import { MdLanguage } from "react-icons/md";
 import { RiAiGenerate } from "react-icons/ri";
 import { LoadingOutlined } from "@ant-design/icons";
 import { Spin } from "antd";
-import DateAndTime from "../DateAndTime/DateAndTime";
 import translations from "../../../../utils/translations";
 import axios from "axios";
 
 const { Content } = Layout;
 const { Title, Text } = Typography;
-
-// Simple in-memory cache for API responses
-const cache = { mealTimes: null, meals: {} };
 
 const Loading = ({ text }) => (
   <div
@@ -68,37 +63,49 @@ const Loading = ({ text }) => (
   </div>
 );
 
-const Page3 = ({ language = "english", username, userId, carouselRef,setResetPin }) => {
-  const navigate = useNavigate();
-  const [currentTime, setCurrentTime] = useState(new Date());
+const Page3 = ({
+  language = "english",
+  username,
+  userId,
+  carouselRef,
+  setResetPin,
+}) => {
+  const [baseTime, setBaseTime] = useState(null);
+  const currentTimeRef = useRef(new Date());
   const [selectedDate, setSelectedDate] = useState("today");
   const [selectedMealTime, setSelectedMealTime] = useState(null);
   const [orderItems, setOrderItems] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [showSuccess, setShowSuccess] = useState(false);
   const [showError, setShowError] = useState(false);
   const [meals, setMeals] = useState([]);
   const [mealTime, setMealTime] = useState([[], []]);
   const [allMeals, setAllMeals] = useState([]);
+  const [_, setRenderTrigger] = useState(0); // For forcing re-render
   const text = translations[language];
 
   useEffect(() => {
-    const timer = setInterval(() => setCurrentTime(new Date()), 10000); // Update every 10 seconds
+    const initTime = () => {
+      const localTime = new Date();
+      currentTimeRef.current = localTime;
+      setBaseTime(localTime);
+
+      setLoading(false);
+    };
+
+    initTime();
+
+    const timer = setInterval(() => {
+      currentTimeRef.current = new Date();
+      if (currentTimeRef.current.getSeconds() === 0) {
+        setRenderTrigger((prev) => prev + 1);
+      }
+    }, 1000);
 
     const fetchMealTime = async () => {
-      if (cache.mealTimes) {
-        setMealTime(cache.mealTimes);
-        const availableMealTimes =
-          selectedDate === "today" ? cache.mealTimes[0] : cache.mealTimes[1];
-        if (availableMealTimes.length > 0 && !selectedMealTime) {
-          setSelectedMealTime(availableMealTimes[0].id);
-        }
-        return;
-      }
       try {
         const res = await axios.get(`http://localhost:3000/meal-types/fetch`);
         const mealTimes = Array.isArray(res.data) ? res.data : [[], []];
-        cache.mealTimes = mealTimes;
         setMealTime(mealTimes);
         const availableMealTimes =
           selectedDate === "today" ? mealTimes[0] : mealTimes[1];
@@ -120,9 +127,8 @@ const Page3 = ({ language = "english", username, userId, carouselRef,setResetPin
       selectedDate === "today" ? mealTime[0] : mealTime[1];
     if (availableMealTimes.length > 0) {
       const validMealTime =
-        availableMealTimes.find(
-          (meal) => meal.id === selectedMealTime && isMealTimeAvailable(meal)
-        ) || availableMealTimes[0];
+        availableMealTimes.find((meal) => isMealTimeAvailable(meal)) ||
+        availableMealTimes[0];
       setSelectedMealTime(validMealTime?.id || null);
     } else {
       setSelectedMealTime(null);
@@ -135,26 +141,15 @@ const Page3 = ({ language = "english", username, userId, carouselRef,setResetPin
         setMeals([]);
         return;
       }
-      const cacheKey = `${selectedDate}-${selectedMealTime}`;
-      if (cache.meals[cacheKey]) {
-        setMeals(cache.meals[cacheKey]);
-        setAllMeals((prev) => {
-          const existingMealIds = new Set(prev.map((m) => m.id));
-          const newMeals = cache.meals[cacheKey].filter(
-            (meal) => !existingMealIds.has(meal.id)
-          );
-          return [...prev, ...newMeals];
-        });
-        return;
-      }
       try {
         setLoading(true);
-        const formattedDate =
+        const baseDate =
           selectedDate === "today"
-            ? new Date().toISOString().split("T")[0]
-            : new Date(new Date().setDate(new Date().getDate() + 1))
-                .toISOString()
-                .split("T")[0];
+            ? baseTime
+            : new Date(baseTime.getTime() + 24 * 60 * 60 * 1000);
+        const formattedDate = baseDate.toLocaleDateString("en-CA", {
+          timeZone: "Asia/Kolkata",
+        });
 
         const scheduleResponse = await axios.get(
           `http://localhost:3000/schedule/${formattedDate}`
@@ -170,7 +165,7 @@ const Page3 = ({ language = "english", username, userId, carouselRef,setResetPin
           scheduleEntry?.meals && Array.isArray(scheduleEntry.meals)
             ? scheduleEntry.meals
             : [];
-        cache.meals[cacheKey] = mealDetails;
+        console.log("Meal Details:", formattedDate, mealDetails);
         setMeals(mealDetails);
         setAllMeals((prev) => {
           const existingMealIds = new Set(prev.map((m) => m.id));
@@ -187,14 +182,10 @@ const Page3 = ({ language = "english", username, userId, carouselRef,setResetPin
       }
     };
     fetchMeals();
-  }, [selectedDate, selectedMealTime]);
+  }, [selectedDate, selectedMealTime, baseTime]);
 
-  const formatDateForDisplay = (date) => date.toLocaleDateString();
-
-  const getTomorrowDate = () => {
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    return tomorrow;
+  const formatDateForDisplay = (date) => {
+    return date.toLocaleDateString("en-IN");
   };
 
   const isMealTimeAvailable = (mealTimeItem) => {
@@ -206,12 +197,21 @@ const Page3 = ({ language = "english", username, userId, carouselRef,setResetPin
     ) {
       return false;
     }
-    const now = new Date();
-    const currentMinutes = now.getHours() * 60 + now.getMinutes();
-    const [startStr, endStr] = mealTimeItem.time;
-    const [, endMinute] = endStr.split(":").map(Number);
-    const endMinutes = endMinute * 60 + endMinute;
-    return currentMinutes <= endMinutes;
+
+    const [, endTimeStr] = mealTimeItem.time;
+    console.log(mealTimeItem.name, endTimeStr);
+    const [endHour, endMinute] = endTimeStr.split(":").map(Number);
+
+    const now = currentTimeRef.current;
+    const endTime = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate(),
+      endHour,
+      endMinute
+    );
+
+    return now <= endTime;
   };
 
   const toggleOrderItem = (mealId) => {
@@ -268,74 +268,86 @@ const Page3 = ({ language = "english", username, userId, carouselRef,setResetPin
     });
   };
 
-const placeOrder = async () => {
-  const groupedOrders = orderItems.reduce((acc, item) => {
-    const key = `${item.date}-${item.mealTime}`;
-    if (!acc[key]) {
-      acc[key] = {
-        date: `${item.date}`,
-        mealTime: item.mealTime,
-        meals: {},
-        totalPrice: 0,
-      };
-    }
-    acc[key].meals[item.mealId] = (acc[key].meals[item.mealId] || 0) + item.count;
-    const meal = allMeals.find((meal) => meal.id === item.mealId);
-    acc[key].totalPrice += meal ? meal.price * item.count : 0;
-    return acc;
-  }, {});
+  const placeOrder = async () => {
+    const groupedOrders = orderItems.reduce((acc, item) => {
+      const key = `${item.date}-${item.mealTime}`;
+      if (!acc[key]) {
+        acc[key] = {
+          date: `${item.date}`,
+          mealTime: item.mealTime,
+          meals: {},
+          totalPrice: 0,
+        };
+      }
+      acc[key].meals[item.mealId] =
+        (acc[key].meals[item.mealId] || 0) + item.count;
+      const meal = allMeals.find((meal) => meal.id === item.mealId);
+      acc[key].totalPrice += meal ? meal.price * item.count : 0;
+      return acc;
+    }, {});
 
-  try {
-    for (const key in groupedOrders) {
-      const { date, mealTime, meals } = groupedOrders[key];
-      const mealsArray = Object.entries(meals).map(
-        ([mealId, count]) => `${mealId}:${count}`
-      );
-      const orderDate =
-        date === "today"
-          ? new Date().toISOString()
-          : new Date(new Date().setDate(new Date().getDate() + 1)).toISOString();
+    try {
+      for (const key in groupedOrders) {
+        const { date, mealTime, meals } = groupedOrders[key];
+        const mealsArray = Object.entries(meals).map(
+          ([mealId, count]) => `${mealId}:${count}`
+        );
 
-      const orderData = {
-        employeeId: userId || "unknown",
-        meals: mealsArray,
-        orderDate,
-        mealTypeId: mealTime,
-        price: 0,
-        serve: true,
-      };
+        const orderPlacedTime = currentTimeRef.current.toISOString();
+        const orderDate =
+          selectedDate === "today"
+            ? currentTimeRef.current.toISOString()
+            : new Date(
+                currentTimeRef.current.getTime() + 24 * 60 * 60 * 1000
+              ).toISOString();
 
-      console.log("Sending order payload:", JSON.stringify(orderData, null, 2));
-      const response = await axios.post("http://localhost:3000/orders", orderData);
-      
-      console.log("Order response:", {
-        status: response.status,
-        data: response.data,
-      });
+        const orderData = {
+          employeeId: userId || "unknown",
+          meals: mealsArray,
+          orderDate,
+          mealTypeId: mealTime,
+          price: 0,
+          serve: true,
+          orderPlacedTime,
+        };
 
-      if (response.status < 200 || response.status >= 300) {
-        console.error("Order failed:", {
+        console.log(
+          "Sending order payload:",
+          JSON.stringify(orderData, null, 2)
+        );
+        const response = await axios.post(
+          "http://localhost:3000/orders",
+          orderData
+        );
+
+        console.log("Order response:", {
           status: response.status,
           data: response.data,
-          message: response.statusText,
         });
-        throw new Error(`Failed to place order: ${response.statusText}`);
-      }
-    }
 
-    setShowSuccess(true);
-    setTimeout(() => {
-      setShowSuccess(false);
-      setOrderItems([]);
-      setResetPin(true); // Trigger PIN reset
-      carouselRef.current?.goTo(1); // Redirect to Page 2
-    }, 1000);
-  } catch (error) {
-    console.log(error);
-    setShowError(true);
-    setTimeout(() => setShowError(false), 1000); // Stay on Page 3
-  }
-};
+        if (response.status < 200 || response.status >= 300) {
+          console.error("Order failed:", {
+            status: response.status,
+            data: response.data,
+            message: response.statusText,
+          });
+          throw new Error(`Failed to place order: ${response.statusText}`);
+        }
+      }
+
+      setShowSuccess(true);
+      setTimeout(() => {
+        carouselRef.current?.goTo(1);
+        setResetPin(true);
+        setShowSuccess(false);
+        setOrderItems([]);
+      }, 1000);
+    } catch (error) {
+      console.log(error);
+      setShowError(true);
+      setTimeout(() => setShowError(false), 1000);
+    }
+  };
 
   const isMealSelected = (mealId) =>
     orderItems.some(
@@ -348,6 +360,8 @@ const placeOrder = async () => {
   const availableMealTimes =
     selectedDate === "today" ? mealTime[0] : mealTime[1];
 
+  if (!baseTime) return <Loading text={text.loading || "Initializing..."} />;
+
   return (
     <>
       {loading && <Loading text={text.loading || "Loading meals..."} />}
@@ -355,7 +369,7 @@ const placeOrder = async () => {
         <div className={styles.header}>
           <div className={styles.name}>BizSolution</div>
           <div className={styles.dateAndTime}>
-            <DateAndTime />
+            {currentTimeRef.current.toLocaleString("en-IN")}
           </div>
           <div className={styles.userName}>
             <div>{username.name || "Guest"}</div>
@@ -421,7 +435,7 @@ const placeOrder = async () => {
                             : ""
                         }`}
                       >
-                        {text.today} ({formatDateForDisplay(currentTime)})
+                        {text.today} ({formatDateForDisplay(baseTime)})
                       </Button>
                       <Button
                         type="default"
@@ -433,7 +447,10 @@ const placeOrder = async () => {
                         }`}
                       >
                         {text.tomorrow} (
-                        {formatDateForDisplay(getTomorrowDate())})
+                        {formatDateForDisplay(
+                          new Date(baseTime.getTime() + 24 * 60 * 60 * 1000)
+                        )}
+                        )
                       </Button>
                     </Space.Compact>
                   </div>
@@ -489,10 +506,7 @@ const placeOrder = async () => {
                             ) : (
                               <Row gutter={8}>
                                 {meals.map((meal) => {
-                                  const isPastDue =
-                                    selectedDate === "tomorrow"
-                                      ? false
-                                      : isMealTimeAvailable(mealTimeItem);
+                                  const isPastDue = !isAvailable;
                                   return (
                                     <Col
                                       span={6}
@@ -534,7 +548,7 @@ const placeOrder = async () => {
                                         onClick={() =>
                                           !isPastDue && toggleOrderItem(meal.id)
                                         }
-                                        hoverable
+                                        hoverable={!isPastDue}
                                       >
                                         <hr className={styles.mealCardhr} />
                                         <Card.Meta
@@ -669,8 +683,9 @@ const placeOrder = async () => {
                                         <Badge
                                           status="success"
                                           text={
-                                            availableMealTimes.find((m) => m.id === item.mealTime)?.name || 
-                                            "Unknown Meal Time"
+                                            availableMealTimes.find(
+                                              (m) => m.id === item.mealTime
+                                            )?.name || "Unknown Meal Time"
                                           }
                                           className={styles.mealTimeBadge}
                                         />
@@ -764,7 +779,7 @@ const placeOrder = async () => {
                           .toFixed(2)}
                       </Text>
                       <Button
-                        onClick={() => carouselRef.current.goTo(0)}
+                        onClick={() => carouselRef.current?.goTo(0)}
                         className={styles.backButton}
                       >
                         <MdLanguage size={20} /> <div>{text.back}</div>

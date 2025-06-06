@@ -6,6 +6,8 @@ import { IoMdDownload } from "react-icons/io";
 import { LuEye } from "react-icons/lu";
 import SearchBar from "../../../molecules/SearchBar/SearchBar";
 import Loading from "../../../atoms/loading/loading";
+import { useAuth } from "../../../../contexts/AuthContext";
+
 
 const customTheme = {
   components: {
@@ -26,12 +28,17 @@ const Payslip = () => {
   const [search, setSearch] = useState();
   const [payslip, setPayslip] = useState();
   const urL = import.meta.env.VITE_BASE_URL;
+    const { authData } = useAuth();
+  const token = authData?.accessToken;
 
   const fetchSlips = async (search) => {
     try {
       const res = await axios.get(`${urL}/payroll`, {
         params: {
           search: search || undefined,
+        },
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
       });
       console.log(res);

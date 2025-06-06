@@ -30,6 +30,7 @@ export class AuthService {
         },
       );
       return response.data;// Return the response data on success
+
     } catch (error) {
       console.error(
         'Error during Auth0 login:',// Log the error

@@ -16,8 +16,8 @@ export class ScheduledMealService {
     mealIds: number[],
   ) {
     try {
-      // Parse the date string to a Date object
-      const scheduledDate = new Date(date);
+      // Parse the date string to a Date object and add UTC+5:30 offset (330 minutes)
+      const scheduledDate = new Date(new Date(date).getTime() + 330 * 60 * 1000);
       
       // Check if a schedule for this date and meal type already exists
       const existingSchedule = await this.databaseService.scheduledMeal.findUnique({
@@ -36,7 +36,7 @@ export class ScheduledMealService {
       // Create scheduled meal with meal connections
       return this.databaseService.scheduledMeal.create({
         data: {
-          date: scheduledDate,
+          date: scheduledDate, // 
           mealTypeId,
           meals: {
             connect: mealIds.map(id => ({ id })),

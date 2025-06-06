@@ -5,6 +5,8 @@ import { MdOutlineDeleteOutline } from "react-icons/md";
 import Loading from "../../../atoms/loading/loading";
 import styles from "./Adjustment.module.css";
 import SearchBar from "../../../molecules/SearchBar/SearchBar";
+import { useAuth } from "../../../../contexts/AuthContext";
+
 const customTheme = {
   components: {
     Table: {
@@ -24,12 +26,17 @@ const Adjustment = () => {
   const [search, setSearch] = useState();
   const [adjustment, setAdjustment] = useState([]);
   const urL = import.meta.env.VITE_BASE_URL;
+    const { authData } = useAuth();
+  const token = authData?.accessToken;
 
   const fetchAdjustment = async (searchValue) => {
     try {
       const response = await axios.get(`${urL}/indiadjustment`, {
         params: {
           search: searchValue || undefined,
+        },
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
       });
       const fetchedAdjustment = response.data.map((adj) => ({
@@ -49,7 +56,11 @@ const Adjustment = () => {
   const handleDelete = async (id) => {
     setLoading(true);
     try {
-      await axios.delete(`${urL}/indiadjustment/${id}`);
+      await axios.delete(`${urL}/indiadjustment/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       fetchAdjustment();
     } catch (err) {
       console.log(err);

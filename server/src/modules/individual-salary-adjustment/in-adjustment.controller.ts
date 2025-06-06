@@ -1,12 +1,29 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, HttpException, HttpStatus, Query } from "@nestjs/common";
-import { Prisma } from "@prisma/client";
-import { IndiAdjustmentService } from "./in-adjustment.service";
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  HttpException,
+  UseGuards,
+  HttpStatus,
+  Query,
+} from '@nestjs/common';
+import { Prisma } from '@prisma/client';
+import { IndiAdjustmentService } from './in-adjustment.service';
+import { AuthGuard } from '@nestjs/passport';
+import { RolesGuard } from '../../core/authentication/roles.guard';
+import { Roles } from '../../core/authentication/roles.decorator';
 
 @Controller('indiadjustment')
 export class IndiAdjustmentController {
   constructor(private readonly IndiAdjustmentService: IndiAdjustmentService) {}
 
   @Post()
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('HR_ADMIN')
   async create(@Body() dto: Prisma.IndividualSalaryAdjustmentsCreateInput) {
     try {
       return await this.IndiAdjustmentService.create(dto);
@@ -23,6 +40,8 @@ export class IndiAdjustmentController {
   }
 
   @Get()
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('HR_ADMIN')
   async findAll(@Query('search') search?: string) {
     try {
       return await this.IndiAdjustmentService.findAll(search);
@@ -39,6 +58,8 @@ export class IndiAdjustmentController {
   }
 
   @Get(':id')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('HR_ADMIN')
   async findOne(@Param('id') id: number) {
     try {
       const adjust = await this.IndiAdjustmentService.findOne(id);
@@ -59,7 +80,12 @@ export class IndiAdjustmentController {
   }
 
   @Put(':id')
-  async update(@Param('id') id: number, @Body() dto: Prisma.IndividualSalaryAdjustmentsUpdateInput) {
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('HR_ADMIN')
+  async update(
+    @Param('id') id: number,
+    @Body() dto: Prisma.IndividualSalaryAdjustmentsUpdateInput,
+  ) {
     try {
       return await this.IndiAdjustmentService.update(id, dto);
     } catch (error) {
@@ -75,6 +101,8 @@ export class IndiAdjustmentController {
   }
 
   @Delete(':id')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('HR_ADMIN')
   async remove(@Param('id') id: string) {
     try {
       return await this.IndiAdjustmentService.remove(id);

@@ -1,16 +1,32 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpException, HttpStatus } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  UseGuards,
+  Patch,
+  Param,
+  Delete,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
 import { MealService } from './meal.service';
 import { Prisma } from '@prisma/client';
+import { AuthGuard } from '@nestjs/passport';
+import { RolesGuard } from '../../core/authentication/roles.guard';
+import { Roles } from '../../core/authentication/roles.decorator';
 
 // Custom DTO for meal creation that includes ingredients
-interface CreateMealWithIngredientsDto extends Omit<Prisma.MealCreateInput, 'ingredients'> {
+interface CreateMealWithIngredientsDto
+  extends Omit<Prisma.MealCreateInput, 'ingredients'> {
   ingredients: Array<{
     ingredientId: number;
   }>;
 }
 
 // Custom DTO for meal updates that includes ingredients
-interface UpdateMealWithIngredientsDto extends Omit<Prisma.MealUpdateInput, 'ingredients'> {
+interface UpdateMealWithIngredientsDto
+  extends Omit<Prisma.MealUpdateInput, 'ingredients'> {
   ingredients?: Array<{
     ingredientId: number;
   }>;
@@ -21,13 +37,18 @@ export class MealController {
   constructor(private readonly mealService: MealService) {}
 
   @Post()
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('KITCHEN_ADMIN')
   async create(@Body() createMealDto: CreateMealWithIngredientsDto) {
     try {
       // Convert DTO to Prisma format
       const { ingredients, ...mealData } = createMealDto;
-      
+
       // Create the meal with ingredients relationships
-      return await this.mealService.createWithIngredients(mealData, ingredients);
+      return await this.mealService.createWithIngredients(
+        mealData,
+        ingredients,
+      );
     } catch (error) {
       throw new HttpException(
         {
@@ -35,7 +56,7 @@ export class MealController {
           error: 'Bad Request',
           message: error.message,
         },
-        HttpStatus.BAD_REQUEST
+        HttpStatus.BAD_REQUEST,
       );
     }
   }
@@ -51,13 +72,13 @@ export class MealController {
           error: 'Failed to retrieve meals',
           message: error.message,
         },
-        HttpStatus.INTERNAL_SERVER_ERROR
+        HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string) {  
+  async findOne(@Param('id') id: string) {
     try {
       const parsedId = parseInt(id);
       if (isNaN(parsedId)) {
@@ -75,20 +96,29 @@ export class MealController {
           error: 'Not Found',
           message: error.message,
         },
-        HttpStatus.BAD_REQUEST
+        HttpStatus.BAD_REQUEST,
       );
     }
   }
 
   @Patch(':id')
-  async update(@Param('id') id: string, @Body() updateMealDto: UpdateMealWithIngredientsDto) {  
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('KITCHEN_ADMIN')
+  async update(
+    @Param('id') id: string,
+    @Body() updateMealDto: UpdateMealWithIngredientsDto,
+  ) {
     try {
       const parsedId = parseInt(id);
       if (isNaN(parsedId)) {
         throw new HttpException('Invalid ID format', HttpStatus.BAD_REQUEST);
       }
       const { ingredients, ...mealData } = updateMealDto;
-      return await this.mealService.updateWithIngredients(parsedId, mealData, ingredients);
+      return await this.mealService.updateWithIngredients(
+        parsedId,
+        mealData,
+        ingredients,
+      );
     } catch (error) {
       throw new HttpException(
         {
@@ -96,13 +126,14 @@ export class MealController {
           error: 'Bad Request',
           message: error.message,
         },
-        HttpStatus.BAD_REQUEST
+        HttpStatus.BAD_REQUEST,
       );
     }
   }
 
   @Delete(':id')
-  async remove(@Param('id') id: string) {  
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  async remove(@Param('id') id: string) {
     try {
       const parsedId = parseInt(id);
       if (isNaN(parsedId)) {
@@ -116,7 +147,7 @@ export class MealController {
           error: 'Not Found',
           message: error.message,
         },
-        HttpStatus.NOT_FOUND
+        HttpStatus.NOT_FOUND,
       );
     }
   }
