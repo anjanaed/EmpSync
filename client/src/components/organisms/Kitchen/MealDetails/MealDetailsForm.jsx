@@ -22,12 +22,17 @@ import styles from "./MealDetailsForm.module.css";
 import { useNavigate } from "react-router-dom";
 import { storage } from "../../../../firebase/config"; // Import Firebase storage
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage"; // Import Firebase storage functions
+import { useAuth } from "../../../../contexts/AuthContext";
+import axios from "axios"; // Import axios
 
 const { TextArea } = Input;
 const { Title } = Typography;
 const { Option } = Select;
 
 const AddMealPage = () => {
+  const { authData } = useAuth();
+  const token = authData?.accessToken;
+
   const [form] = Form.useForm();
   const [imageUrl, setImageUrl] = useState(null);
   const [imageFile, setImageFile] = useState(null); // Store the actual file
@@ -134,28 +139,35 @@ const AddMealPage = () => {
   
       console.log("Submitting meal data:", mealData);
   
-      const response = await fetch("http://localhost:3000/meal", {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(mealData),
-      });
+      try {
+        if (!token) {
+          throw new Error("Authorization token is missing");
+        }
   
-      const responseData = await response.json();
+        const response = await axios.post(
+          "http://localhost:3000/meal",
+          mealData,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
   
-      if (!response.ok) {
-        throw new Error(responseData.message || "Failed to add meal");
+        if (response.status === 201 || response.status === 200) {
+          message.success("Meal added successfully!");
+          form.resetFields();
+          setImageUrl(null);
+          setImageFile(null);
+          setSelectedIngredients([]);
+          navigate("/kitchen-meal");
+        }
+      } catch (error) {
+        console.error("Error details:", error.response || error);
+        const errorMessage = error.response?.data?.message || error.message;
+        message.error(`Failed to add meal: ${errorMessage}`);
       }
-  
-      console.log("Server response:", responseData);
-      message.success("Meal added successfully!");
-      form.resetFields();
-      setImageUrl(null);
-      setImageFile(null);
-      setSelectedIngredients([]);
-      navigate("/kitchen-meal");
     } catch (error) {
       console.error("Detailed error:", error);
       message.error(`Error adding meal: ${error.message}`);
