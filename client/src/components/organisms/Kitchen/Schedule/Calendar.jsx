@@ -40,7 +40,6 @@ const MealPlanner = () => {
   const [currentDate, setCurrentDate] = useState(dayjs());
   const urL = import.meta.env.VITE_BASE_URL;
   const [defaultMeals, setDefaultMeals] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("");
   const [menuItems, setMenuItems] = useState({});
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -51,18 +50,13 @@ const MealPlanner = () => {
   const [showSearchResults, setShowSearchResults] = useState(false);
   const [form] = Form.useForm();
   const [selectedMeals, setSelectedMeals] = useState([]);
-  const [fetchingMeals, setFetchingMeals] = useState(false);
   const [activeMealType, setActiveMealType] = useState(null);
   const [existingSchedule, setExistingSchedule] = useState(null);
-  const [savingSchedule, setSavingSchedule] = useState(false);
   const [scheduledMeals, setScheduledMeals] = useState({});
-  const [loadingSchedules, setLoadingSchedules] = useState(false);
-  const [clearingSchedule, setClearingSchedule] = useState(false);
   const { authData } = useAuth();
   const token = authData?.accessToken;
 
   const fetchDefaultMeals = async (date) => {
-    setLoading(true);
     try {
       const formattedDate = date.format("YYYY-MM-DD");
       const response = await fetch(
@@ -90,13 +84,10 @@ const MealPlanner = () => {
     } catch (error) {
       console.error("Error fetching default meals:", error);
       message.error("Failed to load meal types");
-    } finally {
-      setLoading(false);
     }
   };
 
   const fetchAvailableMeals = async () => {
-    setFetchingMeals(true);
     try {
       const response = await fetch(`${urL}/meal`);
       if (!response.ok) {
@@ -108,14 +99,11 @@ const MealPlanner = () => {
       console.error("Error fetching meals:", error);
       message.error("Failed to load available meals");
       setAvailableMeals([]);
-    } finally {
-      setFetchingMeals(false);
     }
   };
 
   const fetchAllSchedules = async (date = currentDate) => {
     if (!date) return;
-    setLoadingSchedules(true);
     setScheduledMeals({});
     try {
       const formattedDate = date.format("YYYY-MM-DD");
@@ -144,8 +132,6 @@ const MealPlanner = () => {
         message.error("Failed to load meal schedules");
       }
       setScheduledMeals({});
-    } finally {
-      setLoadingSchedules(false);
     }
   };
 
@@ -250,7 +236,7 @@ const MealPlanner = () => {
             : meal
         )
       );
-      setLoading(true);
+      
       await axios.patch(`${urL}/meal-types/timeupdate/${mealId}/0`, {
         newTime: formattedTime,
       }, {
@@ -259,16 +245,13 @@ const MealPlanner = () => {
         },
       });
       await fetchDefaultMeals(currentDate);
+      message.success("Time Updated successfully");
     } catch (err) {
       console.error("Error changing start time:", err);
       message.error(
         err.response?.data?.message || "Failed to update start time"
       );
       await fetchDefaultMeals(currentDate); // Revert on error
-    } finally {
-      message.success("Time Updated successfully");
-
-      setLoading(false);
     }
   };
 
@@ -283,7 +266,7 @@ const MealPlanner = () => {
             : meal
         )
       );
-      setLoading(true);
+      
       await axios.patch(`${urL}/meal-types/timeupdate/${mealId}/1`, {
         newTime: formattedTime,
       }, {
@@ -292,14 +275,11 @@ const MealPlanner = () => {
         },
       });
       await fetchDefaultMeals(currentDate);
+      message.success("Time Updated successfully");
     } catch (err) {
       console.error("Error changing end time:", err);
       message.error(err.response?.data?.message || "Failed to update end time");
       await fetchDefaultMeals(currentDate); // Revert on error
-    } finally {
-      message.success("Time Updated successfully");
-
-      setLoading(false);
     }
   };
 
@@ -332,7 +312,6 @@ const MealPlanner = () => {
   const handleModalOk = () => {
     form.validateFields().then(async (values) => {
       try {
-        setLoading(true);
         const payload = {
           name: values.mealName,
           time: [
@@ -348,11 +327,10 @@ const MealPlanner = () => {
           },
         });
         await fetchDefaultMeals(currentDate);
+        message.success("Meal type created successfully");
       } catch (err) {
         console.error("Error creating meal type:", err);
         message.error("Failed to create meal type");
-      } finally {
-        setLoading(false);
       }
       setIsModalVisible(false);
     });
@@ -391,7 +369,7 @@ const MealPlanner = () => {
       setIsUpdateModalVisible(false);
       return;
     }
-    setClearingSchedule(true);
+    
     try {
       await axios.delete(`${urL}/schedule/${existingSchedule.id}`, {
         headers: {
@@ -409,8 +387,6 @@ const MealPlanner = () => {
       message.error(
         error.response?.data?.message || "Failed to clear meal schedule"
       );
-    } finally {
-      setClearingSchedule(false);
     }
   };
 
@@ -428,7 +404,7 @@ const MealPlanner = () => {
       mealTypeId: parseInt(activeTab),
       mealIds: selectedMeals,
     };
-    setSavingSchedule(true);
+    
     try {
       if (existingSchedule) {
         await axios.patch(`${urL}/schedule/${existingSchedule.id}`, payload, {
@@ -452,7 +428,6 @@ const MealPlanner = () => {
         error.response?.data?.message || "Failed to update meal schedule"
       );
     } finally {
-      setSavingSchedule(false);
       setIsUpdateModalVisible(false);
       setSelectedMeals([]);
     }
@@ -548,10 +523,6 @@ const MealPlanner = () => {
       setActiveMealType(defaultMeals[0]);
     }
   }, [defaultMeals, activeTab]);
-
-  if (loading) {
-    return <Loading />;
-  }
 
   // Validate time to ensure valid dayjs object for defaultValue
   const validateTime = (time) => {
@@ -662,12 +633,7 @@ const MealPlanner = () => {
               className={styles.tabPane}
             >
               <div className={styles.scheduledMeals}>
-                {loadingSchedules ? (
-                  <div className={styles.loadingContainer}>
-                    <Spin size="large" />
-                    <p>Loading scheduled meals...</p>
-                  </div>
-                ) : scheduledMeals[meal.id] ? (
+                {scheduledMeals[meal.id] ? (
                   <div className={styles.mealCardContainer}>
                     {scheduledMeals[meal.id].meals &&
                     scheduledMeals[meal.id].meals.length > 0 ? (
@@ -795,47 +761,37 @@ const MealPlanner = () => {
             />
           </div>
           <div className={styles.mealsContainer}>
-            {fetchingMeals ? (
-              <div className={styles.loadingContainer}>
-                <Spin size="large" />
-                <p>Loading available meals...</p>
-              </div>
-            ) : (
-              <List
-                className={styles.mealList}
-                dataSource={filterMeals()}
-                renderItem={(meal) => (
-                  <List.Item className={styles.mealItem} key={meal.id}>
-                    <div className={styles.mealItemContent}>
-                      <span className={styles.mealName}>
-                        {meal.nameEnglish}
-                      </span>
-                      <Checkbox
-                        checked={selectedMeals.includes(meal.id)}
-                        onChange={() => handleMealSelection(meal.id)}
-                        className={styles.mealCheckbox}
-                      />
-                    </div>
-                  </List.Item>
-                )}
-                locale={{
-                  emptyText: (
-                    <Empty
-                      description={
-                        fetchingMeals ? "Loading..." : "No meals found"
-                      }
-                      image={Empty.PRESENTED_IMAGE_SIMPLE}
+            <List
+              className={styles.mealList}
+              dataSource={filterMeals()}
+              renderItem={(meal) => (
+                <List.Item className={styles.mealItem} key={meal.id}>
+                  <div className={styles.mealItemContent}>
+                    <span className={styles.mealName}>
+                      {meal.nameEnglish}
+                    </span>
+                    <Checkbox
+                      checked={selectedMeals.includes(meal.id)}
+                      onChange={() => handleMealSelection(meal.id)}
+                      className={styles.mealCheckbox}
                     />
-                  ),
-                }}
-              />
-            )}
+                  </div>
+                </List.Item>
+              )}
+              locale={{
+                emptyText: (
+                  <Empty
+                    description="No meals found"
+                    image={Empty.PRESENTED_IMAGE_SIMPLE}
+                  />
+                ),
+              }}
+            />
           </div>
           <div className={styles.modalFooter}>
             <Button
               key="clear"
               onClick={handleClearSchedule}
-              loading={clearingSchedule}
               className={styles.clearButton}
               icon={<ClearOutlined />}
               danger
@@ -846,7 +802,6 @@ const MealPlanner = () => {
               key="update"
               type="primary"
               onClick={handleUpdateMenuOk}
-              loading={savingSchedule}
               className={styles.updateModalBtn}
             >
               {existingSchedule ? "Update" : "Save"}
