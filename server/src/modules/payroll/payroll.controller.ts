@@ -6,6 +6,7 @@ import {
   HttpException,
   HttpStatus,
   Param,
+  Request,
   Post,
   Put,
   UseGuards,
@@ -174,13 +175,60 @@ export class PayrollController {
     }
   }
 
-  @Get('geturl/:emmpId')
+  //For User Portal Usage
+  @Get('geturl/by-month/:month')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  async getSignedUrlFromToken(@Request() req, @Param('month') month: string) {
+    let empId = req.user.employeeId;
+    if (empId) {
+      empId = empId.toUpperCase();
+    }
+
+    try {
+      const url = await this.firebaseService.getSignedUrlFromParams(
+        empId,
+        month,
+      );
+      return { url };
+    } catch (err) {
+      throw new HttpException(
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          error: 'Failed to get signed URL',
+          message: err.message,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  //For HR Portal Usage
+  @Get('geturl/as-hr/:empid/:month/:mode')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles('HR_ADMIN')
-  async getSignedUrl(@Param('empId') empId: string) {
+  async getSignedUrlForHR(
+    @Param('empid') empId: string,
+    @Param('month') month: string,
+    @Param('mode') mode: string,
+  ) {
+    if (empId) {
+      empId = empId.toUpperCase();
+    }
+
     try {
-      const url = await this.firebaseService.getSignedUrl(empId);
-      return { url };
+      if (mode === 'D') {
+        const url = await this.firebaseService.getSignedUrlFromParamsDownload(
+          empId,
+          month,
+        );
+        return { url };
+      } else {
+        const url = await this.firebaseService.getSignedUrlFromParams(
+          empId,
+          month,
+        );
+        return { url };
+      }
     } catch (err) {
       throw new HttpException(
         {

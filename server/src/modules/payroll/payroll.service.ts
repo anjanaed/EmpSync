@@ -3,10 +3,11 @@ import { Prisma } from '@prisma/client';
 import { DatabaseService } from '../../database/database.service';
 import { calculateSalary } from './payroll-cal/calculator';
 import { generatePayslip } from './payroll-cal/pdf-gen';
+import { FirebaseService } from './firebase.service';
 
 @Injectable()
 export class PayrollService {
-  constructor(private readonly databaseService: DatabaseService) {}
+  constructor(private readonly databaseService: DatabaseService,private readonly firebaseService: FirebaseService) {}
 
   async create(dto: Prisma.PayrollCreateInput) {
     try {
@@ -141,6 +142,7 @@ export class PayrollService {
           employerFundRate,
           ETF,
           month,
+          firebaseService: this.firebaseService,
         });
       }
       console.log('Payrolls Generated');
@@ -240,3 +242,4 @@ export class PayrollService {
     }
   }
 }
+

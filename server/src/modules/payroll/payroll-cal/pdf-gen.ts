@@ -2,6 +2,9 @@ import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 const fs = require('fs');
 const moment = require('moment');
 
+/**
+ * @param firebaseService - instance of your FirebaseService
+ */
 export async function generatePayslip({
   employee,
   values,
@@ -9,6 +12,7 @@ export async function generatePayslip({
   employerFundRate,
   ETF,
   month,
+  firebaseService, // <-- pass this in
 }) {
   const deductions = values.totalDeductionArray;
   const earnings = values.totalAllowanceArray;
@@ -217,13 +221,12 @@ export async function generatePayslip({
   });
 
   //PDF Saving
-  const dir = './pdfs';
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir);
-  }
   const pdfBytes = await pdfDoc.save();
-  await fs.writeFileSync(
-    `./pdfs/${employee.id}-${month}.pdf`,
-    pdfBytes,
-  );
+
+  // Upload to Firebase Storage
+  const filename = `${employee.id}-${month}.pdf`;
+  await firebaseService.uploadFile(employee.id, filename, pdfBytes);
+
+  // Optionally return the file path or URL
+  return `payrolls/${employee.id}/${filename}`;
 }
