@@ -499,4 +499,19 @@
   min-height: 200px;
 }
 
+.mealItemWithImage {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.mealAvatar {
+  border: 1px solid #d9d9d9;
+}
+
+.mealName {
+  flex: 1;
+  font-size: 14px;
+}
+
 
