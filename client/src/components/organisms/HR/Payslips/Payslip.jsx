@@ -7,7 +7,7 @@ import { LuEye } from "react-icons/lu";
 import SearchBar from "../../../molecules/SearchBar/SearchBar";
 import Loading from "../../../atoms/loading/loading";
 import { useAuth } from "../../../../contexts/AuthContext";
-
+import { IoMdRemoveCircleOutline } from "react-icons/io";
 
 const customTheme = {
   components: {
@@ -28,7 +28,7 @@ const Payslip = () => {
   const [search, setSearch] = useState();
   const [payslip, setPayslip] = useState();
   const urL = import.meta.env.VITE_BASE_URL;
-    const { authData } = useAuth();
+  const { authData } = useAuth();
   const token = authData?.accessToken;
 
   const fetchSlips = async (search) => {
@@ -57,12 +57,66 @@ const Payslip = () => {
     setLoading(false);
   };
 
-  const handleView = (payslip) => {
-    window.open(payslip, "_blank");
+  const handleRemove = async (empid, month) => {
+    try {
+      setLoading(true);
+      const res = await axios.delete(
+        `${urL}/payroll/delete-by-month/${empid}/${month}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      fetchSlips(search);
+    } catch (err) {
+      console.log(err);
+    }finally {
+      setLoading(false);
+    }
   };
 
-  const handleDownload = (payslip) => {
-    console.log(payslip);
+  const handleView = async (empid, month) => {
+    try {
+      const res = await axios.get(
+        `${urL}/payroll/geturl/as-hr/${empid}/${month}/V`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const url = res.data.url;
+      if (url) {
+        window.open(url, "_blank");
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const handleDownload = async (empid, month) => {
+    try {
+      const res = await axios.get(
+        `${urL}/payroll/geturl/as-hr/${empid}/${month}/D`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const url = res.data.url;
+      if (url) {
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `${empid}-${month}.pdf`; // Suggests a filename
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const columns = [
@@ -107,14 +161,20 @@ const Payslip = () => {
       render: (_, record) => (
         <Space size="middle">
           <LuEye
-            onClick={() => handleView(record.pdf)}
+            onClick={() => handleView(record.id, record.month)}
             className={styles.icons}
             size="20px"
           />
           <IoMdDownload
-            onClick={() => handleDownload(record.pdf)}
+            onClick={() => handleDownload(record.id, record.month)}
             className={styles.icons}
             size="20px"
+          />
+          <IoMdRemoveCircleOutline
+            onClick={() => handleRemove(record.id, record.month)}
+            className={styles.icons}
+            size="20px"
+            style={{ color: "red", cursor: "pointer" }}
           />
         </Space>
       ),
