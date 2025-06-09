@@ -1050,17 +1050,9 @@ const MealPlanner = () => {
         <div style={{ maxHeight: 400, overflowY: "auto" }}>
           {isShowingSnackFallback() && (
             <div
-              style={{
-                marginBottom: 12,
-                padding: 8,
-                backgroundColor: "#f0f8ff",
-                borderRadius: 4,
-              }}
+              
             >
-              <small style={{ color: "#1890ff" }}>
-                No meals found for "{activeMealType?.name}". Showing snack
-                options instead.
-              </small>
+              
             </div>
           )}
 
