@@ -10,9 +10,12 @@ export class FirebaseService implements OnModuleInit {
 
   onModuleInit() {
     try {
-admin.initializeApp({
-        credential: admin.credential.cert('./src/modules/payroll/firebase-credentials.json'), 
-        storageBucket: 'gs://empsync-af358'
+      admin.initializeApp({
+        credential: admin.credential.cert(
+          './src/modules/payroll/firebase-credentials.json',
+        ),
+        //Download the firebase-credentials.json file from cloud console
+        storageBucket: 'gs://empsync-af358',
       });
       this.bucket = admin.storage();
     } catch (error) {
