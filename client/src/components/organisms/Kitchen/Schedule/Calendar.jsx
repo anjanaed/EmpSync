@@ -56,6 +56,8 @@ const MealPlanner = () => {
   const [scheduledMeals, setScheduledMeals] = useState({});
   const [previousSchedules, setPreviousSchedules] = useState([]); // New state for previous schedules
   const { authData } = useAuth();
+  const [isUpdateLoading, setIsUpdateLoading] = useState(false);
+
   const token = authData?.accessToken;
 
   const fetchDefaultMeals = async (date) => {
@@ -602,6 +604,7 @@ const MealPlanner = () => {
       mealIds: selectedMeals,
     };
 
+    setIsUpdateLoading(true); // Start loading
     try {
       if (existingSchedule) {
         await axios.patch(`${urL}/schedule/${existingSchedule.id}`, payload, {
@@ -625,6 +628,7 @@ const MealPlanner = () => {
         error.response?.data?.message || "Failed to update meal schedule"
       );
     } finally {
+      setIsUpdateLoading(false); // End loading
       setIsUpdateModalVisible(false);
       setSelectedMeals([]);
       setPreviousSchedules([]); // Clear previous schedules after update
