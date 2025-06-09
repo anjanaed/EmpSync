@@ -3,10 +3,11 @@ import { Prisma } from '@prisma/client';
 import { DatabaseService } from '../../database/database.service';
 import { calculateSalary } from './payroll-cal/calculator';
 import { generatePayslip } from './payroll-cal/pdf-gen';
+import { FirebaseService } from './firebase.service';
 
 @Injectable()
 export class PayrollService {
-  constructor(private readonly databaseService: DatabaseService) {}
+  constructor(private readonly databaseService: DatabaseService,private readonly firebaseService: FirebaseService) {}
 
   async create(dto: Prisma.PayrollCreateInput) {
     try {
@@ -127,7 +128,7 @@ export class PayrollService {
           employee: { connect: { id: user.id } },
           month: month,
           netPay: values.netSalary,
-          payrollPdf: `http://localhost:3000/pdfs/${user.id}-${month}.pdf`,
+          payrollPdf: `payrolls/${user.id}/${user.id}-${month}.pdf`,
         });
 
         //Passing Calculated Data & Payroll record Data for PDF generation
@@ -141,6 +142,7 @@ export class PayrollService {
           employerFundRate,
           ETF,
           month,
+          firebaseService: this.firebaseService,
         });
       }
       console.log('Payrolls Generated');
@@ -230,6 +232,15 @@ export class PayrollService {
     }
   }
 
+async deleteByMonthAndEmp(empId: string, month: string) {
+  try {
+    return await this.databaseService.payroll.deleteMany({
+      where: { empId, month },
+    });
+  } catch (err) {
+    throw new Error("Failed to delete payroll(s) for employee and month");
+  }
+}
   async deleteByMonth(month:string){
     try{
       await this.databaseService.payroll.deleteMany({
@@ -240,3 +251,4 @@ export class PayrollService {
     }
   }
 }
+

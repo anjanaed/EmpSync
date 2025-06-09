@@ -6,22 +6,31 @@ import {
   HttpException,
   HttpStatus,
   Param,
+  Request,
   Post,
   Put,
   UseGuards,
   Query,
   Res,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { Response } from 'express';
+import { Multer } from 'multer';
 import { PayrollService } from './payroll.service';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from '../../core/authentication/roles.guard';
 import { Roles } from '../../core/authentication/roles.decorator';
+import { FirebaseService } from './firebase.service';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('payroll')
 export class PayrollController {
-  constructor(private readonly payrollService: PayrollService) {}
+  constructor(
+    private readonly payrollService: PayrollService,
+    private readonly firebaseService: FirebaseService,
+  ) {}
 
   @Post('calculate-all')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
@@ -132,6 +141,133 @@ export class PayrollController {
         {
           status: HttpStatus.INTERNAL_SERVER_ERROR,
           error: 'Failed to delete payrolls by month',
+          message: err.message,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  @Post('upload-pdf/:employeeId')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('HR_ADMIN')
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadPayrollPdf(
+    @Param('employeeId') employeeId: string,
+    @UploadedFile() file: Multer.File,
+  ) {
+    try {
+      const filePath = await this.firebaseService.uploadFile(
+        employeeId,
+        file.originalname,
+        file.buffer,
+      );
+      return { filePath };
+    } catch (err) {
+      throw new HttpException(
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          error: 'Failed to upload file',
+          message: err.message,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  //For User Portal Usage
+  @Get('geturl/by-month/:month')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  async getSignedUrlFromToken(@Request() req, @Param('month') month: string) {
+    let empId = req.user.employeeId;
+    if (empId) {
+      empId = empId.toUpperCase();
+    }
+
+    try {
+      const url = await this.firebaseService.getSignedUrlFromParams(
+        empId,
+        month,
+      );
+      return { url };
+    } catch (err) {
+      throw new HttpException(
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          error: 'Failed to get signed URL',
+          message: err.message,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  //For HR Portal Usage
+  @Get('geturl/as-hr/:empid/:month/:mode')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('HR_ADMIN')
+  async getSignedUrlForHR(
+    @Param('empid') empId: string,
+    @Param('month') month: string,
+    @Param('mode') mode: string,
+  ) {
+    if (empId) {
+      empId = empId.toUpperCase();
+    }
+
+    try {
+      if (mode === 'D') {
+        const url = await this.firebaseService.getSignedUrlFromParamsDownload(
+          empId,
+          month,
+        );
+        return { url };
+      } else {
+        const url = await this.firebaseService.getSignedUrlFromParams(
+          empId,
+          month,
+        );
+        return { url };
+      }
+    } catch (err) {
+      throw new HttpException(
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          error: 'Failed to get signed URL',
+          message: err.message,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  @Delete('delete-by-month/:empid/:month')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('HR_ADMIN')
+  async deletePayrollAndFileByMonth(
+    @Param('empid') empId: string,
+    @Param('month') month: string,
+  ) {
+    if (empId) {
+      empId = empId.toUpperCase();
+    }
+
+    try {
+      // Delete payroll record(s) from DB
+      const dbResult = await this.payrollService.deleteByMonthAndEmp(empId, month);
+
+      // Delete file from Firebase Storage
+      const fbResult = await this.firebaseService.deleteFile(empId, month);
+
+      return {
+        dbResult,
+        fbResult,
+      };
+    } catch (err) {
+      throw new HttpException(
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          error: 'Failed to delete payroll and/or file',
           message: err.message,
         },
         HttpStatus.INTERNAL_SERVER_ERROR,
