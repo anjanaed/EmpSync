@@ -128,7 +128,7 @@ export class PayrollService {
           employee: { connect: { id: user.id } },
           month: month,
           netPay: values.netSalary,
-          payrollPdf: `http://localhost:3000/pdfs/${user.id}-${month}.pdf`,
+          payrollPdf: `payrolls/${user.id}/${user.id}-${month}.pdf`,
         });
 
         //Passing Calculated Data & Payroll record Data for PDF generation
@@ -232,6 +232,15 @@ export class PayrollService {
     }
   }
 
+async deleteByMonthAndEmp(empId: string, month: string) {
+  try {
+    return await this.databaseService.payroll.deleteMany({
+      where: { empId, month },
+    });
+  } catch (err) {
+    throw new Error("Failed to delete payroll(s) for employee and month");
+  }
+}
   async deleteByMonth(month:string){
     try{
       await this.databaseService.payroll.deleteMany({

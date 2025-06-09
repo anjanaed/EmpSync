@@ -240,4 +240,38 @@ export class PayrollController {
       );
     }
   }
+
+  @Delete('delete-by-month/:empid/:month')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('HR_ADMIN')
+  async deletePayrollAndFileByMonth(
+    @Param('empid') empId: string,
+    @Param('month') month: string,
+  ) {
+    if (empId) {
+      empId = empId.toUpperCase();
+    }
+
+    try {
+      // Delete payroll record(s) from DB
+      const dbResult = await this.payrollService.deleteByMonthAndEmp(empId, month);
+
+      // Delete file from Firebase Storage
+      const fbResult = await this.firebaseService.deleteFile(empId, month);
+
+      return {
+        dbResult,
+        fbResult,
+      };
+    } catch (err) {
+      throw new HttpException(
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          error: 'Failed to delete payroll and/or file',
+          message: err.message,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
 }
