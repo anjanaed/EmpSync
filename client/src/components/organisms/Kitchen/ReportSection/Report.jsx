@@ -13,7 +13,14 @@ const Report = () => {
   const [employeeTimePeriod, setEmployeeTimePeriod] = useState("daily");
   const [employeeId, setEmployeeId] = useState("");
 
-  // Sample data for employee meal consumption
+  // Meal pricing
+  const mealPrices = {
+    breakfast: 5.50,
+    lunch: 8.75,
+    dinner: 12.25
+  };
+
+  // Sample data for employee meal consumption with pricing
   const employeeData = [
     {
       key: "1",
@@ -48,10 +55,26 @@ const Report = () => {
       employeeName: "Sarah Wilson",
       breakfast: 10,
       lunch: 25,
-      dinner: 14,
-      totalMeals: 49
+      dinner: 15,
+      totalMeals: 50
     }
   ];
+
+  // Calculate totals
+  const totals = employeeData.reduce(
+    (acc, employee) => ({
+      breakfast: acc.breakfast + employee.breakfast,
+      lunch: acc.lunch + employee.lunch,
+      dinner: acc.dinner + employee.dinner,
+      totalMeals: acc.totalMeals + employee.totalMeals
+    }),
+    { breakfast: 0, lunch: 0, dinner: 0, totalMeals: 0 }
+  );
+
+  const grandTotal = 
+    totals.breakfast * mealPrices.breakfast +
+    totals.lunch * mealPrices.lunch +
+    totals.dinner * mealPrices.dinner;
 
   const columns = [
     {
@@ -70,34 +93,77 @@ const Report = () => {
       title: 'Breakfast',
       dataIndex: 'breakfast',
       key: 'breakfast',
-      width: 100,
+      width: 120,
       align: 'center',
+      render: (value) => (
+        <div className={styles.mealCell}>
+          <div className={styles.mealCount}>{value}</div>
+          <div className={styles.mealPrice}>${(value * mealPrices.breakfast).toFixed(2)}</div>
+        </div>
+      ),
     },
     {
       title: 'Lunch',
       dataIndex: 'lunch',
       key: 'lunch',
-      width: 100,
+      width: 120,
       align: 'center',
+      render: (value) => (
+        <div className={styles.mealCell}>
+          <div className={styles.mealCount}>{value}</div>
+          <div className={styles.mealPrice}>${(value * mealPrices.lunch).toFixed(2)}</div>
+        </div>
+      ),
     },
     {
       title: 'Dinner',
       dataIndex: 'dinner',
       key: 'dinner',
-      width: 100,
+      width: 120,
       align: 'center',
+      render: (value) => (
+        <div className={styles.mealCell}>
+          <div className={styles.mealCount}>{value}</div>
+          <div className={styles.mealPrice}>${(value * mealPrices.dinner).toFixed(2)}</div>
+        </div>
+      ),
     },
     {
       title: 'Total Meals',
       dataIndex: 'totalMeals',
       key: 'totalMeals',
-      width: 120,
+      width: 140,
       align: 'center',
-      render: (value) => (
-        <span className={styles.totalMealsCell}>
-          {value}
-        </span>
-      ),
+      render: (value, record) => {
+        const totalCost = 
+          record.breakfast * mealPrices.breakfast +
+          record.lunch * mealPrices.lunch +
+          record.dinner * mealPrices.dinner;
+        return (
+          <div className={styles.totalMealsCell}>
+            <div className={styles.totalCount}>{value}</div>
+            <div className={styles.totalMealsText}>Total Meals</div>
+          </div>
+        );
+      },
+    },
+    {
+      title: 'Total Amount',
+      key: 'totalAmount',
+      width: 140,
+      align: 'center',
+      render: (_, record) => {
+        const totalCost = 
+          record.breakfast * mealPrices.breakfast +
+          record.lunch * mealPrices.lunch +
+          record.dinner * mealPrices.dinner;
+        return (
+          <div className={styles.totalAmountCell}>
+            <div className={styles.totalAmount}>${totalCost.toFixed(2)}</div>
+            <div className={styles.totalCostText}>Total Cost</div>
+          </div>
+        );
+      },
     },
   ];
 
@@ -205,7 +271,6 @@ const Report = () => {
           >
             <div style={{ marginBottom: '24px' }}>
               <div className={styles.tabContentHeader}>
-                {/* <BarChart3 className={styles.tabIcon} size={24} /> */}
                 <div>
                   <h2 className={styles.tabTitle}>
                     Employee Meal Consumption Summary
@@ -269,6 +334,43 @@ const Report = () => {
                 pagination={false}
                 className={styles.table}
                 bordered
+                summary={() => (
+                  <Table.Summary.Row className={styles.summaryRow}>
+                    <Table.Summary.Cell index={0} colSpan={2}>
+                      <strong>Grand Total:</strong>
+                    </Table.Summary.Cell>
+                    <Table.Summary.Cell index={2} align="center">
+                      <div className={styles.summaryCell}>
+                        <div className={styles.summaryCount}>{totals.breakfast}</div>
+                        <div className={styles.summaryPrice}>${(totals.breakfast * mealPrices.breakfast).toFixed(2)}</div>
+                      </div>
+                    </Table.Summary.Cell>
+                    <Table.Summary.Cell index={3} align="center">
+                      <div className={styles.summaryCell}>
+                        <div className={styles.summaryCount}>{totals.lunch}</div>
+                        <div className={styles.summaryPrice}>${(totals.lunch * mealPrices.lunch).toFixed(2)}</div>
+                      </div>
+                    </Table.Summary.Cell>
+                    <Table.Summary.Cell index={4} align="center">
+                      <div className={styles.summaryCell}>
+                        <div className={styles.summaryCount}>{totals.dinner}</div>
+                        <div className={styles.summaryPrice}>${(totals.dinner * mealPrices.dinner).toFixed(2)}</div>
+                      </div>
+                    </Table.Summary.Cell>
+                    <Table.Summary.Cell index={5} align="center">
+                      <div className={styles.summaryTotalMeals}>
+                        <div className={styles.summaryTotalCount}>{totals.totalMeals}</div>
+                        <div className={styles.summaryTotalText}>Total Meals</div>
+                      </div>
+                    </Table.Summary.Cell>
+                    <Table.Summary.Cell index={6} align="center">
+                      <div className={styles.summaryGrandTotal}>
+                        <div className={styles.summaryGrandAmount}>${grandTotal.toFixed(2)}</div>
+                        <div className={styles.summaryGrandText}>Grand Total</div>
+                      </div>
+                    </Table.Summary.Cell>
+                  </Table.Summary.Row>
+                )}
               />
             </div>
           </TabPane>
@@ -284,7 +386,6 @@ const Report = () => {
           >
             <div style={{ marginBottom: '24px' }}>
               <div className={styles.tabContentHeader}>
-                {/* <FileText className={styles.tabIcon} size={24} /> */}
                 <div>
                   <h2 className={styles.tabTitle}>
                     Order Details Report
@@ -426,7 +527,6 @@ const Report = () => {
           >
             <div style={{ marginBottom: '24px' }}>
               <div className={styles.tabContentHeader}>
-                {/* <Users className={styles.tabIcon} size={24} /> */}
                 <div>
                   <h2 className={styles.tabTitle}>
                     Individual Employee Report

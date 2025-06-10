@@ -440,3 +440,151 @@
   display: flex;
   align-items: center;
 }
+
+/* Existing styles - keep all your current styles and add these new ones */
+
+/* New styles for pricing display in table cells */
+.mealCell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.mealCount {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1890ff;
+  text-align: center;
+}
+
+.mealPrice {
+  font-size: 12px;
+  color: #666;
+  font-weight: 500;
+}
+
+.totalMealsCell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.totalCount {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1890ff;
+  text-align: center;
+}
+
+.totalMealsText {
+  font-size: 11px;
+  color: #666;
+  font-weight: 500;
+}
+
+.totalAmountCell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.totalAmount {
+  font-size: 18px;
+  font-weight: 700;
+  color: #52c41a;
+  text-align: center;
+}
+
+.totalCostText {
+  font-size: 11px;
+  color: #666;
+  font-weight: 500;
+}
+
+/* Summary row styles */
+.summaryRow {
+  background-color: #fafafa;
+  font-weight: 600;
+}
+
+.summaryCell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.summaryCount {
+  font-size: 18px;
+  font-weight: 800;
+  color: #fa8c16;
+  text-align: center;
+}
+
+.summaryPrice {
+  font-size: 12px;
+  color: #666;
+  font-weight: 600;
+}
+
+.summaryTotalMeals {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.summaryTotalCount {
+  font-size: 18px;
+  font-weight: 800;
+  color: #1890ff;
+  text-align: center;
+}
+
+.summaryTotalText {
+  font-size: 11px;
+  color: #666;
+  font-weight: 600;
+}
+
+.summaryGrandTotal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.summaryGrandAmount {
+  font-size: 20px;
+  font-weight: 800;
+  color: #52c41a;
+  text-align: center;
+}
+
+.summaryGrandText {
+  font-size: 11px;
+  color: #666;
+  font-weight: 600;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .mealCount, .totalCount, .summaryCount, .summaryTotalCount {
+    font-size: 16px;
+  }
+  
+  .mealPrice, .totalMealsText, .totalCostText, .summaryPrice, .summaryTotalText, .summaryGrandText {
+    font-size: 10px;
+  }
+  
+  .totalAmount {
+    font-size: 16px;
+  }
+  
+  .summaryGrandAmount {
+    font-size: 18px;
+  }
+}
