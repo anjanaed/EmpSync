@@ -1,0 +1,188 @@
+.modal :global(.ant-modal-content) {
+  background-color: rgba(24, 144, 255, 0.2) !important;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+}
+
+.modal :global(.ant-modal-header) {
+  background-color: transparent !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+  padding: 20px 24px 16px;
+}
+
+.modal :global(.ant-modal-title) {
+  color: white !important;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.modal :global(.ant-modal-close) {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+.modal :global(.ant-modal-close:hover) {
+  color: white !important;
+}
+
+.modal :global(.ant-modal-body) {
+  background-color: transparent !important;
+  padding: 20px 24px;
+}
+
+.form {
+  background-color: transparent;
+}
+
+.form :global(.ant-form-item-label > label) {
+  color: white !important;
+  font-weight: 500;
+}
+
+.form :global(.ant-form-item-label > label.ant-form-item-required::before) {
+  color: #ff4d4f !important;
+}
+
+.form :global(.ant-input) {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  border-color: rgba(24, 144, 255, 0.3) !important;
+  color: white !important;
+  border-radius: 6px;
+  padding: 8px 12px;
+  transition: all 0.3s ease;
+}
+
+.form :global(.ant-input:hover) {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  border-color: rgba(24, 144, 255, 0.5) !important;
+}
+
+.form :global(.ant-input:focus) {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  border-color: #1890ff !important;
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2) !important;
+}
+
+.form :global(.ant-input::placeholder) {
+  color: rgba(255, 255, 255, 0.4) !important;
+}
+
+.form :global(.ant-form-item-explain-error) {
+  color: #ff4d4f !important;
+}
+
+.buttonGroup {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+
+.submitButton {
+  background-color: #1890ff !important;
+  border-color: #1890ff !important;
+  color: white !important;
+  border-radius: 6px;
+  font-weight: 500;
+  height: 36px;
+  padding: 0 20px;
+  transition: all 0.3s ease;
+}
+
+.submitButton:hover {
+  background-color: #40a9ff !important;
+  border-color: #40a9ff !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(24, 144, 255, 0.3);
+}
+
+.submitButton:active {
+  transform: translateY(0);
+}
+
+.cancelButton {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  color: rgba(255, 255, 255, 0.8) !important;
+  border-radius: 6px;
+  font-weight: 500;
+  height: 36px;
+  padding: 0 20px;
+  transition: all 0.3s ease;
+}
+
+.cancelButton:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  border-color: rgba(255, 255, 255, 0.4) !important;
+  color: white !important;
+}
+
+/* Mobile styles */
+@media (max-width: 768px) {
+  .modal :global(.ant-modal-content) {
+    margin: 16px;
+  }
+  
+  .modal :global(.ant-modal-header) {
+    padding: 16px 20px 12px;
+  }
+  
+  .modal :global(.ant-modal-title) {
+    font-size: 1.1rem;
+  }
+  
+  .modal :global(.ant-modal-body) {
+    padding: 16px 20px;
+  }
+  
+  .buttonGroup {
+    flex-direction: column-reverse;
+    gap: 8px;
+  }
+  
+  .submitButton,
+  .cancelButton {
+    width: 100%;
+    height: 40px;
+  }
+}
+
+/* Small mobile styles */
+@media (max-width: 480px) {
+  .modal :global(.ant-modal-content) {
+    margin: 12px;
+  }
+  
+  .modal :global(.ant-modal-header) {
+    padding: 12px 16px 8px;
+  }
+  
+  .modal :global(.ant-modal-body) {
+    padding: 12px 16px;
+  }
+  
+  .form :global(.ant-input) {
+    padding: 10px 12px;
+  }
+}
+
+/* Loading state for submit button */
+.submitButton:global(.ant-btn-loading) {
+  background-color: rgba(24, 144, 255, 0.7) !important;
+  border-color: rgba(24, 144, 255, 0.7) !important;
+}
+
+/* Dark theme adjustments */
+@media (prefers-color-scheme: dark) {
+  .modal :global(.ant-modal-content) {
+    background-color: rgba(24, 144, 255, 0.08) !important;
+  }
+  
+  .form :global(.ant-input) {
+    background-color: rgba(255, 255, 255, 0.08) !important;
+  }
+  
+  .form :global(.ant-input:hover) {
+    background-color: rgba(255, 255, 255, 0.12) !important;
+  }
+}
