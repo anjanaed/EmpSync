@@ -1,0 +1,191 @@
+.navbar {
+  background: linear-gradient(180deg, #001529 0%, #002140 100%) !important;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 2px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  min-height: 64px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.logoText {
+  color: #ffffff;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  padding: 16px;
+  background: linear-gradient(45deg, #1890ff, #40a9ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.logoIcon {
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: 700;
+  padding: 16px;
+  background: linear-gradient(45deg, #1890ff, #40a9ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.collapseBtn {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  padding: 8px; /* Increase from 4px to 8px or more */
+  border-radius: 4px;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px; /* Add explicit width */
+  height: 60px; /* Add explicit height */
+  font-size: 16px; /* Add font-size to increase icon size */
+}
+
+.collapseBtn:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.menu {
+  border-right: none !important;
+  background: transparent !important;
+  margin-top: 8px;
+}
+
+.menu :global(.ant-menu-item) {
+  margin: 4px 12px !important;
+  border-radius: 8px !important;
+  transition: all 0.3s ease !important;
+  height: 48px !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+.menu :global(.ant-menu-item:hover) {
+  background: rgba(24, 144, 255, 0.1) !important;
+  color: #40a9ff !important;
+}
+
+.menu :global(.ant-menu-item-selected) {
+  background: linear-gradient(90deg, rgba(24, 144, 255, 0.2), rgba(64, 169, 255, 0.1)) !important;
+  color: #40a9ff !important;
+  border-right: 3px solid #1890ff;
+}
+
+.menu :global(.ant-menu-item-selected::after) {
+  display: none !important;
+}
+
+.menuItem {
+  font-weight: 500;
+}
+
+
+.logoutItem:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: #ff000d !important;
+}
+
+.menu :global(.ant-menu-divider) {
+  background: rgba(255, 255, 255, 0.1) !important;
+  margin: 16px 12px !important;
+}
+
+.footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 16px;
+}
+
+.userInfo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.userDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.userName {
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.userRole {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 12px;
+}
+
+/* Responsive adjustments */
+@media (max-height: 600px) {
+  .footer {
+    position: relative;
+    margin-top: auto;
+  }
+}
+
+/* Custom scrollbar for menu */
+.navbar :global(.ant-layout-sider-children) {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.navbar :global(.ant-layout-sider-children)::-webkit-scrollbar {
+  width: 4px;
+}
+
+.logoutMenu {
+  border-right: none !important;
+  background: transparent !important;
+}
+
+.logoutMenu :global(.ant-menu-item) {
+  margin: 4px 12px !important;
+  border-radius: 8px !important;
+  transition: all 0.3s ease !important;
+  height: 48px !important;
+  display: flex !important;
+  align-items: center !important;
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+.logoutMenu :global(.ant-menu-item:hover) {
+  background: rgba(255, 77, 79, 0.15) !important;
+  color: #ffffff !important;
+}
+
+.logoutMenu :global(.ant-menu-item.ant-menu-item-danger) {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+.logoutMenu :global(.ant-menu-item.ant-menu-item-danger:hover) {
+  background: rgba(255, 77, 79, 0.15) !important;
+  color: #ffffff !important;
+}
+
