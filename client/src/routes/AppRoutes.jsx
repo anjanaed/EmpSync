@@ -2,6 +2,10 @@ import React from "react";
 import { Routes, Route, BrowserRouter, Navigate } from "react-router-dom";
 import PasswordReset from "../components/pages/Login/PasswordReset/PasswordReset";
 import OrderTab from "../components/pages/OrderTab/OrderTab";
+import SuperAdmin from "../components/pages/SuperAdmin/SuperAdmin";
+import Organizations from '../components/organisms/SuperAdmin/pages/Organizations/OrganizationList';
+import Roles from '../components/organisms/SuperAdmin/pages/Roles/RolesList';
+import Permissions from '../components/organisms/SuperAdmin/pages/Permissions/PermissionsList';
 // import KitchenAdmin from "../components/pages/KitchenAdmin/SchedulePage/KitchenAdmin";
 // import Meals from "../components/pages/KitchenAdmin/MealPage/Meal";
 // import MealDetailsForm from "../components/pages/KitchenAdmin/AddMealPage/AddMeal";
@@ -19,6 +23,11 @@ const AppRoutes = () => (
           {/* Public Routes */}
           <Route path="/passwordReset" element={<PasswordReset />} />
           <Route path="/OrderTab" element={<OrderTab />} />
+          <Route path="/SuperAdmin" element={<SuperAdmin />}>
+            <Route path="organizations" element={<Organizations />} />
+            <Route path="roles" element={<Roles />} />
+            <Route path="permissions" element={<Permissions />} />
+          </Route>
           {/* <Route path="/kitchen-admin" element={<KitchenAdmin />} />
           <Route path="/kitchen-meal" element={<Meals />} />
           <Route path="/meal-details" element={<MealDetailsForm />} />
