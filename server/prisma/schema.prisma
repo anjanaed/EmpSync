@@ -16,64 +16,54 @@ datasource db {
 }
 
 model Organization {
-  id          String    @id @default(uuid())
-  name        String
-  logoUrl     String?
-  contactEmail String
-  subscription String    // e.g., "basic", "premium", "enterprise"
-  active      Boolean   @default(true)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  users       User[]
-  roles       Role[]
+  id                      String   @id @default(uuid())
+  name                    String
+  logoUrl                 String?
+  contactEmail            String
+  active                  Boolean  @default(true)
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
+  users                   User[]
+  fingerprint_capacity    Int
+  fingerprint_per_machine Int
+}
+
+model Fingerprint {
+  thumbid String @id
+  empId   String
 }
 
 model User {
-  id        String    @id
-  name      String
-  role      String
-  dob       String?
-  telephone String?
-  gender    String?
-  address   String?
-  email     String    @unique
-  password  String
-  salary    Int?
-  thumbId   Int?      @unique
-  supId     String?
-  language  String?
-  height    Int?
-  weight    Int?
-  payrolls  Payroll[]
+  id             String        @id
+  name           String
+  role           String
+  dob            String?
+  telephone      String?
+  gender         String?
+  address        String?
+  email          String        @unique
+  password       String
+  salary         Int?
+  passkey        Int?
+  supId          String?
+  language       String?
+  height         Int?
+  weight         Int?
+  payrolls       Payroll[]
   organizationId String?
   organization   Organization? @relation(fields: [organizationId], references: [id])
   permissions    Permission[]
-  createdAt DateTime  @default(now())
-}
-
-model Role {
-  id            String       @id @default(uuid())
-  name          String
-  description   String?
-  organizationId String
-  organization  Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  permissions   Permission[]
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
-
-  @@unique([name, organizationId])
+  createdAt      DateTime      @default(now())
 }
 
 // Permission model
 model Permission {
-  id       String   @id @default(uuid())
-  action   String   // e.g., "create", "read", "update", "delete"
-  resource String   // e.g., "users", "payroll", "meals"
-  roles    Role[]
-  users    User[]   // For direct user permissions
+  id        String   @id @default(uuid())
+  orgId     String
+  action    String // e.g., "create", "read", "update", "delete"
+  role      String
+  users     User[] // For direct user permissions
   createdAt DateTime @default(now())
-  
-  @@unique([action, resource])
 }
 
 model Ingredient {
