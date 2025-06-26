@@ -3,6 +3,8 @@ import { Card, Progress, Table, Tabs, Button, Select, Spin, message } from "antd
 import { BarChart3, FileText, Users, Download, TrendingUp, TrendingDown } from "lucide-react";
 import styles from './Report.module.css';
 import { useAuth } from "../../../../contexts/AuthContext";
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
 
 const { TabPane } = Tabs;
 const { Option } = Select;
@@ -21,12 +23,12 @@ const Report = () => {
   const { authData } = useAuth();
   const token = authData?.accessToken;
 
-  // Meal pricing
-  const mealPrices = {
-    breakfast: 5.50,
-    lunch: 8.75,
-    dinner: 12.25
-  };
+  // Remove hardcoded meal prices since we'll use actual order prices
+  // const mealPrices = {
+  //   breakfast: 5.50,
+  //   lunch: 8.75,
+  //   dinner: 12.25
+  // };
 
   // API calls without authentication
   const fetchOrders = async () => {
@@ -55,6 +57,28 @@ const Report = () => {
       return [];
     }
   };
+
+  // Excel download handler
+  const handleDownloadExcel = () => {
+    if (!employeeData || employeeData.length === 0) {
+      message.warning("No data to export.");
+      return;
+    }
+
+    // Prepare data for export (remove 'key' field)
+    const exportData = employeeData.map(({ key, ...rest }) => rest);
+
+    // Create worksheet and workbook
+    const worksheet = XLSX.utils.json_to_sheet(exportData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Report");
+
+    // Generate Excel file and trigger download
+    const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+    const blob = new Blob([excelBuffer], { type: "application/octet-stream" });
+    saveAs(blob, `Employee_Meal_Report_${timePeriod}.xlsx`);
+  };
+
 
   const fetchEmployees = async () => {
     try {
@@ -110,7 +134,7 @@ const Report = () => {
     }
   };
 
-// Enhanced data processing with better employee name mapping
+// Enhanced data processing with actual order prices
 const processEmployeeMealData = (orders, employees, mealTypes) => {
   console.log('Processing data with:', { 
     ordersCount: orders?.length || 0, 
@@ -129,26 +153,19 @@ const processEmployeeMealData = (orders, employees, mealTypes) => {
   }
 
   // Create user lookup map where user.id maps to user name
-  // Employee ID from orders = User ID in user table
   const employeeMap = employees.reduce((acc, user) => {
-    // Get user ID (this should match employee ID from orders)
     const userId = user.id || user.userId || user.user_id;
-    
-    // Get user name from various possible fields
     const userName = user.name || user.userName || user.user_name || 
                     user.fullName || user.full_name || 
                     user.firstName || user.first_name ||
                     (user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : null) ||
                     (user.first_name && user.last_name ? `${user.first_name} ${user.last_name}` : null) ||
-                    user.username || user.email?.split('@')[0] || // fallback to username or email prefix
+                    user.username || user.email?.split('@')[0] || 
                     `User ${userId}`;
     
     if (userId) {
-      // Store user name with user ID as key (employee ID from orders will match this)
       acc[userId] = userName;
-      acc[userId.toString()] = userName; // Also store as string for safety
-      
-      // If userId looks like it might be a number, also store as number
+      acc[userId.toString()] = userName;
       if (!isNaN(userId)) {
         acc[parseInt(userId)] = userName;
       }
@@ -158,7 +175,7 @@ const processEmployeeMealData = (orders, employees, mealTypes) => {
     return acc;
   }, {});
 
-  // Create meal type lookup map with enhanced field matching
+  // Create meal type lookup map
   const mealTypeMap = mealTypes.reduce((acc, mealType) => {
     const mealId = mealType.id || mealType.mealTypeId || mealType.meal_type_id;
     const mealName = mealType.name || mealType.mealTypeName || 
@@ -167,9 +184,7 @@ const processEmployeeMealData = (orders, employees, mealTypes) => {
     
     if (mealId) {
       acc[mealId] = mealName.toLowerCase();
-      acc[mealId.toString()] = mealName.toLowerCase(); // Also store as string
-      
-      // If mealId looks like it might be a number, also store as number
+      acc[mealId.toString()] = mealName.toLowerCase();
       if (!isNaN(mealId)) {
         acc[parseInt(mealId)] = mealName.toLowerCase();
       }
@@ -180,7 +195,7 @@ const processEmployeeMealData = (orders, employees, mealTypes) => {
   console.log('User lookup map (UserID -> UserName):', employeeMap);
   console.log('Meal type map:', mealTypeMap);
 
-  // Get unique employee IDs from orders with better field matching
+  // Get unique employee IDs from orders
   const uniqueEmployeeIds = [...new Set(orders.map(order => {
     const empId = order.employeeId || order.employee_id || order.userId || order.user_id;
     console.log(`Order employee ID: ${empId} (type: ${typeof empId})`);
@@ -188,12 +203,6 @@ const processEmployeeMealData = (orders, employees, mealTypes) => {
   }))].filter(id => id !== null && id !== undefined);
 
   console.log('Unique employee IDs from orders:', uniqueEmployeeIds);
-
-  // Debug: Check which employee IDs have matching user names
-  uniqueEmployeeIds.forEach(empId => {
-    const foundName = employeeMap[empId] || employeeMap[empId.toString()] || employeeMap[parseInt(empId)];
-    console.log(`Employee ID ${empId} -> User Name: ${foundName || 'NOT FOUND'}`);
-  });
 
   // Get unique meal types from orders
   const uniqueMealTypeIds = [...new Set(orders.map(order => 
@@ -212,13 +221,12 @@ const processEmployeeMealData = (orders, employees, mealTypes) => {
 
   console.log('Dynamic meal types:', dynamicMealTypes);
 
-  // Initialize employee meal counts
+  // Initialize employee meal counts and prices
   const employeeMealCounts = {};
 
   // Initialize all employees who have orders
   uniqueEmployeeIds.forEach(empId => {
     if (empId !== null && empId !== undefined) {
-      // Get user name from user table where user.id = employee ID from orders
       const userName = employeeMap[empId] || 
                       employeeMap[empId.toString()] || 
                       employeeMap[parseInt(empId)] || 
@@ -226,13 +234,15 @@ const processEmployeeMealData = (orders, employees, mealTypes) => {
       
       const employeeRecord = {
         employeeId: empId,
-        employeeName: userName, // This will now be the actual user name from user table
-        totalMeals: 0
+        employeeName: userName,
+        totalMeals: 0,
+        totalAmount: 0 // Add total amount tracking
       };
 
-      // Initialize all meal type counts to 0
+      // Initialize all meal type counts and prices to 0
       dynamicMealTypes.forEach(mealType => {
         employeeRecord[mealType.name] = 0;
+        employeeRecord[`${mealType.name}_price`] = 0; // Track price for each meal type
       });
 
       employeeMealCounts[empId] = employeeRecord;
@@ -240,35 +250,38 @@ const processEmployeeMealData = (orders, employees, mealTypes) => {
     }
   });
 
-  // Process orders and count meals
+  // Process orders and count meals with actual prices
   orders.forEach(order => {
     const employeeId = order.employeeId || order.employee_id || order.userId || order.user_id;
     const mealTypeId = order.mealTypeId || order.meal_type_id || order.mealType;
+    const orderPrice = parseFloat(order.price) || 0; // Get actual price from order
     
     if (employeeId && mealTypeId && employeeMealCounts[employeeId]) {
       const mealTypeName = mealTypeMap[mealTypeId] || mealTypeMap[mealTypeId.toString()] || 
                           mealTypeMap[parseInt(mealTypeId)];
       
-      console.log(`Processing order: Employee ${employeeId}, Meal Type ID: ${mealTypeId}, Meal Type Name: ${mealTypeName}`);
+      console.log(`Processing order: Employee ${employeeId}, Meal Type ID: ${mealTypeId}, Meal Type Name: ${mealTypeName}, Price: ${orderPrice}`);
 
       // Get the count of meals from the meals array or default to 1
       let mealCount = 1;
       if (order.meals && Array.isArray(order.meals)) {
         mealCount = order.meals.length;
       } else if (order.meals && typeof order.meals === 'string') {
-        // Handle string format like "2:1" - split by comma and count
         mealCount = order.meals.split(',').length;
       } else if (order.quantity && !isNaN(order.quantity)) {
         mealCount = parseInt(order.quantity);
       }
 
-      // Increment meal count based on meal type
+      // Increment meal count and add price based on meal type
       if (mealTypeName && employeeMealCounts[employeeId][mealTypeName] !== undefined) {
         employeeMealCounts[employeeId][mealTypeName] += mealCount;
+        employeeMealCounts[employeeId][`${mealTypeName}_price`] += orderPrice; // Add actual order price
         employeeMealCounts[employeeId].totalMeals += mealCount;
+        employeeMealCounts[employeeId].totalAmount += orderPrice; // Add to total amount
       } else {
-        // If meal type name not found, still count total meals
+        // If meal type name not found, still count total meals and amount
         employeeMealCounts[employeeId].totalMeals += mealCount;
+        employeeMealCounts[employeeId].totalAmount += orderPrice;
       }
     }
   });
@@ -308,21 +321,18 @@ const processEmployeeMealData = (orders, employees, mealTypes) => {
     });
   };
 
-  // Load data function without authentication
+  // Load data function
   const loadData = async () => {
     setLoading(true);
     try {
       console.log('Starting data load...');
 
-      // Fetch all data with individual error handling
-      console.log('Fetching all data...');
       const [ordersData, employeesData, mealTypesData] = await Promise.allSettled([
         fetchOrders(),
         fetchEmployees(),
         fetchMealTypes()
       ]);
 
-      // Handle the results
       const orders = ordersData.status === 'fulfilled' ? ordersData.value : [];
       const employees = employeesData.status === 'fulfilled' ? employeesData.value : [];
       const mealTypes = mealTypesData.status === 'fulfilled' ? mealTypesData.value : [];
@@ -333,12 +343,10 @@ const processEmployeeMealData = (orders, employees, mealTypes) => {
         mealTypes: { status: mealTypesData.status, count: mealTypes.length }
       });
 
-      // Store the raw data
       setOrders(orders);
       setEmployees(employees);
       setMealTypes(mealTypes);
 
-      // Show warnings for failed requests
       if (employeesData.status === 'rejected') {
         message.warning('Failed to load employee data. Employee names may not display correctly.');
       }
@@ -346,13 +354,10 @@ const processEmployeeMealData = (orders, employees, mealTypes) => {
         message.warning('Failed to load meal type data. Meal type names may not display correctly.');
       }
 
-      // Process data even if some requests failed
       if (orders.length > 0) {
-        // Filter orders based on time period
         const filteredOrders = filterDataByTimePeriod(orders, timePeriod);
         console.log('Filtered orders:', filteredOrders.length);
 
-        // Process the data
         const result = processEmployeeMealData(filteredOrders, employees, mealTypes);
         
         if (result && result.processedData) {
@@ -386,13 +391,15 @@ const processEmployeeMealData = (orders, employees, mealTypes) => {
     loadData();
   }, [timePeriod]);
 
-  // Generate dynamic columns based on available meal types
+  // Generate dynamic columns based on available meal types with actual prices
   const generateDynamicColumns = () => {
     if (employeeData.length === 0) return [];
 
-    const standardFields = ['key', 'employeeId', 'employeeName', 'totalMeals'];
+    const standardFields = ['key', 'employeeId', 'employeeName', 'totalMeals', 'totalAmount'];
     const firstEmployee = employeeData[0];
-    const mealTypeKeys = Object.keys(firstEmployee).filter(key => !standardFields.includes(key));
+    const mealTypeKeys = Object.keys(firstEmployee).filter(key => 
+      !standardFields.includes(key) && !key.endsWith('_price')
+    );
 
     const dynamicColumns = mealTypeKeys.map(mealType => ({
       title: mealType.charAt(0).toUpperCase() + mealType.slice(1),
@@ -400,12 +407,13 @@ const processEmployeeMealData = (orders, employees, mealTypes) => {
       key: mealType,
       width: 120,
       align: 'center',
-      render: (value) => {
-        const price = mealPrices[mealType] || 0;
+      render: (value, record) => {
+        const priceKey = `${mealType}_price`;
+        const totalPrice = record[priceKey] || 0;
         return (
           <div className={styles.mealCell}>
             <div className={styles.mealCount}>{value || 0}</div>
-            <div className={styles.mealPrice}>${((value || 0) * price).toFixed(2)}</div>
+            <div className={styles.mealPrice}>Rs. {totalPrice.toFixed(2)}</div>
           </div>
         );
       },
@@ -414,30 +422,29 @@ const processEmployeeMealData = (orders, employees, mealTypes) => {
     return dynamicColumns;
   };
 
-  // Calculate totals
+  // Calculate totals with actual prices
   const calculateTotals = () => {
     if (employeeData.length === 0) return { totalMeals: 0, grandTotal: 0, mealTypeTotals: {} };
 
-    const standardFields = ['key', 'employeeId', 'employeeName', 'totalMeals'];
-    const mealTypeKeys = Object.keys(employeeData[0]).filter(key => !standardFields.includes(key));
+    const standardFields = ['key', 'employeeId', 'employeeName', 'totalMeals', 'totalAmount'];
+    const mealTypeKeys = Object.keys(employeeData[0]).filter(key => 
+      !standardFields.includes(key) && !key.endsWith('_price')
+    );
 
     const totals = employeeData.reduce((acc, employee) => {
       mealTypeKeys.forEach(mealType => {
         if (!acc[mealType]) acc[mealType] = 0;
+        if (!acc[`${mealType}_price`]) acc[`${mealType}_price`] = 0;
+        
         acc[mealType] += employee[mealType] || 0;
+        acc[`${mealType}_price`] += employee[`${mealType}_price`] || 0;
       });
       acc.totalMeals += employee.totalMeals || 0;
+      acc.grandTotal += employee.totalAmount || 0;
       return acc;
-    }, { totalMeals: 0 });
+    }, { totalMeals: 0, grandTotal: 0 });
 
-    // Calculate grand total
-    let grandTotal = 0;
-    mealTypeKeys.forEach(mealType => {
-      const price = mealPrices[mealType] || 0;
-      grandTotal += (totals[mealType] || 0) * price;
-    });
-
-    return { ...totals, grandTotal, mealTypeKeys };
+    return { ...totals, mealTypeKeys };
   };
 
   const totals = calculateTotals();
@@ -472,25 +479,16 @@ const processEmployeeMealData = (orders, employees, mealTypes) => {
     },
     {
       title: 'Total Amount',
+      dataIndex: 'totalAmount',
       key: 'totalAmount',
       width: 140,
       align: 'center',
-      render: (_, record) => {
-        const standardFields = ['key', 'employeeId', 'employeeName', 'totalMeals'];
-        const mealTypeKeys = Object.keys(record).filter(key => !standardFields.includes(key));
-        
-        const totalCost = mealTypeKeys.reduce((sum, mealType) => {
-          const price = mealPrices[mealType] || 0;
-          return sum + ((record[mealType] || 0) * price);
-        }, 0);
-
-        return (
-          <div className={styles.totalAmountCell}>
-            <div className={styles.totalAmount}>${totalCost.toFixed(2)}</div>
-            <div className={styles.totalCostText}>Total Cost</div>
-          </div>
-        );
-      },
+      render: (value) => (
+        <div className={styles.totalAmountCell}>
+          <div className={styles.totalAmount}>Rs. {(value || 0).toFixed(2)}</div>
+          <div className={styles.totalCostText}>Total Cost</div>
+        </div>
+      ),
     },
   ];
 
@@ -520,7 +518,7 @@ const processEmployeeMealData = (orders, employees, mealTypes) => {
     message.success(`${timePeriod.charAt(0).toUpperCase() + timePeriod.slice(1)} report generated successfully!`);
   };
 
-  // Generate summary row for table
+  // Generate summary row for table with actual prices
   const generateSummaryRow = () => {
     const summaryColumns = [
       <Table.Summary.Cell key="label" index={0} colSpan={2}>
@@ -529,12 +527,13 @@ const processEmployeeMealData = (orders, employees, mealTypes) => {
     ];
 
     (totals.mealTypeKeys || []).forEach((mealType, index) => {
-      const price = mealPrices[mealType] || 0;
+      const priceKey = `${mealType}_price`;
+      const totalPrice = totals[priceKey] || 0;
       summaryColumns.push(
         <Table.Summary.Cell key={mealType} index={index + 2} align="center">
           <div className={styles.summaryCell}>
             <div className={styles.summaryCount}>{totals[mealType] || 0}</div>
-            <div className={styles.summaryPrice}>${((totals[mealType] || 0) * price).toFixed(2)}</div>
+            <div className={styles.summaryPrice}>Rs. {totalPrice.toFixed(2)}</div>
           </div>
         </Table.Summary.Cell>
       );
@@ -552,7 +551,7 @@ const processEmployeeMealData = (orders, employees, mealTypes) => {
     summaryColumns.push(
       <Table.Summary.Cell key="grandTotal" index={summaryColumns.length} align="center">
         <div className={styles.summaryGrandTotal}>
-          <div className={styles.summaryGrandAmount}>${totals.grandTotal.toFixed(2)}</div>
+          <div className={styles.summaryGrandAmount}>Rs. {totals.grandTotal.toFixed(2)}</div>
           <div className={styles.summaryGrandText}>Grand Total</div>
         </div>
       </Table.Summary.Cell>
@@ -661,7 +660,7 @@ const processEmployeeMealData = (orders, employees, mealTypes) => {
                     Employee Meal Consumption Summary
                   </h2>
                   <p className={styles.tabDescription}>
-                    Overview of meal consumption by employee including meal types and total counts
+                    Overview of meal consumption by employee including meal types and total costs based on actual order prices
                   </p>
                 </div>
               </div>
@@ -1025,6 +1024,7 @@ const processEmployeeMealData = (orders, employees, mealTypes) => {
             type="default"
             icon={<Download size={16} />}
             className={styles.downloadButton}
+            onClick={handleDownloadExcel}
           >
             Download Excel
           </Button>
