@@ -60,7 +60,7 @@ model User {
 model Permission {
   id        String   @id @default(uuid())
   orgId     String
-  action    String // e.g., "create", "read", "update", "delete"
+  action    String 
   role      String
   users     User[] // For direct user permissions
   createdAt DateTime @default(now())
