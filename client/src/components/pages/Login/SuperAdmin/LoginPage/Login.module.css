@@ -1,0 +1,324 @@
+.container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1a1a1a 0%, #2c2c2c 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  font-family: "Figtree", sans-serif;
+}
+
+.loginWrapper {
+  width: 100%;
+  max-width: 420px;
+}
+
+.loginCard {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 12px !important;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+}
+
+.loginCard :global(.ant-card-body) {
+  padding: 40px !important;
+  background-color: transparent !important;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.headerContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.title {
+  color: white !important;
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0;
+  background: linear-gradient(135deg, #1890ff, #40a9ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.subtitle {
+  color: rgba(255, 255, 255, 0.7) !important;
+  font-size: 1rem;
+  margin: 0;
+  font-weight: 400;
+}
+
+.loginForm {
+  width: 100%;
+}
+
+.label {
+  color: white !important;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.input {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 8px !important;
+  color: white !important;
+  padding: 12px 16px !important;
+  height: 48px !important;
+  font-size: 14px;
+}
+
+.input:hover {
+  border-color: rgba(24, 144, 255, 0.5) !important;
+  background-color: rgba(255, 255, 255, 0.07) !important;
+}
+
+.input:focus {
+  border-color: #1890ff !important;
+  background-color: rgba(255, 255, 255, 0.07) !important;
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2) !important;
+}
+
+.input::placeholder {
+  color: rgba(255, 255, 255, 0.4) !important;
+}
+
+.inputIcon {
+  color: rgba(255, 255, 255, 0.6) !important;
+  font-size: 16px;
+}
+
+/* Ant Design Input overrides */
+.input :global(.ant-input) {
+  background-color: transparent !important;
+  border: none !important;
+  color: white !important;
+  padding: 0 !important;
+}
+
+.input :global(.ant-input::placeholder) {
+  color: rgba(255, 255, 255, 0.4) !important;
+}
+
+.input :global(.ant-input:focus) {
+  box-shadow: none !important;
+  color: white !important;
+}
+
+.input :global(.ant-input-password) {
+  background-color: transparent !important;
+  border: none !important;
+  color: white !important;
+}
+
+.input :global(.ant-input-password input) {
+  color: white !important;
+  background-color: transparent !important;
+}
+
+.input :global(.ant-input-password-icon) {
+  color: rgba(255, 255, 255, 0.6) !important;
+}
+
+.input :global(.ant-input-password-icon:hover) {
+  color: #1890ff !important;
+}
+
+/* Form item styles */
+.loginForm :global(.ant-form-item) {
+  margin-bottom: 24px;
+}
+
+.loginForm :global(.ant-form-item-label > label) {
+  color: white !important;
+  font-weight: 500;
+}
+
+.loginForm :global(.ant-form-item-explain-error) {
+  color: #ff6b6b !important;
+  font-size: 12px;
+}
+
+.submitContainer {
+  margin-top: 32px !important;
+  margin-bottom: 0 !important;
+}
+
+.loginButton {
+  height: 48px !important;
+  background: linear-gradient(135deg, #1890ff, #40a9ff) !important;
+  border: none !important;
+  border-radius: 8px !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  box-shadow: 0 4px 16px rgba(24, 144, 255, 0.3) !important;
+  transition: all 0.3s ease !important;
+}
+
+.loginButton:hover {
+  background: linear-gradient(135deg, #40a9ff, #69c0ff) !important;
+  box-shadow: 0 6px 20px rgba(24, 144, 255, 0.4) !important;
+  transform: translateY(-2px) !important;
+}
+
+.loginButton:active {
+  transform: translateY(0) !important;
+  box-shadow: 0 2px 8px rgba(24, 144, 255, 0.3) !important;
+}
+
+.loginButton:focus {
+  background: linear-gradient(135deg, #1890ff, #40a9ff) !important;
+  box-shadow: 0 4px 16px rgba(24, 144, 255, 0.3), 0 0 0 2px rgba(24, 144, 255, 0.2) !important;
+}
+
+.footer {
+  text-align: center;
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.footerText {
+  color: rgba(255, 255, 255, 0.5) !important;
+  font-size: 12px;
+  margin: 0;
+  font-style: italic;
+}
+
+/* Loading state adjustments */
+.loginButton :global(.ant-btn-loading-icon) {
+  color: white !important;
+}
+
+.loginButton :global(.anticon) {
+  color: white !important;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .container {
+    padding: 16px;
+  }
+  
+  .loginCard :global(.ant-card-body) {
+    padding: 32px 24px !important;
+  }
+  
+  .title {
+    font-size: 1.75rem;
+  }
+  
+  .subtitle {
+    font-size: 0.9rem;
+  }
+  
+  .input {
+    height: 44px !important;
+    font-size: 13px;
+  }
+  
+  .loginButton {
+    height: 44px !important;
+    font-size: 15px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 12px;
+  }
+  
+  .loginWrapper {
+    max-width: 100%;
+  }
+  
+  .loginCard :global(.ant-card-body) {
+    padding: 24px 20px !important;
+  }
+  
+  .title {
+    font-size: 1.5rem;
+  }
+  
+  .subtitle {
+    font-size: 0.85rem;
+  }
+  
+  .header {
+    margin-bottom: 24px;
+  }
+  
+  .loginForm :global(.ant-form-item) {
+    margin-bottom: 20px;
+  }
+  
+  .submitContainer {
+    margin-top: 24px !important;
+  }
+}
+
+/* Dark theme enhancements */
+@media (prefers-color-scheme: dark) {
+  .container {
+    background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
+  }
+  
+  .loginCard {
+    background-color: rgba(255, 255, 255, 0.03) !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
+  }
+}
+
+/* Focus and accessibility improvements */
+.input:focus-within {
+  outline: none;
+  border-color: #1890ff !important;
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2) !important;
+}
+
+.loginButton:focus-visible {
+  outline: 2px solid #1890ff;
+  outline-offset: 2px;
+}
+
+/* Animation for smooth transitions */
+.loginCard {
+  animation: slideUp 0.5s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Ensure consistent styling with other components */
+.container * {
+  box-sizing: border-box;
+}
+
+/* Override any conflicting Ant Design styles */
+.loginForm :global(.ant-form-item-has-error .ant-input),
+.loginForm :global(.ant-form-item-has-error .ant-input-password) {
+  border-color: #ff6b6b !important;
+}
+
+.loginForm :global(.ant-form-item-has-error .ant-input:focus),
+.loginForm :global(.ant-form-item-has-error .ant-input-password:focus) {
+  border-color: #ff6b6b !important;
+  box-shadow: 0 0 0 2px rgba(255, 107, 107, 0.2) !important;
+}
