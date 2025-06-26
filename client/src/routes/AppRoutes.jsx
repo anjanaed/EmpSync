@@ -3,6 +3,7 @@ import { Routes, Route, BrowserRouter, Navigate } from "react-router-dom";
 import PasswordReset from "../components/pages/Login/PasswordReset/PasswordReset";
 import OrderTab from "../components/pages/OrderTab/OrderTab";
 import SuperAdmin from "../components/pages/SuperAdmin/SuperAdmin";
+import SuperAdminLogin from '../components/pages/Login/SuperAdmin/LoginPage/Login';
 import Organizations from '../components/organisms/SuperAdmin/pages/Organizations/OrganizationList';
 import Roles from '../components/organisms/SuperAdmin/pages/Roles/RolesList';
 import Permissions from '../components/organisms/SuperAdmin/pages/Permissions/PermissionsList';
@@ -23,7 +24,8 @@ const AppRoutes = () => (
           {/* Public Routes */}
           <Route path="/passwordReset" element={<PasswordReset />} />
           <Route path="/OrderTab" element={<OrderTab />} />
-          <Route path="/SuperAdmin" element={<SuperAdmin />}>
+          <Route path="/SuperAdmin/login" element={<SuperAdminLogin />} />
+          <Route path="/SuperAdmin/dashboard" element={<SuperAdmin />}>
             <Route path="organizations" element={<Organizations />} />
             <Route path="roles" element={<Roles />} />
             <Route path="permissions" element={<Permissions />} />
