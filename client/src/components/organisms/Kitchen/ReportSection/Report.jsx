@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, Progress, Table, Tabs, Button, Select, Spin, message } from "antd";
 import { BarChart3, FileText, Users, Download, TrendingUp, TrendingDown } from "lucide-react";
 import styles from './Report.module.css';
+import { useAuth } from "../../../../contexts/AuthContext";
 
 const { TabPane } = Tabs;
 const { Option } = Select;
@@ -12,13 +13,13 @@ const Report = () => {
   const [orderTimePeriod, setOrderTimePeriod] = useState("daily");
   const [employeeTimePeriod, setEmployeeTimePeriod] = useState("daily");
   const [employeeId, setEmployeeId] = useState("");
-  
-  // Loading states
   const [loading, setLoading] = useState(false);
   const [employeeData, setEmployeeData] = useState([]);
   const [mealTypes, setMealTypes] = useState([]);
   const [employees, setEmployees] = useState([]);
   const [orders, setOrders] = useState([]);
+  const { authData } = useAuth();
+  const token = authData?.accessToken;
 
   // Meal pricing
   const mealPrices = {
@@ -27,38 +28,16 @@ const Report = () => {
     dinner: 12.25
   };
 
-  // Enhanced token retrieval with multiple fallback methods
-  const getAuthToken = () => {
-    // Try multiple possible token storage locations
-    const token = localStorage.getItem('token') || 
-                  localStorage.getItem('authToken') || 
-                  localStorage.getItem('accessToken') ||
-                  sessionStorage.getItem('token') || 
-                  sessionStorage.getItem('authToken') ||
-                  sessionStorage.getItem('accessToken');
-    
-    console.log('Retrieved token:', token ? 'Token found' : 'No token found');
-    return token;
-  };
-
-  // Enhanced API calls with better error handling and debugging
+  // API calls without authentication
   const fetchOrders = async () => {
     try {
-      const token = getAuthToken();
-      console.log('Fetching orders with token:', token ? 'Present' : 'Missing');
-      
-      const headers = {
-        "Content-Type": "application/json",
-      };
-      
-      // Only add Authorization header if token exists
-      if (token) {
-        headers.Authorization = `Bearer ${token}`;
-      }
+      console.log('Fetching orders...');
       
       const response = await fetch('http://localhost:3000/orders', {
         method: 'GET',
-        headers: headers,
+       headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
       
       console.log('Orders response status:', response.status);
@@ -77,24 +56,15 @@ const Report = () => {
     }
   };
 
-  // Fixed to use /user endpoint instead of /employees
   const fetchEmployees = async () => {
     try {
-      const token = getAuthToken();
-      console.log('Fetching users/employees with token:', token ? 'Present' : 'Missing');
-      
-      const headers = {
-        "Content-Type": "application/json",
-      };
-      
-      // Only add Authorization header if token exists
-      if (token) {
-        headers.Authorization = `Bearer ${token}`;
-      }
+      console.log('Fetching users/employees...');
       
       const response = await fetch('http://localhost:3000/user', {
         method: 'GET',
-        headers: headers,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
       
       console.log('Users response status:', response.status);
@@ -115,21 +85,13 @@ const Report = () => {
 
   const fetchMealTypes = async () => {
     try {
-      const token = getAuthToken();
-      console.log('Fetching meal types with token:', token ? 'Present' : 'Missing');
-      
-      const headers = {
-        "Content-Type": "application/json",
-      };
-      
-      // Only add Authorization header if token exists
-      if (token) {
-        headers.Authorization = `Bearer ${token}`;
-      }
+      console.log('Fetching meal types...');
       
       const response = await fetch('http://localhost:3000/meal-types', {
         method: 'GET',
-        headers: headers,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
       
       console.log('Meal types response status:', response.status);
@@ -346,18 +308,11 @@ const processEmployeeMealData = (orders, employees, mealTypes) => {
     });
   };
 
-  // Enhanced load data function with better error handling
+  // Load data function without authentication
   const loadData = async () => {
     setLoading(true);
     try {
       console.log('Starting data load...');
-      
-      // Check if token exists
-      const token = getAuthToken();
-      if (!token) {
-        console.warn('No authentication token found');
-        message.warning('No authentication token found. Some data may not be available.');
-      }
 
       // Fetch all data with individual error handling
       console.log('Fetching all data...');
@@ -608,20 +563,6 @@ const processEmployeeMealData = (orders, employees, mealTypes) => {
 
   return (
     <div className={styles.container}>
-      {/* Token Status Indicator (for debugging) */}
-      {!getAuthToken() && (
-        <div style={{ 
-          background: '#fff3cd', 
-          border: '1px solid #ffeaa7', 
-          padding: '8px 16px', 
-          marginBottom: '16px',
-          borderRadius: '4px',
-          color: '#856404'
-        }}>
-          ⚠️ No authentication token found. Please ensure you're logged in.
-        </div>
-      )}
-
       {/* Analysis Section */}
       <div className={styles.analysisSection}>
         <div className={styles.sectionHeader}>
