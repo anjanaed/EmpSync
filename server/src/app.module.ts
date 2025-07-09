@@ -17,6 +17,7 @@ import { ScheduleModule as NestScheduleModule } from '@nestjs/schedule';
 import { MealsServingModule } from './modules/meals-serving/meals-serving.module';
 import { MealTypeModule } from './modules/meal-type/meal-type.module';
 import { SuperAdminModule } from './modules/SuperAdmin/super-admin.module';
+import { SuperAdminAuthModule } from './core/super-admin-auth/superadmin-auth.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { SuperAdminModule } from './modules/SuperAdmin/super-admin.module';
     MealModule,
     PayrollModule,
     OrdersModule,
+    SuperAdminAuthModule,
     ScheduleModule,
     MealTypeModule,
     AdjustmentModule,

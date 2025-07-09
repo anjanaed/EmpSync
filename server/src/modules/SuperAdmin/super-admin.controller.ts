@@ -35,6 +35,12 @@ export class SuperAdminController {
     return this.superAdminService.getOrganizationById(id);
   }
 
+    @Get('admins/:orgId')
+//   @UseGuards(AuthGuard('superadmin-jwt'))
+  async getByOrg(@Param('orgId') orgId: string) {
+    return this.superAdminService.getByOrg(orgId);
+  }
+
   @Put('organizations/:id')
   async updateOrganization(
     @Param('id') id: string,
