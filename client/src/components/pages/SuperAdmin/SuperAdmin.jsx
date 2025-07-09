@@ -1,9 +1,10 @@
 import { Layout, Modal } from 'antd';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Navbar from '../../organisms/SuperAdmin/components/Navbar/Navbar';
 import AppHeader from '../../organisms/SuperAdmin/components/AppHeader/AppHeader';
-import OrganizationList from '../../organisms/SuperAdmin/pages/Organizations/OrganizationList';
-import AddOrganizationModal from '../../organisms/SuperAdmin/pages/Organizations/AddOrganizationModal';
+import OrganizationList from '../../organisms/SuperAdmin/pages/Organizations/Organization List/OrganizationList';
+import AddOrganizationModal from '../../organisms/SuperAdmin/pages/Organizations/Add Organization/AddOrganizationModal';
+import UpdateOrganizationModal from '../../organisms/SuperAdmin/pages/Organizations/Update Organizations/updateOrganiztionModal';
 import RolesList from '../../organisms/SuperAdmin/pages/Roles/RolesList';
 import PermissionsList from '../../organisms/SuperAdmin/pages/Permissions/PermissionsList';
 import styles from './SuperAdmin.module.css';
@@ -21,14 +22,7 @@ const SuperAdmin = () => {
   const [selectedItem, setSelectedItem] = useState(null);
   
   // Organizations data
-  const [data, setData] = useState([
-    { key: '1', name: 'ABC Company', domain: 'abccompany.com', color: '#9254DE', letter: 'A' },
-    { key: '2', name: 'XYZ Company', domain: 'xyzcompany.com', color: '#F5222D', letter: 'X' },
-    { key: '3', name: 'LMK Company', domain: 'lmkcompany.com', color: '#FAAD14', letter: 'L' },
-    { key: '4', name: 'PQR Company', domain: 'pqrcompany.com', color: '#52C41A', letter: 'P' },
-    { key: '5', name: 'HJK Company', domain: 'hjkcompany.com', color: '#1890FF', letter: 'H' },
-    { key: '6', name: 'XYZ Company', domain: 'xyzcompany.com', color: '#F5222D', letter: 'X' },
-  ]);
+  const [data, setData] = useState([]);
 
   // Sample roles data
   const [rolesData, setRolesData] = useState([
@@ -46,6 +40,33 @@ const SuperAdmin = () => {
     { key: '4', name: 'View Reports', category: 'Analytics', description: 'Access system reports' },
     { key: '5', name: 'Export Data', category: 'Analytics', description: 'Export system data' },
   ]);
+
+  // Fetch organizations from API
+  useEffect(() => {
+    fetch('http://localhost:3000/super-admin/organizations')
+      .then(res => res.json())
+      .then(orgs => {
+        // Map API data to expected format for OrganizationList
+        const mapped = orgs.map(org => ({
+          key: org.id,
+          name: org.name,
+          domain: org.contactEmail,
+          color: '#9254DE', // Or use a color logic if needed
+          letter: org.name.charAt(0).toUpperCase(),
+          logoUrl: org.logoUrl,
+          active: org.active,
+          createdAt: org.createdAt,
+          updatedAt: org.updatedAt,
+          fingerprint_capacity: org.fingerprint_capacity,
+          fingerprint_per_machine: org.fingerprint_per_machine,
+          users: org.users,
+        }));
+        setData(mapped);
+      })
+      .catch(err => {
+        console.error('Failed to fetch organizations', err);
+      });
+  }, []);
 
   // Navigation handler
   const handleMenuChange = (menuKey) => {
@@ -108,15 +129,36 @@ const SuperAdmin = () => {
     setIsModalVisible(true);
   };
 
-  const handleOk = (values) => {
-    setData([...data, { 
-      key: (data.length + 1).toString(), 
-      name: values.name, 
-      domain: values.domain, 
-      color: '#9254DE', 
-      letter: values.name.charAt(0).toUpperCase() 
-    }]);
-    setIsModalVisible(false);
+  const handleOk = async (values) => {
+    try {
+      const response = await fetch('http://localhost:3000/super-admin/organizations', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(values),
+      });
+      if (!response.ok) throw new Error('Failed to create organization');
+      // Option 1: Refetch all organizations
+      const orgs = await fetch('http://localhost:3000/super-admin/organizations').then(res => res.json());
+      const mapped = orgs.map(org => ({
+        key: org.id,
+        name: org.name,
+        domain: org.contactEmail,
+        color: '#9254DE',
+        letter: org.name.charAt(0).toUpperCase(),
+        logoUrl: org.logoUrl,
+        active: org.active,
+        createdAt: org.createdAt,
+        updatedAt: org.updatedAt,
+        fingerprint_capacity: org.fingerprint_capacity,
+        fingerprint_per_machine: org.fingerprint_per_machine,
+        users: org.users,
+      }));
+      setData(mapped);
+      setIsModalVisible(false);
+    } catch (err) {
+      console.error(err);
+      // Optionally show error to user
+    }
   };
 
   const handleCancel = () => {
@@ -124,7 +166,11 @@ const SuperAdmin = () => {
   };
 
   const handleUpdate = (item) => {
-    setSelectedItem(item);
+    // Map domain back to contactEmail for the modal
+    setSelectedItem({
+      ...item,
+      contactEmail: item.domain, // ensure contactEmail is present
+    });
     setIsUpdateModalVisible(true);
   };
 
@@ -155,8 +201,31 @@ const SuperAdmin = () => {
       okText: 'Yes, Delete',
       okType: 'danger',
       cancelText: 'Cancel',
-      onOk() {
-        setData(data.filter(dataItem => dataItem.key !== item.key));
+      async onOk() {
+        try {
+          await fetch(`http://localhost:3000/super-admin/organizations/${item.key}`, {
+            method: 'DELETE',
+          });
+          // Refetch organizations after delete
+          const orgs = await fetch('http://localhost:3000/super-admin/organizations').then(res => res.json());
+          const mapped = orgs.map(org => ({
+            key: org.id,
+            name: org.name,
+            domain: org.contactEmail,
+            color: '#9254DE',
+            letter: org.name.charAt(0).toUpperCase(),
+            logoUrl: org.logoUrl,
+            active: org.active,
+            createdAt: org.createdAt,
+            updatedAt: org.updatedAt,
+            fingerprint_capacity: org.fingerprint_capacity,
+            fingerprint_per_machine: org.fingerprint_per_machine,
+            users: org.users,
+          }));
+          setData(mapped);
+        } catch (err) {
+          console.error('Failed to delete organization', err);
+        }
       },
       onCancel() {
         console.log('Delete cancelled');
@@ -187,7 +256,8 @@ const SuperAdmin = () => {
             onCancel={handleCancel}
             className={styles.modal}
           />
-          <AddOrganizationModal 
+          <UpdateOrganizationModal 
+            key={selectedItem?.key || 'new'}
             visible={isUpdateModalVisible}
             onSubmit={handleUpdateOk}
             onCancel={handleUpdateCancel}
