@@ -115,7 +115,10 @@ function PinSection() {
                 <div className={styles.SectionTexts} style={{ fontSize: '1.5rem', width: '100%', textAlign: 'center', background: "none" }}>
                     You can register two fingers on the device.
                 </div>
-                <div className={styles.fingerprintButtonGroup}>
+                <div
+                    className={styles.fingerprintButtonGroup}
+                    style={{ display: 'flex', gap: '7rem', justifyContent: 'center', marginTop: '2rem', marginBottom: '2rem' }}
+                >
                     <button
                         type="button"
                         className={styles.fingerprintButton}
