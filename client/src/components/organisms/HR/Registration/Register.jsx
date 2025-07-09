@@ -451,7 +451,7 @@ const Register = () => {
 
       {menu == 3 && passkey && (
         <div className={styles.passkeyContainer}>
-          <div className={styles.head}>New user Passkey :</div>
+          <div className={styles.head}>New user Finger-Print Passkey :</div>
           <div className={styles.passkeyValue}>{passkey}</div>
           
         </div>
