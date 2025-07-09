@@ -4,7 +4,7 @@ import PasswordReset from "../components/pages/Login/PasswordReset/PasswordReset
 import OrderTab from "../components/pages/OrderTab/OrderTab";
 import SuperAdmin from "../components/pages/SuperAdmin/SuperAdmin";
 import SuperAdminLogin from '../components/pages/Login/SuperAdmin/LoginPage/Login';
-import Organizations from '../components/organisms/SuperAdmin/pages/Organizations/OrganizationList';
+import Organizations from '../components/organisms/SuperAdmin/pages/Organizations/Organization List/OrganizationList';
 import Roles from '../components/organisms/SuperAdmin/pages/Roles/RolesList';
 import Permissions from '../components/organisms/SuperAdmin/pages/Permissions/PermissionsList';
 // import KitchenAdmin from "../components/pages/KitchenAdmin/SchedulePage/KitchenAdmin";
