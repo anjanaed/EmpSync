@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { DatePicker, Form, Space, Input, Select, InputNumber } from "antd";
 import styles from "./Register.module.css";
 import { IoIosArrowBack } from "react-icons/io";
-import FingerPrint from "../../../Atoms/FingerPrint/FingerPrint";
+// import FingerPrint from "../../../Atoms/FingerPrint/FingerPrint";
 import Loading from "../../../atoms/loading/loading";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
@@ -36,6 +36,7 @@ const formItemLayout = {
 
 const Register = () => {
   const [menu, setMenu] = useState(1);
+  const [passkey, setPasskey] = useState(null);
   const urL = import.meta.env.VITE_BASE_URL;
   const auth0Url = import.meta.env.VITE_AUTH0_URL;
   const auth0Id = import.meta.env.VITE_AUTH0_ID;
@@ -83,11 +84,15 @@ const Register = () => {
         language: lang,
         salary: parseInt(salary),
       };
-      await axios.post(`${urL}/user`, payload, {
+      const res = await axios.post(`${urL}/user`, payload, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
+      if (res.data && res.data.passkey) {
+        setPasskey(res.data.passkey);
+        setMenu(3); // Show passkey screen
+      }
     } catch (err) {
       error(
         `Registration Failed: ${err.response?.data?.message || "Unknown error"}`
@@ -98,7 +103,7 @@ const Register = () => {
     try {
       await signUpUser({ email, password, id });
       success("User Registered Successfully");
-      navigate("/EmployeePage");
+      // navigate("/EmployeePage");
     } catch (err) {
       await axios.delete(`${urL}/user/${id}`, {
         headers: {
@@ -429,11 +434,8 @@ const Register = () => {
               <IoIosArrowBack />
             </div>
             <div className={styles.head}>
-              Place Your Finger to Complete Registration
+              Click below to complete registration
             </div>
-          </div>
-          <div className={styles.fingerPrint}>
-            <FingerPrint />
           </div>
           <div className={styles.btnContainer}>
             <Gbutton
@@ -441,10 +443,20 @@ const Register = () => {
               onClick={handleRegister}
               className={styles.btn}
             >
-              Register Without Finger Print
+              Complete Registration
             </Gbutton>
           </div>
         </>
+      )}
+
+      {menu == 3 && passkey && (
+        <div className={styles.passkeyContainer}>
+          <div className={styles.head}>New user Passkey :</div>
+          <div className={styles.passkeyValue}>{passkey}</div>
+          <div className={styles.btnContainer}>
+            <Gbutton width={200} onClick={() => navigate("/EmployeePage")}>Go to Employee Page</Gbutton>
+          </div>
+        </div>
       )}
     </div>
   );
