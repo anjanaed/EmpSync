@@ -43,24 +43,30 @@
 /* Target the input group wrapper */
 .searchInput :global(.ant-input-group-wrapper) {
   background-color: transparent !important;
+  /* Remove border: none to allow outer border to show */
+  box-shadow: none !important;
 }
 
 /* Target the input group */
 .searchInput :global(.ant-input-group) {
   background-color: transparent !important;
+  /* Remove border: none to allow outer border to show */
+  box-shadow: none !important;
 }
 
 /* Target the input field */
 .searchInput :global(.ant-input) {
   background-color: transparent !important;
-  border-color: #1890ff !important;
   color: #1890ff !important;
+  border: none !important;
+  box-shadow: none !important;
 }
 
 /* Add these additional selectors for higher specificity */
 .searchInput :global(.ant-input-affix-wrapper) {
   background-color: transparent !important;
-  border-color: #1890ff !important;
+  border: 1px solid #1890ff !important;
+  box-shadow: none !important;
 }
 
 .searchInput :global(.ant-input-affix-wrapper .ant-input) {
