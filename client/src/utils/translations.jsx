@@ -3,7 +3,7 @@ const translations = {
         orderSuccess: "Your order has been placed successfully!",
         orderFailed: "Failed to place your order. Please try again.",
         title: "Place Your Order",
-        back: "English",
+        back: "Change the Language",
         today: "Today",
         tomorrow: "Tomorrow",
         breakfast: "Breakfast",

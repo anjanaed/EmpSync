@@ -12,7 +12,15 @@ const OrderTab = () => {
     const [username, setUsername] = useState(""); // State to store the username
     const [userId, setUserId] = useState(""); // State to store the user ID
     const [resetPin, setResetPin] = useState(false); // Add this state
-    const [initialSlide, setInitialSlide] = useState(1); // Start at Page2.jsx
+    // Determine initial slide based on sessionStorage flag
+    const getInitialSlide = () => {
+        if (typeof window !== 'undefined' && sessionStorage.getItem('redirectToPage3') === 'true') {
+            sessionStorage.removeItem('redirectToPage3');
+            return 2; // Go directly to Page3
+        }
+        return 1; // Default to Page2
+    };
+    const [initialSlide, setInitialSlide] = useState(getInitialSlide());
 
     // Render the carousel with three pages
     return (
@@ -29,7 +37,16 @@ const OrderTab = () => {
                 <div className={styles.contentStyle1}>
                     <Page1
                         carouselRef={carouselRef}
-                        setLanguage={setLanguage} // Pass function to update language
+                        setLanguage={(lang) => {
+                            setLanguage(lang);
+                            // If coming from Page3, go directly to Page3 after language select
+                            if (typeof window !== 'undefined' && sessionStorage.getItem('redirectToPage3') === 'true') {
+                                sessionStorage.removeItem('redirectToPage3');
+                                setTimeout(() => {
+                                    carouselRef.current?.goTo(2);
+                                }, 0);
+                            }
+                        }} // Pass function to update language
                     />
                 </div>
                 {/* Page 2: Authentication */}
