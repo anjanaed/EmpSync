@@ -7,6 +7,7 @@ import SuperAdminLogin from '../components/pages/Login/SuperAdmin/LoginPage/Logi
 import Organizations from '../components/organisms/SuperAdmin/pages/Organizations/Organization List/OrganizationList';
 import Roles from '../components/organisms/SuperAdmin/pages/Roles/RolesList';
 import Permissions from '../components/organisms/SuperAdmin/pages/Permissions/PermissionsList';
+import UserFingerPrintRegister from '../components/organisms/OrderTabUI/UserFingerPrintRegister/UserFingerPrintRegister';
 // import KitchenAdmin from "../components/pages/KitchenAdmin/SchedulePage/KitchenAdmin";
 // import Meals from "../components/pages/KitchenAdmin/MealPage/Meal";
 // import MealDetailsForm from "../components/pages/KitchenAdmin/AddMealPage/AddMeal";
@@ -14,6 +15,8 @@ import Permissions from '../components/organisms/SuperAdmin/pages/Permissions/Pe
 import PrivateRoutes from "./PrivateRoutes";
 import { NotificationsProvider } from "../contexts/NotificationsContext";
 import { PopupProvider } from "../contexts/PopupContext";
+
+
 
 
 const AppRoutes = () => (
@@ -30,6 +33,7 @@ const AppRoutes = () => (
             <Route path="roles" element={<Roles />} />
             <Route path="permissions" element={<Permissions />} />
           </Route>
+          <Route path="/user-fingerprint-register" element={<UserFingerPrintRegister />} />
           {/* <Route path="/kitchen-admin" element={<KitchenAdmin />} />
           <Route path="/kitchen-meal" element={<Meals />} />
           <Route path="/meal-details" element={<MealDetailsForm />} />

@@ -7,6 +7,7 @@ import FingerPrint from "../../../atoms/FingerPrint/FingerPrint"; // Import Fing
 import { MdLanguage } from "react-icons/md";
 import { IoKeypadSharp } from "react-icons/io5";
 import { BiFingerprint } from "react-icons/bi";
+import { useNavigate } from "react-router-dom"; // Import useNavigate for navigation
 
 // Page2 component for user authentication via fingerprint or PIN
 const Page2 = ({
@@ -18,6 +19,7 @@ const Page2 = ({
   resetPin, // Add this prop
   setResetPin, // Add this prop
 }) => {
+  const navigate = useNavigate(); // Initialize navigate function
   // State for error messages
   const [errorMessage, setErrorMessage] = useState("");
   // State for PIN input
@@ -229,27 +231,40 @@ const Page2 = ({
             </div>
           </Card>
         </div>
-        <div className={styles.backButtonContainer}>
-          <button
-            className={styles.toggleButton}
-            onClick={() => setShowFingerprint((prev) => !prev)} // Toggle the state
-          >
-            {showFingerprint ? (
-              <IoKeypadSharp size={30} />
-            ) : (
-              <BiFingerprint size={30} />
-            )}{" "}
-            {/* Toggle icon */}
-          </button>
-          <button
-            onClick={() => {
-              carouselRef.current.goTo(0);
-            }}
-            className={styles.backButton}
-          >
-            <MdLanguage size={20} /> <div>{selectedLanguage}</div>{" "}
-            {/* Display selected language */}
-          </button>
+        <div className={styles.buttonRowContainer}>
+          <div className={styles.leftButtonCorner}>
+            <button
+              className={styles.registerButton}
+              onClick={() => navigate("/user-fingerprint-register")}
+            >
+              New User Register
+            </button>
+            <button className={styles.connectFingerprintButton}>
+              Connect FingerPrint
+            </button>
+          </div>
+          <div className={styles.backButtonContainer}>
+            <button
+              className={styles.toggleButton}
+              onClick={() => setShowFingerprint((prev) => !prev)} // Toggle the state
+            >
+              {showFingerprint ? (
+                <IoKeypadSharp size={30} />
+              ) : (
+                <BiFingerprint size={30} />
+              )} {" "}
+              {/* Toggle icon */}
+            </button>
+            <button
+              onClick={() => {
+                carouselRef.current.goTo(0);
+              }}
+              className={styles.backButton}
+            >
+              <MdLanguage size={20} /> <div>{selectedLanguage}</div>{" "}
+              {/* Display selected language */}
+            </button>
+          </div>
         </div>
       </div>
       {/* Error message popup */}

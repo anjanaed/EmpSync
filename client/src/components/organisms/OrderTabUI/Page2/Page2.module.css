@@ -1,3 +1,57 @@
+.buttonRowContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-end;
+  width: 100%;
+  margin-top: 20px;
+}
+
+.leftButtonCorner {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: flex-start;
+  margin-left: 2vw;
+  margin-bottom: 1vw;
+}
+
+.registerButton {
+  width: 200px;
+  padding: 10px 0;
+  font-size: 1rem;
+  border-radius: 10px;
+  border: none;
+  background: linear-gradient(135deg, #1db954, #4caf50);
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(30, 185, 84, 0.15);
+  transition: background 0.2s, transform 0.2s;
+}
+.registerButton:hover {
+  background: linear-gradient(135deg, #15803d, #43e97b);
+  transform: scale(1.05);
+}
+
+.connectFingerprintButton {
+  width: 200px;
+  padding: 10px 0;
+  font-size: 1rem;
+  border-radius: 10px;
+  border: none;
+  background: linear-gradient(135deg, #ffe259, #f6d365);
+  color: #333;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(246, 211, 101, 0.15);
+  transition: background 0.2s, transform 0.2s;
+}
+.connectFingerprintButton:hover {
+  background: linear-gradient(135deg, #f9d423, #fffc00);
+  color: #000;
+  transform: scale(1.05);
+}
 /* Main card container for authentication interface */
 
 .card {
@@ -163,10 +217,12 @@
 
 /* Container for back button */
 .backButtonContainer {
-  margin-left: auto;
-  margin-top: auto;
   display: flex;
-  gap: 1vw;
+  flex-direction: row;
+  gap: 12px;
+  align-items: flex-end;
+  margin-right: 2vw;
+  margin-bottom: 1vw;
 }
 
 .full {
@@ -246,4 +302,50 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow for depth */
   text-align: center;
   font-size: 1.2rem;
+}
+
+/* Custom popup styles */
+.customPopup {
+  position: fixed;
+  top: 40px;
+  right: 40px;
+  z-index: 2000;
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.18);
+  min-width: 350px;
+  min-height: 180px;
+  padding: 32px 24px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  animation: popupFadeIn 0.2s;
+}
+
+@keyframes popupFadeIn {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.closePopupButton {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: transparent;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+  color: #888;
+  font-weight: 700;
+  transition: color 0.2s;
+}
+.closePopupButton:hover {
+  color: #e30000;
+}
+
+.popupHeading {
+  margin: 0 0 16px 0;
+  font-weight: 700;
+  font-size: 24px;
+  color: #720000;
 }
