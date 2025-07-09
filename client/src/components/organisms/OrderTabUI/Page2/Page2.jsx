@@ -32,8 +32,19 @@ const Page2 = ({
   const [showFingerprint, setShowFingerprint] = useState(true);
   // State to control loading animation
   const [loading, setLoading] = useState(false);
-  // State to track the selected language
+  // State to track the selected language (display name)
   const [selectedLanguage, setSelectedLanguage] = useState("English");
+
+  // Sync selectedLanguage with language prop
+  useEffect(() => {
+    // Map language code to display name
+    const langMap = {
+      english: "English",
+      sinhala: "සිංහල",
+      tamil: "தமிழ்",
+    };
+    setSelectedLanguage(langMap[language] || "English");
+  }, [language]);
 
   // Menu for language selection with custom styles
   const languageMenu = (
@@ -257,6 +268,7 @@ const Page2 = ({
             </button>
             <button
               onClick={() => {
+                console.log(`Page2.jsx: Back button clicked, ${selectedLanguage} selected`);
                 carouselRef.current.goTo(0);
               }}
               className={styles.backButton}
