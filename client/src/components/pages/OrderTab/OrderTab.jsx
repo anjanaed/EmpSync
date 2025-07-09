@@ -12,6 +12,7 @@ const OrderTab = () => {
     const [username, setUsername] = useState(""); // State to store the username
     const [userId, setUserId] = useState(""); // State to store the user ID
     const [resetPin, setResetPin] = useState(false); // Add this state
+    const [initialSlide, setInitialSlide] = useState(1); // Start at Page2.jsx
 
     // Render the carousel with three pages
     return (
@@ -22,6 +23,7 @@ const OrderTab = () => {
                 dots={false} // Hide navigation dots
                 accessibility={false} // Disable default accessibility features
                 speed={0}
+                initialSlide={initialSlide} // Start at Page2.jsx
             >
                 {/* Page 1: Language selection */}
                 <div className={styles.contentStyle1}>
