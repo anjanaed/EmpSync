@@ -1,4 +1,23 @@
-/* Fixed button for navigation to Page2 */
+/* Close button for top right corner, fixed like the back button */
+.page2CloseButton {
+  position: fixed;
+  top: 24px;
+  right: 32px;
+  width: 38px;
+  height: 38px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: background 0.2s;
+}
+.page2CloseButton:hover {
+  background: rgba(35, 39, 47, 0.12);
+}/* Fixed button for navigation to Page2 */
 .page2NavButton {
   position: fixed;
   right: 32px;

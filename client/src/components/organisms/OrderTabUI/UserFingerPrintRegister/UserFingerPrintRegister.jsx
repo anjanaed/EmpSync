@@ -1,5 +1,6 @@
 
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import styles from "./UserFingerPrintRegister.module.css";
 // import bgImage from "../../../../assets/Login/loginbackground.png";
 import otbImage from "../../../../assets/Order/otb1.jpg";
@@ -32,6 +33,7 @@ const UserFingerPrintRegister = () => {
 
 function PinSection() {
     const [pin, setPin] = useState("");
+    const navigate = useNavigate();
 
     const handlePinInput = (digit) => {
         if (pin.length < 6) {
@@ -49,16 +51,21 @@ function PinSection() {
     if (pin.length === 6) {
         if (showFingerprintSection) {
             return (
-                <div className={styles.fingerprintSection}>
-                    <div
-                        className={styles.fingerprintScanner}
-                        onClick={() => setScanning(true)}
+                <div className={styles.fingerprintSection} style={{position: 'relative'}}>
+                    {/* Close Button */}
+                    <button
+                        onClick={() => navigate('/OrderTab')}
+                        className={styles.page2CloseButton}
+                        aria-label="Close"
                     >
-                        <div className={styles.fingerprintAnimationWrapper}>
-                            <FingerPrint />
-                        </div>
-                    </div>
+                        <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect width="28" height="28" rx="7" fill="#23272F"/>
+                            <path d="M9.5 9.5L18.5 18.5" stroke="#fff" strokeWidth="2" strokeLinecap="round"/>
+                            <path d="M18.5 9.5L9.5 18.5" stroke="#fff" strokeWidth="2" strokeLinecap="round"/>
+                        </svg>
+                    </button>
                     <p>
+                        <br />
                         {scanning ? (
                             <span className={styles.SectionTexts}>
                                 Scanning...
@@ -70,24 +77,43 @@ function PinSection() {
                             </span>
                         )}
                     </p>
-                    <div className={styles.fingerprintBackButtonRow}>
-                        <button
-                            className={styles.fingerprintBackButton}
-                            onClick={() => {
-                                setShowFingerprintSection(false);
-                                setScanning(false);
-                            }}
-                        >
-                            Back
-                        </button>
+                    <div
+                        className={styles.fingerprintScanner}
+                        onClick={() => setScanning(true)}
+                    >
+                        <div className={styles.fingerprintAnimationWrapper}>
+                            <FingerPrint />
+                        </div>
                     </div>
+                    <button
+                        className={styles.fingerprintBackButton + ' ' + styles.page2NavButton}
+                        onClick={() => {
+                            setShowFingerprintSection(false);
+                            setScanning(false);
+                        }}
+                        style={{position: 'fixed', right: 32, bottom: 32, zIndex: 1000}}
+                    >
+                        Back
+                    </button>
                 </div>
             );
         }
         return (
-            <div className={styles.pinSection} style={{ background: "none" }}>
-                <div className={styles.SectionTexts} style={{ fontSize: '2rem', width: '100%', textAlign: 'center', background: "none" }}>
-                    Register Finger Print
+            <div className={styles.pinSection} style={{ background: "none", position: 'relative' }}>
+                {/* Close Button */}
+                <button
+                    onClick={() => navigate('/OrderTab')}
+                    className={styles.page2CloseButton}
+                    aria-label="Close"
+                >
+                    <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="28" height="28" rx="7" fill="#23272F"/>
+                        <path d="M9.5 9.5L18.5 18.5" stroke="#fff" strokeWidth="2" strokeLinecap="round"/>
+                        <path d="M18.5 9.5L9.5 18.5" stroke="#fff" strokeWidth="2" strokeLinecap="round"/>
+                    </svg>
+                </button>
+                <div className={styles.SectionTexts} style={{ fontSize: '1.5rem', width: '100%', textAlign: 'center', background: "none" }}>
+                    You can register two fingers on the device.
                 </div>
                 <div className={styles.fingerprintButtonGroup}>
                     <button
@@ -115,12 +141,31 @@ function PinSection() {
                         <span className={styles.fingerprintLabel}>Finger 02</span>
                     </button>
                 </div>
+                <button
+                    className={styles.fingerprintBackButton + ' ' + styles.page2NavButton}
+                    onClick={() => setPin("")}
+                    style={{position: 'fixed', right: 32, bottom: 32, zIndex: 1000}}
+                >
+                    Back
+                </button>
             </div>
         );
     }
 
     return (
-        <div className={styles.pinSection}>
+        <div className={styles.pinSection} style={{position: 'relative'}}>
+            {/* Close Button */}
+            <button
+                onClick={() => navigate('/OrderTab')}
+                className={styles.page2CloseButton}
+                aria-label="Close"
+            >
+                <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="28" height="28" rx="7" fill="#23272F"/>
+                    <path d="M9.5 9.5L18.5 18.5" stroke="#fff" strokeWidth="2" strokeLinecap="round"/>
+                    <path d="M18.5 9.5L9.5 18.5" stroke="#fff" strokeWidth="2" strokeLinecap="round"/>
+                </svg>
+            </button>
             <div className={styles.SectionTexts}>Enter 6-digit Pin Number</div>
             <div className={styles.pinDigits}>
                 {[...Array(6)].map((_, idx) => (
@@ -130,7 +175,7 @@ function PinSection() {
                 ))}
             </div>
             <div className={styles.pinButtons}>
-                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 0].map((digit) => (
+                {[1, 2, 3, 4, 5, 6, 7, 8, 9, "#", 0].map((digit) => (
                     <button
                         key={digit}
                         type="button"
