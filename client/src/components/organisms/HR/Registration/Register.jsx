@@ -453,11 +453,12 @@ const Register = () => {
         <div className={styles.passkeyContainer}>
           <div className={styles.head}>New user Passkey :</div>
           <div className={styles.passkeyValue}>{passkey}</div>
-          <div className={styles.btnContainer}>
-            <Gbutton width={200} onClick={() => navigate("/EmployeePage")}>Go to Employee Page</Gbutton>
-          </div>
+          
         </div>
       )}
+      <div className={styles.btnContainer}>
+            <Gbutton width={200} onClick={() => navigate("/EmployeePage")}>Go to Employee Page</Gbutton>
+          </div>
     </div>
   );
 };
