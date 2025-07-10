@@ -1,43 +1,39 @@
 import React, { useState, useEffect } from "react";
-import { Typography, Card, Spin, Dropdown, Menu } from "antd"; // Import Spin for loading animation and Dropdown, Menu for language selection
-import styles from "./Page2.module.css"; // Import CSS module for styling
-import DateAndTime from "../DateAndTime/DateAndTime"; // Import DateAndTime component
-import translations from "../../../../utils/translations"; // Import language translations
-import FingerPrint from "../../../atoms/FingerPrint/FingerPrint"; // Import FingerPrint component
+import { Typography, Card, Spin, Dropdown, Menu } from "antd";
+import styles from "./Page2.module.css";
+import DateAndTime from "../DateAndTime/DateAndTime";
+import translations from "../../../../utils/translations";
+import FingerPrint from "../../../atoms/FingerPrint/FingerPrint";
 import { MdLanguage } from "react-icons/md";
 import { IoKeypadSharp } from "react-icons/io5";
 import { BiFingerprint } from "react-icons/bi";
-import { useNavigate } from "react-router-dom"; // Import useNavigate for navigation
+import { useNavigate } from "react-router-dom";
 
-// Page2 component for user authentication via fingerprint or PIN
 const Page2 = ({
   carouselRef,
   language,
   setLanguage,
   setUsername,
   setUserId,
-  resetPin, // Add this prop
-  setResetPin, // Add this prop
+  resetPin,
+  setResetPin,
 }) => {
-  const navigate = useNavigate(); // Initialize navigate function
-  // State for error messages
+  const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState("");
-  // State for PIN input
   const [pin, setPin] = useState("");
-  // Access translations based on selected language
   const text = translations[language];
-  // State to indicate fingerprint scanning status
   const [scanning, setScanning] = useState(false);
-  // State to toggle between fingerprint and PIN input views
   const [showFingerprint, setShowFingerprint] = useState(true);
-  // State to control loading animation
   const [loading, setLoading] = useState(false);
-  // State to track the selected language (display name)
   const [selectedLanguage, setSelectedLanguage] = useState("English");
+  const [fingerprintConnected, setFingerprintConnected] = useState(false);
+  const [fingerprintUnitName, setFingerprintUnitName] = useState("");
+  const [serialReader, setSerialReader] = useState(null);
+  // For continuous serial reading
+  const [serialReadingActive, setSerialReadingActive] = useState(false);
 
   // Sync selectedLanguage with language prop
   useEffect(() => {
-    // Map language code to display name
     const langMap = {
       english: "English",
       sinhala: "සිංහල",
@@ -46,12 +42,200 @@ const Page2 = ({
     setSelectedLanguage(langMap[language] || "English");
   }, [language]);
 
-  // Menu for language selection with custom styles
+  // Cleanup serial reader on component unmount
+  useEffect(() => {
+    return () => {
+      setSerialReadingActive(false);
+      if (serialReader) {
+        serialReader.cancel().catch(() => {});
+        serialReader.releaseLock();
+      }
+      if (window.fingerprintSerialPort) {
+        window.fingerprintSerialPort.close().catch(() => {});
+      }
+    };
+  }, [serialReader]);
+
+  // Continuous serial reading effect
+  useEffect(() => {
+    if (fingerprintConnected && window.fingerprintSerialPort && !serialReadingActive) {
+      let cancelled = false;
+      setSerialReadingActive(true);
+      const readSerial = async () => {
+        let buffer = '';
+        try {
+          const reader = window.fingerprintSerialPort.readable.getReader();
+          setSerialReader(reader);
+          while (!cancelled) {
+            const { value, done } = await reader.read();
+            if (done) break;
+            buffer += new TextDecoder().decode(value);
+            let lines = buffer.split('\n');
+            buffer = lines.pop();
+            for (let line of lines) {
+              line = line.trim();
+              if (line.startsWith('ThumbID: ')) {
+                console.log('Serial ThumbID:', line);
+                // Optionally, trigger further logic here
+              }
+            }
+          }
+          reader.releaseLock();
+          setSerialReader(null);
+        } catch (err) {
+          // Ignore cancel errors
+        }
+        setSerialReadingActive(false);
+      };
+      readSerial();
+      return () => {
+        cancelled = true;
+      };
+    }
+  }, [fingerprintConnected, serialReadingActive]);
+
+  // Handle PIN digit input
+  const handlePinInput = (digit) => {
+    if (pin.length < 4) {
+      setPin(pin + digit);
+    }
+  };
+
+  // Clear PIN on mount and when resetPin is true
+  useEffect(() => {
+    setPin("");
+    setErrorMessage("");
+  }, []);
+
+  useEffect(() => {
+    if (resetPin) {
+      setPin("");
+      setErrorMessage("");
+      setResetPin(false);
+    }
+  }, [resetPin, setResetPin]);
+
+  // Handle backspace for PIN
+  const handleBackspace = () => {
+    setPin(pin.slice(0, -1));
+  };
+
+  // Handle fingerprint scanning
+  const handleFingerprint = async () => {
+    if (!fingerprintConnected) {
+      setErrorMessage(text.fingerprintNotConnected);
+      setTimeout(() => setErrorMessage(""), 2000);
+      return;
+    }
+    setScanning(true);
+    try {
+      const reader = window.fingerprintSerialPort.readable.getReader();
+      setSerialReader(reader);
+      const timeout = setTimeout(() => {
+        reader.cancel();
+        setScanning(false);
+        setErrorMessage(text.fingerprintTimeout);
+        setTimeout(() => setErrorMessage(""), 2000);
+      }, 5000);
+
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+        const text = new TextDecoder().decode(value);
+        console.log("Serial data received:", text);
+        const match = text.match(/ThumbID: (FPU\d{3}\d{4})/);
+        if (match) {
+          clearTimeout(timeout);
+          const fullThumbId = match[1];
+          console.log(`Fingerprint scanned - ThumbID: ${fullThumbId}`);
+          await fetchUserByFingerprintId(fullThumbId);
+          reader.cancel();
+          break;
+        }
+      }
+      reader.releaseLock();
+      setSerialReader(null);
+    } catch (error) {
+      console.error("Fingerprint scan error:", error);
+      setErrorMessage(text.fingerprintError);
+      setTimeout(() => setErrorMessage(""), 2000);
+      setScanning(false);
+    }
+  };
+
+  // Fetch employee ID by thumbid (fingerprint ID) and set username for Page3
+  const fetchUserByFingerprintId = async (fingerId) => {
+    try {
+      // Fetch empId from backend using thumbid
+      const response = await fetch(`http://localhost:3000/user-finger-print-register-backend/fingerprint?thumbid=${fingerId}`);
+      if (!response.ok) {
+        throw new Error("Fingerprint not found");
+      }
+      const fingerprint = await response.json();
+      const empId = fingerprint.empId;
+      if (!empId) {
+        throw new Error("No employee ID found for this fingerprint");
+      }
+      // Fetch user details using empId
+      const userResponse = await fetch(`http://localhost:3000/user/${empId}`);
+      if (!userResponse.ok) {
+        throw new Error("User not found for this employee ID");
+      }
+      const user = await userResponse.json();
+      setUsername({ name: user.name, gender: user.gender });
+      setUserId(user.id);
+      console.log("Retrieved Username:", user.name);
+      console.log("Retrieved User ID:", user.id);
+      setTimeout(() => {
+        carouselRef.current.goTo(2);
+      }, 100);
+    } catch (error) {
+      console.error("Error fetching employee by fingerprint:", error);
+      setErrorMessage(text.invalidFingerprint);
+      setTimeout(() => setErrorMessage(""), 2000);
+      setScanning(false);
+    }
+  };
+
+  // Handle PIN submission
+  const handlePinSubmit = async () => {
+    if (pin.length === 4) {
+      setScanning(true);
+      try {
+        const response = await fetch(`http://localhost:3000/user/${pin}`);
+        if (!response.ok) {
+          throw new Error("User not found");
+        }
+        const user = await response.json();
+        setUsername({ name: user.name, gender: user.gender });
+        setUserId(user.id);
+        console.log("Retrieved Username:", user.name);
+        console.log("Retrieved User ID:", user.id);
+        setTimeout(() => {
+          carouselRef.current.goTo(2);
+        }, 100);
+      } catch (error) {
+        console.error("Error fetching user:", error);
+        setErrorMessage(text.invalidPin);
+        setTimeout(() => setErrorMessage(""), 2000);
+      } finally {
+        setScanning(false);
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (pin.length === 4) {
+      handlePinSubmit();
+    }
+  }, [pin]);
+
+  // Language menu
   const languageMenu = (
     <Menu
       onClick={(e) => {
-        setSelectedLanguage(e.key); // Update selected language
-        setLanguage(e.key.toLowerCase()); // Update parent language state
+        setSelectedLanguage(e.key);
+        setLanguage(e.key.toLowerCase());
       }}
       style={{
         background: "linear-gradient(135deg, #720000, #e30000)",
@@ -59,104 +243,20 @@ const Page2 = ({
         borderRadius: "8px",
       }}
     >
-      <Menu.Item
-        key="English"
-        style={{ fontSize: "16px", padding: "10px 20px", color: "white" }}
-      >
+      <Menu.Item style={{ fontSize: "16px", padding: "10px 20px", color: "white" }}>
         English
       </Menu.Item>
-      <Menu.Item
-        key="සිංහල"
-        style={{ fontSize: "16px", padding: "10px 20px", color: "white" }}
-      >
+      <Menu.Item style={{ fontSize: "16px", padding: "10px 20px", color: "white" }}>
         සිංහල
       </Menu.Item>
-      <Menu.Item
-        key="தமிழ்"
-        style={{ fontSize: "16px", padding: "10px 20px", color: "white" }}
-      >
+      <Menu.Item style={{ fontSize: "16px", padding: "10px 20px", color: "white" }}>
         தமிழ்
       </Menu.Item>
     </Menu>
   );
 
-  // Handle PIN digit input
-  const handlePinInput = (digit) => {
-    if (pin.length < 4) {
-      setPin(pin + digit); // Append digit to PIN
-    }
-  };
-
-  useEffect(() => {
-    // Clear PIN when component mounts (when navigating back to Page2)
-    setPin("");
-    setErrorMessage("");
-  }, []);
-
-  // Clear PIN when resetPin prop becomes true
-  useEffect(() => {
-    if (resetPin) {
-      setPin("");
-      setErrorMessage("");
-      setResetPin(false); // Reset the trigger
-    }
-  }, [resetPin, setResetPin]);
-
-  // Handle backspace to remove last PIN digit
-  const handleBackspace = () => {
-    setPin(pin.slice(0, -1)); // Remove last character
-  };
-
-  // Handle fingerprint authentication
-  const handleFingerprint = () => {
-    setScanning(true); // Show scanning animation
-    setTimeout(() => {
-      setScanning(false); // Stop scanning
-      carouselRef.current.goTo(2); // Navigate to Page 3
-    }, 3000); // Simulate 3-second scan
-  };
-
-  // Handle PIN submission and user authentication
-  const handlePinSubmit = async () => {
-    if (pin.length === 4) {
-      setScanning(true); // Show loading state
-      try {
-        // Fetch user data based on PIN
-        const response = await fetch(`http://localhost:3000/user/${pin}`);
-        if (!response.ok) {
-          throw new Error("User not found");
-        }
-        const user = await response.json();
-        setUsername({ name: user.name, gender: user.gender });
-        setUserId(user.id); // Set user ID in parent component
-        console.log("Retrieved Username:", user.name); // Log username
-        console.log("Retrieved User ID:", user.id); // Log user ID
-
-        // Navigate to Page 3 after a short delay
-        setTimeout(() => {
-          carouselRef.current.goTo(2);
-        }, 100);
-      } catch (error) {
-        console.error("Error fetching user:", error);
-        setErrorMessage(text.invalidPin); // Display error message
-        setTimeout(() => setErrorMessage(""), 2000); // Clear error after 2 seconds
-      } finally {
-        setScanning(false); // Stop loading state
-      }
-    }
-  };
-  useEffect(() => {
-    if (pin.length === 4) {
-      handlePinSubmit();
-    }
-  }, [pin]);
-
-  // Render the authentication page
   return (
     <Spin spinning={loading} tip="Loading...">
-      {" "}
-      {/* Show loading animation when loading */}
-      {/* Date and time display */}
       <div className={styles.full}>
         <div>
           <Typography.Title level={1} className={styles.mainTitle1}>
@@ -166,45 +266,30 @@ const Page2 = ({
         <div className={styles.dateAndTime}>
           <DateAndTime />
         </div>
-        {/* Main card for authentication interface */}
         <div className={styles.full}>
           <Card className={styles.card} bodyStyle={{ padding: 3 }}>
             <div className={styles.content}>
               {showFingerprint ? (
-                // Fingerprint authentication section
                 <div className={styles.fingerprintSection}>
-                  <div
-                    className={styles.fingerprintScanner}
-                    onClick={() => setScanning(true)}
-                  >
-                    <FingerPrint /> {/* Fingerprint icon */}
+                  <div className={styles.fingerprintScanner} onClick={handleFingerprint}>
+                    <FingerPrint />
                   </div>
                   <p>
                     {scanning ? (
-                      <span className={styles.SectionTexts}>
-                        Scanning...
-                        <br />
-                      </span>
+                      <span className={styles.SectionTexts}>Scanning...</span>
                     ) : (
-                      <span className={styles.SectionTexts}>
-                        {text.fingerprint} {/* Prompt for fingerprint scan */}
-                      </span>
+                      <span className={styles.SectionTexts}>{text.fingerprint}</span>
                     )}
                   </p>
                 </div>
               ) : (
-                // PIN input section
                 <div className={styles.pinSection}>
-                  <div className={styles.SectionTexts}>
-                    {text.enterPin} {/* Prompt for PIN entry */}
-                  </div>
+                  <div className={styles.SectionTexts}>{text.enterPin}</div>
                   <div className={styles.pinDots}>
                     {[0, 1, 2, 3].map((idx) => (
                       <span
                         key={idx}
-                        className={`${styles.pinDot} ${
-                          pin.length > idx ? styles.filled : ""
-                        }`}
+                        className={`${styles.pinDot} ${pin.length > idx ? styles.filled : ""}`}
                       />
                     ))}
                   </div>
@@ -244,27 +329,64 @@ const Page2 = ({
         </div>
         <div className={styles.buttonRowContainer}>
           <div className={styles.leftButtonCorner}>
+            {!fingerprintConnected && (
+              <button
+                className={styles.connectFingerprintButton}
+                onClick={async () => {
+                  if (!("serial" in navigator)) {
+                    setErrorMessage("Web Serial API not supported in this browser.");
+                    setTimeout(() => setErrorMessage(""), 2000);
+                    return;
+                  }
+                  try {
+                    const port = await navigator.serial.requestPort({});
+                    await port.open({ baudRate: 115200 });
+                    window.fingerprintSerialPort = port;
+                    setFingerprintConnected(true);
+                    let unitName = "FPU002"; // Default fallback
+                    try {
+                      const reader = port.readable.getReader();
+                      const timeout = setTimeout(() => reader.cancel(), 1000);
+                      const { value, done } = await reader.read();
+                      clearTimeout(timeout);
+                      if (!done && value) {
+                        const text = new TextDecoder().decode(value);
+                        const match = text.match(/Unit Name: (FPU\d{3})/);
+                        if (match) unitName = match[1];
+                      }
+                      reader.releaseLock();
+                    } catch (e) {
+                      console.error("Error reading unit name:", e);
+                    }
+                    setFingerprintUnitName(unitName);
+                    // Start continuous reading (handled by effect)
+                  } catch (error) {
+                    setErrorMessage("Connection failed: " + error.message);
+                    setTimeout(() => setErrorMessage(""), 2000);
+                  }
+                }}
+              >
+                Connect FingerPrint
+              </button>
+            )}
+            {fingerprintConnected && (
+              <div style={{ fontWeight: "bold", color: "#4CAF50", marginTop: 8 }}>
+                UNIT NAME : {fingerprintUnitName}
+              </div>
+            )}
             <button
               className={styles.registerButton}
               onClick={() => navigate("/user-fingerprint-register")}
             >
               New User Register
             </button>
-            <button className={styles.connectFingerprintButton}>
-              Connect FingerPrint
-            </button>
           </div>
           <div className={styles.backButtonContainer}>
             <button
               className={styles.toggleButton}
-              onClick={() => setShowFingerprint((prev) => !prev)} // Toggle the state
+              onClick={() => setShowFingerprint((prev) => !prev)}
             >
-              {showFingerprint ? (
-                <IoKeypadSharp size={30} />
-              ) : (
-                <BiFingerprint size={30} />
-              )} {" "}
-              {/* Toggle icon */}
+              {showFingerprint ? <IoKeypadSharp size={30} /> : <BiFingerprint size={30} />}
             </button>
             <button
               onClick={() => {
@@ -273,17 +395,14 @@ const Page2 = ({
               }}
               className={styles.backButton}
             >
-              <MdLanguage size={20} /> <div>{selectedLanguage}</div>{" "}
-              {/* Display selected language */}
+              <MdLanguage size={20} /> <div>{selectedLanguage}</div>
             </button>
           </div>
         </div>
       </div>
-      {/* Error message popup */}
       {errorMessage && <div className={styles.errorPopup}>{errorMessage}</div>}
     </Spin>
   );
 };
 
-// Export the Page2 component
 export default Page2;

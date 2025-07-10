@@ -14,4 +14,18 @@ export class UserFingerPrintRegisterBackendService {
       },
     });
   }
+  async createFingerprint(thumbid: string, empId: string) {
+    return this.prisma.fingerprint.create({
+      data: {
+        thumbid,
+        empId,
+      },
+    });
+  }
+  async getFingerprintByThumbid(thumbid: string) {
+    return this.prisma.fingerprint.findUnique({
+      where: { thumbid },
+      select: { empId: true },
+    });
+  }
 }

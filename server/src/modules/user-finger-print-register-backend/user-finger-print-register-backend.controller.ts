@@ -1,4 +1,4 @@
-import { Controller, Get, Query, BadRequestException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Query, BadRequestException } from '@nestjs/common';
 import { UserFingerPrintRegisterBackendService } from './user-finger-print-register-backend.service';
 
 @Controller('user-finger-print-register-backend')
@@ -19,5 +19,34 @@ export class UserFingerPrintRegisterBackendController {
       throw new BadRequestException('User not found');
     }
     return user;
+  }
+
+  /**
+   * POST /user-finger-print-register-backend/fingerprint
+   * Body: { thumbid: string, empId: string }
+   * Returns: created Fingerprint or error
+   */
+  @Post('fingerprint')
+  async createFingerprint(@Body() body: { thumbid: string; empId: string }) {
+    if (!body.thumbid || !body.empId) {
+      throw new BadRequestException('thumbid and empId are required');
+    }
+    return this.userFingerPrintRegisterBackendService.createFingerprint(body.thumbid, body.empId);
+  }
+
+  /**
+   * GET /user-finger-print-register-backend/fingerprint?thumbid=abcd
+   * Returns: Fingerprint data or 404 if not found
+   */
+  @Get('fingerprint')
+  async getFingerprintByThumbid(@Query('thumbid') thumbid: string) {
+    if (!thumbid) {
+      throw new BadRequestException('thumbid is required');
+    }
+    const fingerprint = await this.userFingerPrintRegisterBackendService.getFingerprintByThumbid(thumbid);
+    if (!fingerprint) {
+      throw new BadRequestException('Fingerprint not found');
+    }
+    return fingerprint;
   }
 }
