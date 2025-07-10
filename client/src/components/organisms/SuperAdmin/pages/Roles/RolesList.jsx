@@ -47,15 +47,8 @@ const RolesList = ({ data, onAddNew, onUpdate, onDelete, className, urL, authDat
     const {
       id,
       name,
-      dob,
-      tel,
-      gender,
-      address,
       email,
       password,
-      supId,
-      lang,
-      salary,
     } = values;
     try {
       const token = authData?.accessToken;
@@ -72,6 +65,9 @@ const RolesList = ({ data, onAddNew, onUpdate, onDelete, className, urL, authDat
         supId: null,
         language: null,
         salary: null,
+        height: null,
+        weight: null,
+        passkey: null,
       };
       console.log("Payload for registration:", payload);
       await axios.post(`${urL}/user`, payload, {
@@ -207,6 +203,7 @@ const RolesList = ({ data, onAddNew, onUpdate, onDelete, className, urL, authDat
           }
           style={{ width: '100%' }}
           value={selectedOrg}
+          className={styles.roleDropdown}
         >
           {organizations.map(org => (
             <Select.Option key={org.id} value={org.id}>{org.name}</Select.Option>
@@ -269,14 +266,10 @@ const RolesList = ({ data, onAddNew, onUpdate, onDelete, className, urL, authDat
         onCancel={handleCancel}
         okText="Add"
         cancelText="Cancel"
-        footer={[
-          <Button key="add" type="primary" onClick={handleAdd} className={styles.submitButton}>
-            Add
-          </Button>,
-          <Button key="cancel" onClick={handleCancel} className={styles.cancelButton}>
-            Cancel
-          </Button>,
-        ]}
+        modalRender={modal => (
+          <div className={styles.container}>{modal}</div>
+        )}
+        footer={null}
       >
         <Form
           form={form}
@@ -346,6 +339,14 @@ const RolesList = ({ data, onAddNew, onUpdate, onDelete, className, urL, authDat
             {() => null}
           </Form.Item>
         </Form>
+        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginTop: 12 }}>
+          <Button type="primary" onClick={handleAdd} className={styles.submitButton}>
+            Add
+          </Button>
+          <Button onClick={handleCancel} className={styles.cancelButton}>
+            Cancel
+          </Button>
+        </div>
       </Modal>
     </div>
   );
