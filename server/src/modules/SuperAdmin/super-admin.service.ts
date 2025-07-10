@@ -327,7 +327,7 @@ export class SuperAdminService {
         where: {
           organizationId: orgId,
           role: {
-            in: ['kitchen admin', 'hr admin'],
+            in: ['KITCHEN_ADMIN', 'HR_ADMIN'],
           },
         },
         select: {

@@ -4,7 +4,7 @@ import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import styles from './RolesList.module.css';
 import axios from 'axios';
 
-const RolesList = ({ data, onAddNew, onUpdate, onDelete, className, urL, authData, auth0Url, auth0Id, navigate }) => {
+const RolesList = ({ data, onAddNew, onUpdate, onDelete, className, authData}) => {
   const [isModalVisible, setIsModalVisible] = React.useState(false);
   const [form] = Form.useForm();
   const [loading, setLoading] = React.useState(false);
@@ -12,6 +12,9 @@ const RolesList = ({ data, onAddNew, onUpdate, onDelete, className, urL, authDat
   const [selectedOrg, setSelectedOrg] = useState(null);
   const [orgUsers, setOrgUsers] = useState([]);
   const [orgLoading, setOrgLoading] = useState(false);
+  const urL = import.meta.env.VITE_BASE_URL;
+  const auth0Url = import.meta.env.VITE_AUTH0_URL;
+  const auth0Id = import.meta.env.VITE_AUTH0_ID;
 
   const showModal = () => setIsModalVisible(true);
   const handleCancel = () => {
@@ -37,63 +40,62 @@ const RolesList = ({ data, onAddNew, onUpdate, onDelete, className, urL, authDat
     }
   };
 
+  // Fetch organizations on mount
+  useEffect(() => {
+    axios.get(`${urL}/super-admin/organizations`)
+      .then(res => setOrganizations(res.data))
+      .catch(() => setOrganizations([]));
+  }, []);
+
+  // Fetch users for selected organization
+  const fetchOrgUsers = React.useCallback(() => {
+    if (!selectedOrg) {
+      setOrgUsers([]);
+      return;
+    }
+    setOrgLoading(true);
+    axios.get(`${urL}/super-admin/admins/${selectedOrg}`, {
+      headers: { Authorization: `Bearer ${authData?.accessToken}` },
+    })
+      .then(res => setOrgUsers(res.data))
+      .catch(() => setOrgUsers([]))
+      .finally(() => setOrgLoading(false));
+  }, [selectedOrg, authData, urL]);
+
+  useEffect(() => {
+    fetchOrgUsers();
+  }, [fetchOrgUsers]);
+
   // Main registration handler
   const handleRegister = async (values) => {
     setLoading(true);
-    let role = values.role || values.jobRole;
-    if (role === "Other") {
-      role = values.customJobRole;
-    }
-    const {
-      id,
-      name,
-      email,
-      password,
-    } = values;
+    const { employeeId, name, role, email, password } = values;
     try {
       const token = authData?.accessToken;
       const payload = {
-        id,
+        id: employeeId,
         name,
         role,
-        dob: null,
-        telephone: null,
-        gender: null,
-        address: null,
         email,
         password,
-        supId: null,
-        language: null,
-        salary: null,
-        height: null,
-        weight: null,
-        passkey: null,
+        organizationId: localStorage.getItem('orgid') || selectedOrg,
+        dob : "1990-01-01",
+        telephone : "+1234567890",
+        gender : "male",
+        address : "123 Street, City",  
+        salary: 50000,                             
       };
-      console.log("Payload for registration:", payload);
-      await axios.post(`${urL}/user`, payload, {
+      await axios.post(`${urL}/super-admin/users`, payload, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-    } catch (err) {
-      message.error(`Registration Failed: ${err.response?.data?.message || "Unknown error"}`);
-      setLoading(false);
-      return;
-    }
-    try {
-      await signUpUser({ email, password, id });
+      await signUpUser({ email, password, id: employeeId });
       message.success("User Registered Successfully");
-      if (navigate) navigate("/EmployeePage");
       setIsModalVisible(false);
       form.resetFields();
+      fetchOrgUsers(); // <-- Fetch users after adding
     } catch (err) {
-      const token = authData?.accessToken;
-      await axios.delete(`${urL}/user/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      console.error("Registration Error:", err);
       message.error(`Registration Failed: ${err.response?.data?.message || "Unknown error"}`);
     } finally {
       setLoading(false);
@@ -109,40 +111,33 @@ const RolesList = ({ data, onAddNew, onUpdate, onDelete, className, urL, authDat
       .catch(() => {});
   };
 
-  // Fetch organizations on mount
-  useEffect(() => {
-    axios.get('http://localhost:3000/super-admin/organizations')
-      .then(res => setOrganizations(res.data))
-      .catch(() => setOrganizations([]));
-  }, []);
-
-  // Fetch users for selected organization
-  useEffect(() => {
-    if (!selectedOrg) {
-      setOrgUsers([]);
-      return;
-    }
-    setOrgLoading(true);
-    axios.get(`${urL}/organization/${selectedOrg}/users`, {
-      headers: { Authorization: `Bearer ${authData?.accessToken}` },
-    })
-      .then(res => setOrgUsers(res.data))
-      .catch(() => setOrgUsers([]))
-      .finally(() => setOrgLoading(false));
-  }, [selectedOrg, urL, authData]);
-
-  // Group users by role
-  const groupedUsers = orgUsers.reduce((acc, user) => {
-    const role = user.role;
-    if (!acc[role]) acc[role] = [];
-    acc[role].push(user);
-    return acc;
-  }, {});
-
-  // Handle organization selection
   const handleOrgChange = (orgId) => {
     setSelectedOrg(orgId);
     localStorage.setItem('orgid', orgId);
+  };
+
+  const handleDelete = async (id, email) => {
+    setLoading(true);
+    console.log(email);
+    const token = authData?.accessToken;
+    try {
+      await axios.delete(`${urL}/super-admin/users/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      await axios.post(`${urL}/auth/delete`, { email: email }, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      message.success("User Removed Successfully!");
+      fetchOrgUsers(); // <-- Fetch users after deleting
+    } catch (err) {
+      console.log(err);
+      message.error("Something went Wrong!");
+    }
+    setLoading(false);
   };
 
   const columns = [
@@ -211,54 +206,67 @@ const RolesList = ({ data, onAddNew, onUpdate, onDelete, className, urL, authDat
         </Select>
       </div>
 
-      {/* Show users by role for selected organization */}
+      {/* Add New Role Button */}
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 16 }}>
+        <Button 
+          type="primary" 
+          icon={<PlusOutlined />} 
+          onClick={showModal}
+          className={styles.addButton}
+          disabled={!selectedOrg}
+        >
+          Add New Role
+        </Button>
+      </div>
+
+      {/* Organization Users Table with Actions */}
       {selectedOrg && (
         <div style={{ marginBottom: 32 }}>
-          {orgLoading ? (
-            <div>Loading users...</div>
-          ) : (
-            ['HR_ADMIN', 'KITCHEN_ADMIN', 'KITCHEN_STAFF'].map(role => (
-              <div key={role} style={{ marginBottom: 16 }}>
-                <h3 style={{ color: '#1890ff', marginBottom: 8 }}>{role.replace('_', ' ')}</h3>
-                {groupedUsers[role] && groupedUsers[role].length > 0 ? (
-                  <ul style={{ color: '#d9d9d9' }}>
-                    {groupedUsers[role].map(user => (
-                      <li key={user.id}>
-                        {user.name} (Assigned by: {user.assignedByName || user.assignedBy || 'Unknown'})
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <div style={{ color: '#888' }}>No users assigned.</div>
-                )}
-              </div>
-            ))
-          )}
+          <h3 style={{ color: '#1890ff', marginBottom: 8 }}>Organization Users</h3>
+          <Table
+            columns={[
+              { title: 'ID', dataIndex: 'id', key: 'id' },
+              { title: 'Name', dataIndex: 'name', key: 'name' },
+              { title: 'Role', dataIndex: 'role', key: 'role' },
+              { title: 'Email', dataIndex: 'email', key: 'email' },
+              {
+                title: 'Actions',
+                key: 'actions',
+                render: (_, record) => (
+                  <Space size="middle">
+                    <Button 
+                      type="link" 
+                      icon={<EditOutlined />} 
+                      onClick={() => onUpdate(record)}
+                      className={styles.editButton}
+                    >
+                      Edit
+                    </Button>
+                    <Button 
+                      type="link" 
+                      danger 
+                      icon={<DeleteOutlined />} 
+                      onClick={() => handleDelete(record.id, record.email)}
+                      className={styles.deleteButton}
+                      loading={loading}
+                    >
+                      Delete
+                    </Button>
+                  </Space>
+                ),
+              },
+            ]}
+            dataSource={orgUsers}
+            loading={orgLoading}
+            rowKey="id"
+            pagination={false}
+            className={styles.table}
+            style={{ marginBottom: 24 }}
+          />
         </div>
       )}
 
-      <div className={styles.header}>
-        <div className={styles.headerContent}>
-          <h2 className={styles.title}>Roles Management</h2>
-          <div className={styles.actions}>
-            <Button 
-              type="primary" 
-              icon={<PlusOutlined />} 
-              onClick={showModal}
-              className={styles.addButton}
-            >
-              Add New Role
-            </Button>
-          </div>
-        </div>
-      </div>
-      <Table 
-        columns={columns} 
-        dataSource={data} 
-        pagination={{ pageSize: 10 }}
-        className={styles.table}
-        rowKey="id"
-      />
+      {/* Modal for Add New Role */}
       <Modal
         title="Add New Role"
         open={isModalVisible}
@@ -282,6 +290,12 @@ const RolesList = ({ data, onAddNew, onUpdate, onDelete, className, urL, authDat
             rules={[{ required: true, message: 'Please input the Employee ID!' }]}
           >
             <Input placeholder="Enter Employee ID" />
+          </Form.Item>
+          <Form.Item
+            label="Name"
+            name="name"
+            rules={[{ required: true, message: 'Please input the Name!' }]}>
+            <Input placeholder="Enter Name" />
           </Form.Item>
           <Form.Item
             label="Email"
@@ -332,6 +346,7 @@ const RolesList = ({ data, onAddNew, onUpdate, onDelete, className, urL, authDat
               <Select.Option value="KITCHEN_STAFF">Kitchen Staff</Select.Option>
             </Select>
           </Form.Item>
+          
           <Form.Item
             shouldUpdate={(prev, curr) => prev.role !== curr.role}
             noStyle
