@@ -1,14 +1,18 @@
 .head {
   font-size: 20px;
-  color: brown;
+  color: #f20707;
   font-family: "Figtree", sans-serif;
   font-weight: 650;
+  padding: 1vw;
+  border-radius: 8px;
 }
 
 .headDes {
   margin: 0.2vw 0vw 1vw 0vw;
   font-family: "Figtree", sans-serif;
   font-size: 13px;
+  padding: 0.5vw 1vw;
+  border-radius: 8px;
 }
 
 .con {
@@ -78,3 +82,319 @@
 .icon {
   color: black !important;
 }
+
+/* Dark mode styles */
+:global(.dark) {
+  background-color: #181818 !important;
+  color: #ffffff !important;
+}
+
+:global(.dark) .head {
+  color: #f20707 !important;
+  background-color: #2a2a2a !important;
+  border: 1px solid #404040 !important;
+}
+
+:global(.dark) .headDes {
+  color: #cccccc !important;
+  background-color: #2a2a2a !important;
+  border: 1px solid #404040 !important;
+}
+
+:global(.dark) .con {
+  color: #ffffff !important;
+}
+
+:global(.dark) .fingerLabel {
+  color: #ffffff !important;
+}
+
+:global(.dark) .tabHead {
+  color: #ffffff !important;
+}
+
+:global(.dark) .tab {
+  background-color: #303030 !important;
+}
+
+/* Dark mode form styling */
+:global(.dark .ant-form-item-label > label) {
+  color: #ffffff !important;
+}
+
+:global(.dark .ant-input) {
+  background-color: #404040 !important;
+  border-color: #555555 !important;
+  color: #ffffff !important;
+}
+
+:global(.dark .ant-input:hover) {
+  border-color: #ff6b6b !important;
+}
+
+:global(.dark .ant-input:focus) {
+  border-color: #ff6b6b !important;
+  box-shadow: 0 0 0 2px rgba(255, 107, 107, 0.2) !important;
+}
+
+:global(.dark .ant-input::placeholder) {
+  color: #cccccc !important;
+}
+
+:global(.dark .ant-input[disabled]) {
+  background-color: #2a2a2a !important;
+  border-color: #444444 !important;
+  color: #888888 !important;
+}
+
+/* Dark mode select styling */
+:global(.dark .ant-select-selector) {
+  background-color: #404040 !important;
+  border-color: #555555 !important;
+  color: #ffffff !important;
+}
+
+:global(.dark .ant-select-focused .ant-select-selector) {
+  border-color: #ff6b6b !important;
+  box-shadow: 0 0 0 2px rgba(255, 107, 107, 0.2) !important;
+}
+
+:global(.dark .ant-select:hover .ant-select-selector) {
+  border-color: #ff6b6b !important;
+}
+
+:global(.dark .ant-select-selection-item) {
+  color: #ffffff !important;
+}
+
+:global(.dark .ant-select-selection-placeholder) {
+  color: #cccccc !important;
+}
+
+:global(.dark .ant-select-dropdown) {
+  background-color: #404040 !important;
+  border: 1px solid #555555 !important;
+}
+
+:global(.dark .ant-select-item) {
+  background-color: #404040 !important;
+  color: #ffffff !important;
+}
+
+:global(.dark .ant-select-item:hover) {
+  background-color: #555555 !important;
+}
+
+:global(.dark .ant-select-item-option-selected) {
+  background-color: #ff6b6b !important;
+  color: #ffffff !important;
+}
+
+/* Dark mode date picker styling */
+:global(.dark .ant-picker) {
+  background-color: #404040 !important;
+  border-color: #555555 !important;
+  color: #ffffff !important;
+}
+
+:global(.dark .ant-picker:hover) {
+  border-color: #ff6b6b !important;
+}
+
+:global(.dark .ant-picker-focused) {
+  border-color: #ff6b6b !important;
+  box-shadow: 0 0 0 2px rgba(255, 107, 107, 0.2) !important;
+}
+
+:global(.dark .ant-picker-input > input) {
+  color: #ffffff !important;
+}
+
+:global(.dark .ant-picker-input > input::placeholder) {
+  color: #cccccc !important;
+}
+
+:global(.dark .ant-picker-suffix) {
+  color: #ffffff !important;
+}
+
+/* Dark mode input number styling */
+:global(.dark .ant-input-number) {
+  background-color: #404040 !important;
+  border-color: #555555 !important;
+  color: #ffffff !important;
+}
+
+:global(.dark .ant-input-number:hover) {
+  border-color: #ff6b6b !important;
+}
+
+:global(.dark .ant-input-number-focused) {
+  border-color: #ff6b6b !important;
+  box-shadow: 0 0 0 2px rgba(255, 107, 107, 0.2) !important;
+}
+
+:global(.dark .ant-input-number-input) {
+  color: #ffffff !important;
+}
+
+:global(.dark .ant-input-number-input::placeholder) {
+  color: #cccccc !important;
+}
+
+:global(.dark .ant-input-number-handler-wrap) {
+  background-color: #404040 !important;
+  border-color: #555555 !important;
+}
+
+:global(.dark .ant-input-number-handler) {
+  border-color: #555555 !important;
+  color: #ffffff !important;
+}
+
+:global(.dark .ant-input-number-handler:hover) {
+  background-color: #555555 !important;
+}
+
+/* Dark mode tabs styling */
+:global(.dark .ant-tabs) {
+  color: #ffffff !important;
+}
+
+:global(.dark .ant-tabs-tab) {
+  color: #cccccc !important;
+}
+
+:global(.dark .ant-tabs-tab-active) {
+  color: #ff6b6b !important;
+}
+
+:global(.dark .ant-tabs-tab:hover) {
+  color: #ff6b6b !important;
+}
+
+:global(.dark .ant-tabs-ink-bar) {
+  background: #ff6b6b !important;
+}
+
+:global(.dark .ant-tabs-content-holder) {
+  background-color: #303030 !important;
+  color: #ffffff !important;
+}
+
+:global(.dark .ant-tabs-tabpane) {
+  color: #ffffff !important;
+}
+
+/* Dark mode form validation styling */
+:global(.dark .ant-form-item-explain-error) {
+  color: #ff6b6b !important;
+}
+
+:global(.dark .ant-form-item-has-error .ant-input) {
+  border-color: #ff6b6b !important;
+}
+
+:global(.dark .ant-form-item-has-error .ant-select-selector) {
+  border-color: #ff6b6b !important;
+}
+
+:global(.dark .ant-form-item-has-error .ant-picker) {
+  border-color: #ff6b6b !important;
+}
+
+:global(.dark .ant-form-item-has-error .ant-input-number) {
+  border-color: #ff6b6b !important;
+}
+
+/* Dark mode modal/popup styling */
+:global(.dark) {
+  background-color: #181818 !important;
+  color: #ffffff !important;
+}
+
+/* Dark mode modal container */
+:global(.dark .ant-modal) {
+  background-color: #181818 !important;
+  color: #ffffff !important;
+}
+
+:global(.dark .ant-modal-content) {
+  background-color: #181818 !important;
+  color: #ffffff !important;
+  border: 1px solid #333333 !important;
+}
+
+:global(.dark .ant-modal-header) {
+  background-color: #181818 !important;
+  border-bottom: 1px solid #333333 !important;
+}
+
+:global(.dark .ant-modal-title) {
+  color: #ffffff !important;
+}
+
+:global(.dark .ant-modal-body) {
+  background-color: #181818 !important;
+  color: #ffffff !important;
+}
+
+:global(.dark .ant-modal-footer) {
+  background-color: #181818 !important;
+  border-top: 1px solid #333333 !important;
+}
+
+/* Dark mode modal mask/backdrop */
+:global(.dark .ant-modal-mask) {
+  background-color: rgba(0, 0, 0, 0.7) !important;
+}
+
+/* Dark mode modal close button */
+:global(.dark .ant-modal-close) {
+  color: #ffffff !important;
+}
+
+:global(.dark .ant-modal-close:hover) {
+  color: #ff6b6b !important;
+}
+
+:global(.dark .ant-modal-close-x) {
+  color: #ffffff !important;
+}
+
+:global(.dark .ant-modal-close-x:hover) {
+  color: #ff6b6b !important;
+}
+
+/* Dark mode rescan button */
+:global(.dark) .rescanBtn {
+  background-color: #555555 !important;
+  color: #ffffff !important;
+}
+
+:global(.dark) .rescanBtn:hover {
+  background-color: #ff6b6b !important;
+  color: #ffffff !important;
+}
+
+/* Main container dark mode styling */
+.modalContainer {
+  background-color: #ffffff;
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+:global(.dark) .modalContainer {
+  background-color: #181818 !important;
+  color: #ffffff !important;
+}
+
+/* Dark mode for main wrapper */
+.darkWrapper {
+  background-color: #181818;
+  color: #ffffff;
+  min-height: 100%;
+  padding: 0;
+}
+
+/* Dark mode styles */

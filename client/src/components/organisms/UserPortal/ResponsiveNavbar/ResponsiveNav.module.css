@@ -25,18 +25,6 @@
   cursor: pointer;
 }
 
-/* Dark mode styling for navbar */
-.dark {
-  background-color: #1e1e1e;
-  color: #ffffff;
-}
-
-/* Dark mode styling for the entire page */
-.darkMode {
-  background-color: #121212;
-  color: rgb(0, 0, 0);
-}
-
 /* Container for navigation links */
 .navLinks {
   display: flex;
@@ -62,16 +50,6 @@
 .navLink svg {
   margin-right: 10px; /* Space between icon and text */
   vertical-align: middle; /* Align icon with text */
-}
-
-/* Theme toggle button styling */
-.themeToggle {
-  background: none;
-  border: none;
-  font-size: 1.25rem;
-  cursor: pointer;
-  margin-left: 1rem;
-  margin-right: 20px;
 }
 
 /* Logout button styling */
@@ -148,37 +126,9 @@
   }
 }
 
-/* Container for right-side elements (theme toggle, menu toggle, logout) */
+/* Container for right-side elements (menu toggle, logout) */
 .rightSection {
   display: flex;
   align-items: center;
   gap: 1rem;
-}
-
-/* Theme toggle button styling (repeated for clarity) */
-.themeToggle {
-  background: none;
-  border: none;
-  font-size: 1.25rem;
-  cursor: pointer;
-  margin-left: 1rem;
-  margin-right: 1rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Hover effect for theme toggle button */
-.themeToggle:hover {
-  color: #e6c000; /* Yellow color on hover */
-}
-
-/* Responsive adjustments for smaller screens (max-width: 768px) */
-@media screen and (max-width: 768px) {
-  /* Adjust theme toggle button size */
-  .themeToggle {
-    font-size: 1.5rem;
-    margin-left: 0.5rem;
-    margin-right: 0.5rem;
-  }
 }
