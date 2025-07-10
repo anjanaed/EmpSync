@@ -34,11 +34,10 @@ const SuperAdmin = () => {
 
   // Sample permissions data
   const [permissionsData, setPermissionsData] = useState([
-    { key: '1', name: 'Create Users', category: 'User Management', description: 'Create new user accounts' },
-    { key: '2', name: 'Edit Users', category: 'User Management', description: 'Modify user information' },
-    { key: '3', name: 'Delete Users', category: 'User Management', description: 'Remove user accounts' },
-    { key: '4', name: 'View Reports', category: 'Analytics', description: 'Access system reports' },
-    { key: '5', name: 'Export Data', category: 'Analytics', description: 'Export system data' },
+    { key: '1', name: 'User Management', description: 'Manage users: create, edit, delete, and view user accounts.' },
+    { key: '2', name: 'Meal Management', description: 'Manage meals: add, edit, delete, and view meal items.' },
+    { key: '3', name: 'Payroll', description: 'Manage payroll: process, edit, and view payroll records.' },
+    { key: '4', name: 'Reports', description: 'Access and export system reports.' },
   ]);
 
   // Fetch organizations from API
