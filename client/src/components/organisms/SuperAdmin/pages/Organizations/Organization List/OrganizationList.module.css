@@ -400,6 +400,41 @@
   }
 }
 
+/* Extra mobile-friendly tweaks */
+@media (max-width: 480px) {
+  .itemTitle,
+  .itemDescription {
+    white-space: normal;
+    word-break: break-word;
+  }
+
+  .itemContent {
+    padding: 0 4px;
+    gap: 8px;
+  }
+
+  .itemActions {
+    flex-direction: column;
+    gap: 6px;
+    align-items: stretch;
+  }
+
+  .updateButton,
+  .deleteButton {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+}
+
+/* Make list horizontally scrollable on very small screens */
+@media (max-width: 400px) {
+  .list {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
 /* Dark theme adjustments */
 @media (prefers-color-scheme: dark) {
   .listItem {
