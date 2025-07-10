@@ -65,12 +65,6 @@ const PermissionsList = ({
       key: 'name',
     },
     {
-      title: 'Category',
-      dataIndex: 'category',
-      key: 'category',
-      render: (category) => <Tag className={styles.categoryTag}>{category}</Tag>,
-    },
-    {
       title: 'Description',
       dataIndex: 'description',
       key: 'description',
@@ -81,38 +75,11 @@ const PermissionsList = ({
       render: (_, record) => (
         <div className={styles.assignedCheckbox}>
           <Checkbox
-            checked={rolePermissions.includes(record.id)}
-            onChange={(e) => handlePermissionChange(record.id, e.target.checked)}
+            checked={rolePermissions.includes(record.id) || rolePermissions.includes(record.key)}
+            onChange={(e) => handlePermissionChange(record.id || record.key, e.target.checked)}
             disabled={!selectedRole}
           />
         </div>
-      ),
-    },
-    {
-      title: 'Actions',
-      key: 'actions',
-      render: (_, record) => (
-        <Space size="middle">
-          <Button 
-            type="default" 
-            size="small"
-            icon={<EditOutlined />} 
-            onClick={() => onUpdate(record)}
-            className={`${styles.actionButton} ${styles.editButton}`}
-          >
-            Edit
-          </Button>
-          <Button 
-            type="default" 
-            size="small"
-            danger 
-            icon={<DeleteOutlined />} 
-            onClick={() => onDelete(record)}
-            className={`${styles.actionButton} ${styles.deleteButton}`}
-          >
-            Delete
-          </Button>
-        </Space>
       ),
     },
   ];
@@ -177,20 +144,11 @@ const PermissionsList = ({
           </div>
         )}
       </Card>
-
-      <Button 
-        type="primary" 
-        icon={<PlusOutlined />} 
-        onClick={onAddNew}
-        className={styles.addButton}
-      >
-        Add New Permission
-      </Button>
       
       <Table 
         columns={columns} 
         dataSource={data} 
-        pagination={{ pageSize: 3 }}
+        pagination={{ pageSize: 4 }}
         rowKey="id"
         className={styles.table}
       />
