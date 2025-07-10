@@ -18,6 +18,9 @@ import { MealsServingModule } from './modules/meals-serving/meals-serving.module
 import { MealTypeModule } from './modules/meal-type/meal-type.module';
 import { SuperAdminModule } from './modules/SuperAdmin/super-admin.module';
 import { SuperAdminAuthModule } from './core/super-admin-auth/superadmin-auth.module';
+import { UserFingerPrintRegisterBackendModule } from './modules/user-finger-print-register-backend/user-finger-print-register-backend.module';
+import { UserFingerPrintRegisterBackendService } from './modules/user-finger-print-register-backend/user-finger-print-register-backend.service';
+import { UserFingerPrintRegisterBackendController } from './modules/user-finger-print-register-backend/user-finger-print-register-backend.controller';
 
 @Module({
   imports: [
@@ -38,8 +41,9 @@ import { SuperAdminAuthModule } from './core/super-admin-auth/superadmin-auth.mo
     AuthModule,
     MealsServingModule,
     SuperAdminModule,
+    UserFingerPrintRegisterBackendModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [AppController, UserFingerPrintRegisterBackendController],
+  providers: [AppService, UserFingerPrintRegisterBackendService],
 })
 export class AppModule {}
