@@ -34,6 +34,40 @@ const UserFingerPrintRegister = () => {
 function PinSection() {
     const [pin, setPin] = useState("");
     const navigate = useNavigate();
+    const [showFingerprintSection, setShowFingerprintSection] = useState(false);
+    const [scanning, setScanning] = useState(false);
+    const [user, setUser] = useState(null);
+    const [error, setError] = useState("");
+
+    // Fetch user info when pin is 6 digits
+    React.useEffect(() => {
+        const fetchUser = async () => {
+            if (pin.length === 6 && /^\d{6}$/.test(pin)) {
+                try {
+                    setError("");
+                    setUser(null);
+                    const passkey = parseInt(pin, 10);
+                    const response = await fetch(
+                        `/user-finger-print-register-backend/user-by-passkey?passkey=${passkey}`
+                    );
+                    if (!response.ok) {
+                        setError("Invalid Pass Key, check Again");
+                        setUser(null);
+                        return;
+                    }
+                    const data = await response.json();
+                    setUser(data);
+                } catch (err) {
+                    setError("Invalid Pass Key, check Again");
+                    setUser(null);
+                }
+            } else {
+                setError("");
+                setUser(null);
+            }
+        };
+        fetchUser();
+    }, [pin]);
 
     const handlePinInput = (digit) => {
         if (pin.length < 6) {
@@ -45,10 +79,8 @@ function PinSection() {
         setPin(pin.slice(0, -1));
     };
 
-    const [showFingerprintSection, setShowFingerprintSection] = useState(false);
-    const [scanning, setScanning] = useState(false);
-
-    if (pin.length === 6) {
+    // Only allow moving forward if user is found and no error
+    if (pin.length === 6 && user && !error) {
         if (showFingerprintSection) {
             return (
                 <div className={styles.fingerprintSection} style={{position: 'relative'}}>
@@ -155,6 +187,42 @@ function PinSection() {
         );
     }
 
+    // If pin is 6 digits but user not found, show error and block forward
+    if (pin.length === 6 && error) {
+        return (
+            <div className={styles.pinSection} style={{position: 'relative'}}>
+                {/* Close Button */}
+                <button
+                    onClick={() => navigate('/OrderTab')}
+                    className={styles.page2CloseButton}
+                    aria-label="Close"
+                >
+                    <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="28" height="28" rx="7" fill="#23272F"/>
+                        <path d="M9.5 9.5L18.5 18.5" stroke="#fff" strokeWidth="2" strokeLinecap="round"/>
+                        <path d="M18.5 9.5L9.5 18.5" stroke="#fff" strokeWidth="2" strokeLinecap="round"/>
+                    </svg>
+                </button>
+                <div className={styles.SectionTexts} style={{ color: 'red', fontWeight: 'bold', margin: '1rem 0', textAlign: 'center' }}>{error}</div>
+                <div className={styles.pinDigits}>
+                    {[...Array(6)].map((_, idx) => (
+                        <span key={idx} className={styles.pinDigitBox}>
+                            {pin[idx] || ""}
+                        </span>
+                    ))}
+                </div>
+                <button
+                    className={styles.fingerprintBackButton + ' ' + styles.page2NavButton}
+                    onClick={() => setPin("")}
+                    style={{position: 'fixed', right: 32, bottom: 32, zIndex: 1000}}
+                >
+                    Back
+                </button>
+            </div>
+        );
+    }
+
+    // Default: pin entry UI
     return (
         <div className={styles.pinSection} style={{position: 'relative'}}>
             {/* Close Button */}
