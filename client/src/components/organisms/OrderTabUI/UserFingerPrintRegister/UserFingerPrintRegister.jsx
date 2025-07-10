@@ -137,7 +137,7 @@ function PinSection() {
             );
         }
         return (
-            <div className={styles.pinSection} style={{ background: "none", position: 'relative' }}>
+            <div className={styles.pinSection + " " + styles.pinSectionOverride}>
                 {/* Close Button */}
                 <button
                     onClick={() => navigate('/OrderTab')}
@@ -150,36 +150,36 @@ function PinSection() {
                         <path d="M18.5 9.5L9.5 18.5" stroke="#fff" strokeWidth="2" strokeLinecap="round"/>
                     </svg>
                 </button>
-                <div className={styles.SectionTexts} style={{ fontSize: '1.5rem', width: '100%', textAlign: 'center', background: "none" }}>
+                <div className={styles.SectionTexts + " " + styles.userGreeting}>
+                    <h2 className={styles.subHeading1}>
+                        {user && user.name ? `Hello..! ${user.name} ` : null}
+                    </h2>
                     You can register two fingers on the device.
                 </div>
-                <div
-                    className={styles.fingerprintButtonGroup}
-                    style={{ display: 'flex', gap: '7rem', justifyContent: 'center', marginTop: '2rem', marginBottom: '2rem' }}
-                >
+                <div className={styles.fingerprintButtonGroup + " " + styles.fingerprintOptions}>
                     <button
                         type="button"
-                        className={styles.fingerprintButton}
+                        className={styles.fingerprintButton + " " + styles.fingerprintButtonOne}
                         onClick={() => setShowFingerprintSection(true)}
                     >
                         <img
                             src={fingerprintIcon}
                             alt="Register Fingerprint"
-                            className={styles.fingerprintImg}
+                            className={styles.fingerprintImg + " " + styles.fingerprintImgSmall}
                         />
-                        <span className={styles.fingerprintLabel}>Finger 01</span>
+                        <span className={styles.fingerprintLabel + " " + styles.fingerprintLabelBlue}>Finger 01</span>
                     </button>
                     <button
                         type="button"
-                        className={styles.fingerprintButton}
+                        className={styles.fingerprintButton + " " + styles.fingerprintButtonTwo}
                         onClick={() => setShowFingerprintSection(true)}
                     >
                         <img
                             src={fingerprintIcon}
                             alt="Register Fingerprint"
-                            className={styles.fingerprintImg}
+                            className={styles.fingerprintImg + " " + styles.fingerprintImgSmall}
                         />
-                        <span className={styles.fingerprintLabel}>Finger 02</span>
+                        <span className={styles.fingerprintLabel + " " + styles.fingerprintLabelOrange}>Finger 02</span>
                     </button>
                 </div>
                 <button

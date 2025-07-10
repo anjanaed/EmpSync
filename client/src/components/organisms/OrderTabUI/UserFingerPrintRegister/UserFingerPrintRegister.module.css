@@ -1,3 +1,61 @@
+/* Pin section override for background and position */
+.pinSectionOverride {
+  background: none !important;
+  position: relative;
+}
+
+/* User greeting style */
+.userGreeting {
+  margin-bottom: 0.5rem;
+}
+
+/* Fingerprint button group override */
+.fingerprintOptions {
+  display: flex !important;
+  gap: 7rem !important;
+  justify-content: center !important;
+  margin-top: 2rem !important;
+  margin-bottom: 2rem !important;
+}
+
+/* Fingerprint button one style */
+.fingerprintButtonOne {
+  background: #e3f2fd !important;
+  border: 2px solid #2196f3 !important;
+  border-radius: 1.5rem !important;
+  box-shadow: 0 2px 8px rgba(33,150,243,0.15) !important;
+  padding: 1.5rem 2.5rem !important;
+}
+
+/* Fingerprint button two style */
+.fingerprintButtonTwo {
+  background: #fff3e0 !important;
+  border: 2px solid #ff9800 !important;
+  border-radius: 1.5rem !important;
+  box-shadow: 0 2px 8px rgba(255,152,0,0.15) !important;
+  padding: 1.5rem 2.5rem !important;
+}
+
+/* Small fingerprint image */
+.fingerprintImgSmall {
+  width: 60px !important;
+  height: 60px !important;
+  margin-bottom: 0.5rem !important;
+}
+
+/* Blue label for finger 01 */
+.fingerprintLabelBlue {
+  color: #1976d2 !important;
+  font-weight: 500 !important;
+  font-size: 0.95rem !important;
+}
+
+/* Orange label for finger 02 */
+.fingerprintLabelOrange {
+  color: #f57c00 !important;
+  font-weight: 500 !important;
+  font-size: 0.95rem !important;
+}
 /* Close button for top right corner, fixed like the back button */
 .page2CloseButton {
   position: fixed;
@@ -217,6 +275,18 @@
   margin-top: 40px;
   margin-bottom: -80px;
   text-shadow: 1px 1px 4px rgba(0,0,0,0.4);
+}
+.subHeading1 {
+  font-size: 1.3em;
+  font-weight: 600;
+  color: #ffffff;
+  margin-top: -20px;
+  margin-bottom: px;
+  text-shadow: 1px 1px 4px rgb(0, 0, 0);
+  background: rgba(0, 0, 0, 0.049);
+  box-shadow: 0 12px 18px rgba(0,0,0,0.10);
+  border-radius: 6px;
+  padding: 6px 16px;
 }
 
 .content {
