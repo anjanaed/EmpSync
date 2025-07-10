@@ -26,8 +26,8 @@ export class UserController {
   @Roles('HR_ADMIN')
   async create(@Body() dto: Prisma.UserCreateInput) {
     try {
-      await this.userService.create(dto);
-      return 'User Registered Successfully';
+      const passkey = await this.userService.create(dto);
+      return { message: 'User Registered Successfully', passkey };
     } catch (err) {
       throw new HttpException(
         {

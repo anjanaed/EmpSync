@@ -320,4 +320,30 @@ export class SuperAdminService {
       throw new BadRequestException('Failed to delete permission: ' + error.message);
     }
   }
+
+  async getByOrg(orgId: string) {
+    try {
+      const users = await this.databaseService.user.findMany({
+        where: {
+          organizationId: orgId,
+          role: {
+            in: ['kitchen admin', 'hr admin'],
+          },
+        },
+        select: {
+          id: true,
+          name: true,
+          role: true,
+          email: true,
+          organizationId: true,
+        },
+      });
+      if (!users || users.length === 0) {
+        throw new NotFoundException('No kitchen or HR admins found for this organization');
+      }
+      return users;
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
 }
