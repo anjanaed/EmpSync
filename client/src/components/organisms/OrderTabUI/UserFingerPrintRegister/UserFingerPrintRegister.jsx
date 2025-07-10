@@ -57,6 +57,12 @@ function PinSection() {
                     }
                     const data = await response.json();
                     setUser(data);
+                    // Log user info and passkey
+                    console.log("Correct passkey entered:", passkey);
+                    if (data && data.id && data.name) {
+                        console.log("Fetched user ID:", data.id);
+                        console.log("Fetched user name:", data.name);
+                    }
                 } catch (err) {
                     setError("Invalid Pass Key, check Again");
                     setUser(null);
