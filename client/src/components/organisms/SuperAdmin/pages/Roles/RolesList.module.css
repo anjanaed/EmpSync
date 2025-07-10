@@ -297,10 +297,10 @@
 }
 
 /* Modal and Form Styles */
-:global(.ant-modal-content) {
-  background-color: rgba(24, 144, 255, 0.2) !important;
+.container :global(.ant-modal-content) {
+  background-color: rgba(24, 144, 255, 0.1) !important;
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.);
   border-radius: 12px;
   min-width: 400px;
   max-width: 540px;
@@ -308,47 +308,47 @@
   color: white !important;
   padding: 0;
 }
-:global(.ant-modal-header) {
+.container :global(.ant-modal-header) {
   background-color: transparent !important;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
   padding: 20px 24px 16px;
 }
-:global(.ant-modal-title) {
+.container :global(.ant-modal-title) {
   color: white !important;
   font-size: 1.25rem;
   font-weight: 600;
   text-align: center;
   width: 100%;
 }
-:global(.ant-modal-close) {
+.container :global(.ant-modal-close) {
   color: rgba(255, 255, 255, 0.7) !important;
 }
-:global(.ant-modal-close:hover) {
+.container :global(.ant-modal-close:hover) {
   color: white !important;
 }
-:global(.ant-modal-body) {
+.container :global(.ant-modal-body) {
   background-color: transparent !important;
   padding: 20px 24px;
 }
-:global(.ant-modal-footer) {
+.container :global(.ant-modal-footer) {
   display: flex;
   justify-content: flex-end;
   gap: 8px;
   background: transparent !important;
   border-top: none !important;
 }
-:global(.ant-form-vertical .ant-form-item-label > label) {
+.container :global(.ant-form-vertical .ant-form-item-label > label) {
   color: white !important;
   font-weight: 500;
 }
-:global(.ant-form-vertical .ant-form-item-label > label.ant-form-item-required::before) {
+.container :global(.ant-form-vertical .ant-form-item-label > label.ant-form-item-required::before) {
   color: #ff4d4f !important;
 }
-:global(.ant-form-item) {
+.container :global(.ant-form-item) {
   margin-bottom: 18px;
 }
-:global(.ant-input),
-:global(.ant-input-password) {
+.container :global(.ant-input),
+.container :global(.ant-input-password) {
   background-color: rgba(255, 255, 255, 0.05) !important;
   border-color: rgba(24, 144, 255, 0.3) !important;
   color: white !important;
@@ -357,25 +357,25 @@
   font-size: 1rem;
   transition: all 0.3s ease;
 }
-:global(.ant-input:hover),
-:global(.ant-input-password:hover) {
+.container :global(.ant-input:hover),
+.container :global(.ant-input-password:hover) {
   background-color: rgba(255, 255, 255, 0.08) !important;
   border-color: rgba(24, 144, 255, 0.5) !important;
 }
-:global(.ant-input:focus),
-:global(.ant-input-password:focus) {
+.container :global(.ant-input:focus),
+.container :global(.ant-input-password:focus) {
   background-color: rgba(255, 255, 255, 0.08) !important;
   border-color: #1890ff !important;
   box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2) !important;
 }
-:global(.ant-input::placeholder),
-:global(.ant-input-password input::placeholder) {
+.container :global(.ant-input::placeholder),
+.container :global(.ant-input-password input::placeholder) {
   color: rgba(255, 255, 255, 0.4) !important;
 }
-:global(.ant-form-item-explain-error) {
+.container :global(.ant-form-item-explain-error) {
   color: #ff4d4f !important;
 }
-:global(.ant-btn-primary) {
+.container :global(.ant-btn-primary) {
   background-color: #1890ff !important;
   border-color: #1890ff !important;
   color: white !important;
@@ -385,19 +385,16 @@
   padding: 0 20px;
   transition: all 0.3s ease;
 }
-:global(.ant-btn-primary:hover) {
+.container :global(.ant-btn-primary:hover) {
   background-color: #40a9ff !important;
   border-color: #40a9ff !important;
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(24, 144, 255, 0.3);
 }
-:global(.ant-btn-primary:active) {
+.container :global(.ant-btn-primary:active) {
   transform: translateY(0);
 }
-:global(.ant-modal-footer .ant-btn) {
-  border-radius: 6px !important;
-}
-:global(.ant-modal-footer .ant-btn),
+.container :global(.ant-modal-footer .ant-btn),
 .submitButton,
 .cancelButton {
   min-width: 120px;
@@ -446,57 +443,6 @@
 }
 
 /* Responsive modal for mobile */
-@media (max-width: 768px) {
-  :global(.ant-modal-content) {
-    margin: 16px;
-    min-width: 90vw;
-    max-width: 98vw;
-  }
-  :global(.ant-modal-header) {
-    padding: 16px 20px 12px;
-  }
-  :global(.ant-modal-title) {
-    font-size: 1.1rem;
-  }
-  :global(.ant-modal-body) {
-    padding: 16px 20px;
-  }
-  :global(.ant-btn-primary),
-  :global(.ant-modal-footer .ant-btn) {
-    width: 100%;
-    height: 40px;
-  }
-}
-@media (max-width: 480px) {
-  :global(.ant-modal-content) {
-    margin: 12px;
-  }
-  :global(.ant-modal-header) {
-    padding: 12px 16px 8px;
-  }
-  :global(.ant-modal-body) {
-    padding: 12px 16px;
-  }
-  :global(.ant-input),
-  :global(.ant-input-password) {
-    padding: 10px 12px;
-  }
-}
-@media (prefers-color-scheme: dark) {
-  :global(.ant-modal-content) {
-    background-color: rgba(24, 144, 255, 0.08) !important;
-  }
-  :global(.ant-input),
-  :global(.ant-input-password) {
-    background-color: rgba(255, 255, 255, 0.08) !important;
-  }
-  :global(.ant-input:hover),
-  :global(.ant-input-password:hover) {
-    background-color: rgba(255, 255, 255, 0.12) !important;
-  }
-}
-
-/* Mobile styles */
 @media (max-width: 768px) {
   .container {
     padding: 16px;
