@@ -102,6 +102,32 @@ export class SuperAdminService {
     }
   }
 
+  async getByOrg(orgId: string) {
+    try {
+      const users = await this.databaseService.user.findMany({
+        where: {
+          organizationId: orgId,
+          role: {
+            in: ['KITCHEN_ADMIN', 'HR_ADMIN'],
+          },
+        },
+        select: {
+          id: true,
+          name: true,
+          role: true,
+          email: true,
+          organizationId: true,
+        },
+      });
+      if (!users || users.length === 0) {
+        throw new NotFoundException('No kitchen or HR admins found for this organization');
+      }
+      return users;
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
+
   // User CRUD operations
   async createUser(data: Prisma.UserCreateInput) {
     try {
@@ -321,29 +347,26 @@ export class SuperAdminService {
     }
   }
 
-  async getByOrg(orgId: string) {
+  async getPermissionsByUserId(userId: string) {
     try {
-      const users = await this.databaseService.user.findMany({
-        where: {
-          organizationId: orgId,
-          role: {
-            in: ['KITCHEN_ADMIN', 'HR_ADMIN'],
-          },
-        },
-        select: {
-          id: true,
-          name: true,
-          role: true,
-          email: true,
-          organizationId: true,
-        },
-      });
-      if (!users || users.length === 0) {
-        throw new NotFoundException('No kitchen or HR admins found for this organization');
+      if (!userId) {
+        throw new BadRequestException('User ID is required');
       }
-      return users;
+      const user = await this.databaseService.user.findUnique({
+        where: { id: userId },
+        include: { permissions: true },
+      });
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
+      return user.permissions;
     } catch (error) {
-      throw new BadRequestException(error.message);
+      if (error instanceof BadRequestException || error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new BadRequestException('Failed to fetch permissions: ' + error.message);
     }
   }
+
+  
 }
