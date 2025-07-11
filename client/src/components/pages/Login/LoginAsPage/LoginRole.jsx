@@ -40,11 +40,6 @@ const LoginPage = () => {
   }
 
   useEffect(() => {
-    const userRole = authData.user.role;
-    if (userRole === "SUPER_ADMIN") {
-      navigate("/superadmin/dashboard");
-      return;
-    }
     if (!redirectRoles.includes(userRole)) {
       navigate("/ProfilePage");
     }
