@@ -17,7 +17,7 @@ const SuperAdminLogin = () => {
   const handleLogin = async (username, password) => {
     setLoading(true);
     try {
-      const response = await axios.post(`${urL}/auth/login`, {
+      const response = await axios.post(`${urL}/superadmin/login`, {
         username,
         password,
       });
