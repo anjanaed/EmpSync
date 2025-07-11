@@ -1,60 +1,135 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Button, Space, Tag, Select, Card, Checkbox, Divider } from 'antd';
+import { Table, Button, Space, Tag, Select, Card, Checkbox, Divider, message } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined, SaveOutlined } from '@ant-design/icons';
+import axios from 'axios';
 import styles from './PermissionsList.module.css';
 
 const { Option } = Select;
 
 const PermissionsList = ({ 
   data, 
-  organizations, 
-  roles, 
   onAddNew, 
   onUpdate, 
   onDelete, 
   onAssignPermissions,
   className 
 }) => {
+  const [organizations, setOrganizations] = useState([]);
+  const [users, setUsers] = useState([]);
   const [selectedOrganization, setSelectedOrganization] = useState(null);
-  const [selectedRole, setSelectedRole] = useState(null);
+  const [selectedUser, setSelectedUser] = useState(null);
   const [rolePermissions, setRolePermissions] = useState([]);
-  const [filteredRoles, setFilteredRoles] = useState([]);
 
+  // Get token from localStorage (or your preferred method)
+  const token = localStorage.getItem('token');
+
+  // Fetch organizations on mount
+  useEffect(() => {
+    axios.get('http://localhost:3000/super-admin/organizations', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      }
+    })
+      .then(res => setOrganizations(res.data))
+      .catch(err => console.error(err));
+  }, [token]);
+
+  // Update users when organization changes
   useEffect(() => {
     if (selectedOrganization) {
-      const orgRoles = roles?.filter(role => role.organizationId === selectedOrganization) || [];
-      setFilteredRoles(orgRoles);
-      setSelectedRole(null);
+      const org = organizations.find(org => org.id === selectedOrganization);
+      setUsers(org?.users || []);
+      setSelectedUser(null);
       setRolePermissions([]);
+      localStorage.setItem('selectedOrganizationId', selectedOrganization);
     }
-  }, [selectedOrganization, roles]);
+  }, [selectedOrganization, organizations]);
 
   useEffect(() => {
-    if (selectedRole) {
-      const role = filteredRoles.find(r => r.id === selectedRole);
-      setRolePermissions(role?.permissions || []);
+    if (selectedUser) {
+      localStorage.setItem('selectedUserId', selectedUser);
     }
-  }, [selectedRole, filteredRoles]);
+  }, [selectedUser]);
+
+  // Fetch permissions for selected user
+  useEffect(() => {
+    if (selectedUser) {
+      axios.get(`http://localhost:3000/super-admin/users/${selectedUser}/permissions`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        }
+      })
+        .then(res => {
+          setRolePermissions(res.data.map(p => p.action));
+        })
+        .catch(err => {
+          setRolePermissions([]);
+          console.error(err);
+        });
+    } else {
+      setRolePermissions([]);
+    }
+  }, [selectedUser, token]);
 
   const handleOrganizationChange = (value) => {
     setSelectedOrganization(value);
   };
 
-  const handleRoleChange = (value) => {
-    setSelectedRole(value);
+  const handleUserChange = (value) => {
+    setSelectedUser(value);
   };
 
-  const handlePermissionChange = (permissionId, checked) => {
+  const handlePermissionChange = (permissionName, checked) => {
     if (checked) {
-      setRolePermissions([...rolePermissions, permissionId]);
+      setRolePermissions([...rolePermissions, permissionName]);
     } else {
-      setRolePermissions(rolePermissions.filter(id => id !== permissionId));
+      setRolePermissions(rolePermissions.filter(name => name !== permissionName));
     }
   };
 
-  const handleSavePermissions = () => {
-    if (selectedRole && onAssignPermissions) {
-      onAssignPermissions(selectedRole, rolePermissions);
+  const handleSavePermissions = async () => {
+    if (selectedUser && rolePermissions.length > 0) {
+      const orgId = selectedOrganization;
+      const user = users.find(u => u.id === selectedUser);
+      const role = user?.role || 'N/A';
+
+      let currentPermissions = [];
+      try {
+        const res = await axios.get(`http://localhost:3000/super-admin/users/${selectedUser}/permissions`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          }
+        });
+        currentPermissions = res.data.map(p => p.action);
+      } catch (err) {
+        currentPermissions = [];
+      }
+
+      try {
+        for (const permissionName of rolePermissions) {
+          if (!currentPermissions.includes(permissionName)) {
+            const permission = data.find(p => p.name === permissionName);
+            if (!permission) continue;
+
+            await axios.post('http://localhost:3000/super-admin/permissions', {
+              orgId,
+              action: permission.name,
+              role,
+              users: {
+                connect: [{ id: selectedUser }]
+              }
+            }, {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              }
+            });
+          }
+        }
+        message.success('Permissions saved successfully!');
+      } catch (error) {
+        message.error('Failed to save permissions. Please try again.');
+        console.error(error);
+      }
     }
   };
 
@@ -75,9 +150,9 @@ const PermissionsList = ({
       render: (_, record) => (
         <div className={styles.assignedCheckbox}>
           <Checkbox
-            checked={rolePermissions.includes(record.id) || rolePermissions.includes(record.key)}
-            onChange={(e) => handlePermissionChange(record.id || record.key, e.target.checked)}
-            disabled={!selectedRole}
+            checked={rolePermissions.includes(record.name)}
+            onChange={(e) => handlePermissionChange(record.name, e.target.checked)}
+            disabled={!selectedUser}
           />
         </div>
       ),
@@ -96,50 +171,52 @@ const PermissionsList = ({
               value={selectedOrganization}
               onChange={handleOrganizationChange}
             >
-              {organizations?.map(org => (
+              {organizations.map(org => (
                 <Option key={org.id} value={org.id}>
                   {org.name}
                 </Option>
               ))}
             </Select>
           </div>
-          
+
           <div className={styles.selectGroup}>
-            <label className={styles.selectLabel}>Role:</label>
+            <label className={styles.selectLabel}>User:</label>
             <Select
-              placeholder="Select Role"
+              placeholder="Select User"
               className={styles.selectControl}
-              value={selectedRole}
-              onChange={handleRoleChange}
+              value={selectedUser}
+              onChange={handleUserChange}
               disabled={!selectedOrganization}
             >
-              {filteredRoles.map(role => (
-                <Option key={role.id} value={role.id}>
-                  {role.name}
+              {users.map(user => (
+                <Option key={user.id} value={user.id}>
+                  {user.name}
                 </Option>
               ))}
             </Select>
-            
           </div>
 
           <Button 
             type="primary" 
             icon={<SaveOutlined />} 
             onClick={handleSavePermissions}
-            disabled={!selectedRole || rolePermissions.length === 0}
+            disabled={!selectedUser || rolePermissions.length === 0}
             className={styles.saveButton}
           >
             Save Permissions
           </Button>
         </div>
         
-        {selectedRole && (
+        {selectedUser && (
           <div className={styles.roleInfo}>
             <Tag className={styles.roleTag}>
-              Selected Role: {filteredRoles.find(r => r.id === selectedRole)?.name}
+              Selected User: {users.find(u => u.id === selectedUser)?.name}
             </Tag>
             <Tag className={styles.permissionTag}>
               Permissions: {rolePermissions.length}
+            </Tag>
+            <Tag className={styles.roleTag}>
+              Role: {users.find(u => u.id === selectedUser)?.role || 'N/A'}
             </Tag>
           </div>
         )}
