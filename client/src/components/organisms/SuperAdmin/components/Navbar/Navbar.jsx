@@ -59,10 +59,9 @@ const Navbar = ({ activeMenu, onMenuChange }) => {
 
   const handleLogout = () => {
     // Clear user session/token
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+    localStorage.clear();
     // Navigate to login page
-    navigate('/login');
+    navigate('/SuperAdmin/login');
   };
 
   return (
