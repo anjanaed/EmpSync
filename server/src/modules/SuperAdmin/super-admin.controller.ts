@@ -70,6 +70,11 @@ export class SuperAdminController {
     return this.superAdminService.getUserById(id);
   }
 
+  @Get('users/:id/permissions')
+  async getPermissionsByUserId(@Param('id') id: string) {
+    return this.superAdminService.getPermissionsByUserId(id);
+  }
+
   @Put('users/:id')
   async updateUser(
     @Param('id') id: string,
