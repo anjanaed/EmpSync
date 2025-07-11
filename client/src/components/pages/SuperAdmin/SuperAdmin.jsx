@@ -174,17 +174,47 @@ const SuperAdmin = () => {
     setIsUpdateModalVisible(true);
   };
 
-  const handleUpdateOk = (values) => {
-    setData(data.map(item => 
-      item.key === selectedItem.key 
-        ? { 
-            ...item, 
-            name: values.name, 
-            domain: values.domain, 
-            letter: values.name.charAt(0).toUpperCase() 
-          }
-        : item
-    ));
+  // Function to update organization details
+  const updateOrganization = async (orgId, values) => {
+    try {
+      await axios.put(
+        `http://localhost:3000/super-admin/organizations/${orgId}`,
+        values,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      // Refresh organizations list after update
+      const orgsRes = await axios.get('http://localhost:3000/super-admin/organizations', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const orgs = orgsRes.data;
+      const mapped = orgs.map(org => ({
+        key: org.id,
+        name: org.name,
+        domain: org.contactEmail,
+        color: '#9254DE',
+        letter: org.name.charAt(0).toUpperCase(),
+        logoUrl: org.logoUrl,
+        active: org.active,
+        createdAt: org.createdAt,
+        updatedAt: org.updatedAt,
+        fingerprint_capacity: org.fingerprint_capacity,
+        fingerprint_per_machine: org.fingerprint_per_machine,
+        users: org.users,
+      }));
+      setData(mapped);
+    } catch (err) {
+      console.error('Failed to update organization', err);
+    }
+  };
+
+  const handleUpdateOk = async (values) => {
+    if (!selectedItem) return;
+    await updateOrganization(selectedItem.key, values);
     setIsUpdateModalVisible(false);
     setSelectedItem(null);
   };
