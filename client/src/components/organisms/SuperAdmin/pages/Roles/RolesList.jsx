@@ -58,7 +58,12 @@ const RolesList = ({ data, onAddNew, onUpdate, onDelete, className, authData}) =
       headers: { Authorization: `Bearer ${authData?.accessToken}` },
     })
       .then(res => setOrgUsers(res.data))
-      .catch(() => setOrgUsers([]))
+      .catch((err) => {
+        setOrgUsers([]);
+        message.error(
+          err.response?.data?.message || "Failed to fetch organization users"
+        );
+      })
       .finally(() => setOrgLoading(false));
   }, [selectedOrg, authData, urL]);
 
@@ -220,51 +225,49 @@ const RolesList = ({ data, onAddNew, onUpdate, onDelete, className, authData}) =
       </div>
 
       {/* Organization Users Table with Actions */}
-      {selectedOrg && (
-        <div style={{ marginBottom: 32 }}>
-          <h3 style={{ color: '#1890ff', marginBottom: 8 }}>Organization Users</h3>
-          <Table
-            columns={[
-              { title: 'ID', dataIndex: 'id', key: 'id' },
-              { title: 'Name', dataIndex: 'name', key: 'name' },
-              { title: 'Role', dataIndex: 'role', key: 'role' },
-              { title: 'Email', dataIndex: 'email', key: 'email' },
-              {
-                title: 'Actions',
-                key: 'actions',
-                render: (_, record) => (
-                  <Space size="middle">
-                    <Button 
-                      type="link" 
-                      icon={<EditOutlined />} 
-                      onClick={() => onUpdate(record)}
-                      className={styles.editButton}
-                    >
-                      Edit
-                    </Button>
-                    <Button 
-                      type="link" 
-                      danger 
-                      icon={<DeleteOutlined />} 
-                      onClick={() => handleDelete(record.id, record.email)}
-                      className={styles.deleteButton}
-                      loading={loading}
-                    >
-                      Delete
-                    </Button>
-                  </Space>
-                ),
-              },
-            ]}
-            dataSource={orgUsers}
-            loading={orgLoading}
-            rowKey="id"
-            pagination={false}
-            className={styles.table}
-            style={{ marginBottom: 24 }}
-          />
-        </div>
-      )}
+      <div style={{ marginBottom: 32 }}>
+        <h3 style={{ color: '#1890ff', marginBottom: 8 }}>Organization Users</h3>
+        <Table
+          columns={[
+            { title: 'ID', dataIndex: 'id', key: 'id' },
+            { title: 'Name', dataIndex: 'name', key: 'name' },
+            { title: 'Role', dataIndex: 'role', key: 'role' },
+            { title: 'Email', dataIndex: 'email', key: 'email' },
+            {
+              title: 'Actions',
+              key: 'actions',
+              render: (_, record) => (
+                <Space size="middle">
+                  <Button 
+                    type="link" 
+                    icon={<EditOutlined />} 
+                    onClick={() => onUpdate(record)}
+                    className={styles.editButton}
+                  >
+                    Edit
+                  </Button>
+                  <Button 
+                    type="link" 
+                    danger 
+                    icon={<DeleteOutlined />} 
+                    onClick={() => handleDelete(record.id, record.email)}
+                    className={styles.deleteButton}
+                    loading={loading}
+                  >
+                    Delete
+                  </Button>
+                </Space>
+              ),
+            },
+          ]}
+          dataSource={orgUsers}
+          loading={orgLoading}
+          rowKey="id"
+          pagination={false}
+          className={styles.table}
+          style={{ marginBottom: 24 }}
+        />
+      </div>
 
       {/* Modal for Add New Role */}
       <Modal
