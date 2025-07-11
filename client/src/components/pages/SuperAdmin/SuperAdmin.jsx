@@ -1,5 +1,6 @@
 import { Layout, Modal } from 'antd';
 import { useState, useEffect } from 'react';
+import axios from 'axios';
 import Navbar from '../../organisms/SuperAdmin/components/Navbar/Navbar';
 import AppHeader from '../../organisms/SuperAdmin/components/AppHeader/AppHeader';
 import OrganizationList from '../../organisms/SuperAdmin/pages/Organizations/Organization List/OrganizationList';
@@ -24,7 +25,7 @@ const SuperAdmin = () => {
   // Organizations data
   const [data, setData] = useState([]);
 
-  // Sample roles data
+  //  roles data
   const [rolesData, setRolesData] = useState([
     { key: '1', name: 'Super Admin', description: 'Full system access', permissions: 15 },
     { key: '2', name: 'Admin', description: 'Organization admin access', permissions: 10 },
@@ -32,7 +33,7 @@ const SuperAdmin = () => {
     { key: '4', name: 'Employee', description: 'Basic employee access', permissions: 3 },
   ]);
 
-  // Sample permissions data
+  //  permissions data
   const [permissionsData, setPermissionsData] = useState([
     { key: '1', name: 'User Management', description: 'Manage users: create, edit, delete, and view user accounts.' },
     { key: '2', name: 'Meal Management', description: 'Manage meals: add, edit, delete, and view meal items.' },
@@ -40,17 +41,22 @@ const SuperAdmin = () => {
     { key: '4', name: 'Reports', description: 'Access and export system reports.' },
   ]);
 
+  const token = localStorage.getItem('token'); // Or get your token from context/state
+
   // Fetch organizations from API
   useEffect(() => {
-    fetch('http://localhost:3000/super-admin/organizations')
-      .then(res => res.json())
-      .then(orgs => {
-        // Map API data to expected format for OrganizationList
+    axios.get('http://localhost:3000/super-admin/organizations', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then(res => {
+        const orgs = res.data;
         const mapped = orgs.map(org => ({
           key: org.id,
           name: org.name,
           domain: org.contactEmail,
-          color: '#9254DE', // Or use a color logic if needed
+          color: '#9254DE',
           letter: org.name.charAt(0).toUpperCase(),
           logoUrl: org.logoUrl,
           active: org.active,
@@ -103,9 +109,6 @@ const SuperAdmin = () => {
         return (
           <RolesList 
             data={rolesData}
-            onAddNew={() => {/* Handle add role */}}
-            onUpdate={() => {/* Handle update role */}}
-            onDelete={() => {/* Handle delete role */}}
             className={styles.listItem}
           />
         );
@@ -113,9 +116,6 @@ const SuperAdmin = () => {
         return (
           <PermissionsList 
             data={permissionsData}
-            onAddNew={() => {/* Handle add permission */}}
-            onUpdate={() => {/* Handle update permission */}}
-            onDelete={() => {/* Handle delete permission */}}
             className={styles.listItem}
           />
         );
@@ -130,14 +130,16 @@ const SuperAdmin = () => {
 
   const handleOk = async (values) => {
     try {
-      const response = await fetch('http://localhost:3000/super-admin/organizations', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(values),
+      await axios.post('http://localhost:3000/super-admin/organizations', values, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
       });
-      if (!response.ok) throw new Error('Failed to create organization');
-      // Option 1: Refetch all organizations
-      const orgs = await fetch('http://localhost:3000/super-admin/organizations').then(res => res.json());
+      const orgsRes = await axios.get('http://localhost:3000/super-admin/organizations', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const orgs = orgsRes.data;
       const mapped = orgs.map(org => ({
         key: org.id,
         name: org.name,
@@ -156,7 +158,6 @@ const SuperAdmin = () => {
       setIsModalVisible(false);
     } catch (err) {
       console.error(err);
-      // Optionally show error to user
     }
   };
 
@@ -202,11 +203,13 @@ const SuperAdmin = () => {
       cancelText: 'Cancel',
       async onOk() {
         try {
-          await fetch(`http://localhost:3000/super-admin/organizations/${item.key}`, {
-            method: 'DELETE',
+          await axios.delete(`http://localhost:3000/super-admin/organizations/${item.key}`, {
+            headers: { Authorization: `Bearer ${token}` },
           });
-          // Refetch organizations after delete
-          const orgs = await fetch('http://localhost:3000/super-admin/organizations').then(res => res.json());
+          const orgsRes = await axios.get('http://localhost:3000/super-admin/organizations', {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          const orgs = orgsRes.data;
           const mapped = orgs.map(org => ({
             key: org.id,
             name: org.name,
