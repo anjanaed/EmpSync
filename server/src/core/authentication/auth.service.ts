@@ -23,13 +23,11 @@ export class AuthService {
           client_id: this.clientId, // Use the env variable for client_id
           client_secret: this.clientSecret, // Use the env variable for client_secret
           scope: 'openid profile email',
-          connection: 'Username-Password-Authentication',
         },
         {
           headers: { 'Content-Type': 'application/json' },
         },
       );
-      console.log('Auth0 login response:', response.data); // Log the response
       return response.data;// Return the response data on success
 
     } catch (error) {

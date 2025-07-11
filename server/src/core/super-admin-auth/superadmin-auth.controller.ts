@@ -1,5 +1,4 @@
 import { Controller, Get,Post,Body, Param, UseGuards,HttpException,HttpStatus, Request } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
 import { SuperAdminAuthService } from './superadmin-auth.service';
 
 @Controller('superadmin')

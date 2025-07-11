@@ -16,27 +16,26 @@ export class SuperAdminAuthService {
   clientId = process.env.SUPERADMIN_AUTH0_CLIENT_ID;
   clientSecret = process.env.SUPERADMIN_AUTH0_SECRET;
 
+
+
   async superAdminLoginWithAuth0(username: string, password: string) {
     try {
       const response = await axios.post(
         `https://${this.url}/oauth/token`,
         {
-          grant_type: 'password',
+          grant_type: "http://auth0.com/oauth/grant-type/password-realm",
           username: username,
           password: password,
-          audience: `https://${this.url}/api/v2/`, // Use the env variable for audience
+          audience: `https://${this.url}/api/v2/`,
           client_id: this.clientId, // Use the env variable for client_id
           client_secret: this.clientSecret, // Use the env variable for client_secret
-          scope: 'openid profile email',
-          connection: 'SuperAdmin',
-        },
-        {
-          headers: { 'Content-Type': 'application/json' },
+          realm: "SuperAdmin",
         },
       );
       console.log('Auth0 login response:', response.data); // Log the response
       return response.data; // Return the response data on success
     } catch (error) {
+      console.log(error)
       console.error(
         'Error during Auth0 login:', // Log the error
         error.response?.data || error.message,
