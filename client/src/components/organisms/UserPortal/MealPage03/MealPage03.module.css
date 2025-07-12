@@ -2,269 +2,300 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   min-height: 100vh;
-  background: #f8f8f8;
-  padding: 20px;
+  background: #f5f5f5;
+  padding: 0;
+  width: 100%;
 }
 
 .header {
   display: flex;
-  width: 100%;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 20px;
-  background: #fff;
+  padding: 12px 16px;
+  background: #000;
+  color: #fff;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  width: 100%;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.dateAndTime {
-  font-size: 0.8em;
-  position: absolute;
-  top: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  text-align: center;
-  color: #555;
-  z-index: 1000;
+.name {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #06C167;
 }
 
-.name {
-  color: rgb(255, 0, 0);
-  font-weight: 900;
-  font-size: 1.3em;
-  text-shadow: 1px 1px 1px white;
+.dateAndTime {
+  font-size: 0.9rem;
+  color: #ccc;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .userName {
-  font-size: 1.2em;
-  font-weight: 600;
-  color: #ffffff;
-  text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
+  font-size: 1rem;
+  font-weight: 500;
+  color: #fff;
+}
+
+.cartButton {
+  color: #fff;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cartButton .ant-badge-count {
+  background: #06C167;
+  color: #fff;
+  font-size: 12px;
+  padding: 0 6px;
 }
 
 .layout {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  background: rgba(255, 255, 255, 0);
-  backdrop-filter: blur(1px);
-  -webkit-backdrop-filter: blur(1px);
-  border-radius: 10px;
   display: flex;
   flex-direction: column;
-  font-family: "Figtree", sans-serif;
   width: 100%;
-  padding: 10px 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 16px;
+  font-family: "Inter", sans-serif;
 }
 
-.successCard {
-  width: 600px;
-  text-align: center;
-  border: 2px solid #ffd591;
-  border-radius: 8px;
+.content {
+  padding: 0;
+  flex-grow: 1;
 }
 
-.successIcon {
-  font-size: 80px;
-  color: #52c41a;
-  margin-bottom: 24px;
+.cardContainer {
+  border-radius: 12px;
+  border: none;
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(0, grayscale(0%), 0, 0.1);
+  overflow: hidden;
 }
 
 .cardTitle {
   font-weight: 700;
-  color: #333;
-  margin-bottom: 0;
-  font-family: "Figtree", sans-serif;
-}
-
-.cardContainer {
-  border-radius: 8px;
-  border: none;
-  min-height: 92vh;
-  overflow: hidden;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  background: rgba(255, 255, 255, 0.671);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-}
-
-.dateButtonGroup {
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-}
-
-.mealList {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 10px;
-  border: none;
-  border-radius: 10px;
-  background-color: #f9f9f971;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  height: 68vh;
-  overflow-y: auto;
-  overflow-x: hidden;
-}
-
-.orderSummaryContainer {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  background-color: #f9f9f95e;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  height: 82vh;
-}
-
-.orderSummary {
-  height: 100%;
-  overflow-y: auto;
-  overflow-x: hidden;
-}
-
-.orderCard .hr {
+  color: #1a1a1a;
+  font-size: 1.8rem;
   margin: 0;
 }
 
-.orderDetails {
+.dateButtonGroup {
   display: flex;
-  justify-content: space-between;
-}
-
-.mealTitle {
-  font-size: 16px;
-  font-weight: bold;
-  color: #000000;
-  font-family: "Figtree", sans-serif;
-}
-
-.descriptionText {
-  color: #666;
-  font-size: 12px;
-  word-break: break-word;
-  white-space: pre-line;
-}
-
-.priceText {
-  font-size: 15px;
-  color: #000;
-}
-
-.errorCard {
-  width: 600px;
-  text-align: center;
-  border: 2px solid #ffa39e;
-  border-radius: 8px;
-}
-
-.errorIcon {
-  font-size: 80px;
-  color: #ff4d4f;
-  margin-bottom: 24px;
-}
-
-.successContainer {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 80vh;
-}
-
-.errorContainer {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 80vh;
+  gap: 8px;
+  padding: 0 16px;
+  margin-bottom: 16px;
 }
 
 .dateButton {
   flex: 1;
-  padding: 20px;
-  font-size: 20px;
-  font-weight: 700;
-  background-color: #f0f0f0;
-  color: #000;
+  padding: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  background: #f0f0f0;
+  color: #1a1a1a;
   border: none;
+  border-radius: 8px;
+  transition: all 0.3s ease;
 }
 
 .dateButton:hover,
 .dateButton:focus {
-  background-color: #ffffff;
-  color: #000000;
-  box-shadow: none;
-  border: none;
+  background: #e0e0e0;
+  color: #1a1a1a;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .selectedDateButton {
-  background: linear-gradient(135deg, #8f0101, #e30000);
+  background: #06C167;
   color: #fff;
-  padding: 20px;
-  border: none;
 }
 
 .selectedDateButton:hover,
 .selectedDateButton:focus {
-  background: linear-gradient(135deg, #8f0101, #e30000);
+  background: #05a85a;
   color: #fff;
-  box-shadow: none;
-  border: none;
 }
 
 .filterButton {
-  background-color: #f0f0f0;
-  color: #c41114;
+  background: #f0f0f0;
+  color: #1a1a1a;
+  border: none;
+  border-radius: 8px;
   display: flex;
-  justify-content: center;
   align-items: center;
-  border-color: #da1114;
+  gap: 8px;
+  padding: 8px 16px;
+  transition: all 0.3s ease;
+}
+
+.filterButton:hover {
+  background: #e0e0e0;
 }
 
 .tabLabel {
-  color: #000000;
-  text-shadow: none;
-  font-size: 15px;
-  font-family: "Figtree", sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1a1a1a;
 }
 
 .unavailableTab {
-  color: gray;
+  color: #999;
 }
 
 .selectedTab {
-  color: #a80003;
+  color: #06C167;
+}
+
+.mealList {
+  padding: 16px;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.mealCard {
+  border-radius: 12px;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 1px solid #e0e0e0;
+  background: #fff;
+}
+
+.mealCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.mealCard.pastDueCard {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.selectedMealCard {
+  border: 2px solid #06C167;
+  background: #e6f7f0;
 }
 
 .mealImage {
-  height: 110px;
+  height: 120px;
   object-fit: cover;
-}
-
-.mealCardhr {
-  margin: 15px;
+  width: 100%;
 }
 
 .pastDueImage {
   filter: grayscale(100%);
 }
 
-.mealCard {
-  padding-bottom: 15px;
-  opacity: 1;
-  overflow: hidden;
-  border: 2px solid transparent;
-  margin-bottom: 10px;
+.mealCardhr {
+  margin: 12px 0;
+  border-color: #e0e0e0;
 }
 
-.pastDueCard {
-  cursor: not-allowed;
-  opacity: 0.5;
+.mealTitle {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1a1a1a;
 }
 
-.secondRow {
+.descriptionText {
+  font-size: 0.9rem;
+  color: #666;
+  line-height: 1.4;
+}
+
+.priceContainer {
   margin-top: 8px;
+}
+
+.priceText {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.successContainer,
+.errorContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 80vh;
+}
+
+.successCard,
+.errorCard {
+  width: 90%;
+  max-width: 500px;
+  text-align: center;
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.successCard {
+  border: 2px solid #06C167;
+}
+
+.errorCard {
+  border: 2px solid #ff4d4f;
+}
+
+.successIcon {
+  font-size: 60px;
+  color: #06C167;
+  margin-bottom: 16px;
+}
+
+.errorIcon {
+  font-size: 60px;
+  color: #ff4d4f;
+  margin-bottom: 16px;
+}
+
+.cartModal {
+  width: 100%;
+  max-width: 500px;
+  top: 20px;
+}
+
+.cartModal .ant-modal-content {
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.cartTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.orderSummary {
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.orderCard {
+  padding: 12px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.orderCardTitle {
+  font-size: 1.1rem;
+}
+
+.orderCardDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 4px;
 }
 
 .rightAligned {
@@ -273,92 +304,66 @@
 
 .counter {
   display: flex;
-  margin-left: auto;
-  justify-content: end;
   align-items: center;
-}
-
-.orderInfo {
-  display: flex;
-  flex-direction: column;
-}
-
-.priceDiv {
-  margin-right: 20px;
+  gap: 8px;
 }
 
 .actionButton {
-  padding: 5px;
-  margin: 0;
-  border: none;
-  background: none;
-  border-radius: 0;
-  height: auto;
-  line-height: normal;
-  box-shadow: none;
-  min-width: 0;
+  padding: 4px;
+  font-size: 1.2rem;
+  color: #1a1a1a;
 }
 
 .itemCountBadge {
-  font-size: 16px;
-  font-weight: bold;
+  font-size: 1rem;
+  font-weight: 600;
 }
 
-.placeOrderButton {
-  margin-top: 5px;
-  height: 70px;
-  font-size: 16px;
-  font-weight: bold;
-  border-radius: 4px;
-  background: linear-gradient(135deg, #a10000, #e30000);
-  color: #fff;
-  border: 1px solid #d9363e;
-  cursor: pointer;
+.removeButton {
+  padding: 0;
 }
 
-.placeOrderButton:hover,
-.placeOrderButton:focus {
-  background-color: #ff4d4f;
-  color: #fff;
-  border-color: #d9363e;
-  box-shadow: none;
-}
-
-.enabledButton {
-  background-color: #ff4d4f;
-  color: #fff;
-  border-color: #d9363e;
-  cursor: pointer;
-}
-
-.disabledButton {
-  background-color: #d9d9d9;
-  color: #8c8c8c;
-  border-color: #d9d9d9;
-  cursor: not-allowed;
+.priceDiv {
+  margin-top: 8px;
 }
 
 .totalContainer {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 16px;
+  padding: 16px;
+  background: #fff;
+  border-top: 1px solid #e0e0e0;
 }
 
-.selectedMealCard {
-  border: 2px solid #e30000;
-  box-shadow: 0 0 5px #e3000033;
-  background: #fff5f5;
+.totalText {
+  font-size: 1.2rem;
 }
 
-.backButton {
-  display: flex;
-  flex-direction: row;
-  color: white;
-  background-color: #b40003;
-  gap: 4px;
-  justify-content: center;
-  align-items: center;
+.placeOrderButton {
+  height: 48px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  background: #06C167;
+  color: #fff;
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.placeOrderButton:hover,
+.placeOrderButton:focus {
+  background: #05a85a;
+}
+
+.enabledButton {
+  background: #06C167;
+}
+
+.disabledButton {
+ background: #d9d9d9;
+  color: #8c8c8c;
+  cursor: not-allowed;
 }
 
 .loadingContainer {
@@ -374,4 +379,159 @@
   z-index: 9999;
   background: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(4px);
+}
+
+.loadingText {
+  margin-top: 16px;
+  font-size: 1rem;
+  color: #1a1a1a;
+}
+
+.loadingWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 60vh;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .container {
+    padding: 0;
+  }
+
+  .header {
+    padding: 8px 12px;
+  }
+
+  .name {
+    font-size: 1.2rem;
+  }
+
+  .dateAndTime {
+    font-size: 0.8rem;
+  }
+
+  .userName {
+    font-size: 0.9rem;
+  }
+
+  .cartButton {
+    font-size: 0.9rem;
+  }
+
+  .layout {
+    padding: 8px;
+  }
+
+  .cardContainer {
+    box-shadow: none;
+    border-radius: 0;
+  }
+
+  .cardTitle {
+    font-size: 1.5rem;
+  }
+
+  .dateButtonGroup {
+    flex-direction: column;
+    gap: 8px;
+    padding: 0 8px;
+  }
+
+  .dateButton {
+    padding: 10px;
+    font-size: 0.9rem;
+  }
+
+  .mealList {
+    padding: 8px;
+  }
+
+  .mealCard {
+    margin-bottom: 8px;
+  }
+
+  .mealImage {
+    height: 100px;
+  }
+
+  .mealTitle {
+    font-size: 1rem;
+  }
+
+  .descriptionText {
+    font-size: 0.8rem;
+  }
+
+  .priceText {
+    font-size: 0.9rem;
+  }
+
+  .cartModal {
+    max-width: 100%;
+    margin: 0;
+    top: 0;
+    height: 100vh;
+  }
+
+  .cartModal .ant-modal-content {
+    border-radius: 0;
+  }
+
+  .orderCard {
+    padding: 8px;
+  }
+
+  .orderCardTitle {
+    font-size: 1rem;
+  }
+
+  .placeOrderButton {
+    height: 44px;
+    font-size: 1rem;
+  }
+
+  .totalText {
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .header {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .name {
+    font-size: 1rem;
+  }
+
+  .dateAndTime {
+    position: static;
+    transform: none;
+    order: 2;
+    width: 100%;
+    text-align: center;
+  }
+
+  .userName {
+    font-size: 0.8rem;
+  }
+
+  .cartButton {
+    font-size: 0.8rem;
+  }
+
+  .cardTitle {
+    font-size: 1.3rem;
+  }
+
+  .dateButton {
+    font-size: 0.8rem;
+  }
+
+  .mealImage {
+    height: 80px;
+  }
 }
