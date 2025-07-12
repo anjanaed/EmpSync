@@ -12,9 +12,15 @@ const RolesList = ({ data, onAddNew, onUpdate, onDelete, className, authData}) =
   const [selectedOrg, setSelectedOrg] = useState(null);
   const [orgUsers, setOrgUsers] = useState([]);
   const [orgLoading, setOrgLoading] = useState(false);
+
+  const [isEditModalVisible, setIsEditModalVisible] = useState(false);
+  const [editForm] = Form.useForm();
+  const [editingUser, setEditingUser] = useState(null);
+
   const urL = import.meta.env.VITE_BASE_URL;
   const auth0Url = import.meta.env.VITE_AUTH0_URL;
   const auth0Id = import.meta.env.VITE_AUTH0_ID;
+  const token = localStorage.getItem('access_token');
 
   const showModal = () => setIsModalVisible(true);
   const handleCancel = () => {
@@ -55,7 +61,7 @@ const RolesList = ({ data, onAddNew, onUpdate, onDelete, className, authData}) =
     }
     setOrgLoading(true);
     axios.get(`${urL}/super-admin/admins/${selectedOrg}`, {
-      headers: { Authorization: `Bearer ${authData?.accessToken}` },
+      headers: { Authorization: `Bearer ${token}` },
     })
       .then(res => setOrgUsers(res.data))
       .catch((err) => {
@@ -76,7 +82,6 @@ const RolesList = ({ data, onAddNew, onUpdate, onDelete, className, authData}) =
     setLoading(true);
     const { employeeId, name, role, email, password } = values;
     try {
-      const token = authData?.accessToken;
       const payload = {
         id: employeeId,
         name,
@@ -124,7 +129,6 @@ const RolesList = ({ data, onAddNew, onUpdate, onDelete, className, authData}) =
   const handleDelete = async (id, email) => {
     setLoading(true);
     console.log(email);
-    const token = authData?.accessToken;
     try {
       await axios.delete(`${urL}/super-admin/users/${id}`, {
         headers: {
@@ -145,49 +149,46 @@ const RolesList = ({ data, onAddNew, onUpdate, onDelete, className, authData}) =
     setLoading(false);
   };
 
-  const columns = [
-    {
-      title: 'Role Name',
-      dataIndex: 'name',
-      key: 'name',
-    },
-    {
-      title: 'Description',
-      dataIndex: 'description',
-      key: 'description',
-    },
-    {
-      title: 'Permissions',
-      dataIndex: 'permissions',
-      key: 'permissions',
-      render: (count) => <Tag color="blue">{count} permissions</Tag>,
-    },
-    {
-      title: 'Actions',
-      key: 'actions',
-      render: (_, record) => (
-        <Space size="middle">
-          <Button 
-            type="link" 
-            icon={<EditOutlined />} 
-            onClick={() => onUpdate(record)}
-            className={styles.editButton}
-          >
-            Edit
-          </Button>
-          <Button 
-            type="link" 
-            danger 
-            icon={<DeleteOutlined />} 
-            onClick={() => onDelete(record)}
-            className={styles.deleteButton}
-          >
-            Delete
-          </Button>
-        </Space>
-      ),
-    },
-  ];
+  const handleEditClick = (user) => {
+    setEditingUser(user);
+    editForm.setFieldsValue({
+      employeeId: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+    });
+    setIsEditModalVisible(true);
+  };
+
+  const handleUpdate = async () => {
+    try {
+      const values = await editForm.validateFields();
+      setLoading(true);
+      const payload = {
+        id: values.employeeId,
+        name: values.name,
+        email: values.email,
+        role: values.role,
+        organizationId: localStorage.getItem('orgid') || selectedOrg,
+        // You can include other fields if needed
+      };
+
+      await axios.put(`${urL}/super-admin/users/${editingUser.id}`, payload, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      message.success("User Updated Successfully");
+      setIsEditModalVisible(false);
+      setEditingUser(null);
+      fetchOrgUsers();
+    } catch (err) {
+      message.error(`Update Failed: ${err.response?.data?.message || "Unknown error"}`);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className={`${styles.container} ${className || ''}`}>
@@ -241,7 +242,7 @@ const RolesList = ({ data, onAddNew, onUpdate, onDelete, className, authData}) =
                   <Button 
                     type="link" 
                     icon={<EditOutlined />} 
-                    onClick={() => onUpdate(record)}
+                    onClick={() => handleEditClick(record)}
                     className={styles.editButton}
                   >
                     Edit
@@ -366,6 +367,69 @@ const RolesList = ({ data, onAddNew, onUpdate, onDelete, className, authData}) =
           </Button>
         </div>
       </Modal>
+
+
+      {/* Edit Modal */}
+      <Modal
+        title="Edit User"
+        open={isEditModalVisible}
+        onCancel={() => {
+          setIsEditModalVisible(false);
+          setEditingUser(null);
+        }}
+        footer={null}
+      >
+        <Form
+          form={editForm}
+          layout="vertical"
+          name="edit_user_form"
+        >
+          <Form.Item
+            label="Employee ID"
+            name="employeeId"
+            rules={[{ required: true, message: 'Please input the Employee ID!' }]}
+          >
+            <Input disabled />
+          </Form.Item>
+          <Form.Item
+            label="Name"
+            name="name"
+            rules={[{ required: true, message: 'Please input the Name!' }]}
+          >
+            <Input placeholder="Enter Name" />
+          </Form.Item>
+          <Form.Item
+            label="Email"
+            name="email"
+            rules={[
+              { required: true, message: 'Please input the email!' },
+              { type: 'email', message: 'Please enter a valid email!' },
+            ]}
+          >
+            <Input placeholder="Enter Email" />
+          </Form.Item>
+          <Form.Item
+            label="Role"
+            name="role"
+            rules={[{ required: true, message: 'Please select a role!' }]}
+          >
+            <Select placeholder="Select Role">
+              <Select.Option value="HR_ADMIN">Human Resource Manager</Select.Option>
+              <Select.Option value="KITCHEN_ADMIN">Kitchen Administrator</Select.Option>
+              <Select.Option value="KITCHEN_STAFF">Kitchen Staff</Select.Option>
+            </Select>
+          </Form.Item>
+        </Form>
+        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginTop: 12 }}>
+          <Button type="primary" onClick={handleUpdate} loading={loading}>
+            Update
+          </Button>
+          <Button onClick={() => setIsEditModalVisible(false)}>
+            Cancel
+          </Button>
+        </div>
+      </Modal>
+
     </div>
   );
 };
