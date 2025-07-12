@@ -3,27 +3,41 @@ import { Form, Input, Button, message, Card } from "antd";
 import { UserOutlined, LockOutlined, LoginOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { useAuth } from "../../../../../contexts/AuthContext";
 import Loading from "../../../../atoms/loading/loading";
 import styles from "./Login.module.css";
 
 const SuperAdminLogin = () => {
-  const { login } = useAuth();
   const [loading, setLoading] = useState(false);
   const urL = import.meta.env.VITE_BASE_URL;
   const navigate = useNavigate();
   const [form] = Form.useForm();
 
-  const handleLogin = async (username, password) => {
+  const login = async ({ access_token }) => {
+  try {
+      if (access_token) {
+        localStorage.setItem("access_token", access_token);
+        localStorage.setItem("role", "SuperAdmin");
+        return true;
+      } else {
+        throw new Error("No access token provided");
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      
+      return false;
+    }
+  };
+
+  const handleLogin = async (email, password) => {
     setLoading(true);
     try {
       const response = await axios.post(`${urL}/superadmin/login`, {
-        username,
+        email,
         password,
       });
 
-      const { access_token, id_token } = response.data;
-      await login({ access_token, id_token });
+      const { access_token } = response.data;
+      await login({ access_token });
       
       message.success("Login successful!");
       navigate("/superadmin/dashboard");
@@ -36,7 +50,7 @@ const SuperAdminLogin = () => {
   };
 
   const onFinish = (values) => {
-    handleLogin(values.username, values.password);
+    handleLogin(values.email, values.password);
   };
 
   if (loading) {
@@ -64,18 +78,18 @@ const SuperAdminLogin = () => {
             size="large"
           >
             <Form.Item
-              name="username"
-              label={<span className={styles.label}>Username</span>}
+              name="email"
+              label={<span className={styles.label}>Email</span>}
               rules={[
                 {
                   required: true,
-                  message: "Please input your username!",
+                  message: "Please input your email!",
                 },
               ]}
             >
               <Input
                 prefix={<UserOutlined className={styles.inputIcon} />}
-                placeholder="Enter your username"
+                placeholder="Enter your email"
                 className={styles.input}
               />
             </Form.Item>
@@ -123,3 +137,4 @@ const SuperAdminLogin = () => {
 };
 
 export default SuperAdminLogin;
+
