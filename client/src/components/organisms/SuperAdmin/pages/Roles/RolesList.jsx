@@ -128,7 +128,6 @@ const RolesList = ({ data, onAddNew, onUpdate, onDelete, className, authData}) =
 
   const handleDelete = async (id, email) => {
     setLoading(true);
-    console.log(email);
     try {
       await axios.delete(`${urL}/super-admin/users/${id}`, {
         headers: {
@@ -378,6 +377,9 @@ const RolesList = ({ data, onAddNew, onUpdate, onDelete, className, authData}) =
           setEditingUser(null);
         }}
         footer={null}
+        modalRender={(modal) => (
+          <div className={styles.container}>{modal}</div>
+        )}
       >
         <Form
           form={editForm}
@@ -412,6 +414,7 @@ const RolesList = ({ data, onAddNew, onUpdate, onDelete, className, authData}) =
             label="Role"
             name="role"
             rules={[{ required: true, message: 'Please select a role!' }]}
+            className={styles.roleDropdown}
           >
             <Select placeholder="Select Role">
               <Select.Option value="HR_ADMIN">Human Resource Manager</Select.Option>
@@ -421,10 +424,10 @@ const RolesList = ({ data, onAddNew, onUpdate, onDelete, className, authData}) =
           </Form.Item>
         </Form>
         <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginTop: 12 }}>
-          <Button type="primary" onClick={handleUpdate} loading={loading}>
+          <Button type="primary" onClick={handleUpdate} loading={loading} className={styles.submitButton}>
             Update
           </Button>
-          <Button onClick={() => setIsEditModalVisible(false)}>
+          <Button onClick={() => setIsEditModalVisible(false)} className={styles.cancelButton}>
             Cancel
           </Button>
         </div>
