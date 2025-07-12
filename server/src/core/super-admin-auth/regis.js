@@ -53,7 +53,7 @@ var signUpUser = function () { return __awaiter(void 0, void 0, void 0, function
                         client_id: auth0ClientId,
                         email: email,
                         password: password,
-                        connection: "New",
+                        connection: "SuperAdmin",
                     })];
             case 1:
                 res = _b.sent();
