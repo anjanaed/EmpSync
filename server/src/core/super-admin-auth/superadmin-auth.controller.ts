@@ -7,10 +7,10 @@ export class SuperAdminAuthController {
 
 
   @Post('login')
-  async login(@Body() body: { username: string; password: string }) {
+  async login(@Body() body: { email: string; password: string }) {
     try {
       return await this.superAdminAuthService.superAdminLoginWithAuth0(
-        body.username,
+        body.email,
         body.password,
       );
     } catch (error) {
