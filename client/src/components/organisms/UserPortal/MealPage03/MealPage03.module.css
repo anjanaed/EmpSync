@@ -1,0 +1,377 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: #f8f8f8;
+  padding: 20px;
+}
+
+.header {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.dateAndTime {
+  font-size: 0.8em;
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  color: #555;
+  z-index: 1000;
+}
+
+.name {
+  color: rgb(255, 0, 0);
+  font-weight: 900;
+  font-size: 1.3em;
+  text-shadow: 1px 1px 1px white;
+}
+
+.userName {
+  font-size: 1.2em;
+  font-weight: 600;
+  color: #ffffff;
+  text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
+}
+
+.layout {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0);
+  backdrop-filter: blur(1px);
+  -webkit-backdrop-filter: blur(1px);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  font-family: "Figtree", sans-serif;
+  width: 100%;
+  padding: 10px 20px;
+}
+
+.successCard {
+  width: 600px;
+  text-align: center;
+  border: 2px solid #ffd591;
+  border-radius: 8px;
+}
+
+.successIcon {
+  font-size: 80px;
+  color: #52c41a;
+  margin-bottom: 24px;
+}
+
+.cardTitle {
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 0;
+  font-family: "Figtree", sans-serif;
+}
+
+.cardContainer {
+  border-radius: 8px;
+  border: none;
+  min-height: 92vh;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.671);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.dateButtonGroup {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.mealList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
+  border: none;
+  border-radius: 10px;
+  background-color: #f9f9f971;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  height: 68vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.orderSummaryContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background-color: #f9f9f95e;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  height: 82vh;
+}
+
+.orderSummary {
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.orderCard .hr {
+  margin: 0;
+}
+
+.orderDetails {
+  display: flex;
+  justify-content: space-between;
+}
+
+.mealTitle {
+  font-size: 16px;
+  font-weight: bold;
+  color: #000000;
+  font-family: "Figtree", sans-serif;
+}
+
+.descriptionText {
+  color: #666;
+  font-size: 12px;
+  word-break: break-word;
+  white-space: pre-line;
+}
+
+.priceText {
+  font-size: 15px;
+  color: #000;
+}
+
+.errorCard {
+  width: 600px;
+  text-align: center;
+  border: 2px solid #ffa39e;
+  border-radius: 8px;
+}
+
+.errorIcon {
+  font-size: 80px;
+  color: #ff4d4f;
+  margin-bottom: 24px;
+}
+
+.successContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80vh;
+}
+
+.errorContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80vh;
+}
+
+.dateButton {
+  flex: 1;
+  padding: 20px;
+  font-size: 20px;
+  font-weight: 700;
+  background-color: #f0f0f0;
+  color: #000;
+  border: none;
+}
+
+.dateButton:hover,
+.dateButton:focus {
+  background-color: #ffffff;
+  color: #000000;
+  box-shadow: none;
+  border: none;
+}
+
+.selectedDateButton {
+  background: linear-gradient(135deg, #8f0101, #e30000);
+  color: #fff;
+  padding: 20px;
+  border: none;
+}
+
+.selectedDateButton:hover,
+.selectedDateButton:focus {
+  background: linear-gradient(135deg, #8f0101, #e30000);
+  color: #fff;
+  box-shadow: none;
+  border: none;
+}
+
+.filterButton {
+  background-color: #f0f0f0;
+  color: #c41114;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-color: #da1114;
+}
+
+.tabLabel {
+  color: #000000;
+  text-shadow: none;
+  font-size: 15px;
+  font-family: "Figtree", sans-serif;
+}
+
+.unavailableTab {
+  color: gray;
+}
+
+.selectedTab {
+  color: #a80003;
+}
+
+.mealImage {
+  height: 110px;
+  object-fit: cover;
+}
+
+.mealCardhr {
+  margin: 15px;
+}
+
+.pastDueImage {
+  filter: grayscale(100%);
+}
+
+.mealCard {
+  padding-bottom: 15px;
+  opacity: 1;
+  overflow: hidden;
+  border: 2px solid transparent;
+  margin-bottom: 10px;
+}
+
+.pastDueCard {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.secondRow {
+  margin-top: 8px;
+}
+
+.rightAligned {
+  text-align: right;
+}
+
+.counter {
+  display: flex;
+  margin-left: auto;
+  justify-content: end;
+  align-items: center;
+}
+
+.orderInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.priceDiv {
+  margin-right: 20px;
+}
+
+.actionButton {
+  padding: 5px;
+  margin: 0;
+  border: none;
+  background: none;
+  border-radius: 0;
+  height: auto;
+  line-height: normal;
+  box-shadow: none;
+  min-width: 0;
+}
+
+.itemCountBadge {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.placeOrderButton {
+  margin-top: 5px;
+  height: 70px;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 4px;
+  background: linear-gradient(135deg, #a10000, #e30000);
+  color: #fff;
+  border: 1px solid #d9363e;
+  cursor: pointer;
+}
+
+.placeOrderButton:hover,
+.placeOrderButton:focus {
+  background-color: #ff4d4f;
+  color: #fff;
+  border-color: #d9363e;
+  box-shadow: none;
+}
+
+.enabledButton {
+  background-color: #ff4d4f;
+  color: #fff;
+  border-color: #d9363e;
+  cursor: pointer;
+}
+
+.disabledButton {
+  background-color: #d9d9d9;
+  color: #8c8c8c;
+  border-color: #d9d9d9;
+  cursor: not-allowed;
+}
+
+.totalContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+}
+
+.selectedMealCard {
+  border: 2px solid #e30000;
+  box-shadow: 0 0 5px #e3000033;
+  background: #fff5f5;
+}
+
+.backButton {
+  display: flex;
+  flex-direction: row;
+  color: white;
+  background-color: #b40003;
+  gap: 4px;
+  justify-content: center;
+  align-items: center;
+}
+
+.loadingContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(4px);
+}
