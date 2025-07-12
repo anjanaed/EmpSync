@@ -8,6 +8,7 @@ import Organizations from '../components/organisms/SuperAdmin/pages/Organization
 import Roles from '../components/organisms/SuperAdmin/pages/Roles/RolesList';
 import Permissions from '../components/organisms/SuperAdmin/pages/Permissions/PermissionsList';
 import UserFingerPrintRegister from '../components/organisms/OrderTabUI/UserFingerPrintRegister/UserFingerPrintRegister';
+import MealPage03 from '../components/organisms/UserPortal/MealPage03/MealPage03';
 // import KitchenAdmin from "../components/pages/KitchenAdmin/SchedulePage/KitchenAdmin";
 // import Meals from "../components/pages/KitchenAdmin/MealPage/Meal";
 // import MealDetailsForm from "../components/pages/KitchenAdmin/AddMealPage/AddMeal";
@@ -34,6 +35,7 @@ const AppRoutes = () => (
             <Route path="permissions" element={<Permissions />} />
           </Route>
           <Route path="/user-fingerprint-register" element={<UserFingerPrintRegister />} />
+          <Route path="/MealPage03" element={<MealPage03 />} />
           {/* <Route path="/kitchen-admin" element={<KitchenAdmin />} />
           <Route path="/kitchen-meal" element={<Meals />} />
           <Route path="/meal-details" element={<MealDetailsForm />} />
