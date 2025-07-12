@@ -12,7 +12,7 @@ const signUpUser = async () => {
       client_id: auth0ClientId,
       email,
       password,
-      connection: "New",
+      connection: "SuperAdmin",
     });
     console.log("Registration Success:", res.data);
   } catch (error: any) {
