@@ -15,7 +15,6 @@ const SuperAdminLogin = () => {
 
   const [form] = Form.useForm();
 
-
   const handleLogin = async (email, password) => {
     setLoading(true);
     try {

@@ -40,7 +40,7 @@ var axios_1 = require("axios");
 // === CONFIGURE THESE VALUES ===
 var auth0Url = "dev-77pr5yqzs0m53x77.us.auth0.com"; // e.g. your-tenant.auth0.com
 var auth0ClientId = "RsxaQQdCDS1kk422wUEJtql0FY9AGFuN";
-var email = "chami2002@gmail.com";
+var email = "chamilka22002@gmail.com";
 var password = "chamilka2002.";
 var signUpUser = function () { return __awaiter(void 0, void 0, void 0, function () {
     var res, error_1;
