@@ -21,6 +21,7 @@ import { SuperAdminAuthModule } from './core/super-admin-auth/superadmin-auth.mo
 import { UserFingerPrintRegisterBackendModule } from './modules/user-finger-print-register-backend/user-finger-print-register-backend.module';
 import { UserFingerPrintRegisterBackendService } from './modules/user-finger-print-register-backend/user-finger-print-register-backend.service';
 import { UserFingerPrintRegisterBackendController } from './modules/user-finger-print-register-backend/user-finger-print-register-backend.controller';
+import { HrFingerprintsModule } from './modules/hr-fingerprints/hr-fingerprints.module';
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { UserFingerPrintRegisterBackendController } from './modules/user-finger-
     MealsServingModule,
     SuperAdminModule,
     UserFingerPrintRegisterBackendModule,
+    HrFingerprintsModule,
   ],
   controllers: [AppController, UserFingerPrintRegisterBackendController],
   providers: [AppService, UserFingerPrintRegisterBackendService],

@@ -1,6 +1,7 @@
 import React from "react";
 import { Routes, Route, BrowserRouter, Navigate } from "react-router-dom";
 import PasswordReset from "../components/pages/Login/PasswordReset/PasswordReset";
+import FingerPrintPage from '../components/pages/HR/FingerPrintPage/FingerPrintPage';
 import OrderTab from "../components/pages/OrderTab/OrderTab";
 import SuperAdmin from "../components/pages/SuperAdmin/SuperAdmin";
 import SuperAdminLogin from '../components/pages/Login/SuperAdmin/LoginPage/Login';
@@ -44,6 +45,7 @@ const AppRoutes = () => (
           <Route path="/edit-meal" element={<EditMeal />} /> */}         
           {/* Private Routes */}
           {PrivateRoutes()}
+          <Route path="/fingerprint" element={<FingerPrintPage />} />
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </PopupProvider>
