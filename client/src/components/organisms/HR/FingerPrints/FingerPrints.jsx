@@ -25,19 +25,23 @@ const FingerPrints = () => {
   const [modalThumbids, setModalThumbids] = useState([]);
   const [modalEmpId, setModalEmpId] = useState("");
   const [deleteMode, setDeleteMode] = useState(false);
+  const [showTable, setShowTable] = useState(false);
 
   useEffect(() => {
-    axios
-      .get("http://localhost:3000/hr-fingerprints/users/fingerprint-details")
-      .then((res) => {
-        setUserData(res.data);
-        setLoading(false);
-      })
-      .catch(() => {
-        setUserData([]);
-        setLoading(false);
-      });
-  }, []);
+    if (showTable) {
+      setLoading(true);
+      axios
+        .get("http://localhost:3000/hr-fingerprints/users/fingerprint-details")
+        .then((res) => {
+          setUserData(res.data);
+          setLoading(false);
+        })
+        .catch(() => {
+          setUserData([]);
+          setLoading(false);
+        });
+    }
+  }, [showTable]);
 
   const handleView = (empId, thumbids) => {
     setModalEmpId(empId);
@@ -56,7 +60,6 @@ const FingerPrints = () => {
   const handleDeleteThumbid = async (thumbid) => {
     await axios.delete(`http://localhost:3000/hr-fingerprints/fingerprint/${thumbid}`);
     setModalThumbids((prev) => prev.filter((id) => id !== thumbid));
-    // Optionally, refresh main table data
     setUserData((prev) =>
       prev.map((user) =>
         user.id === modalEmpId
@@ -146,61 +149,85 @@ const FingerPrints = () => {
     },
   ];
 
-  return (
-    <div className={styles.container}>
-      <h2 className={styles.title}>User Fingerprint Info.</h2>
-      <ConfigProvider theme={customTheme}>
-        <Table
-          columns={columns}
-          dataSource={userData.map((user) => ({ ...user, key: user.id }))}
-          loading={loading}
-          pagination={{
-            position: ["bottomCenter"],
-            pageSize: 25,
-            showTotal: (total, range) => `${range[0]}–${range[1]} of ${total} items`,
-            showSizeChanger: false,
-          }}
-        />
-      </ConfigProvider>
-      <Modal
-        open={modalVisible}
-        title={deleteMode ? "Delete Fingerprints" : "View Fingerprints"}
-        onCancel={() => setModalVisible(false)}
-        footer={null}
-      >
-        <div>
-          <strong>Employee ID:</strong> {modalEmpId}
+  // Landing view
+  if (!showTable) {
+    return (
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "32px", background: "#fff", borderRadius: "12px", boxShadow: "0 2px 8px rgba(0,0,0,0.08)", width: "100%", margin: "40px 0" }}>
+        <div style={{ textAlign: "left", fontSize: "1.2rem", fontWeight: 500 }}>
+          Click here to get User Fingerprints Info.
         </div>
-        <br />
-        <ul>
-          {modalThumbids.length === 0 ? (
-            <li>No fingerprints found.</li>
-          ) : (
-            modalThumbids.map((thumbid) => (
-              <li key={thumbid} style={{ marginBottom: "8px" }}>
-                {thumbid}
-                {deleteMode && (
-                  <Popconfirm
-                    title="Delete this fingerprint?"
-                    onConfirm={() => handleDeleteThumbid(thumbid)}
-                    okText="Delete"
-                    cancelText="Cancel"
-                  >
-                    <Button
-                      icon={<DeleteOutlined />}
-                      size="small"
-                      danger
-                      style={{ marginLeft: "12px" }}
+        <Button type="primary" onClick={() => setShowTable(true)}>
+          User Info.
+        </Button>
+      </div>
+    );
+  }
+
+  // Table view
+  return (
+    <div style={{ position: "relative" }}>
+      <div className={styles.container} style={{ position: "relative" }}>
+        {/* Absolutely positioned Back Button inside container */}
+        <Button
+          style={{ position: "absolute", top: 16, left: 16, zIndex: 1000 }}
+          onClick={() => setShowTable(false)}
+        >
+          Back
+        </Button>
+        <h2 className={styles.title}>User Fingerprint Info.</h2>
+        <ConfigProvider theme={customTheme}>
+          <Table
+            columns={columns}
+            dataSource={userData.map((user) => ({ ...user, key: user.id }))}
+            loading={loading}
+            pagination={{
+              position: ["bottomCenter"],
+              pageSize: 25,
+              showTotal: (total, range) => `${range[0]}–${range[1]} of ${total} items`,
+              showSizeChanger: false,
+            }}
+          />
+        </ConfigProvider>
+        <Modal
+          open={modalVisible}
+          title={deleteMode ? "Delete Fingerprints" : "View Fingerprints"}
+          onCancel={() => setModalVisible(false)}
+          footer={null}
+        >
+          <div>
+            <strong>Employee ID:</strong> {modalEmpId}
+          </div>
+          <br />
+          <ul>
+            {modalThumbids.length === 0 ? (
+              <li>No fingerprints found.</li>
+            ) : (
+              modalThumbids.map((thumbid) => (
+                <li key={thumbid} style={{ marginBottom: "8px" }}>
+                  {thumbid}
+                  {deleteMode && (
+                    <Popconfirm
+                      title="Delete this fingerprint?"
+                      onConfirm={() => handleDeleteThumbid(thumbid)}
+                      okText="Delete"
+                      cancelText="Cancel"
                     >
-                      Delete
-                    </Button>
-                  </Popconfirm>
-                )}
-              </li>
-            ))
-          )}
-        </ul>
-      </Modal>
+                      <Button
+                        icon={<DeleteOutlined />}
+                        size="small"
+                        danger
+                        style={{ marginLeft: "12px" }}
+                      >
+                        Delete
+                      </Button>
+                    </Popconfirm>
+                  )}
+                </li>
+              ))
+            )}
+          </ul>
+        </Modal>
+      </div>
     </div>
   );
 };
