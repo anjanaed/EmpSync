@@ -1,0 +1,37 @@
+import { Controller, Delete, Get, Param } from '@nestjs/common';
+import { HrFingerprintsService } from './hr-fingerprints.service';
+
+@Controller('hr-fingerprints')
+export class HrFingerprintsController {
+  constructor(private readonly hrFingerprintsService: HrFingerprintsService) {}
+
+  @Get()
+  async getAllFingerprints() {
+    return this.hrFingerprintsService.getAllFingerprints();
+  }
+
+  @Get('thumbids/:empId')
+  async getThumbidsByEmpId(@Param('empId') empId: string) {
+    return this.hrFingerprintsService.getThumbidsByEmpId(empId);
+  }
+
+  @Delete('fingerprint/:thumbid')
+  async deleteFingerprintByThumbid(@Param('thumbid') thumbid: string) {
+    return this.hrFingerprintsService.deleteFingerprintByThumbid(thumbid);
+  }
+
+  @Get('delete-by-empid/:empId')
+  async deleteFingerprintsByEmpId(@Param('empId') empId: string) {
+    return this.hrFingerprintsService.deleteFingerprintsByEmpId(empId);
+  }
+
+  @Get('users/fingerprint-status')
+  async getAllUsersWithFingerprintStatus() {
+    return this.hrFingerprintsService.getAllUsersWithFingerprintStatus();
+  }
+
+  @Get('users/fingerprint-details')
+  async getAllUsersWithFingerprintDetails() {
+    return this.hrFingerprintsService.getAllUsersWithFingerprintDetails();
+  }
+}
