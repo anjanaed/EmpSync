@@ -8,11 +8,22 @@ export class UserService {
 
   async create(dto: Prisma.UserCreateInput) {
     try {
-      if(dto.id==null||dto.name==null||dto.email==null||dto.password==null){
-        throw new HttpException('Id, Name, Email, Password must be filled',HttpStatus.BAD_REQUEST);
-        
+      if (dto.id == null || dto.name == null || dto.email == null || dto.password == null) {
+        throw new HttpException('Id, Name, Email, Password must be filled', HttpStatus.BAD_REQUEST);
       }
+
+      // Generate a unique 6-digit passkey
+      let unique = false;
+      let passkey: number;
+      while (!unique) {
+        passkey = Math.floor(100000 + Math.random() * 900000); // 6-digit
+        const existing = await this.databaseService.user.findFirst({ where: { passkey } });
+        if (!existing) unique = true;
+      }
+      dto.passkey = passkey;
+
       await this.databaseService.user.create({ data: dto });
+      return passkey;
     } catch (err) {
       if (err.code === 'P2002') {
         throw new HttpException(`Id or Email Already Registered`, HttpStatus.CONFLICT);

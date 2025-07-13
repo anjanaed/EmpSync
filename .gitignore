@@ -2,5 +2,5 @@
 /node_modules
 server/pdfs
 
-
+server/prisma/migrations/migration_lock.toml
 

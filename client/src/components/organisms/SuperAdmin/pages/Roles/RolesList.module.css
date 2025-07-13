@@ -1,0 +1,510 @@
+.container {
+  padding: 20px;
+  background-color: transparent;
+}
+
+.header {
+  margin-bottom: 20px;
+  gap: 16px;
+}
+
+.headerContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.title {
+  margin: 0;
+  flex-shrink: 0;
+  color: white;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  gap: 12px;
+}
+
+.table {
+  background-color: transparent !important;
+}
+
+.table :global(.ant-table) {
+  background-color: transparent !important;
+  color: #d9d9d9 !important;
+}
+
+.table :global(.ant-table-thead > tr > th) {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: white !important;
+  font-weight: 600;
+}
+
+.table :global(.ant-table-tbody > tr > td) {
+  background-color: transparent !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+  color: #d9d9d9 !important;
+}
+
+.table :global(.ant-table-tbody > tr:hover > td) {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.table :global(.ant-table-tbody > tr:nth-child(odd):hover > td) {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.table :global(.ant-table-tbody > tr:nth-child(even):hover > td) {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Add these additional table styles */
+.table :global(.ant-table-container) {
+  background-color: transparent !important;
+}
+
+.table :global(.ant-table-content) {
+  background-color: transparent !important;
+}
+
+.table :global(.ant-table-body) {
+  background-color: transparent !important;
+}
+
+.table :global(.ant-table-wrapper) {
+  background-color: transparent !important;
+}
+
+.table :global(.ant-table-thead) {
+  background-color: transparent !important;
+}
+
+.table :global(.ant-table-tbody) {
+  background-color: transparent !important;
+}
+
+/* Force override any default table backgrounds */
+.table :global(.ant-table *) {
+  background-color: transparent !important;
+}
+
+.table :global(.ant-table-thead > tr > th:first-child) {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+.table :global(.ant-table-thead > tr > th:last-child) {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+.table :global(.ant-pagination) {
+  color: #d9d9d9 !important;
+}
+
+.table :global(.ant-pagination .ant-pagination-item) {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.table :global(.ant-pagination .ant-pagination-item a) {
+  color: #1890ff !important;
+}
+
+.table :global(.ant-pagination .ant-pagination-item:hover) {
+  border-color: #1890ff !important;
+  background-color: rgba(24, 144, 255, 0.1) !important;
+}
+
+.table :global(.ant-pagination .ant-pagination-item-active) {
+  background-color: #1890ff !important;
+  border-color: #1890ff !important;
+}
+
+.table :global(.ant-pagination .ant-pagination-item-active a) {
+  color: white !important;
+}
+
+.table :global(.ant-pagination .ant-pagination-prev, .ant-pagination .ant-pagination-next) {
+  color: #1890ff !important;
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.table :global(.ant-pagination .ant-pagination-prev:hover, .ant-pagination .ant-pagination-next:hover) {
+  color: #40a9ff !important;
+  border-color: #1890ff !important;
+  background-color: rgba(24, 144, 255, 0.1) !important;
+}
+
+.table :global(.ant-pagination .ant-pagination-prev .anticon, .ant-pagination .ant-pagination-next .anticon) {
+  color: #1890ff !important;
+  font-size: 12px !important;
+  display: inline-block !important;
+}
+
+.table :global(.ant-pagination .ant-pagination-disabled) {
+  color: rgba(255, 255, 255, 0.3) !important;
+  background-color: rgba(255, 255, 255, 0.02) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.table :global(.ant-pagination .ant-pagination-disabled .anticon) {
+  color: rgba(255, 255, 255, 0.3) !important;
+}
+
+/* Ensure pagination arrows are visible */
+.table :global(.ant-pagination-prev), 
+.table :global(.ant-pagination-next) {
+  display: inline-block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.table :global(.ant-pagination-prev > .anticon), 
+.table :global(.ant-pagination-next > .anticon) {
+  display: inline-block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  color: #1890ff !important;
+}
+
+/* Override any potential hiding styles */
+.table :global(.ant-pagination *) {
+  background-color: initial !important;
+}
+
+.table :global(.ant-pagination .ant-pagination-item),
+.table :global(.ant-pagination .ant-pagination-prev),
+.table :global(.ant-pagination .ant-pagination-next) {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.editButton {
+  background-color: rgba(24, 144, 255, 0.1) !important;
+  border-color: rgba(24, 144, 255, 0.3) !important;
+  color: #1890ff !important;
+}
+
+.editButton:hover {
+  border-color: #1890ff !important;
+  color: #40a9ff !important;
+  background-color: rgba(24, 144, 255, 0.2) !important;
+}
+
+.deleteButton {
+  background-color: rgba(24, 144, 255, 0.1) !important;
+  border-color: rgba(24, 144, 255, 0.3) !important;
+  color: #1890ff !important;
+}
+
+.deleteButton:hover {
+  border-color: #ff4d4f !important;
+  color: #ff4d4f !important;
+  background-color: rgba(255, 77, 79, 0.1) !important;
+}
+
+/* Add button styling */
+.addButton {
+  white-space: nowrap;
+  background-color: #1890ff;
+  border-color: #1890ff;
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+.addButton:hover {
+  background-color: #40a9ff !important;
+  border-color: #40a9ff !important;
+}
+
+
+/* Pagination styling */
+.table :global(.ant-pagination) {
+  display: flex;
+  justify-content: center;
+  margin-top: 24px;
+}
+
+.table :global(.ant-pagination .ant-pagination-item) {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  border-color: rgba(24, 144, 255, 0.3) !important;
+}
+
+.table :global(.ant-pagination .ant-pagination-item a) {
+  color: #1890ff !important;
+}
+
+.table :global(.ant-pagination .ant-pagination-item:hover) {
+  background-color: rgba(24, 144, 255, 0.1) !important;
+  border-color: #1890ff !important;
+}
+
+.table :global(.ant-pagination .ant-pagination-item-active) {
+  background-color: #1890ff !important;
+  border-color: #1890ff !important;
+}
+
+.table :global(.ant-pagination .ant-pagination-item-active a) {
+  color: white !important;
+}
+
+/* Pagination arrows */
+.table :global(.ant-pagination .ant-pagination-prev),
+.table :global(.ant-pagination .ant-pagination-next) {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  border-color: rgba(24, 144, 255, 0.3) !important;
+}
+
+.table :global(.ant-pagination .ant-pagination-prev:hover),
+.table :global(.ant-pagination .ant-pagination-next:hover) {
+  background-color: rgba(24, 144, 255, 0.1) !important;
+  border-color: #1890ff !important;
+}
+
+.table :global(.ant-pagination .ant-pagination-prev .ant-pagination-item-link),
+.table :global(.ant-pagination .ant-pagination-next .ant-pagination-item-link) {
+  color: #1890ff !important;
+  background-color: transparent !important;
+}
+
+.table :global(.ant-pagination .ant-pagination-prev:hover .ant-pagination-item-link),
+.table :global(.ant-pagination .ant-pagination-next:hover .ant-pagination-item-link) {
+  color: #40a9ff !important;
+}
+
+/* Disabled state */
+.table :global(.ant-pagination .ant-pagination-disabled) {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.table :global(.ant-pagination .ant-pagination-disabled .ant-pagination-item-link) {
+  color: rgba(255, 255, 255, 0.3) !important;
+}
+
+/* Empty data state */
+.table :global(.ant-empty-description) {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* Modal and Form Styles */
+.container :global(.ant-modal-content) {
+  background-color: rgba(24, 144, 255, 0.1) !important;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.);
+  border-radius: 12px;
+  min-width: 400px;
+  max-width: 540px;
+  box-shadow: 0 8px 32px rgba(24, 144, 255, 0.15);
+  color: white !important;
+  padding: 0;
+}
+.container :global(.ant-modal-header) {
+  background-color: transparent !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+  padding: 20px 24px 16px;
+}
+.container :global(.ant-modal-title) {
+  color: white !important;
+  font-size: 1.25rem;
+  font-weight: 600;
+  text-align: center;
+  width: 100%;
+}
+.container :global(.ant-modal-close) {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+.container :global(.ant-modal-close:hover) {
+  color: white !important;
+}
+.container :global(.ant-modal-body) {
+  background-color: transparent !important;
+  padding: 20px 24px;
+}
+.container :global(.ant-modal-footer) {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  background: transparent !important;
+  border-top: none !important;
+}
+.container :global(.ant-form-vertical .ant-form-item-label > label) {
+  color: white !important;
+  font-weight: 500;
+}
+.container :global(.ant-form-vertical .ant-form-item-label > label.ant-form-item-required::before) {
+  color: #ff4d4f !important;
+}
+.container :global(.ant-form-item) {
+  margin-bottom: 18px;
+}
+.container :global(.ant-input),
+.container :global(.ant-input-password) {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  border-color: rgba(24, 144, 255, 0.3) !important;
+  color: white !important;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+.container :global(.ant-input:hover),
+.container :global(.ant-input-password:hover) {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  border-color: rgba(24, 144, 255, 0.5) !important;
+}
+.container :global(.ant-input:focus),
+.container :global(.ant-input-password:focus) {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  border-color: #1890ff !important;
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2) !important;
+}
+.container :global(.ant-input::placeholder),
+.container :global(.ant-input-password input::placeholder) {
+  color: rgba(255, 255, 255, 0.4) !important;
+}
+.container :global(.ant-form-item-explain-error) {
+  color: #ff4d4f !important;
+}
+.container :global(.ant-btn-primary) {
+  background-color: #1890ff !important;
+  border-color: #1890ff !important;
+  color: white !important;
+  border-radius: 6px;
+  font-weight: 500;
+  height: 36px;
+  padding: 0 20px;
+  transition: all 0.3s ease;
+}
+.container :global(.ant-btn-primary:hover) {
+  background-color: #40a9ff !important;
+  border-color: #40a9ff !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(24, 144, 255, 0.3);
+}
+.container :global(.ant-btn-primary:active) {
+  transform: translateY(0);
+}
+.container :global(.ant-modal-footer .ant-btn),
+.submitButton,
+.cancelButton {
+  min-width: 120px;
+  height: 36px;
+  border-radius: 6px !important;
+  font-weight: 500;
+  padding: 0 20px;
+  transition: all 0.3s ease;
+  text-align: center;
+}
+.cancelButton {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  color: rgba(255, 255, 255, 0.8) !important;
+  border-radius: 6px;
+  font-weight: 500;
+  height: 36px;
+  padding: 0 20px;
+  transition: all 0.3s ease;
+}
+.cancelButton:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  border-color: rgba(255, 255, 255, 0.4) !important;
+  color: white !important;
+}
+.roleDropdown :global(.ant-select-selector) {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  border-color: rgba(24, 144, 255, 0.3) !important;
+  color: white !important;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+.roleDropdown :global(.ant-select-selector:hover),
+.roleDropdown :global(.ant-select-focused) {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  border-color: #1890ff !important;
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2) !important;
+}
+.roleDropdown :global(.ant-select-selection-placeholder) {
+  color: rgba(255, 255, 255, 0.4) !important;
+}
+.roleDropdown :global(.ant-select-arrow) {
+  color: #1890ff !important;
+}
+
+/* Responsive modal for mobile */
+@media (max-width: 768px) {
+  .container {
+    padding: 16px;
+  }
+  
+  .header {
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+  
+  .title {
+    font-size: 1.1rem;
+  }
+  
+  .actions {
+    justify-content: flex-end;
+    gap: 8px;
+  }
+  
+  .addButton {
+    white-space: nowrap;
+    font-size: 12px;
+  }
+  
+  /* Hide less important columns on mobile */
+  .table :global(.ant-table .ant-table-thead > tr > th:nth-child(2)),
+  .table :global(.ant-table .ant-table-tbody > tr > td:nth-child(2)) {
+    display: none;
+  }
+}
+
+/* Small mobile styles */
+@media (max-width: 480px) {
+  .container {
+    padding: 12px;
+  }
+  
+  .title {
+    font-size: 1rem;
+  }
+  
+  .addButton {
+    font-size: 11px;
+    padding: 0 8px;
+  }
+  
+  /* Further adapt table for very small screens */
+  .table :global(.ant-table .ant-table-thead > tr > th),
+  .table :global(.ant-table .ant-table-tbody > tr > td) {
+    padding: 8px 6px;
+    font-size: 12px;
+  }
+}
+
+/* Dark theme adjustments */
+@media (prefers-color-scheme: dark) {
+  .table :global(.ant-table-tbody > tr) {
+    background-color: transparent !important;
+  }
+  
+  .table :global(.ant-table-tbody > tr:hover) {
+    background-color: rgba(255, 255, 255, 0.08) !important;
+  }
+}
+

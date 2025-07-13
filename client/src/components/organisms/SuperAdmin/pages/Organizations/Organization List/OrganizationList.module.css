@@ -1,0 +1,448 @@
+.container {
+  padding: 20px;
+  background-color: transparent;
+}
+
+.header {
+  margin-bottom: 20px;
+  gap: 16px;
+}
+
+.headerContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.title {
+  margin: 0;
+  flex-shrink: 0;
+  color: white;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  gap: 12px;
+}
+
+.searchInput {
+  width: 250px;
+  max-width: 100%;
+}
+
+/* Target the main input wrapper */
+.searchInput :global(.ant-input-search) {
+  background-color: transparent !important;
+}
+
+/* Target the input group wrapper */
+.searchInput :global(.ant-input-group-wrapper) {
+  background-color: transparent !important;
+  /* Remove border: none to allow outer border to show */
+  box-shadow: none !important;
+}
+
+/* Target the input group */
+.searchInput :global(.ant-input-group) {
+  background-color: transparent !important;
+  /* Remove border: none to allow outer border to show */
+  box-shadow: none !important;
+}
+
+/* Target the input field */
+.searchInput :global(.ant-input) {
+  background-color: transparent !important;
+  color: #1890ff !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Add these additional selectors for higher specificity */
+.searchInput :global(.ant-input-affix-wrapper) {
+  background-color: transparent !important;
+  border: 1px solid #1890ff !important;
+  box-shadow: none !important;
+}
+
+.searchInput :global(.ant-input-affix-wrapper .ant-input) {
+  background-color: transparent !important;
+  color: #1890ff !important;
+}
+
+.searchInput :global(.ant-input-affix-wrapper:hover) {
+  background-color: transparent !important;
+  border-color: #40a9ff !important;
+}
+
+.searchInput :global(.ant-input-affix-wrapper:focus-within) {
+  background-color: transparent !important;
+  border-color: #1890ff !important;
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2) !important;
+}
+
+.searchInput :global(.ant-input::placeholder) {
+  color: rgba(24, 144, 255, 0.6) !important;
+}
+
+.searchInput :global(.ant-input-search-button) {
+  background-color: transparent !important;
+  border-color: #1890ff !important;
+  color: #1890ff !important;
+}
+
+.searchInput :global(.ant-input-search-button:hover) {
+  background-color: rgba(24, 144, 255, 0.1) !important;
+  border-color: #40a9ff !important;
+  color: #40a9ff !important;
+}
+
+.searchInput :global(.ant-input-group-addon) {
+  background-color: transparent !important;
+  border-color: #1890ff !important;
+}
+
+.addButton {
+  white-space: nowrap;
+}
+
+.list {
+  background-color: transparent;
+}
+
+/* Add pagination arrow styling */
+.list :global(.ant-pagination) {
+  display: flex;
+  justify-content: center;
+  margin-top: 24px;
+}
+
+.list :global(.ant-pagination .ant-pagination-item) {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  border-color: rgba(24, 144, 255, 0.3) !important;
+}
+
+.list :global(.ant-pagination .ant-pagination-item a) {
+  color: #1890ff !important;
+}
+
+.list :global(.ant-pagination .ant-pagination-item:hover) {
+  background-color: rgba(24, 144, 255, 0.1) !important;
+  border-color: #1890ff !important;
+}
+
+.list :global(.ant-pagination .ant-pagination-item-active) {
+  background-color: #1890ff !important;
+  border-color: #1890ff !important;
+}
+
+.list :global(.ant-pagination .ant-pagination-item-active a) {
+  color: white !important;
+}
+
+/* Pagination arrows */
+.list :global(.ant-pagination .ant-pagination-prev),
+.list :global(.ant-pagination .ant-pagination-next) {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  border-color: rgba(24, 144, 255, 0.3) !important;
+}
+
+.list :global(.ant-pagination .ant-pagination-prev:hover),
+.list :global(.ant-pagination .ant-pagination-next:hover) {
+  background-color: rgba(24, 144, 255, 0.1) !important;
+  border-color: #1890ff !important;
+}
+
+.list :global(.ant-pagination .ant-pagination-prev .ant-pagination-item-link),
+.list :global(.ant-pagination .ant-pagination-next .ant-pagination-item-link) {
+  color: #1890ff !important;
+  background-color: transparent !important;
+}
+
+.list :global(.ant-pagination .ant-pagination-prev:hover .ant-pagination-item-link),
+.list :global(.ant-pagination .ant-pagination-next:hover .ant-pagination-item-link) {
+  color: #40a9ff !important;
+}
+
+/* Disabled state */
+.list :global(.ant-pagination .ant-pagination-disabled) {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.list :global(.ant-pagination .ant-pagination-disabled .ant-pagination-item-link) {
+  color: rgba(255, 255, 255, 0.3) !important;
+}
+
+.list .ant-list-item {
+  padding: 0 !important;
+  border: none !important;
+}
+
+.listItem {
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  margin-bottom: 12px;
+  padding: 16px 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.listItem:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.itemContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  gap: 16px;
+  padding: 0px 20px;
+}
+
+.itemInfo {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex: 1;
+  min-width: 0;
+}
+
+.avatar {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+}
+
+.itemDetails {
+  flex: 1;
+  min-width: 0;
+}
+
+.itemTitle {
+  color: white;
+  font-weight: 500;
+  font-size: 16px;
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.itemDescription {
+  color: #d9d9d9;
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.itemActions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.updateButton,
+.deleteButton {
+  height: 32px;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.updateButton {
+  background-color: rgba(24, 144, 255, 0.1);
+  border-color: rgba(24, 144, 255, 0.3);
+  color: #1890ff;
+}
+
+.updateButton:hover {
+  border-color: #1890ff !important;
+  color: #40a9ff !important;
+  background-color: rgba(0, 0, 0, 0.2) !important;
+}
+
+.deleteButton {
+  background-color: rgba(24, 144, 255, 0.1) !important;
+  border-color: rgba(24, 144, 255, 0.3) !important;
+  color: #1890ff;
+}
+
+.deleteButton:hover {
+  border-color: #ff4d4f !important;
+  color: #ff4d4f !important;
+}
+
+/* Mobile styles */
+@media (max-width: 768px) {
+  .container {
+    padding: 16px;
+  }
+  
+  .header {
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+  
+  .title {
+    font-size: 1.1rem;
+  }
+  
+  .actions {
+    justify-content: flex-end;
+    gap: 8px;
+  }
+  
+  .searchInput {
+    width: 180px;
+  }
+  
+  .addButton {
+    white-space: nowrap;
+  }
+  
+  .listItem {
+    padding: 12px 16px;
+    margin-bottom: 8px;
+  }
+  
+  .itemContent {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+  
+  .itemInfo {
+    gap: 12px;
+  }
+  
+  .avatar {
+    width: 36px;
+    height: 36px;
+  }
+  
+  .itemTitle {
+    font-size: 15px;
+  }
+  
+  .itemDescription {
+    font-size: 13px;
+  }
+  
+  .itemActions {
+    justify-content: flex-end;
+    gap: 8px;
+  }
+  
+  .updateButton,
+  .deleteButton {
+    height: 28px;
+    font-size: 12px;
+    padding: 0 12px;
+  }
+}
+
+/* Tablet styles */
+@media (max-width: 992px) and (min-width: 769px) {
+  .actions {
+    justify-content: center;
+  }
+  
+  .searchInput {
+    width: 200px;
+  }
+  
+  .listItem {
+    padding: 14px 18px;
+  }
+}
+
+/* Small mobile styles */
+@media (max-width: 480px) {
+  .container {
+    padding: 12px;
+  }
+  
+  .title {
+    font-size: 1.1rem;
+  }
+  
+  .listItem {
+    padding: 10px 12px;
+  }
+  
+  .avatar {
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
+  }
+  
+  .itemTitle {
+    font-size: 14px;
+  }
+  
+  .itemDescription {
+    font-size: 12px;
+  }
+  
+  .updateButton,
+  .deleteButton {
+    height: 26px;
+    font-size: 11px;
+    padding: 0 8px;
+  }
+}
+
+/* Extra mobile-friendly tweaks */
+@media (max-width: 480px) {
+  .itemTitle,
+  .itemDescription {
+    white-space: normal;
+    word-break: break-word;
+  }
+
+  .itemContent {
+    padding: 0 4px;
+    gap: 8px;
+  }
+
+  .itemActions {
+    flex-direction: column;
+    gap: 6px;
+    align-items: stretch;
+  }
+
+  .updateButton,
+  .deleteButton {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+}
+
+/* Make list horizontally scrollable on very small screens */
+@media (max-width: 400px) {
+  .list {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* Dark theme adjustments */
+@media (prefers-color-scheme: dark) {
+  .listItem {
+    background-color: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.15);
+  }
+  
+  .listItem:hover {
+    background-color: rgba(255, 255, 255, 0.12);
+  }
+}

@@ -15,8 +15,8 @@ const ResponsiveNav = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   // Hook for programmatic navigation
   const navigate = useNavigate();
-  // Destructure logout function from AuthContext
-  const { logout } = useAuth();
+  // Destructure logout function and authData from AuthContext
+  const { logout, authData } = useAuth();
 
   // Toggle mobile menu visibility
   const toggleMenu = () => {
@@ -55,10 +55,23 @@ const ResponsiveNav = () => {
             <CreditCard size={18} /> Payroll
           </a>
         </li>
+        {/* Meals1 link */}
+        <li>
+          <a
+            href="#"
+            className={styles.navLink}
+            onClick={e => {
+              e.preventDefault();
+              navigate('/MealPage03');
+            }}
+          >
+            <Utensils size={18} /> Select Meals
+          </a>
+        </li>
         {/* Meals link */}
         <li>
           <a href="/UserMeals" className={styles.navLink}>
-            <Utensils size={18} /> Meals
+            <Utensils size={18} /> Meals Orders
           </a>
         </li>
         {/* Personalized Suggestions link */}

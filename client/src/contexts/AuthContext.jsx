@@ -6,9 +6,9 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [authData, setAuthData] = useState(null);
+  const [superAuthData, setSuperAuthData] = useState(null);
   const urL = import.meta.env.VITE_BASE_URL;
   const [authLoading, setAuthLoading] = useState(true);
-
 
   useEffect(() => {
     const loadAuthData = async () => {
@@ -18,13 +18,26 @@ export const AuthProvider = ({ children }) => {
           const parsedData = JSON.parse(stored);
           setAuthData(parsedData);
         } catch (error) {
-          localStorage.removeItem("authData"); 
+          localStorage.removeItem("authData");
         }
       }
-      setAuthLoading(false); 
+      setAuthLoading(false);
+    };
+    const loadSuperAuthData = async () => {
+      const stored = localStorage.getItem("superAdminUserData");
+      if (stored) {
+        try {
+          const parsedData = JSON.parse(stored);
+          setSuperAuthData(parsedData);
+        } catch (error) {
+          localStorage.removeItem("superAdminUserData");
+        }
+      }
+      setAuthLoading(false);
     };
 
     loadAuthData();
+    loadSuperAuthData();
   }, []);
 
   const login = async ({ access_token, id_token }) => {
@@ -32,7 +45,9 @@ export const AuthProvider = ({ children }) => {
       const decoded = jwtDecode(id_token);
       const employeeId = decoded["https://empidReceiver.com"];
 
-      const response = await axios.get(`${urL}/user/${employeeId.toUpperCase()}`,);
+      const response = await axios.get(
+        `${urL}/user/${employeeId.toUpperCase()}`
+      );
       const currentUser = response.data;
 
       const userRole = currentUser.role;
@@ -53,19 +68,46 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const superAdminLogin = async ({ access_token }) => {
+    try {
+      const superAdminUserData = {
+        accessToken: access_token,
+        role: "superadmin",
+      };
+
+      setSuperAuthData(superAdminUserData);
+      localStorage.setItem("superAuthData", JSON.stringify(superAdminUserData));
+    } catch (error) {
+      console.error("Login error:", error);
+      throw new Error("Failed to log in. Please check your credentials.");
+    }
+  };
+
   const logout = () => {
     setAuthData(null);
-    localStorage.removeItem("authData"); 
+    localStorage.removeItem("authData");
+  };
+
+  const superLogout = () => {
+    setSuperAuthData(null);
+    localStorage.removeItem("superAdminUserData");
   };
 
   return (
-    <AuthContext.Provider value={{ authData,authLoading, login, logout }}>
+    <AuthContext.Provider
+      value={{
+        authData,
+        superAuthData,
+        authLoading,
+        login,
+        superAdminLogin,
+        logout,
+        superLogout,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
 };
 
 export const useAuth = () => useContext(AuthContext);
-
-
-

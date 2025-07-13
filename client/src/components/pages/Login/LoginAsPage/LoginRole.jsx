@@ -12,6 +12,7 @@ const roleDisplayMap = {
   INVENTORY_ADMIN: "Inventory Admin",
   KITCHEN_STAFF: "Kitchen Staff",
   KITCHEN_ADMIN: "Kitchen Admin",
+  SUPER_ADMIN: "Super Admin",
 };
 
 const redirectRoles = [
@@ -19,6 +20,7 @@ const redirectRoles = [
   "KITCHEN_STAFF",
   "INVENTORY_ADMIN",
   "HR_ADMIN",
+  "SUPER_ADMIN",
 ];
 
 const roleRouteMap = {
@@ -26,6 +28,7 @@ const roleRouteMap = {
   INVENTORY_ADMIN: "/Ingredients",
   KITCHEN_STAFF: "/KitchenStaff",
   KITCHEN_ADMIN: "/kitchen-admin",
+  SUPER_ADMIN: "/superadmin/dashboard",
 };
 
 const LoginPage = () => {
@@ -36,12 +39,11 @@ const LoginPage = () => {
     return <Loading />;
   }
 
-  useEffect(() => {
-    const userRole = authData.user.role;
-    if (!redirectRoles.includes(userRole)) {
-      navigate("/ProfilePage");
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (!redirectRoles.includes(userRole)) {
+  //     navigate("/ProfilePage");
+  //   }
+  // }, []);
 
   const handleAdminLogin = () => {
     const userRole = authData.user.role;

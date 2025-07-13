@@ -139,10 +139,16 @@ const AddMealPage = () => {
   
       console.log("Submitting meal data:", mealData);
   
-      try {
-        if (!token) {
-          throw new Error("Authorization token is missing");
-        }
+      const response = await fetch("http://localhost:3000/meal", {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(mealData),
+      });
+
   
         const response = await axios.post(
           "http://localhost:3000/meal",

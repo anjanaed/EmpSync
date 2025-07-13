@@ -15,24 +15,55 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
+model Organization {
+  id                      String   @id @default(uuid())
+  name                    String
+  logoUrl                 String?
+  contactEmail            String
+  active                  Boolean  @default(true)
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
+  users                   User[]
+  fingerprint_capacity    Int
+  fingerprint_per_machine Int
+}
+
+model Fingerprint {
+  thumbid String @id
+  empId   String
+}
+
 model User {
-  id        String    @id
-  name      String
+  id             String        @id
+  name           String
+  role           String
+  dob            String?
+  telephone      String?
+  gender         String?
+  address        String?
+  email          String        @unique
+  password       String
+  salary         Int?
+  passkey        Int?
+  supId          String?
+  language       String?
+  height         Int?
+  weight         Int?
+  payrolls       Payroll[]
+  organizationId String?
+  organization   Organization? @relation(fields: [organizationId], references: [id])
+  permissions    Permission[]
+  createdAt      DateTime      @default(now())
+}
+
+// Permission model
+model Permission {
+  id        String   @id @default(uuid())
+  orgId     String
+  action    String 
   role      String
-  dob       String?
-  telephone String?
-  gender    String?
-  address   String?
-  email     String    @unique
-  password  String
-  salary    Int?
-  thumbId   Int?      @unique
-  supId     String?
-  language  String?
-  height    Int?
-  weight    Int?
-  payrolls  Payroll[]
-  createdAt DateTime  @default(now())
+  users     User[] // For direct user permissions
+  createdAt DateTime @default(now())
 }
 
 model Ingredient {

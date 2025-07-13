@@ -779,7 +779,11 @@ const Page3 = ({
                           .toFixed(2)}
                       </Text>
                       <Button
-                        onClick={() => carouselRef.current?.goTo(0)}
+                        onClick={() => {
+                          // Set a flag in sessionStorage to indicate special redirect
+                          sessionStorage.setItem('redirectToPage3', 'true');
+                          carouselRef.current?.goTo(0);
+                        }}
                         className={styles.backButton}
                       >
                         <MdLanguage size={20} /> <div>{text.back}</div>

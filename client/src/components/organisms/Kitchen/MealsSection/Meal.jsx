@@ -178,8 +178,10 @@ const AvailableMeals = () => {
       const response = await fetch(`http://localhost:3000/meal/${meal.id}`, {
         method: "DELETE",
         headers: {
-          
-           Authorization: `Bearer ${token}`,
+
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+
         },
         
       });

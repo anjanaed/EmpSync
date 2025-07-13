@@ -1,0 +1,466 @@
+/* filepath: c:\Users\ASUS\Documents\GitHub\EmpSync\client\src\components\organisms\SuperAdmin\pages\Permissions\PermissionsList.module.css */
+.container {
+  padding: 20px;
+  background-color: transparent;
+}
+
+.permissionCard {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 8px !important;
+  margin-bottom: 16px;
+}
+
+.permissionCard :global(.ant-card-head) {
+  background-color: transparent !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.permissionCard :global(.ant-card-head-title) {
+  color: white !important;
+  font-weight: 600;
+}
+
+.permissionCard :global(.ant-card-body) {
+  background-color: transparent !important;
+}
+
+.controlsContainer {
+  display: flex;
+  gap: 12px; /* Reduced gap */
+  align-items: flex-end;
+  flex-wrap: wrap; /* Allow wrapping when needed */
+  margin-bottom: 16px;
+  width: 100%; /* Ensure full width usage */
+  overflow: hidden; /* Prevent overflow */
+}
+
+.selectGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0; /* Allow shrinking */
+  flex: 1; /* Allow flexible sizing */
+  max-width: 200px; /* Prevent excessive growth */
+}
+
+.selectLabel {
+  color: #d9d9d9;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 4px;
+  white-space: nowrap; /* Prevent label wrapping */
+}
+
+.selectControl {
+  width: 100%; /* Use full available width */
+  min-width: 140px; /* Minimum width */
+  max-width: 180px; /* Maximum width to prevent overflow */
+}
+
+.selectControl :global(.ant-select-selector) {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  border-color: rgba(24, 144, 255, 0.3) !important;
+  color: #1890ff !important;
+}
+
+.selectControl :global(.ant-select-selector:hover) {
+  border-color: #1890ff !important;
+  background-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.selectControl :global(.ant-select-focused .ant-select-selector) {
+  border-color: #1890ff !important;
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2) !important;
+  background-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.selectControl :global(.ant-select-selection-placeholder) {
+  color: rgba(24, 144, 255, 0.6) !important;
+}
+
+.selectControl :global(.ant-select-selection-item) {
+  color: #1890ff !important;
+}
+
+.selectControl :global(.ant-select-arrow) {
+  color: #1890ff !important;
+}
+
+.selectControl :global(.ant-select-disabled .ant-select-selector) {
+  background-color: rgba(255, 255, 255, 0.02) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  color: rgba(255, 255, 255, 0.3) !important;
+}
+
+.saveButton {
+  background-color: #1890ff !important;
+  border-color: #1890ff !important;
+  color: white !important;
+  font-weight: 500;
+  height: 32px;
+  border-radius: 6px;
+  margin-top: 24px;
+  white-space: nowrap; /* Prevent button text wrapping */
+  flex-shrink: 0; /* Prevent button shrinking */
+}
+
+.saveButton:hover {
+  background-color: #40a9ff !important;
+  border-color: #40a9ff !important;
+}
+
+.saveButton:disabled {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  color: rgba(255, 255, 255, 0.3) !important;
+}
+
+.roleInfo {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-top: 12px;
+}
+
+.roleTag {
+  background-color: rgba(24, 144, 255, 0.1) !important;
+  border-color: rgba(24, 144, 255, 0.3) !important;
+  color: #1890ff !important;
+}
+
+.permissionTag {
+  background-color: rgba(255, 165, 0, 0.1) !important;
+  border-color: rgba(255, 165, 0, 0.3) !important;
+  color: #ffa500 !important;
+}
+
+.addButton {
+  background-color: #1890ff !important;
+  border-color: #1890ff !important;
+  color: white !important;
+  font-weight: 500;
+  height: 36px;
+  margin-bottom: 16px;
+  border-radius: 6px;
+}
+
+.addButton:hover {
+  background-color: #40a9ff !important;
+  border-color: #40a9ff !important;
+}
+
+
+
+.categoryTag {
+  background-color: rgba(82, 196, 26, 0.1) !important;
+  border-color: rgba(82, 196, 26, 0.3) !important;
+  color: #52c41a !important;
+}
+
+.assignedCheckbox :global(.ant-checkbox-wrapper) {
+  color: #d9d9d9 !important;
+}
+
+.assignedCheckbox :global(.ant-checkbox-checked .ant-checkbox-inner) {
+  background-color: #1890ff !important;
+  border-color: #1890ff !important;
+}
+
+.assignedCheckbox :global(.ant-checkbox-inner) {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  border-color: rgba(24, 144, 255, 0.3) !important;
+}
+
+.assignedCheckbox :global(.ant-checkbox:hover .ant-checkbox-inner) {
+  border-color: #1890ff !important;
+}
+
+.actionButton {
+  height: 32px;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.editButton {
+  background-color: rgba(24, 144, 255, 0.1) !important;
+  border-color: rgba(24, 144, 255, 0.3) !important;
+  color: #1890ff !important;
+}
+
+.editButton:hover {
+  border-color: #1890ff !important;
+  color: #40a9ff !important;
+  background-color: rgba(24, 144, 255, 0.2) !important;
+}
+
+.deleteButton {
+  background-color: rgba(24, 144, 255, 0.1) !important;
+  border-color: rgba(24, 144, 255, 0.3) !important;
+  color: #1890ff !important;
+}
+
+.deleteButton:hover {
+  border-color: #ff4d4f !important;
+  color: #ff4d4f !important;
+  background-color: rgba(255, 77, 79, 0.1) !important;
+}
+
+.table {
+  background-color: transparent !important;
+}
+
+.table :global(.ant-table) {
+  background-color: transparent !important;
+  color: #d9d9d9 !important;
+}
+
+.table :global(.ant-table-thead > tr > th) {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: white !important;
+  font-weight: 600;
+}
+
+.table :global(.ant-table-tbody > tr > td) {
+  background-color: transparent !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+  color: #d9d9d9 !important;
+}
+
+.table :global(.ant-table-tbody > tr:hover > td) {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.table :global(.ant-table-tbody > tr:nth-child(odd):hover > td) {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.table :global(.ant-table-tbody > tr:nth-child(even):hover > td) {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Add these additional table styles */
+.table :global(.ant-table-container) {
+  background-color: transparent !important;
+}
+
+.table :global(.ant-table-content) {
+  background-color: transparent !important;
+}
+
+.table :global(.ant-table-body) {
+  background-color: transparent !important;
+}
+
+.table :global(.ant-table-wrapper) {
+  background-color: transparent !important;
+}
+
+.table :global(.ant-table-thead) {
+  background-color: transparent !important;
+}
+
+.table :global(.ant-table-tbody) {
+  background-color: transparent !important;
+}
+
+/* Force override any default table backgrounds */
+.table :global(.ant-table *) {
+  background-color: transparent !important;
+}
+
+.table :global(.ant-table-thead > tr > th:first-child) {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+.table :global(.ant-table-thead > tr > th:last-child) {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+.table :global(.ant-pagination) {
+  color: #d9d9d9 !important;
+}
+
+.table :global(.ant-pagination .ant-pagination-item) {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.table :global(.ant-pagination .ant-pagination-item a) {
+  color: #1890ff !important;
+}
+
+.table :global(.ant-pagination .ant-pagination-item:hover) {
+  border-color: #1890ff !important;
+  background-color: rgba(24, 144, 255, 0.1) !important;
+}
+
+.table :global(.ant-pagination .ant-pagination-item-active) {
+  background-color: #1890ff !important;
+  border-color: #1890ff !important;
+}
+
+.table :global(.ant-pagination .ant-pagination-item-active a) {
+  color: white !important;
+}
+
+.table :global(.ant-pagination .ant-pagination-prev, .ant-pagination .ant-pagination-next) {
+  color: #1890ff !important;
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.table :global(.ant-pagination .ant-pagination-prev:hover, .ant-pagination .ant-pagination-next:hover) {
+  color: #40a9ff !important;
+  border-color: #1890ff !important;
+  background-color: rgba(24, 144, 255, 0.1) !important;
+}
+
+.table :global(.ant-pagination .ant-pagination-prev .anticon, .ant-pagination .ant-pagination-next .anticon) {
+  color: #1890ff !important;
+  font-size: 12px !important;
+  display: inline-block !important;
+}
+
+.table :global(.ant-pagination .ant-pagination-disabled) {
+  color: rgba(255, 255, 255, 0.3) !important;
+  background-color: rgba(255, 255, 255, 0.02) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.table :global(.ant-pagination .ant-pagination-disabled .anticon) {
+  color: rgba(255, 255, 255, 0.3) !important;
+}
+
+/* Ensure pagination arrows are visible */
+.table :global(.ant-pagination-prev), 
+.table :global(.ant-pagination-next) {
+  display: inline-block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.table :global(.ant-pagination-prev > .anticon), 
+.table :global(.ant-pagination-next > .anticon) {
+  display: inline-block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  color: #1890ff !important;
+}
+
+/* Override any potential hiding styles */
+.table :global(.ant-pagination *) {
+  background-color: initial !important;
+}
+
+.table :global(.ant-pagination .ant-pagination-item),
+.table :global(.ant-pagination .ant-pagination-prev),
+.table :global(.ant-pagination .ant-pagination-next) {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Mobile styles */
+@media (max-width: 768px) {
+  .container {
+    padding: 16px;
+    overflow-x: hidden; /* Prevent horizontal scroll */
+  }
+  
+  .controlsContainer {
+    flex-direction: column; /* Stack vertically on mobile */
+    align-items: stretch;
+    gap: 12px;
+  }
+  
+  .selectGroup {
+    max-width: 100%;
+  }
+  
+  .selectControl {
+    width: 100%;
+    min-width: unset;
+    max-width: 100%;
+  }
+  
+  .saveButton {
+    margin-top: 8px;
+    width: 100%; /* Full width on mobile */
+  }
+  
+  .roleInfo {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+  
+  .table :global(.ant-table) {
+    font-size: 14px;
+  }
+  
+  .actionButton {
+    height: 28px;
+    font-size: 12px;
+    padding: 0 8px;
+  }
+}
+
+/* Tablet styles */
+@media (max-width: 992px) and (min-width: 769px) {
+  .controlsContainer {
+    justify-content: flex-start; /* Changed from center to flex-start */
+    flex-direction: row; /* Ensure row direction */
+  }
+  
+  .selectControl {
+    width: 160px; /* Slightly smaller for tablet */
+  }
+}
+
+/* Small mobile styles */
+@media (max-width: 480px) {
+  .container {
+    padding: 12px;
+    overflow-x: hidden;
+  }
+  
+  .controlsContainer {
+    gap: 8px;
+  }
+  
+  .selectControl {
+    font-size: 14px; /* Smaller font for very small screens */
+  }
+  
+  .saveButton {
+    font-size: 14px;
+    height: 36px; /* Slightly larger for touch */
+  }
+  
+  .table :global(.ant-table) {
+    font-size: 12px;
+  }
+  
+  .actionButton {
+    height: 26px;
+    font-size: 11px;
+    padding: 0 6px;
+  }
+}
+
+/* Dark theme adjustments */
+@media (prefers-color-scheme: dark) {
+  .permissionCard {
+    background-color: rgba(255, 255, 255, 0.08) !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
+  }
+  
+  .table :global(.ant-table-tbody > tr:hover > td) {
+    background-color: rgba(255, 255, 255, 0.12) !important;
+  }
+}

@@ -1,0 +1,111 @@
+.sider {
+  background: #001529 !important;
+  color: white;
+}
+
+.content {
+  background: #001529 !important;
+  color: white;
+}
+
+.listItem {
+  color: white;
+}
+
+.avatar {
+  background-color: #9254DE !important;
+}
+
+.modal :global(.ant-modal-content) {
+  background: #001529 !important;
+  color: white;
+}
+
+.modal :global(.ant-modal-header) {
+  background: #001529 !important;
+  color: white;
+  border-bottom: 1px solid #1890ff;
+}
+
+.modal :global(.ant-modal-body) {
+  background: #001529 !important;
+  color: white;
+}
+
+.modal :global(.ant-modal-footer) {
+  background: #001529 !important;
+  border-top: 1px solid #1890ff;
+}
+
+.modal :global(.ant-input) {
+  background: #1a2a44 !important;
+  color: white !important;
+  border: 1px solid #1890ff !important;
+}
+
+.modal :global(.ant-form-item-label) {
+  color: #d9d9d9 !important;
+}
+
+.modal :global(.ant-btn-primary) {
+  background: #1890ff !important;
+  color: white !important;
+  border: none !important;
+}
+
+.modal :global(.ant-btn-primary:hover) {
+  background: #40a9ff !important;
+}
+
+.modal :global(.ant-btn-default) {
+  background: #d9d9d9 !important;
+  color: #001529 !important;
+}
+
+/* Responsive styles for modal and content */
+@media (max-width: 768px) {
+  .modal :global(.ant-modal) {
+    width: 95vw !important;
+    max-width: 95vw !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+  }
+
+  .modal :global(.ant-modal-content) {
+    padding: 12px !important;
+  }
+
+  .modal :global(.ant-modal-header),
+  .modal :global(.ant-modal-footer),
+  .modal :global(.ant-modal-body) {
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+  }
+
+  .modal :global(.ant-input) {
+    font-size: 16px !important;
+  }
+
+  .modal :global(.ant-btn) {
+    width: 100% !important;
+    margin-bottom: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .modal :global(.ant-modal) {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    min-width: unset !important;
+    margin: 0 !important;
+    top: 0 !important;
+  }
+
+  .modal :global(.ant-modal-content) {
+    padding: 6px !important;
+  }
+
+  .modal :global(.ant-form-item-label) {
+    font-size: 14px !important;
+  }
+}
