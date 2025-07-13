@@ -40,10 +40,8 @@ var axios_1 = require("axios");
 // === CONFIGURE THESE VALUES ===
 var auth0Url = "dev-77pr5yqzs0m53x77.us.auth0.com"; // e.g. your-tenant.auth0.com
 var auth0ClientId = "RsxaQQdCDS1kk422wUEJtql0FY9AGFuN";
-var email = "chamilka2002@gmail.com";
-var username = "superadminTest"; // Use this if you want to register with a username
+var email = "chami2002@gmail.com";
 var password = "chamilka2002.";
-var id = "e20020705"; // If you want to use this as username
 var signUpUser = function () { return __awaiter(void 0, void 0, void 0, function () {
     var res, error_1;
     var _a;
@@ -54,7 +52,6 @@ var signUpUser = function () { return __awaiter(void 0, void 0, void 0, function
                 return [4 /*yield*/, axios_1.default.post("https://".concat(auth0Url, "/dbconnections/signup"), {
                         client_id: auth0ClientId,
                         email: email,
-                        username: id, // or use username if you prefer
                         password: password,
                         connection: "SuperAdmin",
                     })];
