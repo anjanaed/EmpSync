@@ -5,28 +5,15 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Loading from "../../../../atoms/loading/loading";
 import styles from "./Login.module.css";
+import { useAuth } from "../../../../../contexts/AuthContext";
 
 const SuperAdminLogin = () => {
   const [loading, setLoading] = useState(false);
   const urL = import.meta.env.VITE_BASE_URL;
   const navigate = useNavigate();
-  const [form] = Form.useForm();
+  const { superAdminLogin } = useAuth();
 
-  const login = async ({ access_token }) => {
-  try {
-      if (access_token) {
-        localStorage.setItem("access_token", access_token);
-        localStorage.setItem("role", "SuperAdmin");
-        return true;
-      } else {
-        throw new Error("No access token provided");
-      }
-    } catch (error) {
-      console.error("Login error:", error);
-      
-      return false;
-    }
-  };
+  const [form] = Form.useForm();
 
   const handleLogin = async (email, password) => {
     setLoading(true);
@@ -37,13 +24,17 @@ const SuperAdminLogin = () => {
       });
 
       const { access_token } = response.data;
-      await login({ access_token });
-      
+      await superAdminLogin({ access_token });
+
       message.success("Login successful!");
       navigate("/superadmin/dashboard");
     } catch (error) {
       console.error("Login error:", error);
-      message.error(`Login Failed: ${error.response?.data?.message || "Invalid credentials"}`);
+      message.error(
+        `Login Failed: ${
+          error.response?.data?.message || "Invalid credentials"
+        }`
+      );
     } finally {
       setLoading(false);
     }
@@ -137,4 +128,3 @@ const SuperAdminLogin = () => {
 };
 
 export default SuperAdminLogin;
-

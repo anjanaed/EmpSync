@@ -15,15 +15,16 @@ export class SuperAdminJwtStrategy extends PassportStrategy(Strategy, 'superadmi
         cache: true,
         rateLimit: true,
         jwksRequestsPerMinute: 5,
-        jwksUri: `https://${process.env.SUPERADMIN_AUTH0_URL}/.well-known/jwks.json`,
+        jwksUri: `https://${process.env.AUTH0_URL}/.well-known/jwks.json`,
       }),
-      issuer: `https://${process.env.SUPERADMIN_AUTH0_URL}/`,
-      audience: `https://${process.env.SUPERADMIN_AUTH0_AUDIENCE}/`,
+      issuer: `https://${process.env.AUTH0_URL}/`,
+      audience: `https://${process.env.SUPERADMIN_AUTH0_AUDIENCE}`,
     });
   }
 
   async validate(payload: any) {
-    // Just return the payload, no role check
+      
+
     return payload;
   }
 }

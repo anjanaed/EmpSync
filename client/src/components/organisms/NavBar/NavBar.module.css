@@ -53,6 +53,7 @@
   font-family: "Bree Serif", serif;
   font-size: 25px !important;
   transition: opacity 0.3s ease-in-out;
+  color: #960000 !important;
 }
 .navHeader.collapsed {
   opacity: 0;
@@ -81,11 +82,37 @@
   z-index: 10;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
     0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  padding: 8px 16px;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.themeToggleContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .logo {
   margin: auto;
   width: 150px !important;
+}
+
+/* Dark mode logo styling */
+:global(.dark) .logo {
+  filter: brightness(0) invert(1);
+  /* Alternative approach: you can also use a different logo image for dark mode */
+  /* content: url('../../../assets/Logo/Logowhite.png'); */
 }
 
 .main {
@@ -158,7 +185,7 @@
 }
 
 .logoutMenuItem {
-  color: #f44336;
+  color: #960000;
 }
 
 .userDetails .userName {
@@ -171,35 +198,6 @@
   font-size: 0.8vw;
 }
 
-.dark {
-  background: #181818;
-  color: #f1f1f1;
-}
-
-.dark .sider {
-  background-color: #232323 !important;
-}
-
-.dark .headerContent {
-  background-color: #232323 !important;
-  color: #f1f1f1;
-}
-
-.dark .menu {
-  background: #232323 !important;
-  color: #f1f1f1 !important;
-}
-
-.dark .navHeader {
-  color: #f1f1f1 !important;
-}
-
-.dark .userName,
-.dark .userPosition {
-  color: #f1f1f1 !important;
-}
-
-
 @media (max-width: 768px){
   .logo{
     display: none;
@@ -207,8 +205,10 @@
   .headerContent Button{
     display: none;
   }
-  .userInfo{
-
+  .headerRight .themeToggleContainer {
+    display: none;
+  }
+  .headerRight .userInfo{
     margin-left: auto;
   }
 }
@@ -217,5 +217,154 @@
   .userDetails{
     display: none;
   }
+}
+
+/* Dark mode styles */
+:global(.dark) .main {
+  background: #212121;
+  color: #ffffff;
+}
+
+:global(.dark) .sider {
+  background-color: #181818 !important;
+}
+
+:global(.dark) .menu {
+  background-color: #181818 !important;
+  color: #ffffff !important;
+}
+
+:global(.dark) .navHeader {
+  color: #ffffff !important;
+}
+
+.red {
+  color: #960000;
+}
+
+:global(.dark) .red {
+  color: #ffffff !important;
+}
+
+:global(.dark) .line {
+  border-color: #333333 !important;
+}
+
+:global(.dark) .headerContent {
+  background-color: #181818 !important;
+  color: #ffffff !important;
+  border-bottom: 1px solid #333333;
+}
+
+:global(.dark) .userInfo {
+  color: #ffffff !important;
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+:global(.dark) .userName {
+  color: #ffffff !important;
+}
+
+:global(.dark) .userPosition {
+  color: #cccccc !important;
+}
+
+:global(.dark) .content {
+  background-color: #212121;
+}
+
+/* Dark mode dropdown menu */
+:global(.dark .ant-dropdown),
+:global(.dark .ant-dropdown .ant-dropdown-menu),
+:global(.dark .ant-dropdown-menu) {
+  background-color: #181818 !important;
+  border: 1px solid #333333 !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5) !important;
+}
+
+:global(.dark .ant-dropdown-menu-item) {
+  background-color: #181818 !important;
+  color: #ffffff !important;
+  border-bottom: 1px solid #333333 !important;
+}
+
+:global(.dark .ant-dropdown-menu-item:hover) {
+  background-color: #2a2a2a !important;
+  color: #ffffff !important;
+}
+
+:global(.dark .ant-dropdown-menu-item:last-child) {
+  border-bottom: none !important;
+}
+
+:global(.dark) .profileMenuItem {
+  color: #ffffff !important;
+}
+
+:global(.dark) .logoutMenuItem {
+  color: #f20707 !important;
+}
+
+/* Dark mode dropdown menu item content */
+:global(.dark .ant-dropdown-menu-item .ant-dropdown-menu-title-content) {
+  color: #ffffff !important;
+}
+
+/* Dark mode for dropdown menu icons */
+:global(.dark .ant-dropdown-menu-item .anticon) {
+  color: #ffffff !important;
+}
+
+:global(.dark .ant-dropdown-menu-item:hover .anticon) {
+  color: #ffffff !important;
+}
+
+/* Specific styling for logout item in dark mode */
+:global(.dark .ant-dropdown-menu-item:last-child .anticon) {
+  color: #f20707 !important;
+}
+
+:global(.dark .ant-dropdown-menu-item:last-child:hover .anticon) {
+  color: #ff6b6b !important;
+}
+
+/* Dark mode button styling */
+:global(.dark .ant-btn) {
+  color: #ffffff !important;
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  border-color: #555555 !important;
+}
+
+
+:global(.dark .ant-btn:focus) {
+  color: #ffffff !important;
+  border-color: #fffcfc !important;
+}
+
+:global(.dark .ant-btn .anticon) {
+  color: #ffffff !important;
+}
+
+/* Dark mode menu items */
+:global(.dark .ant-menu),
+:global(.dark .ant-menu-light),
+:global(.dark .ant-menu-inline) {
+  background-color: #181818 !important;
+  color: #ffffff !important;
+}
+
+:global(.dark .ant-menu-item),
+:global(.dark .ant-menu-item:hover),
+:global(.dark .ant-menu-item-selected) {
+  background-color: #181818 !important;
+  color: #ffffff !important;
+}
+
+:global(.dark .ant-menu-item-selected) {
+  background-color: #333333 !important;
+}
+
+:global(.dark .ant-menu-item:hover) {
+  background-color: #2a2a2a !important;
 }
 

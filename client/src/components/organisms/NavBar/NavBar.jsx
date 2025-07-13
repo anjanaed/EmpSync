@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 import styles from "./NavBar.module.css";
 import { MenuOutlined, LogoutOutlined } from "@ant-design/icons";
-import { UserOutlined, BulbOutlined, MoonOutlined } from "@ant-design/icons";
+import { UserOutlined } from "@ant-design/icons";
 import { Button, Layout, Menu, ConfigProvider, Dropdown, Avatar } from "antd";
 import img from "../../../assets/Logo/logo.png";
-import imgWhite from "../../../assets/Logo/LOgowhite.png"; // Add this line
 import { useNavigate } from "react-router-dom";
 import Loading from "../../atoms/loading/loading";
 import { useAuth } from "../../../contexts/AuthContext";
-import { useDarkMode } from "../../../contexts/DarkModeContext"; // Import context
+import { useTheme } from "../../../contexts/ThemeContext";
+import ThemeToggle from "../../ThemeToggle/ThemeToggle";
 const { Sider } = Layout;
 
 const roleDisplayMap = {
@@ -25,12 +25,38 @@ const customTheme = {
   components: {
     Menu: {
       itemHeight: 50,
-      itemSelectedColor: "rgb(224, 0, 0)",
-      itemSelectedBg: "rgb(230, 230, 230)",
-      itemActiveBg: "rgba(255, 120, 120, 0.53)",
+      itemSelectedColor: "#ffffff",
+      itemSelectedBg: "#d10000",
+      itemActiveBg: "#ff4444",
+      itemHoverBg: "#ff6666",
       itemMarginInline: 10,
       itemMarginBlock: 14,
       iconMarginInlineEnd: 16,
+    },
+  },
+};
+
+const darkTheme = {
+  token: {
+    colorText: "#ffffff",
+    colorBgBase: "#000000",
+  },
+  components: {
+    Menu: {
+      itemHeight: 50,
+      itemSelectedColor: "#ffffff",
+      itemSelectedBg: "#660000",
+      itemActiveBg: "#990000",
+      itemHoverBg: "#bb0000",
+      itemMarginInline: 10,
+      itemMarginBlock: 14,
+      iconMarginInlineEnd: 16,
+      colorBgContainer: "#000000",
+      colorText: "#ffffff",
+    },
+    Dropdown: {
+      colorBgElevated: "#000000",
+      colorText: "#ffffff",
     },
   },
 };
@@ -42,7 +68,7 @@ const NavBar = ({ Comp, titleLines = [], menuItems = [] }) => {
   const [currentUser, setCurrentUser] = useState("null");
   const navigate = useNavigate();
   const { authData, logout, authLoading } = useAuth();
-  const { darkMode, toggleDarkMode } = useDarkMode(); // Use context
+  const { theme } = useTheme();
 
   // Ensure hooks are always called
   useEffect(() => {
@@ -74,10 +100,6 @@ const NavBar = ({ Comp, titleLines = [], menuItems = [] }) => {
     logout();
     setCurrentUser(null);
     navigate("/login");
-  };
-
-  const handleToggleDarkMode = () => {
-    toggleDarkMode();
   };
 
   const dropdownItems = [
@@ -139,8 +161,8 @@ const NavBar = ({ Comp, titleLines = [], menuItems = [] }) => {
   }));
 
   return (
-    <div className={`${styles.main} ${darkMode ? styles.dark : ""}`}>
-      <ConfigProvider theme={customTheme}>
+    <div className={`${styles.main} ${theme === 'dark' ? 'dark' : ''}`}>
+      <ConfigProvider theme={theme === 'dark' ? darkTheme : customTheme}>
         <Sider
           className={styles.sider}
           trigger={null}
@@ -151,7 +173,7 @@ const NavBar = ({ Comp, titleLines = [], menuItems = [] }) => {
           {renderTitle()}
           <Menu
             className={styles.menu}
-            theme="light"
+            theme={theme === 'dark' ? 'dark' : 'light'}
             mode="inline"
             selectedKeys={[selectedKey]}
             items={renderedMenuItems}
@@ -161,34 +183,32 @@ const NavBar = ({ Comp, titleLines = [], menuItems = [] }) => {
 
       <div className={styles.homeContent}>
         <div className={styles.headerContent}>
-          <Button
-            type="text"
-            icon={
-              <MenuOutlined style={{ color: darkMode ? "#fff" : undefined }} />
-            }
-            onClick={() => setCollapsed(!collapsed)}
-            style={{ fontSize: "16px", width: 55, height: 55 }}
-          />
+          <div className={styles.headerLeft}>
+            <Button
+              type="text"
+              icon={
+                <MenuOutlined />
+              }
+              onClick={() => setCollapsed(!collapsed)}
+              style={{ 
+                fontSize: "16px", 
+                width: 55, 
+                height: 55,
+                color: theme === 'dark' ? '#ffffff' : '#000000',
+                backgroundColor: theme === 'dark' ? 'transparent' : 'transparent'
+              }}
+            />
+          </div>
           <img
             className={styles.logo}
-            src={darkMode ? imgWhite : img}
+            src={img}
             alt="Logo"
           />
-          <Button
-            type="text"
-            icon={
-              darkMode ? (
-                <BulbOutlined style={{ color: "#fff" }} />
-              ) : (
-                <MoonOutlined />
-              )
-            }
-            onClick={handleToggleDarkMode}
-            className={styles.darkModeBtn}
-            style={{ fontSize: "20px", marginLeft: 12 }}
-            aria-label="Toggle dark mode"
-          />
-          <Dropdown
+          <div className={styles.headerRight}>
+            <div className={styles.themeToggleContainer}>
+              <ThemeToggle />
+            </div>
+            <Dropdown
             menu={{ items: dropdownItems }}
             placement="bottomRight"
             trigger={["click"]}
@@ -207,6 +227,7 @@ const NavBar = ({ Comp, titleLines = [], menuItems = [] }) => {
               </div>
             </div>
           </Dropdown>
+          </div>
         </div>
         <div className={styles.content}>
           <Comp />

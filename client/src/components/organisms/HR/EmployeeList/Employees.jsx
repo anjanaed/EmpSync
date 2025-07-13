@@ -11,17 +11,44 @@ import { Toaster, toast } from "sonner";
 import { useAuth } from "../../../../contexts/AuthContext";
 import { debounce } from "lodash";
 import { usePopup } from "../../../../contexts/PopupContext";
+import { useTheme } from "../../../../contexts/ThemeContext";
 
 const customTheme = {
   components: {
     Table: {
-      headerBg: "rgba(151, 0, 0, 0.78)",
-      headerColor: "white",
-      headerSortActiveBg: "rgba(151, 0, 0, 0.78)",
-      headerSortHoverBg: "rgba(183, 0, 0, 0.78)",
+      headerBg: "#960000",
+      headerColor: "#ffffff",
+      headerSortActiveBg: "#960000",
+      headerSortHoverBg: "#7a0000",
+      borderColor: "#960000",
       fontSize: 12,
       cellPaddingBlock: 12,
       fontFamily: '"Figtree", sans-serif',
+    },
+  },
+};
+
+const darkTheme = {
+  components: {
+    Table: {
+      headerBg: "#ff0000",
+      headerColor: "#ffffff",
+      headerSortActiveBg: "#ff0000",
+      headerSortHoverBg: "#cc0000",
+      borderColor: "#ff0000",
+      fontSize: 12,
+      cellPaddingBlock: 12,
+      fontFamily: '"Figtree", sans-serif',
+      colorBgContainer: "#303030",
+      colorText: "#ffffff",
+      rowHoverBg: "#ff6b6b",
+      colorBorder: "#404040",
+    },
+    Pagination: {
+      colorBgContainer: "#303030",
+      colorText: "#ffffff",
+      colorBorder: "#404040",
+      itemActiveBg: "#404040",
     },
   },
 };
@@ -43,6 +70,7 @@ const Employees = () => {
   const urL = import.meta.env.VITE_BASE_URL;
   const { authData } = useAuth();
   const token = authData?.accessToken;
+  const { theme } = useTheme();
 
   const { success, error } = usePopup();
 
@@ -144,6 +172,13 @@ const Employees = () => {
         return numA - numB;
       },
       ellipsis: true,
+      onHeaderCell: () => ({
+        style: {
+          backgroundColor: '#960000',
+          color: '#ffffff',
+          fontWeight: 'bold',
+        },
+      }),
     },
     {
       title: "Name",
@@ -151,6 +186,13 @@ const Employees = () => {
       key: "name",
       align: "center",
       ellipsis: true,
+      onHeaderCell: () => ({
+        style: {
+          backgroundColor: '#960000',
+          color: '#ffffff',
+          fontWeight: 'bold',
+        },
+      }),
     },
     {
       title: "Job Role",
@@ -159,6 +201,13 @@ const Employees = () => {
       align: "center",
       ellipsis: true,
       render: (role) => roleMap[role] || role,
+      onHeaderCell: () => ({
+        style: {
+          backgroundColor: '#960000',
+          color: '#ffffff',
+          fontWeight: 'bold',
+        },
+      }),
     },
     {
       title: "Email",
@@ -166,6 +215,13 @@ const Employees = () => {
       key: "email",
       align: "center",
       ellipsis: true,
+      onHeaderCell: () => ({
+        style: {
+          backgroundColor: '#960000',
+          color: '#ffffff',
+          fontWeight: 'bold',
+        },
+      }),
     },
     {
       title: "Actions",
@@ -197,6 +253,13 @@ const Employees = () => {
           </Popconfirm>
         </Space>
       ),
+      onHeaderCell: () => ({
+        style: {
+          backgroundColor: '#960000',
+          color: '#ffffff',
+          fontWeight: 'bold',
+        },
+      }),
     },
   ];
 
@@ -217,7 +280,7 @@ const Employees = () => {
         />
       </Modal>
 
-      <div className={styles.home}>
+      <div className={`${styles.home} ${theme === 'dark' ? 'dark' : ''}`}>
         <div className={styles.homeContent}>
           <div className={styles.homeHead}>
             <div className={styles.headLeft}>Registered Employee Details</div>
@@ -256,7 +319,7 @@ const Employees = () => {
               />
             </div>
           </div>
-          <ConfigProvider theme={customTheme}>
+          <ConfigProvider theme={theme === 'dark' ? darkTheme : customTheme}>
             <Table
               columns={columns}
               dataSource={employee}

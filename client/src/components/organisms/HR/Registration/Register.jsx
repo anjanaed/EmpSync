@@ -2,7 +2,9 @@ import React, { useState } from "react";
 import { DatePicker, Form, Space, Input, Select, InputNumber } from "antd";
 import styles from "./Register.module.css";
 import { IoIosArrowBack } from "react-icons/io";
+
 // import FingerPrint from "../../../Atoms/FingerPrint/FingerPrint";
+
 import Loading from "../../../atoms/loading/loading";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";

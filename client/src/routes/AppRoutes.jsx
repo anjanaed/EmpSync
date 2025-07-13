@@ -17,12 +17,14 @@ import MealPage03 from '../components/organisms/UserPortal/MealPage03/MealPage03
 import PrivateRoutes from "./PrivateRoutes";
 import { NotificationsProvider } from "../contexts/NotificationsContext";
 import { PopupProvider } from "../contexts/PopupContext";
+import { ThemeProvider } from "../contexts/ThemeContext";
 
 
 
 
 const AppRoutes = () => (
   <BrowserRouter>
+
     <NotificationsProvider>
       <PopupProvider>
         <Routes>
@@ -40,14 +42,7 @@ const AppRoutes = () => (
           {/* <Route path="/kitchen-admin" element={<KitchenAdmin />} />
           <Route path="/kitchen-meal" element={<Meals />} />
           <Route path="/meal-details" element={<MealDetailsForm />} />
-          <Route path="/edit-meal" element={<EditMeal />} /> */}
-
-
-          
-
-
-          
-
+          <Route path="/edit-meal" element={<EditMeal />} /> */}         
           {/* Private Routes */}
           {PrivateRoutes()}
           <Route path="/fingerprint" element={<FingerPrintPage />} />
@@ -55,6 +50,7 @@ const AppRoutes = () => (
         </Routes>
       </PopupProvider>
     </NotificationsProvider>
+
   </BrowserRouter>
 );
 

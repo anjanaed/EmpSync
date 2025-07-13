@@ -13,30 +13,33 @@ import {
 import { Prisma } from '@prisma/client';
 import { SuperAdminService } from './super-admin.service';
 import { AuthGuard } from '@nestjs/passport';
-import { RolesGuard } from '../../core/authentication/roles.guard';
-import { Roles } from '../../core/authentication/roles.decorator';
+import { AnyAuthGuard } from 'src/core/authentication/any-auth.guard';
+
 
 @Controller('super-admin')
 export class SuperAdminController {
   constructor(private readonly superAdminService: SuperAdminService) {}
   // Organization endpoints
   @Post('organizations')
+  @UseGuards(AuthGuard('superadmin-jwt'))
   async createOrganization(@Body() data: Prisma.OrganizationCreateInput) {
     return this.superAdminService.createOrganization(data);
   }
 
   @Get('organizations')
+  // @UseGuards(AnyAuthGuard)
   async getOrganizations() {
     return this.superAdminService.getOrganizations();
   }
 
   @Get('organizations/:id')
+  // @UseGuards(AnyAuthGuard)
   async getOrganizationById(@Param('id') id: string) {
     return this.superAdminService.getOrganizationById(id);
   }
 
-    @Get('admins/:orgId')
-//   @UseGuards(AuthGuard('superadmin-jwt'))
+  @Get('admins/:orgId')
+  //   @UseGuards(AuthGuard('superadmin-jwt'))
   async getByOrg(@Param('orgId') orgId: string) {
     return this.superAdminService.getByOrg(orgId);
   }

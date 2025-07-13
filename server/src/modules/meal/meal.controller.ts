@@ -37,8 +37,7 @@ export class MealController {
   constructor(private readonly mealService: MealService) {}
 
   @Post()
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles('KITCHEN_ADMIN')
+  
   async create(@Body() createMealDto: CreateMealWithIngredientsDto) {
     try {
       // Convert DTO to Prisma format

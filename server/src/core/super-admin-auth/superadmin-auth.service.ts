@@ -15,6 +15,7 @@ export class SuperAdminAuthService {
   url = process.env.AUTH0_URL;
   clientId = process.env.SUPERADMIN_AUTH0_CLIENT_ID;
   clientSecret = process.env.SUPERADMIN_AUTH0_SECRET;
+  audience = process.env.SUPERADMIN_AUTH0_AUDIENCE;
 
 
 
@@ -26,7 +27,7 @@ export class SuperAdminAuthService {
           grant_type: "http://auth0.com/oauth/grant-type/password-realm",
           username: email,
           password: password,
-          audience: `https://${this.url}/api/v2/`,
+          audience: `https://${this.audience}`,
           client_id: this.clientId, // Use the env variable for client_id
           client_secret: this.clientSecret, // Use the env variable for client_secret
           realm: "SuperAdmin",

@@ -50,7 +50,7 @@
   font-size: 20px;
   font-weight: 600;
   margin: auto 0;
-  color: #d10000;
+  color: #333333;
 }
 .headRight {
   margin-left: auto;
@@ -63,6 +63,7 @@
 
 .searchBar {
   margin-right: 1vw;
+  width: 20vw;
 }
 
 
@@ -82,10 +83,50 @@
   margin: 0vw 0.5vw;
   cursor: pointer;
   transition: all 0.2s ease-in-out;
+  color: #666666;
 }
 
 .icons:hover {
   transform: scale(1.2);
+}
+
+/* Edit icon styling */
+.editIcon {
+  color: #1890ff !important;
+}
+
+.editIcon:hover {
+  color: #40a9ff !important;
+}
+
+/* Delete icon styling */
+.deleteIcon {
+  color: #ff4d4f !important;
+}
+
+.deleteIcon:hover {
+  color: #ff7875 !important;
+}
+
+/* Dark mode icon colors */
+:global(.dark) .icons {
+  color: #ffffff;
+}
+
+:global(.dark) .editIcon {
+  color: #40a9ff !important;
+}
+
+:global(.dark) .editIcon:hover {
+  color: #69c0ff !important;
+}
+
+:global(.dark) .deleteIcon {
+  color: #ff7875 !important;
+}
+
+:global(.dark) .deleteIcon:hover {
+  color: #ffa39e !important;
 }
 
 .headRight select {
@@ -105,6 +146,184 @@
 Table {
   margin-top: 1vw;
   background-color: rgb(245, 245, 245);
+}
+
+/* Force table header to be red at all times */
+:global(.ant-table-thead > tr > th),
+:global(.ant-table-thead > tr > th:hover),
+:global(.ant-table-thead > tr > th.ant-table-column-has-sorters),
+:global(.ant-table-thead > tr > th.ant-table-column-has-sorters:hover),
+:global(.ant-table-thead > tr > th.ant-table-column-sort),
+:global(.ant-table-thead > tr > th.ant-table-selection-column),
+:global(.ant-table-thead > tr > th:first-child),
+:global(.ant-table-thead > tr > th:last-child),
+:global(.ant-table thead th),
+:global(.ant-table .ant-table-thead > tr > th) {
+  background-color: #960000 !important;
+  color: #ffffff !important;
+  border-bottom: 1px solid #960000 !important;
+  border-top: 1px solid #960000 !important;
+  border-left: 1px solid #960000 !important;
+  border-right: 1px solid #960000 !important;
+}
+
+/* Force Employee ID column specifically */
+:global(.ant-table-thead > tr > th:first-child) {
+  background-color: #960000 !important;
+  color: #ffffff !important;
+}
+
+:global(.ant-table-thead > tr > th .ant-table-column-sorter),
+:global(.ant-table-thead > tr > th .ant-table-column-title) {
+  color: #ffffff !important;
+}
+
+/* Dark mode table row styles */
+:global(.dark .ant-table-tbody > tr > td),
+:global(.dark .ant-table-tbody > tr.ant-table-row-selected > td),
+:global(.dark .ant-table-tbody tr),
+:global(.dark .ant-table-tbody tr.ant-table-row-selected) {
+  background-color: #303030 !important;
+  color: #ffffff !important;
+  border-bottom: 1px solid #404040 !important;
+}
+
+:global(.dark .ant-table-tbody > tr:hover > td),
+:global(.dark .ant-table-tbody > tr.ant-table-row:hover > td),
+:global(.dark .ant-table-tbody tr:hover) {
+  background-color: #1d1c1c !important;
+  color: #ffffff !important;
+  border-bottom: 1px solid #f20707 !important;
+}
+
+/* Dark mode table container */
+:global(.dark .ant-table),
+:global(.dark .ant-table-container),
+:global(.dark .ant-table-content),
+:global(.dark .ant-table-tbody) {
+  background-color: #303030 !important;
+  color: #ffffff !important;
+}
+
+/* Dark mode table pagination */
+:global(.dark .ant-pagination),
+:global(.dark .ant-pagination li),
+:global(.dark .ant-pagination .ant-pagination-item),
+:global(.dark .ant-pagination .ant-pagination-item a) {
+  background-color: #303030 !important;
+  color: #ffffff !important;
+  border-color: #404040 !important;
+}
+
+/* Dark mode for main content areas */
+:global(.dark) .homeContent {
+  background-color: #212121 !important;
+  color: #ffffff !important;
+}
+
+:global(.dark) .contentBox {
+  background-color: #303030 !important;
+  color: #ffffff !important;
+  box-shadow: 0 6px 12px rgba(255, 255, 255, 0.05), 0 3px 6px rgba(255, 255, 255, 0.02);
+}
+
+:global(.dark) .headLeft {
+  color: #f4ecec !important;
+}
+
+/* Dark mode for select components */
+:global(.dark .ant-select-selector) {
+  background-color: #303030 !important;
+  border-color: #404040 !important;
+  color: #ffffff !important;
+}
+
+:global(.dark .ant-select-focused .ant-select-selector) {
+  border-color: rgb(87, 99, 255) !important;
+}
+
+:global(.dark .ant-select:hover .ant-select-selector) {
+  border-color: #1890ff !important;
+}
+
+:global(.dark .ant-select-selection-item) {
+  color: #ffffff !important;
+}
+
+/* Dark mode placeholder text */
+:global(.dark .ant-select-selection-placeholder) {
+  color: #ffffff !important;
+}
+
+:global(.dark .ant-select-selector .ant-select-selection-placeholder) {
+  color: #ffffff !important;
+}
+
+/* Dark mode for select dropdown options */
+:global(.dark .ant-select-dropdown) {
+  background-color: #303030 !important;
+  border: 1px solid #404040 !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5) !important;
+}
+
+:global(.dark .ant-select-item) {
+  background-color: #303030 !important;
+  color: #ffffff !important;
+  border-bottom: 1px solid #404040 !important;
+}
+
+:global(.dark .ant-select-item:hover) {
+  background-color: #404040 !important;
+  color: #ffffff !important;
+}
+
+:global(.dark .ant-select-item-option-selected) {
+  background-color: #ff6b6b !important;
+  color: #ffffff !important;
+}
+
+:global(.dark .ant-select-item-option-active) {
+  background-color: #404040 !important;
+  color: #ffffff !important;
+}
+
+/* Dark mode for dropdown container */
+:global(.dark .ant-select-dropdown .ant-select-item-option-content) {
+  color: #ffffff !important;
+}
+
+/* Dark mode for dropdown arrow */
+:global(.dark .ant-select-arrow) {
+  color: #ffffff !important;
+}
+
+/* Dark mode for clear button */
+:global(.dark .ant-select-clear) {
+  color: #ffffff !important;
+  background-color: transparent !important;
+}
+
+:global(.dark .ant-select-clear:hover) {
+  color: #ff6b6b !important;
+}
+
+/* Dark mode for search bar */
+:global(.dark .ant-input::placeholder) {
+  color: #ffffff !important;
+}
+
+:global(.dark .ant-input) {
+  background-color: #303030 !important;
+  border-color: #404040 !important;
+  color: #ffffff !important;
+}
+
+:global(.dark .ant-input:focus) {
+  border-color: rgb(87, 99, 255) !important;
+}
+
+:global(.dark .ant-input:hover) {
+  border-color: #1890ff !important;
 }
 
 @media(max-width:768px){
