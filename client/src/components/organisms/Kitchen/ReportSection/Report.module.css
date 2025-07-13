@@ -168,3 +168,423 @@
 .downloadIcon {
   font-size: 18px;
 }
+
+/* Report.module.css */
+
+.container {
+  padding: 24px;
+  background-color: #f5f5f5;
+  min-height: 100vh;
+}
+
+.analysisSection {
+  margin-bottom: 32px;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.sectionIcon {
+  margin-right: 8px;
+  color: #1890ff;
+}
+
+.sectionTitle {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.analysisGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.card {
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.cardTitle {
+  display: flex;
+  align-items: center;
+}
+
+.highDemandIcon {
+  margin-right: 8px;
+  color: #52c41a;
+}
+
+.lowDemandIcon {
+  margin-right: 8px;
+  color: #ff4d4f;
+}
+
+.mealItem {
+  margin-bottom: 16px;
+}
+
+.mealHeader {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.highDemandPercentage {
+  font-weight: bold;
+  color: #52c41a;
+}
+
+.lowDemandPercentage {
+  font-weight: bold;
+  color: #ff4d4f;
+}
+
+.reportsSection {
+  margin-bottom: 24px;
+}
+
+.tabHeader {
+  display: flex;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.tabContentHeader {
+  display: flex;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.tabIcon {
+  margin-right: 12px;
+  color: #1890ff;
+}
+
+.tabTitle {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #000;
+}
+
+.tabDescription {
+  margin: 4px 0 0 0;
+  color: #666;
+  font-size: 14px;
+}
+
+.controlsContainer {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.controlsContainerWrap {
+  display: flex;
+  align-items: end;
+  gap: 16px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  margin-top: 40px;
+}
+
+.controlGroup {
+  display: flex;
+  flex-direction: column;
+}
+
+.controlLabel {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.selectInput {
+  width: 150px;
+}
+
+.dateInput {
+  padding: 8px 12px;
+  border: 1px solid #d9d9d9;
+  border-radius: 6px;
+  font-size: 14px;
+  width: 150px;
+}
+
+.textInput {
+  padding: 8px 12px;
+  border: 1px solid #d9d9d9;
+  border-radius: 6px;
+  font-size: 14px;
+  width: 180px;
+  color: #999;
+}
+
+
+.generateButtonDark {
+  background-color: #1f1f1f;
+  border-color: #1f1f1f;
+  height: 35px;
+  font-weight: 500;
+  padding-left: 32px;
+  padding-right: 32px;
+  margin-top: 30px;
+
+}
+
+
+
+.table {
+  background-color: white;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.totalMealsCell {
+  color: #1890ff;
+  font-weight: bold;
+}
+
+.efficiencyBadgeExcellent {
+  background-color: #52c41a;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.efficiencyBadgeGood {
+  background-color: #fadb14;
+  color: black;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.efficiencyBadgePoor {
+  background-color: #ff4d4f;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.statusBadgeExcellent {
+  background-color: #52c41a;
+  color: white;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.statusBadgeGood {
+  background-color: #fadb14;
+  color: black;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.statusBadgeServed {
+  background-color: #52c41a;
+  color: white;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.statusBadgePending {
+  background-color: #faad14;
+  color: white;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.viewDetailsButton {
+  padding: 0;
+  font-weight: 500;
+}
+
+.downloadSection {
+  text-align: right;
+  margin-top: 24px;
+}
+
+.downloadButton {
+  height: 40px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tabIcon16 {
+  margin-right: 8px;
+}
+
+.tabPaneTitle {
+  display: flex;
+  align-items: center;
+}
+
+/* Existing styles - keep all your current styles and add these new ones */
+
+/* New styles for pricing display in table cells */
+.mealCell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.mealCount {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1890ff;
+  text-align: center;
+}
+
+.mealPrice {
+  font-size: 12px;
+  color: #666;
+  font-weight: 500;
+}
+
+.totalMealsCell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.totalCount {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1890ff;
+  text-align: center;
+}
+
+.totalMealsText {
+  font-size: 11px;
+  color: #666;
+  font-weight: 500;
+}
+
+.totalAmountCell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.totalAmount {
+  font-size: 18px;
+  font-weight: 700;
+  color: #52c41a;
+  text-align: center;
+}
+
+.totalCostText {
+  font-size: 11px;
+  color: #666;
+  font-weight: 500;
+}
+
+/* Summary row styles */
+.summaryRow {
+  background-color: #fafafa;
+  font-weight: 600;
+}
+
+.summaryCell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.summaryCount {
+  font-size: 18px;
+  font-weight: 800;
+  color: #fa8c16;
+  text-align: center;
+}
+
+.summaryPrice {
+  font-size: 12px;
+  color: #666;
+  font-weight: 600;
+}
+
+.summaryTotalMeals {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.summaryTotalCount {
+  font-size: 18px;
+  font-weight: 800;
+  color: #1890ff;
+  text-align: center;
+}
+
+.summaryTotalText {
+  font-size: 11px;
+  color: #666;
+  font-weight: 600;
+}
+
+.summaryGrandTotal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.summaryGrandAmount {
+  font-size: 20px;
+  font-weight: 800;
+  color: #52c41a;
+  text-align: center;
+}
+
+.summaryGrandText {
+  font-size: 11px;
+  color: #666;
+  font-weight: 600;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .mealCount, .totalCount, .summaryCount, .summaryTotalCount {
+    font-size: 16px;
+  }
+  
+  .mealPrice, .totalMealsText, .totalCostText, .summaryPrice, .summaryTotalText, .summaryGrandText {
+    font-size: 10px;
+  }
+  
+  .totalAmount {
+    font-size: 16px;
+  }
+  
+  .summaryGrandAmount {
+    font-size: 18px;
+  }
+}

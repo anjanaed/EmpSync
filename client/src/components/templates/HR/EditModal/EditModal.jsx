@@ -18,6 +18,7 @@ import Gbutton from "../../../atoms/button/Button";
 import { RiFingerprintLine } from "react-icons/ri";
 import { usePopup } from "../../../../contexts/PopupContext";
 import { useAuth } from "../../../../contexts/AuthContext";
+import { useTheme } from "../../../../contexts/ThemeContext";
 
 
 const formItemLayout = {
@@ -43,7 +44,8 @@ const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
   const [customRole, setCustomRole] = useState("");
   const [form] = Form.useForm();
   const { success, error } = usePopup();
-        const { authData } = useAuth();
+  const { authData } = useAuth();
+  const { theme } = useTheme();
   const token = authData?.accessToken;
 
 
@@ -124,7 +126,7 @@ const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
   }
 
   return (
-    <>
+    <div className={`${theme === 'dark' ? 'dark' : ''} ${theme === 'dark' ? styles.darkWrapper : styles.modalContainer}`}>
       <div className={styles.head}>Edit Employee - {currentEmployee.id}</div>
       <div className={styles.headDes}>
         Update Employee Information. Click Save Changes When You're Done.
@@ -516,7 +518,7 @@ const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
           />
         </Form>
       </div>
-    </>
+    </div>
   );
 };
 

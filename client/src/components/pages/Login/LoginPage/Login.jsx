@@ -53,7 +53,7 @@ const LoginPage = () => {
         </div>
         <div className={styles.loginRight}>
           <h2 className={styles.loginTitle}>Welcome Back!</h2>
-          <p className={styles.loginSubtitle}>Please Enter Your Credentials.</p>
+          <p className={styles.loginSubtitle}>Please Enter Your Information.</p>
 
           <Form
             layout="vertical"
