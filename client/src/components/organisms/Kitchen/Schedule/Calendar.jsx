@@ -27,6 +27,7 @@ import {
   PushpinFilled,
   SearchOutlined,
   ClearOutlined,
+  CopyOutlined,
 } from "@ant-design/icons";
 import dayjs from "dayjs";
 import styles from "./Calendar.module.css";
@@ -40,7 +41,6 @@ const MealPlanner = () => {
   const [currentDate, setCurrentDate] = useState(dayjs());
   const urL = import.meta.env.VITE_BASE_URL;
   const [defaultMeals, setDefaultMeals] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("");
   const [menuItems, setMenuItems] = useState({});
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -51,18 +51,16 @@ const MealPlanner = () => {
   const [showSearchResults, setShowSearchResults] = useState(false);
   const [form] = Form.useForm();
   const [selectedMeals, setSelectedMeals] = useState([]);
-  const [fetchingMeals, setFetchingMeals] = useState(false);
   const [activeMealType, setActiveMealType] = useState(null);
   const [existingSchedule, setExistingSchedule] = useState(null);
-  const [savingSchedule, setSavingSchedule] = useState(false);
   const [scheduledMeals, setScheduledMeals] = useState({});
-  const [loadingSchedules, setLoadingSchedules] = useState(false);
-  const [clearingSchedule, setClearingSchedule] = useState(false);
+  const [previousSchedules, setPreviousSchedules] = useState([]); // New state for previous schedules
   const { authData } = useAuth();
+  const [isUpdateLoading, setIsUpdateLoading] = useState(false);
+
   const token = authData?.accessToken;
 
   const fetchDefaultMeals = async (date) => {
-    setLoading(true);
     try {
       const formattedDate = date.format("YYYY-MM-DD");
       const response = await fetch(
@@ -90,13 +88,10 @@ const MealPlanner = () => {
     } catch (error) {
       console.error("Error fetching default meals:", error);
       message.error("Failed to load meal types");
-    } finally {
-      setLoading(false);
     }
   };
 
   const fetchAvailableMeals = async () => {
-    setFetchingMeals(true);
     try {
       const response = await fetch(`${urL}/meal`);
       if (!response.ok) {
@@ -108,14 +103,11 @@ const MealPlanner = () => {
       console.error("Error fetching meals:", error);
       message.error("Failed to load available meals");
       setAvailableMeals([]);
-    } finally {
-      setFetchingMeals(false);
     }
   };
 
   const fetchAllSchedules = async (date = currentDate) => {
     if (!date) return;
-    setLoadingSchedules(true);
     setScheduledMeals({});
     try {
       const formattedDate = date.format("YYYY-MM-DD");
@@ -144,8 +136,66 @@ const MealPlanner = () => {
         message.error("Failed to load meal schedules");
       }
       setScheduledMeals({});
-    } finally {
-      setLoadingSchedules(false);
+    }
+  };
+
+  // New function to fetch previous schedules for the same meal type
+  const fetchPreviousSchedules = async () => {
+    if (!activeTab || !currentDate) return;
+
+    try {
+      const mealTypeId = parseInt(activeTab);
+      const currentDateStr = currentDate.format("YYYY-MM-DD");
+
+      // Fetch schedules from the last 30 days
+      const endDate = currentDate.subtract(1, "day");
+      const startDate = currentDate.subtract(30, "days");
+
+      const promises = [];
+      let tempDate = endDate;
+
+      // Check previous 30 days for schedules with the same meal type
+      while (tempDate.isAfter(startDate) || tempDate.isSame(startDate)) {
+        const dateStr = tempDate.format("YYYY-MM-DD");
+        promises.push(
+          axios
+            .get(`${urL}/schedule/${dateStr}`)
+            .then((response) => ({
+              date: dateStr,
+              schedules: response.data || [],
+            }))
+            .catch(() => ({ date: dateStr, schedules: [] }))
+        );
+        tempDate = tempDate.subtract(1, "day");
+      }
+
+      const results = await Promise.all(promises);
+      const previousSchedulesForMealType = [];
+
+      results.forEach(({ date, schedules }) => {
+        const matchingSchedule = schedules.find(
+          (s) => s.mealTypeId === mealTypeId && s.meals && s.meals.length > 0
+        );
+
+        if (matchingSchedule) {
+          previousSchedulesForMealType.push({
+            date,
+            schedule: matchingSchedule,
+            mealTypeName:
+              matchingSchedule.mealType?.name || activeMealType?.name,
+          });
+        }
+      });
+
+      // Sort by date (most recent first)
+      previousSchedulesForMealType.sort(
+        (a, b) => dayjs(b.date).unix() - dayjs(a.date).unix()
+      );
+
+      setPreviousSchedules(previousSchedulesForMealType);
+    } catch (error) {
+      console.error("Error fetching previous schedules:", error);
+      setPreviousSchedules([]);
     }
   };
 
@@ -191,6 +241,7 @@ const MealPlanner = () => {
     setScheduledMeals({});
     setSelectedMeals([]);
     setExistingSchedule(null);
+    setPreviousSchedules([]); // Clear previous schedules when date changes
   };
 
   const modalStyles = {
@@ -204,6 +255,19 @@ const MealPlanner = () => {
       setSelectedMeals(selectedMeals.filter((id) => id !== mealId));
     } else {
       setSelectedMeals([...selectedMeals, mealId]);
+    }
+  };
+
+  // New function to copy meals from previous schedule
+  const handleCopyFromPrevious = (previousSchedule) => {
+    if (previousSchedule.schedule && previousSchedule.schedule.meals) {
+      const mealIds = previousSchedule.schedule.meals.map((meal) => meal.id);
+      setSelectedMeals(mealIds);
+      message.success(
+        `Copied ${mealIds.length} meals from ${dayjs(
+          previousSchedule.date
+        ).format("MMM DD, YYYY")}`
+      );
     }
   };
 
@@ -250,25 +314,26 @@ const MealPlanner = () => {
             : meal
         )
       );
-      setLoading(true);
-      await axios.patch(`${urL}/meal-types/timeupdate/${mealId}/0`, {
-        newTime: formattedTime,
-      }, {
-        headers: {
-          Authorization: `Bearer ${token}`,
+
+      await axios.patch(
+        `${urL}/meal-types/timeupdate/${mealId}/0`,
+        {
+          newTime: formattedTime,
         },
-      });
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       await fetchDefaultMeals(currentDate);
+      message.success("Time Updated successfully");
     } catch (err) {
       console.error("Error changing start time:", err);
       message.error(
         err.response?.data?.message || "Failed to update start time"
       );
       await fetchDefaultMeals(currentDate); // Revert on error
-    } finally {
-      message.success("Time Updated successfully");
-
-      setLoading(false);
     }
   };
 
@@ -283,23 +348,24 @@ const MealPlanner = () => {
             : meal
         )
       );
-      setLoading(true);
-      await axios.patch(`${urL}/meal-types/timeupdate/${mealId}/1`, {
-        newTime: formattedTime,
-      }, {
-        headers: {
-          Authorization: `Bearer ${token}`,
+
+      await axios.patch(
+        `${urL}/meal-types/timeupdate/${mealId}/1`,
+        {
+          newTime: formattedTime,
         },
-      });
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       await fetchDefaultMeals(currentDate);
+      message.success("Time Updated successfully");
     } catch (err) {
       console.error("Error changing end time:", err);
       message.error(err.response?.data?.message || "Failed to update end time");
       await fetchDefaultMeals(currentDate); // Revert on error
-    } finally {
-      message.success("Time Updated successfully");
-
-      setLoading(false);
     }
   };
 
@@ -313,6 +379,7 @@ const MealPlanner = () => {
     }
     setSelectedMeals([]);
     setExistingSchedule(null);
+    setPreviousSchedules([]); // Clear previous schedules when tab changes
   };
 
   const goToNextDay = () => {
@@ -332,7 +399,6 @@ const MealPlanner = () => {
   const handleModalOk = () => {
     form.validateFields().then(async (values) => {
       try {
-        setLoading(true);
         const payload = {
           name: values.mealName,
           time: [
@@ -348,11 +414,10 @@ const MealPlanner = () => {
           },
         });
         await fetchDefaultMeals(currentDate);
+        message.success("Meal type created successfully");
       } catch (err) {
         console.error("Error creating meal type:", err);
         message.error("Failed to create meal type");
-      } finally {
-        setLoading(false);
       }
       setIsModalVisible(false);
     });
@@ -363,22 +428,134 @@ const MealPlanner = () => {
       message.warning("Please select a meal time first");
       return;
     }
-    setIsUpdateModalVisible(true);
-    setSearchTerm("");
-    const mealType = defaultMeals.find(
-      (meal) => meal.id === parseInt(activeTab)
-    );
-    if (mealType) {
-      setActiveMealType(mealType);
+
+    // Check if there's already a schedule for this meal type and date
+    const existingScheduleForToday = scheduledMeals[parseInt(activeTab)];
+
+    if (
+      existingScheduleForToday &&
+      existingScheduleForToday.meals &&
+      existingScheduleForToday.meals.length > 0
+    ) {
+      // If schedule exists, show the modal
+      setIsUpdateModalVisible(true);
+      setSearchTerm("");
+      const mealType = defaultMeals.find(
+        (meal) => meal.id === parseInt(activeTab)
+      );
+      if (mealType) {
+        setActiveMealType(mealType);
+      }
+      await fetchAvailableMeals();
+      await fetchExistingSchedule();
+      await fetchPreviousSchedules();
+    } else {
+      // If no schedule exists, try to auto-copy from previous day
+      await handleAutoUpdateFromPrevious();
     }
-    await fetchAvailableMeals();
-    await fetchExistingSchedule();
+  };
+
+  // New function to automatically update menu from previous day
+  const handleAutoUpdateFromPrevious = async () => {
+    if (!activeTab || !currentDate) {
+      message.error("Missing required information");
+      return;
+    }
+
+    try {
+      const mealTypeId = parseInt(activeTab);
+      const mealType = defaultMeals.find((meal) => meal.id === mealTypeId);
+
+      if (!mealType) {
+        message.error("Meal type not found");
+        return;
+      }
+
+      // Check previous 7 days for the same meal type schedule
+      let foundPreviousSchedule = null;
+      let previousDate = null;
+
+      for (let i = 1; i <= 7; i++) {
+        const checkDate = currentDate.subtract(i, "day");
+        const checkDateStr = checkDate.format("YYYY-MM-DD");
+
+        try {
+          const response = await axios.get(`${urL}/schedule/${checkDateStr}`);
+          if (response.data && Array.isArray(response.data)) {
+            const matchingSchedule = response.data.find(
+              (s) =>
+                s.mealTypeId === mealTypeId && s.meals && s.meals.length > 0
+            );
+
+            if (matchingSchedule) {
+              foundPreviousSchedule = matchingSchedule;
+              previousDate = checkDate;
+              break; // Found the most recent one, stop searching
+            }
+          }
+        } catch (error) {
+          // Continue searching if this date has no schedules
+          continue;
+        }
+      }
+
+      if (foundPreviousSchedule) {
+        // Auto-create schedule with meals from previous day
+        const payload = {
+          date: currentDate.format("YYYY-MM-DD"),
+          mealTypeId: mealTypeId,
+          mealIds: foundPreviousSchedule.meals.map((meal) => meal.id),
+        };
+
+        await axios.post(`${urL}/schedule`, payload, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        message.success(
+          `${mealType.name} menu auto-updated with ${
+            foundPreviousSchedule.meals.length
+          } meals from ${previousDate.format("MMM DD, YYYY")}`
+        );
+
+        await fetchAllSchedules(currentDate);
+      } else {
+        // No previous schedule found, show the modal for manual selection
+        message.info(
+          `No previous ${mealType.name} schedule found in the last 7 days. Opening menu selector.`
+        );
+        setIsUpdateModalVisible(true);
+        setSearchTerm("");
+        setActiveMealType(mealType);
+        await fetchAvailableMeals();
+        await fetchExistingSchedule();
+        await fetchPreviousSchedules();
+      }
+    } catch (error) {
+      console.error("Error auto-updating menu:", error);
+      message.error("Failed to auto-update menu. Please try manually.");
+
+      // Fallback to showing the modal
+      setIsUpdateModalVisible(true);
+      setSearchTerm("");
+      const mealType = defaultMeals.find(
+        (meal) => meal.id === parseInt(activeTab)
+      );
+      if (mealType) {
+        setActiveMealType(mealType);
+      }
+      await fetchAvailableMeals();
+      await fetchExistingSchedule();
+      await fetchPreviousSchedules();
+    }
   };
 
   const handleUpdateMenuCancel = () => {
     setIsUpdateModalVisible(false);
     setSearchTerm("");
     setSelectedMeals([]);
+    setPreviousSchedules([]); // Clear previous schedules when modal closes
   };
 
   const handleClearSchedule = async () => {
@@ -391,7 +568,7 @@ const MealPlanner = () => {
       setIsUpdateModalVisible(false);
       return;
     }
-    setClearingSchedule(true);
+
     try {
       await axios.delete(`${urL}/schedule/${existingSchedule.id}`, {
         headers: {
@@ -409,8 +586,6 @@ const MealPlanner = () => {
       message.error(
         error.response?.data?.message || "Failed to clear meal schedule"
       );
-    } finally {
-      setClearingSchedule(false);
     }
   };
 
@@ -428,7 +603,8 @@ const MealPlanner = () => {
       mealTypeId: parseInt(activeTab),
       mealIds: selectedMeals,
     };
-    setSavingSchedule(true);
+
+    setIsUpdateLoading(true); // Start loading
     try {
       if (existingSchedule) {
         await axios.patch(`${urL}/schedule/${existingSchedule.id}`, payload, {
@@ -452,9 +628,10 @@ const MealPlanner = () => {
         error.response?.data?.message || "Failed to update meal schedule"
       );
     } finally {
-      setSavingSchedule(false);
+      setIsUpdateLoading(false); // End loading
       setIsUpdateModalVisible(false);
       setSelectedMeals([]);
+      setPreviousSchedules([]); // Clear previous schedules after update
     }
   };
 
@@ -548,10 +725,6 @@ const MealPlanner = () => {
       setActiveMealType(defaultMeals[0]);
     }
   }, [defaultMeals, activeTab]);
-
-  if (loading) {
-    return <Loading />;
-  }
 
   // Validate time to ensure valid dayjs object for defaultValue
   const validateTime = (time) => {
@@ -662,12 +835,7 @@ const MealPlanner = () => {
               className={styles.tabPane}
             >
               <div className={styles.scheduledMeals}>
-                {loadingSchedules ? (
-                  <div className={styles.loadingContainer}>
-                    <Spin size="large" />
-                    <p>Loading scheduled meals...</p>
-                  </div>
-                ) : scheduledMeals[meal.id] ? (
+                {scheduledMeals[meal.id] ? (
                   <div className={styles.mealCardContainer}>
                     {scheduledMeals[meal.id].meals &&
                     scheduledMeals[meal.id].meals.length > 0 ? (
@@ -678,7 +846,29 @@ const MealPlanner = () => {
                               key={scheduledMeal.id}
                               className={styles.simpleMealItem}
                             >
-                              {scheduledMeal.nameEnglish}
+                              <div className={styles.mealItemWithImage}>
+                                <Avatar
+                                  src={
+                                    scheduledMeal.imageUrl ||
+                                    scheduledMeal.image
+                                  }
+                                  alt={scheduledMeal.nameEnglish}
+                                  size={50} // Changed from "small" to "default" (or use "large" for even bigger)
+                                  className={styles.mealAvatar}
+                                  style={{
+                                    marginRight: "12px", // Increased from 8px to accommodate larger image
+                                    flexShrink: 0,
+                                  }}
+                                >
+                                  {scheduledMeal.nameEnglish
+                                    ?.charAt(0)
+                                    ?.toUpperCase()}
+                                </Avatar>
+
+                                <span className={styles.mealName}>
+                                  {scheduledMeal.nameEnglish}
+                                </span>
+                              </div>
                             </div>
                           )
                         )}
@@ -769,89 +959,165 @@ const MealPlanner = () => {
         </Form>
       </Modal>
 
+      {/* Update Menu Modal with Previous Schedules */}
       <Modal
-        title={`Update ${
-          activeMealType ? activeMealType.name : ""
-        } Menu for ${currentDate.format("MMMM D, YYYY")}`}
+        title={`Update Menu for ${
+          activeMealType?.name || "Meal"
+        } - ${currentDate.format("MMMM DD, YYYY")}`}
         open={isUpdateModalVisible}
+        onOk={handleUpdateMenuOk}
         onCancel={handleUpdateMenuCancel}
-        className={styles.mealSelectionModal}
-        closable={true}
-        footer={null}
+        width={800}
         styles={modalStyles}
-        width={600}
+        footer={[
+          <Button key="clear" onClick={handleClearSchedule} danger>
+            <ClearOutlined /> Clear Schedule
+          </Button>,
+          <Button key="cancel" onClick={handleUpdateMenuCancel}>
+            Cancel
+          </Button>,
+          <Button key="submit" type="primary" onClick={handleUpdateMenuOk}>
+            {existingSchedule ? "Update Menu" : "Create Menu"}
+          </Button>,
+        ]}
       >
-        <div className={styles.updateMealModalContent}>
-          <h3 className={styles.modalSectionTitle}>
-            Available {activeMealType ? activeMealType.name : ""} Meals
-          </h3>
-          <div className={styles.searchContainer}>
-            <Input
-              placeholder="Search meals..."
-              onChange={handleSearchChange}
-              className={styles.searchInput}
-              value={searchTerm}
-              prefix={<SearchOutlined />}
-            />
-          </div>
-          <div className={styles.mealsContainer}>
-            {fetchingMeals ? (
-              <div className={styles.loadingContainer}>
-                <Spin size="large" />
-                <p>Loading available meals...</p>
-              </div>
-            ) : (
-              <List
-                className={styles.mealList}
-                dataSource={filterMeals()}
-                renderItem={(meal) => (
-                  <List.Item className={styles.mealItem} key={meal.id}>
-                    <div className={styles.mealItemContent}>
-                      <span className={styles.mealName}>
-                        {meal.nameEnglish}
-                      </span>
-                      <Checkbox
-                        checked={selectedMeals.includes(meal.id)}
-                        onChange={() => handleMealSelection(meal.id)}
-                        className={styles.mealCheckbox}
-                      />
+        {/* Previous Schedules Section */}
+        {previousSchedules.length > 0 && (
+          <div style={{ marginBottom: 20 }}>
+            <Divider orientation="left">Copy from Previous Days</Divider>
+            <div style={{ maxHeight: 150, overflowY: "auto" }}>
+              {previousSchedules.slice(0, 5).map((prevSchedule, index) => (
+                <Card
+                  key={`${prevSchedule.date}-${index}`}
+                  size="small"
+                  style={{ marginBottom: 8 }}
+                  bodyStyle={{ padding: "8px 12px" }}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}
+                  >
+                    <div>
+                      <strong>
+                        {dayjs(prevSchedule.date).format("MMM DD, YYYY")}
+                      </strong>
+                      <div style={{ fontSize: "12px", color: "#666" }}>
+                        {prevSchedule.schedule.meals?.length || 0} meals
+                        scheduled
+                      </div>
+                      <div style={{ fontSize: "11px", color: "#888" }}>
+                        {prevSchedule.schedule.meals
+                          ?.slice(0, 3)
+                          .map((meal) => meal.nameEnglish)
+                          .join(", ")}
+                        {prevSchedule.schedule.meals?.length > 3 && "..."}
+                      </div>
                     </div>
-                  </List.Item>
-                )}
-                locale={{
-                  emptyText: (
-                    <Empty
-                      description={
-                        fetchingMeals ? "Loading..." : "No meals found"
-                      }
-                      image={Empty.PRESENTED_IMAGE_SIMPLE}
-                    />
-                  ),
+                    <Button
+                      size="small"
+                      icon={<CopyOutlined />}
+                      onClick={() => handleCopyFromPrevious(prevSchedule)}
+                      type="link"
+                    >
+                      Copy
+                    </Button>
+                  </div>
+                </Card>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Search Section */}
+        <div style={{ marginBottom: 16 }}>
+          <Input
+            placeholder={`Search meals for ${
+              activeMealType?.name || "this meal type"
+            }...`}
+            value={searchTerm}
+            onChange={handleSearchChange}
+            prefix={<SearchOutlined />}
+          />
+        </div>
+
+        {/* Selected Meals Count */}
+        {selectedMeals.length > 0 && (
+          <div style={{ marginBottom: 16 }}>
+            <Tag color="blue">{selectedMeals.length} meals selected</Tag>
+          </div>
+        )}
+
+        {/* Available Meals List */}
+        <div style={{ maxHeight: 400, overflowY: "auto" }}>
+          {isShowingSnackFallback() && (
+            <div
+              
+            >
+              
+            </div>
+          )}
+
+          <List
+            dataSource={filterMeals()}
+            renderItem={(meal) => (
+              <List.Item
+                key={meal.id}
+                style={{
+                  padding: "8px 0",
+                  backgroundColor: selectedMeals.includes(meal.id)
+                    ? "#f6ffed"
+                    : "transparent",
+                  borderRadius: selectedMeals.includes(meal.id) ? "4px" : "0px",
+                  paddingLeft: selectedMeals.includes(meal.id) ? "8px" : "0px",
                 }}
-              />
+              >
+                <Checkbox
+                  checked={selectedMeals.includes(meal.id)}
+                  onChange={() => handleMealSelection(meal.id)}
+                >
+                  <div
+                    style={{ display: "flex", alignItems: "center", gap: 8 }}
+                  >
+                    <Avatar
+                      src={meal.image}
+                      size="small"
+                      style={{ backgroundColor: "#f56a00" }}
+                    >
+                      {meal.nameEnglish?.[0]?.toUpperCase()}
+                    </Avatar>
+                    <div>
+                      <div
+                        style={{
+                          fontWeight: selectedMeals.includes(meal.id)
+                            ? "bold"
+                            : "normal",
+                        }}
+                      >
+                        {meal.nameEnglish}
+                      </div>
+                      {meal.category && (
+                        <div style={{ fontSize: "12px", color: "#666" }}>
+                          {Array.isArray(meal.category)
+                            ? meal.category.join(", ")
+                            : meal.category}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </Checkbox>
+              </List.Item>
             )}
-          </div>
-          <div className={styles.modalFooter}>
-            <Button
-              key="clear"
-              onClick={handleClearSchedule}
-              loading={clearingSchedule}
-              className={styles.clearButton}
-              icon={<ClearOutlined />}
-              danger
-            >
-              Clear
-            </Button>
-            <Button
-              key="update"
-              type="primary"
-              onClick={handleUpdateMenuOk}
-              loading={savingSchedule}
-              className={styles.updateModalBtn}
-            >
-              {existingSchedule ? "Update" : "Save"}
-            </Button>
-          </div>
+            locale={{
+              emptyText: searchTerm
+                ? `No meals found for "${searchTerm}"`
+                : `No meals available for ${
+                    activeMealType?.name || "this meal type"
+                  }`,
+            }}
+          />
         </div>
       </Modal>
     </div>

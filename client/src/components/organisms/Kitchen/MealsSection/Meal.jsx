@@ -31,13 +31,19 @@ import {
 import { getStorage, ref, deleteObject } from "firebase/storage";
 
 import styles from "./Meals.module.css";
+import { useAuth } from "../../../../contexts/AuthContext";
+import axios from "axios"; // Import axios
 
 const { Title } = Typography;
 const { Search } = Input;
 const { confirm } = Modal;
 const { Option } = Select;
 
+
 const AvailableMeals = () => {
+  const { authData } = useAuth();
+  const token = authData?.accessToken;
+  
   const [meals, setMeals] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -150,9 +156,10 @@ const AvailableMeals = () => {
               {
                 method: "DELETE",
                 headers: {
-                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${token}`,
+
                 },
-                credentials: "include", // auth headers
+                
               }
             );
 
@@ -171,9 +178,10 @@ const AvailableMeals = () => {
       const response = await fetch(`http://localhost:3000/meal/${meal.id}`, {
         method: "DELETE",
         headers: {
-          "Content-Type": "application/json",
+          
+           Authorization: `Bearer ${token}`,
         },
-        credentials: "include", 
+        
       });
 
       if (!response.ok) {
