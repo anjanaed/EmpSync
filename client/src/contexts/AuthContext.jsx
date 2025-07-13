@@ -72,6 +72,7 @@ export const AuthProvider = ({ children }) => {
     try {
       const superAdminUserData = {
         accessToken: access_token,
+        role: "superadmin",
       };
 
       setSuperAuthData(superAdminUserData);
