@@ -27,14 +27,13 @@ export class SuperAdminController {
   }
 
   @Get('organizations')
-  @UseGuards(AnyAuthGuard)
-
+  // @UseGuards(AnyAuthGuard)
   async getOrganizations() {
     return this.superAdminService.getOrganizations();
   }
 
   @Get('organizations/:id')
-  @UseGuards(AnyAuthGuard)
+  // @UseGuards(AnyAuthGuard)
   async getOrganizationById(@Param('id') id: string) {
     return this.superAdminService.getOrganizationById(id);
   }
