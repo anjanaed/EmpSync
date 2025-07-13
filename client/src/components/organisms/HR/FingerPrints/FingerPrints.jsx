@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Pie } from '@ant-design/plots';
 import { Table, ConfigProvider, Modal, Button, Popconfirm, Space } from "antd";
 import { EyeOutlined, DeleteOutlined } from "@ant-design/icons";
 import styles from "./FingerPrints.module.css";
@@ -35,7 +36,32 @@ const FingerPrintsContent = () => {
   const [modalEmpId, setModalEmpId] = useState("");
   const [deleteMode, setDeleteMode] = useState(false);
   const [showTable, setShowTable] = useState(false);
+  // Device cards state
+  const [deviceCards, setDeviceCards] = useState([]);
 
+  // Fetch fingerprint device usage
+  useEffect(() => {
+    axios
+      .get("http://localhost:3000/hr-fingerprints")
+      .then((res) => {
+        const fingerprints = res.data;
+        // Group by unit name (first 6 chars)
+        const deviceMap = {};
+        fingerprints.forEach(fp => {
+          const unit = fp.thumbid.slice(0, 6);
+          if (!deviceMap[unit]) deviceMap[unit] = 0;
+          deviceMap[unit]++;
+        });
+        // Build cards
+        const cards = Object.entries(deviceMap).map(([unit, count]) => ({
+          unit,
+          filled: count,
+          available: 1000 - count
+        }));
+        setDeviceCards(cards);
+      })
+      .catch(() => setDeviceCards([]));
+  }, []);
   useEffect(() => {
     if (showTable) {
       setLoading(true);
@@ -161,14 +187,61 @@ const FingerPrintsContent = () => {
   // Landing view
   if (!showTable) {
     return (
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "32px", background: "#fff", borderRadius: "12px", boxShadow: "0 2px 8px rgba(0,0,0,0.08)", width: "100%", margin: "40px 0" }}>
-        <div style={{ textAlign: "left", fontSize: "1rem", fontWeight: 500 }}>
-          Click here to get User Fingerprints Info.
+      <>
+        {/* Device usage cards */}
+        <div style={{ display: "flex", gap: "24px", marginBottom: "16px", flexWrap: "wrap" }}>
+          {deviceCards.length === 0 ? (
+            <div style={{ fontSize: "1rem", color: "#888" }}>No device usage data found.</div>
+          ) : (
+            deviceCards.map(card => {
+              const pieData = [
+                { type: 'Filled', value: card.filled },
+                { type: 'Available', value: card.available }
+              ];
+              const pieConfig = {
+                data: pieData,
+                angleField: 'value',
+                colorField: 'type',
+                radius: 1,
+                innerRadius: 0.7,
+                startAngle: Math.PI,
+                endAngle: 2 * Math.PI,
+                legend: false,
+                label: {
+                  type: 'inner',
+                  offset: '-30%',
+                  content: '{value}',
+                  style: {
+                    fontSize: 14,
+                    textAlign: 'center',
+                  },
+                },
+                color: ['#970000', '#e0e0e0'],
+                statistic: null,
+                animation: false,
+              };
+              return (
+                <div key={card.unit} style={{ minWidth: 220, background: "#fff", borderRadius: "12px", boxShadow: "0 2px 8px rgba(0,0,0,0.08)", padding: "20px 28px", display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
+                  <div style={{ fontWeight: 600, fontSize: "1.1rem", marginBottom: 8 }}>Unit Name: <span style={{ color: "#970000" }}>{card.unit}</span></div>
+                  <div style={{ width: 180, height: 90, margin: "0 auto 8px auto" }}>
+                    <Pie {...pieConfig} />
+                  </div>
+                  <div style={{ fontSize: "1rem", marginBottom: 4 }}>Filled : <span style={{ fontWeight: 500 }}>{card.filled}/1000</span></div>
+                  <div style={{ fontSize: "1rem" }}>Available: <span style={{ fontWeight: 500 }}>{card.available}/1000</span></div>
+                </div>
+              );
+            })
+          )}
         </div>
-        <Button type="primary" onClick={() => setShowTable(true)}>
-          User Info.
-        </Button>
-      </div>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "32px", background: "#fff", borderRadius: "12px", boxShadow: "0 2px 8px rgba(0,0,0,0.08)", width: "100%", margin: "40px 0" }}>
+          <div style={{ textAlign: "left", fontSize: "1rem", fontWeight: 500 }}>
+            Click here to get User Fingerprints Info.
+          </div>
+          <Button type="primary" onClick={() => setShowTable(true)}>
+            User Info.
+          </Button>
+        </div>
+      </>
     );
   }
 
