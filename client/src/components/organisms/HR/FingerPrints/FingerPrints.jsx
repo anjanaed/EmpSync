@@ -29,6 +29,8 @@ const customTheme = {
 };
 
 const FingerPrintsContent = () => {
+  // Toggle state for pass-key login feature
+  const [showPasskeyMsg, setShowPasskeyMsg] = useState(true);
   const [userData, setUserData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
@@ -188,8 +190,26 @@ const FingerPrintsContent = () => {
   if (!showTable) {
     return (
       <>
-        {/* Device usage cards */}
-        <div style={{ display: "flex", gap: "24px", marginBottom: "16px", flexWrap: "wrap" }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "32px", background: "#fff", borderRadius: "12px", boxShadow: "0 2px 8px rgba(0,0,0,0.08)", width: "100%", margin: "40px 0" }}>
+          <div style={{ textAlign: "left", fontSize: "1rem", fontWeight: 500 }}>
+            Click here to get User Fingerprints Info.
+          </div>
+          <Button type="primary" onClick={() => setShowTable(true)}>
+            User Info.
+          </Button>
+        </div>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "32px", background: "#fff", borderRadius: "12px", boxShadow: "0 2px 8px rgba(0,0,0,0.08)", width: "100%", margin: "40px 0" }}>
+        <div style={{ textAlign: "left", fontSize: "1rem", fontWeight: 500 }}>
+          {showPasskeyMsg ? "Hide the pass-key login feature on the Meals Order-Tab" : "Pass-key login feature is hidden on the Meals Order-Tab"}
+        </div>
+        <Button type="primary" onClick={() => setShowPasskeyMsg((prev) => !prev)}>
+          {showPasskeyMsg ? "Hide" : "Unhide"}
+        </Button>
+      </div>
+        <div style={{ fontSize: "1.15rem", fontWeight: 600, color: "#970000", marginBottom: "8px", marginLeft: "35px" }}>
+          Fingerprint Units Info.
+        </div>
+        <div style={{ display: "flex", gap: "24px", marginBottom: "16px", flexWrap: "wrap",marginLeft: "25px" }}>
           {deviceCards.length === 0 ? (
             <div style={{ fontSize: "1rem", color: "#888" }}>No device usage data found.</div>
           ) : (
@@ -233,14 +253,7 @@ const FingerPrintsContent = () => {
             })
           )}
         </div>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "32px", background: "#fff", borderRadius: "12px", boxShadow: "0 2px 8px rgba(0,0,0,0.08)", width: "100%", margin: "40px 0" }}>
-          <div style={{ textAlign: "left", fontSize: "1rem", fontWeight: 500 }}>
-            Click here to get User Fingerprints Info.
-          </div>
-          <Button type="primary" onClick={() => setShowTable(true)}>
-            User Info.
-          </Button>
-        </div>
+        
       </>
     );
   }
