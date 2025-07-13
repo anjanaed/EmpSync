@@ -18,13 +18,13 @@ export class SuperAdminAuthService {
 
 
 
-  async superAdminLoginWithAuth0(username: string, password: string) {
+  async superAdminLoginWithAuth0(email: string, password: string) {
     try {
       const response = await axios.post(
         `https://${this.url}/oauth/token`,
         {
           grant_type: "http://auth0.com/oauth/grant-type/password-realm",
-          username: username,
+          username: email,
           password: password,
           audience: `https://${this.url}/api/v2/`,
           client_id: this.clientId, // Use the env variable for client_id

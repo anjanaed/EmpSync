@@ -172,6 +172,7 @@ const AvailableMeals = () => {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         credentials: "include", 
       });

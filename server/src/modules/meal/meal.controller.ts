@@ -42,6 +42,7 @@ export class MealController {
   async create(@Body() createMealDto: CreateMealWithIngredientsDto) {
     try {
       // Convert DTO to Prisma format
+      console.log("trying");
       const { ingredients, ...mealData } = createMealDto;
 
       // Create the meal with ingredients relationships
@@ -133,6 +134,7 @@ export class MealController {
 
   @Delete(':id')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
+    @Roles('KITCHEN_ADMIN')
   async remove(@Param('id') id: string) {
     try {
       const parsedId = parseInt(id);
