@@ -148,8 +148,7 @@ const AddMealPage = () => {
           "http://localhost:3000/meal",
           mealData,
           {
-            headers: {
-              "Content-Type": "application/json",
+            headers: {             
               Authorization: `Bearer ${token}`,
             },
           }
