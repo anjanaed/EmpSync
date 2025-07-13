@@ -7,6 +7,8 @@ import "./styles/variables.css";
 import "./styles/themes.css";
 import "antd/dist/reset.css";
 import { AuthProvider } from "./contexts/AuthContext.jsx";
+import { PopupProvider } from "./contexts/PopupContext.jsx";
+import { ThemeProvider } from "./contexts/ThemeContext.jsx";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
@@ -15,11 +17,14 @@ ReactDOM.createRoot(document.getElementById("root")).render(
       clientId={import.meta.env.VITE_AUTH0_ID}
       authorizationParams={{
         redirect_uri: window.location.origin,
-
       }}
     >
       <AuthProvider>
-        <App />
+        <ThemeProvider>
+          <PopupProvider>
+            <App />
+          </PopupProvider>
+        </ThemeProvider>
       </AuthProvider>
     </Auth0Provider>
   </React.StrictMode>
