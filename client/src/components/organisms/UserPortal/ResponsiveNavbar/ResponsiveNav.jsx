@@ -3,31 +3,20 @@ import { useNavigate } from 'react-router-dom'; // Import useNavigate for routin
 import { useAuth } from '../../../../contexts/AuthContext'; // Import useAuth for authentication context
 import {
   faBars,
-  faMoon,
-  faSun,
-} from "@fortawesome/free-solid-svg-icons"; // Import FontAwesome icons for menu and theme toggle
+} from "@fortawesome/free-solid-svg-icons"; // Import FontAwesome icons for menu
 import { User, CreditCard, Utensils, Sparkles, LogOut } from "lucide-react"; // Import Lucide icons for navigation links
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"; // Import FontAwesome component
 import styles from './ResponsiveNav.module.css'; // Import CSS module for styling
-import Companylogo from '../../../../assets/Logo/logo.png'; // Import company logo for light mode
-import Whitelogo from '../../../../assets/Logo/Logowhite.png'; // Import company logo for dark mode
+import Companylogo from '../../../../assets/Logo/logo.png'; // Import company logo
 
 // ResponsiveNav component for navigation bar
 const ResponsiveNav = () => {
-  // State to manage dark mode toggle
-  const [darkMode, setDarkMode] = useState(false);
   // State to manage mobile menu visibility
   const [menuOpen, setMenuOpen] = useState(false);
   // Hook for programmatic navigation
   const navigate = useNavigate();
   // Destructure logout function from AuthContext
   const { logout } = useAuth();
-
-  // Toggle dark mode and apply class to body
-  const toggleDarkMode = () => {
-    setDarkMode(!darkMode);
-    document.body.classList.toggle(styles.darkMode);
-  };
 
   // Toggle mobile menu visibility
   const toggleMenu = () => {
@@ -43,11 +32,11 @@ const ResponsiveNav = () => {
 
   // Render navigation bar
   return (
-    <nav className={`${styles.navbar} ${darkMode ? styles.dark : ''}`}>
+    <nav className={styles.navbar}>
       {/* Company logo section */}
       <div className={styles.companyName}>
         <img
-          src={darkMode ? Whitelogo : Companylogo} // Switch logo based on dark mode
+          src={Companylogo} // Use default logo
           alt="Company Logo"
           className={styles.logo}
         />
@@ -85,20 +74,8 @@ const ResponsiveNav = () => {
           </a>
         </li>
       </ul>
-      {/* Right section with theme toggle, menu toggle, and logout button */}
+      {/* Right section with menu toggle and logout button */}
       <div className={styles.rightSection}>
-        {/* Theme toggle button */}
-        <button
-          onClick={toggleDarkMode}
-          className={styles.themeToggle}
-          aria-label="Toggle Dark Mode"
-        >
-          <FontAwesomeIcon
-            icon={darkMode ? faSun : faMoon} // Switch icon based on dark mode
-            size="lg"
-            style={{ fontSize: '20px' }}
-          />
-        </button>
         {/* Mobile menu toggle button */}
         <button
           onClick={toggleMenu}

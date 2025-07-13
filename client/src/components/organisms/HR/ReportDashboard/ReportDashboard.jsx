@@ -5,10 +5,12 @@ import img from "../../../../assets/Report/report.png";
 import { InputNumber, Button } from "antd";
 import axios from "axios";
 import Loading from "../../../atoms/loading/loading";
+import { useTheme } from "../../../../contexts/ThemeContext";
 
 const ReportDashboard = () => {
   const [budget, setBudget] = useState(null);
   const [loading, setLoading] = useState(false);
+  const { theme } = useTheme();
   const urL = import.meta.env.VITE_BASE_URL;
 
   const handleView = () => {

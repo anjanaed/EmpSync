@@ -114,15 +114,18 @@ hr {
   align-items: center;
   cursor: pointer;
   text-align: center;
-  background-color: rgb(255, 255, 255);
+  background-color: #960000;
   border-radius: 5px;
-  border: 1px solid rgb(135, 0, 0);
-  color: rgb(127, 0, 0);
+  border: 1px solid #960000;
+  color: white;
   transition: all 0.2s ease-in-out;
 }
 
 .btnSet button:hover {
   transform: scale(1.07);
+  background-color: #7a0000;
+  border-color: #7a0000;
+  color: white;
 }
 
 .genBtn {
@@ -133,6 +136,17 @@ hr {
 .genBtn button {
   padding: 1vw 2vw;
   border-radius: 10px;
+  background-color: #960000 !important;
+  border-color: #960000 !important;
+  color: white !important;
+  transition: all 0.3s ease-in-out;
+}
+
+.genBtn button:hover {
+  background-color: #7a0000 !important;
+  border-color: #7a0000 !important;
+  color: white !important;
+  transform: scale(1.05);
 }
 
 .dynamicInputLine {
@@ -168,7 +182,7 @@ hr {
 }
 
 .newFieldBtn {
-  color: rgb(110, 0, 0);
+  color: white;
   display: flex;
   margin-top: auto;
   align-items: center;
@@ -176,9 +190,9 @@ hr {
   font-family: "Figtree", sans-serif;
   font-weight: 500;
   font-size: 14px;
-  background-color: white;
+  background-color: #960000;
   padding: 9px 30px;
-  border: none;
+  border: 1px solid #960000;
   gap: 5px;
   cursor: pointer;
   transition: all 0.4s ease-in-out;
@@ -186,7 +200,9 @@ hr {
 }
 
 .newFieldBtn:hover {
-  background-color: rgba(255, 54, 54, 0.267);
+  background-color: #7a0000;
+  border-color: #7a0000;
+  color: white;
 }
 
 .checkBoxes {
@@ -276,5 +292,164 @@ hr {
   }
 
 
+}
+
+/* Dark mode styles */
+:global(.dark) .mainBox {
+  background-color: #303030 !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 8px rgba(255, 255, 255, 0.1) !important;
+}
+
+:global(.dark) .topTitle {
+  color: #ffffff !important;
+}
+
+:global(.dark) .inputSet label,
+:global(.dark) .dynamicInputSet label,
+:global(.dark) .dates label {
+  color: #ffffff !important;
+}
+
+:global(.dark) .payee {
+  color: #ffffff !important;
+}
+
+:global(.dark) .payee span {
+  color: #ff6b6b !important;
+}
+
+:global(.dark) .link {
+  color: #ff6b6b !important;
+}
+
+:global(.dark) .link:hover {
+  color: #ff8a8a !important;
+}
+
+/* Dark mode for form inputs */
+:global(.dark .ant-input),
+:global(.dark .ant-input:focus),
+:global(.dark .ant-input:hover),
+:global(.dark .ant-input:disabled) {
+  background-color: #404040 !important;
+  border-color: #555555 !important;
+  color: #ffffff !important;
+}
+
+:global(.dark .ant-input::placeholder) {
+  color: #cccccc !important;
+}
+
+/* Dark mode for input number */
+:global(.dark .ant-input-number),
+:global(.dark .ant-input-number:hover),
+:global(.dark .ant-input-number:focus) {
+  background-color: #404040 !important;
+  border-color: #555555 !important;
+  color: #ffffff !important;
+}
+
+:global(.dark .ant-input-number .ant-input-number-input) {
+  background-color: transparent !important;
+  color: #ffffff !important;
+}
+
+/* Dark mode for date picker */
+:global(.dark .ant-picker),
+:global(.dark .ant-picker:hover),
+:global(.dark .ant-picker:focus) {
+  background-color: #404040 !important;
+  border-color: #555555 !important;
+  color: #ffffff !important;
+}
+
+:global(.dark .ant-picker-input > input) {
+  background-color: transparent !important;
+  color: #ffffff !important;
+}
+
+:global(.dark .ant-picker-input > input::placeholder) {
+  color: #cccccc !important;
+}
+
+/* Dark mode for checkboxes */
+:global(.dark .ant-checkbox-wrapper) {
+  color: #ffffff !important;
+}
+
+:global(.dark .ant-checkbox-inner) {
+  background-color: #404040 !important;
+  border-color: #555555 !important;
+}
+
+:global(.dark .ant-checkbox-checked .ant-checkbox-inner) {
+  background-color: #960000 !important;
+  border-color: #960000 !important;
+}
+
+/* Dark mode for buttons */
+:global(.dark) .btnSet button {
+  background-color: #960000 !important;
+  border-color: #960000 !important;
+  color: #ffffff !important;
+}
+
+:global(.dark) .btnSet button:hover {
+  background-color: #7a0000 !important;
+  border-color: #7a0000 !important;
+  color: #ffffff !important;
+}
+
+:global(.dark) .newFieldBtn {
+  background-color: #960000 !important;
+  color: #ffffff !important;
+  border-color: #960000 !important;
+}
+
+:global(.dark) .newFieldBtn:hover {
+  background-color: #7a0000 !important;
+  color: #ffffff !important;
+  border-color: #7a0000 !important;
+}
+
+/* Dark mode for generate payroll buttons */
+:global(.dark) .genBtn button {
+  background-color: #960000 !important;
+  border-color: #960000 !important;
+  color: #ffffff !important;
+}
+
+:global(.dark) .genBtn button:hover {
+  background-color: #7a0000 !important;
+  border-color: #7a0000 !important;
+  color: #ffffff !important;
+}
+
+/* Dark mode for form labels */
+:global(.dark .ant-form-item-label > label) {
+  color: #ffffff !important;
+}
+
+/* Dark mode for form validation errors */
+:global(.dark .ant-form-item-explain-error) {
+  color: #ff6b6b !important;
+}
+
+/* Dark mode for tooltips */
+:global(.dark .ant-tooltip) {
+  background-color: #303030 !important;
+  color: #ffffff !important;
+}
+
+:global(.dark .ant-tooltip-inner) {
+  background-color: #303030 !important;
+  color: #ffffff !important;
+}
+
+/* Dark mode for horizontal rule */
+:global(.dark) hr {
+  border-color: #555555 !important;
+  opacity: 0.5;
 }
 

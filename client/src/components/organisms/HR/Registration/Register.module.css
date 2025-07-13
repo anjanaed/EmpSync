@@ -12,7 +12,7 @@
 .heading {
   text-align: center;
   font-weight: 550;
-  color: brown;
+  color: #960000;
   font-size: 25px;
   padding: 2vw 1vw 4vw 1vw;
 }
@@ -21,7 +21,7 @@
   font-weight: 600;
   display: flex;
   position: relative;
-  color: brown;
+  color: #960000;
   flex-direction: row;
   font-size: 20px;
   font-family: "Figtree", sans-serif;
@@ -116,6 +116,167 @@
   color: white !important;
   transform: scale(1.05);
 }
+
+/* Button styling for Next and Register buttons */
+.btnContainer button,
+.btnContainer .ant-btn {
+  background-color: #960000 !important;
+  border-color: #960000 !important;
+  color: white !important;
+}
+
+.btnContainer button:hover,
+.btnContainer .ant-btn:hover {
+  background-color: #7a0000 !important;
+  border-color: #7a0000 !important;
+  color: white !important;
+  transform: scale(1.05);
+}
+
+.btnContainer button:focus,
+.btnContainer .ant-btn:focus {
+  background-color: #960000 !important;
+  border-color: #960000 !important;
+  color: white !important;
+}
+
+/* Dark mode styles */
+:global(.dark) .formContainer {
+  background-color: #303030 !important;
+  border-color: #404040 !important;
+  color: #ffffff !important;
+}
+
+:global(.dark) .heading {
+  color: #ffffff !important;
+}
+
+:global(.dark) .finHeader {
+  color: #ffffff !important;
+}
+
+:global(.dark) .head {
+  color: #ffffff !important;
+}
+
+/* Dark mode for form inputs */
+:global(.dark .ant-input),
+:global(.dark .ant-input:focus),
+:global(.dark .ant-input:hover),
+:global(.dark .ant-input-password),
+:global(.dark .ant-input-password .ant-input) {
+  background-color: #404040 !important;
+  border-color: #555555 !important;
+  color: #ffffff !important;
+}
+
+:global(.dark .ant-input::placeholder) {
+  color: #cccccc !important;
+}
+
+/* Dark mode for select components */
+:global(.dark .ant-select-selector),
+:global(.dark .ant-select-focused .ant-select-selector),
+:global(.dark .ant-select:hover .ant-select-selector) {
+  background-color: #404040 !important;
+  border-color: #555555 !important;
+  color: #ffffff !important;
+}
+
+:global(.dark .ant-select-selection-item),
+:global(.dark .ant-select-selection-placeholder) {
+  color: #ffffff !important;
+}
+
+/* Dark mode for select dropdown */
+:global(.dark .ant-select-dropdown) {
+  background-color: #303030 !important;
+  border-color: #404040 !important;
+}
+
+:global(.dark .ant-select-item) {
+  background-color: #303030 !important;
+  color: #ffffff !important;
+}
+
+:global(.dark .ant-select-item:hover) {
+  background-color: #404040 !important;
+  color: #ffffff !important;
+}
+
+:global(.dark .ant-select-item-option-selected) {
+  background-color: #960000 !important;
+  color: #ffffff !important;
+}
+
+/* Dark mode for date picker */
+:global(.dark .ant-picker),
+:global(.dark .ant-picker:hover),
+:global(.dark .ant-picker:focus) {
+  background-color: #404040 !important;
+  border-color: #555555 !important;
+  color: #ffffff !important;
+}
+
+:global(.dark .ant-picker-input > input) {
+  background-color: transparent !important;
+  color: #ffffff !important;
+}
+
+:global(.dark .ant-picker-input > input::placeholder) {
+  color: #cccccc !important;
+}
+
+/* Dark mode for input number */
+:global(.dark .ant-input-number),
+:global(.dark .ant-input-number:hover),
+:global(.dark .ant-input-number:focus) {
+  background-color: #404040 !important;
+  border-color: #555555 !important;
+  color: #ffffff !important;
+}
+
+:global(.dark .ant-input-number .ant-input-number-input) {
+  background-color: transparent !important;
+  color: #ffffff !important;
+}
+
+/* Dark mode for form labels */
+:global(.dark .ant-form-item-label > label) {
+  color: #ffffff !important;
+}
+
+/* Dark mode for form validation errors */
+:global(.dark .ant-form-item-explain-error) {
+  color: #ff6b6b !important;
+}
+
+/* Dark mode for password input specifically */
+:global(.dark .ant-input-password .ant-input) {
+  background-color: #404040 !important;
+  border-color: #555555 !important;
+  color: #ffffff !important;
+}
+
+:global(.dark .ant-input-affix-wrapper) {
+  background-color: #404040 !important;
+  border-color: #555555 !important;
+}
+
+:global(.dark .ant-input-affix-wrapper:hover) {
+  border-color: #1890ff !important;
+}
+
+:global(.dark .ant-input-affix-wrapper:focus) {
+  border-color: rgb(87, 99, 255) !important;
+  box-shadow: 0 0 0 2px rgba(87, 99, 255, 0.2) !important;
+}
+
+/* Dark mode for password toggle icon */
+:global(.dark .ant-input-password-icon) {
+  color: #ffffff !important;
+}
+
 @media screen and (max-width: 768px) {
   .formContainer {
     margin: 4vw 2vw;
