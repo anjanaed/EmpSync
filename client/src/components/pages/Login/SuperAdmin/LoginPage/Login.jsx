@@ -13,18 +13,18 @@ const SuperAdminLogin = () => {
   const [form] = Form.useForm();
 
   const login = async ({ access_token }) => {
-  try {
-      if (access_token) {
-        localStorage.setItem("access_token", access_token);
-        localStorage.setItem("role", "SuperAdmin");
-        return true;
-      } else {
+    try {
+      if (!access_token) {
         throw new Error("No access token provided");
       }
+
+      localStorage.setItem("access_token", access_token);
+      localStorage.setItem("role", "SuperAdmin");
+      return true;
+
     } catch (error) {
-      console.error("Login error:", error);
-      
-      return false;
+      console.error("Login failed:", error.message);
+      return false; // or rethrow: throw error;
     }
   };
 
@@ -37,10 +37,17 @@ const SuperAdminLogin = () => {
       });
 
       const { access_token } = response.data;
-      await login({ access_token });
-      
-      message.success("Login successful!");
-      navigate("/superadmin/dashboard");
+      try {
+        const success = await login({ access_token });
+        if (success) {
+          message.success("Login successful!");
+          navigate("/superadmin/dashboard");
+        } else {
+          message.error("Login failed. Please try again.");
+        }
+      } catch (err) {
+        message.error(err.message || "Unexpected error during login.");
+      }
     } catch (error) {
       console.error("Login error:", error);
       message.error(`Login Failed: ${error.response?.data?.message || "Invalid credentials"}`);
