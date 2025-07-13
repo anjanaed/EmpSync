@@ -55,9 +55,9 @@ export class HrFingerprintsService {
   }
 
   async getAllUsersWithFingerprintDetails() {
-    // Get all users (id, name)
+    // Get all users (id, name, passkey)
     const users = await this.prisma.user.findMany({
-      select: { id: true, name: true },
+      select: { id: true, name: true, passkey: true },
     });
 
     // Get all fingerprints
@@ -78,6 +78,7 @@ export class HrFingerprintsService {
       return {
         id: user.id,
         name: user.name,
+        passkey: user.passkey,
         status: thumbids.length > 0 ? 'Registered' : 'Unregistered',
         fingerprintCount: thumbids.length,
         thumbids,

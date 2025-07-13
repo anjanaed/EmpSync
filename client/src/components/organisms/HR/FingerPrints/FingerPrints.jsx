@@ -93,6 +93,14 @@ const FingerPrints = () => {
       ellipsis: true,
     },
     {
+      title: "FingerPrint Passkey",
+      dataIndex: "passkey",
+      key: "passkey",
+      align: "center",
+      ellipsis: true,
+      render: (passkey) => passkey !== undefined && passkey !== null ? passkey : "-",
+    },
+    {
       title: "Status",
       dataIndex: "status",
       key: "status",
@@ -140,7 +148,7 @@ const FingerPrints = () => {
 
   return (
     <div className={styles.container}>
-      <h2 className={styles.title}>Fingerprint Registrations</h2>
+      <h2 className={styles.title}>User Fingerprint Info.</h2>
       <ConfigProvider theme={customTheme}>
         <Table
           columns={columns}
