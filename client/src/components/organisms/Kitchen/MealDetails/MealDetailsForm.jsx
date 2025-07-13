@@ -106,10 +106,10 @@ const AddMealPage = () => {
       return;
     }
   
-    if (selectedIngredients.length === 0) {
-      message.warning("Please select at least one ingredient for the meal");
-      return;
-    }
+    // if (selectedIngredients.length === 0) {
+    //   message.warning("Please select at least one ingredient for the meal");
+    //   return;
+    // }
   
     setUploading(true);
   
