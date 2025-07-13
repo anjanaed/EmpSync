@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import {
   Form,
   Input,
@@ -20,10 +20,10 @@ import {
 } from "@ant-design/icons";
 import styles from "./MealDetailsForm.module.css";
 import { useNavigate } from "react-router-dom";
-import { storage } from "../../../../firebase/config"; // Import Firebase storage
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage"; // Import Firebase storage functions
+import { storage } from "../../../../firebase/config";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { useAuth } from "../../../../contexts/AuthContext";
-import axios from "axios"; // Import axios
+import axios from "axios";
 
 const { TextArea } = Input;
 const { Title } = Typography;
@@ -35,14 +35,14 @@ const AddMealPage = () => {
 
   const [form] = Form.useForm();
   const [imageUrl, setImageUrl] = useState(null);
-  const [imageFile, setImageFile] = useState(null); // Store the actual file
+  const [imageFile, setImageFile] = useState(null);
   const fileInputRef = useRef(null);
   const [isIngredientsModalVisible, setIsIngredientsModalVisible] = useState(false);
   const [ingredients, setIngredients] = useState([]);
   const [searchIngredient, setSearchIngredient] = useState("");
   const [selectedIngredients, setSelectedIngredients] = useState([]);
-  const [uploading, setUploading] = useState(false); // Track upload status
-  const [loadingIngredients, setLoadingIngredients] = useState(false); // Track ingredients loading state
+  const [uploading, setUploading] = useState(false);
+  const [loadingIngredients, setLoadingIngredients] = useState(false);
 
   const navigate = useNavigate();
 
@@ -58,20 +58,13 @@ const AddMealPage = () => {
       }
 
       const data = await response.json();
-      console.log("API response:", data);
-
-      // Extract ingredients from both arrays in the response
       const priority1Ingredients = Array.isArray(data.priority1Ingredients)
         ? data.priority1Ingredients
         : [];
       const optimizedIngredients = Array.isArray(data.optimizedIngredients)
         ? data.optimizedIngredients
         : [];
-
-      // Combine both arrays
       const allIngredients = [...priority1Ingredients, ...optimizedIngredients];
-
-      // Transform to our component's expected format
       const formattedIngredients = allIngredients.map((ingredient) => ({
         id: ingredient.id,
         name: ingredient.name,
@@ -85,7 +78,6 @@ const AddMealPage = () => {
       }
     } catch (error) {
       message.error(`Error fetching ingredients: ${error.message}`);
-      console.error("Error fetching ingredients:", error);
       setIngredients([]);
     } finally {
       setLoadingIngredients(false);
@@ -97,7 +89,6 @@ const AddMealPage = () => {
     setImageUrl(null);
     setImageFile(null);
     setSelectedIngredients([]);
-    console.log("Form canceled");
   };
 
   const handleSubmit = async (values) => {
@@ -105,27 +96,22 @@ const AddMealPage = () => {
       message.warning("Please select an image for the meal");
       return;
     }
-  
-    // if (selectedIngredients.length === 0) {
-    //   message.warning("Please select at least one ingredient for the meal");
-    //   return;
-    // }
-  
+
     setUploading(true);
-  
+
     try {
       // Upload image to Firebase Storage
       const imageRef = ref(storage, `meals/${Date.now()}-${imageFile.name}`);
       await uploadBytes(imageRef, imageFile);
-  
+
       // Get the download URL of the uploaded image
       const downloadURL = await getDownloadURL(imageRef);
-  
-      // Format ingredients data - make sure ingredientId is a number
+
+      // Format ingredients data
       const ingredientsData = selectedIngredients.map((ingredient) => ({
         ingredientId: parseInt(ingredient.id),
       }));
-  
+
       const mealData = {
         nameEnglish: values.nameEnglish,
         nameSinhala: values.nameSinhala,
@@ -136,46 +122,30 @@ const AddMealPage = () => {
         imageUrl: downloadURL,
         ingredients: ingredientsData,
       };
-  
-      console.log("Submitting meal data:", mealData);
-  
-      const response = await fetch("http://localhost:3000/meal", {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(mealData),
-      });
 
-  
-        const response = await axios.post(
-          "http://localhost:3000/meal",
-          mealData,
-          {
-            headers: {             
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-  
-        if (response.status === 201 || response.status === 200) {
-          message.success("Meal added successfully!");
-          form.resetFields();
-          setImageUrl(null);
-          setImageFile(null);
-          setSelectedIngredients([]);
-          navigate("/kitchen-meal");
+      console.log("Submitting meal data:", mealData);
+
+      const response = await axios.post(
+        "http://localhost:3000/meal",
+        mealData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
-      } catch (error) {
-        console.error("Error details:", error.response || error);
-        const errorMessage = error.response?.data?.message || error.message;
-        message.error(`Failed to add meal: ${errorMessage}`);
+      );
+
+      if (response.status === 201 || response.status === 200) {
+        message.success("Meal added successfully!");
+        form.resetFields();
+        setImageUrl(null);
+        setImageFile(null);
+        setSelectedIngredients([]);
+        navigate("/kitchen-meal");
       }
     } catch (error) {
-      console.error("Detailed error:", error);
-      message.error(`Error adding meal: ${error.message}`);
+      const errorMessage = error.response?.data?.message || error.message;
+      message.error(`Failed to add meal: ${errorMessage}`);
     } finally {
       setUploading(false);
     }
@@ -194,16 +164,13 @@ const AddMealPage = () => {
       return;
     }
 
-    // Check file size - limit to 2MB
     if (file.size > 2 * 1024 * 1024) {
       message.error("Image size must be less than 2MB!");
       return;
     }
 
-    // Store the file object for later upload
     setImageFile(file);
 
-    // Preview the image
     const reader = new FileReader();
     reader.onload = () => {
       setImageUrl(reader.result);
@@ -213,7 +180,7 @@ const AddMealPage = () => {
 
   const showIngredientsModal = () => {
     setIsIngredientsModalVisible(true);
-    fetchIngredients(); // Fetch ingredients when modal is opened
+    fetchIngredients();
   };
 
   const handleIngredientsModalCancel = () => {
@@ -235,9 +202,7 @@ const AddMealPage = () => {
   };
 
   const handleIngredientsConfirm = () => {
-    const selected = ingredients.filter(
-      (ingredient) => ingredient.selected
-    );
+    const selected = ingredients.filter((ingredient) => ingredient.selected);
     setSelectedIngredients(selected);
     setIsIngredientsModalVisible(false);
 
@@ -311,7 +276,6 @@ const AddMealPage = () => {
               </Col>
 
               <Col xs={24} md={14}>
-                
                 <Form.Item
                   label="Name"
                   required
@@ -418,9 +382,7 @@ const AddMealPage = () => {
                     </p>
                     <ul className={styles.selectedIngredientsList}>
                       {selectedIngredients.map((ingredient) => (
-                        <li key={ingredient.id}>
-                          {ingredient.name}
-                        </li>
+                        <li key={ingredient.id}>{ingredient.name}</li>
                       ))}
                     </ul>
                   </div>
@@ -488,7 +450,7 @@ const AddMealPage = () => {
                     onChange={() => handleIngredientSelect(ingredient.id)}
                     className={styles.ingredientCheckbox}
                   >
-                    {ingredient.name} 
+                    {ingredient.name}
                   </Checkbox>
                 </div>
               </div>
