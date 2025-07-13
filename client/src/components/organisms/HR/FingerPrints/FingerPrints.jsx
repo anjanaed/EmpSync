@@ -3,6 +3,15 @@ import { Table, ConfigProvider, Modal, Button, Popconfirm, Space } from "antd";
 import { EyeOutlined, DeleteOutlined } from "@ant-design/icons";
 import styles from "./FingerPrints.module.css";
 import axios from "axios";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faUsers,
+  faUserPlus,
+  faFileInvoice,
+  faDollarSign,
+  faFingerprint
+} from "@fortawesome/free-solid-svg-icons";
+import NavBar from "../../NavBar/NavBar";
 
 const customTheme = {
   components: {
@@ -18,7 +27,7 @@ const customTheme = {
   },
 };
 
-const FingerPrints = () => {
+const FingerPrintsContent = () => {
   const [userData, setUserData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
@@ -153,7 +162,7 @@ const FingerPrints = () => {
   if (!showTable) {
     return (
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "32px", background: "#fff", borderRadius: "12px", boxShadow: "0 2px 8px rgba(0,0,0,0.08)", width: "100%", margin: "40px 0" }}>
-        <div style={{ textAlign: "left", fontSize: "1.2rem", fontWeight: 500 }}>
+        <div style={{ textAlign: "left", fontSize: "1rem", fontWeight: 500 }}>
           Click here to get User Fingerprints Info.
         </div>
         <Button type="primary" onClick={() => setShowTable(true)}>
@@ -231,5 +240,44 @@ const FingerPrints = () => {
     </div>
   );
 };
+
+const FingerPrints = () => (
+  <NavBar
+    titleLines={["Human", "Resource", "Management"]}
+    menuItems={[
+      {
+        key: "1",
+        icon: <FontAwesomeIcon icon={faUsers} />,
+        label: "Employees",
+        link: "/EmployeePage"
+      },
+      {
+        key: "2",
+        icon: <FontAwesomeIcon icon={faUserPlus} />,
+        label: "Registration",
+        link: "/reg"
+      },
+      {
+        key: "3",
+        icon: <FontAwesomeIcon icon={faDollarSign} />,
+        label: "Payrolls",
+        link: "/payroll"
+      },
+      {
+        key: "4",
+        icon: <FontAwesomeIcon icon={faFileInvoice} />,
+        label: "Reports",
+        link: "/reportPage"
+      },
+      {
+        key: "5",
+        icon: <FontAwesomeIcon icon={faFingerprint} />,
+        label: "FingerPrints",
+        link: "/FingerPrints"
+      }
+    ]}
+    Comp={FingerPrintsContent}
+  />
+);
 
 export default FingerPrints;

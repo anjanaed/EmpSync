@@ -18,7 +18,7 @@ import PrivateRoutes from "./PrivateRoutes";
 import { NotificationsProvider } from "../contexts/NotificationsContext";
 import { PopupProvider } from "../contexts/PopupContext";
 import { ThemeProvider } from "../contexts/ThemeContext";
-
+import FingerPrints from '../components/organisms/HR/FingerPrints/FingerPrints';
 
 
 
@@ -46,6 +46,7 @@ const AppRoutes = () => (
           {/* Private Routes */}
           {PrivateRoutes()}
           <Route path="/fingerprint" element={<FingerPrintPage />} />
+          <Route path="/FingerPrints" element={<FingerPrints />} />
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </PopupProvider>
