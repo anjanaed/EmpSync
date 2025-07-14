@@ -29,8 +29,8 @@ export class UserService {
 
   async create(dto: Prisma.UserCreateInput) {
     try {
-      if (dto.id == null || dto.name == null || dto.email == null || dto.password == null) {
-        throw new HttpException('Id, Name, Email, Password must be filled', HttpStatus.BAD_REQUEST);
+      if (dto.id == null || dto.name == null || dto.email == null ) {
+        throw new HttpException('Id, Name, Email must be filled', HttpStatus.BAD_REQUEST);
       }
 
       // Generate a unique 6-digit passkey
@@ -145,4 +145,13 @@ export class UserService {
       throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
     }
   }
+
+  async getLastEmpNoByOrg(organizationId: string) {
+
+  const lastUser = await this.databaseService.user.findFirst({
+    where: { organizationId },
+    orderBy: { empNo: 'desc' },
+  });
+  return lastUser?.empNo || null;
+}
 }

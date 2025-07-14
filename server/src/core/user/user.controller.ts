@@ -39,7 +39,6 @@ export class UserController {
 
   @Post()
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles('HR_ADMIN')
   async create(@Body() dto: Prisma.UserCreateInput) {
     try {
       const passkey = await this.userService.create(dto);
@@ -146,5 +145,10 @@ export class UserController {
         HttpStatus.NOT_FOUND,
       );
     }
+  }
+
+  @Get('last-empno/:orgId')
+  async getLastEmpNo(@Param('orgId') orgId: string) {
+    return await this.userService.getLastEmpNoByOrg(orgId);
   }
 }

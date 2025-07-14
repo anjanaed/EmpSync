@@ -8,7 +8,6 @@ import Login from "../components/pages/Login/LoginPage/Login";
 // HR_ADMIN
 import EmployeePage from "../components/Pages/HR/EmployeePage/EmployeePage";
 import RegisterPage from "../components/Pages/HR/RegisterPage/RegisterPage";
-import ReportPage from "../components/Pages/HR/ReportPage/ReportPage";
 import PayrollPage from "../components/Pages/HR/PayrollPage/PayrollPage";
 import AdjustmentPage from "../components/Pages/HR/AdjustmentPage/AdjustmentPage";
 import PayslipPage from "../components/Pages/HR/PayslipPage/PayslipPage";
@@ -126,14 +125,6 @@ const PrivateRoutes = () => (
       element={
         <ProtectedRoute allowedRoles={["HR_ADMIN"]}>
           <RegisterPage />
-        </ProtectedRoute>
-      }
-    />
-    <Route
-      path="/reportPage"
-      element={
-        <ProtectedRoute allowedRoles={["HR_ADMIN"]}>
-          <ReportPage />
         </ProtectedRoute>
       }
     />
