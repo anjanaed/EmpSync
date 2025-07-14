@@ -13,7 +13,6 @@ import {
 import { Prisma } from '@prisma/client';
 import { SuperAdminService } from './super-admin.service';
 import { AuthGuard } from '@nestjs/passport';
-import { AnyAuthGuard } from 'src/core/authentication/any-auth.guard';
 
 
 @Controller('super-admin')
@@ -28,14 +27,12 @@ export class SuperAdminController {
 
   @Get('organizations')
   @UseGuards(AuthGuard('superadmin-jwt'))
-  // @UseGuards(AnyAuthGuard)
   async getOrganizations() {
     return this.superAdminService.getOrganizations();
   }
 
   @Get('organizations/:id')
   @UseGuards(AuthGuard('superadmin-jwt'))
-  // @UseGuards(AnyAuthGuard)
   async getOrganizationById(@Param('id') id: string) {
     return this.superAdminService.getOrganizationById(id);
   }
