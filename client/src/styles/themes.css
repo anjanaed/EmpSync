@@ -1,5 +1,5 @@
-/* Light theme Ant Design overrides
-.ant-layout {
+/* Ant Design theme overrides */
+/* .ant-layout {
   background-color: var(--bg-primary) !important;
 }
 
@@ -72,6 +72,254 @@
 .ant-table-tbody > tr:hover > td {
   background-color: var(--bg-tertiary) !important;
 } */
+
+/* Dropdown/Select component styling */
+.ant-select {
+  color: var(--text-primary) !important;
+}
+
+.ant-select-selector {
+  background-color: var(--bg-primary) !important;
+  border-color: var(--border-color) !important;
+  color: var(--text-primary) !important;
+}
+
+.ant-select-focused .ant-select-selector,
+.ant-select:hover .ant-select-selector {
+  border-color: var(--accent) !important;
+  box-shadow: 0 0 0 2px rgba(64, 169, 255, 0.2) !important;
+}
+
+.ant-select-selection-item {
+  color: var(--text-primary) !important;
+}
+
+.ant-select-selection-placeholder {
+  color: var(--text-secondary) !important;
+}
+
+.ant-select-arrow {
+  color: var(--text-secondary) !important;
+}
+
+.ant-select-dropdown {
+  background-color: var(--bg-secondary) !important;
+  border-color: var(--border-color) !important;
+  box-shadow: 0 4px 12px var(--shadow) !important;
+}
+
+.ant-select-item {
+  background-color: var(--bg-secondary) !important;
+  color: var(--text-primary) !important;
+}
+
+.ant-select-item:hover {
+  background-color: var(--bg-tertiary) !important;
+  color: var(--text-primary) !important;
+}
+
+.ant-select-item-option-selected {
+  background-color: var(--accent) !important;
+  color: white !important;
+}
+
+.ant-select-item-option-active {
+  background-color: var(--bg-tertiary) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Calendar/DatePicker component styling */
+.ant-picker {
+  background-color: var(--bg-primary) !important;
+  border-color: var(--border-color) !important;
+  color: var(--text-primary) !important;
+}
+
+.ant-picker:hover,
+.ant-picker-focused {
+  border-color: var(--accent) !important;
+  box-shadow: 0 0 0 2px rgba(64, 169, 255, 0.2) !important;
+}
+
+.ant-picker-input > input {
+  background-color: transparent !important;
+  color: var(--text-primary) !important;
+}
+
+.ant-picker-input > input::placeholder {
+  color: var(--text-secondary) !important;
+}
+
+.ant-picker-suffix {
+  color: var(--text-secondary) !important;
+}
+
+.ant-picker-clear {
+  background-color: var(--bg-secondary) !important;
+  color: var(--text-secondary) !important;
+}
+
+.ant-picker-dropdown {
+  background-color: var(--bg-secondary) !important;
+  border-color: var(--border-color) !important;
+  box-shadow: 0 4px 12px var(--shadow) !important;
+}
+
+.ant-picker-panel {
+  background-color: var(--bg-secondary) !important;
+  border-color: var(--border-color) !important;
+}
+
+.ant-picker-header {
+  border-bottom-color: var(--border-color) !important;
+}
+
+.ant-picker-header button {
+  background-color: transparent !important;
+  color: var(--text-primary) !important;
+  border: none !important;
+}
+
+.ant-picker-header button:hover {
+  background-color: var(--bg-tertiary) !important;
+  color: var(--accent) !important;
+}
+
+.ant-picker-prev-icon,
+.ant-picker-next-icon,
+.ant-picker-super-prev-icon,
+.ant-picker-super-next-icon {
+  color: var(--text-primary) !important;
+}
+
+.ant-picker-content {
+  background-color: var(--bg-secondary) !important;
+}
+
+.ant-picker-cell {
+  color: var(--text-primary) !important;
+}
+
+.ant-picker-cell:hover {
+  background-color: var(--bg-tertiary) !important;
+}
+
+.ant-picker-cell-today .ant-picker-cell-inner {
+  border-color: var(--accent) !important;
+  color: var(--accent) !important;
+}
+
+.ant-picker-cell-selected .ant-picker-cell-inner,
+.ant-picker-cell-range-start .ant-picker-cell-inner,
+.ant-picker-cell-range-end .ant-picker-cell-inner {
+  background-color: var(--accent) !important;
+  color: white !important;
+}
+
+.ant-picker-cell-in-range .ant-picker-cell-inner {
+  background-color: rgba(64, 169, 255, 0.1) !important;
+  color: var(--text-primary) !important;
+}
+
+.ant-picker-cell-range-hover-start .ant-picker-cell-inner,
+.ant-picker-cell-range-hover-end .ant-picker-cell-inner,
+.ant-picker-cell-range-hover .ant-picker-cell-inner {
+  background-color: rgba(64, 169, 255, 0.2) !important;
+  color: var(--text-primary) !important;
+}
+
+.ant-picker-cell-disabled {
+  color: var(--text-muted) !important;
+}
+
+.ant-picker-cell-disabled:hover {
+  background-color: transparent !important;
+}
+
+.ant-picker-time-panel {
+  background-color: var(--bg-secondary) !important;
+  border-left-color: var(--border-color) !important;
+}
+
+.ant-picker-time-panel-column {
+  color: var(--text-primary) !important;
+}
+
+.ant-picker-time-panel-cell {
+  color: var(--text-primary) !important;
+}
+
+.ant-picker-time-panel-cell:hover {
+  background-color: var(--bg-tertiary) !important;
+}
+
+.ant-picker-time-panel-cell-selected {
+  background-color: var(--accent) !important;
+  color: white !important;
+}
+
+.ant-picker-footer {
+  background-color: var(--bg-secondary) !important;
+  border-top-color: var(--border-color) !important;
+}
+
+.ant-picker-now-btn {
+  color: var(--accent) !important;
+}
+
+.ant-picker-now-btn:hover {
+  color: var(--accent) !important;
+  background-color: var(--bg-tertiary) !important;
+}
+
+.ant-picker-ok {
+  background-color: var(--accent) !important;
+  border-color: var(--accent) !important;
+  color: white !important;
+}
+
+.ant-picker-ok:hover {
+  background-color: var(--accent) !important;
+  border-color: var(--accent) !important;
+  opacity: 0.8;
+}
+
+/* Calendar component specific styles */
+.ant-calendar {
+  background-color: var(--bg-secondary) !important;
+  border-color: var(--border-color) !important;
+  color: var(--text-primary) !important;
+}
+
+.ant-calendar-header {
+  background-color: var(--bg-secondary) !important;
+  border-bottom-color: var(--border-color) !important;
+}
+
+.ant-calendar-date {
+  color: var(--text-primary) !important;
+}
+
+.ant-calendar-date:hover {
+  background-color: var(--bg-tertiary) !important;
+}
+
+.ant-calendar-selected-day .ant-calendar-date,
+.ant-calendar-selected-start-date .ant-calendar-date,
+.ant-calendar-selected-end-date .ant-calendar-date {
+  background-color: var(--accent) !important;
+  color: white !important;
+}
+
+.ant-calendar-today .ant-calendar-date {
+  border-color: var(--accent) !important;
+  color: var(--accent) !important;
+}
+
+.ant-calendar-disabled-cell .ant-calendar-date {
+  color: var(--text-muted) !important;
+  background-color: transparent !important;
+}
 
 
 

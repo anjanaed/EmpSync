@@ -47,19 +47,15 @@
   
   .notificationActions button {
     font-size: 14px;
-    color: var(--text-secondary) !important;
+    color: var(--text-secondary);
   }
   
   .notificationActions button:hover {
-    color: var(--text-primary) !important;
+    color: var(--error);
   }
   
   .closeButton {
     margin-left: 10px;
-  }
-  
-  .closeButton:hover {
-    color: var(--error) !important;
   }
   
   .notificationList {
