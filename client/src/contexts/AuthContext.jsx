@@ -51,11 +51,13 @@ export const AuthProvider = ({ children }) => {
       const currentUser = response.data;
 
       const userRole = currentUser.role;
+      const orgId= currentUser.organizationId || NULL; // Fallback to a default org ID if not present
 
       const userData = {
         accessToken: access_token,
         idToken: id_token,
         user: currentUser,
+        orgId: orgId,
         email: decoded.email,
         role: userRole,
       };
@@ -72,7 +74,7 @@ export const AuthProvider = ({ children }) => {
     try {
       const superAdminUserData = {
         accessToken: access_token,
-        role: "superadmin",
+        role: "SUPER_ADMIN",
       };
 
       setSuperAuthData(superAdminUserData);
@@ -91,6 +93,7 @@ export const AuthProvider = ({ children }) => {
   const superLogout = () => {
     setSuperAuthData(null);
     localStorage.removeItem("superAdminUserData");
+    localStorage.clear();
   };
 
   return (

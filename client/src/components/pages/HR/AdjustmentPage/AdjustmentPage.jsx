@@ -4,6 +4,7 @@ import {
   faUserPlus,
   faFileInvoice,
   faDollarSign,
+  faFingerprint // <-- add this
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Adjustment from '../../../Organisms/HR/IndividualAdjustmentList/Adjustment';
@@ -34,10 +35,10 @@ const AdjustmentPage = () => {
         link: "/payroll"
       },
       {
-        key: "4",
-        icon: <FontAwesomeIcon icon={faFileInvoice} />,
-        label: "Reports",
-        link: "/reportPage"
+        key: "5",
+        icon: <FontAwesomeIcon icon={faFingerprint} />,
+        label: "FingerPrints",
+        link: "/FingerPrints"
       }
     ]}
     Comp={Adjustment}

@@ -142,15 +142,8 @@ const NavBar = ({ Comp, titleLines = [], menuItems = [] }) => {
   );
 
   // Add Fingerprint tab to menuItems if not present
-  const fingerprintTab = {
-    key: "fingerprint",
-    icon: <UserOutlined />,
-    label: "Fingerprints",
-    link: "/fingerprint"
-  };
-  const hasFingerprint = menuItems.some(item => item.key === "fingerprint");
-  const updatedMenuItems = hasFingerprint ? menuItems : [...menuItems, fingerprintTab];
-  const renderedMenuItems = updatedMenuItems.map((item) => ({
+  // Use menuItems directly for rendering
+  const renderedMenuItems = menuItems.map((item) => ({
     key: item.key,
     icon: item.icon,
     label: item.label,

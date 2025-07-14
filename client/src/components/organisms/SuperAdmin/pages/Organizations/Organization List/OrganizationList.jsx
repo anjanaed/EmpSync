@@ -2,13 +2,10 @@ import { Button, Input, List, Avatar, Row, Col, Space } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { useState, useMemo } from 'react';
 import styles from './OrganizationList.module.css';
-import { useAuth } from '../../../../../../contexts/AuthContext';
 
 const OrganizationList = ({ data, onAddNew, onUpdate, onDelete }) => {
   const [searchTerm, setSearchTerm] = useState('');
-    const { superAuthData } = useAuth();
-
-
+  
   // Filter data based on search term
   const filteredData = useMemo(() => {
     if (!searchTerm) return data;
@@ -26,8 +23,6 @@ const OrganizationList = ({ data, onAddNew, onUpdate, onDelete }) => {
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
   };
-
-  console.log(superAuthData)
 
   return (
     <div className={styles.container}>

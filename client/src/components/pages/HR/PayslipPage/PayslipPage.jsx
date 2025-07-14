@@ -6,6 +6,7 @@ import {
   faUserPlus,
   faFileInvoice,
   faDollarSign,
+  faFingerprint // <-- add this
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
@@ -33,12 +34,16 @@ const PayslipPage = () => {
             label: "Payrolls",
             link: "/payroll",
           },
+
+
           {
             key: "4",
-            icon: <FontAwesomeIcon icon={faFileInvoice} />,
-            label: "Reports",
-            link: "/reportPage",
-          },
+            icon: <FontAwesomeIcon icon={faFingerprint} />,
+            label: "FingerPrints",
+            link: "/FingerPrints"
+          }
+
+
         ]}
         Comp={Payslip}
       />

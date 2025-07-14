@@ -20,7 +20,6 @@ import { usePopup } from "../../../../contexts/PopupContext";
 import { useAuth } from "../../../../contexts/AuthContext";
 import { useTheme } from "../../../../contexts/ThemeContext";
 
-
 const formItemLayout = {
   labelCol: {
     xs: {
@@ -48,9 +47,9 @@ const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
   const { theme } = useTheme();
   const token = authData?.accessToken;
 
-
   const [currentEmployee, setCurrentEmployee] = useState({
     id: "",
+    empNo: "",
     name: "",
     role: "",
     dob: "",
@@ -68,7 +67,6 @@ const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
   });
   const [loading, setLoading] = useState(true);
   const urL = import.meta.env.VITE_BASE_URL;
-
 
   const fetchRecord = async () => {
     try {
@@ -94,14 +92,13 @@ const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
 
   const handleUpdate = async () => {
     try {
-            const token = authData?.accessToken;
-
+      const token = authData?.accessToken;
       await form.validateFields();
       setLoading(true);
-      await axios.put(`${urL}/user/${empId}`, currentEmployee,{
+      await axios.put(`${urL}/user/${empId}`, currentEmployee, {
         headers: {
           Authorization: `Bearer ${token}`,
-        },  
+        },
       });
       handleCancel();
       fetchEmployee();
@@ -126,8 +123,17 @@ const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
   }
 
   return (
-    <div className={`${theme === 'dark' ? 'dark' : ''} ${theme === 'dark' ? styles.darkWrapper : styles.modalContainer}`}>
-      <div className={styles.head}>Edit Employee - {currentEmployee.id}</div>
+    <div
+      className={`${theme === "dark" ? "dark" : ""} ${
+        theme === "dark" ? styles.darkWrapper : styles.modalContainer
+      }`}
+    >
+          <div className={styles.headWrapper}>
+      <div className={styles.head}>Edit Employee - {currentEmployee.empNo}</div>
+      <div className={styles.empIdTopRight}>
+        ID: <b>{currentEmployee.id}</b>
+      </div>
+      </div>
       <div className={styles.headDes}>
         Update Employee Information. Click Save Changes When You're Done.
       </div>
@@ -294,20 +300,7 @@ const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
                 children: (
                   <>
                     <div className={styles.con}>
-                      <Form.Item
-                        name="id"
-                        label="Employee ID"
-                        rules={[
-                          {
-                            required: true,
-                            message: "Please Enter ID!",
-                          },
-                          {
-                            pattern: /^\S{4}$/,
-                            message: "ID must be exactly 4 characters with no spaces!",
-                          },
-                        ]}
-                      >
+                      <Form.Item name="empNo" label="Employee No">
                         <Input disabled />
                       </Form.Item>
                       <Form.Item name="supId" label="Supervisor's ID">

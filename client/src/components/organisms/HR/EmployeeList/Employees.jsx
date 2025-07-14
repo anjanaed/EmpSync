@@ -99,6 +99,7 @@ const Employees = () => {
       });
       const fetchedEmployee = response.data.map((emp) => ({
         key: emp.id,
+        no:emp.empNo,
         id: emp.id,
         name: emp.name,
         role: emp.role,
@@ -158,9 +159,9 @@ const Employees = () => {
 
   const columns = [
     {
-      title: "Employee ID",
-      dataIndex: "id",
-      key: "id",
+      title: "Employee No",
+      dataIndex: "no",
+      key: "no",
       align: "center",
       defaultSortOrder: "ascend",
       sorter: (a, b) => {

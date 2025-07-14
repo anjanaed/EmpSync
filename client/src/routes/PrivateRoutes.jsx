@@ -1,13 +1,13 @@
 import React from "react";
 import { Route } from "react-router-dom";
 import ProtectedRoute from "../../src/guards/ProtectedRoutes";
+import SuperAdminProtectedRoute from "../../src/guards/SuperAdminProtectedRoute";
 import LoginRole from "../components/Pages/Login/LoginAsPage/LoginRole";
 import Login from "../components/pages/Login/LoginPage/Login";
 
 // HR_ADMIN
 import EmployeePage from "../components/Pages/HR/EmployeePage/EmployeePage";
 import RegisterPage from "../components/Pages/HR/RegisterPage/RegisterPage";
-import ReportPage from "../components/Pages/HR/ReportPage/ReportPage";
 import PayrollPage from "../components/Pages/HR/PayrollPage/PayrollPage";
 import AdjustmentPage from "../components/Pages/HR/AdjustmentPage/AdjustmentPage";
 import PayslipPage from "../components/Pages/HR/PayslipPage/PayslipPage";
@@ -38,6 +38,13 @@ import LoginRouting from "../guards/LoginRouting";
 import ProfilePage from "../components/Pages/UserAccount/ProfilePage/ProfilePage";
 import UserMeals from "../components/Pages/UserAccount/MealsPage/MealsPage";
 
+// SuperAdmin
+import SuperAdmin from "../components/pages/SuperAdmin/SuperAdmin";
+import SuperAdminLogin from '../components/pages/Login/SuperAdmin/LoginPage/Login';
+import Organizations from '../components/organisms/SuperAdmin/pages/Organizations/Organization List/OrganizationList';
+import Roles from '../components/organisms/SuperAdmin/pages/Roles/RolesList';
+import Permissions from '../components/organisms/SuperAdmin/pages/Permissions/PermissionsList';
+
 const PrivateRoutes = () => (
   <>
     <Route
@@ -63,6 +70,47 @@ const PrivateRoutes = () => (
         </ProtectedRoute>
       }
     />
+
+    {/* SuperAdmin Routes */}
+    <Route
+      path="/SuperAdmin/login"
+      element={<SuperAdminLogin />}
+    />
+    <Route
+      path="/SuperAdmin/dashboard"
+      element={
+        <SuperAdminProtectedRoute allowedRoles={["SUPER_ADMIN"]}>
+          <SuperAdmin />
+        </SuperAdminProtectedRoute>
+      }
+    />
+    <Route
+      path="/SuperAdmin/organizations"
+      element={
+        <SuperAdminProtectedRoute allowedRoles={["SUPER_ADMIN"]}> 
+          <Organizations />
+        </SuperAdminProtectedRoute>
+      }
+    />
+    <Route
+      path="/SuperAdmin/roles"
+      element={
+        <SuperAdminProtectedRoute allowedRoles={["SUPER_ADMIN"]}>
+          <Roles />
+        </SuperAdminProtectedRoute>
+      }
+    />
+    <Route
+      path="/SuperAdmin/permissions"
+      element={
+        <SuperAdminProtectedRoute allowedRoles={["SUPER_ADMIN"]}> 
+          <Permissions />
+        </SuperAdminProtectedRoute>
+      }
+    />
+    
+    
+
     {/* HR_ADMIN Routes */}
     <Route
       path="/EmployeePage"
@@ -77,14 +125,6 @@ const PrivateRoutes = () => (
       element={
         <ProtectedRoute allowedRoles={["HR_ADMIN"]}>
           <RegisterPage />
-        </ProtectedRoute>
-      }
-    />
-    <Route
-      path="/reportPage"
-      element={
-        <ProtectedRoute allowedRoles={["HR_ADMIN"]}>
-          <ReportPage />
         </ProtectedRoute>
       }
     />
