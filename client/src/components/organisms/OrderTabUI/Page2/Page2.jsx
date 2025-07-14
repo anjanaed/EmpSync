@@ -421,11 +421,67 @@ const Page2 = ({
           </Button>
           <Button
             type="default"
-            disabled={!fingerprintConnected}
-            onClick={() => {
-              // Implement fetch thumb ids logic here
-              setErrorMessage("Fetch Thumb Ids clicked (implement logic)");
-              setTimeout(() => setErrorMessage(""), 2000);
+            disabled={!fingerprintConnected || loading}
+            loading={loading}
+            onClick={async () => {
+              if (!window.fingerprintSerialPort) {
+                setErrorMessage("No fingerprint device connected.");
+                setTimeout(() => setErrorMessage(""), 2000);
+                return;
+              }
+              try {
+                setLoading(true);
+                // Cancel any existing serial reader to avoid conflicts
+                if (serialReader) {
+                  await serialReader.cancel();
+                  serialReader.releaseLock();
+                  setSerialReader(null);
+                }
+                // Send GET_IDS command
+                const writer = window.fingerprintSerialPort.writable.getWriter();
+                await writer.write(new TextEncoder().encode("GET_IDS\n"));
+                writer.releaseLock();
+
+                // Read response
+                const reader = window.fingerprintSerialPort.readable.getReader();
+                setSerialReader(reader);
+                let buffer = '';
+                const timeout = setTimeout(() => {
+                  reader.cancel();
+                  setErrorMessage("Timeout waiting for thumb IDs.");
+                  setTimeout(() => setErrorMessage(""), 2000);
+                  setLoading(false);
+                }, 60000); // Increased timeout to 60 seconds
+
+                let foundIds = false;
+                while (!foundIds) {
+                  const { value, done } = await reader.read();
+                  if (done) break;
+                  buffer += new TextDecoder().decode(value);
+                  const lines = buffer.split('\n');
+                  buffer = lines.pop();
+                  for (let line of lines) {
+                    line = line.trim();
+                    if (line.startsWith('IDS:')) {
+                      clearTimeout(timeout);
+                      const ids = line.substring(4).split(',').filter(id => id).map(id => parseInt(id));
+                      console.log("Stored Fingerprint IDs:", ids.length > 0 ? ids : "No IDs found");
+                      setErrorMessage(`Fetched ${ids.length} thumb ID${ids.length === 1 ? '' : 's'}`);
+                      setTimeout(() => setErrorMessage(""), 2000);
+                      foundIds = true;
+                      break;
+                    }
+                  }
+                }
+                reader.releaseLock();
+                setSerialReader(null);
+              } catch (error) {
+                console.error("Error fetching thumb IDs:", error);
+                setErrorMessage("Failed to fetch thumb IDs: " + error.message);
+                setTimeout(() => setErrorMessage(""), 2000);
+              } finally {
+                setLoading(false);
+              }
             }}
           >
             Fetch Thumb Ids
