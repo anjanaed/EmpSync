@@ -1,5 +1,6 @@
 import { Layout, Modal } from 'antd';
 import { useState, useEffect } from 'react';
+import { useAuth } from '../../../contexts/AuthContext';
 import axios from 'axios';
 import Navbar from '../../organisms/SuperAdmin/components/Navbar/Navbar';
 import AppHeader from '../../organisms/SuperAdmin/components/AppHeader/AppHeader';
@@ -21,6 +22,7 @@ const SuperAdmin = () => {
   const [selectedItem, setSelectedItem] = useState(null);
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
+  const { superAuthData } = useAuth();
 
   const [rolesData] = useState([
     { key: '1', name: 'Super Admin', description: 'Full system access', permissions: 15 },
@@ -36,7 +38,7 @@ const SuperAdmin = () => {
     { key: '4', name: 'Reports', description: 'Access and export system reports.' },
   ]);
 
-  const token = localStorage.getItem('access_token');
+  const token = superAuthData?.accessToken;
 
   const mapOrganizations = (orgs) => orgs.map(org => ({
     key: org.id,

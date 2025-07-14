@@ -1,4 +1,4 @@
-import { Layout, Menu } from 'antd';
+import { Layout, Menu, Modal } from 'antd';
 import { 
   TeamOutlined, 
   UserOutlined, 
@@ -7,14 +7,17 @@ import {
   MenuFoldOutlined,
   MenuUnfoldOutlined 
 } from '@ant-design/icons';
-import { useState } from 'react';
+import React, { useEffect , useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './Navbar.module.css';
+import { useAuth } from "../../../../../contexts/AuthContext";
 
 const { Sider } = Layout;
 
 const Navbar = ({ activeMenu, onMenuChange }) => {
   const [collapsed, setCollapsed] = useState(false);
+  const { superLogout } = useAuth();
+
   const navigate = useNavigate();
 
   const menuItems = [
@@ -58,10 +61,16 @@ const Navbar = ({ activeMenu, onMenuChange }) => {
   };
 
   const handleLogout = () => {
-    // Clear user session/token
-    localStorage.clear();
-    // Navigate to login page
-    navigate('/SuperAdmin/login');
+    Modal.confirm({
+      title: "Confirm Logout",
+      content: "Are you sure you want to logout?",
+      okText: "Yes",
+      cancelText: "Cancel",
+      onOk: () => {
+        superLogout();
+        navigate('/SuperAdmin/login');
+      }
+    });
   };
 
   return (

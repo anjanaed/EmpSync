@@ -74,7 +74,7 @@ export const AuthProvider = ({ children }) => {
     try {
       const superAdminUserData = {
         accessToken: access_token,
-        role: "superadmin",
+        role: "SUPER_ADMIN",
       };
 
       setSuperAuthData(superAdminUserData);
@@ -93,6 +93,7 @@ export const AuthProvider = ({ children }) => {
   const superLogout = () => {
     setSuperAuthData(null);
     localStorage.removeItem("superAdminUserData");
+    localStorage.clear();
   };
 
   return (

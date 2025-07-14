@@ -485,6 +485,7 @@ const Register = () => {
             <div className={styles.passkeyValue}>{passkey}</div>
           </div>
           <div className={styles.btnContainer}>
+            <Gbutton width={200} onClick={() => navigate("/FingerPrints")}>Go to Fingerprints section</Gbutton>
             <Gbutton width={200} onClick={() => navigate("/EmployeePage")}>
               Go to Employee Page
             </Gbutton>

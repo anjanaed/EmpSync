@@ -4,6 +4,7 @@ import {
   faUserPlus,
   faFileInvoice,
   faDollarSign,
+  faFingerprint // <-- add this
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Register from "../../../organisms/HR/Registration/Register";
@@ -32,7 +33,12 @@ const RegisterPage = () => {
           label: "Payrolls",
           link: "/payroll",
         },
-
+        {
+          key: "4",
+          icon: <FontAwesomeIcon icon={faFingerprint} />,
+          label: "FingerPrints",
+          link: "/FingerPrints"
+        }
       ]}
       Comp={Register}
     />

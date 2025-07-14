@@ -19,6 +19,22 @@ import { Roles } from '../authentication/roles.decorator';
 
 @Controller('user')
 export class UserController {
+  @Put(':id/regenerate-passkey')
+  async regeneratePasskey(@Param('id') id: string) {
+    try {
+      const passkey = await this.userService.regeneratePasskey(id);
+      return { passkey };
+    } catch (err) {
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: 'Bad Request',
+          message: err.message,
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
   constructor(private readonly userService: UserService) {}
 
   @Post()
