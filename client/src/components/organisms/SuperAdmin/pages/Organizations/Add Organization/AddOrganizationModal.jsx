@@ -65,11 +65,8 @@ const AddOrganizationModal = ({ visible, onSubmit, onCancel }) => {
           <InputNumber 
             min={1} 
             placeholder="Enter fingerprints per machine"
-            style={{ width: '100%' }}
+            style={{ width: '100%'}}
           />
-        </Form.Item>
-        <Form.Item name="active" label="Active Status" valuePropName="checked" initialValue={true}>
-          <Switch defaultChecked />
         </Form.Item>
         <Form.Item>
           <div className={styles.buttonGroup}>
