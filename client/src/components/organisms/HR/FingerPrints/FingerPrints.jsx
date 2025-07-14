@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import Loading from "../../../atoms/loading/loading";
+import { ReloadOutlined } from "@ant-design/icons";
 import { Pie } from '@ant-design/plots';
 import { Table, ConfigProvider, Modal, Button, Popconfirm, Space } from "antd";
 import { EyeOutlined, DeleteOutlined } from "@ant-design/icons";
@@ -29,6 +31,7 @@ const customTheme = {
 };
 
 const FingerPrintsContent = () => {
+  const [regeneratingId, setRegeneratingId] = useState(null);
   // Toggle state for pass-key login feature
   const [showPasskeyMsg, setShowPasskeyMsg] = useState(true);
   const [userData, setUserData] = useState([]);
@@ -143,7 +146,32 @@ const FingerPrintsContent = () => {
       key: "passkey",
       align: "center",
       ellipsis: true,
-      render: (passkey) => passkey !== undefined && passkey !== null ? passkey : "-",
+      render: (passkey, record) => (
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <span>{passkey !== undefined && passkey !== null ? passkey : "-"}</span>
+          <Button
+            icon={<ReloadOutlined style={{ color: "#970000" }} />}
+            size="small"
+            style={{ marginLeft: "8px" }}
+            title="Regenerate Passkey"
+            loading={regeneratingId === record.id}
+            onClick={async () => {
+              setRegeneratingId(record.id);
+              try {
+                const res = await axios.put(`http://localhost:3000/user/${record.id}/regenerate-passkey`);
+                const newPasskey = res.data.passkey;
+                setTimeout(() => {
+                  setUserData(prev => prev.map(u => u.id === record.id ? { ...u, passkey: newPasskey } : u));
+                  setRegeneratingId(null);
+                }, 700); // Show loading for at least 700ms
+              } catch (err) {
+                setRegeneratingId(null);
+                alert("Failed to regenerate passkey.");
+              }
+            }}
+          />
+        </div>
+      ),
     },
     {
       title: "Status",
@@ -264,6 +292,10 @@ const FingerPrintsContent = () => {
   }
 
   // Table view
+  // Show loading overlay if regenerating
+  if (regeneratingId) {
+    return <Loading text="Regenerating passkey..." />;
+  }
   return (
     <div style={{ position: "relative" }}>
       <div className={styles.container} style={{ position: "relative" }}>

@@ -4,6 +4,27 @@ import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class UserService {
+  async regeneratePasskey(id: string) {
+    try {
+      // Generate a unique 6-digit passkey
+      let unique = false;
+      let passkey: number;
+      while (!unique) {
+        passkey = Math.floor(100000 + Math.random() * 900000); // 6-digit
+        const existing = await this.databaseService.user.findFirst({ where: { passkey } });
+        if (!existing) unique = true;
+      }
+      // Update user with new passkey
+      const user = await this.databaseService.user.findUnique({ where: { id } });
+      if (!user) {
+        throw new HttpException('User Not found', HttpStatus.NOT_FOUND);
+      }
+      await this.databaseService.user.update({ where: { id }, data: { passkey } });
+      return passkey;
+    } catch (err) {
+      throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
+    }
+  }
   constructor(private readonly databaseService: DatabaseService) {}
 
   async create(dto: Prisma.UserCreateInput) {
