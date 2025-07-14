@@ -2,9 +2,9 @@
 
 .container {
   padding: 20px;
-  background-color: #fff;
+  background-color: var(--bg-primary);
   border-radius: 8px;
-  box-shadow: 1px 0px 1px 2px rgba(0, 0, 0, 0.1);
+  box-shadow: 1px 0px 1px 2px var(--shadow);
   width: 90%;
   margin: 0 auto; 
   flex-direction: column; 
@@ -16,9 +16,9 @@
 
 .analysisContainer {
   padding: 20px;
-  background: white;
+  background: var(--bg-primary);
   border-radius: 8px;
-  box-shadow: 1px 0px 1px 2px rgba(0, 0, 0, 0.1);
+  box-shadow: 1px 0px 1px 2px var(--shadow);
   margin-bottom: 50px; 
 }
 
@@ -27,7 +27,7 @@
   font-weight: bold;
   margin-bottom: 30px;
   font-family: "Roboto Slab", serif;
-  color: black !important;
+  color: var(--text-primary) !important;
 }
 
 .cardsContainer {
@@ -38,19 +38,21 @@
 .card {
   flex: 1;
   border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 5px var(--shadow);
+  background-color: var(--bg-primary);
 }
 
 .mealItem {
   margin-bottom: 10px;
+  color: var(--text-primary);
 }
 
 /* Report Section */
 .reportContainer {
   padding: 20px;
-  background-color: #fff;
+  background-color: var(--bg-secondary);
   border-radius: 8px;
-  box-shadow: 1px 0px 1px 2px rgba(0, 0, 0, 0.1);
+  box-shadow: 1px 0px 1px 2px var(--shadow);
 }
 
 .reportHeader {
@@ -72,7 +74,7 @@
   display: flex;
   border-radius: 8px;
   overflow: hidden;
-  background-color: #f5f5f5;
+  background-color: var(--bg-secondary);
   margin-bottom: 20px;
 }
 
@@ -84,24 +86,25 @@
   cursor: pointer;
   text-align: center;
   font-size: 16px;
-  color: #666;
+  color: var(--text-secondary);
   transition: background-color 0.3s;
 }
 
 .activeTab {
-  background-color: #fff;
-  color: #000;
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
   font-weight: 500;
 }
 
 .reportPanel {
-  border: 1px solid #e0e0e0;
+  border: 1px solid var(--border-color);
   border-radius: 8px;
   padding: 40px;
   margin-bottom: 20px;
   min-height: 200px;
   display: flex;
   justify-content: center;
+  background-color: var(--bg-secondary);
 }
 
 .reportContent {
@@ -135,10 +138,11 @@
   font-size: 22px;
   margin-bottom: 10px;
   font-weight: 500;
+  color: var(--text-primary);
 }
 
 .reportDescription {
-  color: #666;
+  color: var(--text-secondary);
   margin-bottom: 0;
 }
 
@@ -173,7 +177,7 @@
 
 .container {
   padding: 24px;
-  background-color: #f5f5f5;
+  background-color: var(--bg-secondary);
   min-height: 100vh;
 }
 
@@ -189,13 +193,14 @@
 
 .sectionIcon {
   margin-right: 8px;
-  color: #1890ff;
+  color: var(--accent);
 }
 
 .sectionTitle {
   margin: 0;
   font-size: 24px;
   font-weight: 600;
+  color: var(--text-primary);
 }
 
 .analysisGrid {
@@ -206,76 +211,54 @@
 
 .card {
   border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 12px var(--shadow);
+  background-color: var(--bg-tertiary);
+  border: none;
 }
 
 .cardTitle {
   display: flex;
   align-items: center;
+  color: var(--text-primary);
 }
 
 .highDemandIcon {
   margin-right: 8px;
-  color: #52c41a;
+  color: var(--success);
 }
 
 .lowDemandIcon {
   margin-right: 8px;
-  color: #ff4d4f;
+  color: var(--error);
 }
 
 .mealItem {
   margin-bottom: 16px;
+  color: var(--text-primary);
 }
 
 .mealHeader {
   display: flex;
   justify-content: space-between;
   margin-bottom: 8px;
+  color: var(--text-primary);
 }
 
-.highDemandPercentage {
-  font-weight: bold;
-  color: #52c41a;
+/* Styles for "No data available" messages and card content */
+.analysisGrid .card div {
+  color: var(--text-primary);
 }
 
-.lowDemandPercentage {
-  font-weight: bold;
-  color: #ff4d4f;
+.analysisGrid .card span {
+  color: var(--text-primary);
 }
 
-.reportsSection {
-  margin-bottom: 24px;
+.analysisGrid .card .ant-card-body {
+  color: var(--text-primary);
 }
 
-.tabHeader {
-  display: flex;
-  align-items: center;
-  margin-bottom: 24px;
-}
-
-.tabContentHeader {
-  display: flex;
-  align-items: center;
-  margin-bottom: 24px;
-}
-
-.tabIcon {
-  margin-right: 12px;
-  color: #1890ff;
-}
-
-.tabTitle {
-  margin: 0;
-  font-size: 20px;
-  font-weight: 600;
-  color: #000;
-}
-
-.tabDescription {
-  margin: 4px 0 0 0;
-  color: #666;
-  font-size: 14px;
+.analysisGrid .card .ant-card-body > div {
+  color: var(--text-primary);
 }
 
 .controlsContainer {
@@ -303,6 +286,7 @@
   display: block;
   margin-bottom: 8px;
   font-weight: 500;
+  color: var(--text-primary);
 }
 
 .selectInput {
@@ -311,19 +295,22 @@
 
 .dateInput {
   padding: 8px 12px;
-  border: 1px solid #d9d9d9;
+  border: 1px solid var(--border-color);
   border-radius: 6px;
   font-size: 14px;
   width: 150px;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
 }
 
 .textInput {
   padding: 8px 12px;
-  border: 1px solid #d9d9d9;
+  border: 1px solid var(--border-color);
   border-radius: 6px;
   font-size: 14px;
   width: 180px;
-  color: #999;
+  color: var(--text-tertiary);
+  background-color: var(--bg-primary);
 }
 
 
@@ -341,18 +328,18 @@
 
 
 .table {
-  background-color: white;
+  background-color: var(--bg-primary);
   border-radius: 8px;
   overflow: hidden;
 }
 
 .totalMealsCell {
-  color: #1890ff;
+  color: var(--accent);
   font-weight: bold;
 }
 
 .efficiencyBadgeExcellent {
-  background-color: #52c41a;
+  background-color: var(--success);
   color: white;
   padding: 4px 8px;
   border-radius: 12px;
@@ -361,7 +348,7 @@
 }
 
 .efficiencyBadgeGood {
-  background-color: #fadb14;
+  background-color: var(--warning);
   color: black;
   padding: 4px 8px;
   border-radius: 12px;
@@ -370,7 +357,7 @@
 }
 
 .efficiencyBadgePoor {
-  background-color: #ff4d4f;
+  background-color: var(--error);
   color: white;
   padding: 4px 8px;
   border-radius: 12px;
@@ -379,7 +366,7 @@
 }
 
 .statusBadgeExcellent {
-  background-color: #52c41a;
+  background-color: var(--success);
   color: white;
   padding: 4px 12px;
   border-radius: 12px;
@@ -388,7 +375,7 @@
 }
 
 .statusBadgeGood {
-  background-color: #fadb14;
+  background-color: var(--warning);
   color: black;
   padding: 4px 12px;
   border-radius: 12px;
@@ -397,7 +384,7 @@
 }
 
 .statusBadgeServed {
-  background-color: #52c41a;
+  background-color: var(--success);
   color: white;
   padding: 4px 12px;
   border-radius: 12px;
@@ -406,7 +393,7 @@
 }
 
 .statusBadgePending {
-  background-color: #faad14;
+  background-color: var(--warning);
   color: white;
   padding: 4px 12px;
   border-radius: 12px;
@@ -454,13 +441,13 @@
 .mealCount {
   font-size: 18px;
   font-weight: 700;
-  color: #1890ff;
+  color: var(--accent);
   text-align: center;
 }
 
 .mealPrice {
   font-size: 12px;
-  color: #666;
+  color: var(--text-secondary);
   font-weight: 500;
 }
 
@@ -474,13 +461,13 @@
 .totalCount {
   font-size: 18px;
   font-weight: 700;
-  color: #1890ff;
+  color: var(--accent);
   text-align: center;
 }
 
 .totalMealsText {
   font-size: 11px;
-  color: #666;
+  color: var(--text-secondary);
   font-weight: 500;
 }
 
@@ -494,19 +481,19 @@
 .totalAmount {
   font-size: 18px;
   font-weight: 700;
-  color: #52c41a;
+  color: var(--success);
   text-align: center;
 }
 
 .totalCostText {
   font-size: 11px;
-  color: #666;
+  color: var(--text-secondary);
   font-weight: 500;
 }
 
 /* Summary row styles */
 .summaryRow {
-  background-color: #fafafa;
+  background-color: var(--bg-tertiary);
   font-weight: 600;
 }
 
@@ -520,13 +507,13 @@
 .summaryCount {
   font-size: 18px;
   font-weight: 800;
-  color: #fa8c16;
+  color: var(--warning);
   text-align: center;
 }
 
 .summaryPrice {
   font-size: 12px;
-  color: #666;
+  color: var(--text-secondary);
   font-weight: 600;
 }
 
@@ -540,13 +527,13 @@
 .summaryTotalCount {
   font-size: 18px;
   font-weight: 800;
-  color: #1890ff;
+  color: var(--accent);
   text-align: center;
 }
 
 .summaryTotalText {
   font-size: 11px;
-  color: #666;
+  color: var(--text-secondary);
   font-weight: 600;
 }
 
@@ -560,13 +547,13 @@
 .summaryGrandAmount {
   font-size: 20px;
   font-weight: 800;
-  color: #52c41a;
+  color: var(--success);
   text-align: center;
 }
 
 .summaryGrandText {
   font-size: 11px;
-  color: #666;
+  color: var(--text-secondary);
   font-weight: 600;
 }
 
@@ -587,4 +574,17 @@
   .summaryGrandAmount {
     font-size: 18px;
   }
+}
+
+/* Remove borders from Analysis section cards */
+.analysisGrid .card {
+  border: none !important;
+}
+
+.analysisGrid .card .ant-card {
+  border: none !important;
+}
+
+.analysisGrid .card .ant-card-body {
+  border: none !important;
 }
