@@ -40,6 +40,11 @@ const FingerPrintsContent = () => {
   const [showTable, setShowTable] = useState(false);
   // Device cards state
   const [deviceCards, setDeviceCards] = useState([]);
+  // Search bar state
+  const [searchValue, setSearchValue] = useState("");
+  const [searchError, setSearchError] = useState("");
+  // Search bar state
+  // (searchError and setSearchError are now declared below as part of the new search bar logic)
 
   // Fetch fingerprint device usage
   useEffect(() => {
@@ -269,11 +274,60 @@ const FingerPrintsContent = () => {
         >
           Back
         </Button>
-        <h2 className={styles.title}>User Fingerprint Info.</h2>
+        <h3 className={styles.title}>User Fingerprint Info.</h3>
+        {/* Search Bar for Employee ID or Name */}
+        <div style={{ marginBottom: 16, display: "flex", alignItems: "center", gap: 12 }}>
+          <input
+            type="text"
+            placeholder="Search by Employee ID or Name..."
+            value={searchValue}
+            onChange={e => {
+              setSearchValue(e.target.value);
+              setSearchError("");
+            }}
+            style={{ padding: "8px 12px", borderRadius: 6, border: "1px solid #ccc", fontSize: 14, width: 260 }}
+          />
+          <Button
+            type="default"
+            onClick={() => {
+              if (searchValue.trim() === "") {
+                setSearchError("");
+                return;
+              }
+              const val = searchValue.trim().toLowerCase();
+              const found = userData.some(user =>
+                user.id.toLowerCase() === val || user.name.toLowerCase().includes(val)
+              );
+              if (!found) {
+                setSearchError("No matching Employee ID or Name found.");
+              } else {
+                setSearchError("");
+              }
+            }}
+          >
+            Search
+          </Button>
+          {searchError && <span style={{ color: "#970000", fontWeight: 500 }}>{searchError}</span>}
+          {searchValue && !searchError && (
+            <Button type="link" onClick={() => setSearchValue("")}>Clear</Button>
+          )}
+        </div>
         <ConfigProvider theme={customTheme}>
           <Table
             columns={columns}
-            dataSource={userData.map((user) => ({ ...user, key: user.id }))}
+            dataSource={
+              searchValue && !searchError
+                ? userData
+                    .filter(user => {
+                      const val = searchValue.trim().toLowerCase();
+                      return (
+                        user.id.toLowerCase() === val ||
+                        user.name.toLowerCase().includes(val)
+                      );
+                    })
+                    .map(user => ({ ...user, key: user.id }))
+                : userData.map(user => ({ ...user, key: user.id }))
+            }
             loading={loading}
             pagination={{
               position: ["bottomCenter"],
