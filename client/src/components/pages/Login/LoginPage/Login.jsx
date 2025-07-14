@@ -31,7 +31,8 @@ const LoginPage = () => {
       navigate("/loginrole");
     } catch (error) {
       console.error("Login error:", error);
-      message.error(`Login Failed: ${error.response.data.message}`);
+      const errorMessage = error.response?.data?.message || error.message || "Login failed. Please try again.";
+      message.error(`Login Failed: ${errorMessage}`);
     } finally {
       setLoading(false);
     }
