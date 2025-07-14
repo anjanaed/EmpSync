@@ -134,9 +134,6 @@ export class SuperAdminService {
       if (!data.email) {
         throw new BadRequestException('Email is required');
       }
-      if (!data.password) {
-        throw new BadRequestException('Password is required');
-      }
       return await this.databaseService.user.create({ data });
     } catch (error) {
       if (error instanceof BadRequestException) {

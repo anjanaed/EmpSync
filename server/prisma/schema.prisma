@@ -35,6 +35,7 @@ model Fingerprint {
 
 model User {
   id             String        @id
+  empNo          String?
   name           String
   role           String
   dob            String?
@@ -42,7 +43,6 @@ model User {
   gender         String?
   address        String?
   email          String        @unique
-  password       String
   salary         Int?
   passkey        Int?
   supId          String?
@@ -60,7 +60,7 @@ model User {
 model Permission {
   id        String   @id @default(uuid())
   orgId     String
-  action    String 
+  action    String
   role      String
   users     User[] // For direct user permissions
   createdAt DateTime @default(now())

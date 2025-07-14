@@ -14,6 +14,11 @@
   padding: 0.5vw 1vw;
   border-radius: 8px;
 }
+.headWrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 
 .con {
   padding: 2vw 13vw;
@@ -28,6 +33,10 @@
 
 .customTabs {
   width: 100%;
+}
+.empIdTopRight {
+  font-size: 15px;
+  font-weight: 500;
 }
 
 .tabHead {

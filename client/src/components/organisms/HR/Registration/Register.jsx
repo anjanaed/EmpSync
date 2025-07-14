@@ -44,6 +44,7 @@ const Register = () => {
   const auth0Id = import.meta.env.VITE_AUTH0_ID;
   const navigate = useNavigate();
   const [id, setId] = useState(null);
+  const [empNo, setEmpNo] = useState(null);
   const [email, setEmail] = useState(null);
   const [password, setPassword] = useState(null);
   const [dob, setDob] = useState(null);
@@ -74,6 +75,7 @@ const Register = () => {
 
       const payload = {
         id,
+        empNo,
         name,
         role,
         dob,
@@ -84,6 +86,7 @@ const Register = () => {
         password,
         supId,
         language: lang,
+        organizationId: authData?.orgId,
         salary: parseInt(salary),
       };
       const res = await axios.post(`${urL}/user`, payload, {
@@ -121,6 +124,29 @@ const Register = () => {
     }
   };
 
+  const generateUserId = async () => {
+    const org = authData?.orgId || "O1";
+    if (!org) return;
+
+    try {
+      const res = await axios.get(`${urL}/user/last-empno/${org}`);
+      const lastEmpNo = res.data;
+      let newEmpNo;
+
+      if (lastEmpNo) {
+        const prefix = lastEmpNo.slice(0, 3); // "O1E"
+        const num = parseInt(lastEmpNo.slice(3)) + 1;
+        newEmpNo = `${prefix}${num.toString().padStart(3, "0")}`;
+      } else {
+        newEmpNo = `${org}E001`;
+      }
+      setId(newEmpNo);
+      console.log(newEmpNo);
+    } catch (err) {
+      console.error("Failed to generate user ID", err);
+    }
+  };
+
   const signUpUser = async ({ email, password, id }) => {
     try {
       const res = await axios.post(`https://${auth0Url}/dbconnections/signup`, {
@@ -140,6 +166,7 @@ const Register = () => {
 
   const handleNext = async () => {
     await form.validateFields();
+    await generateUserId();
     setMenu(2);
   };
 
@@ -326,24 +353,19 @@ const Register = () => {
               </div>
               <div className={styles.sideOne}>
                 <Form.Item
-                  name="empId"
-                  label="Employee ID"
+                  name="empNo"
+                  label="Employee No"
                   rules={[
                     {
                       required: true,
-                      message: "Please Enter ID!",
-                    },
-                    {
-                      pattern: /^\S{4}$/,
-                      message:
-                        "ID Must be Exactly 4 Characters With No Spaces!",
+                      message: "Please Enter Number!",
                     },
                   ]}
                 >
                   <Input
-                    placeholder="Enter ID"
+                    placeholder="Enter Number"
                     maxLength={10}
-                    onChange={(e) => setId(e.target.value)}
+                    onChange={(e) => setEmpNo(e.target.value)}
                   />
                 </Form.Item>
                 <Form.Item name="address" label="Residential Address">
@@ -435,8 +457,13 @@ const Register = () => {
             <div className={styles.backIcon} onClick={() => setMenu(1)}>
               <IoIosArrowBack />
             </div>
-            <div className={styles.head}>
-              Click below to complete registration
+          </div>
+          <div className={styles.idContainer}>
+            <span>
+              Your Employee ID: <b>{id}</b>
+            </span>
+            <div className={styles.idNote}>
+              <small>This ID can be use for login.</small>
             </div>
           </div>
           <div className={styles.btnContainer}>
@@ -458,11 +485,12 @@ const Register = () => {
             <div className={styles.passkeyValue}>{passkey}</div>
           </div>
           <div className={styles.btnContainer}>
-            <Gbutton width={200} onClick={() => navigate("/EmployeePage")}>Go to Employee Page</Gbutton>
+            <Gbutton width={200} onClick={() => navigate("/EmployeePage")}>
+              Go to Employee Page
+            </Gbutton>
           </div>
         </>
       )}
-      
     </div>
   );
 };
