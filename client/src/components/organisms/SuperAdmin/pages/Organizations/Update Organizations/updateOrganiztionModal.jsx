@@ -74,9 +74,6 @@ const UpdateOrganizationModal = ({ visible, onSubmit, onCancel, initialValues })
             style={{ width: '100%' }}
           />
         </Form.Item>
-        <Form.Item name="active" label="Active Status" valuePropName="checked">
-          <Switch defaultChecked={initialValues?.active} />
-        </Form.Item>
         <Form.Item>
           <div className={styles.buttonGroup}>
             <Button type="primary" htmlType="submit" className={styles.submitButton}>
