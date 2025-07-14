@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Button, Space, Tag, Select, Card, Checkbox, Divider, message } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined, SaveOutlined } from '@ant-design/icons';
+import { useAuth } from '../../../../../contexts/AuthContext';
 import axios from 'axios';
 import styles from './PermissionsList.module.css';
 
@@ -19,9 +20,10 @@ const PermissionsList = ({
   const [selectedOrganization, setSelectedOrganization] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
   const [rolePermissions, setRolePermissions] = useState([]);
+  const { superAuthData } = useAuth();
 
   // Get token from localStorage (or your preferred method)
-  const token = localStorage.getItem('token');
+  const token = superAuthData?.accessToken;
 
   // Fetch organizations on mount
   useEffect(() => {

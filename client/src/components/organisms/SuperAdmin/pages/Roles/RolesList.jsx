@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Table, Button, Space, Tag, Modal, Form, Input, message, Select } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { useAuth } from '../../../../../contexts/AuthContext';
 import styles from './RolesList.module.css';
 import axios from 'axios';
 
@@ -17,10 +18,12 @@ const RolesList = ({ data, onAddNew, onUpdate, onDelete, className, authData}) =
   const [editForm] = Form.useForm();
   const [editingUser, setEditingUser] = useState(null);
 
+  const { superAuthData } = useAuth();
+
   const urL = import.meta.env.VITE_BASE_URL;
   const auth0Url = import.meta.env.VITE_AUTH0_URL;
   const auth0Id = import.meta.env.VITE_AUTH0_ID;
-  const token = localStorage.getItem('access_token');
+  const token = superAuthData?.accessToken;
 
   const showModal = () => setIsModalVisible(true);
   const handleCancel = () => {
@@ -48,7 +51,9 @@ const RolesList = ({ data, onAddNew, onUpdate, onDelete, className, authData}) =
 
   // Fetch organizations on mount
   useEffect(() => {
-    axios.get(`${urL}/super-admin/organizations`)
+    axios.get(`${urL}/super-admin/organizations`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
       .then(res => setOrganizations(res.data))
       .catch(() => setOrganizations([]));
   }, []);
