@@ -1,4 +1,4 @@
-/* Light theme Ant Design overrides */
+/* Light theme Ant Design overrides
 .ant-layout {
   background-color: var(--bg-primary) !important;
 }
@@ -71,4 +71,7 @@
 
 .ant-table-tbody > tr:hover > td {
   background-color: var(--bg-tertiary) !important;
-}
+} */
+
+
+
