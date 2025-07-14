@@ -435,12 +435,12 @@ const FingerPrints = () => (
         label: "Payrolls",
         link: "/payroll"
       },
-      {
-        key: "4",
-        icon: <FontAwesomeIcon icon={faFileInvoice} />,
-        label: "Reports",
-        link: "/reportPage"
-      },
+      // {
+      //   key: "4",
+      //   icon: <FontAwesomeIcon icon={faFileInvoice} />,
+      //   label: "Reports",
+      //   link: "/reportPage"
+      // },
       {
         key: "5",
         icon: <FontAwesomeIcon icon={faFingerprint} />,
