@@ -19,6 +19,11 @@
   font-family: "Roboto Slab", serif;
 }
 
+/* Dark mode style for title */
+[data-theme="dark"] .title {
+  color: #ffffff !important;
+}
+
 .subtitle {
   color: #6c757d;
   font-size: 16px;
@@ -62,13 +67,42 @@
 .redButton {
   background-color: rgb(224, 0, 0) !important;
   border-color: rgb(224, 0, 0) !important;
-  color: white;
+  color: white !important;
+  transition: all 0.3s ease;
 }
 
 .redButton:hover {
   background-color: rgba(224, 0, 0, 0.8) !important;
   border-color: rgba(224, 0, 0, 0.8) !important;
   color: white !important;
+  transform: scale(1.02);
+}
+
+.redButton:focus {
+  background-color: rgb(224, 0, 0) !important;
+  border-color: rgb(224, 0, 0) !important;
+  color: white !important;
+  box-shadow: 0 0 0 2px rgba(224, 0, 0, 0.2);
+}
+
+/* Ensure red button maintains red color in dark mode */
+[data-theme="dark"] .redButton {
+  background-color: rgb(224, 0, 0) !important;
+  border-color: rgb(224, 0, 0) !important;
+  color: white !important;
+}
+
+[data-theme="dark"] .redButton:hover {
+  background-color: rgba(224, 0, 0, 0.8) !important;
+  border-color: rgba(224, 0, 0, 0.8) !important;
+  color: white !important;
+}
+
+[data-theme="dark"] .redButton:focus {
+  background-color: rgb(224, 0, 0) !important;
+  border-color: rgb(224, 0, 0) !important;
+  color: white !important;
+  box-shadow: 0 0 0 2px rgba(224, 0, 0, 0.2);
 }
 
 .card {
@@ -222,6 +256,19 @@
   margin-bottom: 20px;
   text-align: center;
   max-width: 400px;
+}
+
+/* Dark mode styles for empty state */
+[data-theme="dark"] .emptyTitle {
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .emptyDescription {
+  color: #d9d9d9 !important;
+}
+
+[data-theme="dark"] .emptyIcon {
+  color: #595959 !important;
 }
 
 
