@@ -301,17 +301,19 @@ const Employees = () => {
             </div>
           </div>
           <ConfigProvider theme={theme === 'dark' ? getDarkTheme() : getCustomTheme()}>
-            <Table
-              columns={columns}
-              dataSource={employee}
-              pagination={{
-                position: ["bottomCenter"],
-                pageSize: 25,
-                showTotal: (total, range) =>
-                  `${range[0]}–${range[1]} of ${total} items`,
-                showSizeChanger: false,
-              }}
-            />
+            <div className={styles.contentBox}>
+              <Table
+                columns={columns}
+                dataSource={employee}
+                pagination={{
+                  position: ["bottomCenter"],
+                  pageSize: 25,
+                  showTotal: (total, range) =>
+                    `${range[0]}–${range[1]} of ${total} items`,
+                  showSizeChanger: false,
+                }}
+              />
+            </div>
           </ConfigProvider>
         </div>
       </div>
