@@ -4,6 +4,7 @@ import {
   faUserPlus,
   faFileInvoice,
   faDollarSign,
+  faFingerprint // <-- add this
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import FingerPrints from '../../../organisms/HR/FingerPrints/FingerPrints';
@@ -38,6 +39,12 @@ const FingerPrintPage = () => {
         icon: <FontAwesomeIcon icon={faFileInvoice} />,
         label: "Reports",
         link: "/reportPage"
+      },
+      {
+        key: "5",
+        icon: <FontAwesomeIcon icon={faFingerprint} />,
+        label: "FingerPrints",
+        link: "/FingerPrints"
       }
     ]}
     Comp={FingerPrints}
