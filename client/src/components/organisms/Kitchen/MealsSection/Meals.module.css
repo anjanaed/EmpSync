@@ -115,6 +115,15 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
+/* Dark mode styles for card */
+[data-theme="dark"] .card {
+  background-color: #343535 !important;
+}
+
+[data-theme="dark"] .card:hover {
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
+}
+
 .categoryTag {
   position: absolute;
   top: 10px;
@@ -204,6 +213,20 @@
   color: #333;
 }
 
+/* Dark mode styles for meal text */
+[data-theme="dark"] .mealTitle {
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .mealDetails {
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .idValue,
+[data-theme="dark"] .priceValue {
+  color: #ffffff !important;
+}
+
 .ingredientsLink {
   cursor: pointer;
   color: #1677ff;
@@ -219,6 +242,7 @@
   display: flex;
   justify-content: space-between;
   border-top: 1px solid #eee;
+  gap: 12px;
 }
 
 .card :global(.ant-card-body) {
@@ -298,6 +322,11 @@
 .ingredientName {
   font-weight: 300;
   color: rgba(0, 0, 0, 0.85);
+}
+
+/* Dark mode styles for ingredient name */
+[data-theme="dark"] .ingredientName {
+  color: #ffffff !important;
 }
 
 
