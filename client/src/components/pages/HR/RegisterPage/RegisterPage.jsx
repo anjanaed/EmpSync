@@ -32,12 +32,7 @@ const RegisterPage = () => {
           label: "Payrolls",
           link: "/payroll",
         },
-        {
-          key: "4",
-          icon: <FontAwesomeIcon icon={faFileInvoice} />,
-          label: "Reports",
-          link: "/reportPage",
-        },
+
       ]}
       Comp={Register}
     />
