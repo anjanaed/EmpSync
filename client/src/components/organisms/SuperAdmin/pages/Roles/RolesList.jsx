@@ -268,7 +268,10 @@ const RolesList = ({ data, onAddNew, onUpdate, onDelete, className, authData}) =
           dataSource={orgUsers}
           loading={orgLoading}
           rowKey="id"
-          pagination={false}
+          pagination={{ 
+            pageSize: 4, 
+            responsive: true
+          }}
           className={styles.table}
           style={{ marginBottom: 24 }}
         />
