@@ -91,6 +91,7 @@ export const AuthProvider = ({ children }) => {
   const superLogout = () => {
     setSuperAuthData(null);
     localStorage.removeItem("superAdminUserData");
+    localStorage.clear();
   };
 
   return (
