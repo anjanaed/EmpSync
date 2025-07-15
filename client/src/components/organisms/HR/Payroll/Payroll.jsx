@@ -99,6 +99,7 @@ const Payroll = () => {
 
       //Remove Existing Payrolls with same month
       await axios.delete(`${urL}/payroll/delete-by-month/${month}`, {
+        params: { orgId: authData?.orgId },
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -106,7 +107,7 @@ const Payroll = () => {
 
       //Start calculations
       await axios.post(
-        `${urL}/payroll/calculate-all`,
+        `${urL}/payroll/calculate-all?orgId=${authData?.orgId}`,
         {
           range: range,
           month: month,
@@ -171,6 +172,7 @@ const Payroll = () => {
   const fetchAdjustments = async () => {
     try {
       const res = await axios.get(`${urL}/adjustment`, {
+        params: { orgId: authData?.orgId },
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -218,6 +220,9 @@ const Payroll = () => {
 
     try {
       const userRes = await axios.get(`${urL}/user`, {
+        params: {
+          orgId: authData?.orgId,
+        },
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -298,6 +303,7 @@ const Payroll = () => {
     try {
       //Retrieve Pre defined field values
       const res = await axios.get(`${urL}/adjustment`, {
+        params: { orgId: authData?.orgId },
         headers: {
           Authorization: `Bearer ${token}`,
         },

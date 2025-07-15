@@ -30,7 +30,7 @@ model Organization {
 
 model Fingerprint {
   thumbid String @id
-  orgid  String?
+  orgId  String?
   empId   String
 }
 
@@ -69,7 +69,7 @@ model Permission {
 
 model Ingredient {
   id             Int              @id @default(autoincrement())
-  orgid          String?
+  orgId          String?
   name           String
   price_per_unit Decimal          @db.Decimal(10, 2)
   quantity       Decimal          @db.Decimal(10, 2)
@@ -82,7 +82,7 @@ model Ingredient {
 
 model Payroll {
   id         Int        @id @default(autoincrement())
-  orgid      String?
+  orgId      String?
   empId      String
   employee   User       @relation(fields: [empId], references: [id], onDelete: Cascade)
   range      DateTime[]
@@ -94,7 +94,7 @@ model Payroll {
 
 model Meal {
   id          Int              @id @default(autoincrement())
-  orgid       String?
+  orgId       String?
   nameEnglish String
   nameSinhala String
   nameTamil   String

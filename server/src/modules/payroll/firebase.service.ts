@@ -11,14 +11,14 @@ export class FirebaseService implements OnModuleInit {
   onModuleInit() {
     try {
       // Firebase credentials removed - configure with environment variables
-      // admin.initializeApp({
-      //   credential: admin.credential.cert(
-      //     './src/modules/payroll/firebase-credentials.json',
-      //   ),
-      //   storageBucket: 'gs://empsync-af358',
-      // });
-      // this.bucket = admin.storage();
-      console.log('Firebase initialization disabled - credentials removed');
+      admin.initializeApp({
+        credential: admin.credential.cert(
+          './src/modules/payroll/firebase-credentials.json',
+        ),
+        storageBucket: 'gs://empsync-af358',
+      });
+      this.bucket = admin.storage();
+      
     } catch (error) {
       console.error('Firebase initialization error:', error);
       throw new Error('Failed to initialize Firebase Admin SDK');
