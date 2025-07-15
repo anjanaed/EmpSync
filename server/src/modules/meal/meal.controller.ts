@@ -9,6 +9,7 @@ import {
   Delete,
   HttpException,
   HttpStatus,
+  Query, // <-- Add this import
 } from '@nestjs/common';
 import { MealService } from './meal.service';
 import { Prisma } from '@prisma/client';
@@ -37,17 +38,18 @@ export class MealController {
   constructor(private readonly mealService: MealService) {}
 
   @Post()
-  
-  async create(@Body() createMealDto: CreateMealWithIngredientsDto) {
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('KITCHEN_ADMIN')
+  async create(
+    @Body() createMealDto: CreateMealWithIngredientsDto,
+    @Query('orgId') orgId?: string,
+  ) {
     try {
-      // Convert DTO to Prisma format
-      console.log("trying");
       const { ingredients, ...mealData } = createMealDto;
-
-      // Create the meal with ingredients relationships
       return await this.mealService.createWithIngredients(
         mealData,
         ingredients,
+        orgId,
       );
     } catch (error) {
       throw new HttpException(
@@ -62,9 +64,12 @@ export class MealController {
   }
 
   @Get()
-  async findAll() {
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  async findAll(
+    @Query('orgId') orgId?: string,
+  ) {
     try {
-      return await this.mealService.findAllWithIngredients();
+      return await this.mealService.findAllWithIngredients(orgId);
     } catch (error) {
       throw new HttpException(
         {
@@ -78,13 +83,17 @@ export class MealController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string) {
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  async findOne(
+    @Param('id') id: string,
+    @Query('orgId') orgId?: string,
+  ) {
     try {
       const parsedId = parseInt(id);
       if (isNaN(parsedId)) {
         throw new HttpException('Invalid ID format', HttpStatus.BAD_REQUEST);
       }
-      const meal = await this.mealService.findOneWithIngredients(parsedId);
+      const meal = await this.mealService.findOneWithIngredients(parsedId, orgId);
       if (!meal) {
         throw new HttpException('Meal not found', HttpStatus.NOT_FOUND);
       }
@@ -92,11 +101,11 @@ export class MealController {
     } catch (error) {
       throw new HttpException(
         {
-          status: HttpStatus.BAD_REQUEST,
+          status: HttpStatus.NOT_FOUND,
           error: 'Not Found',
           message: error.message,
         },
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.NOT_FOUND,
       );
     }
   }
@@ -107,6 +116,7 @@ export class MealController {
   async update(
     @Param('id') id: string,
     @Body() updateMealDto: UpdateMealWithIngredientsDto,
+    @Query('orgId') orgId?: string,
   ) {
     try {
       const parsedId = parseInt(id);
@@ -118,6 +128,7 @@ export class MealController {
         parsedId,
         mealData,
         ingredients,
+        orgId,
       );
     } catch (error) {
       throw new HttpException(
@@ -133,14 +144,17 @@ export class MealController {
 
   @Delete(':id')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-    @Roles('KITCHEN_ADMIN')
-  async remove(@Param('id') id: string) {
+  @Roles('KITCHEN_ADMIN')
+  async remove(
+    @Param('id') id: string,
+    @Query('orgId') orgId?: string,
+  ) {
     try {
       const parsedId = parseInt(id);
       if (isNaN(parsedId)) {
         throw new HttpException('Invalid ID format', HttpStatus.BAD_REQUEST);
       }
-      return await this.mealService.remove(parsedId);
+      return await this.mealService.remove(parsedId, orgId);
     } catch (error) {
       throw new HttpException(
         {

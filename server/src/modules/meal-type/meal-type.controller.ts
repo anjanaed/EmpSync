@@ -9,6 +9,7 @@ import {
   UseGuards,
   ParseIntPipe,
   BadRequestException,
+  Query,
 } from '@nestjs/common';
 import { MealTypeService } from './meal-type.service';
 import { AuthGuard } from '@nestjs/passport';
@@ -21,45 +22,45 @@ export class MealTypeController {
 
   @Get()
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  async findAll() {
+  async findAll(@Query('orgId') orgId?: string) {
     try {
-      return await this.mealTypeService.findAll();
+      return await this.mealTypeService.findAll(orgId);
     } catch (error) {
       throw new BadRequestException(error.message);
     }
   }
 
   @Get('defaults')
-  async findDefaults() {
+  async findDefaults(@Query('orgId') orgId?: string) {
     try {
-      return await this.mealTypeService.findDefaults();
+      return await this.mealTypeService.findDefaults(orgId);
     } catch (error) {
       throw new BadRequestException(error.message);
     }
   }
 
   @Get('fetch')
-  async fetchTodayAndTomorrow() {
+  async fetchTodayAndTomorrow(@Query('orgId') orgId?: string) {
     try {
-      return await this.mealTypeService.findTodayAndTomorrow();
+      return await this.mealTypeService.findTodayAndTomorrow(orgId);
     } catch (error) {
       throw new BadRequestException(error.message);
     }
   }
 
   @Get('by-date/:date')
-  async findByDateOrDefault(@Param('date') date: string) {
+  async findByDateOrDefault(@Param('date') date: string, @Query('orgId') orgId?: string) {
     try {
-      return await this.mealTypeService.findByDateOrDefault(date);
+      return await this.mealTypeService.findByDateOrDefault(date, orgId);
     } catch (error) {
       throw new BadRequestException(error.message);
     }
   }
 
   @Get(':id')
-  async findOne(@Param('id', ParseIntPipe) id: number) {
+  async findOne(@Param('id', ParseIntPipe) id: number, @Query('orgId') orgId?: string) {
     try {
-      return await this.mealTypeService.findOne(id);
+      return await this.mealTypeService.findOne(id, orgId);
     } catch (error) {
       throw new BadRequestException(error.message);
     }
@@ -76,6 +77,7 @@ export class MealTypeController {
       isDefault?: boolean;
       date: string;
     },
+    @Query('orgId') orgId?: string,
   ) {
     try {
       return await this.mealTypeService.create(
@@ -83,6 +85,7 @@ export class MealTypeController {
         body.time,
         body.isDefault,
         body.date,
+        orgId,
       );
     } catch (error) {
       throw new BadRequestException(error.message);
@@ -92,9 +95,9 @@ export class MealTypeController {
   @Patch(':id/toggle-default')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles('KITCHEN_ADMIN')
-  async toggleDefault(@Param('id', ParseIntPipe) id: number) {
+  async toggleDefault(@Param('id', ParseIntPipe) id: number, @Query('orgId') orgId?: string) {
     try {
-      return await this.mealTypeService.toggleIsDefault(id);
+      return await this.mealTypeService.toggleIsDefault(id, orgId);
     } catch (error) {
       throw new BadRequestException(error.message);
     }
@@ -105,8 +108,9 @@ export class MealTypeController {
   @Roles('KITCHEN_ADMIN')
   async patchTimeElement(
     @Param('id', ParseIntPipe) id: number,
-    @Param('index', ParseIntPipe) index: number, // 0 for first, 1 for second
+    @Param('index', ParseIntPipe) index: number,
     @Body() body: { newTime: string },
+    @Query('orgId') orgId?: string,
   ) {
     try {
       if (index !== 0 && index !== 1) {
@@ -116,6 +120,7 @@ export class MealTypeController {
         id,
         index,
         body.newTime,
+        orgId,
       );
     } catch (error) {
       throw new BadRequestException(error.message);
@@ -128,9 +133,10 @@ export class MealTypeController {
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() body: { name?: string; time?: string; isDefault?: boolean },
+    @Query('orgId') orgId?: string,
   ) {
     try {
-      return await this.mealTypeService.update(id, body);
+      return await this.mealTypeService.update(id, body, orgId);
     } catch (error) {
       throw new BadRequestException(error.message);
     }
@@ -139,9 +145,9 @@ export class MealTypeController {
   @Delete(':id')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles('KITCHEN_ADMIN')
-  async remove(@Param('id', ParseIntPipe) id: number) {
+  async remove(@Param('id', ParseIntPipe) id: number, @Query('orgId') orgId?: string) {
     try {
-      return await this.mealTypeService.remove(id);
+      return await this.mealTypeService.remove(id, orgId);
     } catch (error) {
       throw new BadRequestException(error.message);
     }
