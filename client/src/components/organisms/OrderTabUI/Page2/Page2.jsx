@@ -29,7 +29,6 @@ const Page2 = ({
   const [fingerprintConnected, setFingerprintConnected] = useState(false);
   const [fingerprintUnitName, setFingerprintUnitName] = useState("");
   const [serialReader, setSerialReader] = useState(null);
-  // For continuous serial reading
   const [serialReadingActive, setSerialReadingActive] = useState(false);
 
   // Sync selectedLanguage with language prop
@@ -68,7 +67,7 @@ const Page2 = ({
           setSerialReader(reader);
           while (!cancelled) {
             const { value, done } = await reader.read();
-            if (done) break;
+            if (done || cancelled) break;
             buffer += new TextDecoder().decode(value);
             let lines = buffer.split('\n');
             buffer = lines.pop();
@@ -76,14 +75,25 @@ const Page2 = ({
               line = line.trim();
               if (line.startsWith('ThumbID: ')) {
                 console.log('Serial ThumbID:', line);
-                // Optionally, trigger further logic here
+                const match = line.match(/ThumbID: (FPU\d{3}\d{4})/);
+                if (match) {
+                  const fullThumbId = match[1];
+                  console.log(`Fingerprint scanned - ThumbID: ${fullThumbId}`);
+                  await fetchUserByFingerprintId(fullThumbId);
+                }
+              } else if (line.startsWith('UnitName: ')) {
+                const unitName = line.substring(10).trim();
+                setFingerprintUnitName(unitName);
+                console.log(`Unit Name received: ${unitName}`);
               }
             }
           }
           reader.releaseLock();
           setSerialReader(null);
-        } catch (err) {
-          // Ignore cancel errors
+        }
+
+        catch (err) {
+          console.error('Serial read error:', err);
         }
         setSerialReadingActive(false);
       };
@@ -166,7 +176,6 @@ const Page2 = ({
   // Fetch employee ID by thumbid (fingerprint ID) and set username for Page3
   const fetchUserByFingerprintId = async (fingerId) => {
     try {
-      // Fetch empId from backend using thumbid
       const response = await fetch(`http://localhost:3000/user-finger-print-register-backend/fingerprint?thumbid=${fingerId}`);
       if (!response.ok) {
         throw new Error("Fingerprint not found");
@@ -176,7 +185,6 @@ const Page2 = ({
       if (!empId) {
         throw new Error("No employee ID found for this fingerprint");
       }
-      // Fetch user details using empId
       const userResponse = await fetch(`http://localhost:3000/user/${empId}`);
       if (!userResponse.ok) {
         throw new Error("User not found for this employee ID");
@@ -255,6 +263,74 @@ const Page2 = ({
     </Menu>
   );
 
+  // Handle Connect Fingerprint button
+  const handleConnectFingerprint = async () => {
+    if (!("serial" in navigator)) {
+      setErrorMessage("Web Serial API not supported in this browser.");
+      setTimeout(() => setErrorMessage(""), 2000);
+      return;
+    }
+    try {
+      const port = await navigator.serial.requestPort({});
+      await port.open({ baudRate: 115200 });
+      window.fingerprintSerialPort = port;
+      setFingerprintConnected(true);
+
+      // Send UNIT_NAME command to request unit name
+      try {
+        const writer = port.writable.getWriter();
+        const encoder = new TextEncoder();
+        await writer.write(encoder.encode("UNIT_NAME\n"));
+        writer.releaseLock();
+      } catch (e) {
+        console.error("Error sending UNIT_NAME command:", e);
+        setErrorMessage("Error sending unit name request: " + e.message);
+        setTimeout(() => setErrorMessage(""), 2000);
+      }
+
+      // Read unit name from serial with retries
+      let unitName = "Unknown";
+      let attempts = 3;
+      try {
+        const reader = port.readable.getReader();
+        let buffer = '';
+        const timeout = setTimeout(() => {
+          reader.cancel();
+          setErrorMessage("Failed to read unit name: Timeout");
+          setTimeout(() => setErrorMessage(""), 2000);
+        }, 5000); // Increased timeout to 5 seconds
+
+        while (attempts > 0) {
+          const { value, done } = await reader.read();
+          if (done) break;
+          buffer += new TextDecoder().decode(value);
+          const match = buffer.match(/UnitName: (FPU\d{3})/);
+          if (match) {
+            unitName = match[1];
+            clearTimeout(timeout);
+            setFingerprintUnitName(unitName);
+            console.log(`Unit Name set: ${unitName}`);
+            break;
+          }
+          attempts--;
+          if (attempts === 0) {
+            clearTimeout(timeout);
+            setErrorMessage("Failed to read unit name: No response after retries");
+            setTimeout(() => setErrorMessage(""), 2000);
+          }
+        }
+        reader.releaseLock();
+      } catch (e) {
+        console.error("Error reading unit name:", e);
+        setErrorMessage("Error reading unit name: " + e.message);
+        setTimeout(() => setErrorMessage(""), 2000);
+      }
+    } catch (error) {
+      setErrorMessage("Connection failed: " + error.message);
+      setTimeout(() => setErrorMessage(""), 2000);
+    }
+  };
+
   return (
     <Spin spinning={loading} tip="Loading...">
       <div className={styles.full}>
@@ -332,46 +408,14 @@ const Page2 = ({
             {!fingerprintConnected && (
               <button
                 className={styles.connectFingerprintButton}
-                onClick={async () => {
-                  if (!("serial" in navigator)) {
-                    setErrorMessage("Web Serial API not supported in this browser.");
-                    setTimeout(() => setErrorMessage(""), 2000);
-                    return;
-                  }
-                  try {
-                    const port = await navigator.serial.requestPort({});
-                    await port.open({ baudRate: 115200 });
-                    window.fingerprintSerialPort = port;
-                    setFingerprintConnected(true);
-                    let unitName = "FPU002"; // Default fallback
-                    try {
-                      const reader = port.readable.getReader();
-                      const timeout = setTimeout(() => reader.cancel(), 1000);
-                      const { value, done } = await reader.read();
-                      clearTimeout(timeout);
-                      if (!done && value) {
-                        const text = new TextDecoder().decode(value);
-                        const match = text.match(/Unit Name: (FPU\d{3})/);
-                        if (match) unitName = match[1];
-                      }
-                      reader.releaseLock();
-                    } catch (e) {
-                      console.error("Error reading unit name:", e);
-                    }
-                    setFingerprintUnitName(unitName);
-                    // Start continuous reading (handled by effect)
-                  } catch (error) {
-                    setErrorMessage("Connection failed: " + error.message);
-                    setTimeout(() => setErrorMessage(""), 2000);
-                  }
-                }}
+                onClick={handleConnectFingerprint}
               >
                 Connect FingerPrint
               </button>
             )}
             {fingerprintConnected && (
               <div style={{ fontWeight: "bold", color: "#4CAF50", marginTop: 8 }}>
-                UNIT NAME : {fingerprintUnitName}
+                UNIT NAME: {fingerprintUnitName}
               </div>
             )}
             <button
