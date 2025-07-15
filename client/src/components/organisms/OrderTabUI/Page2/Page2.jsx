@@ -152,12 +152,10 @@ const Page2 = ({
           const fullThumbId = match[1];
           console.log(`Fingerprint scanned - ThumbID: ${fullThumbId}`);
           await fetchUserByFingerprintId(fullThumbId);
-          // Do not cancel the reader, just break the loop to keep serial communication alive
-          break;
+          // Do not break or release the reader; keep communication alive
         }
       }
-      reader.releaseLock();
-      setSerialReader(null);
+      // Do not release the reader or setSerialReader(null) here; keep communication alive
     } catch (error) {
       console.error("Fingerprint scan error:", error);
       setErrorMessage(text.fingerprintError);
