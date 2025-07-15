@@ -6,10 +6,6 @@ import OrderTab from "../components/pages/OrderTab/OrderTab";
 
 import UserFingerPrintRegister from '../components/organisms/OrderTabUI/UserFingerPrintRegister/UserFingerPrintRegister';
 import MealPage03 from '../components/organisms/UserPortal/MealPage03/MealPage03';
-// import KitchenAdmin from "../components/pages/KitchenAdmin/SchedulePage/KitchenAdmin";
-// import Meals from "../components/pages/KitchenAdmin/MealPage/Meal";
-// import MealDetailsForm from "../components/pages/KitchenAdmin/AddMealPage/AddMeal";
-// import EditMeal from "../components/pages/KitchenAdmin/EditMealPage/EditMeal";
 import PrivateRoutes from "./PrivateRoutes";
 import { NotificationsProvider } from "../contexts/NotificationsContext";
 import { PopupProvider } from "../contexts/PopupContext";
