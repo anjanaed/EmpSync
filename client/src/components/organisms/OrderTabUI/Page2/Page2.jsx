@@ -338,7 +338,14 @@ const Page2 = ({
             <div className={styles.content}>
               {showFingerprint ? (
                 <div className={styles.fingerprintSection}>
-                  <div className={styles.fingerprintScanner} onClick={handleFingerprint}>
+                  <div className={styles.fingerprintScanner} onClick={() => {
+                    if (!fingerprintConnected || !window.fingerprintSerialPort) {
+                      setErrorMessage("Fingerprint unit not connected");
+                      setTimeout(() => setErrorMessage(""), 2000);
+                      return;
+                    }
+                    handleFingerprint();
+                  }}>
                     <FingerPrint />
                   </div>
                   <p>
