@@ -141,12 +141,6 @@ const Page2 = ({
     try {
       const reader = window.fingerprintSerialPort.readable.getReader();
       setSerialReader(reader);
-      const timeout = setTimeout(() => {
-        reader.cancel();
-        setScanning(false);
-        setErrorMessage(text.fingerprintTimeout);
-        setTimeout(() => setErrorMessage(""), 2000);
-      }, 5000);
 
       while (true) {
         const { value, done } = await reader.read();
@@ -155,7 +149,6 @@ const Page2 = ({
         console.log("Serial data received:", text);
         const match = text.match(/ThumbID: (FPU\d{3}\d{4})/);
         if (match) {
-          clearTimeout(timeout);
           const fullThumbId = match[1];
           console.log(`Fingerprint scanned - ThumbID: ${fullThumbId}`);
           await fetchUserByFingerprintId(fullThumbId);
