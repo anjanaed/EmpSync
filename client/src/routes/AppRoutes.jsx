@@ -29,11 +29,6 @@ const AppRoutes = () => (
           <Route path="/OrderTab" element={<OrderTab />} />
           <Route path="/user-fingerprint-register" element={<UserFingerPrintRegister />} />
           <Route path="/MealPage03" element={<MealPage03 />} />
-          {/* <Route path="/kitchen-admin" element={<KitchenAdmin />} />
-          <Route path="/kitchen-meal" element={<Meals />} />
-          <Route path="/meal-details" element={<MealDetailsForm />} />
-          <Route path="/edit-meal" element={<EditMeal />} /> */}         
-          {/* Private Routes */}
           {PrivateRoutes()}
           <Route path="/fingerprint" element={<FingerPrintPage />} />
           <Route path="/FingerPrints" element={<FingerPrints />} />
