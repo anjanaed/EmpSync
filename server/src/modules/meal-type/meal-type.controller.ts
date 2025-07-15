@@ -1,148 +1,207 @@
 import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  UseGuards,
-  ParseIntPipe,
+  Injectable,
+  NotFoundException,
   BadRequestException,
 } from '@nestjs/common';
-import { MealTypeService } from './meal-type.service';
-import { AuthGuard } from '@nestjs/passport';
-import { RolesGuard } from '../../core/authentication/roles.guard';
-import { Roles } from '../../core/authentication/roles.decorator';
+import { DatabaseService } from '../../database/database.service';
 
-@Controller('meal-types')
-export class MealTypeController {
-  constructor(private readonly mealTypeService: MealTypeService) {}
+@Injectable()
+export class ScheduledMealService {
+  constructor(private readonly databaseService: DatabaseService) {}
 
-  @Get()
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
-  async findAll() {
-    try {
-      return await this.mealTypeService.findAll();
-    } catch (error) {
-      throw new BadRequestException(error.message);
-    }
-  }
-
-  @Get('defaults')
-  async findDefaults() {
-    try {
-      return await this.mealTypeService.findDefaults();
-    } catch (error) {
-      throw new BadRequestException(error.message);
-    }
-  }
-
-  @Get('fetch')
-  async fetchTodayAndTomorrow() {
-    try {
-      return await this.mealTypeService.findTodayAndTomorrow();
-    } catch (error) {
-      throw new BadRequestException(error.message);
-    }
-  }
-
-  @Get('by-date/:date')
-  async findByDateOrDefault(@Param('date') date: string) {
-    try {
-      return await this.mealTypeService.findByDateOrDefault(date);
-    } catch (error) {
-      throw new BadRequestException(error.message);
-    }
-  }
-
-  @Get(':id')
-  async findOne(@Param('id', ParseIntPipe) id: number) {
-    try {
-      return await this.mealTypeService.findOne(id);
-    } catch (error) {
-      throw new BadRequestException(error.message);
-    }
-  }
-
-  @Post()
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles('KITCHEN_ADMIN')
+  // Create a scheduled meal with meal connections
   async create(
-    @Body()
-    body: {
-      name: string;
-      time?: string;
-      isDefault?: boolean;
-      date: string;
-    },
+    date: string,
+    mealTypeId: number,
+    mealIds: number[],
+    orgId?: string,
   ) {
     try {
-      return await this.mealTypeService.create(
-        body.name,
-        body.time,
-        body.isDefault,
-        body.date,
-      );
-    } catch (error) {
-      throw new BadRequestException(error.message);
-    }
-  }
+      const scheduledDate = new Date(new Date(date).getTime() + 330 * 60 * 1000);
 
-  @Patch(':id/toggle-default')
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles('KITCHEN_ADMIN')
-  async toggleDefault(@Param('id', ParseIntPipe) id: number) {
-    try {
-      return await this.mealTypeService.toggleIsDefault(id);
-    } catch (error) {
-      throw new BadRequestException(error.message);
-    }
-  }
+      // Check if a schedule for this date, meal type, and org already exists
+      const existingSchedule = await this.databaseService.scheduledMeal.findFirst({
+        where: {
+          date: scheduledDate,
+          mealTypeId,
+          orgId: orgId || undefined,
+        },
+      });
 
-  @Patch('timeupdate/:id/:index')
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles('KITCHEN_ADMIN')
-  async patchTimeElement(
-    @Param('id', ParseIntPipe) id: number,
-    @Param('index', ParseIntPipe) index: number, // 0 for first, 1 for second
-    @Body() body: { newTime: string },
-  ) {
-    try {
-      if (index !== 0 && index !== 1) {
-        throw new BadRequestException('Index must be 0 or 1');
+      if (existingSchedule) {
+        throw new BadRequestException('A schedule already exists for this date and meal type');
       }
-      return await this.mealTypeService.patchTimeElement(
-        id,
-        index,
-        body.newTime,
-      );
+
+      // Create scheduled meal with meal connections
+      return this.databaseService.scheduledMeal.create({
+        data: {
+          date: scheduledDate,
+          mealTypeId,
+          orgId: orgId || undefined,
+          meals: {
+            connect: mealIds.map(id => ({ id })),
+          },
+        },
+        include: {
+          mealType: true,
+          meals: true,
+        },
+      });
     } catch (error) {
+      throw new BadRequestException(`Failed to create scheduled meal: ${error.message}`);
+    }
+  }
+
+  // Find all scheduled meals, optionally filtered by orgId
+  async findAll(orgId?: string) {
+    try {
+      return this.databaseService.scheduledMeal.findMany({
+        where: {
+          orgId: orgId || undefined,
+        },
+        include: {
+          mealType: true,
+          meals: {
+            select: {
+              id: true,
+              nameEnglish: true,
+              nameSinhala: true,
+              nameTamil: true,
+              price: true,
+              imageUrl: true,
+              category: true,
+            },
+          },
+        },
+        orderBy: [
+          { date: 'asc' },
+          { mealType: { name: 'asc' } },
+        ],
+      });
+    } catch (error) {
+      throw new BadRequestException('Failed to retrieve scheduled meals');
+    }
+  }
+
+  // Find a single scheduled meal by ID and orgId
+  async findOne(id: number, orgId?: string) {
+    try {
+      const scheduledMeal = await this.databaseService.scheduledMeal.findFirst({
+        where: { id, orgId: orgId || undefined },
+        include: {
+          mealType: true,
+          meals: true,
+        },
+      });
+
+      if (!scheduledMeal) {
+        throw new NotFoundException('Scheduled meal not found');
+      }
+
+      return scheduledMeal;
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
       throw new BadRequestException(error.message);
     }
   }
 
-  @Patch(':id')
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles('KITCHEN_ADMIN')
+  // Find scheduled meals by date and orgId
+  async findByDate(date: string, orgId?: string) {
+    try {
+      const targetDate = new Date(date);
+
+      const scheduledMeals = await this.databaseService.scheduledMeal.findMany({
+        where: {
+          date: targetDate,
+          orgId: orgId || undefined,
+        },
+        include: {
+          mealType: true,
+          meals: true,
+        },
+        orderBy: {
+          mealType: { name: 'asc' },
+        },
+      });
+
+      return scheduledMeals;
+    } catch (error) {
+      throw new BadRequestException(`Failed to retrieve scheduled meals for date: ${error.message}`);
+    }
+  }
+
+  // Update a scheduled meal
   async update(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() body: { name?: string; time?: string; isDefault?: boolean },
+    id: number,
+    data?: { date?: string; mealTypeId?: number },
+    mealIds?: number[],
+    orgId?: string,
   ) {
     try {
-      return await this.mealTypeService.update(id, body);
+      // First, fetch the existing scheduled meal
+      const existingSchedule = await this.databaseService.scheduledMeal.findFirst({
+        where: { id, orgId: orgId || undefined },
+      });
+
+      if (!existingSchedule) {
+        throw new NotFoundException('Scheduled meal not found');
+      }
+
+      return await this.databaseService.$transaction(async (prisma) => {
+        const updateData: any = {};
+
+        if (data?.date) {
+          updateData.date = new Date(data.date);
+        }
+        if (data?.mealTypeId) {
+          updateData.mealTypeId = data.mealTypeId;
+        }
+        if (orgId) {
+          updateData.orgid = orgId;
+        }
+        if (mealIds && mealIds.length > 0) {
+          updateData.meals = {
+            set: mealIds.map(id => ({ id })),
+          };
+        }
+
+        return prisma.scheduledMeal.update({
+          where: { id },
+          data: updateData,
+          include: {
+            mealType: true,
+            meals: true,
+          },
+        });
+      });
     } catch (error) {
-      throw new BadRequestException(error.message);
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new BadRequestException(`Failed to update scheduled meal: ${error.message}`);
     }
   }
 
-  @Delete(':id')
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles('KITCHEN_ADMIN')
-  async remove(@Param('id', ParseIntPipe) id: number) {
+  // Delete a scheduled meal
+  async remove(id: number, orgId?: string) {
     try {
-      return await this.mealTypeService.remove(id);
+      const scheduledMeal = await this.databaseService.scheduledMeal.findFirst({
+        where: { id, orgId: orgId || undefined },
+      });
+
+      if (!scheduledMeal) {
+        throw new NotFoundException('Scheduled meal not found');
+      }
+
+      return await this.databaseService.scheduledMeal.delete({
+        where: { id },
+      });
     } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
       throw new BadRequestException(error.message);
     }
   }
