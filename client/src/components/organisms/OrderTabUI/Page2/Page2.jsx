@@ -146,7 +146,33 @@ const Page2 = ({
         const { value, done } = await reader.read();
         if (done) break;
         const text = new TextDecoder().decode(value);
-        console.log("Serial data received:", text);
+        console.log("Serial data received:\n", text);
+
+        // Parse IDS and print as standard thumb ids if present
+        const idsMatch = text.match(/IDS:([\d,]+)/);
+        if (idsMatch && fingerprintUnitName) {
+          const ids = idsMatch[1].split(',').map(id => id.trim());
+          const thumbIds = ids.map(id => `${fingerprintUnitName}${id.padStart(4, '0')}`);
+          console.log('Standard Thumb IDs:', thumbIds.join(', '));
+
+          // Check which thumbIds are not in the database
+          try {
+            const response = await fetch('http://localhost:3000/user-finger-print-register-backend/all-fingerprints');
+            if (response.ok) {
+              const dbFingerprints = await response.json();
+              const dbThumbIds = dbFingerprints.map(fp => fp.thumbid);
+              const notInDb = thumbIds.filter(id => !dbThumbIds.includes(id));
+              if (notInDb.length > 0) {
+                console.log('This ids not in database :', notInDb.join(', '));
+              }
+            } else {
+              console.warn('Could not fetch fingerprints from database');
+            }
+          } catch (err) {
+            console.error('Error checking thumbids in database:', err);
+          }
+        }
+
         const match = text.match(/ThumbID: (FPU\d{3}\d{4})/);
         if (match) {
           const fullThumbId = match[1];

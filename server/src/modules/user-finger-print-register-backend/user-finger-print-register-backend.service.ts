@@ -3,6 +3,9 @@ import { PrismaClient } from '@prisma/client';
 
 @Injectable()
 export class UserFingerPrintRegisterBackendService {
+  async getAllFingerprints() {
+    return this.prisma.fingerprint.findMany();
+  }
   private prisma = new PrismaClient();
 
   async getUserByPasskey(passkey: number) {
