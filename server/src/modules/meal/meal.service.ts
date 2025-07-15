@@ -52,7 +52,7 @@ export class MealService {
       return await this.databaseService.meal.findFirst({
         where: {
           id,
-          orgid: orgId || undefined,
+          orgId: orgId || undefined,
         },
         include: {
           ingredients: {
@@ -72,7 +72,7 @@ export class MealService {
     try {
       return await this.databaseService.meal.findMany({
         where: {
-          orgid : orgId || undefined,
+          orgId : orgId || undefined,
         },
         include: {
           ingredients: {
@@ -98,7 +98,7 @@ export class MealService {
       const meal = await this.databaseService.meal.findFirst({
         where: {
           id,
-          orgid : orgId || undefined,
+          orgId : orgId || undefined,
         },
       });
       if (!meal) {
@@ -146,7 +146,7 @@ export class MealService {
       const meal = await this.databaseService.meal.findFirst({
         where: {
           id,
-           orgid : orgId || undefined,
+           orgId : orgId || undefined,
         },
       });
 
