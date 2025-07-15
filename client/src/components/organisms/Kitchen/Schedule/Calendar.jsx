@@ -101,7 +101,7 @@ const MealPlanner = () => {
         params: { orgId: authData?.orgId },
         headers: { Authorization: `Bearer ${token}` },
       });
-      setAvailableMeals(Array.isArray(data) ? data : []);
+      setAvailableMeals(Array.isArray(response.data) ? response.data : []);
     } catch (error) {
       console.error("Error fetching meals:", error);
       message.error("Failed to load available meals");

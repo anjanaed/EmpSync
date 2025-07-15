@@ -19,7 +19,7 @@ export class MealService {
     try {
       const data: any = {
         ...mealData,
-        organizationId: orgId || undefined,
+        orgId: orgId || undefined,
       };
       if (ingredients && ingredients.length > 0) {
         data.ingredients = {

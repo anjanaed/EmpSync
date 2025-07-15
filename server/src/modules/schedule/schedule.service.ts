@@ -17,19 +17,24 @@ export class ScheduledMealService {
     orgId?: string,
   ) {
     try {
-      const scheduledDate = new Date(new Date(date).getTime() + 330 * 60 * 1000);
+      const scheduledDate = new Date(
+        new Date(date).getTime() + 330 * 60 * 1000,
+      );
 
       // Check if a schedule for this date, meal type, and org already exists
-      const existingSchedule = await this.databaseService.scheduledMeal.findFirst({
-        where: {
-          date: scheduledDate,
-          mealTypeId,
-          orgId : orgId || undefined,
-        },
-      });
+      const existingSchedule =
+        await this.databaseService.scheduledMeal.findFirst({
+          where: {
+            date: scheduledDate,
+            mealTypeId,
+            orgId: orgId || undefined,
+          },
+        });
 
       if (existingSchedule) {
-        throw new BadRequestException('A schedule already exists for this date and meal type');
+        throw new BadRequestException(
+          'A schedule already exists for this date and meal type',
+        );
       }
 
       // Create scheduled meal with meal connections
@@ -37,9 +42,9 @@ export class ScheduledMealService {
         data: {
           date: scheduledDate,
           mealTypeId,
-          orgId : orgId || undefined,
+          orgId: orgId || undefined,
           meals: {
-            connect: mealIds.map(id => ({ id })),
+            connect: mealIds.map((id) => ({ id })),
           },
         },
         include: {
@@ -48,7 +53,9 @@ export class ScheduledMealService {
         },
       });
     } catch (error) {
-      throw new BadRequestException(`Failed to create scheduled meal: ${error.message}`);
+      throw new BadRequestException(
+        `Failed to create scheduled meal: ${error.message}`,
+      );
     }
   }
 
@@ -57,7 +64,7 @@ export class ScheduledMealService {
     try {
       return this.databaseService.scheduledMeal.findMany({
         where: {
-          orgId : orgId || undefined,
+          orgId: orgId || undefined,
         },
         include: {
           mealType: true,
@@ -73,10 +80,7 @@ export class ScheduledMealService {
             },
           },
         },
-        orderBy: [
-          { date: 'asc' },
-          { mealType: { name: 'asc' } },
-        ],
+        orderBy: [{ date: 'asc' }, { mealType: { name: 'asc' } }],
       });
     } catch (error) {
       throw new BadRequestException('Failed to retrieve scheduled meals');
@@ -87,7 +91,7 @@ export class ScheduledMealService {
   async findOne(id: number, orgId?: string) {
     try {
       const scheduledMeal = await this.databaseService.scheduledMeal.findFirst({
-        where: { id, orgId : orgId || undefined },
+        where: { id, orgId: orgId || undefined },
         include: {
           mealType: true,
           meals: true,
@@ -115,7 +119,7 @@ export class ScheduledMealService {
       const scheduledMeals = await this.databaseService.scheduledMeal.findMany({
         where: {
           date: targetDate,
-          orgId : orgId || undefined,
+          orgId: orgId || undefined,
         },
         include: {
           mealType: true,
@@ -128,7 +132,9 @@ export class ScheduledMealService {
 
       return scheduledMeals;
     } catch (error) {
-      throw new BadRequestException(`Failed to retrieve scheduled meals for date: ${error.message}`);
+      throw new BadRequestException(
+        `Failed to retrieve scheduled meals for date: ${error.message}`,
+      );
     }
   }
 
@@ -141,9 +147,10 @@ export class ScheduledMealService {
   ) {
     try {
       // First, fetch the existing scheduled meal
-      const existingSchedule = await this.databaseService.scheduledMeal.findFirst({
-        where: { id, orgId : orgId || undefined },
-      });
+      const existingSchedule =
+        await this.databaseService.scheduledMeal.findFirst({
+          where: { id, orgId: orgId || undefined },
+        });
 
       if (!existingSchedule) {
         throw new NotFoundException('Scheduled meal not found');
@@ -156,14 +163,14 @@ export class ScheduledMealService {
           updateData.date = new Date(data.date);
         }
         if (data?.mealTypeId) {
-          updateData.mealTypeId = data.mealTypeId;
+          updateData.mealType = { connect: { id: data.mealTypeId } };
         }
         if (orgId) {
-          updateData.orgid = orgId;
+          updateData.orgId = orgId;
         }
         if (mealIds && mealIds.length > 0) {
           updateData.meals = {
-            set: mealIds.map(id => ({ id })),
+            set: mealIds.map((id) => ({ id })),
           };
         }
 
@@ -180,7 +187,9 @@ export class ScheduledMealService {
       if (error instanceof NotFoundException) {
         throw error;
       }
-      throw new BadRequestException(`Failed to update scheduled meal: ${error.message}`);
+      throw new BadRequestException(
+        `Failed to update scheduled meal: ${error.message}`,
+      );
     }
   }
 
@@ -188,7 +197,7 @@ export class ScheduledMealService {
   async remove(id: number, orgId?: string) {
     try {
       const scheduledMeal = await this.databaseService.scheduledMeal.findFirst({
-        where: { id, orgId : orgId || undefined },
+        where: { id, orgId: orgId || undefined },
       });
 
       if (!scheduledMeal) {
