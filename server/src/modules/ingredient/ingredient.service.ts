@@ -402,217 +402,116 @@ export class IngredientsService {
     }
   }
 
-  async storeIngredientOrder(budgetOrderData: any) {
-    try {
-      // Create the order with budget information
-      const order = await this.databaseServices.ingredientOrder.create({
-        data: {
-          lastUpdated: budgetOrderData.lastUpdated,
-          budget: budgetOrderData.budget,
-          priority1Budget: budgetOrderData.budgetAllocation.priority1Budget,
-          otherPriorityBudget: budgetOrderData.budgetAllocation.otherPriorityBudget,
-          totalCost: budgetOrderData.actualCosts.totalCost,
-          ingredients: {
-            create: [
-              // Priority 1 ingredients
-              ...budgetOrderData.orderDetails.priority1Ingredients.map((ing) => ({
-                id: ing.id,
-                name: ing.name,
-                price_per_unit: parseFloat(ing.price_per_unit.toString()),
-                quantity: ing.quantity,
-                type: ing.type,
-                priority: ing.priority,
-                totalCost: ing.totalCost,
-                createdAt: new Date()
-              })),
-              // Other priority ingredients
-              ...budgetOrderData.orderDetails.otherPriorityIngredients.map((ing) => ({
-                id: ing.id,
-                name: ing.name,
-                price_per_unit: parseFloat(ing.price_per_unit.toString()),
-                quantity: ing.quantity,
-                type: ing.type,
-                priority: ing.priority,
-                totalCost: ing.totalCost,
-                createdAt: new Date()
-              }))
-            ]
-          }
-        },
-        include: {
-          ingredients: true
-        }
-      });
+  
 
-      return {
-        orderId: order.id,
-        budget: order.budget,
-        budgetAllocation: {
-          priority1Budget: order.priority1Budget,
-          otherPriorityBudget: order.otherPriorityBudget
-        },
-        totalCost: order.totalCost,
-        ingredients: order.ingredients,
-        lastUpdated: order.lastUpdated
-      };
-    } catch (error) {
-      throw new HttpException(
-        'Failed to store ingredient order',
-        HttpStatus.INTERNAL_SERVER_ERROR
-      );
-    }
-  }
+ 
 
-  async getStoredIngredientOrders() {
-    try {
-      const orders = await this.databaseServices.ingredientOrder.findMany({
-        select: {
-            id: true,
-            lastUpdated: true,
-            budget: true,
-            priority1Budget: true,
-            otherPriorityBudget: true,
-            totalCost: true,
-            ingredients: true
-        },
-        orderBy: {
-            lastUpdated: 'desc'
-        }
-      });
+  // async createBudgetBasedOrder(budget: number) {
+  //   try {
+  //     // Validate budget
+  //     if (budget <= 0) {
+  //       throw new HttpException(
+  //         'Budget must be greater than zero',
+  //         HttpStatus.BAD_REQUEST
+  //       );
+  //     }
 
-      if (!orders || orders.length === 0) {
-        throw new HttpException('No stored ingredient orders found', HttpStatus.NOT_FOUND);
-      }
-
-      return orders.map(order => ({
-        id: order.id,
-        lastUpdated: order.lastUpdated,
-        budget: order.budget,
-        priority1Budget: order.priority1Budget,
-        otherPriorityBudget: order.otherPriorityBudget,
-        totalCost: order.totalCost,
-        ingredients: {
-          priority1Ingredients: order.ingredients.filter(ing => ing.priority === 1),
-          optimizedIngredients: order.ingredients.filter(ing => ing.priority !== 1)
-        }
-      }));
-    } catch (error) {
-      if (error instanceof HttpException) {
-        throw error;
-      }
-      throw new HttpException(
-        'Failed to retrieve stored ingredient orders',
-        HttpStatus.INTERNAL_SERVER_ERROR
-      );
-    }
-  }
-
-  async createBudgetBasedOrder(budget: number) {
-    try {
-      // Validate budget
-      if (budget <= 0) {
-        throw new HttpException(
-          'Budget must be greater than zero',
-          HttpStatus.BAD_REQUEST
-        );
-      }
-
-      const optimizedData = await this.getOptimizedIngredients();
+  //     const optimizedData = await this.getOptimizedIngredients();
       
-      // Calculate budget allocation
-      const priority1Budget = budget * 0.7;
-      const otherPriorityBudget = budget * 0.3;
+  //     // Calculate budget allocation
+  //     const priority1Budget = budget * 0.7;
+  //     const otherPriorityBudget = budget * 0.3;
       
-      // Process priority 1 ingredients
-      const priority1Orders = optimizedData.priority1Ingredients.map(ing => ({
-        id: ing.id,
-        name: ing.name,
-        price_per_unit: parseFloat(ing.price_per_unit.toString()),
-        quantity: Math.floor(priority1Budget / parseFloat(ing.price_per_unit.toString()) / optimizedData.priority1Ingredients.length),
-        type: ing.type,
-        priority: ing.priority,
-        totalCost: Math.floor(priority1Budget / optimizedData.priority1Ingredients.length)
-      }));
+  //     // Process priority 1 ingredients
+  //     const priority1Orders = optimizedData.priority1Ingredients.map(ing => ({
+  //       id: ing.id,
+  //       name: ing.name,
+  //       price_per_unit: parseFloat(ing.price_per_unit.toString()),
+  //       quantity: Math.floor(priority1Budget / parseFloat(ing.price_per_unit.toString()) / optimizedData.priority1Ingredients.length),
+  //       type: ing.type,
+  //       priority: ing.priority,
+  //       totalCost: Math.floor(priority1Budget / optimizedData.priority1Ingredients.length)
+  //     }));
 
-      // Process other priority ingredients
-      const otherPriorityOrders = optimizedData.optimizedIngredients.map(ing => ({
-        id: ing.id,
-        name: ing.name,
-        price_per_unit: parseFloat(ing.price_per_unit.toString()),
-        quantity: Math.floor(otherPriorityBudget / parseFloat(ing.price_per_unit.toString()) / optimizedData.optimizedIngredients.length),
-        type: ing.type,
-        priority: ing.priority,
-        totalCost: Math.floor(otherPriorityBudget / optimizedData.optimizedIngredients.length)
-      }));
+  //     // Process other priority ingredients
+  //     const otherPriorityOrders = optimizedData.optimizedIngredients.map(ing => ({
+  //       id: ing.id,
+  //       name: ing.name,
+  //       price_per_unit: parseFloat(ing.price_per_unit.toString()),
+  //       quantity: Math.floor(otherPriorityBudget / parseFloat(ing.price_per_unit.toString()) / optimizedData.optimizedIngredients.length),
+  //       type: ing.type,
+  //       priority: ing.priority,
+  //       totalCost: Math.floor(otherPriorityBudget / optimizedData.optimizedIngredients.length)
+  //     }));
 
-      // Calculate total costs
-      const priority1TotalCost = priority1Orders.reduce((sum, ing) => sum + ing.totalCost, 0);
-      const otherPriorityTotalCost = otherPriorityOrders.reduce((sum, ing) => sum + ing.totalCost, 0);
-      const totalCost = priority1TotalCost + otherPriorityTotalCost;
+  //     // Calculate total costs
+  //     const priority1TotalCost = priority1Orders.reduce((sum, ing) => sum + ing.totalCost, 0);
+  //     const otherPriorityTotalCost = otherPriorityOrders.reduce((sum, ing) => sum + ing.totalCost, 0);
+  //     const totalCost = priority1TotalCost + otherPriorityTotalCost;
 
-      // Create final order
-      const storedOrder = await this.databaseServices.ingredientOrder.create({
-        data: {
-          budget: budget,
-          priority1Budget: priority1Budget,
-          otherPriorityBudget: otherPriorityBudget,
-          totalCost: totalCost,
-          lastUpdated: new Date(),
-          ingredients: {
-            create: [
-              ...priority1Orders.map(ing => ({
-                name: ing.name,
-                price_per_unit: parseFloat(ing.price_per_unit.toString()),
-                quantity: parseInt(ing.quantity.toString()),
-                type: ing.type,
-                priority: ing.priority,
-                totalCost: ing.totalCost
-              })),
-              ...otherPriorityOrders.map(ing => ({
-                name: ing.name,
-                price_per_unit: parseFloat(ing.price_per_unit.toString()),
-                quantity: parseInt(ing.quantity.toString()),
-                type: ing.type,
-                priority: ing.priority,
-                totalCost: ing.totalCost
-              }))
-            ]
-          }
-        },
-        include: {
-          ingredients: true
-        }
-      });
+  //     // Create final order
+  //     const storedOrder = await this.databaseServices.ingredientOrder.create({
+  //       data: {
+  //         budget: budget,
+  //         priority1Budget: priority1Budget,
+  //         otherPriorityBudget: otherPriorityBudget,
+  //         totalCost: totalCost,
+  //         lastUpdated: new Date(),
+  //         ingredients: {
+  //           create: [
+  //             ...priority1Orders.map(ing => ({
+  //               name: ing.name,
+  //               price_per_unit: parseFloat(ing.price_per_unit.toString()),
+  //               quantity: parseInt(ing.quantity.toString()),
+  //               type: ing.type,
+  //               priority: ing.priority,
+  //               totalCost: ing.totalCost
+  //             })),
+  //             ...otherPriorityOrders.map(ing => ({
+  //               name: ing.name,
+  //               price_per_unit: parseFloat(ing.price_per_unit.toString()),
+  //               quantity: parseInt(ing.quantity.toString()),
+  //               type: ing.type,
+  //               priority: ing.priority,
+  //               totalCost: ing.totalCost
+  //             }))
+  //           ]
+  //         }
+  //       },
+  //       include: {
+  //         ingredients: true
+  //       }
+  //     });
 
-      return {
-        orderId: storedOrder.id,
-        budget: budget,
-        budgetAllocation: {
-          priority1Budget,
-          otherPriorityBudget
-        },
-        actualCosts: {
-          priority1TotalCost,
-          otherPriorityTotalCost,
-          totalCost
-        },
-        orderDetails: {
-          priority1Ingredients: priority1Orders,
-          otherPriorityIngredients: otherPriorityOrders
-        },
-        lastUpdated: storedOrder.lastUpdated
-      };
-    } catch (error) {
-      console.error('Error creating budget-based order:', error);
+  //     return {
+  //       orderId: storedOrder.id,
+  //       budget: budget,
+  //       budgetAllocation: {
+  //         priority1Budget,
+  //         otherPriorityBudget
+  //       },
+  //       actualCosts: {
+  //         priority1TotalCost,
+  //         otherPriorityTotalCost,
+  //         totalCost
+  //       },
+  //       orderDetails: {
+  //         priority1Ingredients: priority1Orders,
+  //         otherPriorityIngredients: otherPriorityOrders
+  //       },
+  //       lastUpdated: storedOrder.lastUpdated
+  //     };
+  //   } catch (error) {
+  //     console.error('Error creating budget-based order:', error);
       
-      if (error instanceof HttpException) {
-        throw error;
-      }
+  //     if (error instanceof HttpException) {
+  //       throw error;
+  //     }
       
-      throw new HttpException(
-        'Failed to create budget-based order',
-        HttpStatus.INTERNAL_SERVER_ERROR
-      );
-    }
-  }
+  //     throw new HttpException(
+  //       'Failed to create budget-based order',
+  //       HttpStatus.INTERNAL_SERVER_ERROR
+  //     );
+  //   }
+  // }
 }

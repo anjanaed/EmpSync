@@ -37,7 +37,8 @@ const AddMealPage = () => {
   const [imageUrl, setImageUrl] = useState(null);
   const [imageFile, setImageFile] = useState(null);
   const fileInputRef = useRef(null);
-  const [isIngredientsModalVisible, setIsIngredientsModalVisible] = useState(false);
+  const [isIngredientsModalVisible, setIsIngredientsModalVisible] =
+    useState(false);
   const [ingredients, setIngredients] = useState([]);
   const [searchIngredient, setSearchIngredient] = useState("");
   const [selectedIngredients, setSelectedIngredients] = useState([]);
@@ -116,6 +117,7 @@ const AddMealPage = () => {
         nameEnglish: values.nameEnglish,
         nameSinhala: values.nameSinhala,
         nameTamil: values.nameTamil,
+        orgId: authData?.orgId,
         description: values.description || "",
         category: values.category || [],
         price: parseFloat(values.price),

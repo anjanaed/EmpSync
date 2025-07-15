@@ -251,6 +251,7 @@ const Payroll = () => {
           const payload = {
             empId: id,
             label: adj.details,
+            orgId: authData?.orgId,
             allowance: adj.isAllowance,
             isPercentage: adj.isPercentage,
             amount: parseFloat(adj.amount),
@@ -320,6 +321,7 @@ const Payroll = () => {
       } else {
         const epfPayload = {
           label: "EPF (Employee)",
+          orgId: authData?.orgId,
           isPercentage: true,
           allowance: false,
           amount: parseFloat(epf),
@@ -345,6 +347,7 @@ const Payroll = () => {
       } else {
         const employerPayload = {
           label: "EmployerFund",
+          orgId: authData?.orgId,
           isPercentage: true,
           allowance: false,
           amount: parseFloat(employerFund),
@@ -360,7 +363,8 @@ const Payroll = () => {
         if (etfRecord.amount != parseFloat(etf)) {
           await axios.put(
             `${urL}/adjustment/${parseInt(etfRecord.id)}`,
-            etfPayload,{
+            etfPayload,
+            {
               headers: {
                 Authorization: `Bearer ${token}`,
               },
@@ -371,6 +375,7 @@ const Payroll = () => {
         const etfPayload = {
           label: "ETF",
           isPercentage: true,
+          orgId: authData?.orgId,
           allowance: false,
           amount: parseFloat(etf),
         };

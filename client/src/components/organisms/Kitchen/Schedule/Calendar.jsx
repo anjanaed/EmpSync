@@ -401,6 +401,7 @@ const MealPlanner = () => {
       try {
         const payload = {
           name: values.mealName,
+          orgId: authData?.orgId,
           time: [
             values.startTime ? values.startTime.format("HH:mm") : null,
             values.endTime ? values.endTime.format("HH:mm") : null,
@@ -503,6 +504,7 @@ const MealPlanner = () => {
         // Auto-create schedule with meals from previous day
         const payload = {
           date: currentDate.format("YYYY-MM-DD"),
+          orgId: authData?.orgId,
           mealTypeId: mealTypeId,
           mealIds: foundPreviousSchedule.meals.map((meal) => meal.id),
         };
@@ -601,6 +603,7 @@ const MealPlanner = () => {
     const payload = {
       date: currentDate.format("YYYY-MM-DD"),
       mealTypeId: parseInt(activeTab),
+      orgId: authData?.orgId,
       mealIds: selectedMeals,
     };
 
