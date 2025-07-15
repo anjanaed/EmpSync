@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { Modal, Button } from "antd";
 import { Typography, Card, Spin, Dropdown, Menu } from "antd";
 import styles from "./Page2.module.css";
 import DateAndTime from "../DateAndTime/DateAndTime";
@@ -30,8 +29,6 @@ const Page2 = ({
   const [fingerprintConnected, setFingerprintConnected] = useState(false);
   const [fingerprintUnitName, setFingerprintUnitName] = useState("");
   const [serialReader, setSerialReader] = useState(null);
-  const [connectModalVisible, setConnectModalVisible] = useState(false);
-  const [connecting, setConnecting] = useState(false);
   // For continuous serial reading
   const [serialReadingActive, setSerialReadingActive] = useState(false);
 
@@ -332,14 +329,47 @@ const Page2 = ({
         </div>
         <div className={styles.buttonRowContainer}>
           <div className={styles.leftButtonCorner}>
-            {!fingerprintConnected ? (
+            {!fingerprintConnected && (
               <button
                 className={styles.connectFingerprintButton}
-                onClick={() => setConnectModalVisible(true)}
+                onClick={async () => {
+                  if (!("serial" in navigator)) {
+                    setErrorMessage("Web Serial API not supported in this browser.");
+                    setTimeout(() => setErrorMessage(""), 2000);
+                    return;
+                  }
+                  try {
+                    const port = await navigator.serial.requestPort({});
+                    await port.open({ baudRate: 115200 });
+                    window.fingerprintSerialPort = port;
+                    setFingerprintConnected(true);
+                    let unitName = "FPU002"; // Default fallback
+                    try {
+                      const reader = port.readable.getReader();
+                      const timeout = setTimeout(() => reader.cancel(), 1000);
+                      const { value, done } = await reader.read();
+                      clearTimeout(timeout);
+                      if (!done && value) {
+                        const text = new TextDecoder().decode(value);
+                        const match = text.match(/Unit Name: (FPU\d{3})/);
+                        if (match) unitName = match[1];
+                      }
+                      reader.releaseLock();
+                    } catch (e) {
+                      console.error("Error reading unit name:", e);
+                    }
+                    setFingerprintUnitName(unitName);
+                    // Start continuous reading (handled by effect)
+                  } catch (error) {
+                    setErrorMessage("Connection failed: " + error.message);
+                    setTimeout(() => setErrorMessage(""), 2000);
+                  }
+                }}
               >
                 Connect FingerPrint
               </button>
-            ) : (
+            )}
+            {fingerprintConnected && (
               <div style={{ fontWeight: "bold", color: "#4CAF50", marginTop: 8 }}>
                 UNIT NAME : {fingerprintUnitName}
               </div>
@@ -370,124 +400,6 @@ const Page2 = ({
           </div>
         </div>
       </div>
-      <Modal
-        open={connectModalVisible}
-        onCancel={() => setConnectModalVisible(false)}
-        footer={null}
-        title="Fingerprint Device Connection"
-      >
-        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-          <Button
-            type="primary"
-            loading={connecting}
-            onClick={async () => {
-              setConnecting(true);
-              if (!("serial" in navigator)) {
-                setErrorMessage("Web Serial API not supported in this browser.");
-                setTimeout(() => setErrorMessage(""), 2000);
-                setConnecting(false);
-                return;
-              }
-              try {
-                const port = await navigator.serial.requestPort({});
-                await port.open({ baudRate: 115200 });
-                window.fingerprintSerialPort = port;
-                setFingerprintConnected(true);
-                let unitName = "FPU002"; // Default fallback
-                try {
-                  const reader = port.readable.getReader();
-                  const timeout = setTimeout(() => reader.cancel(), 1000);
-                  const { value, done } = await reader.read();
-                  clearTimeout(timeout);
-                  if (!done && value) {
-                    const text = new TextDecoder().decode(value);
-                    const match = text.match(/Unit Name: (FPU\d{3})/);
-                    if (match) unitName = match[1];
-                  }
-                  reader.releaseLock();
-                } catch (e) {
-                  console.error("Error reading unit name:", e);
-                }
-                setFingerprintUnitName(unitName);
-                setConnecting(false);
-              } catch (error) {
-                setErrorMessage("Connection failed: " + error.message);
-                setTimeout(() => setErrorMessage(""), 2000);
-                setConnecting(false);
-              }
-            }}
-          >
-            Connect Fingerprint device
-          </Button>
-          <Button
-            type="default"
-            disabled={!fingerprintConnected || loading}
-            loading={loading}
-            onClick={async () => {
-              if (!window.fingerprintSerialPort) {
-                setErrorMessage("No fingerprint device connected.");
-                setTimeout(() => setErrorMessage(""), 2000);
-                return;
-              }
-              try {
-                setLoading(true);
-                // Cancel any existing serial reader to avoid conflicts
-                if (serialReader) {
-                  await serialReader.cancel();
-                  serialReader.releaseLock();
-                  setSerialReader(null);
-                }
-                // Send GET_IDS command
-                const writer = window.fingerprintSerialPort.writable.getWriter();
-                await writer.write(new TextEncoder().encode("GET_IDS\n"));
-                writer.releaseLock();
-
-                // Read response
-                const reader = window.fingerprintSerialPort.readable.getReader();
-                setSerialReader(reader);
-                let buffer = '';
-                const timeout = setTimeout(() => {
-                  reader.cancel();
-                  setErrorMessage("Timeout waiting for thumb IDs.");
-                  setTimeout(() => setErrorMessage(""), 2000);
-                  setLoading(false);
-                }, 60000); // Increased timeout to 60 seconds
-
-                let foundIds = false;
-                while (!foundIds) {
-                  const { value, done } = await reader.read();
-                  if (done) break;
-                  buffer += new TextDecoder().decode(value);
-                  const lines = buffer.split('\n');
-                  buffer = lines.pop();
-                  for (let line of lines) {
-                    line = line.trim();
-                    if (line.startsWith('IDS:')) {
-                      clearTimeout(timeout);
-                      const ids = line.substring(4).split(',').filter(id => id).map(id => parseInt(id));
-                      console.log("Stored Fingerprint IDs:", ids.length > 0 ? ids : "No IDs found");
-                      setErrorMessage(`Fetched ${ids.length} thumb ID${ids.length === 1 ? '' : 's'}`);
-                      setTimeout(() => setErrorMessage(""), 2000);
-                      foundIds = true;
-                      break;
-                    }
-                  }
-                }
-                reader.releaseLock();
-                setSerialReader(null);
-              } catch (error) {
-                console.error("Error fetching thumb IDs:", error);
-                setErrorMessage("Failed to fetch thumb IDs: " + error.message);
-                setTimeout(() => setErrorMessage(""), 2000);
-              } finally {
-                setLoading(false);
-              }
-            }}
-          >
-            Fetch Thumb Ids
-          </Button>
-        </div>
-      </Modal>
       {errorMessage && <div className={styles.errorPopup}>{errorMessage}</div>}
     </Spin>
   );
