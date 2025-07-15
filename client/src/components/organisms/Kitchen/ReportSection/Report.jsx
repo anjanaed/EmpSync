@@ -36,11 +36,11 @@ const Report = () => {
   const [mealTypes, setMealTypes] = useState([]);
   const [employees, setEmployees] = useState([]);
   const [orders, setOrders] = useState([]);
+  const [individualEmployeeData, setIndividualEmployeeData] = useState([]);
   const { authData } = useAuth();
   const [orderDetailsData, setOrderDetailsData] = useState([]);
   const token = authData?.accessToken;
 
-  
   // API calls without authentication
   const fetchOrders = async () => {
     try {
@@ -71,79 +71,189 @@ const Report = () => {
     }
   };
 
-  // Excel download handler
   const handleDownloadExcel = () => {
-    if (!employeeData || employeeData.length === 0) {
-      message.warning("No data to export.");
-      return;
+    let exportData = [];
+    let fileName = "";
+    let worksheetName = "";
+
+    switch (activeTab) {
+      case "summary":
+        if (!employeeData || employeeData.length === 0) {
+          message.warning("No summary data to export.");
+          return;
+        }
+
+        // Prepare summary data for export (remove 'key' field and format prices)
+        exportData = employeeData.map(({ key, ...rest }) => {
+          const formattedData = { ...rest };
+
+          // Format price fields to show actual values instead of objects
+          Object.keys(formattedData).forEach((key) => {
+            if (key.endsWith("_price")) {
+              formattedData[key] = `Rs. ${(formattedData[key] || 0).toFixed(
+                2
+              )}`;
+            }
+          });
+
+          // Format total amount
+          if (formattedData.totalAmount) {
+            formattedData.totalAmount = `Rs. ${formattedData.totalAmount.toFixed(
+              2
+            )}`;
+          }
+
+          return formattedData;
+        });
+
+        fileName = `Employee_Meal_Summary_${timePeriod}.xlsx`;
+        worksheetName = "Summary Report";
+        break;
+
+      case "orders":
+        if (!orderDetailsData || orderDetailsData.length === 0) {
+          message.warning("No order details data to export.");
+          return;
+        }
+
+        // Prepare order details data for export
+        exportData = orderDetailsData.map(({ key, ...rest }) => ({
+          ...rest,
+          efficiency: `${rest.efficiency}%`,
+        }));
+
+        fileName = `Order_Details_Report_${orderTimePeriod}.xlsx`;
+        worksheetName = "Order Details";
+        break;
+
+      case "employee":
+        // For employee report, we need to implement the data structure first
+        // This is a placeholder - you'll need to implement employee-specific data
+        const employeeReportData = generateEmployeeReportData();
+
+        if (!employeeReportData || employeeReportData.length === 0) {
+          message.warning("No employee report data to export.");
+          return;
+        }
+
+        exportData = employeeReportData.map(({ key, ...rest }) => rest);
+        fileName = `Employee_Individual_Report_${
+          employeeId || "All"
+        }_${employeeTimePeriod}.xlsx`;
+        worksheetName = "Employee Report";
+        break;
+
+      default:
+        message.warning("Unknown report type.");
+        return;
     }
 
-    // Prepare data for export (remove 'key' field)
-    const exportData = employeeData.map(({ key, ...rest }) => rest);
+    try {
+      // Create worksheet and workbook
+      const worksheet = XLSX.utils.json_to_sheet(exportData);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, worksheetName);
 
-    // Create worksheet and workbook
-    const worksheet = XLSX.utils.json_to_sheet(exportData);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Report");
+      // Generate Excel file and trigger download
+      const excelBuffer = XLSX.write(workbook, {
+        bookType: "xlsx",
+        type: "array",
+      });
+      const blob = new Blob([excelBuffer], {
+        type: "application/octet-stream",
+      });
+      saveAs(blob, fileName);
 
-    // Generate Excel file and trigger download
-    const excelBuffer = XLSX.write(workbook, {
-      bookType: "xlsx",
-      type: "array",
-    });
-    const blob = new Blob([excelBuffer], { type: "application/octet-stream" });
-    saveAs(blob, `Employee_Meal_Report_${timePeriod}.xlsx`);
+      message.success(`${worksheetName} exported successfully!`);
+    } catch (error) {
+      console.error("Error generating Excel file:", error);
+      message.error("Failed to generate Excel file.");
+    }
   };
 
   const processOrderDetailsData = (orders, mealTypes) => {
-  if (!orders || !mealTypes) return [];
+    if (!orders || !mealTypes) return [];
 
-  // Create meal type lookup
-  const mealTypeMap = mealTypes.reduce((acc, mt) => {
-    const id = mt.id || mt.mealTypeId || mt.meal_type_id;
-    const name =
-      mt.name ||
-      mt.mealTypeName ||
-      mt.meal_type_name ||
-      mt.type ||
-      `Meal Type ${id}`;
-    acc[id] = name;
-    acc[id?.toString()] = name;
-    return acc;
-  }, {});
+    console.log("Processing order details with:", {
+      ordersCount: orders.length,
+      mealTypesCount: mealTypes.length,
+    });
 
-  // Get unique meal type ids from orders
-  const uniqueMealTypeIds = [
-    ...new Set(
-      orders.map(
-        (order) => order.mealTypeId || order.meal_type_id || order.mealType
-      )
-    ),
-  ].filter(Boolean);
+    // Create meal type lookup by ID to get the name
+    const mealTypeMap = mealTypes.reduce((acc, mealType) => {
+      const mealId =
+        mealType.id || mealType.mealTypeId || mealType.meal_type_id;
+      const mealName =
+        mealType.name ||
+        mealType.mealTypeName ||
+        mealType.meal_type_name ||
+        mealType.type ||
+        `Meal Type ${mealId}`;
 
-  // For each meal type, count orders and served
-  const details = uniqueMealTypeIds.map((mealTypeId) => {
-    const mealOrders = orders.filter(
-      (order) =>
-        (order.mealTypeId || order.meal_type_id || order.mealType) == mealTypeId
+      if (mealId) {
+        acc[mealId] = mealName;
+        acc[mealId.toString()] = mealName;
+      }
+      return acc;
+    }, {});
+
+    console.log("Meal type mapping:", mealTypeMap);
+
+    // Group orders by meal type name (not ID)
+    const groupedByMealType = {};
+
+    orders.forEach((order) => {
+      const mealTypeId =
+        order.mealTypeId || order.meal_type_id || order.mealType;
+      const mealTypeName =
+        mealTypeMap[mealTypeId] ||
+        mealTypeMap[mealTypeId?.toString()] ||
+        `Unknown Meal Type ${mealTypeId}`;
+
+      if (!groupedByMealType[mealTypeName]) {
+        groupedByMealType[mealTypeName] = {
+          orders: [],
+          totalOrders: 0,
+          servedOrders: 0,
+        };
+      }
+
+      groupedByMealType[mealTypeName].orders.push(order);
+      groupedByMealType[mealTypeName].totalOrders += 1;
+
+      // Check if order was served (you can modify this logic based on your serve status field)
+      if (
+        order.served === true ||
+        order.status === "served" ||
+        order.orderStatus === "served"
+      ) {
+        groupedByMealType[mealTypeName].servedOrders += 1;
+      }
+    });
+
+    console.log("Grouped by meal type:", groupedByMealType);
+
+    // Convert to array format for the table
+    const details = Object.entries(groupedByMealType).map(
+      ([mealTypeName, data], index) => {
+        const efficiency =
+          data.totalOrders > 0
+            ? Math.round((data.servedOrders / data.totalOrders) * 100)
+            : 0;
+
+        return {
+          key: `${mealTypeName}_${index}`,
+          mealType: mealTypeName,
+          orderCount: data.totalOrders,
+          serveCount: data.servedOrders,
+          efficiency: efficiency,
+        };
+      }
     );
-    const orderCount = mealOrders.length;
-    // Count where served === true
-    const serveCount = mealOrders.filter(
-      (order) => order.served === true
-    ).length;
 
-    return {
-      key: mealTypeId,
-      mealType: mealTypeMap[mealTypeId] || `Meal Type ${mealTypeId}`,
-      orderCount,
-      serveCount,
-      efficiency: orderCount > 0 ? Math.round((serveCount / orderCount) * 100) : 0,
-    };
-  });
-
-  return details;
-};
+    console.log("Final order details data:", details);
+    return details.sort((a, b) => b.orderCount - a.orderCount); // Sort by order count descending
+  };
 
   const fetchEmployees = async () => {
     try {
@@ -726,25 +836,61 @@ const Report = () => {
 
     return summaryColumns;
   };
-  // ...existing code...
+
   const handleGenerateOrderDetailsReport = async () => {
+    setLoading(true);
     try {
-      // Use already fetched orders and mealTypes if available
+      console.log(
+        "Generating order details report for period:",
+        orderTimePeriod
+      );
+
+      // Use already fetched data if available, otherwise fetch fresh data
       let ordersData = orders;
       let mealTypesData = mealTypes;
 
-      if (!ordersData.length) ordersData = await fetchOrders();
-      if (!mealTypesData.length) mealTypesData = await fetchMealTypes();
+      if (!ordersData.length || !mealTypesData.length) {
+        console.log("Fetching fresh data...");
+        const [ordersResult, mealTypesResult] = await Promise.allSettled([
+          fetchOrders(),
+          fetchMealTypes(),
+        ]);
 
+        ordersData =
+          ordersResult.status === "fulfilled" ? ordersResult.value : [];
+        mealTypesData =
+          mealTypesResult.status === "fulfilled" ? mealTypesResult.value : [];
+      }
+
+      console.log("Using data:", {
+        orders: ordersData.length,
+        mealTypes: mealTypesData.length,
+      });
+
+      // Filter orders by selected time period
       const filteredOrders = filterOrdersByPeriod(ordersData, orderTimePeriod);
+      console.log("Filtered orders:", filteredOrders.length);
+
+      // Process the filtered orders
       const details = processOrderDetailsData(filteredOrders, mealTypesData);
+
       setOrderDetailsData(details);
-      message.success("Order details report generated!");
+
+      if (details.length === 0) {
+        message.info("No order data found for the selected time period");
+      } else {
+        message.success(
+          `Order details report generated! Found ${details.length} meal types.`
+        );
+      }
     } catch (error) {
+      console.error("Error generating order details report:", error);
       message.error("Failed to generate order details report");
+    } finally {
+      setLoading(false);
     }
   };
-  // ...existing code...
+
   const filterOrdersByPeriod = (orders, period) => {
     const now = new Date();
     let startDate;
@@ -763,16 +909,34 @@ const Report = () => {
         return orders;
     }
 
+    console.log("Filtering orders from:", startDate.toISOString());
+
     return orders.filter((order) => {
       const orderDate = new Date(
         order.orderDate ||
           order.order_date ||
           order.createdAt ||
-          order.created_at
+          order.created_at ||
+          order.orderPlacedTime
       );
-      return orderDate >= startDate;
+
+      const isInRange = orderDate >= startDate;
+      if (!isInRange) {
+        console.log("Order excluded:", {
+          orderDate: orderDate.toISOString(),
+          startDate: startDate.toISOString(),
+        });
+      }
+      return isInRange;
     });
   };
+
+  // Load order details data on component mount and when orderTimePeriod changes
+  useEffect(() => {
+    if (activeTab === "orders") {
+      handleGenerateOrderDetailsReport();
+    }
+  }, [orderTimePeriod, activeTab]);
 
   return (
     <div className={styles.container}>
@@ -950,7 +1114,6 @@ const Report = () => {
               </Spin>
             </div>
           </TabPane>
-          // ...existing code...
           <TabPane
             tab={
               <span className={styles.tabPaneTitle}>
@@ -966,18 +1129,19 @@ const Report = () => {
                   <h2 className={styles.tabTitle}>Order Details Report</h2>
                   <p className={styles.tabDescription}>
                     Detailed analysis of meal orders, serve counts, and
-                    efficiency metrics
+                    efficiency metrics grouped by meal type
                   </p>
                 </div>
               </div>
 
-              <div className={styles.controlsContainerWrap}>
+              <div className={styles.controlsContainer}>
                 <div className={styles.controlGroup}>
                   <label className={styles.controlLabel}>Time Period</label>
                   <Select
                     value={orderTimePeriod}
                     onChange={setOrderTimePeriod}
                     className={styles.selectInput}
+                    loading={loading}
                   >
                     <Option value="daily">Daily</Option>
                     <Option value="weekly">Weekly</Option>
@@ -985,66 +1149,168 @@ const Report = () => {
                     <Option value="custom">Custom Range</Option>
                   </Select>
                 </div>
-                {/* Add custom range controls if needed */}
+                {orderTimePeriod === "custom" && (
+                  <>
+                    <div className={styles.controlGroup}>
+                      <label className={styles.controlLabel}>Start Date</label>
+                      <input type="date" className={styles.dateInput} />
+                    </div>
+                    <div className={styles.controlGroup}>
+                      <label className={styles.controlLabel}>End Date</label>
+                      <input type="date" className={styles.dateInput} />
+                    </div>
+                  </>
+                )}
                 <Button
                   type="primary"
                   onClick={handleGenerateOrderDetailsReport}
                   className={styles.generateButtonDark}
+                  loading={loading}
                 >
-                  Generate Report
+                  {loading ? "Loading..." : "Generate Report"}
                 </Button>
               </div>
 
-              <Table
-                columns={[
-                  {
-                    title: "Meal Type",
-                    dataIndex: "mealType",
-                    key: "mealType",
-                    width: 150,
-                  },
-                  {
-                    title: "Order Count",
-                    dataIndex: "orderCount",
-                    key: "orderCount",
-                    width: 120,
-                    align: "center",
-                  },
-                  {
-                    title: "Serve Count",
-                    dataIndex: "serveCount",
-                    key: "serveCount",
-                    width: 120,
-                    align: "center",
-                  },
-                  {
-                    title: "Efficiency",
-                    dataIndex: "efficiency",
-                    key: "efficiency",
-                    width: 120,
-                    align: "center",
-                    render: (value) => (
-                      <span
-                        className={
-                          value >= 98
-                            ? styles.efficiencyBadgeExcellent
-                            : value >= 95
-                            ? styles.efficiencyBadgeGood
-                            : styles.efficiencyBadgePoor
-                        }
-                      >
-                        {value}%
-                      </span>
-                    ),
-                  },
-                ]}
-                dataSource={orderDetailsData}
-                pagination={false}
-                className={styles.table}
-                bordered
-              />
+              <Spin spinning={loading}>
+                <Table
+                  columns={[
+                    {
+                      title: "Meal Type",
+                      dataIndex: "mealType",
+                      key: "mealType",
+                      width: 200,
+                      render: (text) => (
+                        <div className={styles.mealTypeCell}>
+                          <strong>{text}</strong>
+                        </div>
+                      ),
+                    },
+                    {
+                      title: "Total Orders",
+                      dataIndex: "orderCount",
+                      key: "orderCount",
+                      width: 150,
+                      align: "center",
+                      render: (value) => (
+                        <div className={styles.orderCountCell}>
+                          <span className={styles.orderCountValue}>
+                            {value}
+                          </span>
+                          <div className={styles.orderCountLabel}>Orders</div>
+                        </div>
+                      ),
+                    },
+                    {
+                      title: "Orders Served",
+                      dataIndex: "serveCount",
+                      key: "serveCount",
+                      width: 150,
+                      align: "center",
+                      render: (value) => (
+                        <div className={styles.serveCountCell}>
+                          <span className={styles.serveCountValue}>
+                            {value}
+                          </span>
+                          <div className={styles.serveCountLabel}>Served</div>
+                        </div>
+                      ),
+                    },
+                    {
+                      title: "Efficiency",
+                      dataIndex: "efficiency",
+                      key: "efficiency",
+                      width: 150,
+                      align: "center",
+                      render: (value) => (
+                        <div className={styles.efficiencyCell}>
+                          <span
+                            className={
+                              value >= 98
+                                ? styles.efficiencyBadgeExcellent
+                                : value >= 95
+                                ? styles.efficiencyBadgeGood
+                                : styles.efficiencyBadgePoor
+                            }
+                          >
+                            {value}%
+                          </span>
+                          <div className={styles.efficiencyLabel}>
+                            {value >= 98
+                              ? "Excellent"
+                              : value >= 95
+                              ? "Good"
+                              : "Needs Improvement"}
+                          </div>
+                        </div>
+                      ),
+                    },
+                  ]}
+                  dataSource={orderDetailsData}
+                  pagination={false}
+                  className={styles.table}
+                  bordered
+                  locale={{
+                    emptyText: loading
+                      ? "Loading order details..."
+                      : "No order data available for the selected time period",
+                  }}
+                  summary={() => {
+                    if (orderDetailsData.length === 0) return null;
+
+                    const totalOrders = orderDetailsData.reduce(
+                      (sum, item) => sum + item.orderCount,
+                      0
+                    );
+                    const totalServed = orderDetailsData.reduce(
+                      (sum, item) => sum + item.serveCount,
+                      0
+                    );
+                    const overallEfficiency =
+                      totalOrders > 0
+                        ? Math.round((totalServed / totalOrders) * 100)
+                        : 0;
+
+                    return (
+                      <Table.Summary.Row className={styles.summaryRow}>
+                        <Table.Summary.Cell index={0}>
+                          <strong>Total Summary</strong>
+                        </Table.Summary.Cell>
+                        <Table.Summary.Cell index={1} align="center">
+                          <div className={styles.summaryCell}>
+                            <strong>{totalOrders}</strong>
+                            <div>Total Orders</div>
+                          </div>
+                        </Table.Summary.Cell>
+                        <Table.Summary.Cell index={2} align="center">
+                          <div className={styles.summaryCell}>
+                            <strong>{totalServed}</strong>
+                            <div>Total Served</div>
+                          </div>
+                        </Table.Summary.Cell>
+                        <Table.Summary.Cell index={3} align="center">
+                          <div className={styles.summaryCell}>
+                            <strong
+                              className={
+                                overallEfficiency >= 98
+                                  ? styles.efficiencyBadgeExcellent
+                                  : overallEfficiency >= 95
+                                  ? styles.efficiencyBadgeGood
+                                  : styles.efficiencyBadgePoor
+                              }
+                            >
+                              {overallEfficiency}%
+                            </strong>
+                            <div>Overall Efficiency</div>
+                          </div>
+                        </Table.Summary.Cell>
+                      </Table.Summary.Row>
+                    );
+                  }}
+                />
+              </Spin>
             </div>
           </TabPane>
+
           <TabPane
             tab={
               <span className={styles.tabPaneTitle}>
