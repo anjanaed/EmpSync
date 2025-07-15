@@ -142,6 +142,7 @@ export class PayrollService {
         //Create Payroll Record
         const payroll = await this.create({
           employee: { connect: { id: user.id } },
+          orgId: orgId,
           month: month,
           netPay: values.netSalary,
           payrollPdf: `payrolls/${user.id}/${user.id}-${month}.pdf`,
@@ -270,14 +271,15 @@ async deleteByMonthAndEmp(empId: string, month: string) {
 }
 async deleteByMonth(month: string, orgId: string) {
   try {
-    await this.databaseService.payroll.deleteMany({
+    const result=await this.databaseService.payroll.deleteMany({
       where: {
         month,
         orgId, 
       },
     });
+    return { deletedCount: result.count };
   } catch (err) {
-    throw new Error("Failed to Delete Payrolls");
+    throw new Error(err);
   }
 }
 }

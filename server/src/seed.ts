@@ -3,11 +3,13 @@ import { UserService } from './core/user/user.service';
 import { DatabaseService } from './database/database.service';
 import { MealService } from './modules/meal/meal.service';
 import { IngredientsService } from './modules/ingredient/ingredient.service';
+import { SuperAdminService } from './modules/SuperAdmin/super-admin.service';
 
 const databaseService = new DatabaseService();
 const userService = new UserService(databaseService);
 const mealService = new MealService(databaseService);
 const ingredientsService = new IngredientsService(databaseService);
+const superAdminService = new SuperAdminService(databaseService);
 
 async function main() {
   const users: Prisma.UserCreateInput[] = [
@@ -39,7 +41,7 @@ async function main() {
     },
     {
       empNo: 'EMP003',
-      organization: { connect: { id: 'O001' } },
+      organization: { connect: { id: 'O002' } },
       id: 'O001E003',
       name: 'Gary Crawford',
       role: 'HR_ADMIN',
@@ -52,7 +54,7 @@ async function main() {
     },
     {
       empNo: 'EMP004',
-      organization: { connect: { id: 'O001' } },
+      organization: { connect: { id: 'O002' } },
       id: 'O001E004',
       name: 'Gregory Ramos',
       role: 'KITCHEN_ADMIN',
@@ -65,7 +67,7 @@ async function main() {
     },
     {
       empNo: 'EMP005',
-      organization: { connect: { id: 'O001' } },
+      organization: { connect: { id: 'O002' } },
       id: 'O001E005',
       name: 'Kimberly Lee',
       role: 'software engineer',
@@ -78,7 +80,7 @@ async function main() {
     },
     {
       empNo: 'EMP006',
-      organization: { connect: { id: 'O001' } },
+      organization: { connect: { id: 'O002' } },
       id: 'O001E006',
       name: 'Michael King',
       role: 'KITCHEN_ADMIN',
@@ -104,7 +106,7 @@ async function main() {
     },
     {
       empNo: 'EMP008',
-      organization: { connect: { id: 'O001' } },
+      organization: { connect: { id: 'O003' } },
       id: 'O001E008',
       name: 'John Perez',
       role: 'KITCHEN_STAFF',
@@ -117,7 +119,7 @@ async function main() {
     },
     {
       empNo: 'EMP009',
-      organization: { connect: { id: 'O001' } },
+      organization: { connect: { id: 'O003' } },
       id: 'O001E009',
       name: 'Allison Brown',
       role: 'KITCHEN_ADMIN',
@@ -130,7 +132,7 @@ async function main() {
     },
     {
       empNo: 'EMP010',
-      organization: { connect: { id: 'O001' } },
+      organization: { connect: { id: 'O003' } },
       id: 'O001E010',
       name: 'Sarah Hopkins',
       role: 'INVENTORY_ADMIN',
@@ -156,7 +158,7 @@ async function main() {
     },
     {
       empNo: 'EMP012',
-      organization: { connect: { id: 'O001' } },
+      organization: { connect: { id: 'O004' } },
       id: 'O001E012',
       name: 'Michelle Freeman',
       role: 'INVENTORY_ADMIN',
@@ -169,7 +171,7 @@ async function main() {
     },
     {
       empNo: 'EMP013',
-      organization: { connect: { id: 'O001' } },
+      organization: { connect: { id: 'O004' } },
       id: 'O001E013',
       name: 'Kim Cunningham',
       role: 'INVENTORY_ADMIN',
@@ -182,7 +184,7 @@ async function main() {
     },
     {
       empNo: 'EMP014',
-      organization: { connect: { id: 'O001' } },
+      organization: { connect: { id: 'O004' } },
       id: 'O001E014',
       name: 'Kevin Scott',
       role: 'HR_ADMIN',
@@ -221,7 +223,7 @@ async function main() {
     },
     {
       empNo: 'EMP017',
-      organization: { connect: { id: 'O001' } },
+      organization: { connect: { id: 'O005' } },
       id: 'O001E017',
       name: 'Kaitlyn Parker',
       role: 'KITCHEN_STAFF',
@@ -247,7 +249,7 @@ async function main() {
     },
     {
       empNo: 'EMP019',
-      organization: { connect: { id: 'O001' } },
+      organization: { connect: { id: 'O006' } },
       id: 'O001E019',
       name: 'Michelle Martinez',
       role: 'KITCHEN_ADMIN',
@@ -543,6 +545,75 @@ async function main() {
       gender: 'male',
       address: '435 Elizabeth Stravenue, Williamsland, CA 32888',
       email: 'Chamilka2002@gmail.com',
+    },
+  ];
+
+  const organizations: Prisma.OrganizationCreateInput[] = [
+    {
+      id: 'O001',
+      name: 'TechCorp Solutions',
+      logoUrl: 'https://example.com/logos/techcorp.png',
+      contactEmail: 'contact@techcorp.com',
+      active: true,
+      createdAt: '2024-01-15T08:30:00.000Z',
+      updatedAt: '2024-12-10T14:22:00.000Z',
+      fingerprint_capacity: 1000,
+      fingerprint_per_machine: 50,
+    },
+    {
+      id: 'O002',
+      name: 'Global Industries Inc',
+      logoUrl: 'https://example.com/logos/global-industries.png',
+      contactEmail: 'info@globalindustries.com',
+      active: true,
+      createdAt: '2024-02-20T10:45:00.000Z',
+      updatedAt: '2024-11-28T16:15:00.000Z',
+      fingerprint_capacity: 2500,
+      fingerprint_per_machine: 100,
+    },
+    {
+      id: 'O003',
+      name: 'StartupHub',
+      logoUrl: null,
+      contactEmail: 'hello@startuphub.io',
+      active: true,
+      createdAt: '2024-03-05T12:00:00.000Z',
+      updatedAt: '2024-12-01T09:30:00.000Z',
+      fingerprint_capacity: 500,
+      fingerprint_per_machine: 25,
+    },
+    {
+      id: 'O004',
+      name: 'Enterprise Systems Ltd',
+      logoUrl: 'https://example.com/logos/enterprise-systems.png',
+      contactEmail: 'support@enterprisesystems.com',
+      active: false,
+      createdAt: '2024-01-10T14:20:00.000Z',
+      updatedAt: '2024-10-15T11:45:00.000Z',
+      fingerprint_capacity: 3000,
+      fingerprint_per_machine: 150,
+    },
+    {
+      id: 'O005',
+      name: 'CloudFirst Technologies',
+      logoUrl: 'https://example.com/logos/cloudfirst.png',
+      contactEmail: 'team@cloudfirst.tech',
+      active: true,
+      createdAt: '2024-04-12T09:15:00.000Z',
+      updatedAt: '2024-12-12T13:20:00.000Z',
+      fingerprint_capacity: 1500,
+      fingerprint_per_machine: 75,
+    },
+    {
+      id: 'O006',
+      name: 'Innovation Labs',
+      logoUrl: null,
+      contactEmail: 'contact@innovationlabs.org',
+      active: true,
+      createdAt: '2024-05-08T16:30:00.000Z',
+      updatedAt: '2024-11-20T10:10:00.000Z',
+      fingerprint_capacity: 800,
+      fingerprint_per_machine: 40,
     },
   ];
 
@@ -1250,6 +1321,11 @@ async function main() {
   ];
 
   try {
+    for (const organization of organizations) {
+      await superAdminService.createOrganization(organization);
+    }
+    console.log('Org created successfully.');
+
     // Create users
     for (const user of users) {
       await userService.create(user);
