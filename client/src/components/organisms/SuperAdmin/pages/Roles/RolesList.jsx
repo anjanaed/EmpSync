@@ -89,10 +89,10 @@ const RolesList = ({ data, onAddNew, onUpdate, onDelete, className, authData}) =
     try {
       const payload = {
         id: employeeId,
+        empNo: "E001",
         name,
         role,
         email,
-        password,
         organizationId: localStorage.getItem('orgid') || selectedOrg,
         dob : "1990-01-01",
         telephone : "+1234567890",
@@ -112,6 +112,7 @@ const RolesList = ({ data, onAddNew, onUpdate, onDelete, className, authData}) =
       fetchOrgUsers(); // <-- Fetch users after adding
     } catch (err) {
       message.error(`Registration Failed: ${err.response?.data?.message || "Unknown error"}`);
+      console.log("Registration Error:", err);
     } finally {
       setLoading(false);
     }
