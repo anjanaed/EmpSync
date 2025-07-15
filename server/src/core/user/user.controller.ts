@@ -60,9 +60,10 @@ export class UserController {
   async findAll(
     @Query('search') search?: string,
     @Query('role') role?: string,
+    @Query('orgId') orgId?: string,
   ) {
     try {
-      return await this.userService.findAll(search, role);
+      return await this.userService.findAll(search, role, orgId);
     } catch (err) {
       throw new HttpException(
         {

@@ -91,6 +91,7 @@ const Employees = () => {
         params: {
           search: searchValue || undefined,
           role: roleValue || undefined,
+          orgId: authData?.orgId, 
         },
         headers: {
           Authorization: `Bearer ${token}`,
