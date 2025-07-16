@@ -11,10 +11,12 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { BellOutlined } from "@ant-design/icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Button } from "antd";
 import NavBar from '../../../organisms/NavBar/NavBar';
 import Menu from "../../../organisms/Kitchen/Schedule/Calendar";
 import NotificationPanel from "../../../organisms/Kitchen/NotificationPanel/NotificationPanel";
 import { useNotifications } from "../../../../contexts/NotificationsContext";
+import { useAuth } from "../../../../contexts/AuthContext";
 import styles from "../../../organisms/Kitchen/NotificationPanel/NotificationPanel.module.css";
 
 
@@ -23,9 +25,42 @@ const AnalysisDashboard = () => {
   const rawAuthData = localStorage.getItem("authData");
   const parsedAuthData = rawAuthData ? JSON.parse(rawAuthData) : null;
   const { getUnreadCount, toggleNotifications } = useNotifications();
+  const { logout } = useAuth();
 
   // Safely get permission actions
   const actions = parsedAuthData?.permissions?.actions || [];
+
+  const handleLogout = () => {
+    logout(); // ✅ clears context/auth
+    navigate("/login");
+  };
+
+  // If no permissions, show a "No Access" message
+  if (!actions || actions.length === 0) {
+    return (
+      <div style={{
+        height: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        fontSize: '1.5rem',
+        color: '#ff4d4f',
+        textAlign: 'center',
+      }}>
+        🚫 You do not have access to view this page.
+        <Button
+          type="primary"
+          danger
+          onClick={handleLogout}
+          style={{ marginTop: '20px' }}
+        >
+          Logout
+        </Button>
+      </div>
+    );
+  }
+
 
   // Define all possible menu items
   const allMenuItems = [
@@ -45,6 +80,13 @@ const AnalysisDashboard = () => {
     },
     {
       key: "3",
+      label: "FingerPrints",
+      action: "User Management",
+      icon: <FontAwesomeIcon icon={faFingerprint} />,
+      link: "/FingerPrints",
+    },
+    {
+      key: "4",
       label: "Payrolls",
       action: "Payroll",
       icon: <FontAwesomeIcon icon={faDollarSign} />,
@@ -52,32 +94,25 @@ const AnalysisDashboard = () => {
     },
     {
       key: "5",
-      label: "FingerPrints",
-      action: "User Management",
-      icon: <FontAwesomeIcon icon={faFingerprint} />,
-      link: "/FingerPrints",
-    },
-    {
-      key: "6",
       label: "Schedule",
       action: "Meal Management",
       icon: <FontAwesomeIcon icon={faCalendar} />,
       link: "/kitchen-admin",
     },
     {
-      key: "7",
+      key: "6",
       label: "Meal",
       action: "Meal Management",
       icon: <FontAwesomeIcon icon={faBowlFood} />,
       link: "/kitchen-meal",
     },
     {
-      key: "8",
+      key: "7",
       label: "Reports & Analysis",
       action: "Reports",
       icon: <FontAwesomeIcon icon={faChartLine} />,
       link: "/kitchen-report",
-    },
+    }, 
   ];
 
   // Create notification menu item

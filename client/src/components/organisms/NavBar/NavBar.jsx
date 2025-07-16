@@ -26,12 +26,13 @@ const customTheme = {
     Menu: {
       itemHeight: 50,
       itemSelectedColor: "#ffffff",
-      itemSelectedBg: "#d10000",
+      itemSelectedBg: "#9c0000ff",
       itemActiveBg: "#ff4444",
-      itemHoverBg: "#ff6666",
+      itemHoverBg: "#ffcbcbff",
       itemMarginInline: 10,
       itemMarginBlock: 14,
       iconMarginInlineEnd: 16,
+      itemBorderRadius: 25,
     },
   },
 };
@@ -53,6 +54,7 @@ const darkTheme = {
       iconMarginInlineEnd: 16,
       colorBgContainer: "#000000",
       colorText: "#ffffff",
+      itemBorderRadius: 25,
     },
     Dropdown: {
       colorBgElevated: "#000000",
