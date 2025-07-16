@@ -1,4 +1,4 @@
-import { Controller, Delete, Get, Param } from '@nestjs/common';
+import { Controller, Delete, Get, Param,Query } from '@nestjs/common';
 import { HrFingerprintsService } from './hr-fingerprints.service';
 
 @Controller('hr-fingerprints')
@@ -30,8 +30,8 @@ export class HrFingerprintsController {
     return this.hrFingerprintsService.getAllUsersWithFingerprintStatus();
   }
 
-  @Get('users/fingerprint-details')
-  async getAllUsersWithFingerprintDetails() {
-    return this.hrFingerprintsService.getAllUsersWithFingerprintDetails();
-  }
+@Get('users/fingerprint-details')
+async getAllUsersWithFingerprintDetails(@Query('orgId') orgId?: string) {
+  return this.hrFingerprintsService.getAllUsersWithFingerprintDetails(orgId);
+}
 }

@@ -30,7 +30,7 @@ model Organization {
 
 model Fingerprint {
   thumbid String @id
-  orgId  String
+  orgId   String
   empId   String
 }
 
