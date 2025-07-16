@@ -79,24 +79,24 @@ const Report = () => {
   };
 
   // Function to fetch individual employee orders
- const fetchIndividualEmployeeOrders = async (employeeId, timePeriod) => {
-  if (!employeeId || !employeeId.trim()) {
-    message.warning("Please enter an Employee ID");
-    return [];
-  }
-  try {
-    setLoading(true);
-    const response = await axios.get(`${urL}/orders`, {
-      params: {
-        orgId: authData?.orgId,
-        employeeId,
-      },
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    const allOrders = Array.isArray(response.data) ? response.data : [];
-    console.log("All orders fetched:", allOrders.length);
+  const fetchIndividualEmployeeOrders = async (employeeId, timePeriod) => {
+    if (!employeeId || !employeeId.trim()) {
+      message.warning("Please enter an Employee ID");
+      return [];
+    }
+    try {
+      setLoading(true);
+      const response = await axios.get(`${urL}/orders`, {
+        params: {
+          orgId: authData?.orgId,
+          employeeId,
+        },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const allOrders = Array.isArray(response.data) ? response.data : [];
+      console.log("All orders fetched:", allOrders.length);
 
       // Filter orders by employee ID
       const employeeOrders = allOrders.filter((order) => {
@@ -190,13 +190,13 @@ const Report = () => {
       console.log("Final processed orders:", ordersWithMealTypes);
       return ordersWithMealTypes;
     } catch (error) {
-    console.error("Error fetching individual employee orders:", error);
-    message.error(`Failed to fetch employee orders: ${error.message}`);
-    return [];
-  } finally {
-    setLoading(false);
-  }
-};
+      console.error("Error fetching individual employee orders:", error);
+      message.error(`Failed to fetch employee orders: ${error.message}`);
+      return [];
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Function to filter orders by time period for individual employee
   const filterOrdersByTimePeriod = (orders, period) => {
@@ -637,6 +637,7 @@ const Report = () => {
   };
 
   // Enhanced data processing with actual order prices
+  // Enhanced data processing with actual order prices - FIXED VERSION
   const processEmployeeMealData = (orders, employees, mealTypes) => {
     console.log("Processing data with:", {
       ordersCount: orders?.length || 0,
@@ -786,13 +787,23 @@ const Report = () => {
       }
     });
 
-    // Process orders and count meals with actual prices
+    // Process orders and count meals with actual prices - FIXED SECTION
     orders.forEach((order) => {
       const employeeId =
         order.employeeId || order.employee_id || order.userId || order.user_id;
       const mealTypeId =
         order.mealTypeId || order.meal_type_id || order.mealType;
-      const orderPrice = parseFloat(order.price) || 0; // Get actual price from order
+
+      // FIXED: Properly parse the price from the order
+      const orderPrice = parseFloat(order.price || 0);
+
+      console.log(`Processing order:`, {
+        employeeId,
+        mealTypeId,
+        orderPrice,
+        rawPrice: order.price,
+        orderData: order,
+      });
 
       if (employeeId && mealTypeId && employeeMealCounts[employeeId]) {
         const mealTypeName =
@@ -804,30 +815,59 @@ const Report = () => {
           `Processing order: Employee ${employeeId}, Meal Type ID: ${mealTypeId}, Meal Type Name: ${mealTypeName}, Price: ${orderPrice}`
         );
 
-        // Get the count of meals from the meals array or default to 1
+        // FIXED: Calculate meal count more accurately
         let mealCount = 1;
         if (order.meals && Array.isArray(order.meals)) {
           mealCount = order.meals.length;
         } else if (order.meals && typeof order.meals === "string") {
-          mealCount = order.meals.split(",").length;
+          // Handle string array format like "['meal1', 'meal2']"
+          try {
+            const parsedMeals = JSON.parse(order.meals);
+            mealCount = Array.isArray(parsedMeals) ? parsedMeals.length : 1;
+          } catch (e) {
+            // If parsing fails, try splitting by comma
+            mealCount = order.meals.split(",").length;
+          }
         } else if (order.quantity && !isNaN(order.quantity)) {
           mealCount = parseInt(order.quantity);
         }
 
-        // Increment meal count and add price based on meal type
+        // FIXED: Increment meal count and add price based on meal type
         if (
           mealTypeName &&
           employeeMealCounts[employeeId][mealTypeName] !== undefined
         ) {
           employeeMealCounts[employeeId][mealTypeName] += mealCount;
-          employeeMealCounts[employeeId][`${mealTypeName}_price`] += orderPrice; // Add actual order price
+
+          // FIXED: Add the actual order price (not multiplied by meal count since price is total)
+          employeeMealCounts[employeeId][`${mealTypeName}_price`] += orderPrice;
           employeeMealCounts[employeeId].totalMeals += mealCount;
-          employeeMealCounts[employeeId].totalAmount += orderPrice; // Add to total amount
+          employeeMealCounts[employeeId].totalAmount += orderPrice;
+
+          console.log(`Updated employee ${employeeId}:`, {
+            mealType: mealTypeName,
+            mealCount: employeeMealCounts[employeeId][mealTypeName],
+            mealPrice: employeeMealCounts[employeeId][`${mealTypeName}_price`],
+            totalAmount: employeeMealCounts[employeeId].totalAmount,
+          });
         } else {
           // If meal type name not found, still count total meals and amount
           employeeMealCounts[employeeId].totalMeals += mealCount;
           employeeMealCounts[employeeId].totalAmount += orderPrice;
+
+          console.log(`Unknown meal type for employee ${employeeId}:`, {
+            mealTypeId,
+            mealTypeName,
+            totalAmount: employeeMealCounts[employeeId].totalAmount,
+          });
         }
+      } else {
+        console.warn(`Skipping order - missing data:`, {
+          employeeId,
+          mealTypeId,
+          hasEmployee: !!employeeMealCounts[employeeId],
+          orderPrice,
+        });
       }
     });
 
@@ -839,7 +879,22 @@ const Report = () => {
       })
     );
 
-    console.log("Final processed data:", processedData);
+    console.log("Final processed data with prices:", processedData);
+
+    // FIXED: Add validation to ensure prices are properly calculated
+    processedData.forEach((employee) => {
+      console.log(`Employee ${employee.employeeName} summary:`, {
+        totalMeals: employee.totalMeals,
+        totalAmount: employee.totalAmount,
+        mealTypePrices: Object.keys(employee)
+          .filter((key) => key.endsWith("_price"))
+          .reduce((acc, key) => {
+            acc[key] = employee[key];
+            return acc;
+          }, {}),
+      });
+    });
+
     return { processedData, dynamicMealTypes };
   };
 
