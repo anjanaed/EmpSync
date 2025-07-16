@@ -219,17 +219,17 @@ const PrivateRoutes = () => (
     <Route
       path="/serving"
       element={
-        <ProtectedRoute allowedRoles={["KITCHEN_STAFF"]}>
+        // <ProtectedRoute allowedRoles={["KITCHEN_STAFF"]}>
           <Serving />
-        </ProtectedRoute>
+        // </ProtectedRoute>
       }
     />
     <Route
       path="/meal-conform/:id"
       element={
-        <ProtectedRoute allowedRoles={["KITCHEN_STAFF"]}>
+        // <ProtectedRoute allowedRoles={["KITCHEN_STAFF"]}>
           <MealConform />
-        </ProtectedRoute>
+        // </ProtectedRoute>
       }
     />
 
