@@ -46,35 +46,35 @@ const AdjustmentPage = () => {
       link: "/payroll",
     },
     {
-      key: "5",
+      key: "4",
       label: "FingerPrints",
       action: "User Management",
       icon: <FontAwesomeIcon icon={faFingerprint} />,
       link: "/FingerPrints",
     },
-        {
-          key: "6",
-          label: "Schedule",
-          action: "Meal Management",
-          icon: <FontAwesomeIcon icon={faCalendar} />,
-          link: "/kitchen-admin",
-        },
-        {
-          key: "7",
-          label: "Meal",
-          action: "Meal Management",
-          icon: <FontAwesomeIcon icon={faBowlFood} />,
-          link: "/kitchen-meal",
-        },
-        {
-          key: "8",
-          label: "Reports & Analysis",
-          action: "Reports",
-          icon: <FontAwesomeIcon icon={faChartLine} />,
-          link: "/kitchen-report",
-        },
+    {
+      key: "5",
+      label: "Schedule",
+      action: "Meal Management",
+      icon: <FontAwesomeIcon icon={faCalendar} />,
+      link: "/kitchen-admin",
+    },
+    {
+      key: "6",
+      label: "Meal",
+      action: "Meal Management",
+      icon: <FontAwesomeIcon icon={faBowlFood} />,
+      link: "/kitchen-meal",
+    },
+    {
+      key: "7",
+      label: "Reports & Analysis",
+      action: "Reports",
+      icon: <FontAwesomeIcon icon={faChartLine} />,
+      link: "/kitchen-report",
+    },
     
-    ];
+  ];
 
   // Filter menu based on permissions
   const filteredMenuItems = allMenuItems.filter((item) =>
