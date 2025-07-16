@@ -6,8 +6,8 @@ export class HrFingerprintsController {
   constructor(private readonly hrFingerprintsService: HrFingerprintsService) {}
 
   @Get()
-  async getAllFingerprints() {
-    return this.hrFingerprintsService.getAllFingerprints();
+  async getAllFingerprints(@Query('orgId') orgId?: string) {
+    return this.hrFingerprintsService.getAllFingerprints(orgId);
   }
 
   @Get('thumbids/:empId')
