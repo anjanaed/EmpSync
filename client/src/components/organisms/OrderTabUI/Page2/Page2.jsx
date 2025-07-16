@@ -558,7 +558,7 @@ const Page2 = ({
               </button>
             ) : (
               <div style={{ fontWeight: "bold", color: "#4CAF50", marginTop: 8 }}>
-                UNIT NAME: {fingerprintUnitName}
+                {/* UNIT NAME: {fingerprintUnitName} */}
               </div>
             )}
             <button
@@ -567,6 +567,12 @@ const Page2 = ({
             >
               New User Register
             </button>
+          </div>
+          <div>
+            <span style={{ fontSize: "70px", fontWeight: "bold"}}>
+              {fingerprintUnitName}
+
+            </span>
           </div>
           <div className={styles.backButtonContainer}>
             <button
@@ -604,11 +610,14 @@ const Page2 = ({
               <button
                 className={styles.popupButton}
                 onClick={async () => {
-                  await handleConnectFingerprint();
+                  if (!fingerprintConnected) {
+                    await handleConnectFingerprint();
+                  }
                 }}
-                style={{ backgroundColor: "#4CAF50", color: "white" }}
+                style={{ backgroundColor: fingerprintConnected ? "#4CAF50" : "#4CAF50", color: "white", opacity: fingerprintConnected ? 0.6 : 1, cursor: fingerprintConnected ? "not-allowed" : "pointer" }}
+                disabled={fingerprintConnected}
               >
-                Connect FingerPrint Unit
+                {fingerprintConnected ? "Device Connected" : "Connect FingerPrint Unit"}
               </button>
               <button
                 className={styles.popupButton}
