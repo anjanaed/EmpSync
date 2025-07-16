@@ -41,6 +41,366 @@ const Report = () => {
   const [orderDetailsData, setOrderDetailsData] = useState([]);
   const token = authData?.accessToken;
 
+  const generateEmployeeReportData = () => {
+    if (!individualEmployeeData || individualEmployeeData.length === 0) {
+      return [];
+    }
+
+    return individualEmployeeData.map((order, index) => ({
+      key: (index + 1).toString(),
+      date: formatDate(order.orderDate || order.order_date),
+      mealType: order.mealTypeName || `Meal Type ${order.mealTypeId}`,
+      orderTime: formatTime(order.orderPlacedTime || order.order_placed_time),
+      status: order.serve || order.served ? "Served" : "Pending",
+      price: `Rs. ${(order.price || 0).toFixed(2)}`,
+      orderId: order.id,
+      ...order, // Include all order data for potential future use
+    }));
+  };
+
+  // Function to format date
+  const formatDate = (dateString) => {
+    if (!dateString) return "N/A";
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-CA"); // YYYY-MM-DD format
+  };
+
+  // Function to format time
+  const formatTime = (timeString) => {
+    if (!timeString) return "N/A";
+    const time = new Date(timeString);
+    return time.toLocaleTimeString("en-US", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    });
+  };
+
+  // Function to fetch individual employee orders
+  const fetchIndividualEmployeeOrders = async (employeeId, timePeriod) => {
+    if (!employeeId || !employeeId.trim()) {
+      message.warning("Please enter an Employee ID");
+      return [];
+    }
+
+    try {
+      setLoading(true);
+      console.log(
+        `Fetching orders for employee: ${employeeId}, period: ${timePeriod}`
+      );
+
+      const response = await fetch("http://localhost:3000/orders", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(
+          `Failed to fetch orders: ${response.status} ${response.statusText}`
+        );
+      }
+
+      const allOrders = await response.json();
+      console.log("All orders fetched:", allOrders.length);
+
+      // Filter orders by employee ID
+      const employeeOrders = allOrders.filter((order) => {
+        const orderEmployeeId =
+          order.employeeId ||
+          order.employee_id ||
+          order.userId ||
+          order.user_id;
+        return (
+          orderEmployeeId &&
+          orderEmployeeId.toString() === employeeId.toString()
+        );
+      });
+
+      console.log(`Orders for employee ${employeeId}:`, employeeOrders.length);
+
+      if (employeeOrders.length === 0) {
+        message.info(`No orders found for Employee ID: ${employeeId}`);
+        return [];
+      }
+
+      // Filter by time period
+      const filteredOrders = filterOrdersByTimePeriod(
+        employeeOrders,
+        timePeriod
+      );
+      console.log(`Orders after time filter:`, filteredOrders.length);
+
+      // Get meal types to map meal type IDs to names
+      let mealTypesData = mealTypes;
+      if (!mealTypesData || mealTypesData.length === 0) {
+        const mealTypesResponse = await fetch(
+          "http://localhost:3000/meal-types",
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (mealTypesResponse.ok) {
+          mealTypesData = await mealTypesResponse.json();
+        }
+      }
+
+      // Create meal type lookup
+      const mealTypeMap = mealTypesData.reduce((acc, mealType) => {
+        const mealId =
+          mealType.id || mealType.mealTypeId || mealType.meal_type_id;
+        const mealName =
+          mealType.name ||
+          mealType.mealTypeName ||
+          mealType.meal_type_name ||
+          mealType.type ||
+          `Meal Type ${mealId}`;
+
+        if (mealId) {
+          acc[mealId] = mealName;
+          acc[mealId.toString()] = mealName;
+        }
+        return acc;
+      }, {});
+
+      // Add meal type names to orders
+      const ordersWithMealTypes = filteredOrders.map((order) => ({
+        ...order,
+        mealTypeName:
+          mealTypeMap[order.mealTypeId] ||
+          mealTypeMap[order.mealTypeId?.toString()] ||
+          `Unknown Meal Type ${order.mealTypeId}`,
+      }));
+
+      // Sort by order date and time (newest first)
+      ordersWithMealTypes.sort((a, b) => {
+        const dateA = new Date(
+          a.orderPlacedTime ||
+            a.order_placed_time ||
+            a.orderDate ||
+            a.order_date
+        );
+        const dateB = new Date(
+          b.orderPlacedTime ||
+            b.order_placed_time ||
+            b.orderDate ||
+            b.order_date
+        );
+        return dateB - dateA;
+      });
+
+      console.log("Final processed orders:", ordersWithMealTypes);
+      return ordersWithMealTypes;
+    } catch (error) {
+      console.error("Error fetching individual employee orders:", error);
+      message.error(`Failed to fetch employee orders: ${error.message}`);
+      return [];
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Function to filter orders by time period for individual employee
+  const filterOrdersByTimePeriod = (orders, period) => {
+    const now = new Date();
+    let startDate;
+
+    switch (period) {
+      case "daily":
+        startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        break;
+      case "weekly":
+        startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+        break;
+      case "monthly":
+        startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+        break;
+      default:
+        return orders;
+    }
+
+    return orders.filter((order) => {
+      const orderDate = new Date(
+        order.orderDate ||
+          order.order_date ||
+          order.orderPlacedTime ||
+          order.order_placed_time ||
+          order.createdAt ||
+          order.created_at
+      );
+      return orderDate >= startDate;
+    });
+  };
+
+  // Function to handle employee report generation
+  const handleGenerateEmployeeReport = async () => {
+    if (!employeeId || !employeeId.trim()) {
+      message.warning("Please enter an Employee ID");
+      return;
+    }
+
+    console.log(
+      `Generating employee report for ID: ${employeeId}, Period: ${employeeTimePeriod}`
+    );
+
+    const employeeOrders = await fetchIndividualEmployeeOrders(
+      employeeId,
+      employeeTimePeriod
+    );
+    setIndividualEmployeeData(employeeOrders);
+
+    if (employeeOrders.length > 0) {
+      message.success(
+        `Found ${employeeOrders.length} orders for Employee ID: ${employeeId}`
+      );
+    } else {
+      message.info(
+        `No orders found for Employee ID: ${employeeId} in the selected time period`
+      );
+    }
+  };
+
+  // Function to get employee name from ID
+  const getEmployeeName = (employeeId) => {
+    if (!employees || employees.length === 0) return null;
+
+    const employee = employees.find((emp) => {
+      const empId = emp.id || emp.userId || emp.user_id;
+      return empId && empId.toString() === employeeId.toString();
+    });
+
+    if (employee) {
+      return (
+        employee.name ||
+        employee.userName ||
+        employee.user_name ||
+        employee.fullName ||
+        employee.full_name ||
+        employee.firstName ||
+        employee.first_name ||
+        (employee.firstName && employee.lastName
+          ? `${employee.firstName} ${employee.lastName}`
+          : null) ||
+        (employee.first_name && employee.last_name
+          ? `${employee.first_name} ${employee.last_name}`
+          : null) ||
+        employee.username ||
+        employee.email?.split("@")[0] ||
+        null
+      );
+    }
+
+    return null;
+  };
+
+  // Updated employee report table columns
+  const employeeReportColumns = [
+    {
+      title: "Date",
+      dataIndex: "date",
+      key: "date",
+      width: 120,
+      sorter: (a, b) => new Date(a.date) - new Date(b.date),
+    },
+    {
+      title: "Meal Type",
+      dataIndex: "mealType",
+      key: "mealType",
+      width: 150,
+      render: (text) => <span className={styles.mealTypeText}>{text}</span>,
+    },
+    {
+      title: "Order Time",
+      dataIndex: "orderTime",
+      key: "orderTime",
+      width: 120,
+      align: "center",
+    },
+    {
+      title: "Price",
+      dataIndex: "price",
+      key: "price",
+      width: 100,
+      align: "center",
+      render: (text) => <span className={styles.priceText}>{text}</span>,
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      width: 120,
+      align: "center",
+      render: (status) => (
+        <span
+          className={
+            status === "Served"
+              ? styles.statusBadgeServed
+              : styles.statusBadgePending
+          }
+        >
+          {status}
+        </span>
+      ),
+    },
+    {
+      title: "Actions",
+      key: "actions",
+      width: 120,
+      align: "center",
+      render: (text, record) => (
+        <Button
+          type="link"
+          className={styles.viewDetailsButton}
+          onClick={() => {
+            console.log("Order details:", record);
+            // You can implement a modal or detailed view here
+            message.info(`Order ID: ${record.orderId}`);
+          }}
+        >
+          View Details
+        </Button>
+      ),
+    },
+  ];
+
+  // Calculate employee report summary
+  const calculateEmployeeReportSummary = () => {
+    if (!individualEmployeeData || individualEmployeeData.length === 0) {
+      return {
+        totalOrders: 0,
+        servedOrders: 0,
+        pendingOrders: 0,
+        totalAmount: 0,
+        efficiency: 0,
+      };
+    }
+
+    const totalOrders = individualEmployeeData.length;
+    const servedOrders = individualEmployeeData.filter(
+      (order) => order.serve || order.served
+    ).length;
+    const pendingOrders = totalOrders - servedOrders;
+    const totalAmount = individualEmployeeData.reduce(
+      (sum, order) => sum + (order.price || 0),
+      0
+    );
+    const efficiency =
+      totalOrders > 0 ? Math.round((servedOrders / totalOrders) * 100) : 0;
+
+    return {
+      totalOrders,
+      servedOrders,
+      pendingOrders,
+      totalAmount,
+      efficiency,
+    };
+  };
+
   // API calls without authentication
   const fetchOrders = async () => {
     try {
@@ -1310,7 +1670,7 @@ const Report = () => {
               </Spin>
             </div>
           </TabPane>
-
+          
           <TabPane
             tab={
               <span className={styles.tabPaneTitle}>
@@ -1378,88 +1738,68 @@ const Report = () => {
                 )}
                 <Button
                   type="primary"
-                  onClick={() => console.log("Generating employee report...")}
+                  onClick={handleGenerateEmployeeReport}
                   className={styles.generateButtonDark}
+                  loading={loading}
                 >
-                  Generate Report
+                  {loading ? "Loading..." : "Generate Report"}
                 </Button>
               </div>
 
-              <Table
-                columns={[
-                  {
-                    title: "Date",
-                    dataIndex: "date",
-                    key: "date",
-                    width: 120,
-                  },
-                  {
-                    title: "Meal Type",
-                    dataIndex: "mealType",
-                    key: "mealType",
-                    width: 120,
-                  },
-                  {
-                    title: "Order Time",
-                    dataIndex: "orderTime",
-                    key: "orderTime",
-                    width: 120,
-                    align: "center",
-                  },
-                  {
-                    title: "Status",
-                    dataIndex: "status",
-                    key: "status",
-                    width: 120,
-                    align: "center",
-                    render: (status) => (
-                      <span
-                        className={
-                          status === "Served"
-                            ? styles.statusBadgeServed
-                            : styles.statusBadgePending
-                        }
-                      >
-                        {status}
-                      </span>
-                    ),
-                  },
-                  {
-                    title: "Actions",
-                    key: "actions",
-                    width: 120,
-                    align: "center",
-                    render: () => (
-                      <Button
-                        type="link"
-                        className={styles.viewDetailsButton}
-                        onClick={() => console.log("View details clicked")}
-                      >
-                        View Details
-                      </Button>
-                    ),
-                  },
-                ]}
-                dataSource={[
-                  {
-                    key: "1",
-                    date: "2024-01-15",
-                    mealType: "Breakfast",
-                    orderTime: "08:30",
-                    status: "Served",
-                  },
-                  {
-                    key: "2",
-                    date: "2024-01-15",
-                    mealType: "Lunch",
-                    orderTime: "12:45",
-                    status: "Served",
-                  },
-                ]}
-                pagination={false}
-                className={styles.table}
-                bordered
-              />
+              {/* Employee Summary Section */}
+              
+
+              <Spin spinning={loading}>
+                <Table
+                  columns={employeeReportColumns}
+                  dataSource={generateEmployeeReportData()}
+                  pagination={{
+                    pageSize: 10,
+                    showSizeChanger: true,
+                    showQuickJumper: true,
+                    showTotal: (total, range) =>
+                      `${range[0]}-${range[1]} of ${total} orders`,
+                  }}
+                  className={styles.table}
+                  bordered
+                  locale={{
+                    emptyText: loading
+                      ? "Loading employee data..."
+                      : employeeId
+                      ? `No orders found for Employee ID: ${employeeId} in the selected time period`
+                      : "Enter an Employee ID and click Generate Report to view order details",
+                  }}
+                  summary={() => {
+                    const reportData = generateEmployeeReportData();
+                    if (reportData.length === 0) return null;
+
+                    const summary = calculateEmployeeReportSummary();
+
+                    return (
+                      <Table.Summary.Row className={styles.summaryRow}>
+                        <Table.Summary.Cell index={0} colSpan={2}>
+                          <strong>Summary Total</strong>
+                        </Table.Summary.Cell>
+                        <Table.Summary.Cell index={2} align="center">
+                          <strong>{summary.totalOrders} Orders</strong>
+                        </Table.Summary.Cell>
+                        <Table.Summary.Cell index={3} align="center">
+                          <strong>Rs. {summary.totalAmount.toFixed(2)}</strong>
+                        </Table.Summary.Cell>
+                        <Table.Summary.Cell index={4} align="center">
+                          <strong>
+                            {summary.servedOrders} Served /{" "}
+                            {summary.pendingOrders} Pending
+                          </strong>
+                        </Table.Summary.Cell>
+                        <Table.Summary.Cell index={5} align="center">
+                          <strong>{summary.efficiency}% Efficiency</strong>
+                        </Table.Summary.Cell>
+                      </Table.Summary.Row>
+                    );
+                  }}
+                />
+              </Spin>
             </div>
           </TabPane>
         </Tabs>
