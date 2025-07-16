@@ -1,83 +1,39 @@
 import React, { useState, useEffect } from 'react';
-import { Layout, Typography, Space, message } from 'antd';
+import { Layout, Space, message } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import Header from '../../../organisms/Serving/Header/Header';
 import WelcomeSection from '../../../organisms/Serving/WelcomeSection/WelcomeSection';
 import MealSection from '../../../organisms/Serving/MealSection/MealSection';
 import ScanSection from '../../../organisms/Serving/ScanSection/ScanSection';
-import axios from 'axios';
 import './Serving.css';
-
 
 const { Content } = Layout;
 
 const Serving = () => {
-  const [scanning, setScanning] = useState(false);
+  const [scanning, setScanning] = useState(true); // Start scanning by default
   const navigate = useNavigate();
 
-  try {
-    const handleScanSuccess = async (orderId) => {
-      if (!orderId) {
-        navigate(`/Serving/order/${orderId}`);
+  const handleScanSuccess = async (orderId) => {
+    try {
+      if (orderId) {
+        setScanning(false); // Stop scanning after success
+        navigate(`/meal-conform/${orderId}`);
       } else {
         message.error('Invalid order ID');
       }
-    };
-  } catch (error) {
-    message.error('Error processing scan: ' + error.message);
-  };
-  
-  // Start scanning when component mounts
-  useEffect(() => {
-    const startScanning = () => {
-      setScanning(true);
-      // Add event listener for barcode scanner
-      document.addEventListener('keydown', handleBarcodeInput);
-  };
-
-  let barcodeBuffer = '';
-  let lastKeyTime = 0;
-
-  const handleBarcodeInput = (event) => {
-    const currentTime = new Date().getTime();
-      
-    // Reset buffer if too much time has passed between keystrokes
-    if (currentTime - lastKeyTime > 100) {
-      barcodeBuffer = '';
-    }
-      
-    // Update last key time
-    lastKeyTime = currentTime;
-
-     // Handle Enter key (barcode scanner typically ends with Enter)
-     if (event.key === 'Enter') {
-      if (barcodeBuffer) {
-        handleScanSuccess(barcodeBuffer);
-        barcodeBuffer = '';
-      }
-    } else {
-      // Add character to buffer
-      barcodeBuffer += event.key;
+    } catch (error) {
+      message.error('Error processing scan: ' + error.message);
     }
   };
-
-  startScanning();
-
-  // Cleanup
-  return () => {
-    document.removeEventListener('keydown', handleBarcodeInput);
-    setScanning(false);
-  };
-}, [navigate]);
 
   return (
     <Layout className="app-container">
       <Content className="content-container">
-        <Space direction="vertical" size="medium" className="main-content">
+        <Space direction="vertical" size="middle" className="main-content">
           <Header />
           <WelcomeSection />
           <MealSection />
-          <ScanSection isScanning={scanning} />
+          <ScanSection isScanning={scanning} onScanSuccess={handleScanSuccess} />
         </Space>
       </Content>
     </Layout>
