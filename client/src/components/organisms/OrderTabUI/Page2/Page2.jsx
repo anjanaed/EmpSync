@@ -85,6 +85,14 @@ const Page2 = ({
                 const unitName = line.substring(10).trim();
                 setFingerprintUnitName(unitName);
                 console.log(`Unit Name received: ${unitName}`);
+              } else if (line.includes('Fingerprint ID #') && line.includes('deleted')) {
+                console.log(`✅ R307 Delete Success: ${line}`);
+              } else if (line.includes('Failed to delete fingerprint ID #')) {
+                console.log(`❌ R307 Delete Error: ${line}`);
+              } else if (line.includes('All fingerprints deleted')) {
+                console.log(`✅ R307 Bulk Delete Success: ${line}`);
+              } else if (line.includes('Failed to delete fingerprints')) {
+                console.log(`❌ R307 Bulk Delete Error: ${line}`);
               }
             }
           }
@@ -130,6 +138,58 @@ const Page2 = ({
     setPin(pin.slice(0, -1));
   };
 
+  // Convert thumb IDs to original IDs and delete from R307 storage
+  // Example conversion: FPU0010003 -> 3, FPU0010004 -> 4, FPU0010005 -> 5, FPU0010006 -> 6
+  const deleteUnregisteredFingerprintsFromR307 = async (thumbIds, unitName) => {
+    if (!window.fingerprintSerialPort || !fingerprintConnected) {
+      console.error('Fingerprint unit not connected');
+      return;
+    }
+
+    if (!unitName) {
+      console.error('Unit name not available for conversion');
+      return;
+    }
+
+    try {
+      const writer = window.fingerprintSerialPort.writable.getWriter();
+      const encoder = new TextEncoder();
+
+      console.log(`Starting deletion of ${thumbIds.length} unregistered fingerprints from R307 storage`);
+
+      for (const thumbId of thumbIds) {
+        // Convert thumb ID back to original ID
+        // Remove unit name prefix and leading zeros
+        // Example: FPU0010003 -> remove FPU001 -> 0003 -> 3
+        let originalId = thumbId.replace(unitName, '');
+        originalId = originalId.replace(/^0+/, '') || '0'; // Remove leading zeros, but keep at least one digit
+        
+        // Validate the original ID is a number
+        const idNumber = parseInt(originalId, 10);
+        if (isNaN(idNumber) || idNumber < 1 || idNumber > 1000) {
+          console.warn(`Invalid original ID extracted from ${thumbId}: ${originalId}, skipping deletion`);
+          continue;
+        }
+        
+        console.log(`Converting ${thumbId} to original ID: ${originalId}`);
+        
+        // Send delete command to R307 module
+        const deleteCommand = `DELETE_ID:${originalId}\n`;
+        await writer.write(encoder.encode(deleteCommand));
+        console.log(`Sent delete command: DELETE_ID:${originalId}`);
+        
+        // Small delay between commands to avoid overwhelming the module
+        await new Promise(resolve => setTimeout(resolve, 500));
+      }
+      
+      writer.releaseLock();
+      console.log(`Successfully sent delete commands for ${thumbIds.length} unregistered fingerprints`);
+      
+    } catch (error) {
+      console.error('Error deleting fingerprints from R307 storage:', error);
+    }
+  };
+
   // Handle fingerprint scanning
   const handleFingerprint = async () => {
     if (!fingerprintConnected) {
@@ -163,7 +223,14 @@ const Page2 = ({
               const dbThumbIds = dbFingerprints.map(fp => fp.thumbid);
               const notInDb = thumbIds.filter(id => !dbThumbIds.includes(id));
               if (notInDb.length > 0) {
-                console.log('This ids not in database :', notInDb.join(', '));
+                console.log('These IDs are not in database:', notInDb.join(', '));
+                console.log(`Found ${notInDb.length} unregistered fingerprints in R307 storage`);
+                
+                // Automatically convert thumb IDs back to original IDs and delete them from R307 storage
+                console.log('Starting automatic cleanup of unregistered fingerprints...');
+                await deleteUnregisteredFingerprintsFromR307(notInDb, fingerprintUnitName);
+              } else {
+                console.log('All fingerprints in R307 storage are properly registered in database');
               }
             } else {
               console.warn('Could not fetch fingerprints from database');
@@ -279,6 +346,31 @@ const Page2 = ({
       </Menu.Item>
     </Menu>
   );
+
+  // Handle manual cleanup of unregistered fingerprints
+  const handleCleanupUnregisteredFingerprints = async () => {
+    if (!fingerprintConnected || !window.fingerprintSerialPort) {
+      setErrorMessage("Fingerprint unit not connected");
+      setTimeout(() => setErrorMessage(""), 2000);
+      return;
+    }
+
+    try {
+      // First, get the current IDs from the R307 module
+      const writer = window.fingerprintSerialPort.writable.getWriter();
+      await writer.write(new TextEncoder().encode("GET_IDS\n"));
+      writer.releaseLock();
+      
+      console.log("Requesting IDs from R307 module for cleanup...");
+      setErrorMessage("Scanning R307 storage for cleanup...");
+      setTimeout(() => setErrorMessage(""), 3000);
+      
+    } catch (error) {
+      console.error("Error initiating cleanup:", error);
+      setErrorMessage("Error initiating cleanup: " + error.message);
+      setTimeout(() => setErrorMessage(""), 2000);
+    }
+  };
 
   // Handle Connect Fingerprint button
   const handleConnectFingerprint = async () => {
@@ -448,6 +540,15 @@ const Page2 = ({
             >
               New User Register
             </button>
+            {fingerprintConnected && (
+              <button
+                className={styles.registerButton}
+                onClick={handleCleanupUnregisteredFingerprints}
+                style={{ backgroundColor: "#ff9800", marginTop: "10px" }}
+              >
+                Cleanup R307 Storage
+              </button>
+            )}
           </div>
           <div className={styles.backButtonContainer}>
             <button
