@@ -42,12 +42,6 @@ const Report = () => {
   const { authData } = useAuth();
   const [orderDetailsData, setOrderDetailsData] = useState([]);
   const token = authData?.accessToken;
-  const [summaryStartDate, setSummaryStartDate] = useState("");
-  const [summaryEndDate, setSummaryEndDate] = useState("");
-  const [orderStartDate, setOrderStartDate] = useState("");
-  const [orderEndDate, setOrderEndDate] = useState("");
-  const [employeeStartDate, setEmployeeStartDate] = useState("");
-  const [employeeEndDate, setEmployeeEndDate] = useState("");
 
   const generateEmployeeReportData = () => {
     if (!individualEmployeeData || individualEmployeeData.length === 0) {
@@ -1798,11 +1792,7 @@ const Report = () => {
                             {summary.pendingOrders} Pending
                           </strong>
                         </Table.Summary.Cell>
-                        {summary.efficiency > 0 && (
-                          <Table.Summary.Cell index={5} align="center">
-                            <strong>{summary.efficiency}% Efficiency</strong>
-                          </Table.Summary.Cell>
-                        )}
+                        
                       </Table.Summary.Row>
                     );
                   }}
