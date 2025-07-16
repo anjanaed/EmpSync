@@ -55,7 +55,7 @@ export const AuthProvider = ({ children }) => {
       let permissions = [];
       try {
         const permRes = await axios.get(
-          `${urL}/super-admin/permissions/${currentUser.id}`,
+          `${urL}/super-admin/users/${currentUser.id}/actions`,
           {
             headers: { Authorization: `Bearer ${access_token}` },
           }
