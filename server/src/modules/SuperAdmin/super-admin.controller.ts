@@ -112,7 +112,7 @@ export class SuperAdminController {
   }
 
   @Get('permissions/:id')
-  @UseGuards(AuthGuard('superadmin-jwt'))
+  // @UseGuards(AuthGuard('superadmin-jwt'))
   async getPermissionById(@Param('id') id: string) {
     return this.superAdminService.getPermissionById(id);
   }

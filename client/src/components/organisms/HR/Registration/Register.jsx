@@ -83,7 +83,6 @@ const Register = () => {
         gender,
         address,
         email,
-        password,
         supId,
         language: lang,
         organizationId: authData?.orgId,

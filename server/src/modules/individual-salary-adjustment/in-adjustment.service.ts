@@ -22,22 +22,28 @@ export class IndiAdjustmentService {
     }
   }
 
-  async findAll(search?: string) {
-    try {
-      return await this.databaseService.individualSalaryAdjustments.findMany({
-        where: search
-          ? {
-              OR: [
-                { empId: { contains: search, mode: 'insensitive' } },
-                { label: { contains: search, mode: 'insensitive' } },
-              ],
-            }
-          : {},
-      });
-    } catch (error) {
-      throw new BadRequestException('Failed to retrieve Adjustments');
+async findAll(search?: string, orgId?: string) {
+  try {
+    const where: any = {};
+
+    if (orgId) {
+      where.orgId = orgId;
     }
+
+    if (search) {
+      where.OR = [
+        { empId: { contains: search, mode: 'insensitive' } },
+        { label: { contains: search, mode: 'insensitive' } },
+      ];
+    }
+
+    return await this.databaseService.individualSalaryAdjustments.findMany({
+      where,
+    });
+  } catch (error) {
+    throw new BadRequestException('Failed to retrieve Adjustments');
   }
+}
 
   async findOne(id: number) {
     try {

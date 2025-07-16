@@ -14,6 +14,7 @@ import {
   parseISO,
 } from 'date-fns';
 
+// ...existing imports...
 @Injectable()
 export class MealTypeService {
   constructor(
@@ -22,12 +23,15 @@ export class MealTypeService {
   ) {}
 
   // Get all meal types, with defaults first
-  async findAll() {
+  async findAll(orgId?: string) {
     try {
       return this.databaseService.mealType.findMany({
+        where: {
+          orgId: orgId || undefined,
+        },
         orderBy: [
-          { isDefault: 'desc' }, // Default meal types first
-          { name: 'asc' }, // Then alphabetically by name
+          { isDefault: 'desc' },
+          { name: 'asc' },
         ],
       });
     } catch (error) {
@@ -36,10 +40,10 @@ export class MealTypeService {
   }
 
   // Find a single meal type by ID
-  async findOne(id: number) {
+  async findOne(id: number, orgId?: string) {
     try {
-      const mealType = await this.databaseService.mealType.findUnique({
-        where: { id },
+      const mealType = await this.databaseService.mealType.findFirst({
+        where: { id, orgId: orgId || undefined },
       });
 
       if (!mealType) {
@@ -55,10 +59,10 @@ export class MealTypeService {
     }
   }
 
-  async toggleIsDefault(id: number) {
+  async toggleIsDefault(id: number, orgId?: string) {
     try {
-      const mealType = await this.databaseService.mealType.findUnique({
-        where: { id },
+      const mealType = await this.databaseService.mealType.findFirst({
+        where: { id, orgId: orgId || undefined },
       });
 
       if (!mealType) {
@@ -83,7 +87,7 @@ export class MealTypeService {
   }
 
   // Get default meal types only
-  async findDefaults() {
+  async findDefaults(orgId?: string) {
     try {
       const todayStart = startOfDay(new Date());
       const todayEnd = endOfDay(new Date());
@@ -91,12 +95,13 @@ export class MealTypeService {
       return this.databaseService.mealType.findMany({
         where: {
           OR: [
-            { isDefault: true },
+            { isDefault: true, orgId: orgId || undefined },
             {
               date: {
                 gte: todayStart,
                 lte: todayEnd,
               },
+              orgId: orgId || undefined,
             },
           ],
         },
@@ -113,9 +118,9 @@ export class MealTypeService {
     time?: string[] | string,
     isDefault?: boolean,
     date?: Date | string,
+    orgId?: string,
   ) {
     try {
-      // Always store time as an array of strings
       let timeArr: string[] | undefined = undefined;
       if (time !== undefined) {
         if (Array.isArray(time)) {
@@ -125,17 +130,16 @@ export class MealTypeService {
         }
       }
 
-      // Prepare the data object
       const data: any = {
         name,
         time: timeArr,
         isDefault: isDefault ?? false,
+        orgId: orgId || undefined,
       };
 
-      // If date is provided, add it to the data object as UTC+5:30
       if (date) {
         const baseDate = new Date(date);
-        data.date = addMinutes(baseDate, 330); // Shift to UTC+5:30
+        data.date = addMinutes(baseDate, 330);
       }
 
       return this.databaseService.mealType.create({
@@ -152,17 +156,17 @@ export class MealTypeService {
   async update(
     id: number,
     data: { name?: string; time?: string[] | string; isDefault?: boolean },
+    orgId?: string,
   ) {
     try {
-      const mealType = await this.databaseService.mealType.findUnique({
-        where: { id },
+      const mealType = await this.databaseService.mealType.findFirst({
+        where: { id, orgId: orgId || undefined },
       });
 
       if (!mealType) {
         throw new NotFoundException('Meal type not found');
       }
 
-      // Always store time as an array of strings
       let timeArr: string[] | undefined = undefined;
       if (data.time !== undefined) {
         if (Array.isArray(data.time)) {
@@ -192,23 +196,10 @@ export class MealTypeService {
   }
 
   // Delete a meal type (only if not used in any schedules)
-  async remove(id: number) {
+  async remove(id: number, orgId?: string) {
     try {
-      // Check if this meal type is used in any schedules
-      // const usedInSchedule = await this.databaseService.scheduledMeal.findFirst(
-      //   {
-      //     where: { mealTypeId: id },
-      //   },
-      // );
-
-      // if (usedInSchedule) {
-      //   throw new BadRequestException(
-      //     'Cannot delete meal type that is used in schedules',
-      //   );
-      // }
-
-      const mealType = await this.databaseService.mealType.findUnique({
-        where: { id },
+      const mealType = await this.databaseService.mealType.findFirst({
+        where: { id, orgId: orgId || undefined },
       });
 
       if (!mealType) {
@@ -226,110 +217,101 @@ export class MealTypeService {
     }
   }
 
- 
+  async findTodayAndTomorrow(orgId?: string) {
+    try {
+      const timezoneOffsetMinutes = 330;
+      const now = addMinutes(new Date(), timezoneOffsetMinutes);
 
-async findTodayAndTomorrow() {
-  try {
-    const timezoneOffsetMinutes = 330;
-    const now = addMinutes(new Date(), timezoneOffsetMinutes);
+      const todayStart = startOfDay(now);
+      const todayEnd = endOfDay(now);
+      const tomorrow = addDays(now, 1);
+      const tomorrowStart = startOfDay(tomorrow);
+      const tomorrowEnd = endOfDay(tomorrow);
 
-    const todayStart = startOfDay(now);
-    const todayEnd = endOfDay(now);
-    const tomorrow = addDays(now, 1);
-    const tomorrowStart = startOfDay(tomorrow);
-    const tomorrowEnd = endOfDay(tomorrow);
+      const todayIST = now.toISOString().split('T')[0];
+      const tomorrowIST = tomorrow.toISOString().split('T')[0];
 
-    const todayIST = now.toISOString().split('T')[0];
-    const tomorrowIST = tomorrow.toISOString().split('T')[0];
-
-    const defaultMeals = await this.databaseService.mealType.findMany({
-      where: { isDefault: true },
-      orderBy: { name: 'asc' },
-    });
-
-    // Helper to get merged meals for a given date range
-    const getMergedMeals = async (
-      start: Date,
-      end: Date,
-      dateString: string,
-    ): Promise<any[]> => {
-      const scheduledMeals = await this.scheduledMealService.findByDate(dateString);
-
-      const usedDefaultMeals = defaultMeals.filter((defaultMeal) =>
-        scheduledMeals.some((schedule) => schedule.mealTypeId === defaultMeal.id),
-      );
-
-      const mealsWithDate = await this.databaseService.mealType.findMany({
-        where: {
-          date: { gte: start, lte: end },
-        },
+      const defaultMeals = await this.databaseService.mealType.findMany({
+        where: { isDefault: true, orgId: orgId || undefined },
         orderBy: { name: 'asc' },
       });
 
-      const mealMap = new Map<number, any>();
-      [...mealsWithDate, ...usedDefaultMeals].forEach((meal) =>
-        mealMap.set(meal.id, meal),
+      const getMergedMeals = async (
+        start: Date,
+        end: Date,
+        dateString: string,
+      ): Promise<any[]> => {
+        const scheduledMeals = await this.scheduledMealService.findByDate(dateString, orgId);
+
+        const usedDefaultMeals = defaultMeals.filter((defaultMeal) =>
+          scheduledMeals.some((schedule) => schedule.mealTypeId === defaultMeal.id),
+        );
+
+        const mealsWithDate = await this.databaseService.mealType.findMany({
+          where: {
+            date: { gte: start, lte: end },
+            orgId: orgId || undefined,
+          },
+          orderBy: { name: 'asc' },
+        });
+
+        const mealMap = new Map<number, any>();
+        [...mealsWithDate, ...usedDefaultMeals].forEach((meal) =>
+          mealMap.set(meal.id, meal),
+        );
+
+        return Array.from(mealMap.values());
+      };
+
+      const [mergedTodayMeals, mergedTomorrowMeals] = await Promise.all([
+        getMergedMeals(todayStart, todayEnd, todayIST),
+        getMergedMeals(tomorrowStart, tomorrowEnd, tomorrowIST),
+      ]);
+
+      return [mergedTodayMeals, mergedTomorrowMeals];
+    } catch (error) {
+      console.error('Error in findTodayAndTomorrow:', error);
+      return [[], []];
+    }
+  }
+
+  async patchTimeElement(id: number, index: 0 | 1, newTime: string, orgId?: string) {
+    try {
+      const mealType = await this.databaseService.mealType.findFirst({
+        where: { id, orgId: orgId || undefined },
+      });
+
+      if (!mealType) {
+        throw new NotFoundException('Meal type not found');
+      }
+
+      let updatedTime: string[] = Array.isArray(mealType.time)
+        ? [...mealType.time]
+        : ['', ''];
+
+      while (updatedTime.length < 2) {
+        updatedTime.push('');
+      }
+
+      updatedTime[index] = newTime;
+
+      return await this.databaseService.mealType.update({
+        where: { id },
+        data: { time: updatedTime },
+      });
+    } catch (error) {
+      if (error instanceof NotFoundException) throw error;
+      throw new BadRequestException(
+        `Failed to patch time element: ${error.message}`,
       );
-
-      return Array.from(mealMap.values());
-    };
-
-    const [mergedTodayMeals, mergedTomorrowMeals] = await Promise.all([
-      getMergedMeals(todayStart, todayEnd, todayIST),
-      getMergedMeals(tomorrowStart, tomorrowEnd, tomorrowIST),
-    ]);
-
-    return [mergedTodayMeals, mergedTomorrowMeals];
-  } catch (error) {
-    console.error('Error in findTodayAndTomorrow:', error);
-    return [[], []];
-  }
-}
-
-async patchTimeElement(id: number, index: 0 | 1, newTime: string) {
-  try {
-    const mealType = await this.databaseService.mealType.findUnique({
-      where: { id },
-    });
-
-    if (!mealType) {
-      throw new NotFoundException('Meal type not found');
     }
-
-    // Always ensure time is an array of 2 elements
-    let updatedTime: string[] = Array.isArray(mealType.time)
-      ? [...mealType.time]
-      : ['', ''];
-
-    // Fill missing elements if needed
-    while (updatedTime.length < 2) {
-      updatedTime.push('');
-    }
-
-    // Update only the requested index
-    updatedTime[index] = newTime;
-
-    return await this.databaseService.mealType.update({
-      where: { id },
-      data: { time: updatedTime },
-    });
-  } catch (error) {
-    if (error instanceof NotFoundException) throw error;
-    throw new BadRequestException(
-      `Failed to patch time element: ${error.message}`,
-    );
   }
-}
-
 
   // Get meal types created at a specific date (IST) and all default meals
-  async findByDateOrDefault(dateString: string) {
+  async findByDateOrDefault(dateString: string, orgId?: string) {
     try {
-      // Parse the date string (e.g., "2024-05-25") as IST
-      // Shift to IST by adding 5:30 (330 minutes)
       const dateIST = addMinutes(parseISO(dateString), 330);
 
-      // Get start and end of the day in IST, then convert back to UTC
       const dayStartIST = startOfDay(dateIST);
       const dayEndIST = endOfDay(dateIST);
       const dayStartUTC = subMinutes(dayStartIST, 330);
@@ -338,12 +320,13 @@ async patchTimeElement(id: number, index: 0 | 1, newTime: string) {
       const meals = await this.databaseService.mealType.findMany({
         where: {
           OR: [
-            { isDefault: true },
+            { isDefault: true, orgId: orgId || undefined },
             {
               date: {
                 gte: dayStartUTC,
                 lte: dayEndUTC,
               },
+              orgId: orgId || undefined,
             },
           ],
         },

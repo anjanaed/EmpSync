@@ -32,12 +32,13 @@ const { Option } = Select;
 const AddMealPage = () => {
   const { authData } = useAuth();
   const token = authData?.accessToken;
-
+  const urL = import.meta.env.VITE_BASE_URL;
   const [form] = Form.useForm();
   const [imageUrl, setImageUrl] = useState(null);
   const [imageFile, setImageFile] = useState(null);
   const fileInputRef = useRef(null);
-  const [isIngredientsModalVisible, setIsIngredientsModalVisible] = useState(false);
+  const [isIngredientsModalVisible, setIsIngredientsModalVisible] =
+    useState(false);
   const [ingredients, setIngredients] = useState([]);
   const [searchIngredient, setSearchIngredient] = useState("");
   const [selectedIngredients, setSelectedIngredients] = useState([]);
@@ -46,18 +47,20 @@ const AddMealPage = () => {
 
   const navigate = useNavigate();
 
-  // Fetch ingredients from API when the modal is opened
+  // Fetch ingredients from API using axios with orgId
   const fetchIngredients = async () => {
     setLoadingIngredients(true);
     try {
-      const response = await fetch(
-        "http://localhost:3000/Ingredients/optimized"
-      );
-      if (!response.ok) {
-        throw new Error("Failed to fetch ingredients");
-      }
+      const response = await axios.get(`${urL}/Ingredients/optimized`, {
+        params: {
+          orgId: authData?.orgId,
+        },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-      const data = await response.json();
+      const data = response.data;
       const priority1Ingredients = Array.isArray(data.priority1Ingredients)
         ? data.priority1Ingredients
         : [];
@@ -77,7 +80,8 @@ const AddMealPage = () => {
         message.warning("No ingredients found in the API response");
       }
     } catch (error) {
-      message.error(`Error fetching ingredients: ${error.message}`);
+      const errorMessage = error.response?.data?.message || error.message;
+      message.error(`Error fetching ingredients: ${errorMessage}`);
       setIngredients([]);
     } finally {
       setLoadingIngredients(false);
@@ -125,15 +129,14 @@ const AddMealPage = () => {
 
       console.log("Submitting meal data:", mealData);
 
-      const response = await axios.post(
-        "http://localhost:3000/meal",
-        mealData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await axios.post(`${urL}/meal`, mealData, {
+        params: {
+          orgId: authData?.orgId,
+        },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       if (response.status === 201 || response.status === 200) {
         message.success("Meal added successfully!");
@@ -459,7 +462,7 @@ const AddMealPage = () => {
             <div className={styles.noIngredientsMessage}>
               No ingredients found. Try adjusting your search.
             </div>
-          )}
+            )}
         </div>
 
         <div className={styles.modalFooter}>

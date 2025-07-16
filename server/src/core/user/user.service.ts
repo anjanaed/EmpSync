@@ -53,12 +53,13 @@ export class UserService {
     }
   }
 
-  async findAll(search?:string,role?:string) {
+  async findAll(search?:string,role?:string, orgId?: string) {
     try {
       const users = await this.databaseService.user.findMany({
         where:{
           name:search?{contains:search,mode:'insensitive'}:undefined,
           role:role||undefined,
+          organizationId: orgId || undefined,
         }
       });
       if (users) {

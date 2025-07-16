@@ -154,8 +154,8 @@ const NavBar = ({ Comp, titleLines = [], menuItems = [] }) => {
   }));
 
   return (
-    <div className={`${styles.main} ${theme === 'dark' ? 'dark' : ''}`}>
-      <ConfigProvider theme={theme === 'dark' ? darkTheme : customTheme}>
+    <div className={`${styles.main} ${theme === "dark" ? "dark" : ""}`}>
+      <ConfigProvider theme={theme === "dark" ? darkTheme : customTheme}>
         <Sider
           className={styles.sider}
           trigger={null}
@@ -166,11 +166,20 @@ const NavBar = ({ Comp, titleLines = [], menuItems = [] }) => {
           {renderTitle()}
           <Menu
             className={styles.menu}
-            theme={theme === 'dark' ? 'dark' : 'light'}
+            theme={theme === "dark" ? "dark" : "light"}
             mode="inline"
             selectedKeys={[selectedKey]}
             items={renderedMenuItems}
           />
+          <div className={styles.orgIdContainer}>
+            {collapsed ? (
+              <b></b>
+            ) : (
+              <>
+                Organization ID: <b>{authData?.orgId || "N/A"}</b>
+              </>
+            )}
+          </div>
         </Sider>
       </ConfigProvider>
 
@@ -179,47 +188,42 @@ const NavBar = ({ Comp, titleLines = [], menuItems = [] }) => {
           <div className={styles.headerLeft}>
             <Button
               type="text"
-              icon={
-                <MenuOutlined />
-              }
+              icon={<MenuOutlined />}
               onClick={() => setCollapsed(!collapsed)}
-              style={{ 
-                fontSize: "16px", 
-                width: 55, 
+              style={{
+                fontSize: "16px",
+                width: 55,
                 height: 55,
-                color: theme === 'dark' ? '#ffffff' : '#000000',
-                backgroundColor: theme === 'dark' ? 'transparent' : 'transparent'
+                color: theme === "dark" ? "#ffffff" : "#000000",
+                backgroundColor:
+                  theme === "dark" ? "transparent" : "transparent",
               }}
             />
           </div>
-          <img
-            className={styles.logo}
-            src={img}
-            alt="Logo"
-          />
+          <img className={styles.logo} src={img} alt="Logo" />
           <div className={styles.headerRight}>
             <div className={styles.themeToggleContainer}>
               <ThemeToggle />
             </div>
             <Dropdown
-            menu={{ items: dropdownItems }}
-            placement="bottomRight"
-            trigger={["click"]}
-            overlayClassName={styles.userDropdownMenu}
-          >
-            <div className={styles.userInfo}>
-              <Avatar
-                style={{ backgroundColor: "#d10000" }}
-                icon={<UserOutlined />}
-              />
-              <div className={styles.userDetails}>
-                <div className={styles.userName}>{currentUser.name}</div>
-                <div className={styles.userPosition}>
-                  {roleDisplayMap[currentUser.role]}
+              menu={{ items: dropdownItems }}
+              placement="bottomRight"
+              trigger={["click"]}
+              overlayClassName={styles.userDropdownMenu}
+            >
+              <div className={styles.userInfo}>
+                <Avatar
+                  style={{ backgroundColor: "#d10000" }}
+                  icon={<UserOutlined />}
+                />
+                <div className={styles.userDetails}>
+                  <div className={styles.userName}>{currentUser.name}</div>
+                  <div className={styles.userPosition}>
+                    {roleDisplayMap[currentUser.role]}
+                  </div>
                 </div>
               </div>
-            </div>
-          </Dropdown>
+            </Dropdown>
           </div>
         </div>
         <div className={styles.content}>

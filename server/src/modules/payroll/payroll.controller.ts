@@ -37,10 +37,11 @@ export class PayrollController {
   @Roles('HR_ADMIN')
   async generatePayrollsForAll(
     @Body() dto: Prisma.PayrollCreateInput,
+    @Query('orgId') orgId: string,
     @Res() res: Response,
   ) {
     try {
-      await this.payrollService.generatePayrollsForAll(dto);
+      await this.payrollService.generatePayrollsForAll(dto,orgId);
       res.status(200).json({ message: 'Payrolls Generated' });
     } catch (err) {
       res.status(500).json({
@@ -54,9 +55,9 @@ export class PayrollController {
   @Get()
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles('HR_ADMIN')
-  async findAll(@Query('search') search?: string) {
+  async findAll(@Query('search') search?: string,@Query('orgId') orgId?: string) {
     try {
-      return await this.payrollService.findAll(search);
+      return await this.payrollService.findAll(search, orgId);
     } catch (err) {
       throw new HttpException(
         {
@@ -130,23 +131,26 @@ export class PayrollController {
     }
   }
 
-  @Delete('delete-by-month/:month')
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles('HR_ADMIN')
-  async deletePayrollsByMonth(@Param('month') month: string) {
-    try {
-      return await this.payrollService.deleteByMonth(month);
-    } catch (err) {
-      throw new HttpException(
-        {
-          status: HttpStatus.INTERNAL_SERVER_ERROR,
-          error: 'Failed to delete payrolls by month',
-          message: err.message,
-        },
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
+@Delete('delete-by-month/:month')
+@UseGuards(AuthGuard('jwt'), RolesGuard)
+@Roles('HR_ADMIN')
+async deletePayrollsByMonth(
+  @Param('month') month: string,
+  @Query('orgId') orgId: string // <-- add this
+) {
+  try {
+    return await this.payrollService.deleteByMonth(month, orgId); // <-- pass orgId
+  } catch (err) {
+    throw new HttpException(
+      {
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        error: 'Failed to delete payrolls by month',
+        message: err.message,
+      },
+      HttpStatus.INTERNAL_SERVER_ERROR,
+    );
   }
+}
 
   @Post('upload-pdf/:employeeId')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
