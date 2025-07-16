@@ -152,4 +152,28 @@ export class UserController {
   async getLastEmpNo(@Param('orgId') orgId: string) {
     return await this.userService.getLastEmpNoByOrg(orgId);
   }
+
+  @Get(':id/org/:orgId/name')
+  // @UseGuards(AuthGuard('jwt'))
+  async getUserNameByIdAndOrg(
+    @Param('id') id: string,
+    @Param('orgId') orgId: string,
+  ) {
+    try {
+      const user = await this.userService.findNameByIdAndOrg(id, orgId);
+      if (!user) {
+        throw new Error('User not found');
+      }
+      return { name: user.name };
+    } catch (err) {
+      throw new HttpException(
+        {
+          status: HttpStatus.NOT_FOUND,
+          error: 'Not Found',
+          message: err.message,
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+  }
 }
