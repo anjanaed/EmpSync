@@ -42,6 +42,12 @@ const Report = () => {
   const { authData } = useAuth();
   const [orderDetailsData, setOrderDetailsData] = useState([]);
   const token = authData?.accessToken;
+  const [summaryStartDate, setSummaryStartDate] = useState("");
+  const [summaryEndDate, setSummaryEndDate] = useState("");
+  const [orderStartDate, setOrderStartDate] = useState("");
+  const [orderEndDate, setOrderEndDate] = useState("");
+  const [employeeStartDate, setEmployeeStartDate] = useState("");
+  const [employeeEndDate, setEmployeeEndDate] = useState("");
 
   const generateEmployeeReportData = () => {
     if (!individualEmployeeData || individualEmployeeData.length === 0) {
@@ -297,28 +303,28 @@ const Report = () => {
       title: "Date",
       dataIndex: "date",
       key: "date",
-      width: 120,
+
       sorter: (a, b) => new Date(a.date) - new Date(b.date),
     },
     {
       title: "Meal Type",
       dataIndex: "mealType",
       key: "mealType",
-      width: 150,
+      // width: 150,
       render: (text) => <span className={styles.mealTypeText}>{text}</span>,
     },
     {
       title: "Order Time",
       dataIndex: "orderTime",
       key: "orderTime",
-      width: 120,
+      // width: 120,
       align: "center",
     },
     {
       title: "Price",
       dataIndex: "price",
       key: "price",
-      width: 100,
+      // width: 100,
       align: "center",
       render: (text) => <span className={styles.priceText}>{text}</span>,
     },
@@ -326,7 +332,7 @@ const Report = () => {
       title: "Status",
       dataIndex: "status",
       key: "status",
-      width: 120,
+      // width: 120,
       align: "center",
       render: (status) => (
         <span
@@ -338,25 +344,6 @@ const Report = () => {
         >
           {status}
         </span>
-      ),
-    },
-    {
-      title: "Actions",
-      key: "actions",
-      width: 120,
-      align: "center",
-      render: (text, record) => (
-        <Button
-          type="link"
-          className={styles.viewDetailsButton}
-          onClick={() => {
-            console.log("Order details:", record);
-            // You can implement a modal or detailed view here
-            message.info(`Order ID: ${record.orderId}`);
-          }}
-        >
-          View Details
-        </Button>
       ),
     },
   ];
@@ -565,11 +552,8 @@ const Report = () => {
       groupedByMealType[mealTypeName].totalOrders += 1;
 
       // Check if order was served (you can modify this logic based on your serve status field)
-      if (
-        order.served === true ||
-        order.status === "served" ||
-        order.orderStatus === "served"
-      ) {
+
+      if (order.serve === true) {
         groupedByMealType[mealTypeName].servedOrders += 1;
       }
     });
@@ -1471,7 +1455,13 @@ const Report = () => {
                 <Table
                   columns={columns}
                   dataSource={employeeData}
-                  pagination={false}
+                  pagination={{
+                    pageSize: 10,
+                    showSizeChanger: false,
+                    showQuickJumper: false,
+                    showTotal: (total, range) =>
+                      `${range[0]}-${range[1]} of ${total} employees`,
+                  }}
                   className={styles.table}
                   bordered
                   locale={{
@@ -1612,19 +1602,18 @@ const Report = () => {
                           >
                             {value}%
                           </span>
-                          <div className={styles.efficiencyLabel}>
-                            {value >= 98
-                              ? "Excellent"
-                              : value >= 95
-                              ? "Good"
-                              : "Needs Improvement"}
-                          </div>
                         </div>
                       ),
                     },
                   ]}
                   dataSource={orderDetailsData}
-                  pagination={false}
+                  pagination={{
+                    pageSize: 10,
+                    showSizeChanger: false,
+                    showQuickJumper: false,
+                    showTotal: (total, range) =>
+                      `${range[0]}-${range[1]} of ${total} meal types`,
+                  }}
                   className={styles.table}
                   bordered
                   locale={{
@@ -1772,8 +1761,8 @@ const Report = () => {
                   dataSource={generateEmployeeReportData()}
                   pagination={{
                     pageSize: 10,
-                    showSizeChanger: true,
-                    showQuickJumper: true,
+                    showSizeChanger: false,
+                    showQuickJumper: false,
                     showTotal: (total, range) =>
                       `${range[0]}-${range[1]} of ${total} orders`,
                   }}
@@ -1809,9 +1798,11 @@ const Report = () => {
                             {summary.pendingOrders} Pending
                           </strong>
                         </Table.Summary.Cell>
-                        <Table.Summary.Cell index={5} align="center">
-                          <strong>{summary.efficiency}% Efficiency</strong>
-                        </Table.Summary.Cell>
+                        {summary.efficiency > 0 && (
+                          <Table.Summary.Cell index={5} align="center">
+                            <strong>{summary.efficiency}% Efficiency</strong>
+                          </Table.Summary.Cell>
+                        )}
                       </Table.Summary.Row>
                     );
                   }}
