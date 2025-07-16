@@ -21,11 +21,13 @@ import styles from "./Report.module.css";
 import { useAuth } from "../../../../contexts/AuthContext";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
+import axios from "axios";
 
 const { TabPane } = Tabs;
 const { Option } = Select;
 
 const Report = () => {
+  const urL = import.meta.env.VITE_BASE_URL;
   const [activeTab, setActiveTab] = useState("summary");
   const [timePeriod, setTimePeriod] = useState("daily");
   const [orderTimePeriod, setOrderTimePeriod] = useState("daily");
@@ -77,33 +79,24 @@ const Report = () => {
   };
 
   // Function to fetch individual employee orders
-  const fetchIndividualEmployeeOrders = async (employeeId, timePeriod) => {
-    if (!employeeId || !employeeId.trim()) {
-      message.warning("Please enter an Employee ID");
-      return [];
-    }
-
-    try {
-      setLoading(true);
-      console.log(
-        `Fetching orders for employee: ${employeeId}, period: ${timePeriod}`
-      );
-
-      const response = await fetch("http://localhost:3000/orders", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error(
-          `Failed to fetch orders: ${response.status} ${response.statusText}`
-        );
-      }
-
-      const allOrders = await response.json();
-      console.log("All orders fetched:", allOrders.length);
+ const fetchIndividualEmployeeOrders = async (employeeId, timePeriod) => {
+  if (!employeeId || !employeeId.trim()) {
+    message.warning("Please enter an Employee ID");
+    return [];
+  }
+  try {
+    setLoading(true);
+    const response = await axios.get(`${urL}/orders`, {
+      params: {
+        orgId: authData?.orgId,
+        employeeId,
+      },
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    const allOrders = Array.isArray(response.data) ? response.data : [];
+    console.log("All orders fetched:", allOrders.length);
 
       // Filter orders by employee ID
       const employeeOrders = allOrders.filter((order) => {
@@ -197,13 +190,13 @@ const Report = () => {
       console.log("Final processed orders:", ordersWithMealTypes);
       return ordersWithMealTypes;
     } catch (error) {
-      console.error("Error fetching individual employee orders:", error);
-      message.error(`Failed to fetch employee orders: ${error.message}`);
-      return [];
-    } finally {
-      setLoading(false);
-    }
-  };
+    console.error("Error fetching individual employee orders:", error);
+    message.error(`Failed to fetch employee orders: ${error.message}`);
+    return [];
+  } finally {
+    setLoading(false);
+  }
+};
 
   // Function to filter orders by time period for individual employee
   const filterOrdersByTimePeriod = (orders, period) => {
@@ -405,25 +398,15 @@ const Report = () => {
   const fetchOrders = async () => {
     try {
       console.log("Fetching orders...");
-
-      const response = await fetch("http://localhost:3000/orders", {
-        method: "GET",
+      const response = await axios.get(`${urL}/orders`, {
+        params: {
+          orgId: authData?.orgId,
+        },
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-
-      console.log("Orders response status:", response.status);
-
-      if (!response.ok) {
-        throw new Error(
-          `Failed to fetch orders: ${response.status} ${response.statusText}`
-        );
-      }
-
-      const data = await response.json();
-      console.log("Fetched orders:", data);
-      return Array.isArray(data) ? data : [];
+      return Array.isArray(response.data) ? response.data : [];
     } catch (error) {
       console.error("Error fetching orders:", error);
       message.error(`Failed to fetch orders: ${error.message}`);
@@ -618,25 +601,15 @@ const Report = () => {
   const fetchEmployees = async () => {
     try {
       console.log("Fetching users/employees...");
-
-      const response = await fetch("http://localhost:3000/user", {
-        method: "GET",
+      const response = await axios.get(`${urL}/user`, {
+        params: {
+          orgId: authData?.orgId,
+        },
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-
-      console.log("Users response status:", response.status);
-
-      if (!response.ok) {
-        throw new Error(
-          `Failed to fetch users: ${response.status} ${response.statusText}`
-        );
-      }
-
-      const data = await response.json();
-      console.log("Fetched users/employees:", data);
-      return Array.isArray(data) ? data : [];
+      return Array.isArray(response.data) ? response.data : [];
     } catch (error) {
       console.error("Error fetching users/employees:", error);
       message.error(`Failed to fetch employees: ${error.message}`);
@@ -647,25 +620,15 @@ const Report = () => {
   const fetchMealTypes = async () => {
     try {
       console.log("Fetching meal types...");
-
-      const response = await fetch("http://localhost:3000/meal-types", {
-        method: "GET",
+      const response = await axios.get(`${urL}/meal-types`, {
+        params: {
+          orgId: authData?.orgId,
+        },
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-
-      console.log("Meal types response status:", response.status);
-
-      if (!response.ok) {
-        throw new Error(
-          `Failed to fetch meal types: ${response.status} ${response.statusText}`
-        );
-      }
-
-      const data = await response.json();
-      console.log("Fetched meal types:", data);
-      return Array.isArray(data) ? data : [];
+      return Array.isArray(response.data) ? response.data : [];
     } catch (error) {
       console.error("Error fetching meal types:", error);
       message.error(`Failed to fetch meal types: ${error.message}`);
@@ -1670,7 +1633,7 @@ const Report = () => {
               </Spin>
             </div>
           </TabPane>
-          
+
           <TabPane
             tab={
               <span className={styles.tabPaneTitle}>
@@ -1747,7 +1710,6 @@ const Report = () => {
               </div>
 
               {/* Employee Summary Section */}
-              
 
               <Spin spinning={loading}>
                 <Table
