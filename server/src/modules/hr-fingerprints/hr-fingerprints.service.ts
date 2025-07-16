@@ -5,11 +5,13 @@ import { PrismaClient } from '@prisma/client';
 export class HrFingerprintsService {
   private prisma = new PrismaClient();
 
-  async getAllFingerprints() {
+  async getAllFingerprints(orgId?: string) {
     return this.prisma.fingerprint.findMany({
+      where: orgId ? { orgId } : undefined,
       select: {
         thumbid: true,
         empId: true,
+        orgId: true,
       },
     });
   }

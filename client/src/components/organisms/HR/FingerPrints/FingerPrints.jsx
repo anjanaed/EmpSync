@@ -53,12 +53,15 @@ const FingerPrintsContent = () => {
 
   // Fetch fingerprint device usage
   useEffect(() => {
+    if (!authData?.orgId) return;
+    
     axios
       .get("http://localhost:3000/hr-fingerprints", {
-        params: { orgId: authData?.orgId }, 
+        params: { orgId: authData.orgId }, 
       })
       .then((res) => {
-        const fingerprints = res.data;
+        const fingerprints = res.data || [];
+        
         // Group by unit name (first 6 chars)
         const deviceMap = {};
         fingerprints.forEach(fp => {
@@ -75,7 +78,7 @@ const FingerPrintsContent = () => {
         setDeviceCards(cards);
       })
       .catch(() => setDeviceCards([]));
-  }, []);
+  }, [authData?.orgId]);
   useEffect(() => {
     if (showTable && authData?.orgId) {
       setLoading(true);
