@@ -1,19 +1,83 @@
 import React from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
+  faUsers,
+  faUserPlus,
+  faFileInvoice,
+  faDollarSign,
+  faFingerprint,
   faCalendar,
   faChartLine,
   faBowlFood,
 } from "@fortawesome/free-solid-svg-icons";
 import { BellOutlined } from "@ant-design/icons";
-import NavBar from "../../../organisms/NavBar/NavBar";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import NavBar from '../../../organisms/NavBar/NavBar';
 import NotificationPanel from "../../../organisms/Kitchen/NotificationPanel/NotificationPanel";
 import { useNotifications } from "../../../../contexts/NotificationsContext";
 import styles from "../../../organisms/Kitchen/NotificationPanel/NotificationPanel.module.css";
 import MealSection from "../../../organisms/Kitchen/MealsSection/Meal";
 
 const MealDash = () => {
+  // Get and parse authData from localStorage
+  const rawAuthData = localStorage.getItem("authData");
+  const parsedAuthData = rawAuthData ? JSON.parse(rawAuthData) : null;
   const { getUnreadCount, toggleNotifications } = useNotifications();
+
+  // Safely get permission actions
+  const actions = parsedAuthData?.permissions?.actions || [];
+
+  // Define all possible menu items
+  const allMenuItems = [
+    {
+      key: "1",
+      label: "Employees",
+      action: "User Management",
+      icon: <FontAwesomeIcon icon={faUsers} />,
+      link: "/EmployeePage",
+    },
+    {
+      key: "2",
+      label: "Registration",
+      action: "User Management",
+      icon: <FontAwesomeIcon icon={faUserPlus} />,
+      link: "/reg",
+    },
+    {
+      key: "3",
+      label: "Payrolls",
+      action: "Payroll",
+      icon: <FontAwesomeIcon icon={faDollarSign} />,
+      link: "/payroll",
+    },
+    {
+      key: "5",
+      label: "FingerPrints",
+      action: "User Management",
+      icon: <FontAwesomeIcon icon={faFingerprint} />,
+      link: "/FingerPrints",
+    },
+    {
+      key: "6",
+      label: "Schedule",
+      action: "Meal Management",
+      icon: <FontAwesomeIcon icon={faCalendar} />,
+      link: "/kitchen-admin",
+    },
+    {
+      key: "7",
+      label: "Meal",
+      action: "Meal Management",
+      icon: <FontAwesomeIcon icon={faBowlFood} />,
+      link: "/kitchen-meal",
+    },
+    {
+      key: "8",
+      label: "Reports & Analysis",
+      action: "Reports",
+      icon: <FontAwesomeIcon icon={faChartLine} />,
+      link: "/kitchen-report",
+    },
+  ];
 
   // Create notification menu item
   const notificationMenuItem = {
@@ -31,35 +95,19 @@ const MealDash = () => {
     onClick: toggleNotifications,
   };
 
+  // Filter menu based on permissions
+  const filteredMenuItems = allMenuItems.filter((item) =>
+    actions.includes(item.action)
+  );
+
   return (
     <>
       <NavBar
-        titleLines={["Meal", "Schedule", "Management"]}
-        menuItems={[
-          {
-            key: "1",
-            icon: <FontAwesomeIcon icon={faCalendar} />,
-            label: "Schedule",
-            link: "/kitchen-admin",
-          },
-          {
-            key: "2",
-            icon: <FontAwesomeIcon icon={faBowlFood} />,
-            label: "Meal",
-            link: "/kitchen-meal",
-          },
-          {
-            key: "3",
-            icon: <FontAwesomeIcon icon={faChartLine} />,
-            label: "Report & Analysis",
-            link: "/kitchen-report",
-          },
-
-          notificationMenuItem, // Add the notification menu item
-        ]}
         Comp={MealSection}
+        titleLines={["Meal", "Schedule", "Management"]}
+        menuItems={filteredMenuItems}
       />
-      <NotificationPanel /> {/* Add the notification panel */}
+      <NotificationPanel />
     </>
   );
 };

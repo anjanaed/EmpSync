@@ -9,6 +9,8 @@ import {
   Put,
   HttpException,
   HttpStatus,
+  NotFoundException,
+  BadRequestException,
 } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { SuperAdminService } from './super-admin.service';
@@ -78,9 +80,27 @@ export class SuperAdminController {
   }
 
   @Get('users/:id/permissions')
-  @UseGuards(AuthGuard('superadmin-jwt'))
+  // @UseGuards(AuthGuard('superadmin-jwt'))
   async getPermissionsByUserId(@Param('id') id: string) {
     return this.superAdminService.getPermissionsByUserId(id);
+  }
+
+  @Get('users/:userId/actions')
+  async getUserActions(@Param('userId') userId: string) {
+    try {
+      const actions = await this.superAdminService.getUserActionsByUserId(userId);
+      return { userId, actions };
+    } catch (error) {
+      if (
+        error instanceof BadRequestException ||
+        error instanceof NotFoundException
+      ) {
+        throw error;
+      }
+      throw new BadRequestException(
+        'Unexpected error fetching user actions: ' + error.message,
+      );
+    }
   }
 
   @Put('users/:id')
@@ -112,7 +132,7 @@ export class SuperAdminController {
   }
 
   @Get('permissions/:id')
-  // @UseGuards(AuthGuard('superadmin-jwt'))
+  @UseGuards(AuthGuard('superadmin-jwt'))
   async getPermissionById(@Param('id') id: string) {
     return this.superAdminService.getPermissionById(id);
   }

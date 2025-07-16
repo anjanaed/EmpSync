@@ -39,7 +39,7 @@ export class MealController {
 
   @Post()
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles('KITCHEN_ADMIN')
+  @Roles('KITCHEN_ADMIN','HR_ADMIN')
   async create(
     @Body() createMealDto: CreateMealWithIngredientsDto,
     @Query('orgId') orgId?: string,
@@ -112,7 +112,7 @@ export class MealController {
 
   @Patch(':id')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles('KITCHEN_ADMIN')
+  @Roles('KITCHEN_ADMIN','HR_ADMIN')
   async update(
     @Param('id') id: string,
     @Body() updateMealDto: UpdateMealWithIngredientsDto,
@@ -144,7 +144,7 @@ export class MealController {
 
   @Delete(':id')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles('KITCHEN_ADMIN')
+  @Roles('KITCHEN_ADMIN','HR_ADMIN')
   async remove(
     @Param('id') id: string,
     @Query('orgId') orgId?: string,
