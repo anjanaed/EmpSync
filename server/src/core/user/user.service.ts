@@ -149,10 +149,22 @@ export class UserService {
 
   async getLastEmpNoByOrg(organizationId: string) {
 
-  const lastUser = await this.databaseService.user.findFirst({
-    where: { organizationId },
-    orderBy: { empNo: 'desc' },
-  });
-  return lastUser?.empNo || null;
-}
+    const lastUser = await this.databaseService.user.findFirst({
+      where: { organizationId },
+      orderBy: { empNo: 'desc' },
+    });
+    return lastUser?.empNo || null;
+  }
+
+  async findNameByIdAndOrg(id: string, orgId: string) {
+    return await this.databaseService.user.findFirst({
+      where: {
+        id,
+        organizationId: orgId,
+      },
+      select: {
+        name: true,
+      },
+    });
+  }
 }
