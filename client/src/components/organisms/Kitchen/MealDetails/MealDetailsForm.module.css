@@ -1,9 +1,42 @@
 @import url("https://fonts.googleapis.com/css2?family=Bree+Serif&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Itim&family=Roboto+Slab:wght@100..900&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap");
 
+/* Light theme variables (default) */
+.pageContainer {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f5f5f5;
+  --bg-tertiary: #fafafa;
+  --text-primary: #000000;
+  --text-secondary: #666666;
+  --text-tertiary: #999999;
+  --border-color: #d9d9d9;
+  --shadow: rgba(0, 0, 0, 0.1);
+  --accent: #1890ff;
+  --success: #52c41a;
+  --warning: #faad14;
+  --error: #f5222d;
+}
+
+/* Dark theme variables */
+:global([data-theme="dark"]) .pageContainer {
+  --bg-primary: #141414;
+  --bg-secondary: #1f1f1f;
+  --bg-tertiary: #262626;
+  --text-primary: #ffffff;
+  --text-secondary: #d9d9d9;
+  --text-tertiary: #8c8c8c;
+  --border-color: #434343;
+  --shadow: rgba(255, 255, 255, 0.1);
+  --accent: #40a9ff;
+  --success: #73d13d;
+  --warning: #ffc53d;
+  --error: #ff7875;
+}
 
 .pageContainer {
   min-height: 100vh;
-  background-color: rgb(244, 244, 244);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .languageInputsContainer {
@@ -25,8 +58,18 @@
 
 .formCard {
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 8px var(--shadow);
   margin-top: 20px;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Dark mode specific form card styling */
+:global([data-theme="dark"]) .formCard {
+  background-color: var(--bg-secondary);
+  border-color: var(--border-color);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .cardTitle {
@@ -35,8 +78,7 @@
   /* font-family: "Roboto Slab", serif; */
   /* text-align: center; */
   font-size: 22px !important;
-  /* color: #d10000 !important; */
-
+  color: var(--text-primary) !important;
 }
 
 .imageContainer {
@@ -46,9 +88,9 @@
 .imagePlaceholder {
   width: 100%;
   height: 300px;
-  border: 1px dashed #d9d9d9;
+  border: 1px dashed var(--border-color);
   border-radius: 4px;
-  background-color: #fafafa;
+  background-color: var(--bg-tertiary);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -59,9 +101,19 @@
   border-color: rgb(230, 74, 74);
 }
 
+/* Dark mode specific image placeholder styling */
+:global([data-theme="dark"]) .imagePlaceholder {
+  background-color: var(--bg-tertiary);
+  border-color: var(--border-color);
+}
+
+:global([data-theme="dark"]) .imagePlaceholder:hover {
+  border-color: rgb(255, 120, 120);
+}
+
 .uploadHint {
   text-align: center;
-  color: #888;
+  color: var(--text-secondary);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -77,16 +129,30 @@
 
 .chooseImageButton {
   margin-bottom: 24px;
-  background-color:  white;
-  border-color:  rgb(230, 74, 74);
-  color:rgb(230, 74, 74);
-  width:200px !important;
+  background-color: var(--bg-secondary);
+  border-color: rgb(230, 74, 74);
+  color: rgb(230, 74, 74);
+  width: 200px !important;
   margin-left: 110px;
+  transition: all 0.3s ease;
 }
 .chooseImageButton:hover{
-  background-color:  white !important;
-  border-color:  rgb(230, 74, 74) !important;
-  color:rgb(230, 74, 74) !important;
+  background-color: var(--bg-secondary) !important;
+  border-color: rgb(230, 74, 74) !important;
+  color: rgb(230, 74, 74) !important;
+}
+
+/* Dark mode specific button styling */
+:global([data-theme="dark"]) .chooseImageButton {
+  background-color: var(--bg-secondary);
+  border-color: rgb(255, 120, 120);
+  color: rgb(255, 120, 120);
+}
+
+:global([data-theme="dark"]) .chooseImageButton:hover {
+  background-color: var(--bg-secondary) !important;
+  border-color: rgb(255, 120, 120) !important;
+  color: rgb(255, 120, 120) !important;
 }
 
 .ingredientsButton {
@@ -95,6 +161,7 @@
   color:white;
   width:500px !important;
   margin-left: 50px;
+  transition: all 0.3s ease;
 }
 
 .ingredientsButton:hover, 
@@ -104,10 +171,24 @@
   color: white;
 }
 
+/* Dark mode ingredients button */
+:global([data-theme="dark"]) .ingredientsButton {
+  background-color: rgb(200, 60, 60) !important;
+  border-color: rgb(160, 40, 40);
+  color: white;
+}
+
+:global([data-theme="dark"]) .ingredientsButton:hover,
+:global([data-theme="dark"]) .ingredientsButton:focus {
+  background-color: rgb(220, 80, 80) !important;
+  border-color: rgb(200, 60, 60);
+  color: white;
+}
+
 .actionButtonsRow {
   margin-top: 24px;
   padding-top: 16px;
-  border-top: 1px solid #f0f0f0;
+  border-top: 1px solid var(--border-color);
 }
 
 .cancelButtonCol {
@@ -117,13 +198,25 @@
 .cancelButton{
   border-color:  rgb(190, 0, 0) !important;
   width:110px !important;
-  /* background-color: rgb(190, 0, 0) !important; */
+  background-color: var(--bg-primary);
   color: rgb(190, 0, 0) !important;
-
+  transition: all 0.3s ease;
 }
 .cancelButton:hover{
   transform: scale(1.1);
+}
 
+/* Dark mode cancel button */
+:global([data-theme="dark"]) .cancelButton {
+  border-color: rgb(255, 120, 120) !important;
+  background-color: var(--bg-primary);
+  color: rgb(255, 120, 120) !important;
+}
+
+:global([data-theme="dark"]) .cancelButton:hover {
+  transform: scale(1.1);
+  border-color: rgb(255, 140, 140) !important;
+  color: rgb(255, 140, 140) !important;
 }
 
 .confirmButtonCol {
@@ -134,10 +227,24 @@
   border-color:  rgb(190, 0, 0) !important;
   width:110px !important;
   background-color: rgb(190, 0, 0) !important;
-
+  color: white;
+  transition: all 0.3s ease;
 }
 .confirmButton:hover{
   transform: scale(1.1);
+}
+
+/* Dark mode confirm button */
+:global([data-theme="dark"]) .confirmButton {
+  border-color: rgb(200, 60, 60) !important;
+  background-color: rgb(200, 60, 60) !important;
+  color: white;
+}
+
+:global([data-theme="dark"]) .confirmButton:hover {
+  transform: scale(1.1);
+  background-color: rgb(220, 80, 80) !important;
+  border-color: rgb(220, 80, 80) !important;
 }
 
 /*Modal*/
@@ -166,8 +273,8 @@
   color: white;
   border-color: #f72424;
   font-size:16px;
+  transition: all 0.3s ease;
 }
-
 
 .searchButton:hover{
   background-color: #f22929 !important;
@@ -175,13 +282,27 @@
   border-color: #f72424 !important;
 }
 
+/* Dark mode search button */
+:global([data-theme="dark"]) .searchButton {
+  background-color: #e63946;
+  color: white;
+  border-color: #dc2626;
+}
+
+:global([data-theme="dark"]) .searchButton:hover {
+  background-color: #ef4444 !important;
+  color: white !important;
+  border-color: #e63946 !important;
+}
+
 .ingredientsListContainer {
   max-height: 400px;
   overflow-y: auto;
   padding: 8px 0;
-  border: 1px solid #f0f0f0;
+  border: 1px solid var(--border-color);
   border-radius: 4px;
   margin-bottom: 16px;
+  background-color: var(--bg-secondary);
 }
 
 .ingredientItem {
@@ -189,12 +310,17 @@
   justify-content: space-between;
   align-items: center;
   padding: 8px 16px;
-  border-bottom: 1px solid #f0f0f0;
-  font-size: 16px ;
+  border-bottom: 1px solid var(--border-color);
+  font-size: 16px;
+  color: var(--text-primary);
 }
 
 .ingredientItem:last-child {
   border-bottom: none;
+}
+
+.ingredientItem:hover {
+  background-color: var(--bg-tertiary);
 }
 
 .ingredientNameContainer {
@@ -215,18 +341,31 @@
   margin-top: 16px;
 }
 
+.loadingContainer {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-secondary);
+}
+
+.noIngredientsMessage {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-secondary);
+}
+
 /* Selected Ingredients Display */
 .selectedIngredientsContainer {
   margin-top: 16px;
   padding: 12px;
-  background-color: #f9f9f9;
+  background-color: var(--bg-tertiary);
   border-radius: 4px;
-  border: 1px solid #e8e8e8;
+  border: 1px solid var(--border-color);
 }
 
 .selectedIngredientsTitle {
   font-weight: 600;
   margin-bottom: 8px;
+  color: var(--text-primary);
 }
 
 .selectedIngredientsList {
@@ -237,6 +376,7 @@
 
 .selectedIngredientsList li {
   padding: 4px 0;
+  color: var(--text-primary);
 }
 
 .ingredientsListContainer::-webkit-scrollbar {
@@ -248,9 +388,209 @@
   border-radius: 3px;
 }
 .ingredientsListContainer::-webkit-scrollbar-track {
-  background-color:white;
-  /* border: 1px solid black; */
-  
+  background-color: var(--bg-primary);
+}
+
+/* Dark mode scrollbar improvements */
+:global([data-theme="dark"]) .ingredientsListContainer::-webkit-scrollbar-thumb {
+  background-color: var(--text-tertiary);
+  border-radius: 3px;
+}
+
+:global([data-theme="dark"]) .ingredientsListContainer::-webkit-scrollbar-thumb:hover {
+  background-color: var(--text-secondary);
+}
+
+:global([data-theme="dark"]) .ingredientsListContainer::-webkit-scrollbar-track {
+  background-color: var(--bg-primary);
+}
+
+/* Dark mode specific improvements */
+.ingredientItem:hover {
+  background-color: var(--bg-tertiary);
+}
+
+.imagePlaceholder[style*="background-image"] {
+  border-color: var(--border-color) !important;
+}
+
+/* Dark mode icon color improvements */
+.uploadHint :global(.anticon) {
+  color: var(--text-secondary) !important;
+}
+
+/* Additional dark mode improvements for inputs and form elements */
+:global([data-theme="dark"]) .ingredientsSearchInput {
+  background-color: var(--bg-secondary);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+:global([data-theme="dark"]) .ingredientsSearchInput:focus {
+  background-color: var(--bg-secondary);
+  border-color: var(--accent);
+  color: var(--text-primary);
+}
+
+:global([data-theme="dark"]) .ingredientsModal :global(.ant-modal-content) {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+:global([data-theme="dark"]) .ingredientsModal :global(.ant-modal-header) {
+  background-color: var(--bg-secondary);
+  border-bottom-color: var(--border-color);
+}
+
+:global([data-theme="dark"]) .ingredientsModal :global(.ant-modal-title) {
+  color: var(--text-primary);
+}
+
+:global([data-theme="dark"]) .ingredientsModal :global(.ant-modal-close-x) {
+  color: var(--text-primary);
+}
+
+/* Dark mode for form inputs */
+:global([data-theme="dark"]) .pageContainer :global(.ant-input) {
+  background-color: var(--bg-secondary);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+:global([data-theme="dark"]) .pageContainer :global(.ant-input:focus) {
+  background-color: var(--bg-secondary);
+  border-color: var(--accent);
+  color: var(--text-primary);
+}
+
+:global([data-theme="dark"]) .pageContainer :global(.ant-select-selector) {
+  background-color: var(--bg-secondary) !important;
+  border-color: var(--border-color) !important;
+  color: var(--text-primary) !important;
+}
+
+:global([data-theme="dark"]) .pageContainer :global(.ant-select-selection-item) {
+  color: var(--text-primary) !important;
+}
+
+:global([data-theme="dark"]) .pageContainer :global(.ant-checkbox-wrapper) {
+  color: var(--text-primary);
+}
+
+:global([data-theme="dark"]) .pageContainer :global(.ant-checkbox-inner) {
+  background-color: var(--bg-secondary);
+  border-color: var(--border-color);
+}
+
+/* Additional dark mode text color improvements */
+:global([data-theme="dark"]) .pageContainer :global(.ant-form-item-label) {
+  color: var(--text-primary) !important;
+}
+
+:global([data-theme="dark"]) .pageContainer :global(.ant-form-item-label > label) {
+  color: var(--text-primary) !important;
+}
+
+:global([data-theme="dark"]) .pageContainer :global(.ant-typography) {
+  color: var(--text-primary) !important;
+}
+
+:global([data-theme="dark"]) .pageContainer :global(.ant-select-selection-placeholder) {
+  color: var(--text-secondary) !important;
+}
+
+:global([data-theme="dark"]) .pageContainer :global(.ant-input::placeholder) {
+  color: var(--text-secondary) !important;
+}
+
+:global([data-theme="dark"]) .pageContainer :global(.ant-select-arrow) {
+  color: var(--text-secondary) !important;
+}
+
+:global([data-theme="dark"]) .pageContainer :global(.ant-form-item-explain) {
+  color: var(--text-secondary) !important;
+}
+
+:global([data-theme="dark"]) .pageContainer :global(.ant-form-item-explain-error) {
+  color: var(--error) !important;
+}
+
+:global([data-theme="dark"]) .uploadHint {
+  color: var(--text-secondary) !important;
+}
+
+:global([data-theme="dark"]) .uploadHint p {
+  color: var(--text-secondary) !important;
+}
+
+:global([data-theme="dark"]) .selectedIngredientsTitle {
+  color: var(--text-primary) !important;
+}
+
+:global([data-theme="dark"]) .selectedIngredientsList li {
+  color: var(--text-primary) !important;
+}
+
+:global([data-theme="dark"]) .loadingContainer {
+  color: var(--text-secondary) !important;
+}
+
+:global([data-theme="dark"]) .loadingContainer p {
+  color: var(--text-secondary) !important;
+}
+
+:global([data-theme="dark"]) .noIngredientsMessage {
+  color: var(--text-secondary) !important;
+}
+
+/* Dark mode for category dropdown menu */
+:global([data-theme="dark"]) .pageContainer :global(.ant-select-dropdown) {
+  background-color: var(--bg-secondary) !important;
+  border-color: var(--border-color) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
+}
+
+:global([data-theme="dark"]) .pageContainer :global(.ant-select-item) {
+  background-color: var(--bg-secondary) !important;
+  color: var(--text-primary) !important;
+}
+
+:global([data-theme="dark"]) .pageContainer :global(.ant-select-item:hover) {
+  background-color: var(--bg-tertiary) !important;
+  color: var(--text-primary) !important;
+}
+
+:global([data-theme="dark"]) .pageContainer :global(.ant-select-item-option-selected) {
+  background-color: var(--accent) !important;
+  color: white !important;
+}
+
+:global([data-theme="dark"]) .pageContainer :global(.ant-select-item-option-active) {
+  background-color: var(--bg-tertiary) !important;
+  color: var(--text-primary) !important;
+}
+
+:global([data-theme="dark"]) .pageContainer :global(.ant-select-selection-item-remove) {
+  color: var(--text-secondary) !important;
+}
+
+:global([data-theme="dark"]) .pageContainer :global(.ant-select-selection-item-remove:hover) {
+  color: var(--text-primary) !important;
+}
+
+:global([data-theme="dark"]) .pageContainer :global(.ant-select-multiple .ant-select-selection-item) {
+  background-color: var(--bg-tertiary) !important;
+  border-color: var(--border-color) !important;
+  color: var(--text-primary) !important;
+}
+
+:global([data-theme="dark"]) .pageContainer :global(.ant-select-clear) {
+  background-color: var(--bg-secondary) !important;
+  color: var(--text-secondary) !important;
+}
+
+:global([data-theme="dark"]) .pageContainer :global(.ant-select-clear:hover) {
+  color: var(--text-primary) !important;
 }
 
 /* Responsive adjustments */

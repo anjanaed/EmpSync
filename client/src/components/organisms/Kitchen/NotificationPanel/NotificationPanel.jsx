@@ -3,6 +3,7 @@ import { Button } from "antd";
 import { CloseOutlined, CalendarOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { useNotifications } from "../../../../contexts/NotificationsContext";
+import { useTheme } from "../../../../contexts/ThemeContext";
 import styles from "./NotificationPanel.module.css";
 
 const NotificationPanel = () => {
@@ -14,6 +15,7 @@ const NotificationPanel = () => {
     handleNotificationAction,
   } = useNotifications();
 
+  const { theme } = useTheme();
   const navigate = useNavigate();
 
   if (!showNotifications) return null;
