@@ -30,6 +30,7 @@ const Page2 = ({
   const [fingerprintUnitName, setFingerprintUnitName] = useState("");
   const [serialReader, setSerialReader] = useState(null);
   const [serialReadingActive, setSerialReadingActive] = useState(false);
+  const [showFingerprintPopup, setShowFingerprintPopup] = useState(false);
 
   // Sync selectedLanguage with language prop
   useEffect(() => {
@@ -347,6 +348,33 @@ const Page2 = ({
     </Menu>
   );
 
+  // Handle opening fingerprint popup
+  const handleOpenFingerprintPopup = () => {
+    setShowFingerprintPopup(true);
+  };
+
+  // Handle closing fingerprint popup
+  const handleCloseFingerprintPopup = () => {
+    setShowFingerprintPopup(false);
+  };
+
+  // Handle ESC key to close popup
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape' && showFingerprintPopup) {
+        handleCloseFingerprintPopup();
+      }
+    };
+
+    if (showFingerprintPopup) {
+      document.addEventListener('keydown', handleKeyDown);
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [showFingerprintPopup]);
+
   // Handle manual cleanup of unregistered fingerprints
   const handleCleanupUnregisteredFingerprints = async () => {
     if (!fingerprintConnected || !window.fingerprintSerialPort) {
@@ -521,15 +549,14 @@ const Page2 = ({
         </div>
         <div className={styles.buttonRowContainer}>
           <div className={styles.leftButtonCorner}>
-            {!fingerprintConnected && (
+            {!fingerprintConnected ? (
               <button
                 className={styles.connectFingerprintButton}
-                onClick={handleConnectFingerprint}
+                onClick={handleOpenFingerprintPopup}
               >
                 Connect FingerPrint
               </button>
-            )}
-            {fingerprintConnected && (
+            ) : (
               <div style={{ fontWeight: "bold", color: "#4CAF50", marginTop: 8 }}>
                 UNIT NAME: {fingerprintUnitName}
               </div>
@@ -540,15 +567,6 @@ const Page2 = ({
             >
               New User Register
             </button>
-            {fingerprintConnected && (
-              <button
-                className={styles.registerButton}
-                onClick={handleCleanupUnregisteredFingerprints}
-                style={{ backgroundColor: "#ff9800", marginTop: "10px" }}
-              >
-                Cleanup R307 Storage
-              </button>
-            )}
           </div>
           <div className={styles.backButtonContainer}>
             <button
@@ -569,6 +587,56 @@ const Page2 = ({
           </div>
         </div>
       </div>
+      
+      {/* Fingerprint Connection Popup */}
+      {showFingerprintPopup && (
+        <div 
+          className={styles.popupOverlay}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              handleCloseFingerprintPopup();
+            }
+          }}
+        >
+          <div className={styles.popupContent}>
+            <h3 style={{ marginBottom: "20px", textAlign: "center", color: "#333" }}>Fingerprint Options</h3>
+            <div className={styles.popupButtons}>
+              <button
+                className={styles.popupButton}
+                onClick={async () => {
+                  await handleConnectFingerprint();
+                }}
+                style={{ backgroundColor: "#4CAF50", color: "white" }}
+              >
+                Connect FingerPrint Unit
+              </button>
+              <button
+                className={styles.popupButton}
+                onClick={async () => {
+                  handleCloseFingerprintPopup();
+                  await handleCleanupUnregisteredFingerprints();
+                }}
+                disabled={!fingerprintConnected}
+                style={{ 
+                  backgroundColor: fingerprintConnected ? "#ff9800" : "#cccccc",
+                  color: fingerprintConnected ? "white" : "#666666",
+                  cursor: fingerprintConnected ? "pointer" : "not-allowed"
+                }}
+                title={!fingerprintConnected ? "Connect to a fingerprint unit first" : "Clean up unregistered fingerprints from R307 storage"}
+              >
+                Cleanup R307 Storage
+              </button>
+            </div>
+            <button
+              className={styles.popupCloseButton}
+              onClick={handleCloseFingerprintPopup}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+      
       {errorMessage && <div className={styles.errorPopup}>{errorMessage}</div>}
     </Spin>
   );
