@@ -23,7 +23,7 @@ export class IndiAdjustmentController {
 
   @Post()
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles('HR_ADMIN')
+  @Roles('HR_ADMIN','KITCHEN_ADMIN')
   async create(@Body() dto: Prisma.IndividualSalaryAdjustmentsCreateInput) {
     try {
       return await this.IndiAdjustmentService.create(dto);
@@ -41,7 +41,7 @@ export class IndiAdjustmentController {
 
   @Get()
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles('HR_ADMIN')
+  @Roles('HR_ADMIN','KITCHEN_ADMIN')
   async findAll(@Query('search') search?: string,@Query('orgId') orgId?: string) {
     try {
       return await this.IndiAdjustmentService.findAll(search,orgId);
@@ -59,7 +59,7 @@ export class IndiAdjustmentController {
 
   @Get(':id')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles('HR_ADMIN')
+  @Roles('HR_ADMIN','KITCHEN_ADMIN')
   async findOne(@Param('id') id: number) {
     try {
       const adjust = await this.IndiAdjustmentService.findOne(id);
@@ -81,7 +81,7 @@ export class IndiAdjustmentController {
 
   @Put(':id')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles('HR_ADMIN')
+  @Roles('HR_ADMIN','KITCHEN_ADMIN')
   async update(
     @Param('id') id: number,
     @Body() dto: Prisma.IndividualSalaryAdjustmentsUpdateInput,
@@ -102,7 +102,7 @@ export class IndiAdjustmentController {
 
   @Delete(':id')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles('HR_ADMIN')
+  @Roles('HR_ADMIN','KITCHEN_ADMIN')
   async remove(@Param('id') id: string) {
     try {
       return await this.IndiAdjustmentService.remove(id);
