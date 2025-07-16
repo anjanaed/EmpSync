@@ -13,47 +13,6 @@ import { debounce } from "lodash";
 import { usePopup } from "../../../../contexts/PopupContext";
 import { useTheme } from "../../../../contexts/ThemeContext";
 
-// Theme configurations moved to CSS module
-const getCustomTheme = () => ({
-  components: {
-    Table: {
-      headerBg: "#960000",
-      headerColor: "#ffffff",
-      headerSortActiveBg: "#960000",
-      headerSortHoverBg: "#7a0000",
-      borderColor: "#960000",
-      fontSize: 12,
-      cellPaddingBlock: 12,
-      fontFamily: '"Figtree", sans-serif',
-    },
-  },
-});
-
-const getDarkTheme = () => ({
-  components: {
-    Table: {
-      headerBg: "#ff0000",
-      headerColor: "#ffffff",
-      headerSortActiveBg: "#ff0000",
-      headerSortHoverBg: "#cc0000",
-      borderColor: "#ff0000",
-      fontSize: 12,
-      cellPaddingBlock: 12,
-      fontFamily: '"Figtree", sans-serif',
-      colorBgContainer: "#303030",
-      colorText: "#ffffff",
-      rowHoverBg: "#ff6b6b",
-      colorBorder: "#404040",
-    },
-    Pagination: {
-      colorBgContainer: "#303030",
-      colorText: "#ffffff",
-      colorBorder: "#404040",
-      itemActiveBg: "#404040",
-    },
-  },
-});
-
 const roleMap = {
   KITCHEN_ADMIN: "Kitchen Administrator",
   KITCHEN_STAFF: "Kitchen Staff",
@@ -250,11 +209,7 @@ const Employees = () => {
         footer={null}
         width="66vw"
         onCancel={handleCancel}
-        styles={{
-          mask: {
-            backdropFilter: "blur(12px)",
-          },
-        }}
+        className={styles.modalMask}
       >
         <EditModal
           empId={selectedEmployee}
@@ -302,7 +257,7 @@ const Employees = () => {
               />
             </div>
           </div>
-          <ConfigProvider theme={theme === 'dark' ? getDarkTheme() : getCustomTheme()}>
+          <ConfigProvider>
             <div className={styles.contentBox}>
               <Table
                 columns={columns}

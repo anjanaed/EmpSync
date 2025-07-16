@@ -1,22 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Itim&family=Roboto+Slab:wght@100..900&display=swap");
 
-/* Custom color variables for easy customization */
-:root {
-  --primary-red: #960000;
-  --primary-red-light: #7a0000;
-  --primary-red-dark: #ff0000;
-  --primary-red-hover: #ff6b6b;
-  --white: #ffffff;
-  --light-gray: #f9f9f9;
-  --medium-gray: #f5f5f5;
-  --dark-gray: #2a2a2a;
-  --darker-gray: #353535;
-  --text-dark: #333333;
-  --border-light: #e8e8e8;
-  --border-dark: #404040;
-  --hover-light: #f0f8ff;
-}
-
 /* Theme configurations for Ant Design Table */
 .customTheme {
   --table-header-bg: #960000;
@@ -79,52 +62,11 @@
   font-weight: bold !important;
 }
 
-/* Custom table row styles */
-.customTableRow {
-  background-color: #ffffff;
-  transition: all 0.3s ease;
-}
-
-.customTableRow:hover {
-  background-color: #f5f5f5 !important;
-  transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-}
-
-.customTableRowDark {
-  background-color: #2a2a2a;
-  color: #ffffff;
-  transition: all 0.3s ease;
-}
-
-.customTableRowDark:hover {
-  background-color: #ff6b6b !important;
-  transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(255, 0, 0, 0.25);
-}
-
-/* Alternating row colors */
-.customTableRow:nth-child(even) {
-  background-color: #f9f9f9;
-}
-
-.customTableRowDark:nth-child(even) {
-  background-color: #353535;
-}
-
 .home {
   display: flex;
   flex-direction: row;
   width: 100%;
-}
-
-.empty {
-  font-weight: 650;
-  font-size: 1vw;
-}
-
-.homeNav {
-  flex: 1;
+  background-color: var(--bg-secondary);
 }
 
 .homeContent {
@@ -134,10 +76,6 @@
   display: flex;
   flex-direction: column;
   overflow-y: auto;
-}
-
-:global(.ant-select-selector) {
-  border: 1px solid !important;
 }
 
 .homeHead {
@@ -153,6 +91,7 @@
   font-weight: 600;
   margin: auto 0;
 }
+
 .headRight {
   margin-left: auto;
   display: flex;
@@ -163,24 +102,6 @@
   margin-left: 1.5vw;
 }
 
-.searchBar {
-  margin-right: 1vw;
-  width: 20vw;
-}
-
-
-.headRight select {
-  font-size: 1vw;
-  padding: 9px;
-  width: 120px;
-  text-align: center;
-  border-radius: 10px;
-  border: 2px solid;
-}
-
-.empty {
-  padding: 3vw;
-}
 .icons {
   margin: 0vw 0.5vw;
   cursor: pointer;
@@ -189,10 +110,6 @@
 
 .icons:hover {
   transform: scale(1.2);
-}
-
-.headRight select {
-  margin: 5px;
 }
 
 .contentBox {
@@ -204,142 +121,70 @@
   overflow-y: auto;
 }
 
-Table {
-  margin-top: 1vw;
-}
-
-/* Employee table header styles - scoped to this component only */
-.contentBox :global(.ant-table-thead > tr > th),
-.contentBox :global(.ant-table-thead > tr > th:hover),
-.contentBox :global(.ant-table-thead > tr > th.ant-table-column-has-sorters),
-.contentBox :global(.ant-table-thead > tr > th.ant-table-column-has-sorters:hover),
-.contentBox :global(.ant-table-thead > tr > th.ant-table-column-sort),
-.contentBox :global(.ant-table-thead > tr > th.ant-table-selection-column),
-.contentBox :global(.ant-table-thead > tr > th:first-child),
-.contentBox :global(.ant-table-thead > tr > th:last-child),
-.contentBox :global(.ant-table thead th),
-.contentBox :global(.ant-table .ant-table-thead > tr > th) {
+/* Custom table styling for light theme */
+.home :global(.ant-table-thead > tr > th) {
   background-color: #960000 !important;
   color: #ffffff !important;
   font-weight: bold !important;
   text-align: center !important;
-  font-size: 14px !important;
+  font-size: 12px !important;
+  font-family: "Figtree", sans-serif !important;
+  border-color: #960000 !important;
 }
 
-/* Dark theme table headers */
-.home.dark .contentBox :global(.ant-table-thead > tr > th),
-.home.dark .contentBox :global(.ant-table-thead > tr > th:hover),
-.home.dark .contentBox :global(.ant-table-thead > tr > th.ant-table-column-has-sorters),
-.home.dark .contentBox :global(.ant-table-thead > tr > th.ant-table-column-has-sorters:hover),
-.home.dark .contentBox :global(.ant-table-thead > tr > th.ant-table-column-sort),
-.home.dark .contentBox :global(.ant-table-thead > tr > th.ant-table-selection-column),
-.home.dark .contentBox :global(.ant-table-thead > tr > th:first-child),
-.home.dark .contentBox :global(.ant-table-thead > tr > th:last-child),
-.home.dark .contentBox :global(.ant-table thead th),
-.home.dark .contentBox :global(.ant-table .ant-table-thead > tr > th) {
-  background-color: #ff0000 !important;
+.home :global(.ant-table-thead > tr > th:hover) {
+  background-color: #7a0000 !important;
+}
+
+/* Dark theme table styling */
+.home.dark :global(.ant-table-thead > tr > th) {
+  background-color: var(--bg-tertiary) !important;
   color: #ffffff !important;
   font-weight: bold !important;
-  border-bottom: 1px solid #ffffff !important;
-  border-top: 1px solid #ffffff !important;
-  border-left: 1px solid #ffffff !important;
-  border-right: 1px solid #ffffff !important;
   text-align: center !important;
-  font-size: 14px !important;
+  font-size: 12px !important;
+  font-family: "Figtree", sans-serif !important;
+  border-color: var(--bg-tertiary) !important;
 }
 
-/* Dark theme table header hover effects */
-.home.dark .contentBox :global(.ant-table-thead > tr > th:hover),
-.home.dark .contentBox :global(.ant-table-thead > tr > th.ant-table-column-has-sorters:hover) {
-  background-color: #cc0000 !important;
-  transition: background-color 0.3s ease !important;
+.home.dark :global(.ant-table-thead > tr > th:hover) {
+  background-color: #404040 !important;
 }
 
-/* Dark theme table container */
-.home.dark .contentBox :global(.ant-table) {
-  background-color: #1a1a1a !important;
-  border: 1px solid #404040 !important;
+.home.dark :global(.ant-table) {
+  background-color: #303030 !important;
+  color: #ffffff !important;
 }
 
-.home.dark .contentBox :global(.ant-table-container) {
-  background-color: #1a1a1a !important;
+.home.dark :global(.ant-table-tbody > tr) {
+  background-color: #303030 !important;
+  color: #ffffff !important;
 }
 
-.home.dark .contentBox :global(.ant-table-content) {
-  background-color: #1a1a1a !important;
+.home.dark :global(.ant-table-tbody > tr:hover) {
+  background-color: #ff6b6b !important;
 }
 
-/* Table body row styles */
-.contentBox :global(.ant-table-tbody > tr) {
-  background-color: #ffffff !important;
-  transition: all 0.3s ease !important;
-}
-
-.contentBox :global(.ant-table-tbody > tr:hover) {
-  background-color: #ebe8eb !important;
-  transform: translateY(-1px) !important;
-}
-
-.contentBox :global(.ant-table-tbody > tr:nth-child(even)) {
-  background-color: #f9f9f9 !important;
-}
-
-
-
-/* Table cell text colors */
-.contentBox :global(.ant-table-tbody > tr > td) {
-  color: #333333 !important;
-  border-bottom: 1px solid #e8e8e8 !important;
-  font-size: 13px !important;
-}
-
-/* Dark mode pagination styles */
-.home.dark .contentBox :global(.ant-pagination) {
+.home.dark :global(.ant-pagination) {
   background-color: transparent !important;
 }
 
-.home.dark .contentBox :global(.ant-pagination .ant-pagination-item) {
+.home.dark :global(.ant-pagination .ant-pagination-item) {
   background-color: #303030 !important;
   border-color: #404040 !important;
-}
-
-.home.dark .contentBox :global(.ant-pagination .ant-pagination-item a) {
   color: #ffffff !important;
 }
 
-.home.dark .contentBox :global(.ant-pagination .ant-pagination-item:hover) {
+.home.dark :global(.ant-pagination .ant-pagination-item:hover) {
   border-color: #ff0000 !important;
 }
 
-.home.dark .contentBox :global(.ant-pagination .ant-pagination-item:hover a) {
-  color: #ff0000 !important;
-}
-
-.home.dark .contentBox :global(.ant-pagination .ant-pagination-item-active) {
+.home.dark :global(.ant-pagination .ant-pagination-item-active) {
   background-color: #404040 !important;
   border-color: #ff0000 !important;
 }
 
-.home.dark .contentBox :global(.ant-pagination .ant-pagination-item-active a) {
-  color: #ff0000 !important;
-}
-
-.home.dark .contentBox :global(.ant-pagination .ant-pagination-prev),
-.home.dark .contentBox :global(.ant-pagination .ant-pagination-next) {
-  color: #ffffff !important;
-}
-
-.home.dark .contentBox :global(.ant-pagination .ant-pagination-prev:hover),
-.home.dark .contentBox :global(.ant-pagination .ant-pagination-next:hover) {
-  color: #ff0000 !important;
-}
-
-.home.dark .contentBox :global(.ant-pagination .ant-pagination-total-text) {
-  color: #ffffff !important;
-}
-
 @media(max-width:768px){
-
   .headLeft{
     font-size: 15px;
   }
