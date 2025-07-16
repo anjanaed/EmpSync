@@ -80,6 +80,13 @@ const AnalysisDashboard = () => {
     },
     {
       key: "3",
+      label: "FingerPrints",
+      action: "User Management",
+      icon: <FontAwesomeIcon icon={faFingerprint} />,
+      link: "/FingerPrints",
+    },
+    {
+      key: "4",
       label: "Payrolls",
       action: "Payroll",
       icon: <FontAwesomeIcon icon={faDollarSign} />,
@@ -87,32 +94,25 @@ const AnalysisDashboard = () => {
     },
     {
       key: "5",
-      label: "FingerPrints",
-      action: "User Management",
-      icon: <FontAwesomeIcon icon={faFingerprint} />,
-      link: "/FingerPrints",
-    },
-    {
-      key: "6",
       label: "Schedule",
       action: "Meal Management",
       icon: <FontAwesomeIcon icon={faCalendar} />,
       link: "/kitchen-admin",
     },
     {
-      key: "7",
+      key: "6",
       label: "Meal",
       action: "Meal Management",
       icon: <FontAwesomeIcon icon={faBowlFood} />,
       link: "/kitchen-meal",
     },
     {
-      key: "8",
+      key: "7",
       label: "Reports & Analysis",
       action: "Reports",
       icon: <FontAwesomeIcon icon={faChartLine} />,
       link: "/kitchen-report",
-    },
+    }, 
   ];
 
   // Create notification menu item
