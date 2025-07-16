@@ -34,7 +34,7 @@ export class PayrollController {
 
   @Post('calculate-all')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles('HR_ADMIN')
+  @Roles('HR_ADMIN','KITCHEN_ADMIN')
   async generatePayrollsForAll(
     @Body() dto: Prisma.PayrollCreateInput,
     @Query('orgId') orgId: string,
@@ -54,7 +54,7 @@ export class PayrollController {
 
   @Get()
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles('HR_ADMIN')
+  @Roles('HR_ADMIN','KITCHEN_ADMIN')
   async findAll(@Query('search') search?: string,@Query('orgId') orgId?: string) {
     try {
       return await this.payrollService.findAll(search, orgId);
@@ -72,7 +72,7 @@ export class PayrollController {
 
   @Get(':empId/:month')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles('HR_ADMIN')
+  @Roles('HR_ADMIN','KITCHEN_ADMIN')
   async findOne(@Param('empId') empId: string, @Param('month') month: string) {
     try {
       const payroll = await this.payrollService.findOne(empId, month);
@@ -94,7 +94,7 @@ export class PayrollController {
 
   @Put(':id')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles('HR_ADMIN')
+  @Roles('HR_ADMIN','KITCHEN_ADMIN')
   async update(
     @Param('id') id: number,
     @Body() dto: Prisma.PayrollUpdateInput,
@@ -115,7 +115,7 @@ export class PayrollController {
 
   @Delete(':id')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles('HR_ADMIN')
+  @Roles('HR_ADMIN','KITCHEN_ADMIN')
   async remove(@Param('id') id: number) {
     try {
       return await this.payrollService.remove(id);
@@ -133,7 +133,7 @@ export class PayrollController {
 
 @Delete('delete-by-month/:month')
 @UseGuards(AuthGuard('jwt'), RolesGuard)
-@Roles('HR_ADMIN')
+@Roles('HR_ADMIN','KITCHEN_ADMIN')
 async deletePayrollsByMonth(
   @Param('month') month: string,
   @Query('orgId') orgId: string // <-- add this
@@ -154,7 +154,7 @@ async deletePayrollsByMonth(
 
   @Post('upload-pdf/:employeeId')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles('HR_ADMIN')
+  @Roles('HR_ADMIN','KITCHEN_ADMIN')
   @UseInterceptors(FileInterceptor('file'))
   async uploadPayrollPdf(
     @Param('employeeId') employeeId: string,
@@ -209,7 +209,7 @@ async deletePayrollsByMonth(
   //For HR Portal Usage
   @Get('geturl/as-hr/:empid/:month/:mode')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles('HR_ADMIN')
+  @Roles('HR_ADMIN','KITCHEN_ADMIN')
   async getSignedUrlForHR(
     @Param('empid') empId: string,
     @Param('month') month: string,
@@ -247,7 +247,7 @@ async deletePayrollsByMonth(
 
   @Delete('delete-by-month/:empid/:month')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles('HR_ADMIN')
+  @Roles('HR_ADMIN','KITCHEN_ADMIN')
   async deletePayrollAndFileByMonth(
     @Param('empid') empId: string,
     @Param('month') month: string,

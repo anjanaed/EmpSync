@@ -268,6 +268,19 @@
   border-color: #d32f2f;
 }
 
+/* Ensure update button maintains red color in dark mode */
+[data-theme="dark"] .updateBtn {
+  background-color: rgb(224, 0, 0) !important;
+  border-color: rgb(224, 0, 0) !important;
+  color: white !important;
+}
+
+[data-theme="dark"] .updateBtn:hover {
+  background-color: rgba(224, 0, 0, 0.8) !important;
+  border-color: rgba(224, 0, 0, 0.8) !important;
+  color: white !important;
+}
+
 
 .mealCheckbox :global(.ant-checkbox-inner) {
   border-radius: 2px;
@@ -512,6 +525,202 @@
 .mealName {
   flex: 1;
   font-size: 14px;
+}
+
+/* Dark mode overrides for backgrounds and containers */
+[data-theme="dark"] .container {
+  background-color: var(--bg-secondary) !important;
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.12) !important;
+}
+
+[data-theme="dark"] .header {
+  border-bottom-color: var(--border-color) !important;
+}
+
+[data-theme="dark"] .title {
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .mealTypeSelection {
+  border-bottom-color: var(--border-color) !important;
+}
+
+[data-theme="dark"] .mealItems {
+  background-color: var(--bg-secondary) !important;
+  border-color: var(--border-color) !important;
+}
+
+[data-theme="dark"] .mealItems:hover {
+  box-shadow: 0 2px 8px rgba(255, 255, 255, 0.08) !important;
+}
+
+[data-theme="dark"] .timePickerSeparator {
+  color: var(--text-secondary) !important;
+}
+
+[data-theme="dark"] .addMealBtn {
+  color: rgb(255, 255, 255) !important;
+  background-color: rgb(0, 81, 255) !important;
+  border-color: rgb(0, 52, 224) !important;
+}
+
+[data-theme="dark"] .addMealBtn:hover {
+  background-color: rgba(224, 0, 0, 0.1) !important;
+  border-color: rgb(224, 0, 0) !important;
+}
+
+[data-theme="dark"] .contentArea {
+  background-color: var(--bg-secondary) !important;
+  border-color: var(--border-color) !important;
+}
+
+[data-theme="dark"] .mealTabs :global(.ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn) {
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .menuItem {
+  border-bottom-color: var(--border-color) !important;
+}
+
+[data-theme="dark"] .menuItem:hover {
+  background-color: var(--bg-tertiary) !important;
+}
+
+[data-theme="dark"] .removeBtn {
+  color: var(--text-tertiary) !important;
+}
+
+[data-theme="dark"] .removeBtn:hover {
+  color: rgb(224, 0, 0) !important;
+  background-color: rgba(224, 0, 0, 0.1) !important;
+}
+
+[data-theme="dark"] .mealName {
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .loadingContainer p {
+  color: var(--text-secondary) !important;
+}
+
+[data-theme="dark"] .modalFooter {
+  background-color: var(--bg-secondary) !important;
+  border-top-color: var(--border-color) !important;
+}
+
+[data-theme="dark"] .cancelButton:hover {
+  border-color: var(--border-color) !important;
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .simpleMealsContainer {
+  background-color: var(--bg-primary) !important;
+  border-color: var(--border-color) !important;
+}
+
+[data-theme="dark"] .simpleMealItem {
+  color: var(--text-primary) !important;
+  background-color: var(--bg-primary) !important;
+  border-bottom-color: var(--border-color) !important;
+}
+
+[data-theme="dark"] .simpleMealItem:hover {
+  background-color: var(--bg-tertiary) !important;
+}
+
+[data-theme="dark"] .mealAvatar {
+  border-color: var(--border-color) !important;
+}
+
+[data-theme="dark"] .searchContainer {
+  background-color: var(--bg-primary) !important;
+  border-bottom-color: var(--border-color) !important;
+}
+
+[data-theme="dark"] .mealsContainer {
+  background-color: var(--bg-primary) !important;
+}
+
+[data-theme="dark"] .mealItem:hover {
+  background-color: var(--bg-tertiary) !important;
+}
+
+[data-theme="dark"] .modalSectionTitle {
+  color: var(--text-primary) !important;
+  background-color: var(--bg-secondary) !important;
+  border-bottom-color: var(--border-color) !important;
+}
+
+/* Dark mode overrides for red elements */
+[data-theme="dark"] .tomorrowBtn {
+  color: var(--text-primary) !important;
+  border-color: var(--border-color) !important;
+}
+
+[data-theme="dark"] .tomorrowBtn:hover {
+  background-color: var(--bg-tertiary) !important;
+  border-color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .datePicker {
+  border-color: rgb(224, 0, 0) !important;
+}
+
+[data-theme="dark"] .datePicker :global(.ant-picker-input > input) {
+  color: rgb(224, 0, 0) !important;
+}
+
+[data-theme="dark"] .calendarIcon {
+  color: rgb(224, 0, 0) !important;
+}
+
+[data-theme="dark"] .deleteMealBtn {
+  color: rgb(224, 0, 0) !important;
+}
+
+[data-theme="dark"] .deleteMealBtn:hover {
+  background-color: rgba(224, 0, 0, 0.1) !important;
+}
+
+[data-theme="dark"] .showTimeBtn {
+  color: rgb(224, 0, 0) !important;
+  background-color: rgba(224, 0, 0, 0.05) !important;
+  border-color: rgba(224, 0, 0, 0.2) !important;
+}
+
+[data-theme="dark"] .showTimeBtn:hover {
+  background-color: rgba(224, 0, 0, 0.1) !important;
+}
+
+[data-theme="dark"] .searchInput:hover,
+[data-theme="dark"] .searchInput:focus {
+  border-color: rgb(224, 0, 0) !important;
+  box-shadow: 0 0 0 2px rgba(224, 0, 0, 0.1) !important;
+}
+
+[data-theme="dark"] .updateModalBtn {
+  background-color: rgb(224, 0, 0) !important;
+  border-color: rgb(224, 0, 0) !important;
+  color: white !important;
+  box-shadow: 0 2px 6px rgba(224, 0, 0, 0.3) !important;
+}
+
+[data-theme="dark"] .updateModalBtn:hover {
+  background-color: rgba(224, 0, 0, 0.8) !important;
+  border-color: rgba(224, 0, 0, 0.8) !important;
+}
+
+[data-theme="dark"] .mealCheckbox :global(.ant-checkbox-checked .ant-checkbox-inner) {
+  background-color: rgb(224, 0, 0) !important;
+  border-color: rgb(224, 0, 0) !important;
+}
+
+[data-theme="dark"] .noMealsMessage {
+  color: white !important;
+}
+
+[data-theme="dark"] .noMealsMessage :global(.ant-empty-description) {
+  color: white !important;
 }
 
 

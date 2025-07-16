@@ -19,6 +19,11 @@
   font-family: "Roboto Slab", serif;
 }
 
+/* Dark mode style for title */
+[data-theme="dark"] .title {
+  color: #ffffff !important;
+}
+
 .subtitle {
   color: #6c757d;
   font-size: 16px;
@@ -62,13 +67,42 @@
 .redButton {
   background-color: rgb(224, 0, 0) !important;
   border-color: rgb(224, 0, 0) !important;
-  color: white;
+  color: white !important;
+  transition: all 0.3s ease;
 }
 
 .redButton:hover {
   background-color: rgba(224, 0, 0, 0.8) !important;
   border-color: rgba(224, 0, 0, 0.8) !important;
   color: white !important;
+  transform: scale(1.02);
+}
+
+.redButton:focus {
+  background-color: rgb(224, 0, 0) !important;
+  border-color: rgb(224, 0, 0) !important;
+  color: white !important;
+  box-shadow: 0 0 0 2px rgba(224, 0, 0, 0.2);
+}
+
+/* Ensure red button maintains red color in dark mode */
+[data-theme="dark"] .redButton {
+  background-color: rgb(224, 0, 0) !important;
+  border-color: rgb(224, 0, 0) !important;
+  color: white !important;
+}
+
+[data-theme="dark"] .redButton:hover {
+  background-color: rgba(224, 0, 0, 0.8) !important;
+  border-color: rgba(224, 0, 0, 0.8) !important;
+  color: white !important;
+}
+
+[data-theme="dark"] .redButton:focus {
+  background-color: rgb(224, 0, 0) !important;
+  border-color: rgb(224, 0, 0) !important;
+  color: white !important;
+  box-shadow: 0 0 0 2px rgba(224, 0, 0, 0.2);
 }
 
 .card {
@@ -79,6 +113,15 @@
 
 .card:hover {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Dark mode styles for card */
+[data-theme="dark"] .card {
+  background-color: #343535 !important;
+}
+
+[data-theme="dark"] .card:hover {
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
 }
 
 .categoryTag {
@@ -170,6 +213,20 @@
   color: #333;
 }
 
+/* Dark mode styles for meal text */
+[data-theme="dark"] .mealTitle {
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .mealDetails {
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .idValue,
+[data-theme="dark"] .priceValue {
+  color: #ffffff !important;
+}
+
 .ingredientsLink {
   cursor: pointer;
   color: #1677ff;
@@ -185,6 +242,7 @@
   display: flex;
   justify-content: space-between;
   border-top: 1px solid #eee;
+  gap: 12px;
 }
 
 .card :global(.ant-card-body) {
@@ -224,6 +282,19 @@
   max-width: 400px;
 }
 
+/* Dark mode styles for empty state */
+[data-theme="dark"] .emptyTitle {
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .emptyDescription {
+  color: #d9d9d9 !important;
+}
+
+[data-theme="dark"] .emptyIcon {
+  color: #595959 !important;
+}
+
 
 
 /* Responsive styles */
@@ -251,6 +322,11 @@
 .ingredientName {
   font-weight: 300;
   color: rgba(0, 0, 0, 0.85);
+}
+
+/* Dark mode styles for ingredient name */
+[data-theme="dark"] .ingredientName {
+  color: #ffffff !important;
 }
 
 

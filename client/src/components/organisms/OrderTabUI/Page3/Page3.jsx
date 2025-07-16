@@ -307,7 +307,7 @@ const Page3 = ({
           orderDate,
           mealTypeId: mealTime,
           price: 0,
-          serve: true,
+          serve: false,
           orderPlacedTime,
         };
 

@@ -13,7 +13,8 @@ import { debounce } from "lodash";
 import { usePopup } from "../../../../contexts/PopupContext";
 import { useTheme } from "../../../../contexts/ThemeContext";
 
-const customTheme = {
+// Theme configurations moved to CSS module
+const getCustomTheme = () => ({
   components: {
     Table: {
       headerBg: "#960000",
@@ -26,9 +27,9 @@ const customTheme = {
       fontFamily: '"Figtree", sans-serif',
     },
   },
-};
+});
 
-const darkTheme = {
+const getDarkTheme = () => ({
   components: {
     Table: {
       headerBg: "#ff0000",
@@ -51,7 +52,7 @@ const darkTheme = {
       itemActiveBg: "#404040",
     },
   },
-};
+});
 
 const roleMap = {
   KITCHEN_ADMIN: "Kitchen Administrator",
@@ -121,11 +122,7 @@ const Employees = () => {
     []
   );
 
-  const modalStyles = {
-    mask: {
-      backdropFilter: "blur(12px)",
-    },
-  };
+  // Modal styles moved to CSS module
 
   const handleDelete = async (id, email) => {
     setLoading(true);
@@ -175,11 +172,7 @@ const Employees = () => {
       },
       ellipsis: true,
       onHeaderCell: () => ({
-        style: {
-          backgroundColor: '#960000',
-          color: '#ffffff',
-          fontWeight: 'bold',
-        },
+        className: styles.tableHeaderCell,
       }),
     },
     {
@@ -189,11 +182,7 @@ const Employees = () => {
       align: "center",
       ellipsis: true,
       onHeaderCell: () => ({
-        style: {
-          backgroundColor: '#960000',
-          color: '#ffffff',
-          fontWeight: 'bold',
-        },
+        className: styles.tableHeaderCell,
       }),
     },
     {
@@ -204,11 +193,7 @@ const Employees = () => {
       ellipsis: true,
       render: (role) => roleMap[role] || role,
       onHeaderCell: () => ({
-        style: {
-          backgroundColor: '#960000',
-          color: '#ffffff',
-          fontWeight: 'bold',
-        },
+        className: styles.tableHeaderCell,
       }),
     },
     {
@@ -218,11 +203,7 @@ const Employees = () => {
       align: "center",
       ellipsis: true,
       onHeaderCell: () => ({
-        style: {
-          backgroundColor: '#960000',
-          color: '#ffffff',
-          fontWeight: 'bold',
-        },
+        className: styles.tableHeaderCell,
       }),
     },
     {
@@ -238,17 +219,17 @@ const Employees = () => {
           />
           <Popconfirm
             title={
-              <span style={{ fontSize: "0.9vw" }}>Delete User {record.id}</span>
+              <span className={styles.popconfirmTitle}>Delete User {record.id}</span>
             }
             placement="bottom"
             onConfirm={() => handleDelete(record.id, record.email)}
             description={
-              <span style={{ fontStyle: "italic", fontSize: "0.8vw" }}>
+              <span className={styles.popconfirmDescription}>
                 Are You Sure to Delete
               </span>
             }
-            okText={<span style={{ fontSize: "0.8vw" }}>Yes</span>}
-            cancelText={<span style={{ fontSize: "0.8vw" }}>No</span>}
+            okText={<span className={styles.popconfirmButton}>Yes</span>}
+            cancelText={<span className={styles.popconfirmButton}>No</span>}
           >
             {" "}
             <MdOutlineDeleteOutline className={styles.icons} size="17px" />
@@ -256,11 +237,7 @@ const Employees = () => {
         </Space>
       ),
       onHeaderCell: () => ({
-        style: {
-          backgroundColor: '#960000',
-          color: '#ffffff',
-          fontWeight: 'bold',
-        },
+        className: styles.tableHeaderCell,
       }),
     },
   ];
@@ -273,7 +250,11 @@ const Employees = () => {
         footer={null}
         width="66vw"
         onCancel={handleCancel}
-        styles={modalStyles}
+        styles={{
+          mask: {
+            backdropFilter: "blur(12px)",
+          },
+        }}
       >
         <EditModal
           empId={selectedEmployee}
@@ -290,7 +271,7 @@ const Employees = () => {
               <SearchBar
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder={"Search Employee"}
-                styles={{ marginRight: "1vw" }}
+                className={styles.searchBarSpacing}
               />
 
               <Select
@@ -321,18 +302,20 @@ const Employees = () => {
               />
             </div>
           </div>
-          <ConfigProvider theme={theme === 'dark' ? darkTheme : customTheme}>
-            <Table
-              columns={columns}
-              dataSource={employee}
-              pagination={{
-                position: ["bottomCenter"],
-                pageSize: 25,
-                showTotal: (total, range) =>
-                  `${range[0]}–${range[1]} of ${total} items`,
-                showSizeChanger: false,
-              }}
-            />
+          <ConfigProvider theme={theme === 'dark' ? getDarkTheme() : getCustomTheme()}>
+            <div className={styles.contentBox}>
+              <Table
+                columns={columns}
+                dataSource={employee}
+                pagination={{
+                  position: ["bottomCenter"],
+                  pageSize: 25,
+                  showTotal: (total, range) =>
+                    `${range[0]}–${range[1]} of ${total} items`,
+                  showSizeChanger: false,
+                }}
+              />
+            </div>
           </ConfigProvider>
         </div>
       </div>

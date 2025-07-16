@@ -68,7 +68,7 @@ export class MealTypeController {
 
   @Post()
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles('KITCHEN_ADMIN')
+  @Roles('KITCHEN_ADMIN','HR_ADMIN')
   async create(
     @Body()
     body: {
@@ -94,7 +94,7 @@ export class MealTypeController {
 
   @Patch(':id/toggle-default')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles('KITCHEN_ADMIN')
+  @Roles('KITCHEN_ADMIN','HR_ADMIN')
   async toggleDefault(@Param('id', ParseIntPipe) id: number, @Query('orgId') orgId?: string) {
     try {
       return await this.mealTypeService.toggleIsDefault(id, orgId);
@@ -105,7 +105,7 @@ export class MealTypeController {
 
   @Patch('timeupdate/:id/:index')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles('KITCHEN_ADMIN')
+  @Roles('KITCHEN_ADMIN','HR_ADMIN')
   async patchTimeElement(
     @Param('id', ParseIntPipe) id: number,
     @Param('index', ParseIntPipe) index: number,
@@ -129,7 +129,7 @@ export class MealTypeController {
 
   @Patch(':id')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles('KITCHEN_ADMIN')
+  @Roles('KITCHEN_ADMIN','HR_ADMIN')
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() body: { name?: string; time?: string; isDefault?: boolean },
@@ -144,7 +144,7 @@ export class MealTypeController {
 
   @Delete(':id')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles('KITCHEN_ADMIN')
+  @Roles('KITCHEN_ADMIN','HR_ADMIN')
   async remove(@Param('id', ParseIntPipe) id: number, @Query('orgId') orgId?: string) {
     try {
       return await this.mealTypeService.remove(id, orgId);

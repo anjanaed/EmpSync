@@ -24,7 +24,7 @@ export class ScheduledMealController {
 
   @Post()
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles('KITCHEN_ADMIN')
+  @Roles('KITCHEN_ADMIN','HR_ADMIN')
   async create(
     @Body() body: { date: string; mealTypeId: number; mealIds: number[] },
     @Query('orgId') orgId?: string,
@@ -70,7 +70,7 @@ export class ScheduledMealController {
 
   @Patch(':id')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles('KITCHEN_ADMIN')
+  @Roles('KITCHEN_ADMIN','HR_ADMIN')
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() body: { date?: string; mealTypeId?: number; mealIds?: number[] },
@@ -82,7 +82,7 @@ export class ScheduledMealController {
 
   @Delete(':id')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles('KITCHEN_ADMIN')
+  @Roles('KITCHEN_ADMIN','HR_ADMIN')
   async remove(
     @Param('id', ParseIntPipe) id: number,
     @Query('orgId') orgId?: string,
