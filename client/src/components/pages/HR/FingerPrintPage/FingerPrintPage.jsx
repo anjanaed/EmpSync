@@ -79,8 +79,7 @@ const FingerPrintPage = () => {
   const filteredMenuItems = allMenuItems.filter((item) =>
     actions.includes(item.action)
   );
-  console.log("Filtered Menu Items:", filteredMenuItems);
-
+  
   return (
     <NavBar
       Comp={FingerPrints}
