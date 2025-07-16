@@ -82,7 +82,7 @@ const AnalysisDashboard = () => {
 
   // Create notification menu item
   const notificationMenuItem = {
-    key: "4",
+    key: "9",
     className: "notification-menu-item",
     icon: <BellOutlined />,
     label: (
@@ -97,8 +97,11 @@ const AnalysisDashboard = () => {
   };
 
   // Filter menu based on permissions
-  const filteredMenuItems = allMenuItems.filter((item) =>
-    actions.includes(item.action)
+  const updatedMenuItems = [...allMenuItems, notificationMenuItem];
+
+  // Filter menu based on permissions
+  const filteredMenuItems = updatedMenuItems.filter((item) =>
+    actions.includes(item.action) || item.key === "9" // Always include notifications
   );
 
   return (
