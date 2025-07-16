@@ -29,8 +29,8 @@ const Page2 = ({
   const [fingerprintConnected, setFingerprintConnected] = useState(false);
   const [fingerprintUnitName, setFingerprintUnitName] = useState("");
   const [serialReader, setSerialReader] = useState(null);
-  // For continuous serial reading
   const [serialReadingActive, setSerialReadingActive] = useState(false);
+  const [showFingerprintPopup, setShowFingerprintPopup] = useState(false);
 
   // Sync selectedLanguage with language prop
   useEffect(() => {
@@ -68,7 +68,7 @@ const Page2 = ({
           setSerialReader(reader);
           while (!cancelled) {
             const { value, done } = await reader.read();
-            if (done) break;
+            if (done || cancelled) break;
             buffer += new TextDecoder().decode(value);
             let lines = buffer.split('\n');
             buffer = lines.pop();
@@ -76,14 +76,33 @@ const Page2 = ({
               line = line.trim();
               if (line.startsWith('ThumbID: ')) {
                 console.log('Serial ThumbID:', line);
-                // Optionally, trigger further logic here
+                const match = line.match(/ThumbID: (FPU\d{3}\d{4})/);
+                if (match) {
+                  const fullThumbId = match[1];
+                  console.log(`Fingerprint scanned - ThumbID: ${fullThumbId}`);
+                  await fetchUserByFingerprintId(fullThumbId);
+                }
+              } else if (line.startsWith('UnitName: ')) {
+                const unitName = line.substring(10).trim();
+                setFingerprintUnitName(unitName);
+                console.log(`Unit Name received: ${unitName}`);
+              } else if (line.includes('Fingerprint ID #') && line.includes('deleted')) {
+                console.log(`✅ R307 Delete Success: ${line}`);
+              } else if (line.includes('Failed to delete fingerprint ID #')) {
+                console.log(`❌ R307 Delete Error: ${line}`);
+              } else if (line.includes('All fingerprints deleted')) {
+                console.log(`✅ R307 Bulk Delete Success: ${line}`);
+              } else if (line.includes('Failed to delete fingerprints')) {
+                console.log(`❌ R307 Bulk Delete Error: ${line}`);
               }
             }
           }
           reader.releaseLock();
           setSerialReader(null);
-        } catch (err) {
-          // Ignore cancel errors
+        }
+
+        catch (err) {
+          console.error('Serial read error:', err);
         }
         setSerialReadingActive(false);
       };
@@ -120,6 +139,58 @@ const Page2 = ({
     setPin(pin.slice(0, -1));
   };
 
+  // Convert thumb IDs to original IDs and delete from R307 storage
+  // Example conversion: FPU0010003 -> 3, FPU0010004 -> 4, FPU0010005 -> 5, FPU0010006 -> 6
+  const deleteUnregisteredFingerprintsFromR307 = async (thumbIds, unitName) => {
+    if (!window.fingerprintSerialPort || !fingerprintConnected) {
+      console.error('Fingerprint unit not connected');
+      return;
+    }
+
+    if (!unitName) {
+      console.error('Unit name not available for conversion');
+      return;
+    }
+
+    try {
+      const writer = window.fingerprintSerialPort.writable.getWriter();
+      const encoder = new TextEncoder();
+
+      console.log(`Starting deletion of ${thumbIds.length} unregistered fingerprints from R307 storage`);
+
+      for (const thumbId of thumbIds) {
+        // Convert thumb ID back to original ID
+        // Remove unit name prefix and leading zeros
+        // Example: FPU0010003 -> remove FPU001 -> 0003 -> 3
+        let originalId = thumbId.replace(unitName, '');
+        originalId = originalId.replace(/^0+/, '') || '0'; // Remove leading zeros, but keep at least one digit
+        
+        // Validate the original ID is a number
+        const idNumber = parseInt(originalId, 10);
+        if (isNaN(idNumber) || idNumber < 1 || idNumber > 1000) {
+          console.warn(`Invalid original ID extracted from ${thumbId}: ${originalId}, skipping deletion`);
+          continue;
+        }
+        
+        console.log(`Converting ${thumbId} to original ID: ${originalId}`);
+        
+        // Send delete command to R307 module
+        const deleteCommand = `DELETE_ID:${originalId}\n`;
+        await writer.write(encoder.encode(deleteCommand));
+        console.log(`Sent delete command: DELETE_ID:${originalId}`);
+        
+        // Small delay between commands to avoid overwhelming the module
+        await new Promise(resolve => setTimeout(resolve, 500));
+      }
+      
+      writer.releaseLock();
+      console.log(`Successfully sent delete commands for ${thumbIds.length} unregistered fingerprints`);
+      
+    } catch (error) {
+      console.error('Error deleting fingerprints from R307 storage:', error);
+    }
+  };
+
   // Handle fingerprint scanning
   const handleFingerprint = async () => {
     if (!fingerprintConnected) {
@@ -131,30 +202,54 @@ const Page2 = ({
     try {
       const reader = window.fingerprintSerialPort.readable.getReader();
       setSerialReader(reader);
-      const timeout = setTimeout(() => {
-        reader.cancel();
-        setScanning(false);
-        setErrorMessage(text.fingerprintTimeout);
-        setTimeout(() => setErrorMessage(""), 2000);
-      }, 5000);
 
       while (true) {
         const { value, done } = await reader.read();
         if (done) break;
         const text = new TextDecoder().decode(value);
-        console.log("Serial data received:", text);
+        console.log("Serial data received:\n", text);
+
+        // Parse IDS and print as standard thumb ids if present
+        const idsMatch = text.match(/IDS:([\d,]+)/);
+        if (idsMatch && fingerprintUnitName) {
+          const ids = idsMatch[1].split(',').map(id => id.trim());
+          const thumbIds = ids.map(id => `${fingerprintUnitName}${id.padStart(4, '0')}`);
+          console.log('Standard Thumb IDs:', thumbIds.join(', '));
+
+          // Check which thumbIds are not in the database
+          try {
+            const response = await fetch('http://localhost:3000/user-finger-print-register-backend/all-fingerprints');
+            if (response.ok) {
+              const dbFingerprints = await response.json();
+              const dbThumbIds = dbFingerprints.map(fp => fp.thumbid);
+              const notInDb = thumbIds.filter(id => !dbThumbIds.includes(id));
+              if (notInDb.length > 0) {
+                console.log('These IDs are not in database:', notInDb.join(', '));
+                console.log(`Found ${notInDb.length} unregistered fingerprints in R307 storage`);
+                
+                // Automatically convert thumb IDs back to original IDs and delete them from R307 storage
+                console.log('Starting automatic cleanup of unregistered fingerprints...');
+                await deleteUnregisteredFingerprintsFromR307(notInDb, fingerprintUnitName);
+              } else {
+                console.log('All fingerprints in R307 storage are properly registered in database');
+              }
+            } else {
+              console.warn('Could not fetch fingerprints from database');
+            }
+          } catch (err) {
+            console.error('Error checking thumbids in database:', err);
+          }
+        }
+
         const match = text.match(/ThumbID: (FPU\d{3}\d{4})/);
         if (match) {
-          clearTimeout(timeout);
           const fullThumbId = match[1];
           console.log(`Fingerprint scanned - ThumbID: ${fullThumbId}`);
           await fetchUserByFingerprintId(fullThumbId);
-          reader.cancel();
-          break;
+          // Do not break or release the reader; keep communication alive
         }
       }
-      reader.releaseLock();
-      setSerialReader(null);
+      // Do not release the reader or setSerialReader(null) here; keep communication alive
     } catch (error) {
       console.error("Fingerprint scan error:", error);
       setErrorMessage(text.fingerprintError);
@@ -166,7 +261,6 @@ const Page2 = ({
   // Fetch employee ID by thumbid (fingerprint ID) and set username for Page3
   const fetchUserByFingerprintId = async (fingerId) => {
     try {
-      // Fetch empId from backend using thumbid
       const response = await fetch(`http://localhost:3000/user-finger-print-register-backend/fingerprint?thumbid=${fingerId}`);
       if (!response.ok) {
         throw new Error("Fingerprint not found");
@@ -176,7 +270,6 @@ const Page2 = ({
       if (!empId) {
         throw new Error("No employee ID found for this fingerprint");
       }
-      // Fetch user details using empId
       const userResponse = await fetch(`http://localhost:3000/user/${empId}`);
       if (!userResponse.ok) {
         throw new Error("User not found for this employee ID");
@@ -255,6 +348,126 @@ const Page2 = ({
     </Menu>
   );
 
+  // Handle opening fingerprint popup
+  const handleOpenFingerprintPopup = () => {
+    setShowFingerprintPopup(true);
+  };
+
+  // Handle closing fingerprint popup
+  const handleCloseFingerprintPopup = () => {
+    setShowFingerprintPopup(false);
+  };
+
+  // Handle ESC key to close popup
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape' && showFingerprintPopup) {
+        handleCloseFingerprintPopup();
+      }
+    };
+
+    if (showFingerprintPopup) {
+      document.addEventListener('keydown', handleKeyDown);
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [showFingerprintPopup]);
+
+  // Handle manual cleanup of unregistered fingerprints
+  const handleCleanupUnregisteredFingerprints = async () => {
+    if (!fingerprintConnected || !window.fingerprintSerialPort) {
+      setErrorMessage("Fingerprint unit not connected");
+      setTimeout(() => setErrorMessage(""), 2000);
+      return;
+    }
+
+    try {
+      // First, get the current IDs from the R307 module
+      const writer = window.fingerprintSerialPort.writable.getWriter();
+      await writer.write(new TextEncoder().encode("GET_IDS\n"));
+      writer.releaseLock();
+      
+      console.log("Requesting IDs from R307 module for cleanup...");
+      setErrorMessage("Scanning R307 storage for cleanup...");
+      setTimeout(() => setErrorMessage(""), 3000);
+      
+    } catch (error) {
+      console.error("Error initiating cleanup:", error);
+      setErrorMessage("Error initiating cleanup: " + error.message);
+      setTimeout(() => setErrorMessage(""), 2000);
+    }
+  };
+
+  // Handle Connect Fingerprint button
+  const handleConnectFingerprint = async () => {
+    if (!("serial" in navigator)) {
+      setErrorMessage("Web Serial API not supported in this browser.");
+      setTimeout(() => setErrorMessage(""), 2000);
+      return;
+    }
+    try {
+      const port = await navigator.serial.requestPort({});
+      await port.open({ baudRate: 115200 });
+      window.fingerprintSerialPort = port;
+      setFingerprintConnected(true);
+
+      // Send UNIT_NAME command to request unit name
+      try {
+        const writer = port.writable.getWriter();
+        const encoder = new TextEncoder();
+        await writer.write(encoder.encode("UNIT_NAME\n"));
+        writer.releaseLock();
+      } catch (e) {
+        console.error("Error sending UNIT_NAME command:", e);
+        setErrorMessage("Error sending unit name request: " + e.message);
+        setTimeout(() => setErrorMessage(""), 2000);
+      }
+
+      // Read unit name from serial with retries
+      let unitName = "Unknown";
+      let attempts = 3;
+      try {
+        const reader = port.readable.getReader();
+        let buffer = '';
+        const timeout = setTimeout(() => {
+          reader.cancel();
+          setErrorMessage("Failed to read unit name: Timeout");
+          setTimeout(() => setErrorMessage(""), 2000);
+        }, 5000); // Increased timeout to 5 seconds
+
+        while (attempts > 0) {
+          const { value, done } = await reader.read();
+          if (done) break;
+          buffer += new TextDecoder().decode(value);
+          const match = buffer.match(/UnitName: (FPU\d{3})/);
+          if (match) {
+            unitName = match[1];
+            clearTimeout(timeout);
+            setFingerprintUnitName(unitName);
+            console.log(`Unit Name set: ${unitName}`);
+            break;
+          }
+          attempts--;
+          if (attempts === 0) {
+            clearTimeout(timeout);
+            setErrorMessage("Failed to read unit name: No response after retries");
+            setTimeout(() => setErrorMessage(""), 2000);
+          }
+        }
+        reader.releaseLock();
+      } catch (e) {
+        console.error("Error reading unit name:", e);
+        setErrorMessage("Error reading unit name: " + e.message);
+        setTimeout(() => setErrorMessage(""), 2000);
+      }
+    } catch (error) {
+      setErrorMessage("Connection failed: " + error.message);
+      setTimeout(() => setErrorMessage(""), 2000);
+    }
+  };
+
   return (
     <Spin spinning={loading} tip="Loading...">
       <div className={styles.full}>
@@ -271,7 +484,14 @@ const Page2 = ({
             <div className={styles.content}>
               {showFingerprint ? (
                 <div className={styles.fingerprintSection}>
-                  <div className={styles.fingerprintScanner} onClick={handleFingerprint}>
+                  <div className={styles.fingerprintScanner} onClick={() => {
+                    if (!fingerprintConnected || !window.fingerprintSerialPort) {
+                      setErrorMessage("Fingerprint unit not connected");
+                      setTimeout(() => setErrorMessage(""), 2000);
+                      return;
+                    }
+                    handleFingerprint();
+                  }}>
                     <FingerPrint />
                   </div>
                   <p>
@@ -329,49 +549,16 @@ const Page2 = ({
         </div>
         <div className={styles.buttonRowContainer}>
           <div className={styles.leftButtonCorner}>
-            {!fingerprintConnected && (
+            {!fingerprintConnected ? (
               <button
                 className={styles.connectFingerprintButton}
-                onClick={async () => {
-                  if (!("serial" in navigator)) {
-                    setErrorMessage("Web Serial API not supported in this browser.");
-                    setTimeout(() => setErrorMessage(""), 2000);
-                    return;
-                  }
-                  try {
-                    const port = await navigator.serial.requestPort({});
-                    await port.open({ baudRate: 115200 });
-                    window.fingerprintSerialPort = port;
-                    setFingerprintConnected(true);
-                    let unitName = "FPU002"; // Default fallback
-                    try {
-                      const reader = port.readable.getReader();
-                      const timeout = setTimeout(() => reader.cancel(), 1000);
-                      const { value, done } = await reader.read();
-                      clearTimeout(timeout);
-                      if (!done && value) {
-                        const text = new TextDecoder().decode(value);
-                        const match = text.match(/Unit Name: (FPU\d{3})/);
-                        if (match) unitName = match[1];
-                      }
-                      reader.releaseLock();
-                    } catch (e) {
-                      console.error("Error reading unit name:", e);
-                    }
-                    setFingerprintUnitName(unitName);
-                    // Start continuous reading (handled by effect)
-                  } catch (error) {
-                    setErrorMessage("Connection failed: " + error.message);
-                    setTimeout(() => setErrorMessage(""), 2000);
-                  }
-                }}
+                onClick={handleOpenFingerprintPopup}
               >
                 Connect FingerPrint
               </button>
-            )}
-            {fingerprintConnected && (
+            ) : (
               <div style={{ fontWeight: "bold", color: "#4CAF50", marginTop: 8 }}>
-                UNIT NAME : {fingerprintUnitName}
+                {/* UNIT NAME: {fingerprintUnitName} */}
               </div>
             )}
             <button
@@ -380,6 +567,12 @@ const Page2 = ({
             >
               New User Register
             </button>
+          </div>
+          <div>
+            <span style={{ fontSize: "70px", fontWeight: "bold"}}>
+              {fingerprintUnitName}
+
+            </span>
           </div>
           <div className={styles.backButtonContainer}>
             <button
@@ -400,6 +593,59 @@ const Page2 = ({
           </div>
         </div>
       </div>
+      
+      {/* Fingerprint Connection Popup */}
+      {showFingerprintPopup && (
+        <div 
+          className={styles.popupOverlay}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              handleCloseFingerprintPopup();
+            }
+          }}
+        >
+          <div className={styles.popupContent}>
+            <h3 style={{ marginBottom: "20px", textAlign: "center", color: "#333" }}>Fingerprint Options</h3>
+            <div className={styles.popupButtons}>
+              <button
+                className={styles.popupButton}
+                onClick={async () => {
+                  if (!fingerprintConnected) {
+                    await handleConnectFingerprint();
+                  }
+                }}
+                style={{ backgroundColor: fingerprintConnected ? "#4CAF50" : "#4CAF50", color: "white", opacity: fingerprintConnected ? 0.6 : 1, cursor: fingerprintConnected ? "not-allowed" : "pointer" }}
+                disabled={fingerprintConnected}
+              >
+                {fingerprintConnected ? "Device Connected" : "Connect FingerPrint Unit"}
+              </button>
+              <button
+                className={styles.popupButton}
+                onClick={async () => {
+                  handleCloseFingerprintPopup();
+                  await handleCleanupUnregisteredFingerprints();
+                }}
+                disabled={!fingerprintConnected}
+                style={{ 
+                  backgroundColor: fingerprintConnected ? "#ff9800" : "#cccccc",
+                  color: fingerprintConnected ? "white" : "#666666",
+                  cursor: fingerprintConnected ? "pointer" : "not-allowed"
+                }}
+                title={!fingerprintConnected ? "Connect to a fingerprint unit first" : "Clean up unregistered fingerprints from R307 storage"}
+              >
+                Cleanup R307 Storage
+              </button>
+            </div>
+            <button
+              className={styles.popupCloseButton}
+              onClick={handleCloseFingerprintPopup}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+      
       {errorMessage && <div className={styles.errorPopup}>{errorMessage}</div>}
     </Spin>
   );

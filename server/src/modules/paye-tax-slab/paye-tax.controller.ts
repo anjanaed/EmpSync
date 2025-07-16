@@ -22,7 +22,7 @@ export class PayeTaxController {
 
   @Post()
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles('HR_ADMIN')
+  @Roles('HR_ADMIN','KITCHEN_ADMIN')
   async create(@Body() dto: Prisma.PayeTaxSlabCreateInput) {
     try {
       return await this.payeTaxService.create(dto);
@@ -40,7 +40,7 @@ export class PayeTaxController {
 
   @Get()
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles('HR_ADMIN')
+  @Roles('HR_ADMIN','KITCHEN_ADMIN')
   async findAll() {
     try {
       return await this.payeTaxService.findAll();
@@ -58,7 +58,7 @@ export class PayeTaxController {
 
   @Get(':id')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles('HR_ADMIN')
+  @Roles('HR_ADMIN','KITCHEN_ADMIN')
   async findOne(@Param('id') id: number) {
     try {
       const tax = await this.payeTaxService.findOne(id);
@@ -80,7 +80,7 @@ export class PayeTaxController {
 
   @Put()
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles('HR_ADMIN')
+  @Roles('HR_ADMIN','KITCHEN_ADMIN')
   async update(@Body() dto: Prisma.PayeTaxSlabCreateManyInput[]) {
     try {
       return await this.payeTaxService.update(dto);
@@ -98,7 +98,7 @@ export class PayeTaxController {
 
   @Delete(':id')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles('HR_ADMIN')
+  @Roles('HR_ADMIN','KITCHEN_ADMIN')
   async remove(@Param('id') id: string) {
     try {
       return await this.payeTaxService.remove(id);

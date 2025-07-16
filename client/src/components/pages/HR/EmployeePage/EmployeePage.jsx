@@ -1,56 +1,91 @@
-import React from 'react'
+import React from "react";
 import {
   faUsers,
   faUserPlus,
   faFileInvoice,
   faDollarSign,
-  faFingerprint // <-- add this
+  faFingerprint,
+  faCalendar,
+  faChartLine,
+  faBowlFood,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Employees from "../../../Organisms/HR/EmployeeList/Employees";
 import NavBar from '../../../organisms/NavBar/NavBar';
-
+import Employees from "../../../Organisms/HR/EmployeeList/Employees";
 
 const EmployeePage = () => {
+  // Get and parse authData from localStorage
+  const rawAuthData = localStorage.getItem("authData");
+  const parsedAuthData = rawAuthData ? JSON.parse(rawAuthData) : null;
+
+  // Safely get permission actions
+  const actions = parsedAuthData?.permissions?.actions || [];
+
+  // Define all possible menu items
+  const allMenuItems = [
+    {
+      key: "1",
+      label: "Employees",
+      action: "User Management",
+      icon: <FontAwesomeIcon icon={faUsers} />,
+      link: "/EmployeePage",
+    },
+    {
+      key: "2",
+      label: "Registration",
+      action: "User Management",
+      icon: <FontAwesomeIcon icon={faUserPlus} />,
+      link: "/reg",
+    },
+    {
+      key: "3",
+      label: "Payrolls",
+      action: "Payroll",
+      icon: <FontAwesomeIcon icon={faDollarSign} />,
+      link: "/payroll",
+    },
+    {
+      key: "4",
+      label: "FingerPrints",
+      action: "User Management",
+      icon: <FontAwesomeIcon icon={faFingerprint} />,
+      link: "/FingerPrints",
+    },
+    {
+      key: "5",
+      label: "Schedule",
+      action: "Meal Management",
+      icon: <FontAwesomeIcon icon={faCalendar} />,
+      link: "/kitchen-admin",
+    },
+    {
+      key: "6",
+      label: "Meal",
+      action: "Meal Management",
+      icon: <FontAwesomeIcon icon={faBowlFood} />,
+      link: "/kitchen-meal",
+    },
+    {
+      key: "7",
+      label: "Reports & Analysis",
+      action: "Reports",
+      icon: <FontAwesomeIcon icon={faChartLine} />,
+      link: "/kitchen-report",
+    },
+  ];
+
+  // Filter menu based on permissions
+  const filteredMenuItems = allMenuItems.filter((item) =>
+    actions.includes(item.action)
+  );
+
   return (
     <NavBar
-    titleLines={["Human", "Resource", "Management"]}
-    menuItems={[
-      {
-        key: "1",
-        icon: <FontAwesomeIcon icon={faUsers} />,
-        label: "Employees",
-        link: "/EmployeePage"
-      },
-      {
-        key: "2",
-        icon: <FontAwesomeIcon icon={faUserPlus} />,
-        label: "Registration",
-        link: "/reg"
-      },
-      {
-        key: "3",
-        icon: <FontAwesomeIcon icon={faDollarSign} />,
-        label: "Payrolls",
-        link: "/payroll"
-      },
+      Comp={Employees}
+      titleLines={["Human", "Resource", "Management"]}
+      menuItems={filteredMenuItems}
+    />
+  );
+};
 
-      {
-        key: "5",
-        icon: <FontAwesomeIcon icon={faFingerprint} />,
-        label: "FingerPrints",
-        link: "/FingerPrints"
-      }
-    ]}
-    Comp={Employees}
-  />
-    
-    
-  )
-}
-
-export default EmployeePage
-
-
-
-
+export default EmployeePage;

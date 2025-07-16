@@ -8,19 +8,29 @@ export class OrdersService {
   constructor(private readonly databaseService: DatabaseService) {}
 
   // Create a new order
-  async create(createOrderDto: Prisma.OrderCreateInput) {
-    try {
-      // Attempt to create an order in the database
-      return await this.databaseService.order.create({ data: createOrderDto });
-    } catch (err) {
-      // Handle unique constraint violation (e.g., duplicate order number)
-      if (err.code === 'P2002') {
-        throw new HttpException('Order Number must be unique', HttpStatus.CONFLICT);
+async create(createOrderDto: Prisma.OrderCreateInput) {
+  try {
+    // If orgId is not provided, fetch it from the User table using employeeId
+    if (!createOrderDto.orgId && createOrderDto.employeeId) {
+      const user = await this.databaseService.user.findUnique({
+        where: { id: createOrderDto.employeeId },
+        select: { organizationId: true },
+      });
+      if (!user) {
+        throw new HttpException('User not found for order', HttpStatus.BAD_REQUEST);
       }
-      // Handle other errors
-      throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
+      createOrderDto.orgId = user.organizationId;
     }
+
+    // Attempt to create an order in the database
+    return await this.databaseService.order.create({ data: createOrderDto });
+  } catch (err) {
+    if (err.code === 'P2002') {
+      throw new HttpException('Order Number must be unique', HttpStatus.CONFLICT);
+    }
+    throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
   }
+}
 
   // Retrieve all orders
   async findAll() {

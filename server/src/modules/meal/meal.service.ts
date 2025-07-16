@@ -10,24 +10,28 @@ import { DatabaseService } from '../../database/database.service';
 export class MealService {
   constructor(private readonly databaseService: DatabaseService) {}
 
-  // Create a meal with ingredient relationships
+  
   async createWithIngredients(
     mealData: Omit<Prisma.MealCreateInput, 'ingredients'>,
     ingredients: Array<{ ingredientId: number }>,
+    orgId?: string,
   ) {
     try {
-      // Create the meal with nested ingredient relations
+      const data: any = {
+        ...mealData,
+        orgId: orgId || undefined,
+      };
+      if (ingredients && ingredients.length > 0) {
+        data.ingredients = {
+          create: ingredients.map((ing) => ({
+            ingredient: {
+              connect: { id: ing.ingredientId },
+            },
+          })),
+        };
+      }
       const result = await this.databaseService.meal.create({
-        data: {
-          ...mealData,
-          ingredients: {
-            create: ingredients.map((ing) => ({
-              ingredient: {
-                connect: { id: ing.ingredientId },
-              },
-            })),
-          },
-        },
+        data,
         include: {
           ingredients: {
             include: {
@@ -36,25 +40,40 @@ export class MealService {
           },
         },
       });
-
       return result;
     } catch (error) {
       throw new BadRequestException(`Failed to create meal: ${error.message}`);
     }
   }
-  
 
-  // Create method which now will route to createWithIngredients
-  async create(createMealDto: Prisma.MealCreateInput) {
-    throw new BadRequestException(
-      'This method is deprecated. Please use createWithIngredients instead.',
-    );
+
+  async findOneWithIngredients(id: number, orgId?: string) {
+    try {
+      return await this.databaseService.meal.findFirst({
+        where: {
+          id,
+          orgId: orgId || undefined,
+        },
+        include: {
+          ingredients: {
+            include: {
+              ingredient: true,
+            },
+          },
+        },
+      });
+    } catch (error) {
+      throw new BadRequestException('Failed to retrieve meal');
+    }
   }
 
-  // Find all meals with their ingredients
-  async findAllWithIngredients() {
+
+  async findAllWithIngredients(orgId?: string) {
     try {
       return await this.databaseService.meal.findMany({
+        where: {
+          orgId : orgId || undefined,
+        },
         include: {
           ingredients: {
             include: {
@@ -68,49 +87,25 @@ export class MealService {
     }
   }
 
- 
-  async findAll() {
-    try {
-      return await this.databaseService.meal.findMany({});
-    } catch (error) {
-      throw new BadRequestException('Failed to retrieve meals');
-    }
-  }
-
- 
-  async findOneWithIngredients(id: number) {
-    try {
-      const meal = await this.databaseService.meal.findUnique({
-        where: { id },
-        include: {
-          ingredients: {
-            include: {
-              ingredient: true,
-            },
-          },
-        },
-      });
-
-      if (!meal) {
-        throw new NotFoundException('Meal not found');
-      }
-
-      return meal;
-    } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw error;
-      }
-      throw new BadRequestException(error.message);
-    }
-  }
-
-  // Update a meal with its ingredient relationships
   async updateWithIngredients(
     id: number,
     mealData: Omit<Prisma.MealUpdateInput, 'ingredients'>,
     ingredients?: Array<{ ingredientId: number }>,
+    orgId?: string,
   ) {
     try {
+      
+      const meal = await this.databaseService.meal.findFirst({
+        where: {
+          id,
+          orgId : orgId || undefined,
+        },
+      });
+      if (!meal) {
+        throw new NotFoundException('Meal not found');
+      }
+
+      
       return await this.databaseService.$transaction(async (prisma) => {
         if (ingredients && ingredients.length > 0) {
           await prisma.mealIngredient.deleteMany({
@@ -146,16 +141,20 @@ export class MealService {
     }
   }
 
-  async remove(id: number) {
+  async remove(id: number, orgId?: string) {
     try {
-      const meal = await this.databaseService.meal.findUnique({
-        where: { id },
+      const meal = await this.databaseService.meal.findFirst({
+        where: {
+          id,
+           orgId : orgId || undefined,
+        },
       });
 
       if (!meal) {
         throw new NotFoundException('Meal not found');
       }
 
+   
       return await this.databaseService.meal.delete({
         where: { id },
       });
@@ -166,4 +165,5 @@ export class MealService {
       throw new BadRequestException(error.message);
     }
   }
+
 }

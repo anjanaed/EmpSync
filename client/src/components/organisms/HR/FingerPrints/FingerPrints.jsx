@@ -15,6 +15,7 @@ import {
   faFingerprint
 } from "@fortawesome/free-solid-svg-icons";
 import NavBar from "../../NavBar/NavBar";
+import { useAuth } from "../../../../contexts/AuthContext";
 
 const customTheme = {
   components: {
@@ -46,15 +47,21 @@ const FingerPrintsContent = () => {
   // Search bar state
   const [searchValue, setSearchValue] = useState("");
   const [searchError, setSearchError] = useState("");
+  const { authData } = useAuth();
   // Search bar state
   // (searchError and setSearchError are now declared below as part of the new search bar logic)
 
   // Fetch fingerprint device usage
   useEffect(() => {
+    if (!authData?.orgId) return;
+    
     axios
-      .get("http://localhost:3000/hr-fingerprints")
+      .get(`${import.meta.env.VITE_BASE_URL}/hr-fingerprints`, {
+        params: { orgId: authData.orgId }, 
+      })
       .then((res) => {
-        const fingerprints = res.data;
+        const fingerprints = res.data || [];
+        
         // Group by unit name (first 6 chars)
         const deviceMap = {};
         fingerprints.forEach(fp => {
@@ -71,12 +78,14 @@ const FingerPrintsContent = () => {
         setDeviceCards(cards);
       })
       .catch(() => setDeviceCards([]));
-  }, []);
+  }, [authData?.orgId]);
   useEffect(() => {
-    if (showTable) {
+    if (showTable && authData?.orgId) {
       setLoading(true);
       axios
-        .get("http://localhost:3000/hr-fingerprints/users/fingerprint-details")
+        .get(`${import.meta.env.VITE_BASE_URL}/hr-fingerprints/users/fingerprint-details`, {
+          params: { orgId: authData.orgId },
+        })
         .then((res) => {
           setUserData(res.data);
           setLoading(false);
@@ -86,7 +95,7 @@ const FingerPrintsContent = () => {
           setLoading(false);
         });
     }
-  }, [showTable]);
+  }, [showTable, authData?.orgId]);
 
   const handleView = (empId, thumbids) => {
     setModalEmpId(empId);
@@ -103,7 +112,7 @@ const FingerPrintsContent = () => {
   };
 
   const handleDeleteThumbid = async (thumbid) => {
-    await axios.delete(`http://localhost:3000/hr-fingerprints/fingerprint/${thumbid}`);
+    await axios.delete(`${import.meta.env.VITE_BASE_URL}/hr-fingerprints/fingerprint/${thumbid}`);
     setModalThumbids((prev) => prev.filter((id) => id !== thumbid));
     setUserData((prev) =>
       prev.map((user) =>
@@ -158,7 +167,7 @@ const FingerPrintsContent = () => {
             onClick={async () => {
               setRegeneratingId(record.id);
               try {
-                const res = await axios.put(`http://localhost:3000/user/${record.id}/regenerate-passkey`);
+                const res = await axios.put(`${import.meta.env.VITE_BASE_URL}/user/${record.id}/regenerate-passkey`);
                 const newPasskey = res.data.passkey;
                 setTimeout(() => {
                   setUserData(prev => prev.map(u => u.id === record.id ? { ...u, passkey: newPasskey } : u));
@@ -225,20 +234,13 @@ const FingerPrintsContent = () => {
       <>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "32px", background: "#fff", borderRadius: "12px", boxShadow: "0 2px 8px rgba(0,0,0,0.08)", width: "100%", margin: "40px 0" }}>
           <div style={{ textAlign: "left", fontSize: "1rem", fontWeight: 500 }}>
-            Click here to get User Fingerprints Info.
+            Click User Info to get User Fingerprints Info.
           </div>
           <Button type="primary" onClick={() => setShowTable(true)}>
             User Info.
           </Button>
         </div>
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "32px", background: "#fff", borderRadius: "12px", boxShadow: "0 2px 8px rgba(0,0,0,0.08)", width: "100%", margin: "40px 0" }}>
-        <div style={{ textAlign: "left", fontSize: "1rem", fontWeight: 500 }}>
-          {showPasskeyMsg ? "Hide the pass-key login feature on the Meals Order-Tab" : "Pass-key login feature is hidden on the Meals Order-Tab"}
-        </div>
-        <Button type="primary" onClick={() => setShowPasskeyMsg((prev) => !prev)}>
-          {showPasskeyMsg ? "Hide" : "Unhide"}
-        </Button>
-      </div>
+
         <div style={{ fontSize: "1.15rem", fontWeight: 600, color: "#970000", marginBottom: "8px", marginLeft: "35px" }}>
           Fingerprint Units Info.
         </div>
@@ -437,12 +439,6 @@ const FingerPrints = () => (
       },
       {
         key: "4",
-        icon: <FontAwesomeIcon icon={faFileInvoice} />,
-        label: "Reports",
-        link: "/reportPage"
-      },
-      {
-        key: "5",
         icon: <FontAwesomeIcon icon={faFingerprint} />,
         label: "FingerPrints",
         link: "/FingerPrints"

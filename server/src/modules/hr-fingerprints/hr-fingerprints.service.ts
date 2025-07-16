@@ -5,11 +5,13 @@ import { PrismaClient } from '@prisma/client';
 export class HrFingerprintsService {
   private prisma = new PrismaClient();
 
-  async getAllFingerprints() {
+  async getAllFingerprints(orgId?: string) {
     return this.prisma.fingerprint.findMany({
+      where: orgId ? { orgId } : undefined,
       select: {
         thumbid: true,
         empId: true,
+        orgId: true,
       },
     });
   }
@@ -54,35 +56,38 @@ export class HrFingerprintsService {
     }));
   }
 
-  async getAllUsersWithFingerprintDetails() {
-    // Get all users (id, name, passkey)
-    const users = await this.prisma.user.findMany({
-      select: { id: true, name: true, passkey: true },
-    });
+  async getAllUsersWithFingerprintDetails(orgId?: string) {
+  // Get all users (id, name, passkey) filtered by orgId if provided
+  const users = await this.prisma.user.findMany({
+    where: orgId ? { organizationId: orgId } : undefined,
+    select: { id: true, name: true, passkey: true },
+  });
 
-    // Get all fingerprints
-    const fingerprints = await this.prisma.fingerprint.findMany({
-      select: { thumbid: true, empId: true },
-    });
+  // Get all fingerprints for users in this org
+  const userIds = users.map(u => u.id);
+  const fingerprints = await this.prisma.fingerprint.findMany({
+    where: { empId: { in: userIds } },
+    select: { thumbid: true, empId: true },
+  });
 
-    // Group fingerprints by empId
-    const fpMap = new Map();
-    fingerprints.forEach((fp) => {
-      if (!fpMap.has(fp.empId)) fpMap.set(fp.empId, []);
-      fpMap.get(fp.empId).push(fp.thumbid);
-    });
+  // Group fingerprints by empId
+  const fpMap = new Map();
+  fingerprints.forEach((fp) => {
+    if (!fpMap.has(fp.empId)) fpMap.set(fp.empId, []);
+    fpMap.get(fp.empId).push(fp.thumbid);
+  });
 
-    // Map users to include status, count, and thumbids
-    return users.map((user) => {
-      const thumbids = fpMap.get(user.id) || [];
-      return {
-        id: user.id,
-        name: user.name,
-        passkey: user.passkey,
-        status: thumbids.length > 0 ? 'Registered' : 'Unregistered',
-        fingerprintCount: thumbids.length,
-        thumbids,
-      };
-    });
-  }
+  // Map users to include status, count, and thumbids
+  return users.map((user) => {
+    const thumbids = fpMap.get(user.id) || [];
+    return {
+      id: user.id,
+      name: user.name,
+      passkey: user.passkey,
+      status: thumbids.length > 0 ? 'Registered' : 'Unregistered',
+      fingerprintCount: thumbids.length,
+      thumbids,
+    };
+  });
+}
 }

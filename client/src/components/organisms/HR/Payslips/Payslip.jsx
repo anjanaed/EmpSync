@@ -36,6 +36,7 @@ const Payslip = () => {
       const res = await axios.get(`${urL}/payroll`, {
         params: {
           search: search || undefined,
+          orgId: authData?.orgId, 
         },
         headers: {
           Authorization: `Bearer ${token}`,

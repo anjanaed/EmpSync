@@ -30,7 +30,6 @@ import {
 } from "firebase/storage";
 import { useAuth } from "../../../../contexts/AuthContext";
 
-
 const { TextArea } = Input;
 const { Title } = Typography;
 const { Option } = Select;
@@ -38,9 +37,9 @@ const { Option } = Select;
 const EditMealPage = () => {
   const [form] = Form.useForm();
   const [imageUrl, setImageUrl] = useState(null);
-  const [originalImageUrl, setOriginalImageUrl] = useState(null); // Store original image URL
+  const [originalImageUrl, setOriginalImageUrl] = useState(null);
   const fileInputRef = useRef(null);
-  const [isIngredientsModalVisible, setIsIngredientsModalVisible] =useState(false);
+  const [isIngredientsModalVisible, setIsIngredientsModalVisible] = useState(false);
   const [loadingIngredients, setLoadingIngredients] = useState(false);
   const [searchIngredient, setSearchIngredient] = useState("");
   const [selectedIngredients, setSelectedIngredients] = useState([]);
@@ -51,9 +50,11 @@ const EditMealPage = () => {
   const [imageFile, setImageFile] = useState(null);
   const { authData } = useAuth();
   const token = authData?.accessToken;
+  const orgId = authData?.orgId;
 
   const navigate = useNavigate();
   const location = useLocation();
+  const urL = import.meta.env.VITE_BASE_URL;
 
   // Define parseIngredientsFromMealData function first
   const parseIngredientsFromMealData = async (ingredientsArray) => {
@@ -62,15 +63,17 @@ const EditMealPage = () => {
     }
 
     try {
-      // First, fetch all ingredients to get their names
-      const response = await fetch(
-        "http://localhost:3000/Ingredients/optimized"
-      );
-      if (!response.ok) {
-        throw new Error("Failed to fetch ingredients data");
-      }
+      // Fetch ingredients with orgId parameter
+      const response = await axios.get(`${urL}/Ingredients/optimized`, {
+        params: {
+          orgId: orgId,
+        },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-      const data = await response.json();
+      const data = response.data;
 
       // Combine both ingredient arrays from the API
       const priority1Ingredients = Array.isArray(data.priority1Ingredients)
@@ -127,7 +130,7 @@ const EditMealPage = () => {
         const meal = location.state.meal;
         setMealData(meal);
         setImageUrl(meal.imageUrl);
-        setOriginalImageUrl(meal.imageUrl); // Store the original image URL
+        setOriginalImageUrl(meal.imageUrl);
 
         // Ensure category is treated as an array
         const mealCategories = Array.isArray(meal.category)
@@ -143,7 +146,7 @@ const EditMealPage = () => {
           nameTamil: meal.nameTamil,
           price: meal.price,
           description: meal.description,
-          category: mealCategories, // Set as array for multi-select
+          category: mealCategories,
         });
 
         // Parse and set the selected ingredients
@@ -173,14 +176,16 @@ const EditMealPage = () => {
   const fetchIngredients = async () => {
     setLoadingIngredients(true);
     try {
-      const response = await fetch(
-        "http://localhost:3000/Ingredients/optimized"
-      );
-      if (!response.ok) {
-        throw new Error("Failed to fetch ingredients");
-      }
+      const response = await axios.get(`${urL}/Ingredients/optimized`, {
+        params: {
+          orgId: orgId,
+        },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-      const data = await response.json();
+      const data = response.data;
 
       // Extract ingredients from both arrays in the response
       const priority1Ingredients = Array.isArray(data.priority1Ingredients)
@@ -226,12 +231,12 @@ const EditMealPage = () => {
     setImageUrl(null);
     setSelectedIngredients([]);
     console.log("Form canceled");
-    navigate("/kitchen-meal"); // Navigate back to meals list
+    navigate("/kitchen-meal");
   };
 
   // Function to delete the old image from Firebase
   const deleteImageFromFirebase = async (imageUrl) => {
-    if (!imageUrl) return true; // No image to delete
+    if (!imageUrl) return true;
 
     try {
       // Check if this is a Firebase Storage URL
@@ -246,10 +251,8 @@ const EditMealPage = () => {
       // Extract the file path from the URL
       let urlPath;
       if (imageUrl.startsWith("gs://")) {
-        // Handle gs:// protocol format
         urlPath = imageUrl.replace(/^gs:\/\/[^\/]+\//, "");
       } else {
-        // Handle https:// format
         urlPath = decodeURIComponent(imageUrl.split("/o/")[1]?.split("?")[0]);
       }
 
@@ -350,15 +353,16 @@ const EditMealPage = () => {
         description: values.description,
         price: parseFloat(values.price),
         imageUrl: finalImageUrl,
-        category: categoryArray, // Send as array
-        ingredients: ingredientsData, // New format for ingredients
+        category: categoryArray,
+        ingredients: ingredientsData,
+        orgId: orgId, // Include orgId in the update data
       };
 
       console.log("Sending update data:", updateData);
 
       // Make the API call to update the meal
       const response = await axios.patch(
-        `http://localhost:3000/meal/${mealData.id}`,
+        `${urL}/meal/${mealData.id}`,
         updateData,
         {
           headers: {
@@ -422,7 +426,7 @@ const EditMealPage = () => {
       return;
     }
 
-    setImageFile(file); // Store the file for later upload
+    setImageFile(file);
 
     // Use object URL for preview instead of Data URL
     const objectUrl = URL.createObjectURL(file);
@@ -434,7 +438,7 @@ const EditMealPage = () => {
 
   const showIngredientsModal = () => {
     setIsIngredientsModalVisible(true);
-    fetchIngredients(); // Fetch ingredients when modal is opened
+    fetchIngredients();
   };
 
   const handleIngredientsModalCancel = () => {
@@ -636,7 +640,6 @@ const EditMealPage = () => {
                     <Option value="Lunch">Lunch</Option>
                     <Option value="Dinner">Dinner</Option>
                     <Option value="Snack">Snack</Option>
-
                   </Select>
                 </Form.Item>
 
@@ -706,7 +709,7 @@ const EditMealPage = () => {
         </Card>
       </div>
 
-      {/* {select Ingredient Modal} */}
+      {/* Select Ingredient Modal */}
       <Modal
         title="Available Ingredients"
         open={isIngredientsModalVisible}

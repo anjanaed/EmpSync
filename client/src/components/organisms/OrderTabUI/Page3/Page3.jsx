@@ -307,7 +307,7 @@ const Page3 = ({
           orderDate,
           mealTypeId: mealTime,
           price: 0,
-          serve: true,
+          serve: false,
           orderPlacedTime,
         };
 
@@ -364,13 +364,18 @@ const Page3 = ({
 
   return (
     <>
+    
       {loading && <Loading text={text.loading || "Loading meals..."} />}
       <Layout className={styles.layout}>
         <div className={styles.header}>
           <div className={styles.name}>BizSolution</div>
           <div className={styles.dateAndTime}>
             {currentTimeRef.current.toLocaleString("en-IN")}
+            <button style={{position: 'fixed', top: 10, right: 10, zIndex: 9999}} onClick={() => carouselRef.current.goTo(1)}>
+        Go to Page2
+      </button>
           </div>
+          
           <div className={styles.userName}>
             <div>{username.name || "Guest"}</div>
           </div>

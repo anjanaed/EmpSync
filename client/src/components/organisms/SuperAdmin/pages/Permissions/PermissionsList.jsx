@@ -21,13 +21,14 @@ const PermissionsList = ({
   const [selectedUser, setSelectedUser] = useState(null);
   const [rolePermissions, setRolePermissions] = useState([]);
   const { superAuthData } = useAuth();
+  const urL = import.meta.env.VITE_BASE_URL;
 
   // Get token from localStorage (or your preferred method)
   const token = superAuthData?.accessToken;
 
   // Fetch organizations on mount
   useEffect(() => {
-    axios.get('http://localhost:3000/super-admin/organizations', {
+    axios.get(`${urL}/super-admin/organizations`, {
       headers: {
         Authorization: `Bearer ${token}`,
       }
@@ -56,7 +57,7 @@ const PermissionsList = ({
   // Fetch permissions for selected user
   useEffect(() => {
     if (selectedUser) {
-      axios.get(`http://localhost:3000/super-admin/users/${selectedUser}/permissions`, {
+      axios.get(`${urL}/super-admin/users/${selectedUser}/permissions`, {
         headers: {
           Authorization: `Bearer ${token}`,
         }
@@ -97,7 +98,7 @@ const PermissionsList = ({
 
       let currentPermissions = [];
       try {
-        const res = await axios.get(`http://localhost:3000/super-admin/users/${selectedUser}/permissions`, {
+        const res = await axios.get(`${urL}/super-admin/users/${selectedUser}/permissions`, {
           headers: {
             Authorization: `Bearer ${token}`,
           }
@@ -113,7 +114,7 @@ const PermissionsList = ({
             const permission = data.find(p => p.name === permissionName);
             if (!permission) continue;
 
-            await axios.post('http://localhost:3000/super-admin/permissions', {
+            await axios.post(`${urL}/super-admin/permissions`, {
               orgId,
               action: permission.name,
               role,

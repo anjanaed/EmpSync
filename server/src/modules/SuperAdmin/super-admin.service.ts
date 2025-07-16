@@ -365,5 +365,29 @@ export class SuperAdminService {
     }
   }
 
-  
+  async getUserActionsByUserId(userId: string): Promise<string[]> {
+    try {
+      if (!userId) {
+        throw new BadRequestException('User ID is required');
+      }
+
+      const user = await this.databaseService.user.findUnique({
+        where: { id: userId },
+        include: { permissions: true },
+      });
+
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
+
+      const actions = user.permissions.map((permission) => permission.action);
+
+      return actions;
+    } catch (error) {
+      if (error instanceof BadRequestException || error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new BadRequestException('Failed to fetch user actions: ' + error.message);
+    }
+  }
 }

@@ -17,14 +17,30 @@ export class PayrollService {
     }
   }
 
-  async generatePayrollsForAll(dto: Prisma.PayrollCreateInput): Promise<any> {
+  async generatePayrollsForAll(dto: Prisma.PayrollCreateInput,orgId: string): Promise<any> {
     try {
-      const users = await this.databaseService.user.findMany();
-      const payeData = await this.databaseService.payeTaxSlab.findMany();
+    const users = await this.databaseService.user.findMany({
+      where: {
+        organizationId: orgId,
+      },
+    });
+      const payeData = await this.databaseService.payeTaxSlab.findMany({
+      where: {
+        orgId: orgId,
+      },
+    });
       const allAdjustments =
-        await this.databaseService.salaryAdjustments.findMany();
+        await this.databaseService.salaryAdjustments.findMany({
+      where: {
+        orgId: orgId,
+      },
+    });
       const allIndividualAdjustments =
-        await this.databaseService.individualSalaryAdjustments.findMany();
+        await this.databaseService.individualSalaryAdjustments.findMany({
+      where: {
+        orgId: orgId,
+      },
+    });
       const employerFundRate = allAdjustments.find(
         (adj) => adj.label == 'EmployerFund',
       ).amount;
@@ -126,6 +142,7 @@ export class PayrollService {
         //Create Payroll Record
         const payroll = await this.create({
           employee: { connect: { id: user.id } },
+          orgId: orgId,
           month: month,
           netPay: values.netSalary,
           payrollPdf: `payrolls/${user.id}/${user.id}-${month}.pdf`,
@@ -151,25 +168,36 @@ export class PayrollService {
     }
   }
 
-  async findAll(search?:string) {
-    try {
-      const payrolls = await this.databaseService.payroll.findMany({
-        include:{
-          employee:true,
-        },
-        where:search?{OR:[
-          {empId: {contains:search,mode:'insensitive'}},
-        ],
-      }:{},});
-      if (payrolls) {
-        return payrolls;
-      } else {
-        throw new HttpException('No Payrolls', HttpStatus.NOT_FOUND);
-      }
-    } catch (err) {
-      throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
+async findAll(search?: string, orgId?: string) {
+  try {
+    const where: any = {};
+
+    if (orgId) {
+      where.orgId = orgId;
     }
+
+    if (search) {
+      where.OR = [
+        { empId: { contains: search, mode: 'insensitive' } },
+      ];
+    }
+
+    const payrolls = await this.databaseService.payroll.findMany({
+      include: {
+        employee: true,
+      },
+      where,
+    });
+
+    if (payrolls) {
+      return payrolls;
+    } else {
+      throw new HttpException('No Payrolls', HttpStatus.NOT_FOUND);
+    }
+  } catch (err) {
+    throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
   }
+}
 
   async findOne(empId: string,month:string) {
     try {
@@ -241,14 +269,18 @@ async deleteByMonthAndEmp(empId: string, month: string) {
     throw new Error("Failed to delete payroll(s) for employee and month");
   }
 }
-  async deleteByMonth(month:string){
-    try{
-      await this.databaseService.payroll.deleteMany({
-        where:{month},
-      })
-    }catch(err){
-      throw new Error("Failed to Delete Payrolls")
-    }
+async deleteByMonth(month: string, orgId: string) {
+  try {
+    const result=await this.databaseService.payroll.deleteMany({
+      where: {
+        month,
+        orgId, 
+      },
+    });
+    return { deletedCount: result.count };
+  } catch (err) {
+    throw new Error(err);
   }
+}
 }
 

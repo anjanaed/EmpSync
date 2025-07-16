@@ -34,13 +34,14 @@ export class PayrollController {
 
   @Post('calculate-all')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles('HR_ADMIN')
+  @Roles('HR_ADMIN','KITCHEN_ADMIN')
   async generatePayrollsForAll(
     @Body() dto: Prisma.PayrollCreateInput,
+    @Query('orgId') orgId: string,
     @Res() res: Response,
   ) {
     try {
-      await this.payrollService.generatePayrollsForAll(dto);
+      await this.payrollService.generatePayrollsForAll(dto,orgId);
       res.status(200).json({ message: 'Payrolls Generated' });
     } catch (err) {
       res.status(500).json({
@@ -53,10 +54,10 @@ export class PayrollController {
 
   @Get()
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles('HR_ADMIN')
-  async findAll(@Query('search') search?: string) {
+  @Roles('HR_ADMIN','KITCHEN_ADMIN')
+  async findAll(@Query('search') search?: string,@Query('orgId') orgId?: string) {
     try {
-      return await this.payrollService.findAll(search);
+      return await this.payrollService.findAll(search, orgId);
     } catch (err) {
       throw new HttpException(
         {
@@ -71,7 +72,7 @@ export class PayrollController {
 
   @Get(':empId/:month')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles('HR_ADMIN')
+  @Roles('HR_ADMIN','KITCHEN_ADMIN')
   async findOne(@Param('empId') empId: string, @Param('month') month: string) {
     try {
       const payroll = await this.payrollService.findOne(empId, month);
@@ -93,7 +94,7 @@ export class PayrollController {
 
   @Put(':id')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles('HR_ADMIN')
+  @Roles('HR_ADMIN','KITCHEN_ADMIN')
   async update(
     @Param('id') id: number,
     @Body() dto: Prisma.PayrollUpdateInput,
@@ -114,7 +115,7 @@ export class PayrollController {
 
   @Delete(':id')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles('HR_ADMIN')
+  @Roles('HR_ADMIN','KITCHEN_ADMIN')
   async remove(@Param('id') id: number) {
     try {
       return await this.payrollService.remove(id);
@@ -130,27 +131,30 @@ export class PayrollController {
     }
   }
 
-  @Delete('delete-by-month/:month')
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles('HR_ADMIN')
-  async deletePayrollsByMonth(@Param('month') month: string) {
-    try {
-      return await this.payrollService.deleteByMonth(month);
-    } catch (err) {
-      throw new HttpException(
-        {
-          status: HttpStatus.INTERNAL_SERVER_ERROR,
-          error: 'Failed to delete payrolls by month',
-          message: err.message,
-        },
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
+@Delete('delete-by-month/:month')
+@UseGuards(AuthGuard('jwt'), RolesGuard)
+@Roles('HR_ADMIN','KITCHEN_ADMIN')
+async deletePayrollsByMonth(
+  @Param('month') month: string,
+  @Query('orgId') orgId: string // <-- add this
+) {
+  try {
+    return await this.payrollService.deleteByMonth(month, orgId); // <-- pass orgId
+  } catch (err) {
+    throw new HttpException(
+      {
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        error: 'Failed to delete payrolls by month',
+        message: err.message,
+      },
+      HttpStatus.INTERNAL_SERVER_ERROR,
+    );
   }
+}
 
   @Post('upload-pdf/:employeeId')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles('HR_ADMIN')
+  @Roles('HR_ADMIN','KITCHEN_ADMIN')
   @UseInterceptors(FileInterceptor('file'))
   async uploadPayrollPdf(
     @Param('employeeId') employeeId: string,
@@ -205,7 +209,7 @@ export class PayrollController {
   //For HR Portal Usage
   @Get('geturl/as-hr/:empid/:month/:mode')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles('HR_ADMIN')
+  @Roles('HR_ADMIN','KITCHEN_ADMIN')
   async getSignedUrlForHR(
     @Param('empid') empId: string,
     @Param('month') month: string,
@@ -243,7 +247,7 @@ export class PayrollController {
 
   @Delete('delete-by-month/:empid/:month')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles('HR_ADMIN')
+  @Roles('HR_ADMIN','KITCHEN_ADMIN')
   async deletePayrollAndFileByMonth(
     @Param('empid') empId: string,
     @Param('month') month: string,
