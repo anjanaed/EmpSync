@@ -77,10 +77,12 @@ const FingerPrintsContent = () => {
       .catch(() => setDeviceCards([]));
   }, []);
   useEffect(() => {
-    if (showTable) {
+    if (showTable && authData?.orgId) {
       setLoading(true);
       axios
-        .get("http://localhost:3000/hr-fingerprints/users/fingerprint-details")
+        .get("http://localhost:3000/hr-fingerprints/users/fingerprint-details", {
+          params: { orgId: authData.orgId },
+        })
         .then((res) => {
           setUserData(res.data);
           setLoading(false);
@@ -90,7 +92,7 @@ const FingerPrintsContent = () => {
           setLoading(false);
         });
     }
-  }, [showTable]);
+  }, [showTable, authData?.orgId]);
 
   const handleView = (empId, thumbids) => {
     setModalEmpId(empId);
