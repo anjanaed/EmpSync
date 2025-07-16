@@ -1,182 +1,16 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Itim&family=Roboto+Slab:wght@100..900&display=swap");
 
+/* Global Container Styles */
 .container {
-  padding: 20px;
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 1px 0px 1px 2px rgba(0, 0, 0, 0.1);
-  width: 90%;
-  margin: 0 auto; 
-  flex-direction: column; 
-  justify-content: center;
-  align-items: center;
-  margin-top: 50px;
-}
-
-
-.analysisContainer {
-  padding: 20px;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 1px 0px 1px 2px rgba(0, 0, 0, 0.1);
-  margin-bottom: 50px; 
-}
-
-.heading {
-  font-size: 20px;
-  font-weight: bold;
-  margin-bottom: 30px;
-  font-family: "Roboto Slab", serif;
-  color: black !important;
-}
-
-.cardsContainer {
-  display: flex;
-  gap: 20px;
-}
-
-.card {
-  flex: 1;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-.mealItem {
-  margin-bottom: 10px;
-}
-
-/* Report Section */
-.reportContainer {
-  padding: 20px;
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 1px 0px 1px 2px rgba(0, 0, 0, 0.1);
-}
-
-.reportHeader {
-  margin-bottom: 20px;
-}
-
-.iconTitle {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.clockIcon {
-  color: #8e1f40;
-  font-size: 24px;
-}
-
-.tabsContainer {
-  display: flex;
-  border-radius: 8px;
-  overflow: hidden;
-  background-color: #f5f5f5;
-  margin-bottom: 20px;
-}
-
-.tabButton {
-  flex: 1;
-  padding: 12px;
-  border: none;
-  background: none;
-  cursor: pointer;
-  text-align: center;
-  font-size: 16px;
-  color: #666;
-  transition: background-color 0.3s;
-}
-
-.activeTab {
-  background-color: #fff;
-  color: #000;
-  font-weight: 500;
-}
-
-.reportPanel {
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  padding: 40px;
-  margin-bottom: 20px;
-  min-height: 200px;
-  display: flex;
-  justify-content: center;
-}
-
-.reportContent {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  max-width: 500px;
-  text-align: center;
-}
-
-.reportIconContainer {
-  margin-bottom: 20px;
-}
-
-.circleIcon {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  background-color: #f9f1f4;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.chartIcon {
-  color: rgb(224, 0, 0);
-  font-size: 28px;
-}
-
-.reportTitle {
-  font-size: 22px;
-  margin-bottom: 10px;
-  font-weight: 500;
-}
-
-.reportDescription {
-  color: #666;
-  margin-bottom: 0;
-}
-
-.buttonContainer {
-  display: flex;
-  justify-content: flex-end;
-}
-
-.downloadButton {
-  background-color: rgb(224, 0, 0);
-  color: white;
-  border: none;
-  border-radius: 6px;
-  padding: 10px 20px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-  font-size: 16px;
-  transition: background-color 0.3s;
-}
-
-.downloadButton:hover {
-  background-color: #741a35;
-}
-
-.downloadIcon {
-  font-size: 18px;
-}
-
-/* Report.module.css */
-
-.container {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 auto;
   padding: 24px;
-  background-color: #f5f5f5;
+  background-color: var(--bg-secondary);
   min-height: 100vh;
 }
 
+/* Analysis Section */
 .analysisSection {
   margin-bottom: 32px;
 }
@@ -189,13 +23,14 @@
 
 .sectionIcon {
   margin-right: 8px;
-  color: #1890ff;
+  color: var(--accent);
 }
 
 .sectionTitle {
   margin: 0;
   font-size: 24px;
   font-weight: 600;
+  color: var(--text-primary);
 }
 
 .analysisGrid {
@@ -204,85 +39,128 @@
   gap: 24px;
 }
 
-.card {
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-}
-
 .cardTitle {
   display: flex;
   align-items: center;
+  color: var(--text-primary);
 }
 
 .highDemandIcon {
   margin-right: 8px;
-  color: #52c41a;
+  color: var(--success);
 }
 
 .lowDemandIcon {
   margin-right: 8px;
-  color: #ff4d4f;
+  color: var(--error);
 }
 
 .mealItem {
   margin-bottom: 16px;
+  color: var(--text-primary);
 }
 
 .mealHeader {
   display: flex;
   justify-content: space-between;
   margin-bottom: 8px;
+  color: var(--text-primary);
 }
 
 .highDemandPercentage {
-  font-weight: bold;
-  color: #52c41a;
+  color: var(--success);
+  font-weight: 600;
 }
 
 .lowDemandPercentage {
-  font-weight: bold;
-  color: #ff4d4f;
+  color: var(--error);
+  font-weight: 600;
 }
 
+/* Reports Section */
 .reportsSection {
-  margin-bottom: 24px;
+  margin-bottom: 20px;
 }
 
-.tabHeader {
+/* Card Styles - Make all cards full width */
+.card {
+  width: 100% !important;
+  max-width: 100% !important;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px var(--shadow);
+  background-color: var(--bg-tertiary);
+  border: none;
+}
+
+/* Remove borders from Analysis section cards */
+.analysisGrid .card {
+  border: none !important;
+}
+
+.analysisGrid .card .ant-card {
+  border: none !important;
+}
+
+.analysisGrid .card .ant-card-body {
+  border: none !important;
+}
+
+/* Styles for "No data available" messages and card content */
+.analysisGrid .card div {
+  color: var(--text-primary);
+}
+
+.analysisGrid .card span {
+  color: var(--text-primary);
+}
+
+.analysisGrid .card .ant-card-body {
+  color: var(--text-primary);
+}
+
+.analysisGrid .card .ant-card-body > div {
+  color: var(--text-primary);
+}
+
+/* Tab Styles */
+.tabPaneTitle {
   display: flex;
   align-items: center;
-  margin-bottom: 24px;
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+.tabIcon16 {
+  margin-right: 8px;
 }
 
 .tabContentHeader {
-  display: flex;
-  align-items: center;
-  margin-bottom: 24px;
-}
-
-.tabIcon {
-  margin-right: 12px;
-  color: #1890ff;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin-bottom: 20px;
 }
 
 .tabTitle {
-  margin: 0;
+  margin: 0 0 8px 0;
   font-size: 20px;
   font-weight: 600;
-  color: #000;
+  color: var(--text-primary);
 }
 
 .tabDescription {
-  margin: 4px 0 0 0;
-  color: #666;
+  margin: 0;
+  color: var(--text-secondary);
   font-size: 14px;
 }
 
+/* Control Styles */
 .controlsContainer {
   display: flex;
   align-items: center;
   gap: 16px;
   margin-bottom: 24px;
+  width: 100% !important;
+  max-width: 100% !important;
 }
 
 .controlsContainerWrap {
@@ -292,6 +170,8 @@
   margin-bottom: 24px;
   flex-wrap: wrap;
   margin-top: 40px;
+  width: 100% !important;
+  max-width: 100% !important;
 }
 
 .controlGroup {
@@ -303,6 +183,7 @@
   display: block;
   margin-bottom: 8px;
   font-weight: 500;
+  color: var(--text-primary);
 }
 
 .selectInput {
@@ -311,21 +192,23 @@
 
 .dateInput {
   padding: 8px 12px;
-  border: 1px solid #d9d9d9;
+  border: 1px solid var(--border-color);
   border-radius: 6px;
   font-size: 14px;
   width: 150px;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
 }
 
 .textInput {
   padding: 8px 12px;
-  border: 1px solid #d9d9d9;
+  border: 1px solid var(--border-color);
   border-radius: 6px;
   font-size: 14px;
   width: 180px;
-  color: #999;
+  color: var(--text-tertiary);
+  background-color: var(--bg-primary);
 }
-
 
 .generateButtonDark {
   background-color: #1f1f1f;
@@ -335,24 +218,151 @@
   padding-left: 32px;
   padding-right: 32px;
   margin-top: 30px;
-
 }
 
-
-
+/* Table Styles - Full width and consistent styling */
 .table {
-  background-color: white;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  background-color: var(--bg-primary);
   border-radius: 8px;
   overflow: hidden;
 }
 
-.totalMealsCell {
-  color: #1890ff;
-  font-weight: bold;
+.ant-spin-nested-loading,
+.ant-spin-container {
+  width: 100% !important;
+  max-width: 100% !important;
 }
 
+/* Table Row Data - Make all black */
+.table :where(.ant-table-tbody) > tr > td {
+  color: #111 !important;
+  font-weight: 500;
+}
+
+.table :where(.ant-table-thead) > tr > th {
+  color: var(--text-primary) !important;
+  font-weight: 600;
+}
+
+/* Meal Cell Styles */
+.mealCell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.mealCount {
+  font-size: 18px;
+  font-weight: 700;
+  color: #111 !important;
+  text-align: center;
+}
+
+.mealPrice {
+  font-size: 12px;
+  color: #111 !important;
+  font-weight: 500;
+}
+
+/* Total Meals Cell */
+.totalMealsCell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.totalCount {
+  font-size: 18px;
+  font-weight: 700;
+  color: #111 !important;
+  text-align: center;
+}
+
+.totalMealsText {
+  font-size: 11px;
+  color: #111 !important;
+  font-weight: 500;
+}
+
+/* Total Amount Cell */
+.totalAmountCell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.totalAmount {
+  font-size: 18px;
+  font-weight: 700;
+  color: #111 !important;
+  text-align: center;
+}
+
+.totalCostText {
+  font-size: 11px;
+  color: #111 !important;
+  font-weight: 500;
+}
+
+/* Order Details Report Specific Styles */
+.mealTypeCell {
+  color: #111 !important;
+  font-weight: 600;
+}
+
+.orderCountCell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.orderCountValue {
+  font-size: 18px;
+  font-weight: 700;
+  color: #111 !important;
+  text-align: center;
+}
+
+.orderCountLabel {
+  font-size: 11px;
+  color: #111 !important;
+  font-weight: 500;
+}
+
+.serveCountCell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.serveCountValue {
+  font-size: 18px;
+  font-weight: 700;
+  color: #111 !important;
+  text-align: center;
+}
+
+.serveCountLabel {
+  font-size: 11px;
+  color: #111 !important;
+  font-weight: 500;
+}
+
+.efficiencyCell {
+  text-align: center;
+}
+
+/* Efficiency Badges */
 .efficiencyBadgeExcellent {
-  background-color: #52c41a;
+  background-color: var(--success);
   color: white;
   padding: 4px 8px;
   border-radius: 12px;
@@ -361,7 +371,7 @@
 }
 
 .efficiencyBadgeGood {
-  background-color: #fadb14;
+  background-color: var(--warning);
   color: black;
   padding: 4px 8px;
   border-radius: 12px;
@@ -370,7 +380,7 @@
 }
 
 .efficiencyBadgePoor {
-  background-color: #ff4d4f;
+  background-color: var(--error);
   color: white;
   padding: 4px 8px;
   border-radius: 12px;
@@ -378,26 +388,9 @@
   font-weight: 500;
 }
 
-.statusBadgeExcellent {
-  background-color: #52c41a;
-  color: white;
-  padding: 4px 12px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: 500;
-}
-
-.statusBadgeGood {
-  background-color: #fadb14;
-  color: black;
-  padding: 4px 12px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: 500;
-}
-
+/* Status Badges */
 .statusBadgeServed {
-  background-color: #52c41a;
+  background-color: var(--success);
   color: white;
   padding: 4px 12px;
   border-radius: 12px;
@@ -406,7 +399,7 @@
 }
 
 .statusBadgePending {
-  background-color: #faad14;
+  background-color: var(--warning);
   color: white;
   padding: 4px 12px;
   border-radius: 12px;
@@ -414,11 +407,97 @@
   font-weight: 500;
 }
 
-.viewDetailsButton {
-  padding: 0;
+.statusBadgeExcellent {
+  background-color: var(--success);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
   font-weight: 500;
 }
 
+.statusBadgeGood {
+  background-color: var(--warning);
+  color: black;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* Summary Row Styles - Bold grand total */
+.summaryRow {
+  background-color: var(--bg-tertiary) !important;
+  font-weight: 800 !important;
+}
+
+.summaryRow td {
+  color: #111 !important;
+  font-weight: 800 !important;
+}
+
+.summaryCell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  color: #111 !important;
+}
+
+.summaryCount {
+  font-size: 18px;
+  font-weight: 800 !important;
+  color: #111 !important;
+  text-align: center;
+}
+
+.summaryPrice {
+  font-size: 12px;
+  color: #111 !important;
+  font-weight: 600;
+}
+
+.summaryTotalMeals {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.summaryTotalCount {
+  font-size: 18px;
+  font-weight: 800 !important;
+  color: #111 !important;
+  text-align: center;
+}
+
+.summaryTotalText {
+  font-size: 11px;
+  color: #111 !important;
+  font-weight: 600;
+}
+
+.summaryGrandTotal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.summaryGrandAmount {
+  font-size: 20px;
+  font-weight: 800 !important;
+  color: #111 !important;
+  text-align: center;
+}
+
+.summaryGrandText {
+  font-size: 11px;
+  color: #111 !important;
+  font-weight: 600;
+}
+
+/* Download Section */
 .downloadSection {
   text-align: right;
   margin-top: 24px;
@@ -432,151 +511,60 @@
   gap: 8px;
 }
 
-.tabIcon16 {
-  margin-right: 8px;
-}
-
-.tabPaneTitle {
-  display: flex;
-  align-items: center;
-}
-
-/* Existing styles - keep all your current styles and add these new ones */
-
-/* New styles for pricing display in table cells */
-.mealCell {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-}
-
-.mealCount {
-  font-size: 18px;
-  font-weight: 700;
-  color: #1890ff;
-  text-align: center;
-}
-
-.mealPrice {
-  font-size: 12px;
-  color: #666;
+.viewDetailsButton {
+  padding: 0;
   font-weight: 500;
 }
 
-.totalMealsCell {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .analysisGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .controlsContainer {
+    flex-wrap: wrap;
+  }
 }
 
-.totalCount {
-  font-size: 18px;
-  font-weight: 700;
-  color: #1890ff;
-  text-align: center;
-}
-
-.totalMealsText {
-  font-size: 11px;
-  color: #666;
-  font-weight: 500;
-}
-
-.totalAmountCell {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-}
-
-.totalAmount {
-  font-size: 18px;
-  font-weight: 700;
-  color: #52c41a;
-  text-align: center;
-}
-
-.totalCostText {
-  font-size: 11px;
-  color: #666;
-  font-weight: 500;
-}
-
-/* Summary row styles */
-.summaryRow {
-  background-color: #fafafa;
-  font-weight: 600;
-}
-
-.summaryCell {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-}
-
-.summaryCount {
-  font-size: 18px;
-  font-weight: 800;
-  color: #fa8c16;
-  text-align: center;
-}
-
-.summaryPrice {
-  font-size: 12px;
-  color: #666;
-  font-weight: 600;
-}
-
-.summaryTotalMeals {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-}
-
-.summaryTotalCount {
-  font-size: 18px;
-  font-weight: 800;
-  color: #1890ff;
-  text-align: center;
-}
-
-.summaryTotalText {
-  font-size: 11px;
-  color: #666;
-  font-weight: 600;
-}
-
-.summaryGrandTotal {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-}
-
-.summaryGrandAmount {
-  font-size: 20px;
-  font-weight: 800;
-  color: #52c41a;
-  text-align: center;
-}
-
-.summaryGrandText {
-  font-size: 11px;
-  color: #666;
-  font-weight: 600;
-}
-
-/* Responsive adjustments */
 @media (max-width: 768px) {
-  .mealCount, .totalCount, .summaryCount, .summaryTotalCount {
+  .container {
+    padding: 16px;
+  }
+  
+  .controlsContainer,
+  .controlsContainerWrap {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .controlGroup {
+    width: 100%;
+  }
+  
+  .selectInput,
+  .dateInput,
+  .textInput {
+    width: 100%;
+  }
+  
+  .mealCount,
+  .totalCount,
+  .summaryCount,
+  .summaryTotalCount,
+  .orderCountValue,
+  .serveCountValue {
     font-size: 16px;
   }
   
-  .mealPrice, .totalMealsText, .totalCostText, .summaryPrice, .summaryTotalText, .summaryGrandText {
+  .mealPrice,
+  .totalMealsText,
+  .totalCostText,
+  .summaryPrice,
+  .summaryTotalText,
+  .summaryGrandText,
+  .orderCountLabel,
+  .serveCountLabel {
     font-size: 10px;
   }
   
@@ -587,4 +575,49 @@
   .summaryGrandAmount {
     font-size: 18px;
   }
+}
+
+/* Ensure all tables have consistent styling */
+.table .ant-table-container {
+  width: 100% !important;
+}
+
+.table .ant-table {
+  width: 100% !important;
+}
+
+.table .ant-table-content {
+  width: 100% !important;
+}
+
+.table .ant-table-tbody > tr > td,
+.table .ant-table-thead > tr > th {
+  text-align: center;
+}
+
+/* Fix for Employee Report to use full width */
+.table .ant-pagination {
+  margin-top: 16px;
+}
+
+/* Ensure consistent header styling across all tables */
+.table .ant-table-thead > tr > th {
+  background-color: var(--bg-secondary) !important;
+  border-bottom: 2px solid var(--border-color) !important;
+}
+
+/* Additional styling for consistent table appearance */
+.table .ant-table-tbody > tr:hover > td {
+  background-color: var(--bg-tertiary) !important;
+}
+
+.table .ant-table-tbody > tr > td {
+  border-bottom: 1px solid var(--border-color) !important;
+}
+
+/* Ensure summary rows are bold across all tables */
+.table .ant-table-summary > tr > td {
+  font-weight: 800 !important;
+  color: #111 !important;
+  background-color: var(--bg-tertiary) !important;
 }

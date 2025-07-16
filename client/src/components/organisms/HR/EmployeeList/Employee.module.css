@@ -1,5 +1,117 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Itim&family=Roboto+Slab:wght@100..900&display=swap");
 
+/* Custom color variables for easy customization */
+:root {
+  --primary-red: #960000;
+  --primary-red-light: #7a0000;
+  --primary-red-dark: #ff0000;
+  --primary-red-hover: #ff6b6b;
+  --white: #ffffff;
+  --light-gray: #f9f9f9;
+  --medium-gray: #f5f5f5;
+  --dark-gray: #2a2a2a;
+  --darker-gray: #353535;
+  --text-dark: #333333;
+  --border-light: #e8e8e8;
+  --border-dark: #404040;
+  --hover-light: #f0f8ff;
+}
+
+/* Theme configurations for Ant Design Table */
+.customTheme {
+  --table-header-bg: #960000;
+  --table-header-color: #ffffff;
+  --table-header-sort-active-bg: #960000;
+  --table-header-sort-hover-bg: #7a0000;
+  --table-border-color: #960000;
+  --table-font-size: 12px;
+  --table-cell-padding: 12px;
+  --table-font-family: "Figtree", sans-serif;
+}
+
+.darkTheme {
+  --table-header-bg: #ff0000;
+  --table-header-color: #ffffff;
+  --table-header-sort-active-bg: #ff0000;
+  --table-header-sort-hover-bg: #cc0000;
+  --table-border-color: #ff0000;
+  --table-font-size: 12px;
+  --table-cell-padding: 12px;
+  --table-font-family: "Figtree", sans-serif;
+  --table-bg-container: #303030;
+  --table-text-color: #ffffff;
+  --table-row-hover-bg: #ff6b6b;
+  --table-border: #404040;
+  --pagination-bg-container: #303030;
+  --pagination-text-color: #ffffff;
+  --pagination-border: #404040;
+  --pagination-item-active-bg: #404040;
+}
+
+/* Modal styles */
+.modalMask {
+  backdrop-filter: blur(12px);
+}
+
+/* Popconfirm text styles */
+.popconfirmTitle {
+  font-size: 0.9vw;
+}
+
+.popconfirmDescription {
+  font-style: italic;
+  font-size: 0.8vw;
+}
+
+.popconfirmButton {
+  font-size: 0.8vw;
+}
+
+/* SearchBar inline style replacement */
+.searchBarSpacing {
+  margin-right: 1vw;
+}
+
+/* Table header cell styles */
+.tableHeaderCell {
+  background-color: #960000 !important;
+  color: #ffffff !important;
+  font-weight: bold !important;
+}
+
+/* Custom table row styles */
+.customTableRow {
+  background-color: #ffffff;
+  transition: all 0.3s ease;
+}
+
+.customTableRow:hover {
+  background-color: #f5f5f5 !important;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.customTableRowDark {
+  background-color: #2a2a2a;
+  color: #ffffff;
+  transition: all 0.3s ease;
+}
+
+.customTableRowDark:hover {
+  background-color: #ff6b6b !important;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(255, 0, 0, 0.25);
+}
+
+/* Alternating row colors */
+.customTableRow:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.customTableRowDark:nth-child(even) {
+  background-color: #353535;
+}
+
 .home {
   display: flex;
   flex-direction: row;
@@ -19,23 +131,13 @@
   flex: 5;
   padding: 1vw;
   overflow: hidden;
-  background-color: rgb(255, 255, 255);
   display: flex;
   flex-direction: column;
   overflow-y: auto;
 }
 
 :global(.ant-select-selector) {
-  border: 1px solid rgb(219, 218, 218) !important;
-  background-color: white !important;
-}
-
-:global(.ant-select-focused .ant-select-selector) {
-  border-color: rgb(87, 99, 255) !important;
-}
-
-:global(.ant-select:hover .ant-select-selector) {
-  border-color: #1890ff !important;
+  border: 1px solid !important;
 }
 
 .homeHead {
@@ -50,7 +152,6 @@
   font-size: 20px;
   font-weight: 600;
   margin: auto 0;
-  color: #333333;
 }
 .headRight {
   margin-left: auto;
@@ -59,6 +160,7 @@
 
 .filter {
   width: 10vw;
+  margin-left: 1.5vw;
 }
 
 .searchBar {
@@ -73,7 +175,7 @@
   width: 120px;
   text-align: center;
   border-radius: 10px;
-  border: 2px solid rgb(0, 0, 0);
+  border: 2px solid;
 }
 
 .empty {
@@ -83,50 +185,10 @@
   margin: 0vw 0.5vw;
   cursor: pointer;
   transition: all 0.2s ease-in-out;
-  color: #666666;
 }
 
 .icons:hover {
   transform: scale(1.2);
-}
-
-/* Edit icon styling */
-.editIcon {
-  color: #1890ff !important;
-}
-
-.editIcon:hover {
-  color: #40a9ff !important;
-}
-
-/* Delete icon styling */
-.deleteIcon {
-  color: #ff4d4f !important;
-}
-
-.deleteIcon:hover {
-  color: #ff7875 !important;
-}
-
-/* Dark mode icon colors */
-:global(.dark) .icons {
-  color: #ffffff;
-}
-
-:global(.dark) .editIcon {
-  color: #40a9ff !important;
-}
-
-:global(.dark) .editIcon:hover {
-  color: #69c0ff !important;
-}
-
-:global(.dark) .deleteIcon {
-  color: #ff7875 !important;
-}
-
-:global(.dark) .deleteIcon:hover {
-  color: #ffa39e !important;
 }
 
 .headRight select {
@@ -134,7 +196,6 @@
 }
 
 .contentBox {
-  background-color: rgb(255, 255, 255);
   margin: 0.5vw;
   border-radius: 10px;
   padding: 0.5vw;
@@ -145,185 +206,136 @@
 
 Table {
   margin-top: 1vw;
-  background-color: rgb(245, 245, 245);
 }
 
-/* Force table header to be red at all times */
-:global(.ant-table-thead > tr > th),
-:global(.ant-table-thead > tr > th:hover),
-:global(.ant-table-thead > tr > th.ant-table-column-has-sorters),
-:global(.ant-table-thead > tr > th.ant-table-column-has-sorters:hover),
-:global(.ant-table-thead > tr > th.ant-table-column-sort),
-:global(.ant-table-thead > tr > th.ant-table-selection-column),
-:global(.ant-table-thead > tr > th:first-child),
-:global(.ant-table-thead > tr > th:last-child),
-:global(.ant-table thead th),
-:global(.ant-table .ant-table-thead > tr > th) {
+/* Employee table header styles - scoped to this component only */
+.contentBox :global(.ant-table-thead > tr > th),
+.contentBox :global(.ant-table-thead > tr > th:hover),
+.contentBox :global(.ant-table-thead > tr > th.ant-table-column-has-sorters),
+.contentBox :global(.ant-table-thead > tr > th.ant-table-column-has-sorters:hover),
+.contentBox :global(.ant-table-thead > tr > th.ant-table-column-sort),
+.contentBox :global(.ant-table-thead > tr > th.ant-table-selection-column),
+.contentBox :global(.ant-table-thead > tr > th:first-child),
+.contentBox :global(.ant-table-thead > tr > th:last-child),
+.contentBox :global(.ant-table thead th),
+.contentBox :global(.ant-table .ant-table-thead > tr > th) {
   background-color: #960000 !important;
   color: #ffffff !important;
-  border-bottom: 1px solid #960000 !important;
-  border-top: 1px solid #960000 !important;
-  border-left: 1px solid #960000 !important;
-  border-right: 1px solid #960000 !important;
+  font-weight: bold !important;
+  text-align: center !important;
+  font-size: 14px !important;
 }
 
-/* Force Employee ID column specifically */
-:global(.ant-table-thead > tr > th:first-child) {
-  background-color: #960000 !important;
+/* Dark theme table headers */
+.home.dark .contentBox :global(.ant-table-thead > tr > th),
+.home.dark .contentBox :global(.ant-table-thead > tr > th:hover),
+.home.dark .contentBox :global(.ant-table-thead > tr > th.ant-table-column-has-sorters),
+.home.dark .contentBox :global(.ant-table-thead > tr > th.ant-table-column-has-sorters:hover),
+.home.dark .contentBox :global(.ant-table-thead > tr > th.ant-table-column-sort),
+.home.dark .contentBox :global(.ant-table-thead > tr > th.ant-table-selection-column),
+.home.dark .contentBox :global(.ant-table-thead > tr > th:first-child),
+.home.dark .contentBox :global(.ant-table-thead > tr > th:last-child),
+.home.dark .contentBox :global(.ant-table thead th),
+.home.dark .contentBox :global(.ant-table .ant-table-thead > tr > th) {
+  background-color: #ff0000 !important;
   color: #ffffff !important;
+  font-weight: bold !important;
+  border-bottom: 1px solid #ffffff !important;
+  border-top: 1px solid #ffffff !important;
+  border-left: 1px solid #ffffff !important;
+  border-right: 1px solid #ffffff !important;
+  text-align: center !important;
+  font-size: 14px !important;
 }
 
-:global(.ant-table-thead > tr > th .ant-table-column-sorter),
-:global(.ant-table-thead > tr > th .ant-table-column-title) {
-  color: #ffffff !important;
+/* Dark theme table header hover effects */
+.home.dark .contentBox :global(.ant-table-thead > tr > th:hover),
+.home.dark .contentBox :global(.ant-table-thead > tr > th.ant-table-column-has-sorters:hover) {
+  background-color: #cc0000 !important;
+  transition: background-color 0.3s ease !important;
 }
 
-/* Dark mode table row styles */
-:global(.dark .ant-table-tbody > tr > td),
-:global(.dark .ant-table-tbody > tr.ant-table-row-selected > td),
-:global(.dark .ant-table-tbody tr),
-:global(.dark .ant-table-tbody tr.ant-table-row-selected) {
-  background-color: #303030 !important;
-  color: #ffffff !important;
-  border-bottom: 1px solid #404040 !important;
-}
-
-:global(.dark .ant-table-tbody > tr:hover > td),
-:global(.dark .ant-table-tbody > tr.ant-table-row:hover > td),
-:global(.dark .ant-table-tbody tr:hover) {
-  background-color: #1d1c1c !important;
-  color: #ffffff !important;
-  border-bottom: 1px solid #f20707 !important;
-}
-
-/* Dark mode table container */
-:global(.dark .ant-table),
-:global(.dark .ant-table-container),
-:global(.dark .ant-table-content),
-:global(.dark .ant-table-tbody) {
-  background-color: #303030 !important;
-  color: #ffffff !important;
-}
-
-/* Dark mode table pagination */
-:global(.dark .ant-pagination),
-:global(.dark .ant-pagination li),
-:global(.dark .ant-pagination .ant-pagination-item),
-:global(.dark .ant-pagination .ant-pagination-item a) {
-  background-color: #303030 !important;
-  color: #ffffff !important;
-  border-color: #404040 !important;
-}
-
-/* Dark mode for main content areas */
-:global(.dark) .homeContent {
-  background-color: #212121 !important;
-  color: #ffffff !important;
-}
-
-:global(.dark) .contentBox {
-  background-color: #303030 !important;
-  color: #ffffff !important;
-  box-shadow: 0 6px 12px rgba(255, 255, 255, 0.05), 0 3px 6px rgba(255, 255, 255, 0.02);
-}
-
-:global(.dark) .headLeft {
-  color: #f4ecec !important;
-}
-
-/* Dark mode for select components */
-:global(.dark .ant-select-selector) {
-  background-color: #303030 !important;
-  border-color: #404040 !important;
-  color: #ffffff !important;
-}
-
-:global(.dark .ant-select-focused .ant-select-selector) {
-  border-color: rgb(87, 99, 255) !important;
-}
-
-:global(.dark .ant-select:hover .ant-select-selector) {
-  border-color: #1890ff !important;
-}
-
-:global(.dark .ant-select-selection-item) {
-  color: #ffffff !important;
-}
-
-/* Dark mode placeholder text */
-:global(.dark .ant-select-selection-placeholder) {
-  color: #ffffff !important;
-}
-
-:global(.dark .ant-select-selector .ant-select-selection-placeholder) {
-  color: #ffffff !important;
-}
-
-/* Dark mode for select dropdown options */
-:global(.dark .ant-select-dropdown) {
-  background-color: #303030 !important;
+/* Dark theme table container */
+.home.dark .contentBox :global(.ant-table) {
+  background-color: #1a1a1a !important;
   border: 1px solid #404040 !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5) !important;
 }
 
-:global(.dark .ant-select-item) {
-  background-color: #303030 !important;
-  color: #ffffff !important;
-  border-bottom: 1px solid #404040 !important;
+.home.dark .contentBox :global(.ant-table-container) {
+  background-color: #1a1a1a !important;
 }
 
-:global(.dark .ant-select-item:hover) {
-  background-color: #404040 !important;
-  color: #ffffff !important;
+.home.dark .contentBox :global(.ant-table-content) {
+  background-color: #1a1a1a !important;
 }
 
-:global(.dark .ant-select-item-option-selected) {
-  background-color: #ff6b6b !important;
-  color: #ffffff !important;
+/* Table body row styles */
+.contentBox :global(.ant-table-tbody > tr) {
+  background-color: #ffffff !important;
+  transition: all 0.3s ease !important;
 }
 
-:global(.dark .ant-select-item-option-active) {
-  background-color: #404040 !important;
-  color: #ffffff !important;
+.contentBox :global(.ant-table-tbody > tr:hover) {
+  background-color: #ebe8eb !important;
+  transform: translateY(-1px) !important;
 }
 
-/* Dark mode for dropdown container */
-:global(.dark .ant-select-dropdown .ant-select-item-option-content) {
-  color: #ffffff !important;
+.contentBox :global(.ant-table-tbody > tr:nth-child(even)) {
+  background-color: #f9f9f9 !important;
 }
 
-/* Dark mode for dropdown arrow */
-:global(.dark .ant-select-arrow) {
-  color: #ffffff !important;
+
+
+/* Table cell text colors */
+.contentBox :global(.ant-table-tbody > tr > td) {
+  color: #333333 !important;
+  border-bottom: 1px solid #e8e8e8 !important;
+  font-size: 13px !important;
 }
 
-/* Dark mode for clear button */
-:global(.dark .ant-select-clear) {
-  color: #ffffff !important;
+/* Dark mode pagination styles */
+.home.dark .contentBox :global(.ant-pagination) {
   background-color: transparent !important;
 }
 
-:global(.dark .ant-select-clear:hover) {
-  color: #ff6b6b !important;
-}
-
-/* Dark mode for search bar */
-:global(.dark .ant-input::placeholder) {
-  color: #ffffff !important;
-}
-
-:global(.dark .ant-input) {
+.home.dark .contentBox :global(.ant-pagination .ant-pagination-item) {
   background-color: #303030 !important;
   border-color: #404040 !important;
+}
+
+.home.dark .contentBox :global(.ant-pagination .ant-pagination-item a) {
   color: #ffffff !important;
 }
 
-:global(.dark .ant-input:focus) {
-  border-color: rgb(87, 99, 255) !important;
+.home.dark .contentBox :global(.ant-pagination .ant-pagination-item:hover) {
+  border-color: #ff0000 !important;
 }
 
-:global(.dark .ant-input:hover) {
-  border-color: #1890ff !important;
+.home.dark .contentBox :global(.ant-pagination .ant-pagination-item:hover a) {
+  color: #ff0000 !important;
+}
+
+.home.dark .contentBox :global(.ant-pagination .ant-pagination-item-active) {
+  background-color: #404040 !important;
+  border-color: #ff0000 !important;
+}
+
+.home.dark .contentBox :global(.ant-pagination .ant-pagination-item-active a) {
+  color: #ff0000 !important;
+}
+
+.home.dark .contentBox :global(.ant-pagination .ant-pagination-prev),
+.home.dark .contentBox :global(.ant-pagination .ant-pagination-next) {
+  color: #ffffff !important;
+}
+
+.home.dark .contentBox :global(.ant-pagination .ant-pagination-prev:hover),
+.home.dark .contentBox :global(.ant-pagination .ant-pagination-next:hover) {
+  color: #ff0000 !important;
+}
+
+.home.dark .contentBox :global(.ant-pagination .ant-pagination-total-text) {
+  color: #ffffff !important;
 }
 
 @media(max-width:768px){

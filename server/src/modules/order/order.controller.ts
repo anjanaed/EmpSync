@@ -9,6 +9,7 @@ import {
   Delete,
   HttpException,
   HttpStatus,
+  Query
 } from '@nestjs/common';
 import { OrdersService } from './order.service';
 import { Prisma } from '@prisma/client';
@@ -40,22 +41,40 @@ export class OrdersController {
   }
 
   // GET endpoint to retrieve all orders
-  @Get()
-  async findAll() {
-    try {
-      return await this.ordersService.findAll(); // Call service to fetch all orders
-    } catch (err) {
-      // Handle errors with an INTERNAL_SERVER_ERROR response
-      throw new HttpException(
-        {
-          status: HttpStatus.INTERNAL_SERVER_ERROR,
-          error: 'Internal Server Error',
-          message: err.message,
-        },
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
+  // @Get()
+  // async findAll() {
+  //   try {
+  //     return await this.ordersService.findAll(); // Call service to fetch all orders
+  //   } catch (err) {
+  //     // Handle errors with an INTERNAL_SERVER_ERROR response
+  //     throw new HttpException(
+  //       {
+  //         status: HttpStatus.INTERNAL_SERVER_ERROR,
+  //         error: 'Internal Server Error',
+  //         message: err.message,
+  //       },
+  //       HttpStatus.INTERNAL_SERVER_ERROR,
+  //     );
+  //   }
+  // }
+
+@Get()
+async findAll(
+  @Query('orgId') orgId?: string,
+) {
+  try {
+    return await this.ordersService.findAll(orgId);
+  } catch (err) {
+    throw new HttpException(
+      {
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        error: 'Internal Server Error',
+        message: err.message,
+      },
+      HttpStatus.INTERNAL_SERVER_ERROR,
+    );
   }
+}
 
   // GET endpoint to retrieve a single order by ID
   @Get(':id')
