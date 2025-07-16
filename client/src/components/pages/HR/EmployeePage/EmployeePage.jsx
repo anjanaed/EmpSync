@@ -2,7 +2,6 @@ import React from "react";
 import {
   faUsers,
   faUserPlus,
-  faFileInvoice,
   faDollarSign,
   faFingerprint,
   faCalendar,
@@ -10,10 +9,16 @@ import {
   faBowlFood,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Button } from "antd";
+import { useNavigate } from "react-router-dom";
 import NavBar from '../../../organisms/NavBar/NavBar';
 import Employees from "../../../Organisms/HR/EmployeeList/Employees";
+import { useAuth } from "../../../../contexts/AuthContext"; 
 
 const EmployeePage = () => {
+  const navigate = useNavigate();
+  const { logout } = useAuth(); 
+
   // Get and parse authData from localStorage
   const rawAuthData = localStorage.getItem("authData");
   const parsedAuthData = rawAuthData ? JSON.parse(rawAuthData) : null;
@@ -21,7 +26,39 @@ const EmployeePage = () => {
   // Safely get permission actions
   const actions = parsedAuthData?.permissions?.actions || [];
 
-  // Define all possible menu items
+  // Handle logout using context
+  const handleLogout = () => {
+    logout(); // ✅ clears context/auth
+    navigate("/login");
+  };
+
+  // No access case
+  if (!actions || actions.length === 0) {
+    return (
+      <div style={{
+        height: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        fontSize: '1.5rem',
+        color: '#ff4d4f',
+        textAlign: 'center',
+      }}>
+        🚫 You do not have access to view this page.
+        <Button
+          type="primary"
+          danger
+          onClick={handleLogout}
+          style={{ marginTop: '20px' }}
+        >
+          Logout
+        </Button>
+      </div>
+    );
+  }
+
+  // All menu items
   const allMenuItems = [
     {
       key: "1",
@@ -74,8 +111,7 @@ const EmployeePage = () => {
     },
   ];
 
-  // Filter menu based on permissions
-  const filteredMenuItems = allMenuItems.filter((item) =>
+  const filteredMenuItems = allMenuItems.filter(item =>
     actions.includes(item.action)
   );
 
