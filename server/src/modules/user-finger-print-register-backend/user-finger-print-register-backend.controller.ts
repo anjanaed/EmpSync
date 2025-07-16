@@ -3,6 +3,14 @@ import { UserFingerPrintRegisterBackendService } from './user-finger-print-regis
 
 @Controller('user-finger-print-register-backend')
 export class UserFingerPrintRegisterBackendController {
+  /**
+   * GET /user-finger-print-register-backend/all-fingerprints
+   * Returns: Array of all fingerprints
+   */
+  @Get('all-fingerprints')
+  async getAllFingerprints() {
+    return this.userFingerPrintRegisterBackendService.getAllFingerprints();
+  }
   constructor(private readonly userFingerPrintRegisterBackendService: UserFingerPrintRegisterBackendService) {}
 
   /**

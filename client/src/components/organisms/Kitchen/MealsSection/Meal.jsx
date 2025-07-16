@@ -39,10 +39,10 @@ const { Search } = Input;
 const { confirm } = Modal;
 const { Option } = Select;
 
-
 const AvailableMeals = () => {
   const { authData } = useAuth();
   const token = authData?.accessToken;
+  const urL = import.meta.env.VITE_BASE_URL;
   
   const [meals, setMeals] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -58,7 +58,7 @@ const AvailableMeals = () => {
 
   const navigate = useNavigate();
 
-  // Fetch meal data from the API
+  // Fetch meal data from the API using axios with orgId
   useEffect(() => {
     fetchMeals();
   }, []);
@@ -66,12 +66,19 @@ const AvailableMeals = () => {
   const fetchMeals = async () => {
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:3000/meal");
-      const data = await response.json();
-      setMeals(data);
+      const response = await axios.get(`${urL}/meal`, {
+        params: {
+          orgId: authData?.orgId,
+        },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setMeals(response.data);
     } catch (error) {
       console.error("Error fetching meals:", error);
-      message.error("Failed to load meals");
+      const errorMessage = error.response?.data?.message || error.message;
+      message.error(`Failed to load meals: ${errorMessage}`);
     } finally {
       setLoading(false);
     }
@@ -151,55 +158,39 @@ const AvailableMeals = () => {
       if (meal.ingredients && meal.ingredients.length > 0) {
         for (const ingredient of meal.ingredients) {
           try {
-            const ingredientResponse = await fetch(
-              `http://localhost:3000/meal-ingredients/${ingredient.id}`,
-              {
-                method: "DELETE",
-                headers: {
-                  Authorization: `Bearer ${token}`,
-
-                },
-                
-              }
-            );
-
-            if (!ingredientResponse.ok) {
-              console.warn(
-                `Failed to delete meal ingredient with ID ${ingredient.id}`
-              );
-            }
+            await axios.delete(`${urL}/meal-ingredients/${ingredient.id}`, {
+              params: {
+                orgId: authData?.orgId,
+              },
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            });
           } catch (ingredientError) {
             console.error("Error deleting meal ingredient:", ingredientError);
+            console.warn(
+              `Failed to delete meal ingredient with ID ${ingredient.id}`
+            );
           }
         }
       }
 
-      // delete the meal from the database
-      const response = await fetch(`http://localhost:3000/meal/${meal.id}`, {
-        method: "DELETE",
-        headers: {
-
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-
+      // Delete the meal from the database using axios
+      await axios.delete(`${urL}/meal/${meal.id}`, {
+        params: {
+          orgId: authData?.orgId,
         },
-        
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
 
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        console.error("Server error response:", errorData);
-        throw new Error(
-          `Failed to delete meal: ${errorData.message || response.statusText}`
-        );
-      }
-
-      
       setMeals(meals.filter((m) => m.id !== meal.id));
       message.success("Meal deleted successfully");
     } catch (error) {
       console.error("Error deleting meal:", error);
-      message.error(`Failed to delete meal: ${error.message}`);
+      const errorMessage = error.response?.data?.message || error.message;
+      message.error(`Failed to delete meal: ${errorMessage}`);
     } finally {
       setLoading(false);
     }

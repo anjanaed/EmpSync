@@ -99,6 +99,7 @@ const Payroll = () => {
 
       //Remove Existing Payrolls with same month
       await axios.delete(`${urL}/payroll/delete-by-month/${month}`, {
+        params: { orgId: authData?.orgId },
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -106,7 +107,7 @@ const Payroll = () => {
 
       //Start calculations
       await axios.post(
-        `${urL}/payroll/calculate-all`,
+        `${urL}/payroll/calculate-all?orgId=${authData?.orgId}`,
         {
           range: range,
           month: month,
@@ -171,6 +172,7 @@ const Payroll = () => {
   const fetchAdjustments = async () => {
     try {
       const res = await axios.get(`${urL}/adjustment`, {
+        params: { orgId: authData?.orgId },
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -218,6 +220,9 @@ const Payroll = () => {
 
     try {
       const userRes = await axios.get(`${urL}/user`, {
+        params: {
+          orgId: authData?.orgId,
+        },
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -251,6 +256,7 @@ const Payroll = () => {
           const payload = {
             empId: id,
             label: adj.details,
+            orgId: authData?.orgId,
             allowance: adj.isAllowance,
             isPercentage: adj.isPercentage,
             amount: parseFloat(adj.amount),
@@ -297,6 +303,7 @@ const Payroll = () => {
     try {
       //Retrieve Pre defined field values
       const res = await axios.get(`${urL}/adjustment`, {
+        params: { orgId: authData?.orgId },
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -320,6 +327,7 @@ const Payroll = () => {
       } else {
         const epfPayload = {
           label: "EPF (Employee)",
+          orgId: authData?.orgId,
           isPercentage: true,
           allowance: false,
           amount: parseFloat(epf),
@@ -345,6 +353,7 @@ const Payroll = () => {
       } else {
         const employerPayload = {
           label: "EmployerFund",
+          orgId: authData?.orgId,
           isPercentage: true,
           allowance: false,
           amount: parseFloat(employerFund),
@@ -360,7 +369,8 @@ const Payroll = () => {
         if (etfRecord.amount != parseFloat(etf)) {
           await axios.put(
             `${urL}/adjustment/${parseInt(etfRecord.id)}`,
-            etfPayload,{
+            etfPayload,
+            {
               headers: {
                 Authorization: `Bearer ${token}`,
               },
@@ -371,6 +381,7 @@ const Payroll = () => {
         const etfPayload = {
           label: "ETF",
           isPercentage: true,
+          orgId: authData?.orgId,
           allowance: false,
           amount: parseFloat(etf),
         };

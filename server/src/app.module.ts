@@ -5,7 +5,6 @@ import { DatabaseModule } from './database/database.module';
 import { UserModule } from './core/user/user.module';
 import { MealModule } from './modules/meal/meal.module';
 import { IngredientsModule } from './modules/ingredient/ingredient.module';
-import { BudgetsModule } from './modules/budget/budget.module';
 import { PayrollModule } from './modules/payroll/payroll.module';
 import { OrdersModule } from './modules/order/order.module';
 import { ScheduleModule } from './modules/schedule/schedule.module';
@@ -29,7 +28,6 @@ import { HrFingerprintsModule } from './modules/hr-fingerprints/hr-fingerprints.
     DatabaseModule,
     UserModule,
     IngredientsModule,
-    BudgetsModule,
     MealModule,
     PayrollModule,
     OrdersModule,

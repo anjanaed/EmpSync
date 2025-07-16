@@ -14,7 +14,7 @@ const translations = {
         noMealsSelected: "No meals selected.",
         placeOrder: "Place Order",
         add: "Add",
-        fingerprint: "Place Your Finger on Fingerprint Scanner",
+        fingerprint: "Tap here to start scanning",
         enterPin: "Enter PIN",
         submit: "Submit",
         clear: "Clear",

@@ -8,6 +8,7 @@ import {
   UseGuards,
   Put,
   HttpException,
+  Query,
   HttpStatus,
 } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
@@ -37,13 +38,12 @@ export class AdjustmentController {
       );
     }
   }
-
   @Get()
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles('HR_ADMIN')
-  async findAll() {
+  async findAll(@Query('orgId') orgId?: string) { 
     try {
-      return await this.adjustmentService.findAll();
+      return await this.adjustmentService.findAll(orgId); 
     } catch (error) {
       throw new HttpException(
         {

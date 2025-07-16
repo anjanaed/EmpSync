@@ -51,8 +51,19 @@ export const AuthProvider = ({ children }) => {
       const currentUser = response.data;
 
       const userRole = currentUser.role;
-      const orgId= currentUser.organizationId || NULL; // Fallback to a default org ID if not present
-
+      const orgId = currentUser.organizationId || NULL; // Fallback to a default org ID if not present
+      let permissions = [];
+      try {
+        const permRes = await axios.get(
+          `${urL}/super-admin/permissions/${currentUser.id}`,
+          {
+            headers: { Authorization: `Bearer ${access_token}` },
+          }
+        );
+        permissions = permRes.data || [];
+      } catch (permErr) {
+        console.error("Failed to fetch permissions:", permErr);
+      }
       const userData = {
         accessToken: access_token,
         idToken: id_token,
@@ -60,6 +71,7 @@ export const AuthProvider = ({ children }) => {
         orgId: orgId,
         email: decoded.email,
         role: userRole,
+        permissions,
       };
 
       setAuthData(userData);

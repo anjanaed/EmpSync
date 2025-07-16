@@ -15,6 +15,7 @@ import {
   faFingerprint
 } from "@fortawesome/free-solid-svg-icons";
 import NavBar from "../../NavBar/NavBar";
+import { useAuth } from "../../../../contexts/AuthContext";
 
 const customTheme = {
   components: {
@@ -46,13 +47,16 @@ const FingerPrintsContent = () => {
   // Search bar state
   const [searchValue, setSearchValue] = useState("");
   const [searchError, setSearchError] = useState("");
+  const { authData } = useAuth();
   // Search bar state
   // (searchError and setSearchError are now declared below as part of the new search bar logic)
 
   // Fetch fingerprint device usage
   useEffect(() => {
     axios
-      .get("http://localhost:3000/hr-fingerprints")
+      .get("http://localhost:3000/hr-fingerprints", {
+        params: { orgId: authData?.orgId }, 
+      })
       .then((res) => {
         const fingerprints = res.data;
         // Group by unit name (first 6 chars)
@@ -437,12 +441,6 @@ const FingerPrints = () => (
       },
       {
         key: "4",
-        icon: <FontAwesomeIcon icon={faFileInvoice} />,
-        label: "Reports",
-        link: "/reportPage"
-      },
-      {
-        key: "5",
         icon: <FontAwesomeIcon icon={faFingerprint} />,
         label: "FingerPrints",
         link: "/FingerPrints"

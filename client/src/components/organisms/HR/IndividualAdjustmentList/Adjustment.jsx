@@ -34,6 +34,7 @@ const Adjustment = () => {
       const response = await axios.get(`${urL}/indiadjustment`, {
         params: {
           search: searchValue || undefined,
+          orgId: authData?.orgId, 
         },
         headers: {
           Authorization: `Bearer ${token}`,

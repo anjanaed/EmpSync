@@ -14,9 +14,11 @@ export class AdjustmentService {
     }
   }
 
-  async findAll() {
+  async findAll(orgId?: string) {
     try {
-      return await this.databaseService.salaryAdjustments.findMany({});
+      return await this.databaseService.salaryAdjustments.findMany({
+        where: orgId ? { orgId } : undefined, 
+      });
     } catch (error) {
       throw new BadRequestException('Failed to retrieve Adjustments');
     }

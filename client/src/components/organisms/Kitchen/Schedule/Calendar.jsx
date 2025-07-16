@@ -63,10 +63,14 @@ const MealPlanner = () => {
   const fetchDefaultMeals = async (date) => {
     try {
       const formattedDate = date.format("YYYY-MM-DD");
-      const response = await fetch(
-        `${urL}/meal-types/by-date/${formattedDate}`
+      const response = await axios.get(
+        `${urL}/meal-types/by-date/${formattedDate}`,
+        {
+          params: { orgId: authData?.orgId },
+          headers: { Authorization: `Bearer ${token}` },
+        }
       );
-      const data = await response.json();
+      const data = response.data;
       // Normalize time data to ensure valid format
       const normalizedData = data.map((meal) => ({
         ...meal,
@@ -93,12 +97,11 @@ const MealPlanner = () => {
 
   const fetchAvailableMeals = async () => {
     try {
-      const response = await fetch(`${urL}/meal`);
-      if (!response.ok) {
-        throw new Error("Failed to fetch meals");
-      }
-      const data = await response.json();
-      setAvailableMeals(Array.isArray(data) ? data : []);
+      const response = await axios.get(`${urL}/meal`, {
+        params: { orgId: authData?.orgId },
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setAvailableMeals(Array.isArray(response.data) ? response.data : []);
     } catch (error) {
       console.error("Error fetching meals:", error);
       message.error("Failed to load available meals");
@@ -111,7 +114,10 @@ const MealPlanner = () => {
     setScheduledMeals({});
     try {
       const formattedDate = date.format("YYYY-MM-DD");
-      const response = await axios.get(`${urL}/schedule/${formattedDate}`);
+      const response = await axios.get(`${urL}/schedule/${formattedDate}`, {
+        params: { orgId: authData?.orgId },
+        headers: { Authorization: `Bearer ${token}` },
+      });
       if (response.data && Array.isArray(response.data)) {
         const schedulesMap = {};
         response.data.forEach((schedule) => {
@@ -159,7 +165,10 @@ const MealPlanner = () => {
         const dateStr = tempDate.format("YYYY-MM-DD");
         promises.push(
           axios
-            .get(`${urL}/schedule/${dateStr}`)
+            .get(`${urL}/schedule/${dateStr}`, {
+              params: { orgId: authData?.orgId },
+              headers: { Authorization: `Bearer ${token}` },
+            })
             .then((response) => ({
               date: dateStr,
               schedules: response.data || [],
@@ -203,7 +212,11 @@ const MealPlanner = () => {
     if (!activeTab || !currentDate) return;
     try {
       const formattedDate = currentDate.format("YYYY-MM-DD");
-      const response = await axios.get(`${urL}/schedule/${formattedDate}`);
+      const response = await axios.get(`${urL}/schedule/${formattedDate}`, {
+
+        params: { orgId: authData?.orgId },
+        headers: { Authorization: `Bearer ${token}` },
+      });
       if (response.data && Array.isArray(response.data)) {
         const schedule = response.data.find(
           (s) =>
@@ -258,22 +271,67 @@ const MealPlanner = () => {
     }
   };
 
-  // New function to copy meals from previous schedule
-  const handleCopyFromPrevious = (previousSchedule) => {
-    if (previousSchedule.schedule && previousSchedule.schedule.meals) {
-      const mealIds = previousSchedule.schedule.meals.map((meal) => meal.id);
-      setSelectedMeals(mealIds);
+  // // New function to copy meals from previous schedule
+  // const handleCopyFromPrevious = (previousSchedule) => {
+  //   if (previousSchedule.schedule && previousSchedule.schedule.meals) {
+  //     const mealIds = previousSchedule.schedule.meals.map((meal) => meal.id);
+  //     setSelectedMeals(mealIds);
+  //     message.success(
+  //       `Copied ${mealIds.length} meals from ${dayjs(
+  //         previousSchedule.date
+  //       ).format("MMM DD, YYYY")}`
+  //     );
+  //   }
+  // };
+
+  const handleCopyFromPrevious = async (previousSchedule) => {
+  if (previousSchedule.schedule && previousSchedule.schedule.meals) {
+    const mealIds = previousSchedule.schedule.meals.map((meal) => meal.id);
+    setSelectedMeals(mealIds);
+
+    // Optional: Immediately update the schedule on the server
+    if (activeTab && currentDate && authData?.orgId && token) {
+      const payload = {
+        date: currentDate.format("YYYY-MM-DD"),
+        mealTypeId: parseInt(activeTab),
+        orgId: authData.orgId,
+        mealIds,
+      };
+      try {
+        if (existingSchedule) {
+          await axios.patch(`${urL}/schedule/${existingSchedule.id}`, payload, {
+            params: { orgId: authData.orgId },
+            headers: { Authorization: `Bearer ${token}` },
+          });
+        } else {
+          await axios.post(`${urL}/schedule`, payload, {
+            params: { orgId: authData.orgId },
+            headers: { Authorization: `Bearer ${token}` },
+          });
+        }
+        message.success(
+          `Copied ${mealIds.length} meals from ${dayjs(
+            previousSchedule.date
+          ).format("MMM DD, YYYY")} and updated the schedule`
+        );
+        await fetchAllSchedules(currentDate);
+      } catch (error) {
+        message.error("Failed to update schedule with copied meals");
+      }
+    } else {
       message.success(
         `Copied ${mealIds.length} meals from ${dayjs(
           previousSchedule.date
         ).format("MMM DD, YYYY")}`
       );
     }
-  };
+  }
+};
 
   const handlePinMeal = async (id) => {
     try {
       await axios.patch(`${urL}/meal-types/${id}/toggle-default`, {
+        params: { orgId: authData?.orgId },
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -292,6 +350,7 @@ const MealPlanner = () => {
     try {
       if (!meal.isDefault) {
         await axios.delete(`${urL}/meal-types/${meal.id}`, {
+          params: { orgId: authData?.orgId },
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -321,6 +380,7 @@ const MealPlanner = () => {
           newTime: formattedTime,
         },
         {
+          params: { orgId: authData?.orgId },
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -355,6 +415,7 @@ const MealPlanner = () => {
           newTime: formattedTime,
         },
         {
+          params: { orgId: authData?.orgId },
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -401,6 +462,7 @@ const MealPlanner = () => {
       try {
         const payload = {
           name: values.mealName,
+          orgId: authData?.orgId,
           time: [
             values.startTime ? values.startTime.format("HH:mm") : null,
             values.endTime ? values.endTime.format("HH:mm") : null,
@@ -409,6 +471,7 @@ const MealPlanner = () => {
           date: currentDate.format("YYYY-MM-DD"),
         };
         await axios.post(`${urL}/meal-types`, payload, {
+          params: { orgId: authData?.orgId },
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -503,11 +566,13 @@ const MealPlanner = () => {
         // Auto-create schedule with meals from previous day
         const payload = {
           date: currentDate.format("YYYY-MM-DD"),
+          orgId: authData?.orgId,
           mealTypeId: mealTypeId,
           mealIds: foundPreviousSchedule.meals.map((meal) => meal.id),
         };
 
         await axios.post(`${urL}/schedule`, payload, {
+          params: { orgId: authData?.orgId },
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -571,6 +636,7 @@ const MealPlanner = () => {
 
     try {
       await axios.delete(`${urL}/schedule/${existingSchedule.id}`, {
+        params: { orgId: authData?.orgId },
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -601,6 +667,7 @@ const MealPlanner = () => {
     const payload = {
       date: currentDate.format("YYYY-MM-DD"),
       mealTypeId: parseInt(activeTab),
+      orgId: authData?.orgId,
       mealIds: selectedMeals,
     };
 
@@ -608,6 +675,7 @@ const MealPlanner = () => {
     try {
       if (existingSchedule) {
         await axios.patch(`${urL}/schedule/${existingSchedule.id}`, payload, {
+          params: { orgId: authData?.orgId },
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -615,6 +683,7 @@ const MealPlanner = () => {
         message.success(`${activeMealType.name} menu updated successfully`);
       } else {
         await axios.post(`${urL}/schedule`, payload, {
+          params: { orgId: authData?.orgId },
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -1052,13 +1121,7 @@ const MealPlanner = () => {
 
         {/* Available Meals List */}
         <div style={{ maxHeight: 400, overflowY: "auto" }}>
-          {isShowingSnackFallback() && (
-            <div
-              
-            >
-              
-            </div>
-          )}
+          {isShowingSnackFallback() && <div></div>}
 
           <List
             dataSource={filterMeals()}

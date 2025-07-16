@@ -42,9 +42,9 @@ export class IndiAdjustmentController {
   @Get()
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles('HR_ADMIN')
-  async findAll(@Query('search') search?: string) {
+  async findAll(@Query('search') search?: string,@Query('orgId') orgId?: string) {
     try {
-      return await this.IndiAdjustmentService.findAll(search);
+      return await this.IndiAdjustmentService.findAll(search,orgId);
     } catch (error) {
       throw new HttpException(
         {
