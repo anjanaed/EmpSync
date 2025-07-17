@@ -10,7 +10,8 @@ import {
   faBowlFood,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import NavBar from '../../../organisms/NavBar/NavBar';
+import NavBar from "../../../organisms/NavBar/NavBar";
+import FingerPrintsContent from "../../../organisms/HR/FingerPrints/FingerPrints";
 import FingerPrints from '../../../organisms/HR/FingerPrints/FingerPrints';
 import { useAuth } from "../../../../contexts/AuthContext"; 
 
@@ -41,7 +42,7 @@ const FingerPrintPage = () => {
       label: "FingerPrints",
       action: "User Management",
       icon: <FontAwesomeIcon icon={faFingerprint} />,
-      link: "/FingerPrints",
+      link: "/FingerPrint",
     },
     {
       key: "4",
@@ -72,15 +73,16 @@ const FingerPrintPage = () => {
       link: "/kitchen-report",
     },
   ];
-
   // Filter menu based on permissions
   const filteredMenuItems = allMenuItems.filter((item) =>
     actions.includes(item.action)
   );
-  
+
+  console.log(actions, filteredMenuItems);
+
   return (
     <NavBar
-      Comp={FingerPrints}
+      Comp={FingerPrintsContent}
       titleLines={["Human", "Resource", "Management"]}
       menuItems={filteredMenuItems}
     />

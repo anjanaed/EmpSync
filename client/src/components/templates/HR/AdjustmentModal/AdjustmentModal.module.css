@@ -1,40 +1,56 @@
-.mainBox{
-    width: 95%;
-    font-family: "Figtree", sans-serif;
-    font-weight: 400;
-    margin: auto;
+.mainBox {
+  width: 95%;
+  font-family: "Figtree", sans-serif;
+  font-weight: 400;
+  margin: auto;
 }
 
-h1{
-    font-size: 20px;
-    color: rgb(164, 0, 0);
-
+h1 {
+  font-size: 20px;
+  color: rgb(164, 0, 0);
 }
 
-.inputDiv{
-    width: 80%;
-    margin: auto;
+.inputDiv {
+  width: 80%;
+  margin: auto;
 }
 
-.inputLine{
-    margin: 1vw 0vw;
-
+.inputLine {
+  margin: 1vw 0vw;
 }
 
-.titles{
-    font-weight: 600;
-    padding-bottom: 0.3vw;
-    font-size: 13px;
+.titles {
+  font-weight: 600;
+  padding-bottom: 0.3vw;
+  font-size: 13px;
 }
 
-.btnDiv{
-    text-align: center;
-    margin: 30px 0 15px 0;
-    
+.btnDiv {
+  text-align: center;
+  margin: 30px 0 15px 0;
 }
 
-Input{
-    font-size: 12px !important;
-    font-family: "Figtree", sans-serif !important;
+.btnDiv button {
+  font-size: 15px;
+  font-weight: 500;
+  padding: 0.6vw 2.5vw;
+  border-radius: 8px;
+  background-color: rgb(155, 2, 2);
+  color: white;
+
+  border: none;
+
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
 }
 
+.btnDiv button:hover {
+  background-color: rgb(114, 1, 1);
+
+  transform: scale(1.02);
+}
+
+Input {
+  font-size: 12px !important;
+  font-family: "Figtree", sans-serif !important;
+}

@@ -36,7 +36,7 @@ Input {
   padding: 0.7vw 0vw;
 }
 
-.bottomHalf{
+.bottomHalf {
   width: 100%;
   overflow: hidden;
 }
@@ -53,12 +53,12 @@ Input {
   font-weight: 550;
 }
 
-:global(.ant-form){
+:global(.ant-form) {
   line-height: 1.2;
 }
 
 .link {
-  color: rgb(213, 0, 0);
+  color: rgb(143, 0, 0);
   display: flex;
   align-items: center;
   width: 200px;
@@ -114,10 +114,10 @@ hr {
   align-items: center;
   cursor: pointer;
   text-align: center;
-  background-color: #960000;
+  border: 1px solid #b1b1b1;
   border-radius: 5px;
-  border: 1px solid #960000;
-  color: white;
+  border: 1px solid #b1b1b1;
+  color: rgb(156, 2, 2);
   transition: all 0.2s ease-in-out;
 }
 
@@ -129,17 +129,33 @@ hr {
 }
 
 .genBtn {
-  text-align: center;
-  margin-top: 30px ;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 30px;
+  gap: 20px;
 }
 
-.genBtn button {
-  padding: 1vw 2vw;
+.generateBtn {
+  padding: 10px 30px;
+  cursor: pointer;
+  width: 250px;
   border-radius: 10px;
-  background-color: #960000 !important;
-  border-color: #960000 !important;
+  background-color: #880000;
+  border: none;
   color: white !important;
   transition: all 0.3s ease-in-out;
+}
+
+.btnContent {
+  display: inline-flex;
+  font-size: 0.8vw;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  height: 100%;
+  min-height: 24px;
+  line-height: normal;
 }
 
 .genBtn button:hover {
@@ -182,7 +198,7 @@ hr {
 }
 
 .newFieldBtn {
-  color: white;
+  color: rgb(134, 0, 0);
   display: flex;
   margin-top: auto;
   align-items: center;
@@ -190,9 +206,9 @@ hr {
   font-family: "Figtree", sans-serif;
   font-weight: 500;
   font-size: 14px;
-  background-color: #960000;
+  background-color: #dddddd;
   padding: 9px 30px;
-  border: 1px solid #960000;
+  border: 1px solid #b1b1b1;
   gap: 5px;
   cursor: pointer;
   transition: all 0.4s ease-in-out;
@@ -226,63 +242,42 @@ hr {
   transform: scale(1.1);
 }
 
-.amountLine{
+.amountLine {
   display: flex;
   gap: 2.6vw;
   flex-direction: row;
 }
 
-
 @media (max-width: 800px) {
   .inputLine {
     flex-direction: column;
     gap: 20px;
-    
+
     align-items: center;
   }
 
   .dynamicInputLine {
-    grid-template-columns: repeat(1, 1fr); 
+    grid-template-columns: repeat(1, 1fr);
     gap: 1rem;
     align-items: center;
-
   }
 
   .dates {
     flex-direction: column;
     gap: 20px;
     align-items: center;
-
   }
-
-  /* .btnSet {
-    flex-direction: column;
-    gap: 15px;
-    align-items: center;
-
-  } */
-
-  .genBtn {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    align-items: center;
-
-  }
-
-
 
   .removeBtn {
     justify-content: center;
     align-items: center;
-
   }
-  .amountLine{
+  .amountLine {
     display: flex;
     flex-direction: row;
   }
-  
-  .payee{
+
+  .payee {
     text-align: center !important;
   }
   .link {
@@ -290,8 +285,6 @@ hr {
     text-align: center;
     margin: 0 auto; /* Center horizontally */
   }
-
-
 }
 
 /* Dark mode styles */
@@ -320,7 +313,7 @@ hr {
 }
 
 :global(.dark) .link {
-  color: #ff6b6b !important;
+  color: #2c64ff !important;
 }
 
 :global(.dark) .link:hover {
@@ -384,46 +377,46 @@ hr {
 }
 
 :global(.dark .ant-checkbox-checked .ant-checkbox-inner) {
-  background-color: #960000 !important;
-  border-color: #960000 !important;
+  background-color: #000000 !important;
+  border-color: #000000 !important;
 }
 
 /* Dark mode for buttons */
 :global(.dark) .btnSet button {
-  background-color: #960000 !important;
-  border-color: #960000 !important;
+  background-color: #030303 !important;
+  border-color: #5a5a5a !important;
   color: #ffffff !important;
 }
 
 :global(.dark) .btnSet button:hover {
-  background-color: #7a0000 !important;
-  border-color: #7a0000 !important;
+  background-color: #8a8a8a !important;
+  border-color: #8f8f8f !important;
   color: #ffffff !important;
 }
 
 :global(.dark) .newFieldBtn {
-  background-color: #960000 !important;
+  background-color: #000000 !important;
   color: #ffffff !important;
-  border-color: #960000 !important;
+  border-color: #818181 !important;
 }
 
 :global(.dark) .newFieldBtn:hover {
-  background-color: #7a0000 !important;
+  background-color: #8a8a8a !important;
   color: #ffffff !important;
-  border-color: #7a0000 !important;
+  border-color: #818181 !important;
 }
 
 /* Dark mode for generate payroll buttons */
-:global(.dark) .genBtn button {
-  background-color: #960000 !important;
-  border-color: #960000 !important;
-  color: #ffffff !important;
+:global(.dark) .generateBtn {
+  background-color: #d6d6d6 !important;
+  border-color: #000000 !important;
+  color: #000000 !important;
 }
 
-:global(.dark) .genBtn button:hover {
-  background-color: #7a0000 !important;
-  border-color: #7a0000 !important;
-  color: #ffffff !important;
+:global(.dark) .generateBtn:hover {
+  background-color: #ffffff !important;
+  border-color: #000000 !important;
+  color: #000000 !important;
 }
 
 /* Dark mode for form labels */
@@ -433,7 +426,7 @@ hr {
 
 /* Dark mode for form validation errors */
 :global(.dark .ant-form-item-explain-error) {
-  color: #ff6b6b !important;
+  color: #ff2727 !important;
 }
 
 /* Dark mode for tooltips */
@@ -453,3 +446,6 @@ hr {
   opacity: 0.5;
 }
 
+:global(.dark) .removeIcon {
+  color: #000000 !important;
+}

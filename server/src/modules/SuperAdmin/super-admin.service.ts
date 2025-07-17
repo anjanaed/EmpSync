@@ -120,7 +120,7 @@ export class SuperAdminService {
         },
       });
       if (!users || users.length === 0) {
-        throw new NotFoundException('No kitchen or HR admins found for this organization');
+        throw new NotFoundException('No Administrators Found For This Organization');
       }
       return users;
     } catch (error) {

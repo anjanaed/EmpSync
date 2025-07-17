@@ -725,7 +725,11 @@ const Payroll = () => {
                   setIndividualAdjustment(newList);
                 }}
               >
-                <IoMdRemoveCircleOutline size="2vw" color="brown" />
+                <IoMdRemoveCircleOutline
+                  size="2vw"
+                  color="brown"
+                  className={styles.removeIcon}
+                />
               </div>
             </div>
           ))}
@@ -744,18 +748,18 @@ const Payroll = () => {
           </div>
         </div>
         <div className={styles.genBtn}>
-          <Gbutton width={250} onClick={handleGenerate}>
-            <>
+          <button onClick={handleGenerate} className={styles.generateBtn}>
+            <span className={styles.btnContent}>
               <MdCalculate size={19} />
-              &nbsp;Generate Payroll
-            </>
-          </Gbutton>{" "}
-          <Gbutton width={250} onClick={() => navigate("/payslip")}>
-            <>
+              <span>Generate Payroll</span>
+            </span>
+          </button>
+          <button onClick={() => navigate("/payslip")} className={styles.generateBtn}>
+            <span className={styles.btnContent}>
               <LuEye size={19} />
-              &nbsp;View Payrolls
-            </>
-          </Gbutton>
+              <span>View Payrolls</span>
+            </span>
+          </button>
         </div>
       </div>
     </Form>

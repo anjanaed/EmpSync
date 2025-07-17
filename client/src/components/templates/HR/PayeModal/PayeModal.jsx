@@ -9,7 +9,6 @@ import { LuCircleMinus } from "react-icons/lu";
 import Loading from "../../../atoms/loading/loading";
 import { useAuth } from "../../../../contexts/AuthContext";
 
-
 const customTheme = {
   components: {
     Table: {
@@ -28,7 +27,7 @@ const PayeModal = ({ handleCancel, success, error }) => {
   const urL = import.meta.env.VITE_BASE_URL;
   const [form] = Form.useForm();
   const [dataSource, setDataSource] = useState([]);
-      const { authData } = useAuth();
+  const { authData } = useAuth();
   const token = authData?.accessToken;
 
   const handleChange = (orderId, field, value) => {
@@ -214,14 +213,22 @@ const PayeModal = ({ handleCancel, success, error }) => {
         Leave The Upper Limit Of Last Level As Null
       </div>
       <br />
-      <Button type="primary" onClick={handleAddRow}>
-        <BsPlusCircle />
-        Add Level
-      </Button>
-      <Button type="primary" onClick={handleRemoveLastRow}>
-        <LuCircleMinus />
-        Remove Level
-      </Button>
+      <div className={styles.upDownBtn}>
+        <button className={styles.upDown} onClick={handleAddRow}>
+          <div className={styles.btnContent}>
+     
+            <BsPlusCircle />
+            Add Level
+          </div>
+        </button>
+        <button className={styles.upDown} onClick={handleRemoveLastRow}>
+          <div className={styles.btnContent}>
+  
+            <LuCircleMinus />
+            Remove Level
+          </div>
+        </button>
+      </div>
       <Form form={form}>
         <ConfigProvider theme={customTheme}>
           <Table
@@ -233,12 +240,12 @@ const PayeModal = ({ handleCancel, success, error }) => {
         </ConfigProvider>
       </Form>
       <div className={styles.btn}>
-        <Gbutton onClick={handleConfirm}>
-          <>
+        <button onClick={handleConfirm}>
+          <div className={styles.btnContent}>
             <FaRegSave />
             &nbsp; Confirm
-          </>
-        </Gbutton>
+          </div>
+        </button>
       </div>
     </div>
   );
