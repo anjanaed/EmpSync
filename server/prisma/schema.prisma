@@ -16,8 +16,8 @@ datasource db {
 }
 
 model Organization {
-  id                      String   @id @default(uuid())
-  name                    String
+  id                      String   @id
+  name                    String   @unique
   logoUrl                 String?
   contactEmail            String
   active                  Boolean  @default(true)
