@@ -26,6 +26,15 @@ export class IngredientsController {
     return this.ingredientsService.update(id, updateIngredientDto);
   }
 
+  @Get('org/:orgId')
+  async getIngredientsByOrgId(@Param('orgId') orgId: string) {
+    try {
+      return await this.ingredientsService.findByOrgId(orgId);
+    } catch (error) {
+      throw new HttpException(error.message || 'Server error', error.status || HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
   @Delete(':id')
   remove(@Param('id') id: number) {
     return this.ingredientsService.remove(id);

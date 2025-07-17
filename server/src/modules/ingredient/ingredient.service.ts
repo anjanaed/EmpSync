@@ -108,6 +108,24 @@ export class IngredientsService {
     }
   }
 
+  async findByOrgId(orgId: string) {
+    if (!orgId || typeof orgId !== 'string') {
+      throw new HttpException('Invalid organization ID', HttpStatus.BAD_REQUEST);
+    }
+
+    const ingredients = await this.databaseServices.ingredient.findMany({
+      where: {
+        orgId: orgId,
+      },
+    });
+
+    if (!ingredients || ingredients.length === 0) {
+      throw new HttpException('No ingredients found for the organization', HttpStatus.NOT_FOUND);
+    }
+
+    return ingredients;
+  }
+
   async getIngredientStats() {
     const allIngredients = await this.databaseServices.ingredient.findMany({
       select: {
