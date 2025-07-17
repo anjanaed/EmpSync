@@ -42,6 +42,159 @@ const Report = () => {
   const { authData } = useAuth();
   const [orderDetailsData, setOrderDetailsData] = useState([]);
   const token = authData?.accessToken;
+  const [highestDemandMeal, setHighestDemandMeal] = useState(null);
+  const [lowestDemandMeal, setLowestDemandMeal] = useState(null);
+
+  useEffect(() => {
+    const loadAnalyzeData = async () => {
+      const { highestDemand, lowestDemand } = await analyzeMealOrders();
+      setHighestDemandMeal(highestDemand);
+      setLowestDemandMeal(lowestDemand);
+    };
+
+    if (authData?.orgId) {
+      loadAnalyzeData();
+    }
+  }, [authData?.orgId]);
+
+  // Function to fetch meals data
+  const fetchMeals = async () => {
+    try {
+      console.log("Fetching meals data...");
+      const response = await axios.get(`${urL}/meal`, {
+        params: {
+          orgId: authData?.orgId,
+        },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return Array.isArray(response.data) ? response.data : [];
+    } catch (error) {
+      console.error("Error fetching meals:", error);
+      message.error(`Failed to fetch meals: ${error.message}`);
+      return [];
+    }
+  };
+
+  // Function to analyze meal orders and get single highest and lowest demand meals
+  const analyzeMealOrders = async () => {
+    try {
+      setLoading(true);
+
+      // Fetch orders and meals data
+      const [ordersData, mealsData] = await Promise.allSettled([
+        fetchOrders(),
+        fetchMeals(),
+      ]);
+
+      const orders = ordersData.status === "fulfilled" ? ordersData.value : [];
+      const meals = mealsData.status === "fulfilled" ? mealsData.value : [];
+
+      console.log("Orders data:", orders.length);
+      console.log("Meals data:", meals.length);
+
+      if (orders.length === 0) {
+        console.log("No orders found");
+        return { highestDemand: null, lowestDemand: null };
+      }
+
+      // Extract and count meal IDs from orders
+      const mealOrderCounts = {};
+
+      orders.forEach((order) => {
+        const mealsArray = order.meals || [];
+
+        mealsArray.forEach((mealString) => {
+          // Parse meal string format "mealId:quantity"
+          const [mealId, quantity] = mealString.split(":");
+          const parsedMealId = parseInt(mealId);
+          const parsedQuantity = parseInt(quantity) || 1;
+
+          if (!isNaN(parsedMealId)) {
+            mealOrderCounts[parsedMealId] =
+              (mealOrderCounts[parsedMealId] || 0) + parsedQuantity;
+          }
+        });
+      });
+
+      console.log("Meal order counts:", mealOrderCounts);
+
+      // Convert to array and sort by count (descending)
+      const sortedMealCounts = Object.entries(mealOrderCounts)
+        .map(([mealId, count]) => ({
+          mealId: parseInt(mealId),
+          count: count,
+        }))
+        .sort((a, b) => b.count - a.count);
+
+      console.log("Sorted meal counts:", sortedMealCounts);
+
+      if (sortedMealCounts.length === 0) {
+        return { highestDemand: null, lowestDemand: null };
+      }
+
+      // Create meals lookup map for efficient meal name retrieval
+      const mealsLookup = {};
+      meals.forEach((meal) => {
+        const mealId = meal.id || meal.mealId;
+        const mealName = meal.nameEnglish;
+
+        if (mealId) {
+          mealsLookup[mealId] = mealName;
+        }
+      });
+
+      console.log("Meals lookup:", mealsLookup);
+
+      // Function to get meal name by ID using lookup
+      const getMealNameById = (mealId) => {
+        return mealsLookup[mealId] || `Unknown Meal ${mealId}`;
+      };
+
+      // Calculate total orders for percentage calculation
+      const totalOrders = sortedMealCounts.reduce((sum, m) => sum + m.count, 0);
+
+      // Get highest demand meal (first in sorted array)
+      const highestDemandMeal = sortedMealCounts[0];
+      const highestDemand = {
+        mealId: highestDemandMeal.mealId,
+        name: getMealNameById(highestDemandMeal.mealId),
+        count: highestDemandMeal.count,
+        percentage: Math.round((highestDemandMeal.count / totalOrders) * 100),
+      };
+
+      // Get lowest demand meal (last in sorted array)
+      const lowestDemandMeal = sortedMealCounts[sortedMealCounts.length - 1];
+      const lowestDemand = {
+        mealId: lowestDemandMeal.mealId,
+        name: getMealNameById(lowestDemandMeal.mealId),
+        count: lowestDemandMeal.count,
+        percentage: Math.round((lowestDemandMeal.count / totalOrders) * 100),
+      };
+
+      console.log("Highest demand meal:", highestDemand);
+      console.log("Lowest demand meal:", lowestDemand);
+
+      return { highestDemand, lowestDemand };
+    } catch (error) {
+      console.error("Error analyzing meal orders:", error);
+      message.error("Failed to analyze meal orders");
+      return { highestDemand: null, lowestDemand: null };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    const loadAnalyzeData = async () => {
+      const { mostOrdered, leastOrdered } = await analyzeMealOrders();
+      setMostOrderedMeals(mostOrdered);
+      setLeastOrderedMeals(leastOrdered);
+    };
+
+    loadAnalyzeData();
+  }, [authData?.orgId]);
 
   const generateEmployeeReportData = () => {
     if (!individualEmployeeData || individualEmployeeData.length === 0) {
@@ -1297,10 +1450,11 @@ const Report = () => {
   return (
     <div className={styles.container}>
       {/* Analysis Section */}
+
       <div className={styles.analysisSection}>
         <div className={styles.sectionHeader}>
           <TrendingUp className={styles.sectionIcon} />
-          <h2 className={styles.sectionTitle}>Analysis</h2>
+          <h2 className={styles.sectionTitle}>Meal Demand Analysis</h2>
         </div>
 
         <div className={styles.analysisGrid}>
@@ -1308,32 +1462,37 @@ const Report = () => {
             title={
               <div className={styles.cardTitle}>
                 <TrendingUp className={styles.highDemandIcon} size={18} />
-                High Demand Meals
+                Highest Demand Meal
               </div>
             }
             className={styles.card}
+            loading={loading}
           >
-            {highDemand.length > 0 ? (
-              highDemand.map((meal, index) => (
-                <div key={index} className={styles.mealItem}>
-                  <div className={styles.mealHeader}>
-                    <span>
-                      {meal.name} ({meal.count} orders)
-                    </span>
-                    <span className={styles.highDemandPercentage}>
-                      {meal.percentage}%
-                    </span>
-                  </div>
-                  <Progress
-                    percent={meal.percentage}
-                    strokeColor="#52c41a"
-                    trailColor="#f0f0f0"
-                    showInfo={false}
-                  />
+            {highestDemandMeal ? (
+              <div className={styles.mealItem}>
+                <div className={styles.mealHeader}>
+                  <span className={styles.mealName}>
+                    {highestDemandMeal.name}
+                  </span>
+                  <span className={styles.mealStats}>
+                    {highestDemandMeal.count} orders (
+                    {highestDemandMeal.percentage}%)
+                  </span>
                 </div>
-              ))
+                <Progress
+                  percent={highestDemandMeal.percentage}
+                  strokeColor="#52c41a"
+                  trailColor="#f0f0f0"
+                  showInfo={false}
+                />
+                <div className={styles.mealDetails}>
+                  <span className={styles.mealId}>
+                    Meal ID: {highestDemandMeal.mealId}
+                  </span>
+                </div>
+              </div>
             ) : (
-              <div>No high demand meals data available</div>
+              <div className={styles.noDataMessage}>No meal data available</div>
             )}
           </Card>
 
@@ -1341,32 +1500,37 @@ const Report = () => {
             title={
               <div className={styles.cardTitle}>
                 <TrendingDown className={styles.lowDemandIcon} size={18} />
-                Low Demand Meals
+                Lowest Demand Meal
               </div>
             }
             className={styles.card}
+            loading={loading}
           >
-            {lowDemand.length > 0 ? (
-              lowDemand.map((meal, index) => (
-                <div key={index} className={styles.mealItem}>
-                  <div className={styles.mealHeader}>
-                    <span>
-                      {meal.name} ({meal.count} orders)
-                    </span>
-                    <span className={styles.lowDemandPercentage}>
-                      {meal.percentage}%
-                    </span>
-                  </div>
-                  <Progress
-                    percent={meal.percentage}
-                    strokeColor="#ff4d4f"
-                    trailColor="#f0f0f0"
-                    showInfo={false}
-                  />
+            {lowestDemandMeal ? (
+              <div className={styles.mealItem}>
+                <div className={styles.mealHeader}>
+                  <span className={styles.mealName}>
+                    {lowestDemandMeal.name}
+                  </span>
+                  <span className={styles.mealStats}>
+                    {lowestDemandMeal.count} orders (
+                    {lowestDemandMeal.percentage}%)
+                  </span>
                 </div>
-              ))
+                <Progress
+                  percent={lowestDemandMeal.percentage}
+                  strokeColor="#ff4d4f"
+                  trailColor="#f0f0f0"
+                  showInfo={false}
+                />
+                <div className={styles.mealDetails}>
+                  <span className={styles.mealId}>
+                    Meal ID: {lowestDemandMeal.mealId}
+                  </span>
+                </div>
+              </div>
             ) : (
-              <div>No low demand meals data available</div>
+              <div className={styles.noDataMessage}>No meal data available</div>
             )}
           </Card>
         </div>
@@ -1792,7 +1956,6 @@ const Report = () => {
                             {summary.pendingOrders} Pending
                           </strong>
                         </Table.Summary.Cell>
-                        
                       </Table.Summary.Row>
                     );
                   }}
