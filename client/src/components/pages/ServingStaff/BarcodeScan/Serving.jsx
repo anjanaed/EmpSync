@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Layout, Space, message } from 'antd';
 import { useNavigate } from 'react-router-dom';
-import Header from '../../../organisms/Serving/Header/Header';
 import WelcomeSection from '../../../organisms/Serving/WelcomeSection/WelcomeSection';
 import MealSection from '../../../organisms/Serving/MealSection/MealSection';
 import ScanSection from '../../../organisms/Serving/ScanSection/ScanSection';
@@ -31,7 +30,6 @@ const Serving = () => {
     <Layout className="app-container">
       <Content className="content-container">
         <Space direction="vertical" size="middle" className="main-content">
-          <Header />
           <WelcomeSection />
           <MealSection />
           <ScanSection isScanning={scanning} onScanSuccess={handleScanSuccess} />
