@@ -264,8 +264,8 @@
 }
 
 .updateBtn:hover {
-  background-color: #d32f2f;
-  border-color: #d32f2f;
+  background-color: #840d0d !important;
+  border-color: #a01414 !important;
 }
 
 /* Ensure update button maintains red color in dark mode */

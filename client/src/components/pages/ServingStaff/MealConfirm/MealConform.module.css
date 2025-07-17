@@ -1,146 +1,117 @@
+/* Center the card and set background */
 .container {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 1rem;
-    background-color: #f8f3e3;
-    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23701c33' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
-  }
-  
-  .card {
-    width: 100%;
-    max-width: 500px;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  }
-  
+  min-height: 100vh; /* Full height */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 24px;
+  background-color: #f8f3e3; /* <-- Change background color here */
+}
+
+/* Card styling */
+.card {
+  max-width: 900px;
+  width: 100%;
+  padding: 24px;
+  box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  background-color: #ffffff;
+}
+
+/* Header section */
+.headerRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+/* Content layout */
+.contentWrapper {
+  display: flex;
+  flex-direction: row;
+  gap: 24px;
+}
+
+/* Left image section */
+.leftSection {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Meal image */
+.foodImage {
+  height: 250px;
+  width: 250px;
+  border-radius: 12px;
+  object-fit: cover;
+}
+
+/* Right content section */
+.rightSection {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Employee name */
+.userName {
+  margin-bottom: 4px;
+}
+
+/* Price details */
+.priceContainer {
+  margin-bottom: 12px;
+}
+
+/* Meal text details */
+.mealDetailsHeader {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.mealName {
+  margin-bottom: 4px;
+}
+
+/* Buttons */
+.buttonContainer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+/* Cancel button style */
+.cancelButton {
+  background-color: #f5f5f5;
+  color: #000;
+  border: 1px solid #d9d9d9;
+}
+
+/* Confirm button style */
+.confirmButton {
+  background-color: #701c33;
+  border: none;
+  color: white;
+}
+
+/* Responsive behavior */
+@media (max-width: 768px) {
   .contentWrapper {
-    padding: 24px;
-    text-align: center;
+    flex-direction: column;
   }
-  
-  .header {
-    margin-bottom: 24px;
-  }
-  
-  .title {
-    color: #701c33 !important;
-    margin-bottom: 8px !important;
-  }
-  
-  .dateText {
-    color: #701c33 !important;
-    display: block;
-    margin-bottom: 24px;
-  }
-  
-  .imageContainer {
-    position: relative;
-    margin-bottom: 36px;
-  }
-  
-  .mainImage {
-    border-radius: 8px;
-    overflow: hidden;
-  }
-  
+
   .foodImage {
-    width: 100%;
+    width: 200px;
     height: 200px;
-    object-fit: cover;
   }
-  
-  .badgeImage {
-    position: absolute;
-    bottom: -20px;
-    right: 40px;
-    border-radius: 50%;
-    overflow: hidden;
-    border: 4px solid white;
-    width: 80px;
-    height: 80px;
-  }
-  
-  .eggImage {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-  
-  .userDetails {
-    text-align: left;
-    margin-top: 32px;
-    margin-bottom: 24px;
-  }
-  
-  .userName {
-    color: #701c33 !important;
-    margin-bottom: 8px !important;
-  }
-  
-  .orderId {
-    color: #701c33 !important;
-  }
-  
-  .priceContainer {
-    display: flex;
-    align-items: center;
-    margin-top: 8px;
-    gap: 4px;
-  }
-  
-  .price {
-    color: #701c33 !important;
-  }
-  
-  .mealDetails {
-    margin-top: 24px;
-  }
-  
-  .mealDetailsHeader {
-    display: block;
-    margin-bottom: 8px;
-    font-size: 16px;
-  }
-  
-  .mealName {
-    color: #701c33 !important;
-    margin-top: 4px !important;
-    margin-bottom: 4px !important;
-  }
-  
-  .divider {
-    margin: 0;
-  }
-  
+
   .buttonContainer {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-    padding: 16px;
+    flex-direction: column;
+    align-items: stretch;
   }
-  
-  .cancelButton {
-    border: 2px solid #701c33 !important;
-    color: #701c33 !important;
-    height: 52px !important;
-    font-weight: 600;
-    font-size: 18px;
-  }
-  
-  .cancelButton:hover {
-    background-color: rgba(112, 28, 51, 0.1) !important;
-  }
-  
-  .confirmButton {
-    background-color: #701c33 !important;
-    height: 52px !important;
-    font-weight: 600;
-    font-size: 18px;
-  }
-  
-  .confirmButton:hover {
-    background-color: #5a1728 !important;
-  }
+}

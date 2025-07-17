@@ -40,17 +40,17 @@ const FingerPrintPage = () => {
     },
     {
       key: "3",
-      label: "Payrolls",
-      action: "Payroll",
-      icon: <FontAwesomeIcon icon={faDollarSign} />,
-      link: "/payroll",
-    },
-    {
-      key: "4",
       label: "FingerPrints",
       action: "User Management",
       icon: <FontAwesomeIcon icon={faFingerprint} />,
       link: "/FingerPrints",
+    },
+    {
+      key: "4",
+      label: "Payrolls",
+      action: "Payroll",
+      icon: <FontAwesomeIcon icon={faDollarSign} />,
+      link: "/payroll",
     },
     {
       key: "5",
@@ -79,8 +79,7 @@ const FingerPrintPage = () => {
   const filteredMenuItems = allMenuItems.filter((item) =>
     actions.includes(item.action)
   );
-  console.log("Filtered Menu Items:", filteredMenuItems);
-
+  
   return (
     <NavBar
       Comp={FingerPrints}

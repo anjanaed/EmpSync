@@ -14,6 +14,7 @@ import FingerPrints from '../components/organisms/HR/FingerPrints/FingerPrints';
 
 
 
+
 const AppRoutes = () => (
   <BrowserRouter>
 

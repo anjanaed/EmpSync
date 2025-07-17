@@ -91,50 +91,68 @@ const PermissionsList = ({
   };
 
   const handleSavePermissions = async () => {
-    if (selectedUser && rolePermissions.length > 0) {
-      const orgId = selectedOrganization;
-      const user = users.find(u => u.id === selectedUser);
-      const role = user?.role || 'N/A';
+  if (selectedUser) {
+    const orgId = selectedOrganization;
+    const user = users.find(u => u.id === selectedUser);
+    const role = user?.role || 'N/A';
 
-      let currentPermissions = [];
-      try {
-        const res = await axios.get(`${urL}/super-admin/users/${selectedUser}/permissions`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          }
-        });
-        currentPermissions = res.data.map(p => p.action);
-      } catch (err) {
-        currentPermissions = [];
-      }
+    let currentPermissions = [];
 
-      try {
-        for (const permissionName of rolePermissions) {
-          if (!currentPermissions.includes(permissionName)) {
-            const permission = data.find(p => p.name === permissionName);
-            if (!permission) continue;
-
-            await axios.post(`${urL}/super-admin/permissions`, {
-              orgId,
-              action: permission.name,
-              role,
-              users: {
-                connect: [{ id: selectedUser }]
-              }
-            }, {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              }
-            });
-          }
+    try {
+      const res = await axios.get(`${urL}/super-admin/users/${selectedUser}/permissions`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
         }
-        message.success('Permissions saved successfully!');
-      } catch (error) {
-        message.error('Failed to save permissions. Please try again.');
-        console.error(error);
-      }
+      });
+
+      // Get full permission objects
+      currentPermissions = res.data;
+    } catch (err) {
+      currentPermissions = [];
     }
-  };
+
+    try {
+      // --- Add New Permissions ---
+      for (const permissionName of rolePermissions) {
+        const alreadyExists = currentPermissions.find(p => p.action === permissionName);
+        if (!alreadyExists) {
+          const permission = data.find(p => p.name === permissionName);
+          if (!permission) continue;
+
+          await axios.post(`${urL}/super-admin/permissions`, {
+            orgId,
+            action: permission.name,
+            role,
+            users: {
+              connect: [{ id: selectedUser }]
+            }
+          }, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            }
+          });
+        }
+      }
+
+      // --- Remove Unchecked Permissions ---
+      for (const currentPermission of currentPermissions) {
+        if (!rolePermissions.includes(currentPermission.action)) {
+          await axios.delete(`${urL}/super-admin/permissions/${currentPermission.id}`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            }
+          });
+        }
+      }
+
+      message.success('Permissions updated successfully!');
+    } catch (error) {
+      message.error('Failed to update permissions. Please try again.');
+      console.error(error);
+    }
+  }
+};
+
 
   const columns = [
     {
