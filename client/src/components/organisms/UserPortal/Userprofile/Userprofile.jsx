@@ -176,13 +176,31 @@ export default function UserProfile({ user }) {
       <div className={styles.content}>
         <div className={styles.profileCard}>
           <div className={styles.profileImageSection}>
-            {/* Fixed user data display */}
-            <div className={styles.fixedData}>
-              <p><strong>Employee ID:</strong> {userData.id}</p>
-              <p><strong>Email:</strong> {userData.email}</p>
-              <p><strong>Job Role:</strong> {userData.role}</p>
-              <p><strong>Join Date:</strong> {userData.createdAt.split("T")[0]}</p>
-            </div>
+            {/* Fixed user data display as a table */}
+            <table className={styles.fixedDataTable}>
+              <tbody>
+                <tr>
+                  <td className={styles.fixedDataLabel}>Employee ID:</td>
+                  <td className={styles.fixedDataValue}>{userData.id}</td>
+                </tr>
+                <tr>
+                  <td className={styles.fixedDataLabel}>Email:</td>
+                  <td className={styles.fixedDataValue}>{userData.email}</td>
+                </tr>
+                <tr>
+                  <td className={styles.fixedDataLabel}>Job Role:</td>
+                  <td className={styles.fixedDataValue}>{userData.role}</td>
+                </tr>
+                <tr>
+                  <td className={styles.fixedDataLabel}>Fingerprint Passkey:</td>
+                  <td className={styles.fixedDataValue}>{userData.passkey || 'Not set'}</td>
+                </tr>
+                <tr>
+                  <td className={styles.fixedDataLabel}>Join Date:</td>
+                  <td className={styles.fixedDataValue}>{userData.createdAt.split("T")[0]}</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
 
           {/* Form for editable user data */}

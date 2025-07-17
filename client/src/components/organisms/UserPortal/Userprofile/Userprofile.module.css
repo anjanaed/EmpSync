@@ -63,17 +63,27 @@
 }
 
 /* Container for fixed user data (non-editable fields) */
-.fixedData {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  font-size: 1rem;
-  color: #555;
-}
 
-/* Remove default margin from fixed data paragraphs */
-.fixedData p {
-  margin: 0;
+/* Table layout for fixed user data */
+.fixedDataTable {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 12px;
+  margin-bottom: 1rem;
+}
+.fixedDataLabel {
+  font-weight: 600;
+  color: #333;
+  padding-right: 32px;
+  min-width: 140px;
+  text-align: right;
+  vertical-align: middle;
+}
+.fixedDataValue {
+  color: #555;
+  padding-left: 24px;
+  text-align: left;
+  vertical-align: middle;
 }
 
 /* Controls for uploading a new profile image */
