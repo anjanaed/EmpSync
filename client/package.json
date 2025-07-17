@@ -31,6 +31,7 @@
     "prop-types": "^15.8.1",
     "qrcode.react": "^4.2.0",
     "react": "^18.3.1",
+    "react-barcode": "^1.6.1",
     "react-dom": "^18.3.1",
     "react-icons": "^5.4.0",
     "react-infinite-scroll-component": "^6.1.0",

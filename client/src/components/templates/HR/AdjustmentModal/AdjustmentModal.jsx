@@ -32,6 +32,7 @@ const AdjustmentModal = ({ handleCancel, fetch, success, error }) => {
     setLoading(true);
     try {
       const payload = {
+        orgId: authData?.orgId,
         label: description,
         isPercentage: !isTypeChecked,
         allowance: isAllowanceChecked,
@@ -158,12 +159,12 @@ const AdjustmentModal = ({ handleCancel, fetch, success, error }) => {
         </div>
 
         <div className={styles.btnDiv}>
-          <Gbutton onClick={handleSave}>
+          <button onClick={handleSave}>
             <>
               <FaRegSave />
               &nbsp;&nbsp;Save Changes
             </>
-          </Gbutton>
+          </button>
         </div>
       </div>
     </Form>

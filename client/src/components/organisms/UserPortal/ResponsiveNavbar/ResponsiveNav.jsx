@@ -8,7 +8,9 @@ import {
   ShoppingCartOutlined,
   LogoutOutlined,
   SunOutlined,
-  MoonOutlined
+  MoonOutlined,
+  AppstoreOutlined,
+  BellOutlined
 } from '@ant-design/icons';
 import styles from './ResponsiveNav.module.css';
 import Companylogo from '../../../../assets/Logo/logo.png';
@@ -19,6 +21,8 @@ const ResponsiveNav = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   // State to manage dark mode
   const [darkMode, setDarkMode] = useState(false);
+  // State to manage notification count
+  const [notificationCount, setNotificationCount] = useState(3); // Example count
   // Hook for programmatic navigation
   const navigate = useNavigate();
   // Destructure logout function and authData from AuthContext
@@ -41,6 +45,13 @@ const ResponsiveNav = () => {
     logout(); // Clear user data
     console.log("User logged out");
     navigate('/login'); // Redirect to login page
+  };
+
+  // Handle notification click
+  const handleNotificationClick = () => {
+    // Add your notification handling logic here
+    console.log("Notification clicked");
+    navigate('/notifications'); // Navigate to notifications page
   };
 
   // Render navigation bar
@@ -83,7 +94,7 @@ const ResponsiveNav = () => {
               navigate('/MealPage03');
             }}
           >
-            <ShoppingCartOutlined style={{ fontSize: '18px', marginRight: '8px' }} />
+            <AppstoreOutlined style={{ fontSize: '18px', marginRight: '8px' }} />
             Select Meals
           </a>
         </li>
@@ -107,6 +118,22 @@ const ResponsiveNav = () => {
 
       {/* Right section with controls */}
       <div className={styles.rightSection}>
+        {/* Notification icon */}
+        <div className={styles.notificationContainer}>
+          <button
+            onClick={handleNotificationClick}
+            className={styles.notificationButton}
+            aria-label="View Notifications"
+          >
+            <BellOutlined style={{ fontSize: '20px' }} />
+            {notificationCount > 0 && (
+              <span className={styles.notificationBadge}>
+                {notificationCount > 99 ? '99+' : notificationCount}
+              </span>
+            )}
+          </button>
+        </div>
+
         {/* Dark mode toggle */}
         <button
           onClick={toggleDarkMode}

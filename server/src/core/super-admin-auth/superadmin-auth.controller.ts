@@ -20,4 +20,16 @@ export class SuperAdminAuthController {
       );
     }
   }
+    @Post('delete')
+  
+    async remove(@Body() body: { email: string }) {
+      try {
+        return await this.superAdminAuthService.superAdminDeleteAuth0UserByEmail(body.email);
+      } catch (error) {
+        throw new HttpException(
+          error.response?.data || error.message || 'User Removing failed',
+          error.status || HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+    }
 }

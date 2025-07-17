@@ -128,11 +128,13 @@ const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
         theme === "dark" ? styles.darkWrapper : styles.modalContainer
       }`}
     >
-          <div className={styles.headWrapper}>
-      <div className={styles.head}>Edit Employee - {currentEmployee.empNo}</div>
-      <div className={styles.empIdTopRight}>
-        ID: <b>{currentEmployee.id}</b>
-      </div>
+      <div className={styles.headWrapper}>
+        <div className={styles.head}>
+          Edit Employee - {currentEmployee.empNo}
+        </div>
+        <div className={styles.empIdTopRight}>
+          ID: <b>{currentEmployee.id}</b>
+        </div>
       </div>
       <div className={styles.headDes}>
         Update Employee Information. Click Save Changes When You're Done.
@@ -497,12 +499,12 @@ const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
                       </button>
                     </div>
                     <div className={styles.subBtn}>
-                      <Gbutton onClick={handleUpdate}>
-                        <>
+                      <button onClick={handleUpdate} className={styles.saveBtn}>
+                        <span className={styles.btnContent}>
                           <LuSave size={16} />
-                          &nbsp;&nbsp;Save Changes
-                        </>
-                      </Gbutton>
+                          <span>Save Changes</span>
+                        </span>
+                      </button>
                     </div>
                   </>
                 ),

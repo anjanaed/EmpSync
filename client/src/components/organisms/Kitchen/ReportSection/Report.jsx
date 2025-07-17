@@ -1114,10 +1114,6 @@ const Report = () => {
 
           if (result.processedData.length === 0) {
             message.info("No data found for the selected time period");
-          } else {
-            message.success(
-              `Loaded ${result.processedData.length} employee records`
-            );
           }
         } else {
           setEmployeeData([]);
@@ -1125,7 +1121,7 @@ const Report = () => {
         }
       } else {
         setEmployeeData([]);
-        message.info("No order data available");
+        // message.info("No order data available");
       }
     } catch (error) {
       console.error("Error loading data:", error);
@@ -1388,9 +1384,9 @@ const Report = () => {
       if (details.length === 0) {
         message.info("No order data found for the selected time period");
       } else {
-        message.success(
-          `Order details report generated! Found ${details.length} meal types.`
-        );
+        // message.success(
+        //   `Order details report generated! Found ${details.length} meal types.`
+        // );
       }
     } catch (error) {
       console.error("Error generating order details report:", error);

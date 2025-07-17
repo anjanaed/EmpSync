@@ -43,6 +43,86 @@
   padding: 1rem;
 }
 
+/* Main layout container for profile image and form */
+.profileLayout {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+}
+
+/* Container for profile image and fixed data */
+.profileImageContainer {
+  flex: 0 0 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+/* Wrapper for profile image with hover effects */
+.profileImageWrapper {
+  position: relative;
+  width: 250px;
+  height: 250px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+}
+
+.profileImageWrapper:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+/* Large profile image styling */
+.profileImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+/* Overlay for image upload when editing */
+.imageOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.profileImageWrapper:hover .imageOverlay {
+  opacity: 1;
+}
+
+/* Image upload button styling */
+.imageUploadButton {
+  background: #4f46e5;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.imageUploadButton:hover {
+  background: #3730a3;
+  transform: translateY(-1px);
+}
+
 /* Section for profile image and fixed data */
 .profileImageSection {
   display: flex;
@@ -62,18 +142,28 @@
   border-radius: 50%;
 }
 
-/* Container for fixed user data (non-editable fields) */
-.fixedData {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  font-size: 1rem;
-  color: #555;
+/* Table layout for fixed user data */
+.fixedDataTable {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 12px;
+  margin-bottom: 1rem;
 }
 
-/* Remove default margin from fixed data paragraphs */
-.fixedData p {
-  margin: 0;
+.fixedDataLabel {
+  font-weight: 600;
+  color: #333;
+  padding-right: 32px;
+  min-width: 140px;
+  text-align: right;
+  vertical-align: middle;
+}
+
+.fixedDataValue {
+  color: #555;
+  padding-left: 24px;
+  text-align: left;
+  vertical-align: middle;
 }
 
 /* Controls for uploading a new profile image */
@@ -106,6 +196,7 @@
 
 /* Grid layout for the form fields */
 .formGrid {
+  flex: 1;
   display: grid;
   grid-template-columns: 1fr;
   gap: 1.5rem;
@@ -170,8 +261,8 @@
   min-height: 35px;
 }
 
-/* Responsive styles for smaller screens (max-width: 640px) */
-@media (max-width: 640px) {
+/* Responsive styles for smaller screens (max-width: 768px) */
+@media (max-width: 768px) {
   /* Adjust padding for profile container */
   .profileContainer {
     padding: 1rem;
@@ -187,6 +278,25 @@
   /* Make edit button full-width */
   .editButton {
     width: 100%;
+  }
+
+  /* Stack profile layout vertically on mobile */
+  .profileLayout {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  /* Adjust image container for mobile */
+  .profileImageContainer {
+    flex: none;
+    width: 100%;
+    align-items: center;
+  }
+
+  /* Reduce image size on mobile */
+  .profileImageWrapper {
+    width: 200px;
+    height: 200px;
   }
 
   /* Stack profile image and fixed data vertically */
@@ -218,12 +328,11 @@
   }
 }
 
-/* Responsive styles for larger screens (min-width: 641px) */
-@media (min-width: 641px) {
-  /* Use three-column grid for form fields */
+/* Responsive styles for larger screens (min-width: 769px) */
+@media (min-width: 769px) {
+  /* Use two-column grid for form fields */
   .formGrid {
-    grid-template-columns: repeat(3, 1fr);
-    margin-left: 50px;
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 

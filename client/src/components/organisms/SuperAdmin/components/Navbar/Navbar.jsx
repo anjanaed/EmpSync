@@ -30,7 +30,7 @@ const Navbar = ({ activeMenu, onMenuChange }) => {
     {
       key: 'roles',
       icon: <UserOutlined />,
-      label: 'Roles',
+      label: 'Administrators',
       className: styles.menuItem
     },
     {
@@ -66,6 +66,7 @@ const Navbar = ({ activeMenu, onMenuChange }) => {
       content: "Are you sure you want to logout?",
       okText: "Yes",
       cancelText: "Cancel",
+      className: styles.logoutModal,
       onOk: () => {
         superLogout();
         navigate('/SuperAdmin/login');

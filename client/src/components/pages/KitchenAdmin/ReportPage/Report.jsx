@@ -16,15 +16,15 @@ import NotificationPanel from "../../../organisms/Kitchen/NotificationPanel/Noti
 import { useNotifications } from "../../../../contexts/NotificationsContext";
 import styles from "../../../organisms/Kitchen/NotificationPanel/NotificationPanel.module.css";
 import Section from "../../../organisms/Kitchen/ReportSection/Report";
+import { useAuth } from "../../../../contexts/AuthContext"; 
 
 const Report = () => {
   // Get and parse authData from localStorage
-  const rawAuthData = localStorage.getItem("authData");
-  const parsedAuthData = rawAuthData ? JSON.parse(rawAuthData) : null;
+  const { authData } = useAuth();
   const { getUnreadCount, toggleNotifications } = useNotifications();
 
   // Safely get permission actions
-  const actions = parsedAuthData?.permissions?.actions || [];
+  const actions = authData?.permissions?.actions || [];
 
   // Define all possible menu items
   const allMenuItems = [
@@ -47,7 +47,7 @@ const Report = () => {
       label: "FingerPrints",
       action: "User Management",
       icon: <FontAwesomeIcon icon={faFingerprint} />,
-      link: "/FingerPrints",
+      link: "/FingerPrint",
     },
     {
       key: "4",

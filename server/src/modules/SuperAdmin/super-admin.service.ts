@@ -16,7 +16,30 @@ export class SuperAdminService {
       if (!data.name) {
         throw new BadRequestException('Organization name is required');
       }
-      return await this.databaseService.organization.create({ data });
+
+      // Fetch last org ID
+      let newId: string;
+      try {
+        const lastId = await this.getLastOrganizationId(); // e.g., "O007"
+        const numericPart = parseInt(lastId.replace('O', ''), 10); // -> 7
+        const nextId = numericPart + 1;
+        newId = 'O' + nextId.toString().padStart(3, '0'); // -> "O008"
+      } catch (error) {
+        // If no orgs found, start from O001
+        if (error instanceof NotFoundException) {
+          newId = 'O001';
+        } else {
+          throw error;
+        }
+      }
+
+      // Merge ID with data
+      const newOrgData: Prisma.OrganizationCreateInput = {
+        ...data,
+        id: newId,
+      };
+
+      return await this.databaseService.organization.create({ data: newOrgData });
     } catch (error) {
       if (error instanceof BadRequestException) {
         throw error;
@@ -26,7 +49,8 @@ export class SuperAdminService {
       }
       throw new BadRequestException('Failed to create organization: ' + error.message);
     }
-  }
+}
+
 
   async getOrganizations() {
     try {
@@ -120,13 +144,35 @@ export class SuperAdminService {
         },
       });
       if (!users || users.length === 0) {
-        throw new NotFoundException('No kitchen or HR admins found for this organization');
+        throw new NotFoundException('No Administrators Found For This Organization');
       }
       return users;
     } catch (error) {
       throw new BadRequestException(error.message);
     }
   }
+
+  async getLastOrganizationId(): Promise<string> {
+    try {
+      const lastOrg = await this.databaseService.organization.findFirst({
+        orderBy: {
+          createdAt: 'desc', // Or use `id: 'desc'` if no createdAt field
+        },
+        select: {
+          id: true,
+        },
+      });
+
+      if (!lastOrg) {
+        throw new NotFoundException('No organizations found');
+      }
+
+      return lastOrg.id;
+    } catch (error) {
+      throw new BadRequestException('Failed to fetch last organization ID: ' + error.message);
+    }
+  }
+
 
   // User CRUD operations
   async createUser(data: Prisma.UserCreateInput) {
