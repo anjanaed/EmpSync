@@ -21,6 +21,7 @@ import { AuthGuard } from '@nestjs/passport';
 export class SuperAdminController {
   constructor(private readonly superAdminService: SuperAdminService) {}
   // Organization endpoints
+  
   @Post('organizations')
   @UseGuards(AuthGuard('superadmin-jwt'))
   async createOrganization(@Body() data: Prisma.OrganizationCreateInput) {
@@ -58,6 +59,16 @@ export class SuperAdminController {
   @UseGuards(AuthGuard('superadmin-jwt'))
   async deleteOrganization(@Param('id') id: string) {
     return this.superAdminService.deleteOrganization(id);
+  }
+
+  @Get('last-org-id')
+  async getLastOrganizationId() {
+    try {
+      const id = await this.superAdminService.getLastOrganizationId();
+      return { id };
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
   }
 
   // User endpoints
