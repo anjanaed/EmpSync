@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../../contexts/AuthContext';
+import { useTheme } from '../../../../contexts/ThemeContext';
 import {
   MenuOutlined,
   UserOutlined,
@@ -19,25 +20,20 @@ import Companylogo from '../../../../assets/Logo/logo.png';
 const ResponsiveNav = () => {
   // State to manage mobile menu visibility
   const [menuOpen, setMenuOpen] = useState(false);
-  // State to manage dark mode
-  const [darkMode, setDarkMode] = useState(false);
   // State to manage notification count
   const [notificationCount, setNotificationCount] = useState(3); // Example count
   // Hook for programmatic navigation
   const navigate = useNavigate();
   // Destructure logout function and authData from AuthContext
   const { logout, authData } = useAuth();
+  // Use theme context instead of local state
+  const { theme, toggleTheme } = useTheme();
+
+  const isDark = theme === 'dark';
 
   // Toggle mobile menu visibility
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
-  };
-
-  // Toggle dark mode
-  const toggleDarkMode = () => {
-    setDarkMode(!darkMode);
-    // Add your dark mode logic here (e.g., update theme context, localStorage, etc.)
-    document.documentElement.setAttribute('data-theme', darkMode ? 'light' : 'dark');
   };
 
   // Handle logout action
@@ -56,7 +52,7 @@ const ResponsiveNav = () => {
 
   // Render navigation bar
   return (
-    <nav className={`${styles.navbar} ${darkMode ? styles.dark : ''}`}>
+    <nav className={`${styles.navbar} ${isDark ? styles.dark : ''}`}>
       {/* Company logo section */}
       <div className={styles.companyName}>
         <img
@@ -136,11 +132,11 @@ const ResponsiveNav = () => {
 
         {/* Dark mode toggle */}
         <button
-          onClick={toggleDarkMode}
+          onClick={toggleTheme}
           className={styles.darkModeToggle}
           aria-label="Toggle Dark Mode"
         >
-          {darkMode ? (
+          {isDark ? (
             <SunOutlined style={{ fontSize: '20px' }} />
           ) : (
             <MoonOutlined style={{ fontSize: '20px' }} />

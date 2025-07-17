@@ -44,7 +44,7 @@
 
 .cartButton {
   color: #fff;
-  font-size: 1rem;
+  font-size: 1.5rem; /* Increased from 1rem */
   display: flex;
   align-items: center;
   gap: 8px;
@@ -53,8 +53,11 @@
 .cartButton .ant-badge-count {
   background: #06C167;
   color: #fff;
-  font-size: 12px;
-  padding: 0 6px;
+  font-size: 14px; /* Increased from 12px */
+  padding: 0 8px; /* Increased padding */
+  min-width: 20px;
+  height: 20px;
+  line-height: 20px;
 }
 
 .layout {
@@ -417,9 +420,9 @@
   }
 
   .cartButton {
-    font-size: 0.9rem;
+    font-size: 1.2rem; /* Increased from 0.9rem */
   }
-
+  
   .layout {
     padding: 8px;
   }
@@ -520,9 +523,9 @@
   }
 
   .cartButton {
-    font-size: 0.8rem;
+    font-size: 1rem; /* Increased from 0.8rem */
   }
-
+  
   .cardTitle {
     font-size: 1.3rem;
   }
