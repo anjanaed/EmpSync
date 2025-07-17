@@ -22,7 +22,7 @@
 
 .linearGradientButton::before {
   content: "";
-  background-color: rgb(255, 177, 177);
+  background-color: rgb(155, 2, 2);
   position: absolute;
   inset: 0;
   opacity: 1;
@@ -33,5 +33,5 @@
 
 .linearGradientButton:hover::before {
   opacity: 0.8;
-  background: rgb(255, 124, 124);
+  background: rgb(122, 3, 3);
 }

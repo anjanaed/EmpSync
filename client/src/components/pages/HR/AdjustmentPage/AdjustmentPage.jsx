@@ -12,15 +12,13 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import NavBar from '../../../organisms/NavBar/NavBar';
 import Adjustment from '../../../Organisms/HR/IndividualAdjustmentList/Adjustment';
+import { useAuth } from "../../../../contexts/AuthContext";
 
 const AdjustmentPage = () => {
-  // Get and parse authData from localStorage
-  const rawAuthData = localStorage.getItem("authData");
-  const parsedAuthData = rawAuthData ? JSON.parse(rawAuthData) : null;
-
-  // Safely get permission actions
-  const actions = parsedAuthData?.permissions?.actions || [];
-  console.log("Actions:", actions);
+  const { authData } = useAuth();
+    
+  // Get permission actions safely
+  const actions = authData?.permissions?.actions || [];
 
   // Define all possible menu items
   const allMenuItems = [
@@ -50,7 +48,7 @@ const AdjustmentPage = () => {
       label: "FingerPrints",
       action: "User Management",
       icon: <FontAwesomeIcon icon={faFingerprint} />,
-      link: "/FingerPrints",
+      link: "/FingerPrint",
     },
     {
       key: "5",

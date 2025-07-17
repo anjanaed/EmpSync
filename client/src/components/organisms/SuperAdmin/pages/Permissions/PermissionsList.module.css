@@ -93,6 +93,89 @@
   color: rgba(255, 255, 255, 0.3) !important;
 }
 
+:global(.org-dropdown-dark) {
+  background-color: #1a1a2e !important;
+  color: white !important;
+  border-radius: 8px;
+}
+
+:global(.org-dropdown-dark .ant-select-item-option) {
+  color: white !important;
+}
+
+:global(.org-dropdown-dark .ant-select-item-option-active) {
+  background-color: #1890ff !important;
+  color: white !important;
+}
+
+:global(.org-dropdown-dark .ant-select-item-option-selected) {
+  background-color: #1890ff !important;
+  color: white !important;
+}
+
+/* User dropdown dark theme */
+:global(.user-dropdown-dark) {
+  background-color: #1a1a2e !important;
+  color: white !important;
+  border-radius: 8px;
+}
+
+:global(.user-dropdown-dark .ant-select-item-option) {
+  color: white !important;
+}
+
+:global(.user-dropdown-dark .ant-select-item-option-active) {
+  background-color: #1890ff !important;
+  color: white !important;
+}
+
+:global(.user-dropdown-dark .ant-select-item-option-selected) {
+  background-color: #1890ff !important;
+  color: white !important;
+}
+
+/* Permission organization dropdown dark theme */
+:global(.permission-org-dropdown-dark) {
+  background-color: #1a1a2e !important;
+  color: white !important;
+  border-radius: 8px;
+}
+
+:global(.permission-org-dropdown-dark .ant-select-item-option) {
+  color: white !important;
+}
+
+:global(.permission-org-dropdown-dark .ant-select-item-option-active) {
+  background-color: #1890ff !important;
+  color: white !important;
+}
+
+:global(.permission-org-dropdown-dark .ant-select-item-option-selected) {
+  background-color: #1890ff !important;
+  color: white !important;
+}
+
+/* Role dropdown dark theme */
+:global(.role-dropdown-dark) {
+  background-color: #1a1a2e !important;
+  color: white !important;
+  border-radius: 8px;
+}
+
+:global(.role-dropdown-dark .ant-select-item-option) {
+  color: white !important;
+}
+
+:global(.role-dropdown-dark .ant-select-item-option-active) {
+  background-color: #1890ff !important;
+  color: white !important;
+}
+
+:global(.role-dropdown-dark .ant-select-item-option-selected) {
+  background-color: #1890ff !important;
+  color: white !important;
+}
+
 .saveButton {
   background-color: #1890ff !important;
   border-color: #1890ff !important;

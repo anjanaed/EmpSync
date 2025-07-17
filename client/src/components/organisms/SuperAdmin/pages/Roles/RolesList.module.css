@@ -442,6 +442,28 @@
   color: #1890ff !important;
 }
 
+/* Dropdown background */
+:global(.org-dropdown-dark) {
+  background-color: #0e0e2e !important;
+  color: white !important;
+  border-radius: 8px;
+}
+
+:global(.org-dropdown-dark .ant-select-item-option) {
+  color: white !important;
+}
+
+:global(.org-dropdown-dark .ant-select-item-option-active) {
+  background-color: #1890ff !important;
+  color: white !important;
+}
+
+:global(.org-dropdown-dark .ant-select-item-option-selected) {
+  background-color: #1890ff !important;
+  color: white !important;
+}
+
+
 /* Responsive modal for mobile */
 @media (max-width: 768px) {
   .container {

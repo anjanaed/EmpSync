@@ -38,16 +38,16 @@
 
 /* Popconfirm text styles */
 .popconfirmTitle {
-  font-size: 0.9vw;
+  font-size: 0.8vw;
 }
 
 .popconfirmDescription {
   font-style: italic;
-  font-size: 0.8vw;
+  font-size: 0.7vw;
 }
 
 .popconfirmButton {
-  font-size: 0.8vw;
+  font-size: 0.7vw;
 }
 
 /* SearchBar inline style replacement */

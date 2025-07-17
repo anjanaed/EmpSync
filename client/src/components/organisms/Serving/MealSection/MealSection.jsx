@@ -8,7 +8,7 @@ const MealSection = () => {
   return (
     <div className="meal-container">
       <Title level={2} className="meal-title">
-        Breakfast Meal
+        Scan your meal barcode
       </Title>
     </div>
   );

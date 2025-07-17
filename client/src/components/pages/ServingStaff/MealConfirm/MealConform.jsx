@@ -4,9 +4,11 @@ import { useState, useEffect } from 'react';
 import styles from './MealConform.module.css';
 import DateTime from '../../../organisms/Serving/DateAndTime/DateTime';
 import Loading from '../../../atoms/loading/loading'; // Renamed to Loading
+import { useAuth } from "../../../../contexts/AuthContext";
 
 const urL = import.meta.env.VITE_BASE_URL;
 const { Title, Text } = Typography;
+
 
 const MealConform = () => {
   const navigate = useNavigate();
@@ -15,6 +17,8 @@ const MealConform = () => {
   const [mealDetails, setMealDetails] = useState(null);
   const [employeeName, setEmployeeName] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const { authData } = useAuth();
+  const token = authData?.accessToken;
 
   useEffect(() => {
     const fetchDetails = async () => {
@@ -25,7 +29,8 @@ const MealConform = () => {
         const orderData = await orderRes.json();
         setOrderDetails(orderData);
 
-        const mealRes = await fetch(`${urL}/meal/${orderData.id}?orgId=${orderData.orgId}`);
+        const [mealIdPart] = orderData.meals[0].split(':');
+        const mealRes = await fetch(`${urL}/meal/${mealIdPart}?orgId=${orderData.orgId}`);
         if (!mealRes.ok) throw new Error('Failed to fetch meal details');
         const mealData = await mealRes.json();
         setMealDetails(mealData);
