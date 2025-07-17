@@ -501,6 +501,10 @@
   .totalText {
     font-size: 1.1rem;
   }
+
+  .mobileHeader {
+    display: flex;
+  }
 }
 
 @media (max-width: 480px) {
@@ -820,4 +824,47 @@
 
 [data-theme="dark"] .container .ant-row {
   background: #2a2a2a;
+}
+
+.mobileHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.mobileDropdownContainer {
+  width: 100%;
+}
+
+.mobileDropdown {
+  width: 100%;
+}
+
+.mobileActions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.dropdownOption {
+  font-weight: 500;
+}
+
+.unavailableOption {
+  color: #999;
+  opacity: 0.6;
+}
+
+@media (max-width: 768px) {
+  .mobileHeader {
+    display: flex;
+  }
+}
+
+@media (min-width: 769px) {
+  .mobileHeader {
+    display: none;
+  }
 }
