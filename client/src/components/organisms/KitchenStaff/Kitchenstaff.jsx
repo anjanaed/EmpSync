@@ -328,11 +328,21 @@ const Dashbord = () => {
               }
             >
               <Meta
-                title={`${meal.name} `}
+                title={`${meal.name}`}
                 description={
-                  <span className={styles.mealCountText}>
-                    Total Count: {meal.totalCount}
-                  </span>
+                  <div>
+                    <div style={{ fontSize: '12px', color: '#666', marginBottom: '4px' }}>
+                      Meal ID: {meal.mealId}
+                    </div>
+                    {meal.description && (
+                      <div style={{ fontSize: '13px', color: '#555', marginBottom: '8px', lineHeight: '1.3' }}>
+                        {meal.description}
+                      </div>
+                    )}
+                    <span className={styles.mealCountText}>
+                      Total Count: {meal.totalCount}
+                    </span>
+                  </div>
                 } // Add a class for the meal count text
               />
             </Card>
