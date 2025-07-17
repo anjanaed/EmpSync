@@ -13,7 +13,7 @@ import { useAuth } from "../../../../contexts/AuthContext";
 import axios from "axios";
 import styles from "./Meals.module.css";
 import { QrcodeOutlined } from "@ant-design/icons";
-import { QRCodeCanvas } from "qrcode.react";
+import Barcode from "react-barcode";
 
 const { Text, Title } = Typography;
 const { TabPane } = Tabs;
@@ -60,7 +60,7 @@ const Cart = ({
       <br />
       {showQR && !isReadOnly ? (
         <div className={styles.qrContainer}>
-          <QRCodeCanvas value={order.id.toString()} size={235} />
+          <Barcode value={order.id.toString()} width={2} height={80} displayValue={true} />
         </div>
       ) : (
         <>
