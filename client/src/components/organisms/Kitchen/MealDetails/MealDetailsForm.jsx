@@ -51,7 +51,7 @@ const AddMealPage = () => {
   const fetchIngredients = async () => {
     setLoadingIngredients(true);
     try {
-      const response = await axios.get(`${urL}/Ingredients/optimized`, {
+      const response = await axios.get(`${urL}/Ingredients`, {
         params: {
           orgId: authData?.orgId,
         },
