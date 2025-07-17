@@ -339,7 +339,7 @@ const MealPage03 = () => {
         <Layout className={styles.layout}>
           <div className={styles.header}>
             <div className={styles.userName}>
-              hello 
+              {username?.name || "Guest"}
             </div>
             <Button
               type="text"

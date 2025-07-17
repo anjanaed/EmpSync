@@ -13,8 +13,8 @@
   justify-content: space-between;
   align-items: center;
   padding: 12px 16px;
-  background: #0aa002;
-  color: #fff;
+  background: #ffffff;
+  color: #1e1d1d;
   position: sticky;
   top: 0;
   z-index: 1000;
@@ -39,15 +39,16 @@
 .userName {
   font-size: 1rem;
   font-weight: 500;
-  color: #fff;
+  color: #232323;
 }
 
 .cartButton {
-  color: #fff;
+  color: #121212;
   font-size: 1.5rem; /* Increased from 1rem */
   display: flex;
   align-items: center;
   gap: 8px;
+  border: #121212;
 }
 
 .cartButton .ant-badge-count {
@@ -168,7 +169,8 @@
   overflow: hidden;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   border: 1px solid #e0e0e0;
-  background: #fff;
+  background: #ffffff;
+  width: 250px;
 }
 
 .mealCard:hover {
