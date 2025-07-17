@@ -886,3 +886,17 @@
     display: none;
   }
 }
+
+/* Add these dark mode styles for the loading screen */
+[data-theme="dark"] .loadingContainer {
+  background: rgba(26, 26, 26, 0.7) !important;
+  backdrop-filter: blur(4px);
+}
+
+[data-theme="dark"] .loadingText {
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .loadingWrapper {
+  background: #1a1a1a;
+}
