@@ -356,7 +356,7 @@
   .navbar.dark .navLink {
     border-bottom-color: rgba(255, 255, 255, 0.05);
   }
-}
+
 
 /* Extra small mobile devices */
 @media screen and (max-width: 480px) {
