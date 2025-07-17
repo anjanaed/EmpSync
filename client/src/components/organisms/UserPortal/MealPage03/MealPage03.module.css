@@ -8,19 +8,6 @@
   width: 100%;
 }
 
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 16px;
-  background: #ffffff;
-  color: #1e1d1d;
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  width: 100%;
-  /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); */
-}
 
 .name {
   font-size: 1.5rem;
@@ -43,12 +30,20 @@
 }
 
 .cartButton {
-  color: #121212;
-  font-size: 1.5rem; /* Increased from 1rem */
+  background: #f0f0f0;
+  color: #1a1a1a;
+  border: none;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   gap: 8px;
-  border: #121212;
+  padding: 8px 16px;
+  transition: all 0.3s ease;
+  font-size: 1rem;
+}
+
+.cartButton:hover {
+  background: #e0e0e0;
 }
 
 .cartButton .ant-badge-count {
@@ -67,7 +62,7 @@
   width: 100%;
   max-width: 100%;
   margin: 0 auto;
-  padding: 16px;
+  padding: px;
   font-family: "Inter", sans-serif;
 }
 
@@ -82,6 +77,8 @@
   background: #fff;
   box-shadow: 0 4px 12px rgba(0, grayscale(0%), 0, 0.1);
   overflow: hidden;
+  margin: 20px;
+  padding: 20px;
 }
 
 .cardTitle {
@@ -423,7 +420,8 @@
   }
 
   .cartButton {
-    font-size: 1.2rem; /* Increased from 0.9rem */
+    padding: 8px 12px;
+    font-size: 0.9rem;
   }
   
   .layout {
@@ -530,7 +528,7 @@
   }
 
   .cartButton {
-    font-size: 1rem; /* Increased from 0.8rem */
+    font-size: 0.8rem;
   }
   
   .cardTitle {
@@ -566,13 +564,31 @@
 }
 
 [data-theme="dark"] .cartButton {
-  color: #ffffff;
-  border-color: #ffffff;
+  background: #404040;
+  color: #ffffff !important;
+  border: 1px solid #555555;
 }
 
 [data-theme="dark"] .cartButton:hover {
-  color: #06C167;
-  border-color: #06C167;
+  background: #555555;
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .cartButton .ant-badge {
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .cartButton .ant-badge .ant-badge-count {
+  background: #06C167;
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .cartButton span {
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .cartButton .ant-badge-status-text {
+  color: #ffffff !important;
 }
 
 [data-theme="dark"] .layout {
@@ -685,156 +701,147 @@
 
 [data-theme="dark"] .orderSummary {
   background: #2a2a2a;
+  color: #ffffff;
+}
+
+[data-theme="dark"] .orderSummary .ant-card {
+  background: #333333 !important;
+  border: 1px solid #555555 !important;
+}
+
+[data-theme="dark"] .orderSummary .ant-card-head {
+  background: #333333 !important;
+  border-bottom: 1px solid #555555 !important;
+}
+
+[data-theme="dark"] .orderSummary .ant-card-head-title {
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .orderSummary .ant-card-body {
+  background: #333333 !important;
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .orderSummary .ant-alert {
+  background: #404040 !important;
+  border: 1px solid #555555 !important;
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .orderSummary .ant-alert-info {
+  background: #1a3d2e !important;
+  border: 1px solid #06C167 !important;
+}
+
+[data-theme="dark"] .orderSummary .ant-alert-message {
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .orderSummary .ant-typography {
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .orderSummary .ant-typography h3 {
+  color: #ffffff !important;
 }
 
 [data-theme="dark"] .orderCard {
-  background: #333333;
-  border-bottom: 1px solid #555555;
+  background: #404040 !important;
+  border-bottom: 1px solid #555555 !important;
 }
 
 [data-theme="dark"] .orderCardTitle {
-  color: #ffffff;
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .orderCardDetails .ant-badge-status-text {
+  color: #cccccc !important;
 }
 
 [data-theme="dark"] .actionButton {
-  color: #ffffff;
+  color: #ffffff !important;
+  background: #555555 !important;
 }
 
 [data-theme="dark"] .actionButton:hover {
-  color: #06C167;
+  color: #06C167 !important;
+  background: #666666 !important;
 }
 
 [data-theme="dark"] .itemCountBadge {
-  color: #ffffff;
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .removeButton {
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .removeButton:hover {
+  color: #ff4d4f !important;
+}
+
+[data-theme="dark"] .priceDiv {
+  color: #ffffff !important;
 }
 
 [data-theme="dark"] .totalContainer {
-  background: #2a2a2a;
-  border-top: 1px solid #555555;
+  background: #404040 !important;
+  border-top: 1px solid #555555 !important;
 }
 
 [data-theme="dark"] .totalText {
-  color: #ffffff;
+  color: #ffffff !important;
 }
 
 [data-theme="dark"] .placeOrderButton {
-  background: #06C167;
-  color: #ffffff;
-  border: none;
+  background: #06C167 !important;
+  color: #ffffff !important;
+  border: none !important;
 }
 
 [data-theme="dark"] .placeOrderButton:hover,
 [data-theme="dark"] .placeOrderButton:focus {
-  background: #05a85a;
+  background: #05a85a !important;
+  color: #ffffff !important;
 }
 
 [data-theme="dark"] .disabledButton {
-  background: #555555;
-  color: #888888;
+  background: #555555 !important;
+  color: #888888 !important;
 }
 
-[data-theme="dark"] .loadingContainer {
-  background: rgba(26, 26, 26, 0.7);
+/* Dark mode for specific elements inside orderSummary */
+[data-theme="dark"] .orderSummary .ant-row {
+  background: transparent !important;
 }
 
-[data-theme="dark"] .loadingText {
-  color: #ffffff;
+[data-theme="dark"] .orderSummary .ant-col {
+  color: #ffffff !important;
 }
 
-/* Dark mode Ant Design component overrides */
-[data-theme="dark"] .container .ant-card {
-  background: #2a2a2a;
-  border: 1px solid #404040;
+[data-theme="dark"] .orderSummary .ant-badge {
+  color: #ffffff !important;
 }
 
-[data-theme="dark"] .container .ant-card-head {
-  background: #2a2a2a;
-  border-bottom: 1px solid #404040;
+[data-theme="dark"] .orderSummary .ant-badge-status-processing {
+  color: #06C167 !important;
 }
 
-[data-theme="dark"] .container .ant-card-head-title {
-  color: #ffffff;
-}
-
-[data-theme="dark"] .container .ant-tabs-nav {
-  background: #2a2a2a;
-}
-
-[data-theme="dark"] .container .ant-tabs-tab {
-  color: #ffffff;
-}
-
-[data-theme="dark"] .container .ant-tabs-tab-active {
-  color: #06C167;
-}
-
-[data-theme="dark"] .container .ant-tabs-tab:hover {
-  color: #06C167;
-}
-
-[data-theme="dark"] .container .ant-tabs-ink-bar {
-  background: #06C167;
-}
-
-[data-theme="dark"] .container .ant-tabs-content {
-  background: #2a2a2a;
-}
-
-[data-theme="dark"] .container .ant-badge-count {
-  background: #06C167;
-  color: #ffffff;
-}
-
-[data-theme="dark"] .container .ant-modal-content {
-  background: #2a2a2a;
-  color: #ffffff;
-}
-
-[data-theme="dark"] .container .ant-modal-header {
-  background: #2a2a2a;
-  border-bottom: 1px solid #404040;
-}
-
-[data-theme="dark"] .container .ant-modal-title {
-  color: #ffffff;
-}
-
-[data-theme="dark"] .container .ant-modal-close {
-  color: #ffffff;
-}
-
-[data-theme="dark"] .container .ant-modal-close:hover {
-  color: #06C167;
-}
-
-[data-theme="dark"] .container .ant-alert {
-  background: #333333;
-  border: 1px solid #555555;
-  color: #ffffff;
-}
-
-[data-theme="dark"] .container .ant-alert-info {
-  background: #1a3d2e;
-  border: 1px solid #06C167;
-}
-
-[data-theme="dark"] .container .ant-typography {
-  color: #ffffff;
-}
-
-[data-theme="dark"] .container .ant-row {
-  background: #2a2a2a;
+[data-theme="dark"] .orderSummary .ant-badge-status-success {
+  color: #52c41a !important;
 }
 
 .mobileHeader {
   display: flex;
-  flex-direction: column;
-  gap: 16px;
+  flex-direction: row; /* Change from column to row */
+  gap: 8px; /* Reduce gap */
   margin-bottom: 16px;
+  align-items: center; /* Center align items */
 }
 
 .mobileDropdownContainer {
-  width: 100%;
+  flex: 1; /* Take available space on the left */
 }
 
 .mobileDropdown {
@@ -843,9 +850,10 @@
 
 .mobileActions {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end; /* Align to right */
   align-items: center;
   gap: 8px;
+  flex-shrink: 0; /* Prevent shrinking */
 }
 
 .dropdownOption {
@@ -860,6 +868,16 @@
 @media (max-width: 768px) {
   .mobileHeader {
     display: flex;
+  }
+  
+  .filterButton {
+    padding: 8px 12px; /* Adjust padding for mobile */
+    font-size: 0.9rem; /* Slightly smaller font */
+  }
+  
+  .cartButton {
+    padding: 8px 12px; /* Adjust padding for mobile */
+    font-size: 0.9rem; /* Slightly smaller font */
   }
 }
 
