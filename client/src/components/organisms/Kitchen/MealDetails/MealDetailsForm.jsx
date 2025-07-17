@@ -49,44 +49,38 @@ const AddMealPage = () => {
 
   // Fetch ingredients from API using axios with orgId
   const fetchIngredients = async () => {
-    setLoadingIngredients(true);
-    try {
-      const response = await axios.get(`${urL}/Ingredients`, {
-        params: {
-          orgId: authData?.orgId,
-        },
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+  setLoadingIngredients(true);
+  try {
+    const response = await axios.get(`${urL}/ingredients`, {
+      params: {
+        orgId: authData?.orgId,
+      },
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
-      const data = response.data;
-      const priority1Ingredients = Array.isArray(data.priority1Ingredients)
-        ? data.priority1Ingredients
-        : [];
-      const optimizedIngredients = Array.isArray(data.optimizedIngredients)
-        ? data.optimizedIngredients
-        : [];
-      const allIngredients = [...priority1Ingredients, ...optimizedIngredients];
-      const formattedIngredients = allIngredients.map((ingredient) => ({
-        id: ingredient.id,
-        name: ingredient.name,
-        selected: false,
-      }));
+    const data = Array.isArray(response.data) ? response.data : [];
 
-      setIngredients(formattedIngredients);
+    const formattedIngredients = data.map((ingredient) => ({
+      id: ingredient.id,
+      name: ingredient.name,
+      selected: false,
+    }));
 
-      if (formattedIngredients.length === 0) {
-        message.warning("No ingredients found in the API response");
-      }
-    } catch (error) {
-      const errorMessage = error.response?.data?.message || error.message;
-      message.error(`Error fetching ingredients: ${errorMessage}`);
-      setIngredients([]);
-    } finally {
-      setLoadingIngredients(false);
+    setIngredients(formattedIngredients);
+
+    if (formattedIngredients.length === 0) {
+      message.warning("No ingredients found");
     }
-  };
+  } catch (error) {
+    const errorMessage = error.response?.data?.message || error.message;
+    message.error(`Error fetching ingredients: ${errorMessage}`);
+    setIngredients([]);
+  } finally {
+    setLoadingIngredients(false);
+  }
+};
 
   const handleCancel = () => {
     form.resetFields();
