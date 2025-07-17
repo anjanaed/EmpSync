@@ -39,7 +39,8 @@ const EditMealPage = () => {
   const [imageUrl, setImageUrl] = useState(null);
   const [originalImageUrl, setOriginalImageUrl] = useState(null);
   const fileInputRef = useRef(null);
-  const [isIngredientsModalVisible, setIsIngredientsModalVisible] = useState(false);
+  const [isIngredientsModalVisible, setIsIngredientsModalVisible] =
+    useState(false);
   const [loadingIngredients, setLoadingIngredients] = useState(false);
   const [searchIngredient, setSearchIngredient] = useState("");
   const [selectedIngredients, setSelectedIngredients] = useState([]);
@@ -58,70 +59,57 @@ const EditMealPage = () => {
 
   // Define parseIngredientsFromMealData function first
   const parseIngredientsFromMealData = async (ingredientsArray) => {
-    if (!ingredientsArray || ingredientsArray.length === 0) {
-      return [];
-    }
+  if (!ingredientsArray || ingredientsArray.length === 0) {
+    return [];
+  }
 
-    try {
-      // Fetch ingredients with orgId parameter
-      const response = await axios.get(`${urL}/Ingredients/optimized`, {
-        params: {
-          orgId: orgId,
-        },
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+  try {
+    const response = await axios.get(`${urL}/ingredients`, {
+      params: {
+        orgId: authData?.orgId, // Make sure you have `authData` accessible in the edit page too
+      },
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
-      const data = response.data;
+    const allIngredients = Array.isArray(response.data) ? response.data : [];
 
-      // Combine both ingredient arrays from the API
-      const priority1Ingredients = Array.isArray(data.priority1Ingredients)
-        ? data.priority1Ingredients
-        : [];
-      const optimizedIngredients = Array.isArray(data.optimizedIngredients)
-        ? data.optimizedIngredients
-        : [];
-      const allIngredients = [...priority1Ingredients, ...optimizedIngredients];
+    // Format all ingredients with selected: false initially
+    const formattedIngredients = allIngredients.map((ingredient) => ({
+      id: ingredient.id,
+      name: ingredient.name,
+      selected: false,
+    }));
 
-      // Create a map of ingredient IDs to their full details for quick lookup
-      const ingredientsMap = {};
-      allIngredients.forEach((ing) => {
-        ingredientsMap[ing.id] = ing;
-      });
+    // Set selected to true for ingredients in the meal
+    const usedIngredientIds = ingredientsArray.map((ing) =>
+      typeof ing === "object" && ing.ingredientId ? ing.ingredientId : ing
+    );
 
-      console.log("Ingredients map:", ingredientsMap);
-      console.log("Processing ingredients:", ingredientsArray);
+    const parsedIngredients = formattedIngredients.map((ingredient) => ({
+      ...ingredient,
+      selected: usedIngredientIds.includes(ingredient.id),
+    }));
 
-      // Parse the meal's ingredients which are now just ingredient IDs
-      const parsedIngredients = ingredientsArray.map((ingredient) => {
-        const ingredientId = ingredient.ingredientId || ingredient;
-        const ingredientDetails = ingredientsMap[ingredientId];
+    console.log("Parsed ingredients for edit:", parsedIngredients);
+    return parsedIngredients;
+  } catch (error) {
+    const errorMessage = error.response?.data?.message || error.message;
+    console.error("Error fetching ingredients:", errorMessage);
 
-        return {
-          id: ingredientId,
-          name: ingredientDetails
-            ? ingredientDetails.name
-            : `Ingredient ID: ${ingredientId}`,
-          selected: true,
-        };
-      });
+    // Fallback to display only used ingredients
+    return ingredientsArray.map((ingredient) => {
+      const ingredientId = ingredient.ingredientId || ingredient;
+      return {
+        id: ingredientId,
+        name: `Ingredient ID: ${ingredientId}`,
+        selected: true,
+      };
+    });
+  }
+};
 
-      console.log("Parsed ingredients:", parsedIngredients);
-      return parsedIngredients;
-    } catch (error) {
-      console.error("Error parsing ingredients:", error);
-      // Fallback parsing if API fetch fails
-      return ingredientsArray.map((ingredient) => {
-        const ingredientId = ingredient.ingredientId || ingredient;
-        return {
-          id: ingredientId,
-          name: `Ingredient ID: ${ingredientId}`,
-          selected: true,
-        };
-      });
-    }
-  };
 
   // Now use the function in useEffect
   useEffect(() => {
