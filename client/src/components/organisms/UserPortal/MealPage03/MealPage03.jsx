@@ -338,12 +338,8 @@ const MealPage03 = () => {
         {loading && <Loading text={text.loading || "Loading meals..."} />}
         <Layout className={styles.layout}>
           <div className={styles.header}>
-            {/* <div className={styles.name}>BizSolution</div> */}
-            {/* <div className={styles.dateAndTime}>
-              {currentTimeRef.current.toLocaleString("en-IN")}
-            </div> */}
             <div className={styles.userName}>
-              <div>{username.name || "Guest"}</div>
+              hello 
             </div>
             <Button
               type="text"

@@ -13,7 +13,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 12px 16px;
-  background: #000;
+  background: #0aa002;
   color: #fff;
   position: sticky;
   top: 0;
@@ -55,8 +55,8 @@
   color: #fff;
   font-size: 14px; /* Increased from 12px */
   padding: 0 8px; /* Increased padding */
-  min-width: 20px;
-  height: 20px;
+  min-width: 50px;
+  height: 50px;
   line-height: 20px;
 }
 
@@ -64,7 +64,7 @@
   display: flex;
   flex-direction: column;
   width: 100%;
-  max-width: 1200px;
+  max-width: 100%;
   margin: 0 auto;
   padding: 16px;
   font-family: "Inter", sans-serif;
