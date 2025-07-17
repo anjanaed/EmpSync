@@ -177,6 +177,7 @@ export class MealsServingService {
             imageUrl: string | null;
             mealTypeId: number;
             description: string | null;
+            ingredients: string[];
           } 
         };
       } = {};
@@ -211,7 +212,19 @@ export class MealsServingService {
 
           const meal = await this.databaseService.meal.findUnique({
             where: { id: mealId },
-            select: { id: true, nameEnglish: true, imageUrl: true, description: true },
+            select: { 
+              id: true, 
+              nameEnglish: true, 
+              imageUrl: true, 
+              description: true,
+              ingredients: {
+                include: {
+                  ingredient: {
+                    select: { name: true }
+                  }
+                }
+              }
+            },
           });
 
           if (!meal) {
@@ -220,12 +233,14 @@ export class MealsServingService {
 
           // Initialize meal in this meal type if not exists
           if (!mealCounts[mealTypeName][mealId]) {
+            const ingredientNames = meal.ingredients.map(mealIngredient => mealIngredient.ingredient.name);
             mealCounts[mealTypeName][mealId] = { 
               name: meal.nameEnglish, 
               totalCount: 0, 
               imageUrl: meal.imageUrl,
               mealTypeId: order.mealTypeId,
-              description: meal.description || null
+              description: meal.description || null,
+              ingredients: ingredientNames
             };
           }
 
@@ -242,17 +257,19 @@ export class MealsServingService {
           imageUrl: string | null;
           mealTypeId: number;
           description: string | null;
+          ingredients: string[];
         }>;
       } = {};
 
       for (const [mealTypeName, meals] of Object.entries(mealCounts)) {
-        result[mealTypeName] = Object.entries(meals).map(([mealId, { name, totalCount, imageUrl, mealTypeId, description }]) => ({
+        result[mealTypeName] = Object.entries(meals).map(([mealId, { name, totalCount, imageUrl, mealTypeId, description, ingredients }]) => ({
           mealId: Number(mealId),
           name,
           totalCount,
           imageUrl,
           mealTypeId,
           description,
+          ingredients,
         }));
       }
 

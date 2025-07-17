@@ -339,6 +339,31 @@ const Dashbord = () => {
                         {meal.description}
                       </div>
                     )}
+                    {meal.ingredients && meal.ingredients.length > 0 && (
+                      <div style={{ marginBottom: '8px' }}>
+                        <div style={{ fontSize: '12px', fontWeight: '500', color: '#444', marginBottom: '4px' }}>
+                          Ingredients:
+                        </div>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+                          {meal.ingredients.map((ingredient, index) => (
+                            <span 
+                              key={index} 
+                              style={{
+                                backgroundColor: '#fff3cd',
+                                color: '#856404',
+                                padding: '2px 6px',
+                                borderRadius: '3px',
+                                fontSize: '10px',
+                                fontWeight: '500',
+                                border: '1px solid #ffeaa7',
+                              }}
+                            >
+                              {ingredient}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                     <span className={styles.mealCountText}>
                       Total Count: {meal.totalCount}
                     </span>
