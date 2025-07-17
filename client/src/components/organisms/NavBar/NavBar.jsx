@@ -215,7 +215,10 @@ const NavBar = ({ Comp, titleLines = [], menuItems = [] }) => {
             >
               <div className={styles.userInfo}>
                 <Avatar
-                  style={{ backgroundColor: "#d10000" }}
+                  style={{
+                    backgroundColor: theme === "dark" ? "#000000ff" : "#d60a0aff",
+                    color: theme === "dark" ? "#ffffff" : "#fff", // icon color for dark/light
+                  }}
                   icon={<UserOutlined />}
                 />
                 <div className={styles.userDetails}>

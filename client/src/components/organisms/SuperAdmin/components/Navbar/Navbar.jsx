@@ -30,7 +30,7 @@ const Navbar = ({ activeMenu, onMenuChange }) => {
     {
       key: 'roles',
       icon: <UserOutlined />,
-      label: 'Roles',
+      label: 'Administrators',
       className: styles.menuItem
     },
     {

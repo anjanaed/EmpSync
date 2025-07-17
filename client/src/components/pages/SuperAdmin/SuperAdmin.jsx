@@ -84,7 +84,7 @@ const SuperAdmin = () => {
   const getPageTitle = () => {
     switch (activeMenu) {
       case 'organizations': return 'Organizations';
-      case 'roles': return 'Roles';
+      case 'roles': return 'Administrators';
       case 'permissions': return 'Permissions';
       default: return 'Super Administrator';
     }

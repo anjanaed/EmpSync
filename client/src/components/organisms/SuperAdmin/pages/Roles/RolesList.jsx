@@ -226,7 +226,7 @@ const RolesList = ({ data, onAddNew, onUpdate, onDelete, className, authData}) =
           className={styles.addButton}
           disabled={!selectedOrg}
         >
-          Add New Role
+          Add New Admin
         </Button>
       </div>
 

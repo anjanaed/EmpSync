@@ -9,7 +9,6 @@ import {
   faChartLine,
   faBowlFood,
 } from "@fortawesome/free-solid-svg-icons";
-import { BellOutlined } from "@ant-design/icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Button } from "antd";
 import NavBar from '../../../organisms/NavBar/NavBar';
@@ -19,19 +18,17 @@ import { useNotifications } from "../../../../contexts/NotificationsContext";
 import { useAuth } from "../../../../contexts/AuthContext";
 import styles from "../../../organisms/Kitchen/NotificationPanel/NotificationPanel.module.css";
 
-
 const AnalysisDashboard = () => {
   // Get and parse authData from localStorage
   const rawAuthData = localStorage.getItem("authData");
   const parsedAuthData = rawAuthData ? JSON.parse(rawAuthData) : null;
-  const { getUnreadCount, toggleNotifications } = useNotifications();
   const { logout } = useAuth();
 
   // Safely get permission actions
   const actions = parsedAuthData?.permissions?.actions || [];
 
   const handleLogout = () => {
-    logout(); // ✅ clears context/auth
+    logout();
     navigate("/login");
   };
 
@@ -61,7 +58,6 @@ const AnalysisDashboard = () => {
     );
   }
 
-
   // Define all possible menu items
   const allMenuItems = [
     {
@@ -83,7 +79,7 @@ const AnalysisDashboard = () => {
       label: "FingerPrints",
       action: "User Management",
       icon: <FontAwesomeIcon icon={faFingerprint} />,
-      link: "/FingerPrints",
+      link: "/FingerPrint",
     },
     {
       key: "4",
@@ -112,31 +108,12 @@ const AnalysisDashboard = () => {
       action: "Reports",
       icon: <FontAwesomeIcon icon={faChartLine} />,
       link: "/kitchen-report",
-    }, 
+    },
   ];
 
-  // Create notification menu item
-  const notificationMenuItem = {
-    key: "9",
-    className: "notification-menu-item",
-    icon: <BellOutlined />,
-    label: (
-      <div className={styles.notificationMenuItem}>
-        Notifications
-        {getUnreadCount() > 0 && (
-          <span className={styles.notificationBadge}>{getUnreadCount()}</span>
-        )}
-      </div>
-    ),
-    onClick: toggleNotifications,
-  };
-
   // Filter menu based on permissions
-  const updatedMenuItems = [...allMenuItems, notificationMenuItem];
-
-  // Filter menu based on permissions
-  const filteredMenuItems = updatedMenuItems.filter((item) =>
-    actions.includes(item.action) || item.key === "9" // Always include notifications
+  const filteredMenuItems = allMenuItems.filter((item) =>
+    actions.includes(item.action)
   );
 
   return (
