@@ -3,17 +3,22 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 1rem 2rem;
   background-color: #ffffff;
-  padding: 0.75rem 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   position: relative;
-  z-index: 10;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Adds a subtle drop shadow for depth */
+  z-index: 1000;
 }
 
-/* Styling for the company logo */
+/* Company logo section */
+.companyName {
+  display: flex;
+  align-items: center;
+}
+
 .logo {
-  width: auto;
   height: 40px;
+  width: auto;
 }
 
 /* Menu toggle button for mobile view */
@@ -23,27 +28,42 @@
   background: none;
   border: none;
   cursor: pointer;
+  padding: 8px;
+  border-radius: 6px;
+  transition: background-color 0.3s ease;
+  color: #333;
+}
+
+/* Hover effect for menu toggle button */
+.menuToggle:hover {
+  background-color: rgba(0, 0, 0, 0.1);
 }
 
 /* Container for navigation links */
 .navLinks {
   display: flex;
-  gap: 2rem;
   list-style: none;
-  margin-top: 20px;
+  margin: 0;
+  padding: 0;
+  gap: 2rem;
 }
 
 /* Styling for individual navigation links */
 .navLink {
+  display: flex;
+  align-items: center;
   text-decoration: none;
-  color: inherit;
+  color: #333;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  transition: all 0.3s ease;
   font-weight: 500;
-  transition: color 0.3s ease; /* Smooth color transition on hover */
 }
 
 /* Hover effect for navigation links */
 .navLink:hover {
-  color: red; /* Change text color to red on hover */
+  background-color: rgba(0, 0, 0, 0.05);
+  color: #1890ff;
 }
 
 /* Styling for icons within navigation links */
@@ -54,21 +74,31 @@
 
 /* Logout button styling */
 .logoutButton {
-  background-color: #ffffff;
-  color: rgb(23, 22, 22);
-  border: 2px solid #1e1e1e; /* Border for visual distinction */
-  padding: 8px 12px;
-  border-radius: 4px;
+  background-color: #ff4d4f;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
   cursor: pointer;
-  margin-left: 10px;
-  font-size: 18px; /* Consistent font size */
+  transition: background-color 0.3s ease;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
 }
 
 /* Hover effect for logout button */
 .logoutButton:hover {
-  background-color: #e60000;
-  color: #fff;
-  border-color: #e60000; /* Match border color with background on hover */
+  background-color: #ff7875;
+}
+
+/* Mobile logout link - RED COLOR */
+.logoutLinkMobile {
+  color: #ff4d4f !important;
+}
+
+.logoutLinkMobile:hover {
+  background-color: rgba(255, 77, 79, 0.1) !important;
+  color: #ff4d4f !important;
 }
 
 /* Hide mobile logout link by default */
@@ -81,54 +111,222 @@
   display: inline-block;
 }
 
+/* Right section container for controls */
+.rightSection {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Dark mode toggle button styling */
+.darkModeToggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 6px;
+  transition: background-color 0.3s ease;
+  color: #333;
+  margin-right: 1rem; /* Add space between dark mode toggle and logout button */
+}
+
+/* Hover effect for dark mode toggle button */
+.darkModeToggle:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+/* Dark mode specific styles */
+.navbar.dark {
+  background-color: #1f1f1f;
+  color: #ffffff;
+}
+
+.navbar.dark .navLink {
+  color: #ffffff;
+}
+
+.navbar.dark .navLink:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #40a9ff;
+}
+
+.navbar.dark .darkModeToggle,
+.navbar.dark .menuToggle {
+  color: #ffffff;
+}
+
+.navbar.dark .darkModeToggle:hover,
+.navbar.dark .menuToggle:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.navbar.dark .logoutLinkMobile {
+  color: #ff7875 !important;
+}
+
+.navbar.dark .logoutLinkMobile:hover {
+  background-color: rgba(255, 120, 117, 0.2) !important;
+}
+
+/* Notification styles */
+.notificationContainer {
+  position: relative;
+  display: inline-block;
+}
+
+.notificationButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: inherit;
+}
+
+.notificationButton:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.notificationBadge {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  background-color: #ff4d4f;
+  color: white;
+  font-size: 10px;
+  font-weight: bold;
+  padding: 2px 6px;
+  border-radius: 10px;
+  min-width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+/* Dark mode styles */
+.dark .notificationButton:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
 /* Responsive styles for mobile devices (max-width: 768px) */
 @media screen and (max-width: 768px) {
-  /* Show menu toggle button */
+  .navbar {
+    padding: 1rem;
+  }
+
+  /* Right section adjustments for mobile */
+  .rightSection {
+    gap: 0.25rem;
+  }
+
+  .darkModeToggle {
+    margin-right: 0.5rem;
+    padding: 6px;
+  }
+
   .menuToggle {
     display: block;
-    height: 50px;
+    order: 2; /* Ensure menu toggle appears last */
   }
 
-  /* Hide navigation links by default */
   .navLinks {
-    display: none;
     position: absolute;
-    top: 50px; /* Position below navbar */
+    top: 100%;
+    left: 0;
     right: 0;
+    width: 100vw;
+    margin-left: calc(-1 * (100vw - 100%) / 2);
+    background-color: #ffffff;
     flex-direction: column;
-    background-color: inherit;
-    width: 100%;
-    height: 100vh; /* Full viewport height */
-    padding: 1rem;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Shadow for depth */
-    overflow-y: auto; /* Enable scrolling for overflow content */
+    gap: 0;
+    transform: translateY(-100%);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 1rem 0;
+    z-index: 999;
   }
 
-  /* Show navigation links when active */
   .navLinks.active {
-    display: flex;
+    transform: translateY(0);
+    opacity: 1;
+    visibility: visible;
   }
 
-  /* Styling for navigation links in mobile view */
+  .navLinks li {
+    width: 100%;
+  }
+
   .navLink {
-    padding: 0.5rem 0;
-    font-size: 18px; /* Larger font size for readability */
+    padding: 1rem 2rem;
+    border-radius: 0;
+    width: 100%;
+    justify-content: flex-start;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
   }
 
-  /* Hide desktop logout button */
+  .navLink:last-child {
+    border-bottom: none;
+  }
+
   .desktopLogout {
     display: none;
   }
 
-  /* Show mobile logout link */
   .mobileLogout {
     display: block;
+    border-top: 2px solid rgba(0, 0, 0, 0.1);
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
+  }
+
+  /* Dark mode mobile styles */
+  .navbar.dark .navLinks {
+    background-color: #1f1f1f;
+  }
+
+  .navbar.dark .mobileLogout {
+    border-top-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .navbar.dark .navLink {
+    border-bottom-color: rgba(255, 255, 255, 0.05);
+  }
+
+  .notificationContainer {
+    order: -1;
+    margin-right: 10px;
   }
 }
 
-/* Container for right-side elements (menu toggle, logout) */
-.rightSection {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
+/* Extra small mobile devices */
+@media screen and (max-width: 480px) {
+  .navbar {
+    padding: 0.75rem;
+  }
+
+  .logo {
+    height: 35px;
+  }
+
+  .rightSection {
+    gap: 0.25rem;
+  }
+
+  .darkModeToggle,
+  .menuToggle {
+    padding: 6px;
+  }
+
+  .navLink {
+    padding: 0.875rem 1.5rem;
+    font-size: 0.95rem;
+  }
 }
