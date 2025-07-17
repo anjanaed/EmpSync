@@ -337,22 +337,22 @@ const MealPage03 = () => {
       <div className={styles.container}>
         {loading && <Loading text={text.loading || "Loading meals..."} />}
         <Layout className={styles.layout}>
-          <div className={styles.header}>
-            <div className={styles.userName}>
-              {username?.name || "Guest"}
-            </div>
-            <Button
-              type="text"
-              icon={<ShoppingCartOutlined />}
-              className={styles.cartButton}
-              onClick={() => setIsCartVisible(true)}
-            >
-              <Badge count={orderItems.reduce((sum, item) => sum + item.count, 0)}>
-                Cart
-              </Badge>
-            </Button>
-          </div>
           <Content className={styles.content}>
+            {/* <div className={styles.header}>
+              <div className={styles.userName}>
+                {username?.name || "Guest"}
+              </div>
+              <Button
+                type="text"
+                icon={<ShoppingCartOutlined />}
+                className={styles.cartButton}
+                onClick={() => setIsCartVisible(true)}
+              >
+                <Badge count={orderItems.reduce((sum, item) => sum + item.count, 0)}>
+                  Cart
+                </Badge>
+              </Button>
+            </div> */}
             {showSuccess ? (
               <motion.div
                 initial={{ opacity: 0, scale: 0.8 }}
@@ -428,14 +428,26 @@ const MealPage03 = () => {
                   onChange={(key) => setSelectedMealTime(Number(key))}
                   tabBarStyle={{ fontWeight: "bold" }}
                   tabBarExtraContent={
-                    <Button
-                      type="default"
-                      icon={<RiAiGenerate />}
-                      onClick={() => console.log("Filter button clicked")}
-                      className={styles.filterButton}
-                    >
-                      Suggestions
-                    </Button>
+                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                      <Button
+                        type="default"
+                        icon={<RiAiGenerate />}
+                        onClick={() => console.log("Filter button clicked")}
+                        className={styles.filterButton}
+                      >
+                        Suggestions
+                      </Button>
+                      <Button
+                        type="text"
+                        icon={<ShoppingCartOutlined />}
+                        className={styles.cartButton}
+                        onClick={() => setIsCartVisible(true)}
+                      >
+                        <Badge count={orderItems.reduce((sum, item) => sum + item.count, 0)}>
+                          Cart
+                        </Badge>
+                      </Button>
+                    </div>
                   }
                   items={availableMealTimes.map((mealTimeItem) => {
                     const isAvailable = isMealTimeAvailable(mealTimeItem);
@@ -569,7 +581,7 @@ const MealPage03 = () => {
                       showIcon
                     />
                   ) : (
-  <div>
+        <div>
                     <Row gutter={[16, 16]}>
                       {Object.entries(
                         orderItems.reduce((acc, item) => {
