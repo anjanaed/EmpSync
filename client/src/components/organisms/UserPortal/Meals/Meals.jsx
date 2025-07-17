@@ -8,6 +8,7 @@ import {
   message,
   Tabs,
   Calendar,
+  Tag,
 } from "antd";
 import { useAuth } from "../../../../contexts/AuthContext";
 import axios from "axios";
@@ -21,6 +22,7 @@ const { TabPane } = Tabs;
 const Cart = ({
   order,
   mealDetails,
+  mealTypes,
   onCancelOrder,
   isCancelable,
   isReadOnly = false,
@@ -36,6 +38,14 @@ const Cart = ({
   const handleCancelClick = (e) => {
     e.stopPropagation();
     onCancelOrder(order.id);
+  };
+
+  // Check if order is not served (future date with serve: false)
+  const isNotServed = () => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const orderDate = new Date(order.orderDate);
+    return orderDate < today && order.serve === false;
   };
 
   return (
@@ -67,11 +77,18 @@ const Cart = ({
             </div>
           ) : (
             <>
+              {isNotServed() && (
+                  <Tag color="error" style={{ marginLeft: '8px', fontSize: '10px' }}>
+                    Not Served
+                  </Tag>
+                )}
+                <br />
               <div className={styles.orderedAt}>
                 <Text style={{ fontSize: "10px" }}>
                   {new Date(order.orderPlacedTime).toLocaleString()}
                 </Text>
               </div>
+              
               <div className={styles.cardHeader}>
                 <Text strong className={styles.orderId}>
                   ID: {order.id}
@@ -79,6 +96,7 @@ const Cart = ({
                 <Text strong className={styles.orderPrice}>
                   LKR {order.price.toFixed(2)}
                 </Text>
+                
               </div>
               <div className={styles.orderDetailsContainer}>
                 <div className={styles.orderDetails}>
@@ -87,11 +105,7 @@ const Cart = ({
                     className={styles.mealType}
                     style={{ float: "left" }}
                   >
-                    {order.breakfast
-                      ? "Breakfast"
-                      : order.lunch
-                      ? "Lunch"
-                      : "Dinner"}
+                    {mealTypes[order.mealTypeId] || `Meal Type ${order.mealTypeId}`}
                   </Text>
                   <Text
                     strong
@@ -155,6 +169,7 @@ const Meals = () => {
   const [currentOrders, setCurrentOrders] = useState([]);
   const [pastOrders, setPastOrders] = useState([]);
   const [mealDetails, setMealDetails] = useState({});
+  const [mealTypes, setMealTypes] = useState({});
   const [selectedDateOrders, setSelectedDateOrders] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const token = authData?.accessToken;
@@ -202,9 +217,29 @@ const Meals = () => {
         );
 
         const mealDetailsMap = {};
+        const mealTypeMap = {};
+        
         mealResponses.forEach((meal) => {
           if (meal) {
             mealDetailsMap[meal.id] = meal.nameEnglish;
+          }
+        });
+
+        // Fetch meal types
+        const uniqueMealTypeIds = [...new Set(orders.map(order => order.mealTypeId))];
+        
+        const mealTypeResponses = await Promise.all(
+          uniqueMealTypeIds.map((mealTypeId) =>
+            axios
+              .get(`http://localhost:3000/meal-type/${mealTypeId}`)
+              .then((response) => response.data)
+              .catch(() => null)
+          )
+        );
+
+        mealTypeResponses.forEach((mealType) => {
+          if (mealType) {
+            mealTypeMap[mealType.id] = mealType.name;
           }
         });
 
@@ -220,11 +255,16 @@ const Meals = () => {
           );
         });
 
-        const past = orders.filter(
-          (order) => order.employeeId === employeeId && order.serve === true
-        );
+        const past = orders.filter((order) => {
+          const orderDate = new Date(order.orderDate);
+          return (
+            order.employeeId === employeeId && 
+            (order.serve === true || (order.serve === false && orderDate < today))
+          );
+        });
 
         setMealDetails(mealDetailsMap);
+        setMealTypes(mealTypeMap);
         setCurrentOrders(current);
         setPastOrders(past);
       } catch (error) {
@@ -266,9 +306,11 @@ const Meals = () => {
       const currentTime = now.getHours() * 60 + now.getMinutes();
 
       if (orderDate.getDate() === now.getDate()) {
-        if (order.breakfast && currentTime < 540) return true;
-        if (order.lunch && currentTime < 660) return true;
-        if (order.dinner && currentTime < 1080) return true;
+        const mealTypeName = mealTypes[order.mealTypeId]?.toLowerCase() || '';
+        
+        if (mealTypeName.includes('breakfast') && currentTime < 540) return true; // 9:00 AM
+        if (mealTypeName.includes('lunch') && currentTime < 660) return true; // 11:00 AM
+        if (mealTypeName.includes('dinner') && currentTime < 1080) return true; // 6:00 PM
         return false;
       }
 
@@ -313,6 +355,7 @@ const Meals = () => {
                   key={order.id}
                   order={order}
                   mealDetails={mealDetails}
+                  mealTypes={mealTypes}
                   onCancelOrder={handleCancelOrder}
                   isCancelable={isCancelable}
                 />
@@ -346,6 +389,7 @@ const Meals = () => {
                       key={order.id}
                       order={order}
                       mealDetails={mealDetails}
+                      mealTypes={mealTypes}
                       isReadOnly={true} // Pass the new prop to disable cancel button and QR code
                     />
                   ))
