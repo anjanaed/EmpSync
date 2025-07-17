@@ -25,7 +25,8 @@ const MealConform = () => {
         const orderData = await orderRes.json();
         setOrderDetails(orderData);
 
-        const mealRes = await fetch(`${urL}/meal/${orderData.id}?orgId=${orderData.orgId}`);
+        const [mealIdPart] = orderData.meals[0].split(':');
+        const mealRes = await fetch(`${urL}/meal/${mealIdPart}?orgId=${orderData.orgId}`);
         if (!mealRes.ok) throw new Error('Failed to fetch meal details');
         const mealData = await mealRes.json();
         setMealDetails(mealData);
