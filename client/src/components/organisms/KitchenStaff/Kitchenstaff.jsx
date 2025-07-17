@@ -189,64 +189,14 @@ const cartStyles = {
 };
 
 const Dashbord = () => {
-  const [activeTab, setActiveTab] = useState("breakfast");
-  const [manualOverride, setManualOverride] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(new Date());
   const [currentTime, setCurrentTime] = useState(new Date());
-  const [mealData, setMealData] = useState({ breakfast: [], lunch: [], dinner: [] }); // State to store meal data
+  const [activeTab, setActiveTab] = useState("Breakfast");
+  const [manualOverride, setManualOverride] = useState(false);
+  const [isViewingTomorrow, setIsViewingTomorrow] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
   const [selectedMeal, setSelectedMeal] = useState(null);
-  const [isViewingTomorrow, setIsViewingTomorrow] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(new Date());
-  const [cartItems, setCartItems] = useState([
-    {
-      id: 1,
-      name: "Milk Rice",
-      mealId: "125845A",
-      orderCount: 22,
-      serveOrderCount: 15,
-      pendingOrderCount: 7,
-      description:
-        "Milk rice is a traditional Sri Lankan dish made from cooked rice with coconut milk, often served during...",
-      ingredients: ["White rice", "Salt", "coconut milk"],
-      image: null,
-    },
-    {
-      id: 2,
-      name: "Hopper",
-      mealId: "125845A",
-      orderCount: 18,
-      serveOrderCount: 12,
-      pendingOrderCount: 6,
-      description:
-        "A hopper is a container used to hold and dispense materials like grain, sand, or pellets through a...",
-      ingredients: ["Bread flour", "Salt", "coconut milk"],
-      image: null,
-    },
-    {
-      id: 3,
-      name: "Fried rice",
-      mealId: "125845A",
-      orderCount: 46,
-      serveOrderCount: 30,
-      pendingOrderCount: 16,
-      description:
-        "Fried rice is a flavorful dish made by stir-frying rice with vegetables, eggs, and optional meat or...",
-      ingredients: ["Bread flour", "Salt", "coconut milk"],
-      image: null,
-    },
-    {
-      id: 4,
-      name: "Koththu",
-      mealId: "125845A",
-      orderCount: 10,
-      serveOrderCount: 8,
-      pendingOrderCount: 2,
-      description:
-        "Koththu is a popular Sri Lankan street food made with chopped roti, vegetables, eggs or meat, and...",
-      ingredients: ["Bread flour", "Salt", "coconut milk"],
-      image: null,
-    },
-  ]);
+  const [mealData, setMealData] = useState({});
   const navigate = useNavigate();
 
   const currentDate = new Date();
@@ -262,22 +212,47 @@ const Dashbord = () => {
     second: "2-digit",
   });
 
+  // Update time every second
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+
   // Fetch meal data from the backend
   useEffect(() => {
     const fetchMealData = async () => {
       try {
-        const response = await fetch(
-          `http://localhost:3000/meals-serving/meal-counts-by-time?date=${selectedDate
-            .toISOString()
-            .split("T")[0]}`
-        );
+        // Format date for API request
+        const dateStr = selectedDate.toISOString().split('T')[0];
+        
+        // Use the complete backend URL
+        const response = await fetch(`http://localhost:3000/meals-serving/meal-counts-by-time?date=${dateStr}`);
+        
         if (!response.ok) {
-          throw new Error("Failed to fetch meal data");
+          throw new Error(`HTTP error! status: ${response.status}`);
         }
+        
         const data = await response.json();
-        setMealData(data); // Update state with fetched data
+        
+        // Transform meal type names to match our tab names
+        const transformedData = {};
+        Object.entries(data).forEach(([mealType, meals]) => {
+          const normalizedType = mealType.toLowerCase();
+          if (normalizedType.includes('breakfast')) {
+            transformedData['breakfast'] = meals;
+          } else if (normalizedType.includes('lunch')) {
+            transformedData['lunch'] = meals;
+          } else if (normalizedType.includes('dinner')) {
+            transformedData['dinner'] = meals;
+          }
+        });
+        
+        setMealData(transformedData);
       } catch (error) {
-        console.error("Error fetching meal data:", error);
+        console.error('Error fetching meal data:', error);
       }
     };
 
@@ -293,24 +268,13 @@ const Dashbord = () => {
   // Handle tomorrow/today button click
   const handleDateToggle = () => {
     if (isViewingTomorrow) {
-      // Switch back to today
       setSelectedDate(new Date());
-      setIsViewingTomorrow(false);
     } else {
-      // Switch to tomorrow
       const tomorrow = new Date();
       tomorrow.setDate(tomorrow.getDate() + 1);
       setSelectedDate(tomorrow);
-      setIsViewingTomorrow(true);
     }
-  };
-
-  const updateOrderCount = (id, newCount) => {
-    setCartItems((items) =>
-      items.map((item) =>
-        item.id === id ? { ...item, orderCount: Math.max(0, newCount) } : item
-      )
-    );
+    setIsViewingTomorrow(!isViewingTomorrow);
   };
 
   const handleCartItemClick = (item) => {
@@ -341,15 +305,7 @@ const Dashbord = () => {
           <div style={cartStyles.popupBody}>
             <div style={cartStyles.countRow}>
               <span style={cartStyles.countLabel}>Total Order Count:</span>
-              <span style={cartStyles.countValue}>{selectedMeal.orderCount}</span>
-            </div>
-            <div style={cartStyles.countRow}>
-              <span style={cartStyles.countLabel}>Served Order Count:</span>
-              <span style={cartStyles.countValue}>{selectedMeal.serveOrderCount}</span>
-            </div>
-            <div style={cartStyles.countRow}>
-              <span style={cartStyles.countLabel}>Pending Order Count:</span>
-              <span style={cartStyles.countValue}>{selectedMeal.pendingOrderCount}</span>
+              <span style={cartStyles.countValue}>{selectedMeal.totalCount}</span>
             </div>
           </div>
         </div>
@@ -360,88 +316,42 @@ const Dashbord = () => {
   // Render content based on the active tab
   const renderTabContent = () => {
     const meals = mealData[activeTab] || [];
-    return (
-      <div>
-        <div className={styles.cardContainer}>
-          {meals.map((meal) => (
-            <Card
-              key={meal.mealId}
-              hoverable
-              className={styles.card} // Add a class for the card
-              cover={
-                <img
-                  alt={meal.name}
-                  src={meal.imageUrl || "https://via.placeholder.com/240"} // Use Firebase image or fallback
-                  className={styles.cardImage} // Add a class for the image
-                />
-              }
-            >
-              <Meta
-                title={`${meal.name} `}
-                description={
-                  <span className={styles.mealCountText}>
-                    Total Count: {meal.totalCount}
-                  </span>
-                } // Add a class for the meal count text
-              />
-            </Card>
-          ))}
-        </div>
-        
-        {/* Cart section under each meal tab */}
-        <div style={cartStyles.cartContainer}>
-          {/* <h3 style={{ margin: '20px 0', fontSize: '20px', fontWeight: '600', color: '#333' }}>
-            Cart Items for {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}
-          </h3> */}
-          <div style={cartStyles.cartGrid}>
-            {cartItems.map((item) => (
-              <div 
-                key={item.id} 
-                style={{...cartStyles.cartCard, cursor: 'pointer'}} 
-                onClick={() => handleCartItemClick(item)}
-              >
-                <div style={cartStyles.imageContainer}>
-                  <div style={cartStyles.imagePlaceholder}>
-                    <svg
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                    >
-                      <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-                      <circle cx="8.5" cy="8.5" r="1.5" />
-                      <polyline points="21,15 16,10 5,21" />
-                    </svg>
-                  </div>
-                </div>
-
-                <div style={cartStyles.cardContent}>
-                  <div style={cartStyles.cardHeader}>
-                    <h3 style={cartStyles.itemName}>{item.name}</h3>
-                    <div style={cartStyles.orderCount}>
-                      <span style={cartStyles.count}>{item.orderCount}</span>
-                      <span style={cartStyles.countLabel}>Order Count</span>
-                    </div>
-                  </div>
-
-                  <div style={cartStyles.mealId}>Meal ID: {item.mealId}</div>
-
-                  <p style={cartStyles.description}>{item.description}</p>
-
-                  <div style={cartStyles.ingredients}>
-                    {item.ingredients.map((ingredient, index) => (
-                      <span key={index} style={cartStyles.ingredient}>
-                        {ingredient}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            ))}
+    
+    if (meals.length === 0) {
+      return (
+        <div className={styles.emptyState}>
+          <div className={styles.emptyStateImage}>
+            <img src="/no-data.svg" alt="No data" width={120} height={120} />
+            
           </div>
+          <p className={styles.emptyStateText}>No meals found for this time period</p>
         </div>
+      );
+    }
+
+    return (
+      <div className={styles.cardContainer}>
+        {meals.map((meal) => (
+          <div key={meal.mealId} onClick={() => handleCartItemClick(meal)}>
+            <div className={styles.card}>
+              <img 
+                src={meal.imageUrl || '/default-meal-image.jpg'} 
+                alt={meal.name} 
+                className={styles.cardImage}
+              />
+              <div className={styles.cardContent}>
+                <h3>{meal.name}</h3>
+                <p className={styles.mealCountText}>Order Count: {meal.totalCount}</p>
+                <p className={styles.mealId}>Meal ID: {meal.mealId}</p>
+                {meal.description && (
+                  <p className={styles.mealDescription}>
+                    {meal.description}
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
     );
   };

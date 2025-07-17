@@ -176,6 +176,7 @@ export class MealsServingService {
             totalCount: number; 
             imageUrl: string | null;
             mealTypeId: number;
+            description: string | null;
           } 
         };
       } = {};
@@ -210,7 +211,7 @@ export class MealsServingService {
 
           const meal = await this.databaseService.meal.findUnique({
             where: { id: mealId },
-            select: { id: true, nameEnglish: true, imageUrl: true },
+            select: { id: true, nameEnglish: true, imageUrl: true, description: true },
           });
 
           if (!meal) {
@@ -223,7 +224,8 @@ export class MealsServingService {
               name: meal.nameEnglish, 
               totalCount: 0, 
               imageUrl: meal.imageUrl,
-              mealTypeId: order.mealTypeId
+              mealTypeId: order.mealTypeId,
+              description: meal.description || null
             };
           }
 
@@ -239,16 +241,18 @@ export class MealsServingService {
           totalCount: number;
           imageUrl: string | null;
           mealTypeId: number;
+          description: string | null;
         }>;
       } = {};
 
       for (const [mealTypeName, meals] of Object.entries(mealCounts)) {
-        result[mealTypeName] = Object.entries(meals).map(([mealId, { name, totalCount, imageUrl, mealTypeId }]) => ({
+        result[mealTypeName] = Object.entries(meals).map(([mealId, { name, totalCount, imageUrl, mealTypeId, description }]) => ({
           mealId: Number(mealId),
           name,
           totalCount,
           imageUrl,
           mealTypeId,
+          description,
         }));
       }
 
