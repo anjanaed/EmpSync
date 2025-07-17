@@ -81,6 +81,46 @@
   display: inline-block;
 }
 
+/* Dark mode toggle button styling */
+.darkModeToggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 6px;
+  transition: background-color 0.3s ease;
+  margin-right: 8px;
+}
+
+/* Hover effect for dark mode toggle button */
+.darkModeToggle:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+/* Dark mode specific styles */
+.navbar.dark {
+  background-color: #1f1f1f;
+  color: #ffffff;
+}
+
+.navbar.dark .navLink {
+  color: #ffffff;
+}
+
+.navbar.dark .navLink:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.navbar.dark .menuToggle,
+.navbar.dark .logoutButton {
+  color: #ffffff;
+}
+
+.navbar.dark .menuToggle:hover,
+.navbar.dark .logoutButton:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
 /* Responsive styles for mobile devices (max-width: 768px) */
 @media screen and (max-width: 768px) {
   /* Show menu toggle button */
