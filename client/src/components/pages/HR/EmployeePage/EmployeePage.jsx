@@ -17,14 +17,11 @@ import { useAuth } from "../../../../contexts/AuthContext";
 
 const EmployeePage = () => {
   const navigate = useNavigate();
-  const { logout } = useAuth(); 
-
-  // Get and parse authData from localStorage
-  const rawAuthData = localStorage.getItem("authData");
-  const parsedAuthData = rawAuthData ? JSON.parse(rawAuthData) : null;
-
-  // Safely get permission actions
-  const actions = parsedAuthData?.permissions?.actions || [];
+  const { logout } = useAuth();
+  const { authData } = useAuth();
+  
+  // Get permission actions safely
+  const actions = authData?.permissions?.actions || [];
 
   // Handle logout using context
   const handleLogout = () => {

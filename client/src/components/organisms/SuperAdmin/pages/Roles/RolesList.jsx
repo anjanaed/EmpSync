@@ -140,7 +140,7 @@ const RolesList = ({ data, onAddNew, onUpdate, onDelete, className, authData}) =
           Authorization: `Bearer ${token}`,
         },
       });
-      await axios.post(`${urL}/auth/delete`, { email: email }, {
+      await axios.post(`${urL}/superadmin/delete`, { email: email }, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -210,6 +210,7 @@ const RolesList = ({ data, onAddNew, onUpdate, onDelete, className, authData}) =
           style={{ width: '100%' }}
           value={selectedOrg}
           className={styles.roleDropdown}
+          dropdownClassName="org-dropdown-dark" // Add this line
         >
           {organizations.map(org => (
             <Select.Option key={org.id} value={org.id}>{org.name}</Select.Option>
@@ -269,7 +270,7 @@ const RolesList = ({ data, onAddNew, onUpdate, onDelete, className, authData}) =
           dataSource={orgUsers}
           loading={orgLoading}
           rowKey="id"
-          pagination={false}
+          pagination={{ pageSize: 4 }}
           className={styles.table}
           style={{ marginBottom: 24 }}
         />
@@ -349,7 +350,7 @@ const RolesList = ({ data, onAddNew, onUpdate, onDelete, className, authData}) =
             rules={[{ required: true, message: 'Please select a role!' }]}
             className={styles.roleDropdown}
           >
-            <Select placeholder="Select Role">
+            <Select placeholder="Select Role" dropdownClassName="role-dropdown-dark">
               <Select.Option value="HR_ADMIN">Human Resource Manager</Select.Option>
               <Select.Option value="KITCHEN_ADMIN">Kitchen Administrator</Select.Option>
               <Select.Option value="KITCHEN_STAFF">Kitchen Staff</Select.Option>

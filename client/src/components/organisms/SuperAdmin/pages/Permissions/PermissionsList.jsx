@@ -191,6 +191,7 @@ const PermissionsList = ({
               className={styles.selectControl}
               value={selectedOrganization}
               onChange={handleOrganizationChange}
+              dropdownClassName="permission-org-dropdown-dark"
             >
               {organizations.map(org => (
                 <Option key={org.id} value={org.id}>
@@ -208,6 +209,7 @@ const PermissionsList = ({
               value={selectedUser}
               onChange={handleUserChange}
               disabled={!selectedOrganization}
+              dropdownClassName="user-dropdown-dark"
             >
               {users.map(user => (
                 <Option key={user.id} value={user.id}>

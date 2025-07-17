@@ -22,13 +22,15 @@ const AnalysisDashboard = () => {
   // Get and parse authData from localStorage
   const rawAuthData = localStorage.getItem("authData");
   const parsedAuthData = rawAuthData ? JSON.parse(rawAuthData) : null;
+  const { authData } = useAuth();
+  const { getUnreadCount, toggleNotifications } = useNotifications();
   const { logout } = useAuth();
 
   // Safely get permission actions
-  const actions = parsedAuthData?.permissions?.actions || [];
+  const actions = authData?.permissions?.actions || [];
 
   const handleLogout = () => {
-    logout();
+    logout(); 
     navigate("/login");
   };
 

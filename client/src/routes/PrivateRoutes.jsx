@@ -247,41 +247,41 @@ const PrivateRoutes = () => (
     <Route
       path="/Ingredients"
       element={
-        <ProtectedRoute allowedRoles={["INVENTORY_ADMIN"]}>
+        // <ProtectedRoute allowedRoles={["INVENTORY_ADMIN"]}>
           <Ingredients />
-        </ProtectedRoute>
+        // </ProtectedRoute>
       }
     />
     <Route
       path="/CostAnalysis"
       element={
-        <ProtectedRoute allowedRoles={["INVENTORY_ADMIN"]}>
+        // <ProtectedRoute allowedRoles={["INVENTORY_ADMIN"]}>
           <CostAnalysis />
-        </ProtectedRoute>
+        // </ProtectedRoute>
       }
     />
     <Route
       path="/AnalysisDashboard"
       element={
-        <ProtectedRoute allowedRoles={["INVENTORY_ADMIN"]}>
+        // <ProtectedRoute allowedRoles={["INVENTORY_ADMIN"]}>
           <AnalysisDashboard />
-        </ProtectedRoute>
+        // </ProtectedRoute>
       }
     />
     <Route
       path="/OrderReportDashboard"
       element={
-        <ProtectedRoute allowedRoles={["INVENTORY_ADMIN"]}>
+        // <ProtectedRoute allowedRoles={["INVENTORY_ADMIN"]}>
           <OrderReportDashboard />
-        </ProtectedRoute>
+        // </ProtectedRoute>
       }
     />
     <Route
       path="/OrderHistory"
       element={
-        <ProtectedRoute allowedRoles={["INVENTORY_ADMIN"]}>
+        // <ProtectedRoute allowedRoles={["INVENTORY_ADMIN"]}>
           <OrderHistory />
-        </ProtectedRoute>
+        // </ProtectedRoute>
       }
     />
 
