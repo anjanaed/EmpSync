@@ -1,6 +1,6 @@
 /* Dark theme dropdown styling */
 [data-theme="dark"] .ant-select-dropdown {
-  background-color: var(--bg-secondary) !important;
+  background-color: #434343 !important;
   border: 1px solid var(--border-color) !important;
   box-shadow: 0 6px 16px 0 #141414;
 }
@@ -24,7 +24,7 @@
 
 /* Select input styling */
 [data-theme="dark"] .ant-select:not(.ant-select-disabled):not(.ant-select-customize-input):not(.ant-pagination-size-changer) .ant-select-selector {
-  background-color: var(--bg-secondary) !important;
+  background-color: #434343 !important;
   border-color: var(--border-color) !important;
   color: var(--text-primary) !important;
 }
@@ -49,13 +49,13 @@
 
 /* Search input in dropdown */
 [data-theme="dark"] .ant-select-dropdown .ant-select-selection-search-input {
-  background-color: var(--bg-secondary) !important;
+  background-color: #434343 !important;
   color: var(--text-primary) !important;
 }
 
 /* Clear button */
 [data-theme="dark"] .ant-select-clear {
-  background-color: var(--bg-secondary) !important;
+  background-color: #434343 !important;
   color: var(--text-secondary) !important;
 }
 
@@ -65,7 +65,7 @@
 
 /* Dropdown menu for other components */
 [data-theme="dark"] .ant-dropdown-menu {
-  background-color: var(--bg-secondary) !important;
+  background-color: #434343 !important;
   border: 1px solid var(--border-color) !important;
   box-shadow: 0 6px 16px 0 #ffffff14 !important;
 }
@@ -84,11 +84,204 @@
 
 /* Pagination size changer dropdown */
 [data-theme="dark"] .ant-pagination-options .ant-select-selector {
-  background-color: var(--bg-secondary) !important;
+  background-color: #434343 !important;
   border-color: var(--border-color) !important;
   color: var(--text-primary) !important;
 }
 
 [data-theme="dark"] .ant-pagination-options .ant-select-dropdown {
+  background-color: #434343 !important;
+}
+
+/* Calendar component dark theme styling */
+[data-theme="dark"] .ant-calendar {
+  background-color: var(--bg-primary) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .ant-calendar-header {
   background-color: var(--bg-secondary) !important;
+  border-bottom: 1px solid var(--border-color) !important;
+}
+
+[data-theme="dark"] .ant-calendar-month-select,
+[data-theme="dark"] .ant-calendar-year-select {
+  background-color: var(--bg-tertiary) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .ant-calendar-month-select:hover,
+[data-theme="dark"] .ant-calendar-year-select:hover {
+  border-color: var(--accent) !important;
+}
+
+[data-theme="dark"] .ant-calendar-prev-month-btn,
+[data-theme="dark"] .ant-calendar-next-month-btn,
+[data-theme="dark"] .ant-calendar-prev-year-btn,
+[data-theme="dark"] .ant-calendar-next-year-btn {
+  color: var(--text-secondary) !important;
+}
+
+[data-theme="dark"] .ant-calendar-prev-month-btn:hover,
+[data-theme="dark"] .ant-calendar-next-month-btn:hover,
+[data-theme="dark"] .ant-calendar-prev-year-btn:hover,
+[data-theme="dark"] .ant-calendar-next-year-btn:hover {
+  color: var(--accent) !important;
+}
+
+[data-theme="dark"] .ant-calendar-date {
+  background-color: transparent !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .ant-calendar-date:hover {
+  background-color: var(--bg-tertiary) !important;
+  border-color: var(--accent) !important;
+}
+
+[data-theme="dark"] .ant-calendar-selected-date .ant-calendar-date {
+  background-color: var(--accent) !important;
+  border-color: var(--accent) !important;
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .ant-calendar-today .ant-calendar-date {
+  border-color: var(--accent) !important;
+  color: var(--accent) !important;
+}
+
+[data-theme="dark"] .ant-calendar-disabled-date .ant-calendar-date {
+  background-color: var(--bg-secondary) !important;
+  border-color: var(--border-color) !important;
+  color: var(--text-tertiary) !important;
+  cursor: not-allowed;
+}
+
+[data-theme="dark"] .ant-calendar-last-month-cell .ant-calendar-date,
+[data-theme="dark"] .ant-calendar-next-month-btn-day .ant-calendar-date {
+  color: var(--text-tertiary) !important;
+}
+
+[data-theme="dark"] .ant-calendar-column-header {
+  background-color: var(--bg-secondary) !important;
+  border-bottom: 1px solid var(--border-color) !important;
+  color: var(--text-secondary) !important;
+}
+
+[data-theme="dark"] .ant-calendar-column-header-inner {
+  color: var(--text-secondary) !important;
+}
+
+/* Picker (DatePicker/TimePicker) dropdown styling */
+[data-theme="dark"] .ant-picker-dropdown {
+  background-color: var(--bg-primary) !important;
+  border: 1px solid var(--border-color) !important;
+  box-shadow: 0 6px 16px 0 var(--shadow) !important;
+}
+
+[data-theme="dark"] .ant-picker-panel {
+  background-color: var(--bg-primary) !important;
+  border: none !important;
+}
+
+[data-theme="dark"] .ant-picker-panel-container {
+  background-color: var(--bg-primary) !important;
+}
+
+[data-theme="dark"] .ant-picker-header {
+  border-bottom: 1px solid var(--border-color) !important;
+}
+
+[data-theme="dark"] .ant-picker-header button {
+  color: var(--text-secondary) !important;
+}
+
+[data-theme="dark"] .ant-picker-header button:hover {
+  color: var(--accent) !important;
+}
+
+[data-theme="dark"] .ant-picker-header-view {
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .ant-picker-content {
+  background-color: var(--bg-primary) !important;
+}
+
+[data-theme="dark"] .ant-picker-cell {
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .ant-picker-cell:hover {
+  background-color: var(--bg-tertiary) !important;
+}
+
+[data-theme="dark"] .ant-picker-cell-selected {
+  background-color: var(--accent) !important;
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .ant-picker-cell-today {
+  border-color: var(--accent) !important;
+}
+
+[data-theme="dark"] .ant-picker-cell-disabled {
+  color: var(--text-tertiary) !important;
+  background-color: var(--bg-secondary) !important;
+}
+
+[data-theme="dark"] .ant-picker-cell-in-view.ant-picker-cell-range-start,
+[data-theme="dark"] .ant-picker-cell-in-view.ant-picker-cell-range-end {
+  background-color: var(--accent) !important;
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .ant-picker-cell-in-view.ant-picker-cell-in-range {
+  background-color: rgba(64, 169, 255, 0.2) !important;
+}
+
+[data-theme="dark"] .ant-picker-footer {
+  border-top: 1px solid var(--border-color) !important;
+  background-color: var(--bg-secondary) !important;
+}
+
+[data-theme="dark"] .ant-picker-footer a {
+  color: var(--accent) !important;
+}
+
+[data-theme="dark"] .ant-picker-footer a:hover {
+  color: var(--accent) !important;
+  opacity: 0.8;
+}
+
+/* Input field styling for picker */
+[data-theme="dark"] .ant-picker {
+  background-color: var(--bg-tertiary) !important;
+  border-color: var(--border-color) !important;
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .ant-picker:hover {
+  border-color: var(--accent) !important;
+}
+
+[data-theme="dark"] .ant-picker-focused {
+  border-color: var(--accent) !important;
+  box-shadow: 0 0 0 2px rgba(64, 169, 255, 0.2) !important;
+}
+
+[data-theme="dark"] .ant-picker-suffix {
+  color: var(--text-secondary) !important;
+}
+
+[data-theme="dark"] .ant-picker-clear {
+  background-color: var(--bg-tertiary) !important;
+  color: var(--text-secondary) !important;
+}
+
+[data-theme="dark"] .ant-picker-clear:hover {
+  color: var(--text-primary) !important;
 }
