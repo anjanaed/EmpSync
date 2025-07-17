@@ -72,7 +72,7 @@ const cartStyles = {
     color: "#333",
     lineHeight: "1",
   },
-  countLabel: {
+  orderCountLabel: {
     fontSize: "12px",
     color: "#6c757d",
     textAlign: "center",
@@ -197,56 +197,7 @@ const Dashbord = () => {
   const [selectedMeal, setSelectedMeal] = useState(null);
   const [isViewingTomorrow, setIsViewingTomorrow] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [cartItems, setCartItems] = useState([
-    {
-      id: 1,
-      name: "Milk Rice",
-      mealId: "125845A",
-      orderCount: 22,
-      serveOrderCount: 15,
-      pendingOrderCount: 7,
-      description:
-        "Milk rice is a traditional Sri Lankan dish made from cooked rice with coconut milk, often served during...",
-      ingredients: ["White rice", "Salt", "coconut milk"],
-      image: null,
-    },
-    {
-      id: 2,
-      name: "Hopper",
-      mealId: "125845A",
-      orderCount: 18,
-      serveOrderCount: 12,
-      pendingOrderCount: 6,
-      description:
-        "A hopper is a container used to hold and dispense materials like grain, sand, or pellets through a...",
-      ingredients: ["Bread flour", "Salt", "coconut milk"],
-      image: null,
-    },
-    {
-      id: 3,
-      name: "Fried rice",
-      mealId: "125845A",
-      orderCount: 46,
-      serveOrderCount: 30,
-      pendingOrderCount: 16,
-      description:
-        "Fried rice is a flavorful dish made by stir-frying rice with vegetables, eggs, and optional meat or...",
-      ingredients: ["Bread flour", "Salt", "coconut milk"],
-      image: null,
-    },
-    {
-      id: 4,
-      name: "Koththu",
-      mealId: "125845A",
-      orderCount: 10,
-      serveOrderCount: 8,
-      pendingOrderCount: 2,
-      description:
-        "Koththu is a popular Sri Lankan street food made with chopped roti, vegetables, eggs or meat, and...",
-      ingredients: ["Bread flour", "Salt", "coconut milk"],
-      image: null,
-    },
-  ]);
+  const [cartItems, setCartItems] = useState([]);
   const navigate = useNavigate();
 
   const currentDate = new Date();
@@ -377,11 +328,46 @@ const Dashbord = () => {
               }
             >
               <Meta
-                title={`${meal.name} `}
+                title={`${meal.name}`}
                 description={
-                  <span className={styles.mealCountText}>
-                    Total Count: {meal.totalCount}
-                  </span>
+                  <div>
+                    <div style={{ fontSize: '12px', color: '#666', marginBottom: '4px' }}>
+                      Meal ID: {meal.mealId}
+                    </div>
+                    {meal.description && (
+                      <div style={{ fontSize: '13px', color: '#555', marginBottom: '8px', lineHeight: '1.3' }}>
+                        {meal.description}
+                      </div>
+                    )}
+                    {meal.ingredients && meal.ingredients.length > 0 && (
+                      <div style={{ marginBottom: '8px' }}>
+                        <div style={{ fontSize: '12px', fontWeight: '500', color: '#444', marginBottom: '4px' }}>
+                          Ingredients:
+                        </div>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+                          {meal.ingredients.map((ingredient, index) => (
+                            <span 
+                              key={index} 
+                              style={{
+                                backgroundColor: '#fff3cd',
+                                color: '#856404',
+                                padding: '2px 6px',
+                                borderRadius: '3px',
+                                fontSize: '10px',
+                                fontWeight: '500',
+                                border: '1px solid #ffeaa7',
+                              }}
+                            >
+                              {ingredient}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    <span className={styles.mealCountText}>
+                      Total Count: {meal.totalCount}
+                    </span>
+                  </div>
                 } // Add a class for the meal count text
               />
             </Card>
@@ -422,7 +408,7 @@ const Dashbord = () => {
                     <h3 style={cartStyles.itemName}>{item.name}</h3>
                     <div style={cartStyles.orderCount}>
                       <span style={cartStyles.count}>{item.orderCount}</span>
-                      <span style={cartStyles.countLabel}>Order Count</span>
+                      <span style={cartStyles.orderCountLabel}>Order Count</span>
                     </div>
                   </div>
 

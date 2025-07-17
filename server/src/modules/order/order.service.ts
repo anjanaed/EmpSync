@@ -48,12 +48,20 @@ async create(createOrderDto: Prisma.OrderCreateInput) {
   //   }
   // }
 
-  async findAll(orgId?: string) {
+  async findAll(orgId?: string, employeeId?: string) {
   try {
+    const whereClause: any = {};
+    
+    if (orgId) {
+      whereClause.orgId = orgId;
+    }
+    
+    if (employeeId) {
+      whereClause.employeeId = employeeId;
+    }
+
     const orders = await this.databaseService.order.findMany({
-      where: {
-        orgId: orgId || undefined,
-      },
+      where: whereClause,
     });
     // Instead of throwing, just return empty array
     return orders || [];
