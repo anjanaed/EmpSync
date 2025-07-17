@@ -159,7 +159,7 @@
 }
 
 .mealList {
-  padding: 16px;
+  padding: 5px;
   max-height: 70vh;
   overflow-y: auto;
 }
@@ -171,6 +171,7 @@
   border: 1px solid #e0e0e0;
   background: #ffffff;
   width: 250px;
+  padding: 16px; /* Add internal padding */
 }
 
 .mealCard:hover {
