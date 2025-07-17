@@ -6,24 +6,33 @@ import { DatabaseService } from '../../database/database.service';
 export class IngredientsService {
   constructor(private readonly databaseServices: DatabaseService) {}
 
-  async create(createIngredientDto: Prisma.IngredientCreateInput | Prisma.IngredientCreateInput[]) {
+  async create(
+    createIngredientDto: Prisma.IngredientCreateInput | Prisma.IngredientCreateInput[]
+  ) {
     try {
       if (Array.isArray(createIngredientDto)) {
+        const formattedData = createIngredientDto.map(ingredient => ({
+          ...ingredient,
+          price_per_unit: parseFloat(ingredient.price_per_unit.toString()),
+          quantity: parseInt(ingredient.quantity.toString(), 10)
+        }));
+
         return await this.databaseServices.ingredient.createMany({
-          data: createIngredientDto.map(ingredient => ({
-            ...ingredient,
-            price_per_unit: parseFloat(ingredient.price_per_unit.toString()),
-            quantity: parseInt(ingredient.quantity.toString())
-          }))
+          data: formattedData,
+          skipDuplicates: true // optional: prevent unique constraint errors
         });
       }
-      return await this.databaseServices.ingredient.create({ 
-        data: {
-          ...createIngredientDto,
-          price_per_unit: parseFloat(createIngredientDto.price_per_unit.toString()),
-          quantity: parseInt(createIngredientDto.quantity.toString())
-        } 
+
+      const formattedSingle = {
+        ...createIngredientDto,
+        price_per_unit: parseFloat(createIngredientDto.price_per_unit.toString()),
+        quantity: parseInt(createIngredientDto.quantity.toString(), 10)
+      };
+
+      return await this.databaseServices.ingredient.create({
+        data: formattedSingle
       });
+
     } catch (error) {
       if (error?.code === 'P2002') {
         throw new HttpException(
@@ -37,6 +46,7 @@ export class IngredientsService {
       );
     }
   }
+
 
   async findAll() {
     const ingredients = await this.databaseServices.ingredient.findMany({});

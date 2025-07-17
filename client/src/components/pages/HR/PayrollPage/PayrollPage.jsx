@@ -12,14 +12,13 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import NavBar from '../../../organisms/NavBar/NavBar';
 import Payroll from '../../../organisms/HR/Payroll/Payroll';
+import { useAuth } from "../../../../contexts/AuthContext"; 
 
 const PayrollPage = () => {
-  // Get and parse authData from localStorage
-  const rawAuthData = localStorage.getItem("authData");
-  const parsedAuthData = rawAuthData ? JSON.parse(rawAuthData) : null;
-
-  // Safely get permission actions
-  const actions = parsedAuthData?.permissions?.actions || [];
+  const { authData } = useAuth();
+  
+  // Get permission actions safely
+  const actions = authData?.permissions?.actions || [];
 
   // Define all possible menu items
   const allMenuItems = [
