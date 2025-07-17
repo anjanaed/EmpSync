@@ -31,10 +31,34 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  height: 100%;
+  height: 420px; /* Fixed height */
   padding: 1rem;
   margin: 0 auto;
   box-sizing: border-box;
+}
+
+.cardContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.contentArea {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 280px; /* Fixed content area height */
+}
+
+.orderDetailsContainer {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.buttonContainer {
+  margin-top: 1rem;
+  flex-shrink: 0; /* Prevent button from shrinking */
 }
 
 .cartContainer:hover {
@@ -158,6 +182,9 @@
   background: #f9f9f9;
   border-radius: 12px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  flex: 1;
+  min-height: 180px; /* Fixed height for QR container */
+  max-height: 180px;
 }
 
 .orderId {
@@ -192,6 +219,11 @@
   .cartContainer {
     max-width: 100%;
     padding: 0.75rem;
+    height: 380px; /* Adjusted fixed height for mobile */
+  }
+
+  .contentArea {
+    min-height: 240px; /* Adjusted for mobile */
   }
 
   .cardHeaderMain {
@@ -219,6 +251,8 @@
 
   .qrContainer {
     padding: 0.5rem;
+    min-height: 150px; /* Adjusted for mobile */
+    max-height: 150px;
   }
 
   .qrContainer canvas {

@@ -44,98 +44,106 @@ const Cart = ({
       hoverable={!isReadOnly}
       onClick={handleCardClick}
     >
-      {!isReadOnly && (
-        <div className={styles.cardHeaderMain1}>
-          <Text strong className={styles.cardHeaderMain}>
-            {showQR ? (
-              "  Tap to Show Details  "
-            ) : (
-              <>
-                Tap to Show Token <QrcodeOutlined />
-              </>
-            )}
-          </Text>
-        </div>
-      )}
-      <br />
-      {showQR && !isReadOnly ? (
-        <div className={styles.qrContainer}>
-          <Barcode value={order.id.toString()} width={2} height={80} displayValue={true} />
-        </div>
-      ) : (
-        <>
-          <div className={styles.orderedAt}>
-            <Text style={{ fontSize: "10px" }}>
-              {new Date(order.orderPlacedTime).toLocaleString()}
+      <div className={styles.cardContent}>
+        {!isReadOnly && (
+          <div className={styles.cardHeaderMain1}>
+            <Text strong className={styles.cardHeaderMain}>
+              {showQR ? (
+                "  Tap to Show Details  "
+              ) : (
+                <>
+                  Tap to Show Token <QrcodeOutlined />
+                </>
+              )}
             </Text>
           </div>
-          <div className={styles.cardHeader}>
-            <Text strong className={styles.orderId}>
-              ID: {order.id}
-            </Text>
-            <Text strong className={styles.orderPrice}>
-              LKR {order.price.toFixed(2)}
-            </Text>
-          </div>
-          <div className={styles.cartContent}>
-            <div className={styles.orderDetails}>
-              <Text
-                strong
-                className={styles.mealType}
-                style={{ float: "left" }}
-              >
-                {order.breakfast
-                  ? "Breakfast"
-                  : order.lunch
-                  ? "Lunch"
-                  : "Dinner"}
-              </Text>
-              <Text
-                strong
-                className={styles.orderDate}
-                style={{ float: "right" }}
-              >
-                {new Date(order.orderDate).toLocaleDateString()}
-              </Text>
+        )}
+        <br />
+        
+        <div className={styles.contentArea}>
+          {showQR && !isReadOnly ? (
+            <div className={styles.qrContainer}>
+              <Barcode value={order.id.toString()} width={2} height={80} displayValue={true} />
             </div>
-            <div className={styles.mealsOrdered}>
-              <List
-                itemLayout="horizontal"
-                dataSource={order.meals.map((meal) => {
-                  const [mealId, count] = meal.split(":");
-                  return {
-                    name: mealDetails[mealId] || "Unknown Meal",
-                    quantity: count,
-                  };
-                })}
-                renderItem={(item) => (
-                  <List.Item>
-                    <List.Item.Meta
-                      title={<div style={{ float: "left" }}>{item.name}</div>}
-                    />
-                    <List.Item.Meta
-                      title={
-                        <div style={{ float: "right" }}>{item.quantity}</div>
-                      }
-                    />
-                  </List.Item>
-                )}
-              />
-            </div>
-          </div>
-        </>
-      )}
+          ) : (
+            <>
+              <div className={styles.orderedAt}>
+                <Text style={{ fontSize: "10px" }}>
+                  {new Date(order.orderPlacedTime).toLocaleString()}
+                </Text>
+              </div>
+              <div className={styles.cardHeader}>
+                <Text strong className={styles.orderId}>
+                  ID: {order.id}
+                </Text>
+                <Text strong className={styles.orderPrice}>
+                  LKR {order.price.toFixed(2)}
+                </Text>
+              </div>
+              <div className={styles.orderDetailsContainer}>
+                <div className={styles.orderDetails}>
+                  <Text
+                    strong
+                    className={styles.mealType}
+                    style={{ float: "left" }}
+                  >
+                    {order.breakfast
+                      ? "Breakfast"
+                      : order.lunch
+                      ? "Lunch"
+                      : "Dinner"}
+                  </Text>
+                  <Text
+                    strong
+                    className={styles.orderDate}
+                    style={{ float: "right" }}
+                  >
+                    {new Date(order.orderDate).toLocaleDateString()}
+                  </Text>
+                </div>
+                <div className={styles.mealsOrdered}>
+                  <List
+                    itemLayout="horizontal"
+                    dataSource={order.meals.map((meal) => {
+                      const [mealId, count] = meal.split(":");
+                      return {
+                        name: mealDetails[mealId] || "Unknown Meal",
+                        quantity: count,
+                      };
+                    })}
+                    renderItem={(item) => (
+                      <List.Item>
+                        <List.Item.Meta
+                          title={<div style={{ float: "left" }}>{item.name}</div>}
+                        />
+                        <List.Item.Meta
+                          title={
+                            <div style={{ float: "right" }}>{item.quantity}</div>
+                          }
+                        />
+                      </List.Item>
+                    )}
+                  />
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+      
       {!isReadOnly && (
-        <Button
-          type="primary"
-          danger
-          block
-          className={styles.cancelButton}
-          onClick={handleCancelClick}
-          disabled={!isCancelable(order)}
-        >
-          Cancel Order
-        </Button>
+        <div className={styles.buttonContainer}>
+          <Button
+            type="primary"
+            danger
+            block
+            className={styles.cancelButton}
+            onClick={handleCancelClick}
+            disabled={!isCancelable(order)}
+          >
+            Cancel Order
+          </Button>
+        </div>
       )}
     </Card>
   );
