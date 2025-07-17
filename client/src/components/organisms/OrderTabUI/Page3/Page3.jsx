@@ -288,7 +288,7 @@ const Page3 = ({
 
     try {
       for (const key in groupedOrders) {
-        const { date, mealTime, meals } = groupedOrders[key];
+        const { date, mealTime, meals, totalPrice } = groupedOrders[key];
         const mealsArray = Object.entries(meals).map(
           ([mealId, count]) => `${mealId}:${count}`
         );
@@ -306,7 +306,7 @@ const Page3 = ({
           meals: mealsArray,
           orderDate,
           mealTypeId: mealTime,
-          price: 0,
+          price: totalPrice,
           serve: false,
           orderPlacedTime,
         };
@@ -625,7 +625,7 @@ const Page3 = ({
                               orderItems.reduce((acc, item) => {
                                 const key = `${item.mealId}-${item.date}-${item.mealTime}`;
                                 if (!acc[key]) acc[key] = { ...item, count: 0 };
-                                acc[key].count += 1;
+                                acc[key].count += item.count;
                                 return acc;
                               }, {})
                             ).map(([key, item], index) => {

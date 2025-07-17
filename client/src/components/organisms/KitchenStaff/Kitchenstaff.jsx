@@ -188,6 +188,187 @@ const cartStyles = {
   },
 };
 
+// Cart component styles
+const cartStyles = {
+  cartContainer: {
+    padding: "20px",
+    backgroundColor: "#f8f9fa",
+    margin: "20px",
+  },
+  cartGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(4, 1fr)",
+    gap: "20px",
+    maxWidth: "1200px",
+    margin: "0 auto",
+  },
+  cartCard: {
+    backgroundColor: "white",
+    borderRadius: "8px",
+    padding: "20px",
+    boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+    border: "1px solid #e9ecef",
+  },
+  imageContainer: {
+    width: "100%",
+    height: "200px",
+    marginBottom: "16px",
+    backgroundColor: "#e9ecef",
+    borderRadius: "6px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  imagePlaceholder: {
+    color: "#6c757d",
+    fontSize: "24px",
+  },
+  cardContent: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "12px",
+  },
+  cardHeader: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+    marginBottom: "8px",
+  },
+  itemName: {
+    fontSize: "24px",
+    fontWeight: "600",
+    color: "#333",
+    margin: "0",
+    flex: "1",
+  },
+  orderCount: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    minWidth: "80px",
+  },
+  count: {
+    fontSize: "36px",
+    fontWeight: "700",
+    color: "#333",
+    lineHeight: "1",
+  },
+  countLabel: {
+    fontSize: "12px",
+    color: "#6c757d",
+    textAlign: "center",
+    marginTop: "2px",
+  },
+  mealId: {
+    fontSize: "14px",
+    color: "#6c757d",
+    marginBottom: "8px",
+  },
+  description: {
+    fontSize: "14px",
+    color: "#666",
+    lineHeight: "1.4",
+    margin: "0",
+    marginBottom: "12px",
+  },
+  ingredients: {
+    display: "flex",
+    flexWrap: "wrap",
+    gap: "8px",
+  },
+  ingredient: {
+    backgroundColor: "#fff3cd",
+    color: "#856404",
+    padding: "4px 8px",
+    borderRadius: "4px",
+    fontSize: "12px",
+    fontWeight: "500",
+    border: "1px solid #ffeaa7",
+  },
+  // Popup styles
+  popupOverlay: {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 1000,
+  },
+  popupContent: {
+    backgroundColor: "white",
+    borderRadius: "12px",
+    padding: "30px",
+    width: "400px",
+    maxWidth: "90vw",
+    boxShadow: "0 10px 30px rgba(0, 0, 0, 0.3)",
+    position: "relative",
+  },
+  popupHeader: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+    marginBottom: "20px",
+    borderBottom: "1px solid #e9ecef",
+    paddingBottom: "15px",
+  },
+  popupTitle: {
+    fontSize: "24px",
+    fontWeight: "600",
+    color: "#333",
+    margin: 0,
+  },
+  popupMealId: {
+    fontSize: "14px",
+    color: "#666",
+    fontWeight: "400",
+    marginTop: "4px",
+    margin: 0,
+  },
+  closeButton: {
+    background: "none",
+    border: "none",
+    fontSize: "24px",
+    color: "#666",
+    cursor: "pointer",
+    padding: "0",
+    width: "30px",
+    height: "30px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: "50%",
+    transition: "background-color 0.2s",
+  },
+  popupBody: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "15px",
+  },
+  countRow: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: "12px",
+    backgroundColor: "#f8f9fa",
+    borderRadius: "8px",
+    border: "1px solid #e9ecef",
+  },
+  countLabel: {
+    fontSize: "16px",
+    fontWeight: "500",
+    color: "#333",
+  },
+  countValue: {
+    fontSize: "20px",
+    fontWeight: "700",
+    color: "#d32f2f",
+  },
+};
+
 const Dashbord = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -200,6 +381,7 @@ const Dashbord = () => {
   const navigate = useNavigate();
 
   const currentDate = new Date();
+  const formattedDate = selectedDate.toLocaleDateString("en-US", {
   const formattedDate = selectedDate.toLocaleDateString("en-US", {
     month: "long",
     day: "numeric",
@@ -257,6 +439,7 @@ const Dashbord = () => {
     };
 
     fetchMealData();
+  }, [selectedDate]);
   }, [selectedDate]);
 
   // Handle manual tab switching
@@ -363,8 +546,17 @@ const Dashbord = () => {
           <h2 className={styles.title}>
             Order - {formattedDate} {isViewingTomorrow && "(Tomorrow)"}
           </h2>
+          <h2 className={styles.title}>
+            Order - {formattedDate} {isViewingTomorrow && "(Tomorrow)"}
+          </h2>
           <p className={styles.time}>{formattedTime}</p>
           <div className={styles.dateControls}>
+            <button 
+              className={styles.dateButton}
+              onClick={handleDateToggle}
+            >
+              {isViewingTomorrow ? "Today" : "Tomorrow"}
+            </button>
             <button 
               className={styles.dateButton}
               onClick={handleDateToggle}
@@ -412,7 +604,13 @@ const Dashbord = () => {
         <div className={styles.content}>
           {renderTabContent()}
         </div>
+        <div className={styles.content}>
+          {renderTabContent()}
+        </div>
       </div>
+      
+      {/* Popup */}
+      {renderPopup()}
       
       {/* Popup */}
       {renderPopup()}
