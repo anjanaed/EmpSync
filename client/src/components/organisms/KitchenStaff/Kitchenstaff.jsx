@@ -72,7 +72,7 @@ const cartStyles = {
     color: "#333",
     lineHeight: "1",
   },
-  countLabel: {
+  orderCountLabel: {
     fontSize: "12px",
     color: "#6c757d",
     textAlign: "center",
@@ -408,7 +408,7 @@ const Dashbord = () => {
                     <h3 style={cartStyles.itemName}>{item.name}</h3>
                     <div style={cartStyles.orderCount}>
                       <span style={cartStyles.count}>{item.orderCount}</span>
-                      <span style={cartStyles.countLabel}>Order Count</span>
+                      <span style={cartStyles.orderCountLabel}>Order Count</span>
                     </div>
                   </div>
 
