@@ -6,15 +6,6 @@ import { Table, ConfigProvider, Modal, Button, Popconfirm, Space } from "antd";
 import { EyeOutlined, DeleteOutlined } from "@ant-design/icons";
 import styles from "./FingerPrints.module.css";
 import axios from "axios";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faUsers,
-  faUserPlus,
-  faFileInvoice,
-  faDollarSign,
-  faFingerprint
-} from "@fortawesome/free-solid-svg-icons";
-import NavBar from "../../NavBar/NavBar";
 import { useAuth } from "../../../../contexts/AuthContext";
 
 const customTheme = {
@@ -299,6 +290,7 @@ const FingerPrintsContent = () => {
     return <Loading text="Regenerating passkey..." />;
   }
   return (
+    <>
     <div style={{ position: "relative" }}>
       <div className={styles.container} style={{ position: "relative" }}>
         {/* Absolutely positioned Back Button inside container */}
@@ -412,40 +404,9 @@ const FingerPrintsContent = () => {
         </Modal>
       </div>
     </div>
+    </>
   );
 };
 
-const FingerPrints = () => (
-  <NavBar
-    titleLines={["Human", "Resource", "Management"]}
-    menuItems={[
-      {
-        key: "1",
-        icon: <FontAwesomeIcon icon={faUsers} />,
-        label: "Employees",
-        link: "/EmployeePage"
-      },
-      {
-        key: "2",
-        icon: <FontAwesomeIcon icon={faUserPlus} />,
-        label: "Registration",
-        link: "/reg"
-      },
-      {
-        key: "3",
-        icon: <FontAwesomeIcon icon={faDollarSign} />,
-        label: "Payrolls",
-        link: "/payroll"
-      },
-      {
-        key: "4",
-        icon: <FontAwesomeIcon icon={faFingerprint} />,
-        label: "FingerPrints",
-        link: "/FingerPrints"
-      }
-    ]}
-    Comp={FingerPrintsContent}
-  />
-);
 
-export default FingerPrints;
+export default FingerPrintsContent;

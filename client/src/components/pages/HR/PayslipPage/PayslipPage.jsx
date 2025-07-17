@@ -41,7 +41,7 @@ const PayslipPage = () => {
       label: "FingerPrints",
       action: "User Management",
       icon: <FontAwesomeIcon icon={faFingerprint} />,
-      link: "/FingerPrints",
+      link: "/FingerPrint",
     },
     {
       key: "4",

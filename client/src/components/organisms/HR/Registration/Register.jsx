@@ -480,13 +480,13 @@ const Register = () => {
       {menu == 3 && passkey && (
         <>
           <div className={styles.passkeyContainer}>
-            <div className={styles.head}>New user Finger-Print Passkey :</div>
-            <div className={styles.passkeyValue}>{passkey}</div>
+            <div className={styles.head}>New user Finger-Print Passkey:</div>
+            <div className={styles.passkeyValue}><b>{passkey}</b></div>
           </div>
           <div className={styles.btnContainer}>
-            <Gbutton width={200} onClick={() => navigate("/FingerPrints")}>Go to Fingerprints section</Gbutton>
+            <Gbutton width={200} onClick={() => navigate("/FingerPrint")}>Fingerprint Management</Gbutton>
             <Gbutton width={200} onClick={() => navigate("/EmployeePage")}>
-              Go to Employee Page
+              Back To Employees
             </Gbutton>
           </div>
         </>
