@@ -33,20 +33,34 @@ async create(createOrderDto: Prisma.OrderCreateInput) {
 }
 
   // Retrieve all orders
-  async findAll() {
-    try {
-      // Fetch all orders from the database
-      const orders = await this.databaseService.order.findMany();
-      if (orders && orders.length > 0) {
-        return orders; // Return orders if found
-      } else {
-        throw new HttpException('No Orders Found', HttpStatus.NOT_FOUND);
-      }
-    } catch (err) {
-      // Handle unexpected errors
-      throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+  // async findAll() {
+  //   try {
+  //     // Fetch all orders from the database
+  //     const orders = await this.databaseService.order.findMany();
+  //     if (orders && orders.length > 0) {
+  //       return orders; // Return orders if found
+  //     } else {
+  //       throw new HttpException('No Orders Found', HttpStatus.NOT_FOUND);
+  //     }
+  //   } catch (err) {
+  //     // Handle unexpected errors
+  //     throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
+  //   }
+  // }
+
+  async findAll(orgId?: string) {
+  try {
+    const orders = await this.databaseService.order.findMany({
+      where: {
+        orgId: orgId || undefined,
+      },
+    });
+    // Instead of throwing, just return empty array
+    return orders || [];
+  } catch (err) {
+    throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
   }
+}
 
   // Retrieve a single order by ID
   async findOne(id: number) {
