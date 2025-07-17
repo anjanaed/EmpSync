@@ -72,7 +72,7 @@
 
 .menu :global(.ant-menu-item) {
   margin: 4px 12px !important;
-  border-radius: 8px !important;
+  border-radius: 50px !important;
   transition: all 0.3s ease !important;
   height: 48px !important;
   display: flex !important;
@@ -88,6 +88,7 @@
   background: linear-gradient(90deg, rgba(24, 144, 255, 0.2), rgba(64, 169, 255, 0.1)) !important;
   color: #40a9ff !important;
   border-right: 3px solid #1890ff;
+  width: 85% !important;
 }
 
 .menu :global(.ant-menu-item-selected::after) {
@@ -189,3 +190,24 @@
   color: #ffffff !important;
 }
 
+/* Style the modal content */
+:global(.logoutModal .ant-modal-content) {
+  background-color: rgba(0, 0, 0, 0.85);
+  color: white;
+}
+
+/* Style the modal title */
+:global(.logoutModal .ant-modal-title) {
+  color: white;
+}
+
+/* Style the buttons */
+:global(.logoutModal .ant-btn-primary) {
+  background-color: #ff4d4f;
+  border-color: #ff4d4f;
+}
+
+:global(.logoutModal .ant-btn-default) {
+  color: white;
+  border-color: white;
+}

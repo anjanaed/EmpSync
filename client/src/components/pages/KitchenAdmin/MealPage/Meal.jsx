@@ -16,15 +16,14 @@ import NotificationPanel from "../../../organisms/Kitchen/NotificationPanel/Noti
 import { useNotifications } from "../../../../contexts/NotificationsContext";
 import styles from "../../../organisms/Kitchen/NotificationPanel/NotificationPanel.module.css";
 import MealSection from "../../../organisms/Kitchen/MealsSection/Meal";
+import { useAuth } from "../../../../contexts/AuthContext";
 
 const MealDash = () => {
-  // Get and parse authData from localStorage
-  const rawAuthData = localStorage.getItem("authData");
-  const parsedAuthData = rawAuthData ? JSON.parse(rawAuthData) : null;
+  const { authData } = useAuth();
   const { getUnreadCount, toggleNotifications } = useNotifications();
 
   // Safely get permission actions
-  const actions = parsedAuthData?.permissions?.actions || [];
+  const actions = authData?.permissions?.actions || [];
 
   // Define all possible menu items
   const allMenuItems = [
