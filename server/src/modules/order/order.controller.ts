@@ -61,9 +61,10 @@ export class OrdersController {
 @Get()
 async findAll(
   @Query('orgId') orgId?: string,
+  @Query('employeeId') employeeId?: string,
 ) {
   try {
-    return await this.ordersService.findAll(orgId);
+    return await this.ordersService.findAll(orgId, employeeId);
   } catch (err) {
     throw new HttpException(
       {
