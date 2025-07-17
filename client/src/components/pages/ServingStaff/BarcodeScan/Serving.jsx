@@ -17,6 +17,7 @@ const Serving = () => {
     try {
       if (orderId) {
         setScanning(false); // Stop scanning after success
+        console.log('Scanned Order ID:', orderId);
         navigate(`/meal-conform/${orderId}`);
       } else {
         message.error('Invalid order ID');
