@@ -6,7 +6,6 @@ import {
   UserOutlined,
   CreditCardOutlined,
   ShoppingCartOutlined,
-  BulbOutlined,
   LogoutOutlined,
   SunOutlined,
   MoonOutlined
@@ -97,17 +96,9 @@ const ResponsiveNav = () => {
           </a>
         </li>
         
-        {/* Personalized Suggestions link */}
-        <li>
-          <a href="#personalized-suggestions" className={styles.navLink}>
-            <BulbOutlined style={{ fontSize: '18px', marginRight: '8px' }} />
-            Personalized Suggestions
-          </a>
-        </li>
-        
         {/* Logout link for mobile view */}
         <li className={styles.mobileLogout}>
-          <a href="#Logout" onClick={handleLogout} className={styles.navLink}>
+          <a href="#Logout" onClick={handleLogout} className={`${styles.navLink} ${styles.logoutLinkMobile}`}>
             <LogoutOutlined style={{ fontSize: '18px', marginRight: '8px' }} />
             Logout
           </a>
