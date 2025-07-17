@@ -197,56 +197,7 @@ const Dashbord = () => {
   const [selectedMeal, setSelectedMeal] = useState(null);
   const [isViewingTomorrow, setIsViewingTomorrow] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [cartItems, setCartItems] = useState([
-    {
-      id: 1,
-      name: "Milk Rice",
-      mealId: "125845A",
-      orderCount: 22,
-      serveOrderCount: 15,
-      pendingOrderCount: 7,
-      description:
-        "Milk rice is a traditional Sri Lankan dish made from cooked rice with coconut milk, often served during...",
-      ingredients: ["White rice", "Salt", "coconut milk"],
-      image: null,
-    },
-    {
-      id: 2,
-      name: "Hopper",
-      mealId: "125845A",
-      orderCount: 18,
-      serveOrderCount: 12,
-      pendingOrderCount: 6,
-      description:
-        "A hopper is a container used to hold and dispense materials like grain, sand, or pellets through a...",
-      ingredients: ["Bread flour", "Salt", "coconut milk"],
-      image: null,
-    },
-    {
-      id: 3,
-      name: "Fried rice",
-      mealId: "125845A",
-      orderCount: 46,
-      serveOrderCount: 30,
-      pendingOrderCount: 16,
-      description:
-        "Fried rice is a flavorful dish made by stir-frying rice with vegetables, eggs, and optional meat or...",
-      ingredients: ["Bread flour", "Salt", "coconut milk"],
-      image: null,
-    },
-    {
-      id: 4,
-      name: "Koththu",
-      mealId: "125845A",
-      orderCount: 10,
-      serveOrderCount: 8,
-      pendingOrderCount: 2,
-      description:
-        "Koththu is a popular Sri Lankan street food made with chopped roti, vegetables, eggs or meat, and...",
-      ingredients: ["Bread flour", "Salt", "coconut milk"],
-      image: null,
-    },
-  ]);
+  const [cartItems, setCartItems] = useState([]);
   const navigate = useNavigate();
 
   const currentDate = new Date();
