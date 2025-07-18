@@ -89,7 +89,6 @@ const RolesList = ({ data, onAddNew, onUpdate, onDelete, className, authData}) =
     try {
       const payload = {
         id: employeeId,
-        empNo: "E001",
         name,
         role,
         email,
@@ -353,7 +352,6 @@ const RolesList = ({ data, onAddNew, onUpdate, onDelete, className, authData}) =
             <Select placeholder="Select Role" dropdownClassName="role-dropdown-dark">
               <Select.Option value="HR_ADMIN">Human Resource Manager</Select.Option>
               <Select.Option value="KITCHEN_ADMIN">Kitchen Administrator</Select.Option>
-              <Select.Option value="KITCHEN_STAFF">Kitchen Staff</Select.Option>
             </Select>
           </Form.Item>
           

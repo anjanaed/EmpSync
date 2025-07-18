@@ -213,7 +213,6 @@ const MealPlanner = () => {
     try {
       const formattedDate = currentDate.format("YYYY-MM-DD");
       const response = await axios.get(`${urL}/schedule/${formattedDate}`, {
-
         params: { orgId: authData?.orgId },
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -285,48 +284,52 @@ const MealPlanner = () => {
   // };
 
   const handleCopyFromPrevious = async (previousSchedule) => {
-  if (previousSchedule.schedule && previousSchedule.schedule.meals) {
-    const mealIds = previousSchedule.schedule.meals.map((meal) => meal.id);
-    setSelectedMeals(mealIds);
+    if (previousSchedule.schedule && previousSchedule.schedule.meals) {
+      const mealIds = previousSchedule.schedule.meals.map((meal) => meal.id);
+      setSelectedMeals(mealIds);
 
-    // Optional: Immediately update the schedule on the server
-    if (activeTab && currentDate && authData?.orgId && token) {
-      const payload = {
-        date: currentDate.format("YYYY-MM-DD"),
-        mealTypeId: parseInt(activeTab),
-        orgId: authData.orgId,
-        mealIds,
-      };
-      try {
-        if (existingSchedule) {
-          await axios.patch(`${urL}/schedule/${existingSchedule.id}`, payload, {
-            params: { orgId: authData.orgId },
-            headers: { Authorization: `Bearer ${token}` },
-          });
-        } else {
-          await axios.post(`${urL}/schedule`, payload, {
-            params: { orgId: authData.orgId },
-            headers: { Authorization: `Bearer ${token}` },
-          });
+      // Optional: Immediately update the schedule on the server
+      if (activeTab && currentDate && authData?.orgId && token) {
+        const payload = {
+          date: currentDate.format("YYYY-MM-DD"),
+          mealTypeId: parseInt(activeTab),
+          orgId: authData.orgId,
+          mealIds,
+        };
+        try {
+          if (existingSchedule) {
+            await axios.patch(
+              `${urL}/schedule/${existingSchedule.id}`,
+              payload,
+              {
+                params: { orgId: authData.orgId },
+                headers: { Authorization: `Bearer ${token}` },
+              }
+            );
+          } else {
+            await axios.post(`${urL}/schedule`, payload, {
+              params: { orgId: authData.orgId },
+              headers: { Authorization: `Bearer ${token}` },
+            });
+          }
+          message.success(
+            `Copied ${mealIds.length} meals from ${dayjs(
+              previousSchedule.date
+            ).format("MMM DD, YYYY")} and updated the schedule`
+          );
+          await fetchAllSchedules(currentDate);
+        } catch (error) {
+          message.error("Failed to update schedule with copied meals");
         }
+      } else {
         message.success(
           `Copied ${mealIds.length} meals from ${dayjs(
             previousSchedule.date
-          ).format("MMM DD, YYYY")} and updated the schedule`
+          ).format("MMM DD, YYYY")}`
         );
-        await fetchAllSchedules(currentDate);
-      } catch (error) {
-        message.error("Failed to update schedule with copied meals");
       }
-    } else {
-      message.success(
-        `Copied ${mealIds.length} meals from ${dayjs(
-          previousSchedule.date
-        ).format("MMM DD, YYYY")}`
-      );
     }
-  }
-};
+  };
 
   const handlePinMeal = async (id) => {
     try {
@@ -839,55 +842,76 @@ const MealPlanner = () => {
         >
           Add Meal Time
         </Button>
-        <div className={styles.horizontalMealContainer}>
-          {defaultMeals.map((meal) => (
-            <div key={meal.id} className={styles.mealItems}>
-              <div className={styles.boxTop}>
-                <div className={styles.boxTopLeft}>{meal.name}</div>
-                <div className={styles.boxTopRight}>
-                  <Button
-                    type="text"
-                    icon={
-                      meal.isDefault ? (
-                        <PushpinFilled style={{ color: "red" }} />
-                      ) : (
-                        <PushpinOutlined />
-                      )
-                    }
-                    onClick={() => handlePinMeal(meal.id)}
-                    size="small"
+
+        {defaultMeals.length === 0 ? (
+          <div
+            style={{
+              textAlign: "center",
+              padding: "40px 20px",
+              color: "#666",
+              background: "#f8f9fa",
+              borderRadius: "8px",
+              margin: "20px 0",
+            }}
+          >
+            <div style={{ fontSize: "16px", marginBottom: "8px" }}>
+              No meal types available
+            </div>
+            <div style={{ fontSize: "14px" }}>
+              Please create a meal type to get started with meal planning
+            </div>
+          </div>
+        ) : (
+          <div className={styles.horizontalMealContainer}>
+            {defaultMeals.map((meal) => (
+              <div key={meal.id} className={styles.mealItems}>
+                <div className={styles.boxTop}>
+                  <div className={styles.boxTopLeft}>{meal.name}</div>
+                  <div className={styles.boxTopRight}>
+                    <Button
+                      type="text"
+                      icon={
+                        meal.isDefault ? (
+                          <PushpinFilled style={{ color: "red" }} />
+                        ) : (
+                          <PushpinOutlined />
+                        )
+                      }
+                      onClick={() => handlePinMeal(meal.id)}
+                      size="small"
+                    />
+                    <Button
+                      type="text"
+                      icon={<DeleteOutlined />}
+                      onClick={() => handleDeleteMeal(meal)}
+                      size="small"
+                      danger
+                    />
+                  </div>
+                </div>
+                <div className={styles.timePickerGroup}>
+                  <TimePicker
+                    defaultValue={validateTime(meal.time?.[0])}
+                    format="HH:mm"
+                    onChange={(time) => handleStartTimeChange(time, meal.id)}
+                    className={styles.timePicker}
+                    placeholder="Start time"
+                    allowClear={false}
                   />
-                  <Button
-                    type="text"
-                    icon={<DeleteOutlined />}
-                    onClick={() => handleDeleteMeal(meal)}
-                    size="small"
-                    danger
+                  <span className={styles.timePickerSeparator}>to</span>
+                  <TimePicker
+                    defaultValue={validateTime(meal.time?.[1])}
+                    format="HH:mm"
+                    onChange={(time) => handleEndTimeChange(time, meal.id)}
+                    className={styles.timePicker}
+                    placeholder="End time"
+                    allowClear={false}
                   />
                 </div>
               </div>
-              <div className={styles.timePickerGroup}>
-                <TimePicker
-                  defaultValue={validateTime(meal.time?.[0])}
-                  format="HH:mm"
-                  onChange={(time) => handleStartTimeChange(time, meal.id)}
-                  className={styles.timePicker}
-                  placeholder="Start time"
-                  allowClear={false}
-                />
-                <span className={styles.timePickerSeparator}>to</span>
-                <TimePicker
-                  defaultValue={validateTime(meal.time?.[1])}
-                  format="HH:mm"
-                  onChange={(time) => handleEndTimeChange(time, meal.id)}
-                  className={styles.timePicker}
-                  placeholder="End time"
-                  allowClear={false}
-                />
-              </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
 
       <div className={styles.contentArea}>
