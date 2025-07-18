@@ -89,7 +89,6 @@ const RolesList = ({ data, onAddNew, onUpdate, onDelete, className, authData}) =
     try {
       const payload = {
         id: employeeId,
-        empNo: "E001",
         name,
         role,
         email,
