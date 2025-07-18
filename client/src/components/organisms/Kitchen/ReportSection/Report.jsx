@@ -46,6 +46,10 @@ const Report = () => {
   const [lowestDemandMeal, setLowestDemandMeal] = useState(null);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const [orderStartDate, setOrderStartDate] = useState("");
+  const [orderEndDate, setOrderEndDate] = useState("");
+  const [employeeStartDate, setEmployeeStartDate] = useState("");
+  const [employeeEndDate, setEmployeeEndDate] = useState("");
 
   useEffect(() => {
     const loadAnalyzeData = async () => {
@@ -273,28 +277,32 @@ const Report = () => {
         return [];
       }
 
-      // Filter by time period
+      // Filter by time period - pass custom dates if applicable
       const filteredOrders = filterOrdersByTimePeriod(
         employeeOrders,
-        timePeriod
+        timePeriod,
+        employeeTimePeriod === "custom" ? employeeStartDate : null,
+        employeeTimePeriod === "custom" ? employeeEndDate : null
       );
       console.log(`Orders after time filter:`, filteredOrders.length);
 
       // Get meal types to map meal type IDs to names
       let mealTypesData = mealTypes;
+
       if (!mealTypesData || mealTypesData.length === 0) {
-        const mealTypesResponse = await fetch(
-          "http://localhost:3000/meal-types",
-          {
-            method: "GET",
+        try {
+          const mealTypesResponse = await axios.get(`${urL}/meal-types`, {
+            params: {
+              orgId: authData?.orgId,
+            },
             headers: {
               Authorization: `Bearer ${token}`,
             },
-          }
-        );
+          });
 
-        if (mealTypesResponse.ok) {
-          mealTypesData = await mealTypesResponse.json();
+          mealTypesData = mealTypesResponse.data;
+        } catch (error) {
+          console.error("Error fetching meal types:", error);
         }
       }
 
@@ -352,7 +360,6 @@ const Report = () => {
       setLoading(false);
     }
   };
-
   // Function to filter orders by time period for individual employee
   const filterOrdersByTimePeriod = (
     orders,
@@ -1381,31 +1388,25 @@ const Report = () => {
     return summaryColumns;
   };
 
-  const handleGenerateOrderDetailsReport = async (
-    customStartDate = null,
-    customEndDate = null
-  ) => {
+  const handleGenerateOrderDetailsReport = async () => {
+    console.log("Generating order details report for period:", orderTimePeriod);
+
+    // Validate custom date range if selected
+    if (orderTimePeriod === "custom") {
+      if (!orderStartDate || !orderEndDate) {
+        message.error(
+          "Please select both start date and end date for custom range"
+        );
+        return;
+      }
+      if (new Date(orderStartDate) > new Date(orderEndDate)) {
+        message.error("Start date cannot be later than end date");
+        return;
+      }
+    }
+
     setLoading(true);
     try {
-      console.log(
-        "Generating order details report for period:",
-        orderTimePeriod
-      );
-
-      // Validate custom date range if selected
-      if (orderTimePeriod === "custom") {
-        if (!customStartDate || !customEndDate) {
-          message.error(
-            "Please select both start date and end date for custom range"
-          );
-          return;
-        }
-        if (new Date(customStartDate) > new Date(customEndDate)) {
-          message.error("Start date cannot be later than end date");
-          return;
-        }
-      }
-
       // Use already fetched data if available, otherwise fetch fresh data
       let ordersData = orders;
       let mealTypesData = mealTypes;
@@ -1432,8 +1433,8 @@ const Report = () => {
       const filteredOrders = filterOrdersByPeriod(
         ordersData,
         orderTimePeriod,
-        customStartDate,
-        customEndDate
+        orderStartDate,
+        orderEndDate
       );
       console.log("Filtered orders:", filteredOrders.length);
 
@@ -1444,6 +1445,10 @@ const Report = () => {
 
       if (details.length === 0) {
         message.info("No order data found for the selected time period");
+      } else {
+        message.success(
+          `Order details report generated successfully for ${orderTimePeriod} period!`
+        );
       }
     } catch (error) {
       console.error("Error generating order details report:", error);
@@ -1520,12 +1525,73 @@ const Report = () => {
     });
   };
 
-  // Load order details data on component mount and when orderTimePeriod changes
-  useEffect(() => {
-    if (activeTab === "orders") {
-      handleGenerateOrderDetailsReport();
+  const handleGenerateEmployeeReport = async () => {
+    console.log(
+      `Generating employee report for ID: ${employeeId}, period: ${employeeTimePeriod}`
+    );
+
+    // Validate employee ID
+    if (!employeeId || !employeeId.trim()) {
+      message.error("Please enter an Employee ID");
+      return;
     }
-  }, [orderTimePeriod, activeTab]);
+
+    // Validate custom date range if selected
+    if (employeeTimePeriod === "custom") {
+      if (!employeeStartDate || !employeeEndDate) {
+        message.error(
+          "Please select both start date and end date for custom range"
+        );
+        return;
+      }
+      if (new Date(employeeStartDate) > new Date(employeeEndDate)) {
+        message.error("Start date cannot be later than end date");
+        return;
+      }
+    }
+
+    try {
+      // Fetch individual employee orders with the selected time period
+      const employeeOrders = await fetchIndividualEmployeeOrders(
+        employeeId,
+        employeeTimePeriod
+      );
+      setIndividualEmployeeData(employeeOrders);
+
+      if (employeeOrders.length === 0) {
+        message.info(
+          `No orders found for Employee ID: ${employeeId} in the selected time period`
+        );
+      } else {
+        message.success(
+          `Employee report generated successfully for ${employeeId}!`
+        );
+      }
+    } catch (error) {
+      console.error("Error generating employee report:", error);
+      message.error("Failed to generate employee report");
+    }
+  };
+
+  useEffect(() => {
+    if (employeeTimePeriod !== "custom") {
+      setEmployeeStartDate("");
+      setEmployeeEndDate("");
+    }
+  }, [employeeTimePeriod]);
+
+  useEffect(() => {
+    if (orderTimePeriod !== "custom") {
+      setOrderStartDate("");
+      setOrderEndDate("");
+    }
+  }, [orderTimePeriod]);
+
+  useEffect(() => {
+    if (activeTab !== "orders") {
+      setOrderDetailsData([]);
+    }
+  }, [activeTab]);
 
   return (
     <div className={styles.container}>
@@ -1772,11 +1838,21 @@ const Report = () => {
                   <>
                     <div className={styles.controlGroup}>
                       <label className={styles.controlLabel}>Start Date</label>
-                      <input type="date" className={styles.dateInput} />
+                      <input
+                        type="date"
+                        className={styles.dateInput}
+                        value={orderStartDate}
+                        onChange={(e) => setOrderStartDate(e.target.value)}
+                      />
                     </div>
                     <div className={styles.controlGroup}>
                       <label className={styles.controlLabel}>End Date</label>
-                      <input type="date" className={styles.dateInput} />
+                      <input
+                        type="date"
+                        className={styles.dateInput}
+                        value={orderEndDate}
+                        onChange={(e) => setOrderEndDate(e.target.value)}
+                      />
                     </div>
                   </>
                 )}
@@ -1870,6 +1946,8 @@ const Report = () => {
                   locale={{
                     emptyText: loading
                       ? "Loading order details..."
+                      : orderDetailsData.length === 0 && activeTab === "orders"
+                      ? "Click 'Generate Report' to view order details data"
                       : "No order data available for the selected time period",
                   }}
                   summary={() => {
@@ -1980,7 +2058,8 @@ const Report = () => {
                       <label className={styles.controlLabel}>Start Date</label>
                       <input
                         type="date"
-                        defaultValue="2025-01-06"
+                        value={employeeStartDate}
+                        onChange={(e) => setEmployeeStartDate(e.target.value)}
                         className={styles.dateInput}
                       />
                     </div>
@@ -1988,15 +2067,16 @@ const Report = () => {
                       <label className={styles.controlLabel}>End Date</label>
                       <input
                         type="date"
+                        value={employeeEndDate}
+                        onChange={(e) => setEmployeeEndDate(e.target.value)}
                         className={styles.dateInput}
-                        placeholder="mm/dd/yyyy"
                       />
                     </div>
                   </>
                 )}
                 <Button
                   type="primary"
-                  // onClick={handleGenerateEmployeeReport}
+                  onClick={handleGenerateEmployeeReport}
                   className={styles.generateButtonDark}
                   loading={loading}
                 >
@@ -2005,7 +2085,6 @@ const Report = () => {
               </div>
 
               {/* Employee Summary Section */}
-
               <Spin spinning={loading}>
                 <Table
                   columns={employeeReportColumns}

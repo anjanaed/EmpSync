@@ -91,7 +91,7 @@ export const NotificationsProvider = ({ children }) => {
   // Check schedules
   const checkSchedules = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/schedule");
+      const response = await axios.get(`${urL}/schedule`);
       const schedules = response.data;
       const today = new Date();
       today.setHours(0, 0, 0, 0);

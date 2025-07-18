@@ -43,7 +43,6 @@ const AvailableMeals = () => {
   const { authData } = useAuth();
   const token = authData?.accessToken;
   const urL = import.meta.env.VITE_BASE_URL;
-  
   const [meals, setMeals] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
