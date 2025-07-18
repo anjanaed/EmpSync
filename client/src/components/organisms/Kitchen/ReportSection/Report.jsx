@@ -44,6 +44,8 @@ const Report = () => {
   const token = authData?.accessToken;
   const [highestDemandMeal, setHighestDemandMeal] = useState(null);
   const [lowestDemandMeal, setLowestDemandMeal] = useState(null);
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
 
   useEffect(() => {
     const loadAnalyzeData = async () => {
@@ -352,19 +354,40 @@ const Report = () => {
   };
 
   // Function to filter orders by time period for individual employee
-  const filterOrdersByTimePeriod = (orders, period) => {
+  const filterOrdersByTimePeriod = (
+    orders,
+    period,
+    customStartDate = null,
+    customEndDate = null
+  ) => {
     const now = new Date();
-    let startDate;
+    let startDate, endDate;
 
     switch (period) {
       case "daily":
         startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        endDate = new Date(
+          now.getFullYear(),
+          now.getMonth(),
+          now.getDate() + 1
+        );
         break;
       case "weekly":
         startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+        endDate = now;
         break;
       case "monthly":
         startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+        endDate = now;
+        break;
+      case "custom":
+        if (customStartDate && customEndDate) {
+          startDate = new Date(customStartDate);
+          endDate = new Date(customEndDate);
+          endDate.setHours(23, 59, 59, 999);
+        } else {
+          return orders;
+        }
         break;
       default:
         return orders;
@@ -379,38 +402,9 @@ const Report = () => {
           order.createdAt ||
           order.created_at
       );
-      return orderDate >= startDate;
+      return orderDate >= startDate && orderDate <= endDate;
     });
   };
-
-  // Function to handle employee report generation
-  const handleGenerateEmployeeReport = async () => {
-    if (!employeeId || !employeeId.trim()) {
-      message.warning("Please enter an Employee ID");
-      return;
-    }
-
-    console.log(
-      `Generating employee report for ID: ${employeeId}, Period: ${employeeTimePeriod}`
-    );
-
-    const employeeOrders = await fetchIndividualEmployeeOrders(
-      employeeId,
-      employeeTimePeriod
-    );
-    setIndividualEmployeeData(employeeOrders);
-
-    if (employeeOrders.length > 0) {
-      message.success(
-        `Found ${employeeOrders.length} orders for Employee ID: ${employeeId}`
-      );
-    } else {
-      message.info(
-        `No orders found for Employee ID: ${employeeId} in the selected time period`
-      );
-    }
-  };
-
   // Function to get employee name from ID
   const getEmployeeName = (employeeId) => {
     if (!employees || employees.length === 0) return null;
@@ -1030,19 +1024,40 @@ const Report = () => {
   };
 
   // Filter data based on time period
-  const filterDataByTimePeriod = (orders, period) => {
+  const filterDataByTimePeriod = (
+    orders,
+    period,
+    customStartDate = null,
+    customEndDate = null
+  ) => {
     const now = new Date();
-    let startDate;
+    let startDate, endDate;
 
     switch (period) {
       case "daily":
         startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        endDate = new Date(
+          now.getFullYear(),
+          now.getMonth(),
+          now.getDate() + 1
+        );
         break;
       case "weekly":
         startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+        endDate = now;
         break;
       case "monthly":
         startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+        endDate = now;
+        break;
+      case "custom":
+        if (customStartDate && customEndDate) {
+          startDate = new Date(customStartDate);
+          endDate = new Date(customEndDate);
+          endDate.setHours(23, 59, 59, 999); // Include the entire end date
+        } else {
+          return orders; // Return all orders if custom dates not provided
+        }
         break;
       default:
         return orders;
@@ -1055,12 +1070,12 @@ const Report = () => {
           order.createdAt ||
           order.created_at
       );
-      return orderDate >= startDate;
+      return orderDate >= startDate && orderDate <= endDate;
     });
   };
 
   // Load data function
-  const loadData = async () => {
+  const loadData = async (customStartDate = null, customEndDate = null) => {
     setLoading(true);
     try {
       console.log("Starting data load...");
@@ -1100,7 +1115,12 @@ const Report = () => {
       }
 
       if (orders.length > 0) {
-        const filteredOrders = filterDataByTimePeriod(orders, timePeriod);
+        const filteredOrders = filterDataByTimePeriod(
+          orders,
+          timePeriod,
+          customStartDate,
+          customEndDate
+        );
         console.log("Filtered orders:", filteredOrders.length);
 
         const result = processEmployeeMealData(
@@ -1121,7 +1141,6 @@ const Report = () => {
         }
       } else {
         setEmployeeData([]);
-        // message.info("No order data available");
       }
     } catch (error) {
       console.error("Error loading data:", error);
@@ -1132,11 +1151,13 @@ const Report = () => {
     }
   };
 
-  // Load data on component mount and when time period changes
   useEffect(() => {
-    loadData();
+    // Clear data when time period changes, requiring manual report generation
+    if (timePeriod !== "custom") {
+      setStartDate("");
+      setEndDate("");
+    }
   }, [timePeriod]);
-
   // Generate dynamic columns based on available meal types with actual prices
   const generateDynamicColumns = () => {
     if (employeeData.length === 0) return [];
@@ -1280,7 +1301,25 @@ const Report = () => {
 
   const handleGenerateReport = () => {
     console.log(`Generating ${timePeriod} report...`);
-    loadData();
+
+    // Validate custom date range if selected
+    if (timePeriod === "custom") {
+      if (!startDate || !endDate) {
+        message.error(
+          "Please select both start date and end date for custom range"
+        );
+        return;
+      }
+      if (new Date(startDate) > new Date(endDate)) {
+        message.error("Start date cannot be later than end date");
+        return;
+      }
+    }
+    const customStartDate = timePeriod === "custom" ? startDate : null;
+    const customEndDate = timePeriod === "custom" ? endDate : null;
+
+    loadData(customStartDate, customEndDate);
+
     message.success(
       `${
         timePeriod.charAt(0).toUpperCase() + timePeriod.slice(1)
@@ -1342,13 +1381,30 @@ const Report = () => {
     return summaryColumns;
   };
 
-  const handleGenerateOrderDetailsReport = async () => {
+  const handleGenerateOrderDetailsReport = async (
+    customStartDate = null,
+    customEndDate = null
+  ) => {
     setLoading(true);
     try {
       console.log(
         "Generating order details report for period:",
         orderTimePeriod
       );
+
+      // Validate custom date range if selected
+      if (orderTimePeriod === "custom") {
+        if (!customStartDate || !customEndDate) {
+          message.error(
+            "Please select both start date and end date for custom range"
+          );
+          return;
+        }
+        if (new Date(customStartDate) > new Date(customEndDate)) {
+          message.error("Start date cannot be later than end date");
+          return;
+        }
+      }
 
       // Use already fetched data if available, otherwise fetch fresh data
       let ordersData = orders;
@@ -1373,7 +1429,12 @@ const Report = () => {
       });
 
       // Filter orders by selected time period
-      const filteredOrders = filterOrdersByPeriod(ordersData, orderTimePeriod);
+      const filteredOrders = filterOrdersByPeriod(
+        ordersData,
+        orderTimePeriod,
+        customStartDate,
+        customEndDate
+      );
       console.log("Filtered orders:", filteredOrders.length);
 
       // Process the filtered orders
@@ -1383,10 +1444,6 @@ const Report = () => {
 
       if (details.length === 0) {
         message.info("No order data found for the selected time period");
-      } else {
-        // message.success(
-        //   `Order details report generated! Found ${details.length} meal types.`
-        // );
       }
     } catch (error) {
       console.error("Error generating order details report:", error);
@@ -1396,25 +1453,51 @@ const Report = () => {
     }
   };
 
-  const filterOrdersByPeriod = (orders, period) => {
+  const filterOrdersByPeriod = (
+    orders,
+    period,
+    customStartDate = null,
+    customEndDate = null
+  ) => {
     const now = new Date();
-    let startDate;
+    let startDate, endDate;
 
     switch (period) {
       case "daily":
         startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        endDate = new Date(
+          now.getFullYear(),
+          now.getMonth(),
+          now.getDate() + 1
+        );
         break;
       case "weekly":
         startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+        endDate = now;
         break;
       case "monthly":
         startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+        endDate = now;
+        break;
+      case "custom":
+        if (customStartDate && customEndDate) {
+          startDate = new Date(customStartDate);
+          endDate = new Date(customEndDate);
+          endDate.setHours(23, 59, 59, 999);
+        } else {
+          return orders;
+        }
         break;
       default:
         return orders;
     }
 
-    console.log("Filtering orders from:", startDate.toISOString());
+    console.log(
+      "Filtering orders from:",
+      startDate.toISOString(),
+      "to:",
+      endDate.toISOString()
+    );
 
     return orders.filter((order) => {
       const orderDate = new Date(
@@ -1425,11 +1508,12 @@ const Report = () => {
           order.orderPlacedTime
       );
 
-      const isInRange = orderDate >= startDate;
+      const isInRange = orderDate >= startDate && orderDate <= endDate;
       if (!isInRange) {
         console.log("Order excluded:", {
           orderDate: orderDate.toISOString(),
           startDate: startDate.toISOString(),
+          endDate: endDate.toISOString(),
         });
       }
       return isInRange;
@@ -1587,11 +1671,23 @@ const Report = () => {
                   <>
                     <div className={styles.controlGroup}>
                       <label className={styles.controlLabel}>Start Date</label>
-                      <input type="date" className={styles.dateInput} />
+                      <input
+                        type="date"
+                        className={styles.dateInput}
+                        value={startDate}
+                        onChange={(e) => setStartDate(e.target.value)}
+                        max={endDate || undefined}
+                      />
                     </div>
                     <div className={styles.controlGroup}>
                       <label className={styles.controlLabel}>End Date</label>
-                      <input type="date" className={styles.dateInput} />
+                      <input
+                        type="date"
+                        className={styles.dateInput}
+                        value={endDate}
+                        onChange={(e) => setEndDate(e.target.value)}
+                        min={startDate || undefined}
+                      />
                     </div>
                   </>
                 )}
@@ -1600,6 +1696,7 @@ const Report = () => {
                   onClick={handleGenerateReport}
                   className={styles.generateButtonDark}
                   loading={loading}
+                  disabled={timePeriod === "custom" && (!startDate || !endDate)}
                 >
                   {loading ? "Loading..." : "Generate Report"}
                 </Button>
@@ -1899,7 +1996,7 @@ const Report = () => {
                 )}
                 <Button
                   type="primary"
-                  onClick={handleGenerateEmployeeReport}
+                  // onClick={handleGenerateEmployeeReport}
                   className={styles.generateButtonDark}
                   loading={loading}
                 >
