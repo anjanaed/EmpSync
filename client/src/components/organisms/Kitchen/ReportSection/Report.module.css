@@ -1,13 +1,31 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Itim&family=Roboto+Slab:wght@100..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+
+/* CSS Variables for consistent theming */
+:root {
+  --primary-font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8fafc;
+  --bg-tertiary: #f1f5f9;
+  --text-primary: #1e293b;
+  --text-secondary: #64748b;
+  --text-tertiary: #94a3b8;
+  --border-color: #e2e8f0;
+  --accent: #3b82f6;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --error: #ef4444;
+  --shadow: rgba(0, 0, 0, 0.1);
+}
 
 /* Global Container Styles */
 .container {
-  width: 100% !important;
-  max-width: 100% !important;
+  width: 100%;
+  max-width: 100%;
   margin: 0 auto;
   padding: 24px;
   background-color: var(--bg-secondary);
   min-height: 100vh;
+  font-family: var(--primary-font);
 }
 
 /* Analysis Section */
@@ -19,11 +37,13 @@
   display: flex;
   align-items: center;
   margin-bottom: 24px;
+  gap: 12px;
 }
 
 .sectionIcon {
-  margin-right: 8px;
   color: var(--accent);
+  width: 24px;
+  height: 24px;
 }
 
 .sectionTitle {
@@ -31,6 +51,7 @@
   font-size: 24px;
   font-weight: 600;
   color: var(--text-primary);
+  font-family: var(--primary-font);
 }
 
 .analysisGrid {
@@ -42,22 +63,24 @@
 .cardTitle {
   display: flex;
   align-items: center;
+  gap: 8px;
   color: var(--text-primary);
+  font-family: var(--primary-font);
+  font-weight: 600;
 }
 
 .highDemandIcon {
-  margin-right: 8px;
   color: var(--success);
 }
 
 .lowDemandIcon {
-  margin-right: 8px;
   color: var(--error);
 }
 
 .mealItem {
   margin-bottom: 16px;
   color: var(--text-primary);
+  font-family: var(--primary-font);
 }
 
 .mealHeader {
@@ -65,6 +88,7 @@
   justify-content: space-between;
   margin-bottom: 8px;
   color: var(--text-primary);
+  font-family: var(--primary-font);
 }
 
 .highDemandPercentage {
@@ -82,438 +106,323 @@
   margin-bottom: 20px;
 }
 
-/* Card Styles - Make all cards full width */
+/* Card Styles */
 .card {
-  width: 100% !important;
-  max-width: 100% !important;
+  width: 100%;
+  max-width: 100%;
   border-radius: 12px;
   box-shadow: 0 4px 12px var(--shadow);
-  background-color: var(--bg-tertiary);
-  border: none;
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border-color);
 }
 
-/* Remove borders from Analysis section cards */
+/* Analysis Grid Cards */
 .analysisGrid .card {
-  border: none !important;
-}
-
-.analysisGrid .card .ant-card {
-  border: none !important;
-}
-
-.analysisGrid .card .ant-card-body {
-  border: none !important;
-}
-
-/* Styles for "No data available" messages and card content */
-.analysisGrid .card div {
-  color: var(--text-primary);
-}
-
-.analysisGrid .card span {
-  color: var(--text-primary);
-}
-
-.analysisGrid .card .ant-card-body {
-  color: var(--text-primary);
-}
-
-.analysisGrid .card .ant-card-body > div {
-  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-primary);
 }
 
 /* Tab Styles */
 .tabPaneTitle {
   display: flex;
   align-items: center;
-  width: 100% !important;
-  max-width: 100% !important;
+  gap: 8px;
+  font-family: var(--primary-font);
+  font-weight: 500;
+  color: var(--text-primary);
 }
 
 .tabIcon16 {
-  margin-right: 8px;
+  width: 16px;
+  height: 16px;
 }
 
 .tabContentHeader {
-  width: 100% !important;
-  max-width: 100% !important;
-  margin-bottom: 20px;
+  width: 100%;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .tabTitle {
   margin: 0 0 8px 0;
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 600;
   color: var(--text-primary);
+  font-family: var(--primary-font);
 }
 
 .tabDescription {
   margin: 0;
   color: var(--text-secondary);
   font-size: 14px;
+  font-family: var(--primary-font);
+  line-height: 1.5;
 }
 
 /* Control Styles */
 .controlsContainer {
   display: flex;
-  align-items: center;
+  align-items: end;
   gap: 16px;
-  margin-bottom: 24px;
-  width: 100% !important;
-  max-width: 100% !important;
+  margin-bottom: 32px;
+  padding: 20px;
+  background-color: var(--bg-tertiary);
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
 }
 
 .controlsContainerWrap {
   display: flex;
   align-items: end;
   gap: 16px;
-  margin-bottom: 24px;
+  margin-bottom: 32px;
+  padding: 20px;
+  background-color: var(--bg-tertiary);
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
   flex-wrap: wrap;
-  margin-top: 40px;
-  width: 100% !important;
-  max-width: 100% !important;
 }
 
 .controlGroup {
   display: flex;
   flex-direction: column;
+  gap: 8px;
 }
 
 .controlLabel {
-  display: block;
-  margin-bottom: 8px;
   font-weight: 500;
   color: var(--text-primary);
+  font-family: var(--primary-font);
+  font-size: 14px;
 }
 
 .selectInput {
-  width: 150px;
+  width: 160px;
+  font-family: var(--primary-font);
+}
+
+.dateInput,
+.textInput {
+  padding: 10px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: var(--primary-font);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: border-color 0.2s ease;
+}
+
+.dateInput:focus,
+.textInput:focus {
+  outline: none;
+  border-color: var(--accent);
 }
 
 .dateInput {
-  padding: 8px 12px;
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
-  font-size: 14px;
-  width: 150px;
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
+  width: 160px;
 }
 
 .textInput {
-  padding: 8px 12px;
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
-  font-size: 14px;
   width: 180px;
-  color: var(--text-tertiary);
-  background-color: var(--bg-primary);
 }
 
 .generateButtonDark {
-  background-color: #1f1f1f;
-  border-color: #1f1f1f;
-  height: 35px;
+  background-color: var(--text-primary);
+  border-color: var(--text-primary);
+  color: var(--bg-primary);
+  height: 40px;
   font-weight: 500;
-  padding-left: 32px;
-  padding-right: 32px;
-  margin-top: 30px;
+  padding: 0 24px;
+  border-radius: 6px;
+  font-family: var(--primary-font);
+  transition: all 0.2s ease;
 }
 
-/* Table Styles - Full width and consistent styling */
+.generateButtonDark:hover {
+  background-color: var(--accent);
+  border-color: var(--accent);
+}
+
+/* Table Styles */
 .table {
-  width: 100% !important;
-  min-width: 0 !important;
-  max-width: 100% !important;
+  width: 100%;
   background-color: var(--bg-primary);
   border-radius: 8px;
   overflow: hidden;
+  border: 1px solid var(--border-color);
 }
 
-.ant-spin-nested-loading,
-.ant-spin-container {
-  width: 100% !important;
-  max-width: 100% !important;
-}
-
-/* Table Row Data - Make all black */
-.table :where(.ant-table-tbody) > tr > td {
-  color: #111 !important;
-  font-weight: 500;
-}
-
+/* Table Headers */
 .table :where(.ant-table-thead) > tr > th {
-  color: var(--text-primary) !important;
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
   font-weight: 600;
-}
-
-/* Meal Cell Styles */
-.mealCell {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-}
-
-.mealCount {
-  font-size: 18px;
-  font-weight: 700;
-  color: #111 !important;
+  font-family: var(--primary-font);
+  border-bottom: 2px solid var(--border-color);
   text-align: center;
+  padding: 16px 12px;
 }
 
-.mealPrice {
-  font-size: 12px;
-  color: #111 !important;
+/* Table Body */
+.table :where(.ant-table-tbody) > tr > td {
+  color: var(--text-primary);
   font-weight: 500;
-}
-
-/* Total Meals Cell */
-.totalMealsCell {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-}
-
-.totalCount {
-  font-size: 18px;
-  font-weight: 700;
-  color: #111 !important;
+  font-family: var(--primary-font);
   text-align: center;
+  padding: 16px 12px;
+  border-bottom: 1px solid var(--border-color);
 }
 
-.totalMealsText {
-  font-size: 11px;
-  color: #111 !important;
-  font-weight: 500;
+.table :where(.ant-table-tbody) > tr:hover > td {
+  background-color: var(--bg-tertiary);
 }
 
-/* Total Amount Cell */
-.totalAmountCell {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-}
-
-.totalAmount {
-  font-size: 18px;
-  font-weight: 700;
-  color: #111 !important;
-  text-align: center;
-}
-
-.totalCostText {
-  font-size: 11px;
-  color: #111 !important;
-  font-weight: 500;
-}
-
-/* Order Details Report Specific Styles */
-.mealTypeCell {
-  color: #111 !important;
-  font-weight: 600;
-}
-
-.orderCountCell {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-}
-
-.orderCountValue {
-  font-size: 18px;
-  font-weight: 700;
-  color: #111 !important;
-  text-align: center;
-}
-
-.orderCountLabel {
-  font-size: 11px;
-  color: #111 !important;
-  font-weight: 500;
-}
-
-.serveCountCell {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-}
-
-.serveCountValue {
-  font-size: 18px;
-  font-weight: 700;
-  color: #111 !important;
-  text-align: center;
-}
-
-.serveCountLabel {
-  font-size: 11px;
-  color: #111 !important;
-  font-weight: 500;
-}
-
-.efficiencyCell {
-  text-align: center;
-}
-
-/* Efficiency Badges */
-.efficiencyBadgeExcellent {
-  background-color: var(--success);
-  color: white;
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: 500;
-}
-
-.efficiencyBadgeGood {
-  background-color: var(--warning);
-  color: black;
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: 500;
-}
-
-.efficiencyBadgePoor {
-  background-color: var(--error);
-  color: white;
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: 500;
-}
-
-/* Status Badges */
-.statusBadgeServed {
-  background-color: var(--success);
-  color: white;
-  padding: 4px 12px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: 500;
-}
-
-.statusBadgePending {
-  background-color: var(--warning);
-  color: white;
-  padding: 4px 12px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: 500;
-}
-
-.statusBadgeExcellent {
-  background-color: var(--success);
-  color: white;
-  padding: 4px 12px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: 500;
-}
-
-.statusBadgeGood {
-  background-color: var(--warning);
-  color: black;
-  padding: 4px 12px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: 500;
-}
-
-/* Summary Row Styles - Bold grand total */
-.summaryRow {
-  background-color: var(--bg-tertiary) !important;
-  font-weight: 800 !important;
-}
-
-.summaryRow td {
-  color: #111 !important;
-  font-weight: 800 !important;
-}
-
-.summaryCell {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-  color: #111 !important;
-}
-
-.summaryCount {
-  font-size: 18px;
-  font-weight: 800 !important;
-  color: #111 !important;
-  text-align: center;
-}
-
-.summaryPrice {
-  font-size: 12px;
-  color: #111 !important;
-  font-weight: 600;
-}
-
-.summaryTotalMeals {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-}
-
-.summaryTotalCount {
-  font-size: 18px;
-  font-weight: 800 !important;
-  color: #111 !important;
-  text-align: center;
-}
-
-.summaryTotalText {
-  font-size: 11px;
-  color: #111 !important;
-  font-weight: 600;
-}
-
+/* Cell Styles - Consistent across all reports */
+.mealCell,
+.totalMealsCell,
+.totalAmountCell,
+.orderCountCell,
+.serveCountCell,
+.summaryCell,
+.summaryTotalMeals,
 .summaryGrandTotal {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
+  gap: 4px;
+  font-family: var(--primary-font);
+}
+
+/* Value Styles */
+.mealCount,
+.totalCount,
+.totalAmount,
+.orderCountValue,
+.serveCountValue,
+.summaryCount,
+.summaryTotalCount {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+  font-family: var(--primary-font);
 }
 
 .summaryGrandAmount {
   font-size: 20px;
-  font-weight: 800 !important;
-  color: #111 !important;
+  font-weight: 700;
+  color: var(--text-primary);
+  font-family: var(--primary-font);
+}
+
+/* Label Styles */
+.mealPrice,
+.totalMealsText,
+.totalCostText,
+.orderCountLabel,
+.serveCountLabel,
+.summaryPrice,
+.summaryTotalText,
+.summaryGrandText {
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-weight: 500;
+  font-family: var(--primary-font);
+}
+
+/* Meal Type Cell */
+.mealTypeCell {
+  color: var(--text-primary);
+  font-weight: 600;
+  font-family: var(--primary-font);
+}
+
+/* Efficiency Cell */
+.efficiencyCell {
   text-align: center;
 }
 
-.summaryGrandText {
-  font-size: 11px;
-  color: #111 !important;
-  font-weight: 600;
+/* Badge Styles */
+.efficiencyBadgeExcellent,
+.statusBadgeServed,
+.statusBadgeExcellent {
+  background-color: var(--success);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 16px;
+  font-size: 12px;
+  font-weight: 500;
+  font-family: var(--primary-font);
+}
+
+.efficiencyBadgeGood,
+.statusBadgeGood {
+  background-color: var(--warning);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 16px;
+  font-size: 12px;
+  font-weight: 500;
+  font-family: var(--primary-font);
+}
+
+.efficiencyBadgePoor,
+.statusBadgePending {
+  background-color: var(--error);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 16px;
+  font-size: 12px;
+  font-weight: 500;
+  font-family: var(--primary-font);
+}
+
+/* Summary Row Styles */
+.summaryRow {
+  background-color: var(--bg-tertiary);
+}
+
+.summaryRow td {
+  color: var(--text-primary);
+  font-weight: 700;
+  font-family: var(--primary-font);
+  border-top: 2px solid var(--border-color);
 }
 
 /* Download Section */
 .downloadSection {
   text-align: right;
   margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border-color);
 }
 
 .downloadButton {
   height: 40px;
   font-weight: 500;
+  font-family: var(--primary-font);
   display: flex;
   align-items: center;
   gap: 8px;
+  padding: 0 20px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: all 0.2s ease;
+}
+
+.downloadButton:hover {
+  background-color: var(--bg-tertiary);
+  border-color: var(--accent);
 }
 
 .viewDetailsButton {
   padding: 0;
   font-weight: 500;
+  font-family: var(--primary-font);
+  color: var(--accent);
 }
 
 /* Responsive Design */
@@ -522,7 +431,8 @@
     grid-template-columns: 1fr;
   }
   
-  .controlsContainer {
+  .controlsContainer,
+  .controlsContainerWrap {
     flex-wrap: wrap;
   }
 }
@@ -536,6 +446,7 @@
   .controlsContainerWrap {
     flex-direction: column;
     align-items: stretch;
+    gap: 16px;
   }
   
   .controlGroup {
@@ -548,6 +459,14 @@
     width: 100%;
   }
   
+  .sectionTitle {
+    font-size: 20px;
+  }
+  
+  .tabTitle {
+    font-size: 18px;
+  }
+  
   .mealCount,
   .totalCount,
   .summaryCount,
@@ -555,6 +474,14 @@
   .orderCountValue,
   .serveCountValue {
     font-size: 16px;
+  }
+  
+  .totalAmount {
+    font-size: 16px;
+  }
+  
+  .summaryGrandAmount {
+    font-size: 18px;
   }
   
   .mealPrice,
@@ -565,59 +492,64 @@
   .summaryGrandText,
   .orderCountLabel,
   .serveCountLabel {
-    font-size: 10px;
+    font-size: 11px;
   }
   
-  .totalAmount {
+  .controlsContainer,
+  .controlsContainerWrap {
+    padding: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 12px;
+  }
+  
+  .sectionTitle {
+    font-size: 18px;
+  }
+  
+  .tabTitle {
     font-size: 16px;
   }
   
-  .summaryGrandAmount {
-    font-size: 18px;
+  .tabDescription {
+    font-size: 13px;
+  }
+  
+  .generateButtonDark {
+    width: 100%;
+    margin-top: 16px;
   }
 }
 
-/* Ensure all tables have consistent styling */
-.table .ant-table-container {
-  width: 100% !important;
+/* Antd Overrides for consistent styling */
+.ant-tabs-tab {
+  font-family: var(--primary-font) !important;
 }
 
-.table .ant-table {
-  width: 100% !important;
+.ant-select {
+  font-family: var(--primary-font) !important;
 }
 
-.table .ant-table-content {
-  width: 100% !important;
+.ant-table {
+  font-family: var(--primary-font) !important;
 }
 
-.table .ant-table-tbody > tr > td,
-.table .ant-table-thead > tr > th {
-  text-align: center;
+.ant-pagination {
+  font-family: var(--primary-font) !important;
 }
 
-/* Fix for Employee Report to use full width */
-.table .ant-pagination {
-  margin-top: 16px;
+.ant-btn {
+  font-family: var(--primary-font) !important;
 }
 
-/* Ensure consistent header styling across all tables */
-.table .ant-table-thead > tr > th {
-  background-color: var(--bg-secondary) !important;
-  border-bottom: 2px solid var(--border-color) !important;
+.ant-card {
+  font-family: var(--primary-font) !important;
 }
 
-/* Additional styling for consistent table appearance */
-.table .ant-table-tbody > tr:hover > td {
-  background-color: var(--bg-tertiary) !important;
-}
-
-.table .ant-table-tbody > tr > td {
-  border-bottom: 1px solid var(--border-color) !important;
-}
-
-/* Ensure summary rows are bold across all tables */
-.table .ant-table-summary > tr > td {
-  font-weight: 800 !important;
-  color: #111 !important;
-  background-color: var(--bg-tertiary) !important;
+/* Ensure all text uses the same font */
+* {
+  font-family: var(--primary-font) !important;
 }
