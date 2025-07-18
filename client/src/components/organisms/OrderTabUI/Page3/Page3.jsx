@@ -10,17 +10,20 @@ import {
   Layout,
   Alert,
   Space,
+  Modal,
 } from "antd";
 import { CheckCircleOutlined, CloseOutlined } from "@ant-design/icons";
 import { motion } from "framer-motion";
 import styles from "./Page3.module.css";
 import { IoClose } from "react-icons/io5";
-import { MdLanguage } from "react-icons/md";
+import { MdLanguage, MdTranslate } from "react-icons/md";
 import { RiAiGenerate } from "react-icons/ri";
 import { LoadingOutlined } from "@ant-design/icons";
 import { Spin } from "antd";
 import translations from "../../../../utils/translations";
+import { useAuth } from "../../../../contexts/AuthContext";
 import axios from "axios";
+import DateAndTime from "../DateAndTime/DateAndTime";
 
 const { Content } = Layout;
 const { Title, Text } = Typography;
@@ -70,6 +73,7 @@ const Page3 = ({
   carouselRef,
   setResetPin,
 }) => {
+  const { authData } = useAuth();
   const [baseTime, setBaseTime] = useState(null);
   const currentTimeRef = useRef(new Date());
   const [selectedDate, setSelectedDate] = useState("today");
@@ -82,6 +86,9 @@ const Page3 = ({
   const [mealTime, setMealTime] = useState([[], []]);
   const [allMeals, setAllMeals] = useState([]);
   const [_, setRenderTrigger] = useState(0); // For forcing re-render
+  const [suggestions, setSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [loadingSuggestions, setLoadingSuggestions] = useState(false);
   const text = translations[language];
 
   useEffect(() => {
@@ -268,6 +275,56 @@ const Page3 = ({
     });
   };
 
+  const fetchMealSuggestions = async () => {
+    if (!userId || !selectedMealTime) {
+      console.log("Missing userId or selectedMealTime for suggestions");
+      return;
+    }
+
+    setLoadingSuggestions(true);
+
+    try {
+      const baseDate =
+        selectedDate === "today"
+          ? baseTime
+          : new Date(baseTime.getTime() + 24 * 60 * 60 * 1000);
+      const formattedDate = baseDate.toLocaleDateString("en-CA");
+
+      const response = await axios.get(
+        `http://localhost:3000/meal/suggestions/${userId}`,
+        {
+          params: {
+            date: formattedDate,
+            mealTypeId: selectedMealTime,
+            orgId: authData?.orgId,
+          },
+        }
+      );
+
+      console.log("Suggestions response:", response.data);
+      setSuggestions(response.data || []);
+      setShowSuggestions(true);
+    } catch (error) {
+      console.error("Error fetching meal suggestions:", error);
+      
+      if (error.response?.status === 404) {
+        // No meals scheduled for this date/time
+        if (error.response.data?.message?.includes("No meals found")) {
+          setSuggestions([]);
+          setShowSuggestions(true); // Still show modal with "no suggestions" message
+        } else {
+          console.error("User not found for suggestions");
+          setSuggestions([]);
+        }
+      } else {
+        setSuggestions([]);
+        setShowSuggestions(true);
+      }
+    } finally {
+      setLoadingSuggestions(false);
+    }
+  };
+
   const placeOrder = async () => {
     const groupedOrders = orderItems.reduce((acc, item) => {
       const key = `${item.date}-${item.mealTime}`;
@@ -370,10 +427,7 @@ const Page3 = ({
         <div className={styles.header}>
           <div className={styles.name}>BizSolution</div>
           <div className={styles.dateAndTime}>
-            {currentTimeRef.current.toLocaleString("en-IN")}
-            <button style={{position: 'fixed', top: 10, right: 10, zIndex: 9999}} onClick={() => carouselRef.current.goTo(1)}>
-        Go to Page2
-      </button>
+            <DateAndTime />
           </div>
           
           <div className={styles.userName}>
@@ -467,8 +521,9 @@ const Page3 = ({
                       <Button
                         type="default"
                         icon={<RiAiGenerate />}
-                        onClick={() => console.log("Filter button clicked")}
+                        onClick={fetchMealSuggestions}
                         className={styles.filterButton}
+                        loading={loadingSuggestions}
                       >
                         Suggestions
                       </Button>
@@ -559,6 +614,7 @@ const Page3 = ({
                                         <Card.Meta
                                           title={
                                             <div>
+                                              
                                               <Text
                                                 className={styles.mealTitle}
                                               >
@@ -571,14 +627,6 @@ const Page3 = ({
                                                   }`
                                                 ] || "Unnamed Meal"}
                                               </Text>
-                                              <div
-                                                className={
-                                                  styles.descriptionText
-                                                }
-                                              >
-                                                {meal.description ||
-                                                  "No description available"}
-                                              </div>
                                               <div
                                                 className={
                                                   styles.priceContainer
@@ -594,6 +642,16 @@ const Page3 = ({
                                                     : "0.00"}
                                                 </Text>
                                               </div>
+                                              <br />
+                                              <div
+                                                className={
+                                                  styles.descriptionText
+                                                }
+                                              >
+                                                {meal.description ||
+                                                  "No description available"}
+                                              </div>
+                                              
                                             </div>
                                           }
                                         />
@@ -783,16 +841,28 @@ const Page3 = ({
                           }, 0)
                           .toFixed(2)}
                       </Text>
-                      <Button
-                        onClick={() => {
-                          // Set a flag in sessionStorage to indicate special redirect
-                          sessionStorage.setItem('redirectToPage3', 'true');
-                          carouselRef.current?.goTo(0);
-                        }}
-                        className={styles.backButton}
-                      >
-                        <MdLanguage size={20} /> <div>{text.back}</div>
-                      </Button>
+                      <div style={{ display: 'flex', gap: '8px' }}>
+                        <Button
+                          onClick={() => {
+                            // Set a flag in sessionStorage to indicate special redirect
+                            sessionStorage.setItem('redirectToPage3', 'true');
+                            carouselRef.current?.goTo(0);
+                          }}
+                          className={styles.backButton}
+                        >
+                          <MdTranslate size={20} /> 
+                        </Button>
+                        <Button
+                          onClick={() => {
+                            setResetPin(true);
+                            carouselRef.current?.goTo(1);
+                          }}
+                          className={styles.backButton}
+                        >
+                          Cancel Order
+                        </Button>
+                        
+                      </div>
                     </div>
                   </div>
                 </Col>
@@ -800,6 +870,110 @@ const Page3 = ({
             </Card>
           )}
         </Content>
+
+        {/* Meal Suggestions Modal */}
+        <Modal
+          title={
+            <div className={styles.suggestionsTitle}>
+              <RiAiGenerate /> Meal Suggestions
+            </div>
+          }
+          visible={showSuggestions}
+          onCancel={() => setShowSuggestions(false)}
+          footer={null}
+          className={styles.suggestionsModal}
+          width={800}
+        >
+          <div className={styles.suggestionsContent}>
+            {loadingSuggestions ? (
+              <div className={styles.loadingWrapper}>
+                <Loading text="Getting personalized suggestions..." />
+              </div>
+            ) : suggestions.length === 0 ? (
+              <Alert
+                message="No suggestions available"
+                description={`We couldn't generate personalized suggestions for this ${mealTime[selectedDate === "today" ? 0 : 1].find(m => m.id === selectedMealTime)?.name || 'meal time'} on ${selectedDate === 'today' ? 'today' : 'tomorrow'}. This might be because no meals are scheduled for this time, or you may need to add height and weight to your profile for personalized recommendations.`}
+                type="info"
+                showIcon
+              />
+            ) : (
+              <div className={styles.suggestionsList}>
+                <Typography.Text className={styles.suggestionsDescription}>
+                  Based on your BMI, order history, and nutritional preferences, here are our recommendations:
+                </Typography.Text>
+                <Row gutter={[16, 16]} style={{ marginTop: 16 }}>
+                  {suggestions.map((suggestion, index) => {
+                    const meal = meals.find(m => m.id === suggestion.mealId);
+                    if (!meal) return null;
+                    
+                    return (
+                      <Col xs={24} sm={12} md={8} key={suggestion.mealId}>
+                        <Card
+                          bodyStyle={{ padding: 12 }}
+                          cover={
+                            <img
+                              alt={meal.nameEnglish}
+                              src={meal.imageUrl || "https://via.placeholder.com/200"}
+                              className={styles.suggestionImage}
+                            />
+                          }
+                          className={`${styles.suggestionCard} ${
+                            isMealSelected(suggestion.mealId) ? styles.selectedSuggestionCard : ""
+                          }`}
+                          onClick={() => {
+                            toggleOrderItem(suggestion.mealId);
+                            setShowSuggestions(false);
+                          }}
+                          hoverable
+                        >
+                          <div className={styles.suggestionRank}>
+                            #{index + 1}
+                          </div>
+                          <Card.Meta
+                            title={
+                              <div>
+                                <Typography.Text className={styles.suggestionMealTitle}>
+                                  {meal.nameEnglish}
+                                </Typography.Text>
+                                <div className={styles.suggestionScore}>
+                                  Match Score: {(suggestion.score * 100).toFixed(0)}%
+                                </div>
+                                <div className={styles.suggestionPrice}>
+                                  Rs. {meal.price ? meal.price.toFixed(2) : "0.00"}
+                                </div>
+                              </div>
+                            }
+                            description={
+                              <div className={styles.suggestionDescription}>
+                                <Typography.Text className={styles.suggestionReason}>
+                                  {suggestion.reason}
+                                </Typography.Text>
+                                <div className={styles.suggestionMetrics}>
+                                  <Badge 
+                                    count={`Nutrition: ${(suggestion.nutritionalMatch * 100).toFixed(0)}%`} 
+                                    style={{ backgroundColor: '#52c41a', fontSize: '10px' }}
+                                  />
+                                  <Badge 
+                                    count={`Preference: ${(suggestion.preferenceMatch * 100).toFixed(0)}%`} 
+                                    style={{ backgroundColor: '#1890ff', fontSize: '10px' }}
+                                  />
+                                  <Badge 
+                                    count={`BMI Fit: ${(suggestion.bmiSuitability * 100).toFixed(0)}%`} 
+                                    style={{ backgroundColor: '#722ed1', fontSize: '10px' }}
+                                  />
+                                </div>
+                              </div>
+                            }
+                          />
+                        </Card>
+                      </Col>
+                    );
+                  })}
+                </Row>
+              </div>
+            )}
+          </div>
+        </Modal>
       </Layout>
     </>
   );
