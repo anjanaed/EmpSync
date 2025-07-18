@@ -21,6 +21,11 @@
   width: auto;
 }
 
+/* Add to ResponsiveNav.module.css if you want, but this is global! */
+:global(.dark) .logo {
+  filter: brightness(0) invert(1);
+}
+
 /* Menu toggle button for mobile view */
 .menuToggle {
   display: none;

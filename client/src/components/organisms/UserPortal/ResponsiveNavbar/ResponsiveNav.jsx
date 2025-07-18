@@ -14,7 +14,7 @@ import {
   BellOutlined
 } from '@ant-design/icons';
 import styles from './ResponsiveNav.module.css';
-import Companylogo from '../../../../assets/Logo/logo.png';
+import logoImg from '../../../../assets/Logo/Logo.png';
 
 // ResponsiveNav component for navigation bar
 const ResponsiveNav = () => {
@@ -55,11 +55,7 @@ const ResponsiveNav = () => {
     <nav className={`${styles.navbar} ${isDark ? styles.dark : ''}`}>
       {/* Company logo section */}
       <div className={styles.companyName}>
-        <img
-          src={Companylogo} // Use default logo
-          alt="Company Logo"
-          className={styles.logo}
-        />
+        <img className={styles.logo} src={logoImg} alt="Logo" />
       </div>
 
       {/* Navigation links */}
