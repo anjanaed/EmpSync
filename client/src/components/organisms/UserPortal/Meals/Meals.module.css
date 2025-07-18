@@ -354,6 +354,12 @@
   color: var(--text-primary);
 }
 
+/* Ensure all text in Meals section is white in dark mode */
+[data-theme="dark"] .container,
+[data-theme="dark"] .container * {
+  color: var(--text-primary) !important;
+}
+
 /* Additional text elements that need white text in dark mode */
 [data-theme="dark"] .cardHeader {
   color: var(--text-primary);
@@ -432,6 +438,17 @@
 
 [data-theme="dark"] .ant-tabs-tab-active .ant-tabs-tab-btn {
   color: var(--text-primary) !important;
+}
+
+/* Dark mode: Month and Year select button backgrounds for Ant Design Calendar/DatePicker */
+[data-theme="dark"] .ant-picker-header button,
+[data-theme="dark"] .ant-picker-month-btn,
+[data-theme="dark"] .ant-picker-year-btn,
+[data-theme="dark"] .ant-calendar-month-select,
+[data-theme="dark"] .ant-calendar-year-select {
+  background: var(--bg-tertiary) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--border-color) !important;
 }
 
 
