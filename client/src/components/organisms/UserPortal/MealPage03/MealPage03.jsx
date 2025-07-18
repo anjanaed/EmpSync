@@ -769,7 +769,7 @@ const MealPage03 = () => {
             <Modal
               title={
                 <div className={styles.suggestionsTitle}>
-                  <RiAiGenerate /> AI Meal Suggestions
+                  <RiAiGenerate /> Meal Suggestions
                 </div>
               }
               visible={showSuggestions}
