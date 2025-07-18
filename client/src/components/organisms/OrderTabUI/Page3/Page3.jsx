@@ -16,13 +16,14 @@ import { CheckCircleOutlined, CloseOutlined } from "@ant-design/icons";
 import { motion } from "framer-motion";
 import styles from "./Page3.module.css";
 import { IoClose } from "react-icons/io5";
-import { MdLanguage } from "react-icons/md";
+import { MdLanguage, MdTranslate } from "react-icons/md";
 import { RiAiGenerate } from "react-icons/ri";
 import { LoadingOutlined } from "@ant-design/icons";
 import { Spin } from "antd";
 import translations from "../../../../utils/translations";
 import { useAuth } from "../../../../contexts/AuthContext";
 import axios from "axios";
+import DateAndTime from "../DateAndTime/DateAndTime";
 
 const { Content } = Layout;
 const { Title, Text } = Typography;
@@ -426,10 +427,7 @@ const Page3 = ({
         <div className={styles.header}>
           <div className={styles.name}>BizSolution</div>
           <div className={styles.dateAndTime}>
-            {currentTimeRef.current.toLocaleString("en-IN")}
-            <button style={{position: 'fixed', top: 10, right: 10, zIndex: 9999}} onClick={() => carouselRef.current.goTo(1)}>
-        Go to Page2
-      </button>
+            <DateAndTime />
           </div>
           
           <div className={styles.userName}>
@@ -843,16 +841,28 @@ const Page3 = ({
                           }, 0)
                           .toFixed(2)}
                       </Text>
-                      <Button
-                        onClick={() => {
-                          // Set a flag in sessionStorage to indicate special redirect
-                          sessionStorage.setItem('redirectToPage3', 'true');
-                          carouselRef.current?.goTo(0);
-                        }}
-                        className={styles.backButton}
-                      >
-                        <MdLanguage size={20} /> <div>{text.back}</div>
-                      </Button>
+                      <div style={{ display: 'flex', gap: '8px' }}>
+                        <Button
+                          onClick={() => {
+                            // Set a flag in sessionStorage to indicate special redirect
+                            sessionStorage.setItem('redirectToPage3', 'true');
+                            carouselRef.current?.goTo(0);
+                          }}
+                          className={styles.backButton}
+                        >
+                          <MdTranslate size={20} /> 
+                        </Button>
+                        <Button
+                          onClick={() => {
+                            setResetPin(true);
+                            carouselRef.current?.goTo(1);
+                          }}
+                          className={styles.backButton}
+                        >
+                          Cancel Order
+                        </Button>
+                        
+                      </div>
                     </div>
                   </div>
                 </Col>
