@@ -114,6 +114,11 @@ export class SuperAdminController {
     }
   }
 
+  @Get('admin/last-employee-no')
+  async getLastAdminEmployeeNo() {
+    return this.superAdminService.getLastAdminEmployeeNo();
+  }
+
   @Put('users/:id')
   @UseGuards(AuthGuard('superadmin-jwt'))
   async updateUser(

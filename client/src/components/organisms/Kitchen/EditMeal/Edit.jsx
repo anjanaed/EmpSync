@@ -39,8 +39,7 @@ const EditMealPage = () => {
   const [imageUrl, setImageUrl] = useState(null);
   const [originalImageUrl, setOriginalImageUrl] = useState(null);
   const fileInputRef = useRef(null);
-  const [isIngredientsModalVisible, setIsIngredientsModalVisible] =
-    useState(false);
+  const [isIngredientsModalVisible, setIsIngredientsModalVisible] =useState(false);
   const [loadingIngredients, setLoadingIngredients] = useState(false);
   const [searchIngredient, setSearchIngredient] = useState("");
   const [selectedIngredients, setSelectedIngredients] = useState([]);
@@ -52,7 +51,6 @@ const EditMealPage = () => {
   const { authData } = useAuth();
   const token = authData?.accessToken;
   const orgId = authData?.orgId;
-
   const navigate = useNavigate();
   const location = useLocation();
   const urL = import.meta.env.VITE_BASE_URL;

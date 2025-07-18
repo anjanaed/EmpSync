@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { BrowserMultiFormatReader } from '@zxing/browser';
 import { message } from 'antd';
 
@@ -6,25 +6,24 @@ const ScanSection = ({ isScanning, onScanSuccess }) => {
   const videoRef = useRef(null);
   const codeReader = useRef(null);
   const streamRef = useRef(null);
+  const hasScannedRef = useRef(false); 
 
   useEffect(() => {
     if (isScanning) {
+      hasScannedRef.current = false; // reset lock on new scan session
       codeReader.current = new BrowserMultiFormatReader();
 
-      // Start scanning
       codeReader.current
         .decodeFromVideoDevice(undefined, videoRef.current, (result, error) => {
-          if (result) {
+          if (result && !hasScannedRef.current) {
+            hasScannedRef.current = true; 
             const text = result.getText();
-            onScanSuccess(text);
-
-            // Stop scanning and camera after successful scan
             stopScanning();
+            onScanSuccess(text); // only call once
           }
-          // NotFoundException is normal - it means no code was found in this frame
-          // Only log actual errors
+
           if (error && error.name !== 'NotFoundException') {
-            
+            console.error(error); // optional logging
           }
         })
         .catch((err) => {
@@ -38,20 +37,17 @@ const ScanSection = ({ isScanning, onScanSuccess }) => {
   }, [isScanning, onScanSuccess]);
 
   const stopScanning = () => {
-    // Stop the video stream
     if (videoRef.current?.srcObject) {
       const tracks = videoRef.current.srcObject.getTracks();
       tracks.forEach((track) => track.stop());
       videoRef.current.srcObject = null;
     }
 
-    // Clear the stream reference
     if (streamRef.current) {
       streamRef.current.getTracks().forEach((track) => track.stop());
       streamRef.current = null;
     }
 
-    // Clear the code reader
     codeReader.current = null;
   };
 

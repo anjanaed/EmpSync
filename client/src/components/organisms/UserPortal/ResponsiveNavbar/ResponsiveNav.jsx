@@ -14,7 +14,7 @@ import {
   BellOutlined
 } from '@ant-design/icons';
 import styles from './ResponsiveNav.module.css';
-import Companylogo from '../../../../assets/Logo/logo.png';
+import logoImg from '../../../../assets/Logo/Logo.png';
 
 // ResponsiveNav component for navigation bar
 const ResponsiveNav = () => {
@@ -55,11 +55,7 @@ const ResponsiveNav = () => {
     <nav className={`${styles.navbar} ${isDark ? styles.dark : ''}`}>
       {/* Company logo section */}
       <div className={styles.companyName}>
-        <img
-          src={Companylogo} // Use default logo
-          alt="Company Logo"
-          className={styles.logo}
-        />
+        <img className={styles.logo} src={logoImg} alt="Logo" />
       </div>
 
       {/* Navigation links */}
@@ -114,20 +110,9 @@ const ResponsiveNav = () => {
 
       {/* Right section with controls */}
       <div className={styles.rightSection}>
-        {/* Notification icon */}
+        {/* Notification icon only */}
         <div className={styles.notificationContainer}>
-          <button
-            onClick={handleNotificationClick}
-            className={styles.notificationButton}
-            aria-label="View Notifications"
-          >
-            <BellOutlined style={{ fontSize: '20px' }} />
-            {notificationCount > 0 && (
-              <span className={styles.notificationBadge}>
-                {notificationCount > 99 ? '99+' : notificationCount}
-              </span>
-            )}
-          </button>
+          <BellOutlined style={{ fontSize: '20px' }} />
         </div>
 
         {/* Dark mode toggle */}

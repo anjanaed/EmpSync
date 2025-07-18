@@ -4,6 +4,7 @@ import axios from "axios";
 import moment from "moment";
 import { useAuth } from "../../../../contexts/AuthContext";
 import { useTheme } from "../../../../contexts/ThemeContext";
+import leftimag from "../../../../assets/Logo/profile.jpg";
 
 export default function UserProfile({ user }) {
   const [isEditing, setIsEditing] = useState(false);
@@ -72,9 +73,9 @@ export default function UserProfile({ user }) {
     },
     imageSection: {
       position: 'relative',
-      backgroundImage: isDark 
-        ? 'linear-gradient(135deg, #1e3a8a 0%, #3730a3 50%, #581c87 100%)'
-        : 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'800\' height=\'600\' viewBox=\'0 0 800 600\'%3E%3Cdefs%3E%3ClinearGradient id=\'grad1\' x1=\'0%25\' y1=\'0%25\' x2=\'100%25\' y2=\'100%25\'%3E%3Cstop offset=\'0%25\' style=\'stop-color:%23ff6b6b;stop-opacity:1\' /%3E%3Cstop offset=\'50%25\' style=\'stop-color:%23feca57;stop-opacity:1\' /%3E%3Cstop offset=\'100%25\' style=\'stop-color:%23ff9ff3;stop-opacity:1\' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width=\'800\' height=\'600\' fill=\'url(%23grad1)\'/%3E%3Ccircle cx=\'200\' cy=\'150\' r=\'80\' fill=\'%23fff\' opacity=\'0.3\'/%3E%3Ccircle cx=\'600\' cy=\'100\' r=\'60\' fill=\'%23fff\' opacity=\'0.2\'/%3E%3Ccircle cx=\'150\' cy=\'400\' r=\'100\' fill=\'%23fff\' opacity=\'0.1\'/%3E%3Ccircle cx=\'650\' cy=\'450\' r=\'90\' fill=\'%23fff\' opacity=\'0.2\'/%3E%3Cpath d=\'M300,250 Q400,200 500,250 T700,300 L700,400 Q600,350 500,400 T300,450 Z\' fill=\'%23fff\' opacity=\'0.1\'/%3E%3Ctext x=\'400\' y=\'280\' font-family=\'Arial, sans-serif\' font-size=\'24\' font-weight=\'bold\' text-anchor=\'middle\' fill=\'%23fff\' opacity=\'0.8\'%3EEmployee Portal%3C/text%3E%3Ctext x=\'400\' y=\'310\' font-family=\'Arial, sans-serif\' font-size=\'16\' text-anchor=\'middle\' fill=\'%23fff\' opacity=\'0.7\'%3EManage Your Profile%3C/text%3E%3Cpath d=\'M200,500 Q250,480 300,500 T400,520 Q450,500 500,520 T600,500\' stroke=\'%23fff\' stroke-width=\'3\' fill=\'none\' opacity=\'0.3\'/%3E%3C/svg%3E")',
+      backgroundImage: isDark
+        ? `url(${leftimag})`
+        : `url(${leftimag})`,
       backgroundSize: 'cover',
       backgroundPosition: 'center',
       display: 'flex',
@@ -396,10 +397,10 @@ export default function UserProfile({ user }) {
           {window.innerWidth > 768 && (
             <div style={styles.imageSection}>
               <div style={styles.imageOverlay}>
-                <div style={styles.imageContent}>
+                {/* <div style={styles.imageContent}>
                   <h2 style={styles.imageTitle}>Employee Portal</h2>
                   <p style={styles.imageSubtitle}>Manage your profile information</p>
-                </div>
+                </div> */}
               </div>
             </div>
           )}

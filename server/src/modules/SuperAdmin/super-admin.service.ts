@@ -180,13 +180,26 @@ export class SuperAdminService {
       if (!data.email) {
         throw new BadRequestException('Email is required');
       }
+
+      // Only auto-generate employeeNo for admin roles
+      if (
+        data.role === 'HR_ADMIN' ||
+        data.role === 'KITCHEN_ADMIN'
+      ) {
+        const lastEmpNo = await this.getLastAdminEmployeeNo(); // e.g., 'A007'
+
+        const lastNumber = parseInt(lastEmpNo.slice(1), 10);
+        const nextNumber = (lastNumber + 1).toString().padStart(3, '0');
+        data.empNo = `A${nextNumber}`;
+      }
+
       return await this.databaseService.user.create({ data });
     } catch (error) {
       if (error instanceof BadRequestException) {
         throw error;
       }
       if (error.code === 'P2002') {
-        throw new BadRequestException('User with this email already exists');
+        throw new BadRequestException('User with this email or employee number already exists');
       }
       if (error.code === 'P2003') {
         throw new BadRequestException('Invalid organization ID provided');
@@ -272,6 +285,36 @@ export class SuperAdminService {
         throw new NotFoundException('User not found');
       }
       throw new BadRequestException('Failed to delete user: ' + error.message);
+    }
+  }
+
+  async getLastAdminEmployeeNo(): Promise<string> {
+    try {
+      const admins = await this.databaseService.user.findMany({
+        where: {
+          role: {
+            in: ['HR_ADMIN', 'KITCHEN_ADMIN'],
+          },
+          empNo: {
+            startsWith: 'A',
+          },
+        },
+        orderBy: {
+          empNo: 'desc',
+        },
+        take: 1,
+      });
+
+      if (admins.length === 0) {
+        return 'A000';
+      }
+
+      const lastEmpNo = admins[0].empNo; // e.g., 'A007'
+      const lastNumber = parseInt(lastEmpNo.slice(1), 10);
+      const nextNumber = (lastNumber + 1).toString().padStart(3, '0');
+      return `A${nextNumber}`;
+    } catch (error) {
+      throw new BadRequestException('Failed to fetch last admin employee number: ' + error.message);
     }
   }
 
