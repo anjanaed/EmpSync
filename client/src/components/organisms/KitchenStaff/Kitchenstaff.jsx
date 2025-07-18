@@ -1,17 +1,204 @@
 import React, { useState, useEffect } from "react";
 import { Calendar, Plus, Trash2 } from "lucide-react";
-import styles from "./KitchenStaff.module.css";
+import { DatePicker, Card } from "antd";
+import { useNavigate } from "react-router-dom";
+import "antd/dist/reset.css";
+import styles from "./Kitchenstaff.module.css";
 
-const Dashboard = () => {
+const { Meta } = Card;
+
+// Cart component styles
+const cartStyles = {
+  cartContainer: {
+    padding: "20px",
+    backgroundColor: "#f8f9fa",
+    margin: "20px",
+  },
+  cartGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(4, 1fr)",
+    gap: "20px",
+    maxWidth: "1200px",
+    margin: "0 auto",
+  },
+  cartCard: {
+    backgroundColor: "white",
+    borderRadius: "8px",
+    padding: "20px",
+    boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+    border: "1px solid #e9ecef",
+  },
+  imageContainer: {
+    width: "100%",
+    height: "200px",
+    marginBottom: "16px",
+    backgroundColor: "#e9ecef",
+    borderRadius: "6px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  imagePlaceholder: {
+    color: "#6c757d",
+    fontSize: "24px",
+  },
+  cardContent: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "12px",
+  },
+  cardHeader: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+    marginBottom: "8px",
+  },
+  itemName: {
+    fontSize: "24px",
+    fontWeight: "600",
+    color: "#333",
+    margin: "0",
+    flex: "1",
+  },
+  orderCount: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    minWidth: "80px",
+  },
+  count: {
+    fontSize: "36px",
+    fontWeight: "700",
+    color: "#333",
+    lineHeight: "1",
+  },
+  orderCountLabel: {
+    fontSize: "12px",
+    color: "#6c757d",
+    textAlign: "center",
+    marginTop: "2px",
+  },
+  mealId: {
+    fontSize: "14px",
+    color: "#6c757d",
+    marginBottom: "8px",
+  },
+  description: {
+    fontSize: "14px",
+    color: "#666",
+    lineHeight: "1.4",
+    margin: "0",
+    marginBottom: "12px",
+  },
+  ingredients: {
+    display: "flex",
+    flexWrap: "wrap",
+    gap: "8px",
+  },
+  ingredient: {
+    backgroundColor: "#fff3cd",
+    color: "#856404",
+    padding: "4px 8px",
+    borderRadius: "4px",
+    fontSize: "12px",
+    fontWeight: "500",
+    border: "1px solid #ffeaa7",
+  },
+  // Popup styles
+  popupOverlay: {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 1000,
+  },
+  popupContent: {
+    backgroundColor: "white",
+    borderRadius: "12px",
+    padding: "30px",
+    width: "400px",
+    maxWidth: "90vw",
+    boxShadow: "0 10px 30px rgba(0, 0, 0, 0.3)",
+    position: "relative",
+  },
+  popupHeader: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+    marginBottom: "20px",
+    borderBottom: "1px solid #e9ecef",
+    paddingBottom: "15px",
+  },
+  popupTitle: {
+    fontSize: "24px",
+    fontWeight: "600",
+    color: "#333",
+    margin: 0,
+  },
+  popupMealId: {
+    fontSize: "14px",
+    color: "#666",
+    fontWeight: "400",
+    marginTop: "4px",
+    margin: 0,
+  },
+  closeButton: {
+    background: "none",
+    border: "none",
+    fontSize: "24px",
+    color: "#666",
+    cursor: "pointer",
+    padding: "0",
+    width: "30px",
+    height: "30px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: "50%",
+    transition: "background-color 0.2s",
+  },
+  popupBody: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "15px",
+  },
+  countRow: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: "12px",
+    backgroundColor: "#f8f9fa",
+    borderRadius: "8px",
+    border: "1px solid #e9ecef",
+  },
+  countLabel: {
+    fontSize: "16px",
+    fontWeight: "500",
+    color: "#333",
+  },
+  countValue: {
+    fontSize: "20px",
+    fontWeight: "700",
+    color: "#d32f2f",
+  },
+};
+
+const Dashbord = () => {
   const [activeTab, setActiveTab] = useState("breakfast");
   const [manualOverride, setManualOverride] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
-  const [mealData, setMealData] = useState({ breakfast: [], lunch: [], dinner: [] });
+  const [mealData, setMealData] = useState({ breakfast: [], lunch: [], dinner: [] }); // State to store meal data
   const [showPopup, setShowPopup] = useState(false);
   const [selectedMeal, setSelectedMeal] = useState(null);
   const [isViewingTomorrow, setIsViewingTomorrow] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [cartItems, setCartItems] = useState([]);
+  const navigate = useNavigate();
 
   const currentDate = new Date();
   const formattedDate = selectedDate.toLocaleDateString("en-US", {
@@ -39,7 +226,7 @@ const Dashboard = () => {
           throw new Error("Failed to fetch meal data");
         }
         const data = await response.json();
-        setMealData(data);
+        setMealData(data); // Update state with fetched data
       } catch (error) {
         console.error("Error fetching meal data:", error);
       }
@@ -57,9 +244,11 @@ const Dashboard = () => {
   // Handle tomorrow/today button click
   const handleDateToggle = () => {
     if (isViewingTomorrow) {
+      // Switch back to today
       setSelectedDate(new Date());
       setIsViewingTomorrow(false);
     } else {
+      // Switch to tomorrow
       const tomorrow = new Date();
       tomorrow.setDate(tomorrow.getDate() + 1);
       setSelectedDate(tomorrow);
@@ -85,265 +274,225 @@ const Dashboard = () => {
     setSelectedMeal(null);
   };
 
-  const navigate = (path) => {
-    console.log(`Navigating to: ${path}`);
-  };
+  const renderPopup = () => {
+    if (!showPopup || !selectedMeal) return null;
+
+    return (
+      <div style={cartStyles.popupOverlay} onClick={closePopup}>
+        <div style={cartStyles.popupContent} onClick={(e) => e.stopPropagation()}>
+          <div style={cartStyles.popupHeader}>
+            <div>
+              <h2 style={cartStyles.popupTitle}>{selectedMeal.name}</h2>
+              <p style={cartStyles.popupMealId}>Meal ID: {selectedMeal.mealId}</p>
+            </div>
+            <button style={cartStyles.closeButton} onClick={closePopup}>
+              ×
+            </button>
+          </div>
+          <div style={cartStyles.popupBody}>
+            <div style={cartStyles.countRow}>
+              <span style={cartStyles.countLabel}>Total Order Count:</span>
+              <span style={cartStyles.countValue}>{selectedMeal.orderCount}</span>
+            </div>
+            <div style={cartStyles.countRow}>
+              <span style={cartStyles.countLabel}>Served Order Count:</span>
+              <span style={cartStyles.countValue}>{selectedMeal.serveOrderCount}</span>
+            </div>
+            <div style={cartStyles.countRow}>
+              <span style={cartStyles.countLabel}>Pending Order Count:</span>
+              <span style={cartStyles.countValue}>{selectedMeal.pendingOrderCount}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // Render content based on the active tab
   const renderTabContent = () => {
     const meals = mealData[activeTab] || [];
     return (
       <div>
-        {/* Meal Cards Grid */}
-        <div className={styles.cardGrid}>
+        <div className={styles.cardContainer}>
           {meals.map((meal) => (
-            <div key={meal.mealId} className={styles.mealCard}>
-              {/* Image Container */}
-              <div className={styles.imageContainer}>
-                {meal.imageUrl ? (
-                  <img
-                    src={meal.imageUrl}
-                    alt={meal.name}
-                    className={styles.mealImage}
-                  />
-                ) : (
-                  <div className={styles.imagePlaceholder}>
-                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+            <Card
+              key={meal.mealId}
+              hoverable
+              className={styles.card} // Add a class for the card
+              cover={
+                <img
+                  alt={meal.name}
+                  src={meal.imageUrl || "https://via.placeholder.com/240"} // Use Firebase image or fallback
+                  className={styles.cardImage} // Add a class for the image
+                />
+              }
+            >
+              <Meta
+                title={`${meal.name}`}
+                description={
+                  <div>
+                    <div style={{ fontSize: '12px', color: '#666', marginBottom: '4px' }}>
+                      Meal ID: {meal.mealId}
+                    </div>
+                    {meal.description && (
+                      <div style={{ fontSize: '13px', color: '#555', marginBottom: '8px', lineHeight: '1.3' }}>
+                        {meal.description}
+                      </div>
+                    )}
+                    {meal.ingredients && meal.ingredients.length > 0 && (
+                      <div style={{ marginBottom: '8px' }}>
+                        <div style={{ fontSize: '12px', fontWeight: '500', color: '#444', marginBottom: '4px' }}>
+                          Ingredients:
+                        </div>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+                          {meal.ingredients.map((ingredient, index) => (
+                            <span 
+                              key={index} 
+                              style={{
+                                backgroundColor: '#fff3cd',
+                                color: '#856404',
+                                padding: '2px 6px',
+                                borderRadius: '3px',
+                                fontSize: '10px',
+                                fontWeight: '500',
+                                border: '1px solid #ffeaa7',
+                              }}
+                            >
+                              {ingredient}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    <span className={styles.mealCountText}>
+                      Total Count: {meal.totalCount}
+                    </span>
+                  </div>
+                } // Add a class for the meal count text
+              />
+            </Card>
+          ))}
+        </div>
+        
+        {/* Cart section under each meal tab */}
+        
+          {/* <h3 style={{ margin: '20px 0', fontSize: '20px', fontWeight: '600', color: '#333' }}>
+            Cart Items for {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}
+          </h3> */}
+          <div style={cartStyles.cartGrid}>
+            {cartItems.map((item) => (
+              <div 
+                key={item.id} 
+                style={{...cartStyles.cartCard, cursor: 'pointer'}} 
+                onClick={() => handleCartItemClick(item)}
+              >
+                <div style={cartStyles.imageContainer}>
+                  <div style={cartStyles.imagePlaceholder}>
+                    <svg
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
                       <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
                       <circle cx="8.5" cy="8.5" r="1.5" />
                       <polyline points="21,15 16,10 5,21" />
                     </svg>
                   </div>
-                )}
-              </div>
+                </div>
 
-              {/* Card Content */}
-              <div className={styles.cardContent}>
-                {/* Header with Name and Count */}
-                <div className={styles.cardHeader}>
-                  <h3 className={styles.mealName}>
-                    {meal.name}
-                  </h3>
-                  <div className={styles.orderCountSection}>
-                    <div className={styles.orderCountNumber}>
-                      {meal.totalCount}
-                    </div>
-                    <div className={styles.orderCountLabel}>
-                      Order Count
+                <div style={cartStyles.cardContent}>
+                  <div style={cartStyles.cardHeader}>
+                    <h3 style={cartStyles.itemName}>{item.name}</h3>
+                    <div style={cartStyles.orderCount}>
+                      <span style={cartStyles.count}>{item.orderCount}</span>
+                      <span style={cartStyles.orderCountLabel}>Order Count</span>
                     </div>
                   </div>
-                </div>
 
-                {/* Meal ID */}
-                <div className={styles.mealId}>
-                  Meal ID: {meal.mealId}
-                </div>
+                  <div style={cartStyles.mealId}>Meal ID: {item.mealId}</div>
 
-                {/* Description */}
-                {meal.description && (
-                  <p className={styles.description}>
-                    {meal.description}
-                  </p>
-                )}
+                  <p style={cartStyles.description}>{item.description}</p>
 
-                {/* Ingredients */}
-                {meal.ingredients && meal.ingredients.length > 0 && (
-                  <div className={styles.ingredients}>
-                    {meal.ingredients.slice(0, 3).map((ingredient, index) => (
-                      <span
-                        key={index}
-                        className={styles.ingredient}
-                      >
+                  <div style={cartStyles.ingredients}>
+                    {item.ingredients.map((ingredient, index) => (
+                      <span key={index} style={cartStyles.ingredient}>
                         {ingredient}
                       </span>
                     ))}
-                    {meal.ingredients.length > 3 && (
-                      <span className={styles.moreIngredients}>
-                        +{meal.ingredients.length - 3} more
-                      </span>
-                    )}
-                  </div>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
-        
-        {/* Cart Items Section */}
-        {cartItems.length > 0 && (
-          <div className={styles.cartContainer}>
-            <div className={styles.cartGrid}>
-              {cartItems.map((item) => (
-                <div 
-                  key={item.id} 
-                  className={styles.cartCard}
-                  onClick={() => handleCartItemClick(item)}
-                >
-                  <div className={styles.cartImageContainer}>
-                    <div className={styles.imagePlaceholder}>
-                      <svg
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                      >
-                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-                        <circle cx="8.5" cy="8.5" r="1.5" />
-                        <polyline points="21,15 16,10 5,21" />
-                      </svg>
-                    </div>
-                  </div>
-
-                  <div className={styles.cartCardContent}>
-                    <div className={styles.cartCardHeader}>
-                      <h3 className={styles.cartItemName}>
-                        {item.name}
-                      </h3>
-                      <div className={styles.cartOrderCount}>
-                        <span className={styles.cartCount}>
-                          {item.orderCount}
-                        </span>
-                        <span className={styles.cartOrderCountLabel}>
-                          Order Count
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className={styles.cartMealId}>
-                      Meal ID: {item.mealId}
-                    </div>
-
-                    <p className={styles.cartDescription}>
-                      {item.description}
-                    </p>
-
-                    <div className={styles.cartIngredients}>
-                      {item.ingredients.map((ingredient, index) => (
-                        <span
-                          key={index}
-                          className={styles.cartIngredient}
-                        >
-                          {ingredient}
-                        </span>
-                      ))}
-                    </div>
                   </div>
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
-        )}
-      </div>
+        </div>
     );
   };
 
   return (
     <div className={styles.dashboardContainer}>
-      <div className={styles.mainWrapper}>
-        <div className={styles.menuScheduler}>
-          <div className={styles.header}>
-            <h2 className={styles.title}>
-              Order - {formattedDate} {isViewingTomorrow && "(Tomorrow)"}
-            </h2>
-            <p className={styles.time}>{formattedTime}</p>
-            <div className={styles.dateControls}>
-              <button 
-                className={styles.dateButton}
-                onClick={handleDateToggle}
-              >
-                {isViewingTomorrow ? "Today" : "Tomorrow"}
-              </button>
-              <button
-                className={styles.gotoDashboardButton}
-                onClick={() => navigate("/serving")}
-              >
-                Goto Serving
-              </button>
-            </div>
+      <div className={styles.menuScheduler}>
+        <div className={styles.header}>
+          <h2 className={styles.title}>
+            Order - {formattedDate} {isViewingTomorrow && "(Tomorrow)"}
+          </h2>
+          <p className={styles.time}>{formattedTime}</p>
+          <div className={styles.dateControls}>
+            <button 
+              className={styles.dateButton}
+              onClick={handleDateToggle}
+            >
+              {isViewingTomorrow ? "Today" : "Tomorrow"}
+            </button>
+            <button
+              className={styles.gotoDashboardButton}
+              onClick={() => navigate("/serving")}
+            >
+              Goto Serving
+            </button>
           </div>
+        </div>
 
-          <div className={styles.tabContainer}>
-            <div className={styles.tabs}>
-              <button
-                className={`${styles.tab} ${
-                  activeTab === "breakfast" ? styles.activeTab : ""
-                }`}
-                onClick={() => handleTabSwitch("breakfast")}
-              >
-                Breakfast Sets
-              </button>
-              <button
-                className={`${styles.tab} ${
-                  activeTab === "lunch" ? styles.activeTab : ""
-                }`}
-                onClick={() => handleTabSwitch("lunch")}
-              >
-                Lunch Set
-              </button>
-              <button
-                className={`${styles.tab} ${
-                  activeTab === "dinner" ? styles.activeTab : ""
-                }`}
-                onClick={() => handleTabSwitch("dinner")}
-              >
-                Dinner Set
-              </button>
-            </div>
+        <div className={styles.tabContainer}>
+          <div className={styles.tabs}>
+            <button
+              className={`${styles.tab} ${
+                activeTab === "breakfast" ? styles.activeTab : ""
+              }`}
+              onClick={() => handleTabSwitch("breakfast")}
+            >
+              Breakfast Sets
+            </button>
+            <button
+              className={`${styles.tab} ${
+                activeTab === "lunch" ? styles.activeTab : ""
+              }`}
+              onClick={() => handleTabSwitch("lunch")}
+            >
+              Lunch Set
+            </button>
+            <button
+              className={`${styles.tab} ${
+                activeTab === "dinner" ? styles.activeTab : ""
+              }`}
+              onClick={() => handleTabSwitch("dinner")}
+            >
+              Dinner Set
+            </button>
           </div>
+        </div>
 
-          <div className={styles.content}>
-            {renderTabContent()}
-          </div>
+        <div className={styles.content}>
+          {renderTabContent()}
         </div>
       </div>
-
-      {/* Popup Modal */}
-      {showPopup && selectedMeal && (
-        <div className={styles.popupOverlay} onClick={closePopup}>
-          <div className={styles.popupContent} onClick={(e) => e.stopPropagation()}>
-            <div className={styles.popupHeader}>
-              <div>
-                <h2 className={styles.popupTitle}>
-                  {selectedMeal.name}
-                </h2>
-                <p className={styles.popupMealId}>
-                  Meal ID: {selectedMeal.mealId}
-                </p>
-              </div>
-              <button
-                className={styles.closeButton}
-                onClick={closePopup}
-              >
-                <span className={styles.closeButtonIcon}>×</span>
-              </button>
-            </div>
-            <div className={styles.popupBody}>
-              <div className={styles.countRow}>
-                <span className={styles.countLabel}>Total Order Count:</span>
-                <span className={styles.countValue}>
-                  {selectedMeal.orderCount}
-                </span>
-              </div>
-              <div className={styles.countRow}>
-                <span className={styles.countLabel}>Served Order Count:</span>
-                <span className={styles.countValue}>
-                  {selectedMeal.serveOrderCount}
-                </span>
-              </div>
-              <div className={styles.countRow}>
-                <span className={styles.countLabel}>Pending Order Count:</span>
-                <span className={styles.countValue}>
-                  {selectedMeal.pendingOrderCount}
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      
+      {/* Popup */}
+      {renderPopup()}
     </div>
   );
 };
 
-export default Dashboard;
+export default Dashbord;
