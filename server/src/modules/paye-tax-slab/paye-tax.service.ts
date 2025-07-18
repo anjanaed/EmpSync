@@ -8,19 +8,21 @@ export class PayeTaxService {
 
   async create(createPayeTaxDto: Prisma.PayeTaxSlabCreateInput) {
     try {
-      return await this.databaseService.payeTaxSlab.create({ data: createPayeTaxDto });
+      return await this.databaseService.payeTaxSlab.createMany({ data: createPayeTaxDto });
     } catch (error) {
       throw new BadRequestException(error.message);
     }
   }
 
-  async findAll() {
-    try {
-      return await this.databaseService.payeTaxSlab.findMany({});
-    } catch (error) {
-      throw new BadRequestException('Failed to retrieve tax record');
-    }
+async findAll(orgId?: string) {
+  try {
+    return await this.databaseService.payeTaxSlab.findMany({
+      where: orgId ? { orgId } : undefined,
+    });
+  } catch (error) {
+    throw new BadRequestException('Failed to retrieve tax record');
   }
+}
 
   async findOne(id: number ) {
     try {

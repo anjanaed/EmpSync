@@ -7,6 +7,7 @@ import {
   UseGuards,
   Post,
   Put,
+  Query,
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
@@ -38,23 +39,23 @@ export class PayeTaxController {
     }
   }
 
-  @Get()
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles('HR_ADMIN','KITCHEN_ADMIN')
-  async findAll() {
-    try {
-      return await this.payeTaxService.findAll();
-    } catch (error) {
-      throw new HttpException(
-        {
-          status: HttpStatus.INTERNAL_SERVER_ERROR,
-          error: 'Failed to fetch PAYE tax slabs',
-          message: error.message,
-        },
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
+@Get()
+@UseGuards(AuthGuard('jwt'), RolesGuard)
+@Roles('HR_ADMIN','KITCHEN_ADMIN')
+async findAll(@Query('orgId') orgId?: string) {
+  try {
+    return await this.payeTaxService.findAll(orgId);
+  } catch (error) {
+    throw new HttpException(
+      {
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        error: 'Failed to fetch PAYE tax slabs',
+        message: error.message,
+      },
+      HttpStatus.INTERNAL_SERVER_ERROR,
+    );
   }
+}
 
   @Get(':id')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
