@@ -12,6 +12,7 @@ import {
   Query, // <-- Add this import
 } from '@nestjs/common';
 import { MealService } from './meal.service';
+import { MealSuggestionService } from './meal-suggestion.service';
 import { Prisma } from '@prisma/client';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from '../../core/authentication/roles.guard';
@@ -35,7 +36,10 @@ interface UpdateMealWithIngredientsDto
 
 @Controller('meal')
 export class MealController {
-  constructor(private readonly mealService: MealService) {}
+  constructor(
+    private readonly mealService: MealService,
+    private readonly mealSuggestionService: MealSuggestionService,
+  ) {}
 
   @Post()
   @UseGuards(AuthGuard('jwt'), RolesGuard)
@@ -163,6 +167,45 @@ export class MealController {
           message: error.message,
         },
         HttpStatus.NOT_FOUND,
+      );
+    }
+  }
+
+  @Get('suggestions/:userId')
+  // @UseGuards(AuthGuard('jwt'), RolesGuard)
+  async getMealSuggestions(
+    @Param('userId') userId: string,
+    @Query('date') date: string,
+    @Query('mealTypeId') mealTypeId: string,
+    @Query('orgId') orgId?: string,
+  ): Promise<any[]> {
+    try {
+      if (!date || !mealTypeId) {
+        throw new HttpException(
+          'Date and mealTypeId are required parameters',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
+      const parsedMealTypeId = parseInt(mealTypeId);
+      if (isNaN(parsedMealTypeId)) {
+        throw new HttpException('Invalid mealTypeId format', HttpStatus.BAD_REQUEST);
+      }
+
+      return await this.mealSuggestionService.getMealSuggestions(
+        userId,
+        date,
+        parsedMealTypeId,
+        orgId,
+      );
+    } catch (error) {
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: 'Bad Request',
+          message: error.message,
+        },
+        HttpStatus.BAD_REQUEST,
       );
     }
   }
