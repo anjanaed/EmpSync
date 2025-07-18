@@ -274,39 +274,39 @@ const Dashbord = () => {
     setSelectedMeal(null);
   };
 
-  const renderPopup = () => {
-    if (!showPopup || !selectedMeal) return null;
+  // const renderPopup = () => {
+  //   if (!showPopup || !selectedMeal) return null;
 
-    return (
-      <div style={cartStyles.popupOverlay} onClick={closePopup}>
-        <div style={cartStyles.popupContent} onClick={(e) => e.stopPropagation()}>
-          <div style={cartStyles.popupHeader}>
-            <div>
-              <h2 style={cartStyles.popupTitle}>{selectedMeal.name}</h2>
-              <p style={cartStyles.popupMealId}>Meal ID: {selectedMeal.mealId}</p>
-            </div>
-            <button style={cartStyles.closeButton} onClick={closePopup}>
-              ×
-            </button>
-          </div>
-          <div style={cartStyles.popupBody}>
-            <div style={cartStyles.countRow}>
-              <span style={cartStyles.countLabel}>Total Order Count:</span>
-              <span style={cartStyles.countValue}>{selectedMeal.orderCount}</span>
-            </div>
-            <div style={cartStyles.countRow}>
-              <span style={cartStyles.countLabel}>Served Order Count:</span>
-              <span style={cartStyles.countValue}>{selectedMeal.serveOrderCount}</span>
-            </div>
-            <div style={cartStyles.countRow}>
-              <span style={cartStyles.countLabel}>Pending Order Count:</span>
-              <span style={cartStyles.countValue}>{selectedMeal.pendingOrderCount}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  //   return (
+  //     <div style={cartStyles.popupOverlay} onClick={closePopup}>
+  //       <div style={cartStyles.popupContent} onClick={(e) => e.stopPropagation()}>
+  //         <div style={cartStyles.popupHeader}>
+  //           <div>
+  //             <h2 style={cartStyles.popupTitle}>{selectedMeal.name}</h2>
+  //             <p style={cartStyles.popupMealId}>Meal ID: {selectedMeal.mealId}</p>
+  //           </div>
+  //           <button style={cartStyles.closeButton} onClick={closePopup}>
+  //             ×
+  //           </button>
+  //         </div>
+  //         <div style={cartStyles.popupBody}>
+  //           <div style={cartStyles.countRow}>
+  //             <span style={cartStyles.countLabel}>Total Order Count:</span>
+  //             <span style={cartStyles.countValue}>{selectedMeal.orderCount}</span>
+  //           </div>
+  //           <div style={cartStyles.countRow}>
+  //             <span style={cartStyles.countLabel}>Served Order Count:</span>
+  //             <span style={cartStyles.countValue}>{selectedMeal.serveOrderCount}</span>
+  //           </div>
+  //           <div style={cartStyles.countRow}>
+  //             <span style={cartStyles.countLabel}>Pending Order Count:</span>
+  //             <span style={cartStyles.countValue}>{selectedMeal.pendingOrderCount}</span>
+  //           </div>
+  //         </div>
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   // Render content based on the active tab
   const renderTabContent = () => {
@@ -374,11 +374,6 @@ const Dashbord = () => {
           ))}
         </div>
         
-        {/* Cart section under each meal tab */}
-        
-          {/* <h3 style={{ margin: '20px 0', fontSize: '20px', fontWeight: '600', color: '#333' }}>
-            Cart Items for {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}
-          </h3> */}
           <div style={cartStyles.cartGrid}>
             {cartItems.map((item) => (
               <div 
@@ -488,9 +483,6 @@ const Dashbord = () => {
           {renderTabContent()}
         </div>
       </div>
-      
-      {/* Popup */}
-      {renderPopup()}
     </div>
   );
 };
