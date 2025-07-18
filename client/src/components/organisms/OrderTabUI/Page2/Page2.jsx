@@ -115,7 +115,7 @@ const Page2 = ({
 
   // Handle PIN digit input
   const handlePinInput = (digit) => {
-    if (pin.length < 4) {
+    if (pin.length < 6) {
       setPin(pin + digit);
     }
   };
@@ -292,10 +292,10 @@ const Page2 = ({
 
   // Handle PIN submission
   const handlePinSubmit = async () => {
-    if (pin.length === 4) {
+    if (pin.length === 6) {
       setScanning(true);
       try {
-        const response = await fetch(`http://localhost:3000/user/${pin}`);
+        const response = await fetch(`http://localhost:3000/user/passkey/${pin}`);
         if (!response.ok) {
           throw new Error("User not found");
         }
@@ -318,7 +318,7 @@ const Page2 = ({
   };
 
   useEffect(() => {
-    if (pin.length === 4) {
+    if (pin.length === 6) {
       handlePinSubmit();
     }
   }, [pin]);
@@ -506,7 +506,7 @@ const Page2 = ({
                 <div className={styles.pinSection}>
                   <div className={styles.SectionTexts}>{text.enterPin}</div>
                   <div className={styles.pinDots}>
-                    {[0, 1, 2, 3].map((idx) => (
+                    {[0, 1, 2, 3, 4, 5].map((idx) => (
                       <span
                         key={idx}
                         className={`${styles.pinDot} ${pin.length > idx ? styles.filled : ""}`}
