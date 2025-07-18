@@ -306,7 +306,7 @@ const Dashbord = () => {
         </div>
       </div>
     );
-  };
+  }
 
   // Render content based on the active tab
   const renderTabContent = () => {
@@ -375,7 +375,7 @@ const Dashbord = () => {
         </div>
         
         {/* Cart section under each meal tab */}
-        <div style={cartStyles.cartContainer}>
+        
           {/* <h3 style={{ margin: '20px 0', fontSize: '20px', fontWeight: '600', color: '#333' }}>
             Cart Items for {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}
           </h3> */}
@@ -428,7 +428,6 @@ const Dashbord = () => {
             ))}
           </div>
         </div>
-      </div>
     );
   };
 
