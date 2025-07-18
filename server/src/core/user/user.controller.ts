@@ -153,6 +153,26 @@ export class UserController {
     return await this.userService.getLastEmpNoByOrg(orgId);
   }
 
+  @Get('passkey/:passkey')
+  async findByPasskey(@Param('passkey') passkey: string) {
+    try {
+      const passkeyNumber = parseInt(passkey, 10);
+      if (isNaN(passkeyNumber)) {
+        throw new Error('Invalid passkey format');
+      }
+      return await this.userService.findByPasskey(passkeyNumber);
+    } catch (err) {
+      throw new HttpException(
+        {
+          status: HttpStatus.NOT_FOUND,
+          error: 'Not Found',
+          message: err.message,
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+  }
+
   @Get(':id/org/:orgId/name')
   // @UseGuards(AuthGuard('jwt'))
   async getUserNameByIdAndOrg(
