@@ -41,6 +41,7 @@ const PayeModal = ({ handleCancel, success, error }) => {
   const fetchRecord = async () => {
     try {
       const res = await axios.get(`${urL}/paye`, {
+        params: { orgId: authData?.orgId }, 
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -88,23 +89,29 @@ const PayeModal = ({ handleCancel, success, error }) => {
     setDataSource((prev) => prev.slice(0, -1));
   };
 
-  const handleConfirm = async () => {
-    await form.validateFields();
-    setLoading(true);
-    try {
-      await axios.put(`${urL}/paye`, dataSource, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      handleCancel();
-      success("PAYE Slab Updated");
-    } catch (err) {
-      handleCancel();
-      error("Something Went Wrong");
-    }
-    setLoading(false);
-  };
+const handleConfirm = async () => {
+  await form.validateFields();
+  setLoading(true);
+  try {
+    const dataWithOrgId = dataSource.map(row => ({
+      ...row,
+      orgId: authData?.orgId,
+    }));
+
+    await axios.post(`${urL}/paye`, dataWithOrgId, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    handleCancel();
+    success("PAYE Slab Updated");
+  } catch (err) {
+    handleCancel();
+    console.error("Failed to update PAYE records:", err);
+    error("Something Went Wrong");
+  }
+  setLoading(false);
+};
 
   const columns = [
     {
