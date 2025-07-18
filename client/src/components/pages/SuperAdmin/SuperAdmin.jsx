@@ -34,8 +34,7 @@ const SuperAdmin = () => {
   const [permissionsData] = useState([
     { key: '1', name: 'User Management', description: 'Manage users: create, edit, delete, and view user accounts.' },
     { key: '2', name: 'Meal Management', description: 'Manage meals: add, edit, delete, and view meal items.' },
-    { key: '3', name: 'Payroll', description: 'Manage payroll: process, edit, and view payroll records.' },
-    { key: '4', name: 'Reports', description: 'Access and export system reports.' },
+    { key: '3', name: 'Reports', description: 'Access and export system reports.' },
   ]);
 
   const token = superAuthData?.accessToken;

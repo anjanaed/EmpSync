@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../../contexts/AuthContext';
+import { useTheme } from '../../../../contexts/ThemeContext';
 import {
   MenuOutlined,
   UserOutlined,
@@ -13,31 +14,26 @@ import {
   BellOutlined
 } from '@ant-design/icons';
 import styles from './ResponsiveNav.module.css';
-import Companylogo from '../../../../assets/Logo/logo.png';
+import logoImg from '../../../../assets/Logo/Logo.png';
 
 // ResponsiveNav component for navigation bar
 const ResponsiveNav = () => {
   // State to manage mobile menu visibility
   const [menuOpen, setMenuOpen] = useState(false);
-  // State to manage dark mode
-  const [darkMode, setDarkMode] = useState(false);
   // State to manage notification count
   const [notificationCount, setNotificationCount] = useState(3); // Example count
   // Hook for programmatic navigation
   const navigate = useNavigate();
   // Destructure logout function and authData from AuthContext
   const { logout, authData } = useAuth();
+  // Use theme context instead of local state
+  const { theme, toggleTheme } = useTheme();
+
+  const isDark = theme === 'dark';
 
   // Toggle mobile menu visibility
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
-  };
-
-  // Toggle dark mode
-  const toggleDarkMode = () => {
-    setDarkMode(!darkMode);
-    // Add your dark mode logic here (e.g., update theme context, localStorage, etc.)
-    document.documentElement.setAttribute('data-theme', darkMode ? 'light' : 'dark');
   };
 
   // Handle logout action
@@ -56,14 +52,10 @@ const ResponsiveNav = () => {
 
   // Render navigation bar
   return (
-    <nav className={`${styles.navbar} ${darkMode ? styles.dark : ''}`}>
+    <nav className={`${styles.navbar} ${isDark ? styles.dark : ''}`}>
       {/* Company logo section */}
       <div className={styles.companyName}>
-        <img
-          src={Companylogo} // Use default logo
-          alt="Company Logo"
-          className={styles.logo}
-        />
+        <img className={styles.logo} src={logoImg} alt="Logo" />
       </div>
 
       {/* Navigation links */}
@@ -118,29 +110,18 @@ const ResponsiveNav = () => {
 
       {/* Right section with controls */}
       <div className={styles.rightSection}>
-        {/* Notification icon */}
+        {/* Notification icon only */}
         <div className={styles.notificationContainer}>
-          <button
-            onClick={handleNotificationClick}
-            className={styles.notificationButton}
-            aria-label="View Notifications"
-          >
-            <BellOutlined style={{ fontSize: '20px' }} />
-            {notificationCount > 0 && (
-              <span className={styles.notificationBadge}>
-                {notificationCount > 99 ? '99+' : notificationCount}
-              </span>
-            )}
-          </button>
+          <BellOutlined style={{ fontSize: '20px' }} />
         </div>
 
         {/* Dark mode toggle */}
         <button
-          onClick={toggleDarkMode}
+          onClick={toggleTheme}
           className={styles.darkModeToggle}
           aria-label="Toggle Dark Mode"
         >
-          {darkMode ? (
+          {isDark ? (
             <SunOutlined style={{ fontSize: '20px' }} />
           ) : (
             <MoonOutlined style={{ fontSize: '20px' }} />

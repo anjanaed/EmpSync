@@ -285,3 +285,161 @@
 [data-theme="dark"] .ant-picker-clear:hover {
   color: var(--text-primary) !important;
 }
+
+/* Modal/Popup window styling */
+[data-theme="dark"] .ant-modal {
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .ant-modal-content {
+  background-color: var(--bg-primary) !important;
+  border: 1px solid var(--border-color) !important;
+  box-shadow: 0 6px 16px 0 var(--shadow) !important;
+}
+
+[data-theme="dark"] .ant-modal-header {
+  background-color: var(--bg-secondary) !important;
+  border-bottom: 1px solid var(--border-color) !important;
+}
+
+[data-theme="dark"] .ant-modal-title {
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .ant-modal-close {
+  color: var(--text-secondary) !important;
+}
+
+[data-theme="dark"] .ant-modal-close:hover {
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .ant-modal-body {
+  background-color: var(--bg-primary) !important;
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .ant-modal-footer {
+  background-color: var(--bg-secondary) !important;
+  border-top: 1px solid var(--border-color) !important;
+}
+
+[data-theme="dark"] .ant-modal-mask {
+  background-color: rgba(0, 0, 0, 0.75) !important;
+}
+
+/* Popover styling */
+[data-theme="dark"] .ant-popover {
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .ant-popover-content {
+  background-color: var(--bg-primary) !important;
+  border: 1px solid var(--border-color) !important;
+  box-shadow: 0 6px 16px 0 var(--shadow) !important;
+}
+
+[data-theme="dark"] .ant-popover-inner {
+  background-color: var(--bg-primary) !important;
+}
+
+[data-theme="dark"] .ant-popover-title {
+  background-color: var(--bg-secondary) !important;
+  border-bottom: 1px solid var(--border-color) !important;
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .ant-popover-inner-content {
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .ant-popover-arrow {
+  background-color: var(--bg-primary) !important;
+}
+
+[data-theme="dark"] .ant-popover-arrow::before {
+  background-color: var(--bg-primary) !important;
+  border-color: var(--border-color) !important;
+}
+
+/* Tooltip styling */
+[data-theme="dark"] .ant-tooltip {
+  max-width: 250px;
+}
+
+[data-theme="dark"] .ant-tooltip-inner {
+  background-color: var(--bg-primary) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--border-color) !important;
+  box-shadow: 0 6px 16px 0 var(--shadow) !important;
+}
+
+[data-theme="dark"] .ant-tooltip-arrow {
+  background-color: var(--bg-primary) !important;
+}
+
+[data-theme="dark"] .ant-tooltip-arrow::before {
+  background-color: var(--bg-primary) !important;
+  border-color: var(--border-color) !important;
+}
+
+/* Drawer styling */
+[data-theme="dark"] .ant-drawer-content {
+  background-color: var(--bg-primary) !important;
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .ant-drawer-header {
+  background-color: var(--bg-secondary) !important;
+  border-bottom: 1px solid var(--border-color) !important;
+}
+
+[data-theme="dark"] .ant-drawer-title {
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .ant-drawer-close {
+  color: var(--text-secondary) !important;
+}
+
+[data-theme="dark"] .ant-drawer-close:hover {
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .ant-drawer-body {
+  background-color: var(--bg-primary) !important;
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .ant-drawer-mask {
+  background-color: rgba(0, 0, 0, 0.75) !important;
+}
+
+/* Notification styling */
+[data-theme="dark"] .ant-notification {
+  background-color: var(--bg-primary) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-primary) !important;
+  box-shadow: 0 6px 16px 0 var(--shadow) !important;
+}
+
+[data-theme="dark"] .ant-notification-notice {
+  background-color: var(--bg-primary) !important;
+  border: 1px solid var(--border-color) !important;
+}
+
+[data-theme="dark"] .ant-notification-notice-message {
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .ant-notification-notice-description {
+  color: var(--text-secondary) !important;
+}
+
+[data-theme="dark"] .ant-notification-notice-close {
+  color: var(--text-secondary) !important;
+}
+
+[data-theme="dark"] .ant-notification-notice-close:hover {
+  color: var(--text-primary) !important;
+}
