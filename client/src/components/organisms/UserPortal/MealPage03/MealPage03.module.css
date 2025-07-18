@@ -167,7 +167,7 @@
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   border: 1px solid #e0e0e0;
   background: #ffffff;
-  width: 250px;
+  width: 300px;
   padding: 16px; /* Add internal padding */
 }
 
@@ -900,6 +900,7 @@
 [data-theme="dark"] .loadingWrapper {
   background: #1a1a1a;
 }
+
 /* Suggestions Modal Styles */
 .suggestionsModal {
   z-index: 1050;
