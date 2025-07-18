@@ -144,6 +144,7 @@
 
 .cancelButton:hover {
   background: linear-gradient(145deg, #ff7875, #ff4d4f);
+  color: white;
   transform: scale(1.05);
 }
 
@@ -259,6 +260,178 @@
     width: 100% !important;
     height: auto !important;
   }
+}
+
+/* Dark theme support */
+[data-theme="dark"] {
+  --text-primary: #ffffff;
+  /* ...other variables... */
+}
+
+[data-theme="dark"] .container {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+[data-theme="dark"] .title {
+  color: var(--text-primary);
+}
+
+[data-theme="dark"] .tabs {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 8px 16px var(--shadow), 0 4px 6px var(--shadow);
+}
+
+[data-theme="dark"] .cartContainer {
+  background: linear-gradient(145deg, var(--bg-secondary), var(--bg-tertiary));
+  border: 1px solid var(--border-color);
+  box-shadow: 0 8px 16px var(--shadow), 0 4px 6px var(--shadow);
+  color: var(--text-primary);
+}
+
+[data-theme="dark"] .cartContainer:hover {
+  background: linear-gradient(145deg, var(--bg-tertiary), var(--bg-secondary));
+  box-shadow: 0 12px 24px var(--shadow), 0 6px 8px var(--shadow);
+}
+
+[data-theme="dark"] .cardHeaderMain1 {
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .cardHeaderMain {
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .orderPrice {
+  color: var(--error);
+}
+
+[data-theme="dark"] .mealsOrdered {
+  border-top: 1px solid var(--border-color);
+}
+
+[data-theme="dark"] .cancelButton {
+  background: linear-gradient(145deg, #ff4d4f, #ff7875);
+  color: white;
+  border: 1px solid #ff4d4f;
+}
+
+[data-theme="dark"] .cancelButton:hover {
+  background: linear-gradient(145deg, #ff7875, #ff4d4f);
+  color: white;
+  transform: scale(1.05);
+}
+
+[data-theme="dark"] .emptyCard {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 2px 8px var(--shadow);
+  color: var(--text-primary);
+}
+
+[data-theme="dark"] .calendar {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 2px 8px var(--shadow);
+}
+
+[data-theme="dark"] .qrContainer {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 4px 8px var(--shadow);
+}
+
+[data-theme="dark"] .orderId {
+  color: var(--text-primary);
+}
+
+[data-theme="dark"] .mealType {
+  color: var(--text-primary);
+}
+
+[data-theme="dark"] .orderDate {
+  color: var(--text-primary);
+}
+
+/* Additional text elements that need white text in dark mode */
+[data-theme="dark"] .cardHeader {
+  color: var(--text-primary);
+}
+
+[data-theme="dark"] .cartContent {
+  color: var(--text-primary);
+}
+
+[data-theme="dark"] .orderDetailsContainer {
+  color: var(--text-primary);
+}
+
+/* Ant Design List component dark mode overrides */
+[data-theme="dark"] .mealsOrdered .ant-list-item {
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-primary);
+}
+
+[data-theme="dark"] .mealsOrdered .ant-list-item-meta-title {
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .mealsOrdered .ant-list-item-meta-description {
+  color: var(--text-primary) !important;
+}
+
+/* Tag component dark mode styling */
+[data-theme="dark"] .ant-tag {
+  background-color: var(--bg-tertiary);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+[data-theme="dark"] .ant-tag.ant-tag-error {
+  background-color: rgba(245, 34, 45, 0.1);
+  border-color: var(--error);
+  color: var(--error);
+}
+
+/* Scrollbar styling for dark mode */
+[data-theme="dark"] .mealsOrdered::-webkit-scrollbar {
+  width: 6px;
+}
+
+[data-theme="dark"] .mealsOrdered::-webkit-scrollbar-track {
+  background: var(--bg-tertiary);
+  border-radius: 3px;
+}
+
+[data-theme="dark"] .mealsOrdered::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 3px;
+}
+
+[data-theme="dark"] .mealsOrdered::-webkit-scrollbar-thumb:hover {
+  background: var(--text-tertiary);
+}
+
+/* Override any Ant Design text components in dark mode */
+[data-theme="dark"] .ant-typography {
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .ant-typography-title {
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .ant-typography-paragraph {
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .ant-tabs-tab {
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: var(--text-primary) !important;
 }
 
 
