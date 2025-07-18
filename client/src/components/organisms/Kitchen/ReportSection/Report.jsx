@@ -1694,7 +1694,7 @@ const Report = () => {
         <Tabs
           activeKey={activeTab}
           onChange={setActiveTab}
-          style={{ marginBottom: "24px" }}
+          style={{ marginBottom: "30px" }}
         >
           <TabPane
             tab={
@@ -1705,7 +1705,7 @@ const Report = () => {
             }
             key="summary"
           >
-            <div style={{ marginBottom: "24px" }}>
+            <div style={{ marginBottom: "40px" }}>
               <div className={styles.tabContentHeader}>
                 <div>
                   <h2 className={styles.tabTitle}>

@@ -126,11 +126,16 @@
 .tabPaneTitle {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   font-family: var(--primary-font);
   font-weight: 500;
+  font-size: medium;
   color: var(--text-primary);
+  ;
 }
+
+
+
 
 .tabIcon16 {
   width: 16px;
@@ -150,6 +155,7 @@
   font-weight: 600;
   color: var(--text-primary);
   font-family: var(--primary-font);
+  margin-top: 10px;
 }
 
 .tabDescription {
@@ -229,10 +235,10 @@
 }
 
 .generateButtonDark {
-  background-color: var(--text-primary);
-  border-color: var(--text-primary);
-  color: var(--bg-primary);
-  height: 40px;
+  background-color: black;
+  border-color: black;
+  color: white;
+  height: 35px;
   font-weight: 500;
   padding: 0 24px;
   border-radius: 6px;
@@ -241,8 +247,8 @@
 }
 
 .generateButtonDark:hover {
-  background-color: var(--accent);
-  border-color: var(--accent);
+  background-color: rgb(116, 9, 9) !important;
+  border-color: rgb(116, 9, 9) !important;
 }
 
 /* Table Styles */
@@ -285,6 +291,7 @@
 .totalAmountCell,
 .orderCountCell,
 .serveCountCell,
+
 .summaryCell,
 .summaryTotalMeals,
 .summaryGrandTotal {
@@ -295,13 +302,23 @@
   font-family: var(--primary-font);
 }
 
-/* Value Styles */
-.mealCount,
-.totalCount,
 .totalAmount,
+.totalCount,
+.mealCount{
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+  font-family: var(--primary-font);
+}
+
+
+
+
+/* Value Styles */
 .orderCountValue,
 .serveCountValue,
 .summaryCount,
+.summaryGrandAmount,
 .summaryTotalCount {
   font-size: 18px;
   font-weight: 700;
@@ -309,12 +326,7 @@
   font-family: var(--primary-font);
 }
 
-.summaryGrandAmount {
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--text-primary);
-  font-family: var(--primary-font);
-}
+ 
 
 /* Label Styles */
 .mealPrice,
@@ -326,7 +338,7 @@
 .summaryTotalText,
 .summaryGrandText {
   font-size: 12px;
-  color: var(--text-secondary);
+  color:rgb(246, 184, 184);
   font-weight: 500;
   font-family: var(--primary-font);
 }
@@ -385,7 +397,7 @@
 
 .summaryRow td {
   color: var(--text-primary);
-  font-weight: 700;
+  font-weight: 500;
   font-family: var(--primary-font);
   border-top: 2px solid var(--border-color);
 }
@@ -408,14 +420,15 @@
   padding: 0 20px;
   border-radius: 6px;
   border: 1px solid var(--border-color);
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
+  background-color: rgb(179, 18, 18);
+  color: white;
   transition: all 0.2s ease;
 }
 
 .downloadButton:hover {
-  background-color: var(--bg-tertiary);
-  border-color: var(--accent);
+  background-color: white !important;
+  border-color: rgb(179, 18, 18) !important;
+  color: black !important;
 }
 
 .viewDetailsButton {
