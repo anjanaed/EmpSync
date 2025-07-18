@@ -121,8 +121,6 @@
 /* Dark mode logo styling */
 :global(.dark) .logo {
   filter: brightness(0) invert(1);
-  /* Alternative approach: you can also use a different logo image for dark mode */
-  /* content: url('../../../assets/Logo/Logowhite.png'); */
 }
 
 .main {

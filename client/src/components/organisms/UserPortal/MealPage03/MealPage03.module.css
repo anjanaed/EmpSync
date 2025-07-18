@@ -8,19 +8,6 @@
   width: 100%;
 }
 
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 16px;
-  background: #000;
-  color: #fff;
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  width: 100%;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
 
 .name {
   font-size: 1.5rem;
@@ -39,31 +26,43 @@
 .userName {
   font-size: 1rem;
   font-weight: 500;
-  color: #fff;
+  color: #232323;
 }
 
 .cartButton {
-  color: #fff;
-  font-size: 1rem;
+  background: #f0f0f0;
+  color: #1a1a1a;
+  border: none;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   gap: 8px;
+  padding: 8px 16px;
+  transition: all 0.3s ease;
+  font-size: 1rem;
+}
+
+.cartButton:hover {
+  background: #e0e0e0;
 }
 
 .cartButton .ant-badge-count {
   background: #06C167;
   color: #fff;
-  font-size: 12px;
-  padding: 0 6px;
+  font-size: 14px; /* Increased from 12px */
+  padding: 0 8px; /* Increased padding */
+  min-width: 50px;
+  height: 50px;
+  line-height: 20px;
 }
 
 .layout {
   display: flex;
   flex-direction: column;
   width: 100%;
-  max-width: 1200px;
+  max-width: 100%;
   margin: 0 auto;
-  padding: 16px;
+  padding: px;
   font-family: "Inter", sans-serif;
 }
 
@@ -78,6 +77,8 @@
   background: #fff;
   box-shadow: 0 4px 12px rgba(0, grayscale(0%), 0, 0.1);
   overflow: hidden;
+  margin: 20px;
+  padding: 20px;
 }
 
 .cardTitle {
@@ -155,7 +156,7 @@
 }
 
 .mealList {
-  padding: 16px;
+  padding: 5px;
   max-height: 70vh;
   overflow-y: auto;
 }
@@ -165,7 +166,9 @@
   overflow: hidden;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   border: 1px solid #e0e0e0;
-  background: #fff;
+  background: #ffffff;
+  width: 300px;
+  padding: 16px; /* Add internal padding */
 }
 
 .mealCard:hover {
@@ -417,9 +420,10 @@
   }
 
   .cartButton {
+    padding: 8px 12px;
     font-size: 0.9rem;
   }
-
+  
   .layout {
     padding: 8px;
   }
@@ -495,6 +499,10 @@
   .totalText {
     font-size: 1.1rem;
   }
+
+  .mobileHeader {
+    display: flex;
+  }
 }
 
 @media (max-width: 480px) {
@@ -522,7 +530,7 @@
   .cartButton {
     font-size: 0.8rem;
   }
-
+  
   .cardTitle {
     font-size: 1.3rem;
   }
@@ -534,6 +542,363 @@
   .mealImage {
     height: 80px;
   }
+}
+
+/* Dark mode styles */
+[data-theme="dark"] .container {
+  background: #1a1a1a;
+}
+
+[data-theme="dark"] .header {
+  background: #2a2a2a;
+  color: #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .name {
+  color: #06C167;
+}
+
+[data-theme="dark"] .userName {
+  color: #ffffff;
+}
+
+[data-theme="dark"] .cartButton {
+  background: #404040;
+  color: #ffffff !important;
+  border: 1px solid #555555;
+}
+
+[data-theme="dark"] .cartButton:hover {
+  background: #555555;
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .cartButton .ant-badge {
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .cartButton .ant-badge .ant-badge-count {
+  background: #06C167;
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .cartButton span {
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .cartButton .ant-badge-status-text {
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .layout {
+  background: #1a1a1a;
+}
+
+[data-theme="dark"] .cardContainer {
+  background: #2a2a2a;
+  border: 1px solid #404040;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .cardTitle {
+  color: #ffffff;
+}
+
+[data-theme="dark"] .dateButton {
+  background: #404040;
+  color: #ffffff;
+  border: 1px solid #555555;
+}
+
+[data-theme="dark"] .dateButton:hover,
+[data-theme="dark"] .dateButton:focus {
+  background: #555555;
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .selectedDateButton {
+  background: #06C167;
+  color: #ffffff;
+}
+
+[data-theme="dark"] .selectedDateButton:hover,
+[data-theme="dark"] .selectedDateButton:focus {
+  background: #05a85a;
+  color: #ffffff;
+}
+
+[data-theme="dark"] .filterButton {
+  background: #404040;
+  color: #ffffff;
+  border: 1px solid #555555;
+}
+
+[data-theme="dark"] .filterButton:hover {
+  background: #555555;
+}
+
+[data-theme="dark"] .tabLabel {
+  color: #ffffff;
+}
+
+[data-theme="dark"] .unavailableTab {
+  color: #888888;
+}
+
+[data-theme="dark"] .selectedTab {
+  color: #06C167;
+}
+
+[data-theme="dark"] .mealList {
+  background: #2a2a2a;
+}
+
+[data-theme="dark"] .mealCard {
+  background: #333333;
+  border: 1px solid #555555;
+}
+
+[data-theme="dark"] .mealCard:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="dark"] .selectedMealCard {
+  border: 2px solid #06C167;
+  background: #1a3d2e;
+}
+
+[data-theme="dark"] .mealCardhr {
+  border-color: #555555;
+}
+
+[data-theme="dark"] .mealTitle {
+  color: #ffffff;
+}
+
+[data-theme="dark"] .descriptionText {
+  color: #cccccc;
+}
+
+[data-theme="dark"] .priceText {
+  color: #ffffff;
+}
+
+[data-theme="dark"] .successCard {
+  background: #2a2a2a;
+  border: 2px solid #06C167;
+}
+
+[data-theme="dark"] .errorCard {
+  background: #2a2a2a;
+  border: 2px solid #ff4d4f;
+}
+
+[data-theme="dark"] .cartTitle {
+  color: #ffffff;
+}
+
+[data-theme="dark"] .orderSummary {
+  background: #2a2a2a;
+  color: #ffffff;
+}
+
+[data-theme="dark"] .orderSummary .ant-card {
+  background: #333333 !important;
+  border: 1px solid #555555 !important;
+}
+
+[data-theme="dark"] .orderSummary .ant-card-head {
+  background: #333333 !important;
+  border-bottom: 1px solid #555555 !important;
+}
+
+[data-theme="dark"] .orderSummary .ant-card-head-title {
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .orderSummary .ant-card-body {
+  background: #333333 !important;
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .orderSummary .ant-card-body .ant-typography {
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .orderSummary .ant-card-body .ant-typography h3 {
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .orderSummary .ant-card-body .ant-alert {
+  background: #404040 !important;
+  border: 1px solid #555555 !important;
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .orderSummary .ant-card-body .ant-alert-info {
+  background: #1a3d2e !important;
+  border: 1px solid #06C167 !important;
+}
+
+[data-theme="dark"] .orderSummary .ant-card-body .ant-alert-message {
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .orderCard {
+  background: #404040 !important;
+  border-bottom: 1px solid #555555 !important;
+}
+
+[data-theme="dark"] .orderCardTitle {
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .orderCardDetails .ant-badge-status-text {
+  color: #cccccc !important;
+}
+
+[data-theme="dark"] .actionButton {
+  color: #ffffff !important;
+  background: #555555 !important;
+}
+
+[data-theme="dark"] .actionButton:hover {
+  color: #06C167 !important;
+  background: #666666 !important;
+}
+
+[data-theme="dark"] .itemCountBadge {
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .removeButton {
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .removeButton:hover {
+  color: #ff4d4f !important;
+}
+
+[data-theme="dark"] .priceDiv {
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .totalContainer {
+  background: #404040 !important;
+  border-top: 1px solid #555555 !important;
+}
+
+[data-theme="dark"] .totalText {
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .placeOrderButton {
+  background: #06C167 !important;
+  color: #ffffff !important;
+  border: none !important;
+}
+
+[data-theme="dark"] .placeOrderButton:hover,
+[data-theme="dark"] .placeOrderButton:focus {
+  background: #05a85a !important;
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .disabledButton {
+  background: #555555 !important;
+  color: #888888 !important;
+}
+
+/* Dark mode for specific elements inside orderSummary */
+[data-theme="dark"] .orderSummary .ant-row {
+  background: transparent !important;
+}
+
+[data-theme="dark"] .orderSummary .ant-col {
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .orderSummary .ant-badge {
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .orderSummary .ant-badge-status-processing {
+  color: #06C167 !important;
+}
+
+[data-theme="dark"] .orderSummary .ant-badge-status-success {
+  color: #52c41a !important;
+}
+
+.mobileHeader {
+  display: flex;
+  flex-direction: row; /* Change from column to row */
+  gap: 8px; /* Reduce gap */
+  margin-bottom: 16px;
+  align-items: center; /* Center align items */
+}
+
+.mobileDropdownContainer {
+  flex: 1; /* Take available space on the left */
+}
+
+.mobileDropdown {
+  width: 100%;
+}
+
+.mobileActions {
+  display: flex;
+  justify-content: flex-end; /* Align to right */
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0; /* Prevent shrinking */
+}
+
+.dropdownOption {
+  font-weight: 500;
+}
+
+.unavailableOption {
+  color: #999;
+  opacity: 0.6;
+}
+
+@media (max-width: 768px) {
+  .mobileHeader {
+    display: flex;
+  }
+  
+  .filterButton {
+    padding: 8px 12px; /* Adjust padding for mobile */
+    font-size: 0.9rem; /* Slightly smaller font */
+  }
+  
+  .cartButton {
+    padding: 8px 12px; /* Adjust padding for mobile */
+    font-size: 0.9rem; /* Slightly smaller font */
+  }
+}
+
+@media (min-width: 769px) {
+  .mobileHeader {
+    display: none;
+  }
+}
+
+/* Add these dark mode styles for the loading screen */
+[data-theme="dark"] .loadingContainer {
+  background: rgba(26, 26, 26, 0.7) !important;
+  backdrop-filter: blur(4px);
+}
+
+[data-theme="dark"] .loadingText {
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .loadingWrapper {
+  background: #1a1a1a;
 }
 
 /* Suggestions Modal Styles */

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Button, Card, Tabs, Badge, Row, Col, Typography, Layout, Alert, Space, Modal } from "antd";
+import { Button, Card, Tabs, Badge, Row, Col, Typography, Layout, Alert, Space, Modal, Select } from "antd";
 import { CheckCircleOutlined, CloseOutlined, LoadingOutlined, ShoppingCartOutlined } from "@ant-design/icons";
 import { IoClose } from "react-icons/io5";
 import { MdLanguage } from "react-icons/md";
@@ -45,9 +45,11 @@ const MealPage03 = () => {
   const [allMeals, setAllMeals] = useState([]);
   const [_, setRenderTrigger] = useState(0);
   const [isCartVisible, setIsCartVisible] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [loadingSuggestions, setLoadingSuggestions] = useState(false);
+
   const language = "english";
   const text = translations[language];
   const carouselRef = useRef(null);
@@ -386,6 +388,17 @@ const MealPage03 = () => {
   const availableMealTimes =
     selectedDate === "today" ? mealTime[0] : mealTime[1];
 
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   if (!baseTime) return <Loading text={text.loading || "Initializing..."} />;
 
   return (
@@ -394,25 +407,6 @@ const MealPage03 = () => {
       <div className={styles.container}>
         {loading && <Loading text={text.loading || "Loading meals..."} />}
         <Layout className={styles.layout}>
-          <div className={styles.header}>
-            {/* <div className={styles.name}>BizSolution</div> */}
-            {/* <div className={styles.dateAndTime}>
-              {currentTimeRef.current.toLocaleString("en-IN")}
-            </div> */}
-            <div className={styles.userName}>
-              <div>{username.name || "Guest"}</div>
-            </div>
-            <Button
-              type="text"
-              icon={<ShoppingCartOutlined />}
-              className={styles.cartButton}
-              onClick={() => setIsCartVisible(true)}
-            >
-              <Badge count={orderItems.reduce((sum, item) => sum + item.count, 0)}>
-                Cart
-              </Badge>
-            </Button>
-          </div>
           <Content className={styles.content}>
             {showSuccess ? (
               <motion.div
@@ -484,131 +478,205 @@ const MealPage03 = () => {
                     )
                   </Button>
                 </div>
-                <Tabs
-                  activeKey={selectedMealTime}
-                  onChange={(key) => setSelectedMealTime(Number(key))}
-                  tabBarStyle={{ fontWeight: "bold" }}
-                  tabBarExtraContent={
-                    <Button
-                      type="default"
-                      icon={<RiAiGenerate />}
-                      onClick={fetchMealSuggestions}
-                      className={styles.filterButton}
-                      loading={loadingSuggestions}
-                    >
-                      Suggestions
-                    </Button>
-                  }
-                  items={availableMealTimes.map((mealTimeItem) => {
-                    const isAvailable = isMealTimeAvailable(mealTimeItem);
-                    const isSelected = selectedMealTime === mealTimeItem.id;
-                    return {
-                      key: mealTimeItem.id,
-                      label: (
-                        <span
-                          className={`${styles.tabLabel} ${
-                            !isAvailable
-                              ? styles.unavailableTab
-                              : isSelected
-                              ? styles.selectedTab
-                              : ""
-                          }`}
+
+                {/* Mobile Dropdown */}
+                {isMobile ? (
+                  <div className={styles.mobileHeader}>
+                    <div className={styles.mobileDropdownContainer}>
+                      <Select
+                        value={selectedMealTime}
+                        onChange={(value) => setSelectedMealTime(value)}
+                        className={styles.mobileDropdown}
+                        size="large"
+                        style={{ width: '100%' }}
+                        placeholder="Select meal time"
+                      >
+                        {availableMealTimes.map((mealTimeItem) => {
+                          const isAvailable = isMealTimeAvailable(mealTimeItem);
+                          return (
+                            <Select.Option
+                              key={mealTimeItem.id}
+                              value={mealTimeItem.id}
+                              disabled={!isAvailable}
+                            >
+                              <span
+                                className={`${styles.dropdownOption} ${
+                                  !isAvailable ? styles.unavailableOption : ""
+                                }`}
+                              >
+                                {text[mealTimeItem.name] || mealTimeItem.name}
+                              </span>
+                            </Select.Option>
+                          );
+                        })}
+                      </Select>
+                    </div>
+                    <div className={styles.mobileActions}>
+                      <Button
+                        type="default"
+                        icon={<RiAiGenerate />}
+                        onClick={() => console.log("Filter button clicked")}
+                        className={styles.filterButton}
+                      >
+                        Suggestions
+                      </Button>
+                      <Button
+                        type="text"
+                        icon={<ShoppingCartOutlined />}
+                        className={styles.cartButton}
+                        onClick={() => setIsCartVisible(true)}
+                      >
+                        <Badge count={orderItems.reduce((sum, item) => sum + item.count, 0)}>
+                          Cart
+                        </Badge>
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  /* Desktop Tabs */
+                  <Tabs
+                    activeKey={selectedMealTime}
+                    onChange={(key) => setSelectedMealTime(Number(key))}
+                    tabBarStyle={{ fontWeight: "bold" }}
+                    tabBarExtraContent={
+                      <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                        <Button
+                          type="default"
+                          icon={<RiAiGenerate />}
+                          onClick={() => console.log("Filter button clicked")}
+                          className={styles.filterButton}
+
                         >
-                          {text[mealTimeItem.name] || mealTimeItem.name}
-                        </span>
-                      ),
-                      disabled: !isAvailable,
-                      children: (
-                        <div className={styles.mealList}>
-                          {loading ? (
-                            <div className={styles.loadingWrapper}>
-                              <Loading text={text.loading || "Loading meals..."} />
-                            </div>
-                          ) : (
-                            <Row gutter={[8, 8]}>
-                              {meals.map((meal) => {
-                                const isPastDue = !isAvailable;
-                                return (
-                                  <Col
-                                    xs={24}
-                                    sm={12}
-                                    md={8}
-                                    lg={6}
-                                    key={meal.id}
-                                    className={styles.tabContent}
-                                  >
-                                    <Card
-                                      bodyStyle={{ padding: 8 }}
-                                      cover={
-                                        <img
-                                          alt={
-                                            meal[
-                                              `name${language
-                                                .charAt(0)
-                                                .toUpperCase()}${language.slice(1)}`
-                                            ] || "Meal"
-                                          }
-                                          src={
-                                            meal.imageUrl ||
-                                            "https://via.placeholder.com/200"
-                                          }
-                                          className={`${styles.mealImage} ${
-                                            isPastDue ? styles.pastDueImage : ""
-                                          }`}
-                                        />
-                                      }
-                                      className={`${styles.mealCard} ${
-                                        isPastDue ? styles.pastDueCard : ""
-                                      } ${
-                                        isMealSelected(meal.id)
-                                          ? styles.selectedMealCard
-                                          : ""
-                                      }`}
-                                      onClick={() =>
-                                        !isPastDue && toggleOrderItem(meal.id)
-                                      }
-                                      hoverable={!isPastDue}
-                                    >
-                                      <hr className={styles.mealCardhr} />
-                                      <Card.Meta
-                                        title={
-                                          <div>
-                                            <Text className={styles.mealTitle}>
-                                              {meal[
-                                                `name${language
-                                                  .charAt(0)
-                                                  .toUpperCase()}${language.slice(1)}`
-                                              ] || "Unnamed Meal"}
-                                            </Text>
-                                            <div className={styles.descriptionText}>
-                                              {meal.description ||
-                                                "No description available"}
-                                            </div>
-                                            <div className={styles.priceContainer}>
-                                              <Text
-                                                strong
-                                                className={styles.priceText}
-                                              >
-                                                Rs.{" "}
-                                                {meal.price
-                                                  ? meal.price.toFixed(2)
-                                                  : "0.00"}
-                                              </Text>
-                                            </div>
-                                          </div>
-                                        }
-                                      />
-                                    </Card>
-                                  </Col>
-                                );
-                              })}
-                            </Row>
-                          )}
-                        </div>
-                      ),
-                    };
-                  })}
-                />
+                          Suggestions
+                        </Button>
+                        <Button
+                          type="text"
+                          icon={<ShoppingCartOutlined />}
+                          className={styles.cartButton}
+                          onClick={() => setIsCartVisible(true)}
+                        >
+                          <Badge count={orderItems.reduce((sum, item) => sum + item.count, 0)}>
+                            Cart
+                          </Badge>
+                        </Button>
+                      </div>
+                    }
+                    items={availableMealTimes.map((mealTimeItem) => {
+                      const isAvailable = isMealTimeAvailable(mealTimeItem);
+                      const isSelected = selectedMealTime === mealTimeItem.id;
+                      return {
+                        key: mealTimeItem.id,
+                        label: (
+                          <span
+                            className={`${styles.tabLabel} ${
+                              !isAvailable
+                                ? styles.unavailableTab
+                                : isSelected
+                                ? styles.selectedTab
+                                : ""
+                            }`}
+                          >
+                            {text[mealTimeItem.name] || mealTimeItem.name}
+                          </span>
+                        ),
+                        disabled: !isAvailable,
+                        children: null, // Content will be rendered separately
+                      };
+                    })}
+                  />
+                )}
+
+                {/* Meal List - Common for both mobile and desktop */}
+                <div className={styles.mealList}>
+                  {loading ? (
+                    <div className={styles.loadingWrapper}>
+                      <Loading text={text.loading || "Loading meals..."} />
+                    </div>
+                  ) : (
+                    <Row gutter={[8, 8]}>
+                      {meals.map((meal) => {
+                        const isPastDue = !availableMealTimes.find(
+                          (m) => m.id === selectedMealTime
+                        ) || !isMealTimeAvailable(
+                          availableMealTimes.find((m) => m.id === selectedMealTime)
+                        );
+                        return (
+                          <Col
+                            xs={24}
+                            sm={12}
+                            md={8}
+                            lg={6}
+                            key={meal.id}
+                            className={styles.tabContent}
+                          >
+                            <Card
+                              bodyStyle={{ padding: 8 }}
+                              cover={
+                                <img
+                                  alt={
+                                    meal[
+                                      `name${language
+                                        .charAt(0)
+                                        .toUpperCase()}${language.slice(1)}`
+                                    ] || "Meal"
+                                  }
+                                  src={
+                                    meal.imageUrl ||
+                                    "https://via.placeholder.com/200"
+                                  }
+                                  className={`${styles.mealImage} ${
+                                    isPastDue ? styles.pastDueImage : ""
+                                  }`}
+                                />
+                              }
+                              className={`${styles.mealCard} ${
+                                isPastDue ? styles.pastDueCard : ""
+                              } ${
+                                isMealSelected(meal.id)
+                                  ? styles.selectedMealCard
+                                  : ""
+                              }`}
+                              onClick={() =>
+                                !isPastDue && toggleOrderItem(meal.id)
+                              }
+                              hoverable={!isPastDue}
+                            >
+                              <hr className={styles.mealCardhr} />
+                              <Card.Meta
+                                title={
+                                  <div>
+                                    <Text className={styles.mealTitle}>
+                                      {meal[
+                                        `name${language
+                                          .charAt(0)
+                                          .toUpperCase()}${language.slice(1)}`
+                                      ] || "Unnamed Meal"}
+                                    </Text>
+                                    <div className={styles.descriptionText}>
+                                      {meal.description ||
+                                        "No description available"}
+                                    </div>
+                                    <div className={styles.priceContainer}>
+                                      <Text
+                                        strong
+                                        className={styles.priceText}
+                                      >
+                                        Rs.{" "}
+                                        {meal.price
+                                          ? meal.price.toFixed(2)
+                                          : "0.00"}
+                                      </Text>
+                                    </div>
+                                  </div>
+                                }
+                              />
+                            </Card>
+                          </Col>
+                        );
+                      })}
+                    </Row>
+                  )}
+                </div>
               </Card>
             )}
             <Modal
@@ -631,7 +699,7 @@ const MealPage03 = () => {
                       showIcon
                     />
                   ) : (
-  <div>
+        <div>
                     <Row gutter={[16, 16]}>
                       {Object.entries(
                         orderItems.reduce((acc, item) => {

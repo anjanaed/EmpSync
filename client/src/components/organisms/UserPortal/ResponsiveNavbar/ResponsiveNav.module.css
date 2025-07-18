@@ -21,6 +21,11 @@
   width: auto;
 }
 
+/* Add to ResponsiveNav.module.css if you want, but this is global! */
+:global(.dark) .logo {
+  filter: brightness(0) invert(1);
+}
+
 /* Menu toggle button for mobile view */
 .menuToggle {
   display: none;
@@ -166,6 +171,13 @@
 
 .navbar.dark .logoutLinkMobile:hover {
   background-color: rgba(255, 120, 117, 0.2) !important;
+}
+
+/* Notification icon container */
+.notificationContainer {
+  margin-right: 1rem; /* Add space to the right of the notification icon */
+  display: flex;
+  align-items: center;
 }
 
 /* Responsive styles for mobile devices (max-width: 768px) */
