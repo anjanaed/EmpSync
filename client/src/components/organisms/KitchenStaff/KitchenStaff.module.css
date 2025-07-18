@@ -1,353 +1,348 @@
-/* Dashboard.module.css */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin:20px;
+  }
+  
+  
+  .dateControls {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .dateButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    background-color: white;
+    color: #333;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .dateButton:hover {
+    background-color: #f5f5f5;
+  }
+  
+  .calendarIcon {
+    color: #666;
+  }
+  
+  .tabContainer {
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    margin:20px;
+    overflow: hidden;
+   
+  }
+  
+  .tabs {
+    display: flex;
+    border-bottom: 1px solid #e0e0e0;
+  }
+  
+  .tab {
+    flex: 1;
+    padding: 15px;
+    text-align: center;
+    background: none;
+    border: none;
+    font-size: 16px;
+    color: #666;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .tab:hover {
+    background-color: #f9f9f9;
+  }
+  
+  .activeTab {
+    color: #d32f2f;
+    font-weight: 600;
+    border-bottom: 3px solid #d32f2f;
+  }
+  
+  .content {
+    display: flex;
+    gap: 20px;
+    margin: 20px;
+  }
+  
+  .emptyState {
+    flex: 1;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 250px;
+  }
+  
+  .emptyStateImage {
+    position: relative;
+    margin-bottom: 15px;
+  }
+  
+  .noDataBadge {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background-color: #333;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+  }
+  
+  .emptyStateText {
+    color: #888;
+    font-size: 16px;
+    margin: 0;
+  }
+  
+  .actions {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 350px;
+  }
+  
+  .addButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px;
+    border: 1px solid #d32f2f;
+    border-radius: 6px;
+    background-color: white;
+    color: #d32f2f;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .addButton:hover {
+    background-color: #fff5f5;
+  }
+  
+  .removeButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    background-color: #f5f5f5;
+    color: #666;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .removeButton:hover {
+    background-color: #eeeeee;
+  }
+  
+  .confirmButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    background-color: white;
+    color: #333;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .confirmButton:hover {
+    background-color: #f5f5f5;
+  }
+  
+  .gotoDashboardButton {
+    margin-left: 10px;
+    padding: 8px 16px;
+    background-color: #d10000;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .gotoDashboardButton:hover {
+    background-color: #a00000;
+  }
+  
+  @media (max-width: 768px) {
+    .header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 15px;
+    }
+  
+    .dateControls {
+      width: 100%;
+    }
+  
+    .dateButton {
+      flex: 1;
+    }
+  
+    .content {
+      flex-direction: column;
+    }
+  
+    .actions {
+      width: 100%;
+    }
+  }
 
-/* Container and Layout */
-.dashboardContainer {
-  min-height: 100vh;
-  background-color: #f3f4f6;
-  margin: 20px;
-}
+  .cardContainer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px; /* Space between cards */
+    justify-content: center; /* Center the cards */
+  }
+  
+  .cardContainer > div {
+    flex: 1 1 calc(20% - 16px); /* Ensure 5 cards per row */
+    max-width: 240px; /* Limit the width of each card */
+  }
 
-.mainWrapper {
-  max-width: 1280px;
-  margin: 0 auto;
-}
+  .card {
+    width: 240px; /* Set card width */
+  }
 
-.menuScheduler {
-  background-color: white;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-}
+  .cardImage {
+    height: 200px; /* Set image height */
+  }
 
-/* Header */
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px;
-}
+  .mealCountText {
+    font-weight: bold; /* Make text bold */
+    font-size: 18px; /* Set font size */
+  }
 
-.title {
-  font-size: 24px;
-  font-weight: 700;
-  color: #1f2937;
-  margin: 0;
-}
-
-.time {
-  color: #6b7280;
-  margin: 0;
-}
-
-.dateControls {
-  display: flex;
-  gap: 8px;
-}
-
-.dateButton {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 8px 20px;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  background-color: white;
-  color: #374151;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.dateButton:hover {
-  background-color: #f9fafb;
-}
-
-.gotoDashboardButton {
-  padding: 8px 16px;
-  background-color: #dc2626;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.gotoDashboardButton:hover {
-  background-color: #b91c1c;
-}
-
-/* Tabs */
-.tabContainer {
-  border-top: 1px solid #e5e7eb;
-}
-
-.tabs {
-  display: flex;
-}
-
-.tab {
-  flex: 1;
-  padding: 16px;
-  text-align: center;
-  border-bottom: 2px solid transparent;
-  font-weight: 500;
-  color: #6b7280;
-  background: none;
-  border-left: none;
-  border-right: none;
-  border-top: none;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.tab:hover {
-  color: #374151;
-}
-
-.activeTab {
-  border-bottom-color: #dc2626;
-  color: #dc2626;
-}
-
-/* Content */
-.content {
-  padding: 20px;
-}
-
-/* Card Grid */
-.cardGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
-.mealCard {
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-  transition: box-shadow 0.3s ease;
-  width: 250px;
-}
-
-.mealCard:hover {
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.imageContainer {
-  width: 100%;
-  height: 192px;
-  background-color: #e5e7eb;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-}
-
-.mealImage {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.imagePlaceholder {
-  color: #9ca3af;
-}
-
-.cardContent {
-  padding: 16px;
-}
-
-.cardHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 12px;
-}
-
-.mealName {
-  font-size: 18px;
-  font-weight: 600;
-  color: #1f2937;
-  line-height: 1.3;
-  margin: 0;
-  flex: 1;
-}
-
-.orderCountSection {
-  text-align: right;
-  margin-left: 12px;
-}
-
-.orderCountNumber {
-  font-size: 32px;
-  font-weight: 700;
-  color: #1f2937;
-  line-height: 1;
-  margin: 0;
-}
-
-.orderCountLabel {
-  font-size: 12px;
-  color: #6b7280;
-  margin: 0;
-}
-
-.mealId {
-  font-size: 14px;
-  color: #6b7280;
-  margin-bottom: 8px;
-}
-
-.description {
-  font-size: 14px;
-  color: #4b5563;
-  line-height: 1.4;
-  margin-bottom: 12px;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.ingredients {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-}
-
-.ingredient {
-  padding: 4px 8px;
-  background-color: #fef3c7;
-  color: #92400e;
-  font-size: 12px;
-  font-weight: 500;
-  border-radius: 4px;
-  border: 1px solid #fde68a;
-}
-
-.moreIngredients {
-  padding: 4px 8px;
-  background-color: #f3f4f6;
-  color: #4b5563;
-  font-size: 12px;
-  font-weight: 500;
-  border-radius: 4px;
-}
-
-/* Cart Section */
+  /* Cart Section */
 .cartContainer {
   padding: 20px;
-  background-color: var(--bg-tertiary);
+  background-color: #f8f9fa;
   margin: 20px;
-  border-radius: 8px;
 }
-
 .cartGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 10px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
 }
-
 .cartCard {
-  background-color: var(--bg-primary);
+  background-color: white;
   border-radius: 8px;
   padding: 20px;
-  box-shadow: 0 1px 3px var(--shadow);
-  border: 1px solid var(--border-color);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  border: 1px solid #e9ecef;
   cursor: pointer;
-  transition: box-shadow 0.3s ease;
 }
-
-.cartCard:hover {
-  box-shadow: 0 4px 6px var(--shadow);
-}
-
-.cartImageContainer {
-  width: 300px;
-  height: 192px;
-  background-color: var(--bg-secondary);
-  border-radius: 6px;
+.imageContainer {
+  width: 100%;
+  height: 200px;
   margin-bottom: 16px;
+  background-color: #e9ecef;
+  border-radius: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
-
-.cartCardContent {
+.imagePlaceholder {
+  color: #6c757d;
+  font-size: 24px;
+}
+.cardContent {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
-
-.cartCardHeader {
+.cardHeader {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 8px;
 }
-
-.cartItemName {
-  font-size: 20px;
+.itemName {
+  font-size: 24px;
   font-weight: 600;
-  color: var(--text-primary);
+  color: #333;
   margin: 0;
   flex: 1;
 }
-
-.cartOrderCount {
+.orderCount {
   display: flex;
   flex-direction: column;
   align-items: center;
   min-width: 80px;
 }
-
-.cartCount {
+.count {
   font-size: 36px;
   font-weight: 700;
-  color: var(--text-primary);
+  color: #333;
   line-height: 1;
 }
-
-.cartOrderCountLabel {
+.orderCountLabel {
   font-size: 12px;
-  color: var(--text-tertiary);
+  color: #6c757d;
   text-align: center;
   margin-top: 2px;
 }
-
-.cartMealId {
+.mealId {
   font-size: 14px;
-  color: var(--text-tertiary);
+  color: #6c757d;
   margin-bottom: 8px;
 }
-
-.cartDescription {
+.description {
   font-size: 14px;
-  color: var(--text-secondary);
+  color: #666;
   line-height: 1.4;
   margin: 0;
   margin-bottom: 12px;
 }
-
-.cartIngredients {
+.ingredients {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
 }
-
-.cartIngredient {
-  background-color: #fef3c7;
-  color: #92400e;
+.ingredient {
+  background-color: #fff3cd;
+  color: #856404;
   padding: 4px 8px;
   border-radius: 4px;
   font-size: 12px;
   font-weight: 500;
-  border: 1px solid #fde68a;
+  border: 1px solid #ffeaa7;
 }
 
-/* Popup Modal */
+/* Popup styles */
 .popupOverlay {
   position: fixed;
   top: 0;
@@ -360,135 +355,76 @@
   justify-content: center;
   z-index: 1000;
 }
-
 .popupContent {
   background-color: white;
   border-radius: 12px;
-  padding: 32px;
+  padding: 30px;
   width: 400px;
   max-width: 90vw;
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  position: relative;
 }
-
 .popupHeader {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 20px;
-  border-bottom: 1px solid #e5e7eb;
-  padding-bottom: 16px;
+  border-bottom: 1px solid #e9ecef;
+  padding-bottom: 15px;
 }
-
 .popupTitle {
   font-size: 24px;
   font-weight: 600;
-  color: #1f2937;
+  color: #333;
   margin: 0;
 }
-
 .popupMealId {
   font-size: 14px;
-  color: #6b7280;
+  color: #666;
   font-weight: 400;
   margin-top: 4px;
   margin: 0;
 }
-
 .closeButton {
-  width: 32px;
-  height: 32px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #666;
+  cursor: pointer;
+  padding: 0;
+  width: 30px;
+  height: 30px;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  background: none;
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: background-color 0.2s;
 }
-
-.closeButton:hover {
-  background-color: #f3f4f6;
-}
-
-.closeButtonIcon {
-  font-size: 24px;
-  color: #6b7280;
-}
-
 .popupBody {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 15px;
 }
-
 .countRow {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 12px;
-  background-color: #f9fafb;
+  background-color: #f8f9fa;
   border-radius: 8px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid #e9ecef;
 }
-
 .countLabel {
   font-size: 16px;
   font-weight: 500;
-  color: #1f2937;
+  color: #333;
 }
-
 .countValue {
   font-size: 20px;
   font-weight: 700;
-  color: #dc2626;
+  color: #d32f2f;
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-  .header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
-  }
-  
-  .dateControls {
-    width: 100%;
-    justify-content: stretch;
-  }
-  
-  .dateButton {
-    flex: 1;
-  }
-  
-  .cardGrid {
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 10px;
-  }
-  
-  /* .cartGrid {
-    grid-template-columns: 1fr;
-  }
-   */
-  .popupContent {
-    width: 90vw;
-    padding: 24px;
-  }
-}
 
-@media (max-width: 480px) {
-  .cardGrid {
-    grid-template-columns: 1fr;
-  }
-  
-  .cardHeader {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  
-  .orderCountSection {
-    margin-left: 0;
-    margin-top: 8px;
-    text-align: left;
-  }
-}
+
+
