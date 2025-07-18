@@ -616,6 +616,7 @@ const Page3 = ({
                                         <Card.Meta
                                           title={
                                             <div>
+                                              
                                               <Text
                                                 className={styles.mealTitle}
                                               >
@@ -628,14 +629,6 @@ const Page3 = ({
                                                   }`
                                                 ] || "Unnamed Meal"}
                                               </Text>
-                                              <div
-                                                className={
-                                                  styles.descriptionText
-                                                }
-                                              >
-                                                {meal.description ||
-                                                  "No description available"}
-                                              </div>
                                               <div
                                                 className={
                                                   styles.priceContainer
@@ -651,6 +644,16 @@ const Page3 = ({
                                                     : "0.00"}
                                                 </Text>
                                               </div>
+                                              <br />
+                                              <div
+                                                className={
+                                                  styles.descriptionText
+                                                }
+                                              >
+                                                {meal.description ||
+                                                  "No description available"}
+                                              </div>
+                                              
                                             </div>
                                           }
                                         />
@@ -862,7 +865,7 @@ const Page3 = ({
         <Modal
           title={
             <div className={styles.suggestionsTitle}>
-              <RiAiGenerate /> AI Meal Suggestions
+              <RiAiGenerate /> Meal Suggestions
             </div>
           }
           visible={showSuggestions}

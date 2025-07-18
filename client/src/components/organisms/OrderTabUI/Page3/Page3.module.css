@@ -127,6 +127,11 @@
   font-size: 15px;
   color: #000;
 }
+
+.priceContainer {
+  margin-top: auto;
+  padding-top: 8px;
+}
 .removeButton {
   background: none;
   border: none;
@@ -226,6 +231,27 @@
   height: 280px;
   display: flex;
   flex-direction: column;
+}
+
+.mealCard .ant-card-body {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  flex: 1;
+}
+
+.mealCard .ant-card-meta {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  flex: 1;
+}
+
+.mealCard .ant-card-meta-title {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  flex: 1;
 }
 .tabContent Card {
   padding: 0 !important;
