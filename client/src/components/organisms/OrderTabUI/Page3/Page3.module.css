@@ -113,14 +113,24 @@
 .descriptionText {
   color: #666;
   font-size: 12px;
-    word-break: break-word;
+  word-break: break-word;
   white-space: pre-line;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  max-height: 3.6em;
+  line-height: 1.2em;
 }
 .priceText {
   font-size: 15px;
   color: #000;
 }
 .removeButton {
+  background: none;
+  border: none;
+  padding: 0;
 }
 .errorCard {
   width: 600px;
@@ -213,6 +223,9 @@
   overflow: hidden;
   border: 2px solid #ff000000 !important;
   margin-bottom: 10px;
+  height: 280px;
+  display: flex;
+  flex-direction: column;
 }
 .tabContent Card {
   padding: 0 !important;
