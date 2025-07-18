@@ -514,32 +514,23 @@ const Page2 = ({
                     ))}
                   </div>
                   <div className={styles.pinButtons}>
-                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 0].map((digit) => (
-                      <button
-                        key={digit}
-                        type="primary"
-                        shape="circle"
-                        size="large"
-                        onClick={() => handlePinInput(digit.toString())}
-                      >
-                        {digit}
-                      </button>
+                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, "#", 0].map((digit) => (
+                        <button
+                            key={digit}
+                            type="button"
+                            className={styles.keypadButton}
+                            onClick={() => handlePinInput(digit.toString())}
+                            disabled={pin.length >= 6}
+                        >
+                            {digit}
+                        </button>
                     ))}
                     <button
-                      type="default"
-                      shape="circle"
-                      size="large"
-                      onClick={() => handlePinInput("E")}
+                        type="button"
+                        className={styles.keypadButton}
+                        onClick={handleBackspace}
                     >
-                      E
-                    </button>
-                    <button
-                      type="default"
-                      shape="circle"
-                      size="large"
-                      onClick={handleBackspace}
-                    >
-                      ⮌
+                        ⮌
                     </button>
                   </div>
                 </div>
