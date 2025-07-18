@@ -168,6 +168,13 @@
   background-color: rgba(255, 120, 117, 0.2) !important;
 }
 
+/* Notification icon container */
+.notificationContainer {
+  margin-right: 1rem; /* Add space to the right of the notification icon */
+  display: flex;
+  align-items: center;
+}
+
 /* Responsive styles for mobile devices (max-width: 768px) */
 @media screen and (max-width: 768px) {
   .navbar {

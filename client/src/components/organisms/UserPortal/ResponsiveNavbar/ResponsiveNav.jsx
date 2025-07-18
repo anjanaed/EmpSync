@@ -114,20 +114,9 @@ const ResponsiveNav = () => {
 
       {/* Right section with controls */}
       <div className={styles.rightSection}>
-        {/* Notification icon */}
+        {/* Notification icon only */}
         <div className={styles.notificationContainer}>
-          <button
-            onClick={handleNotificationClick}
-            className={styles.notificationButton}
-            aria-label="View Notifications"
-          >
-            <BellOutlined style={{ fontSize: '20px' }} />
-            {notificationCount > 0 && (
-              <span className={styles.notificationBadge}>
-                {notificationCount > 99 ? '99+' : notificationCount}
-              </span>
-            )}
-          </button>
+          <BellOutlined style={{ fontSize: '20px' }} />
         </div>
 
         {/* Dark mode toggle */}
