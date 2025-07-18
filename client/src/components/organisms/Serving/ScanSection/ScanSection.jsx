@@ -6,7 +6,7 @@ const ScanSection = ({ isScanning, onScanSuccess }) => {
   const videoRef = useRef(null);
   const codeReader = useRef(null);
   const streamRef = useRef(null);
-  const hasScannedRef = useRef(false); // 🔐 prevent multiple scans
+  const hasScannedRef = useRef(false); 
 
   useEffect(() => {
     if (isScanning) {
@@ -16,7 +16,7 @@ const ScanSection = ({ isScanning, onScanSuccess }) => {
       codeReader.current
         .decodeFromVideoDevice(undefined, videoRef.current, (result, error) => {
           if (result && !hasScannedRef.current) {
-            hasScannedRef.current = true; // 🛑 lock future scans
+            hasScannedRef.current = true; 
             const text = result.getText();
             stopScanning();
             onScanSuccess(text); // only call once
