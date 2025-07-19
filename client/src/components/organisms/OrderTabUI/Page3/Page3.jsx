@@ -12,7 +12,7 @@ import {
   Space,
   Modal,
 } from "antd";
-import { CheckCircleOutlined, CloseOutlined } from "@ant-design/icons";
+import { CheckCircleOutlined, CloseOutlined, LogoutOutlined } from "@ant-design/icons";
 import { motion } from "framer-motion";
 import styles from "./Page3.module.css";
 import { IoClose } from "react-icons/io5";
@@ -441,6 +441,10 @@ const Page3 = ({
   const availableMealTimes =
     selectedDate === "today" ? mealTime[0] : mealTime[1];
 
+  // Only show loading animations if user has actually progressed to Page3 (has userId)
+  // This prevents loading animations when going back to Page1/Page2
+  if (!userId) return null;
+
   if (!baseTime) return <Loading text={text.loading || "Initializing..."} />;
   
   // Wait for organizationId to be available
@@ -842,6 +846,19 @@ const Page3 = ({
                         )}
                       </Card>
                     </div>
+                    <div>
+                      <Text strong>
+                        Total: Rs.{" "}
+                        {orderItems
+                          .reduce((total, item) => {
+                            const meal = allMeals.find(
+                              (meal) => meal.id === item.mealId
+                            );
+                            return total + (meal ? meal.price * item.count : 0);
+                          }, 0)
+                          .toFixed(2)}
+                      </Text>
+                    </div>
                     <Button
                       type="primary"
                       block
@@ -856,17 +873,10 @@ const Page3 = ({
                     >
                       {text.placeOrder}
                     </Button>
+                    
                     <div className={styles.totalContainer}>
                       <Text strong>
-                        Total: Rs.{" "}
-                        {orderItems
-                          .reduce((total, item) => {
-                            const meal = allMeals.find(
-                              (meal) => meal.id === item.mealId
-                            );
-                            return total + (meal ? meal.price * item.count : 0);
-                          }, 0)
-                          .toFixed(2)}
+                        {" "}
                       </Text>
                       <div style={{ display: 'flex', gap: '8px' }}>
                         <Button
@@ -885,8 +895,9 @@ const Page3 = ({
                             carouselRef.current?.goTo(1);
                           }}
                           className={styles.backButton}
+                          icon={<LogoutOutlined />}
                         >
-                          Cancel Order
+                          Logout
                         </Button>
                         
                       </div>
