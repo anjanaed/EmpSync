@@ -14,7 +14,6 @@ import {
   parseISO,
 } from 'date-fns';
 
-
 @Injectable()
 export class MealTypeService {
   constructor(
@@ -22,18 +21,20 @@ export class MealTypeService {
     private readonly scheduledMealService: ScheduledMealService,
   ) {}
 
+  // Common where clause to exclude soft-deleted records
+  private getBaseWhereClause(orgId?: string) {
+    return {
+      orgId: orgId || undefined,
+      isDeleted: false, // Always exclude soft-deleted records
+    };
+  }
+
   // Get all meal types, excluding soft-deleted ones
   async findAll(orgId?: string) {
     try {
       return this.databaseService.mealType.findMany({
-        where: {
-          orgId: orgId || undefined,
-          isDeleted: false,
-        },
-        orderBy: [
-          { isDefault: 'desc' },
-          { name: 'asc' },
-        ],
+        where: this.getBaseWhereClause(orgId),
+        orderBy: [{ isDefault: 'desc' }, { name: 'asc' }],
       });
     } catch (error) {
       throw new BadRequestException('Failed to retrieve meal types');
@@ -43,7 +44,10 @@ export class MealTypeService {
   async findOne(id: number, orgId?: string) {
     try {
       const mealType = await this.databaseService.mealType.findFirst({
-        where: { id, orgId: orgId || undefined, isDeleted: false },
+        where: { 
+          id, 
+          ...this.getBaseWhereClause(orgId)
+        },
       });
 
       if (!mealType) {
@@ -60,7 +64,10 @@ export class MealTypeService {
   async toggleIsDefault(id: number, orgId?: string) {
     try {
       const mealType = await this.databaseService.mealType.findFirst({
-        where: { id, orgId: orgId || undefined, isDeleted: false },
+        where: { 
+          id, 
+          ...this.getBaseWhereClause(orgId)
+        },
       });
 
       if (!mealType) {
@@ -73,7 +80,9 @@ export class MealTypeService {
       });
     } catch (error) {
       if (error instanceof NotFoundException) throw error;
-      throw new BadRequestException(`Failed to toggle isDefault: ${error.message}`);
+      throw new BadRequestException(
+        `Failed to toggle isDefault: ${error.message}`,
+      );
     }
   }
 
@@ -84,9 +93,12 @@ export class MealTypeService {
 
       return this.databaseService.mealType.findMany({
         where: {
-          isDeleted: false,
+          isDeleted: false, // Ensure soft-deleted records are excluded
           OR: [
-            { isDefault: true, orgId: orgId || undefined },
+            { 
+              isDefault: true, 
+              orgId: orgId || undefined 
+            },
             {
               date: {
                 gte: todayStart,
@@ -121,7 +133,7 @@ export class MealTypeService {
         time: timeArr,
         isDefault: isDefault ?? false,
         orgId: orgId || undefined,
-        isDeleted: false,
+        isDeleted: false, // Explicitly set to false for new records
       };
 
       if (date) {
@@ -130,43 +142,104 @@ export class MealTypeService {
 
       return this.databaseService.mealType.create({ data });
     } catch (error) {
-      throw new BadRequestException(`Failed to create meal type: ${error.message}`);
+      throw new BadRequestException(
+        `Failed to create meal type: ${error.message}`,
+      );
     }
   }
 
   async softDelete(id: number, orgId?: string) {
-  try {
-    // First check if the meal type exists and belongs to the organization
-    const mealType = await this.databaseService.mealType.findFirst({
-      where: { 
-        id, 
-        orgId: orgId || undefined, 
-        isDeleted: false 
-      },
-    });
+    try {
+      // First check if the meal type exists and belongs to the organization
+      const mealType = await this.databaseService.mealType.findFirst({
+        where: { 
+          id, 
+          ...this.getBaseWhereClause(orgId) // This ensures we only find non-deleted records
+        },
+      });
 
-    if (!mealType) {
-      throw new NotFoundException('Meal type not found or already deleted');
+      if (!mealType) {
+        throw new NotFoundException('Meal type not found or already deleted');
+      }
+
+      // Check if this meal type is being used in any active schedules
+      const activeSchedules = await this.databaseService.scheduledMeal.count({
+        where: {
+          mealTypeId: id,
+          // Add any other conditions to check for active schedules
+        },
+      });
+
+      if (activeSchedules > 0) {
+        console.log(`Warning: Meal type ${id} (${mealType.name}) is being used in ${activeSchedules} schedules`);
+      }
+
+      // Perform the soft delete - ONLY update isDeleted to true
+      const updatedMealType = await this.databaseService.mealType.update({
+        where: { id },
+        data: { 
+          isDeleted: true,
+          // Don't modify any other fields
+        },
+      });
+
+      // Log the soft delete operation for debugging
+      console.log(`Meal type ${id} (${mealType.name}) has been soft deleted`);
+
+      return {
+        success: true,
+        message: 'Meal type deleted successfully',
+        id: updatedMealType.id,
+        name: mealType.name, // Return the original name
+        isDeleted: updatedMealType.isDeleted,
+        warningMessage: activeSchedules > 0 ? 
+          `This meal type was used in ${activeSchedules} schedules` : null
+      };
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      console.error('Soft delete error:', error);
+      throw new BadRequestException(`Failed to delete meal type: ${error.message}`);
     }
-
-    // Perform the soft delete
-    const updatedMealType = await this.databaseService.mealType.update({
-      where: { id },
-      data: { 
-        isDeleted: true,
-        
-      },
-    });
-
-    return updatedMealType;
-  } catch (error) {
-    if (error instanceof NotFoundException) {
-      throw error;
-    }
-    console.error('Soft delete error:', error);
-    throw new BadRequestException(`Failed to delete meal type: ${error.message}`);
   }
-}
+
+  // Method to restore a soft-deleted meal type (optional)
+  async restore(id: number, orgId?: string) {
+    try {
+      const mealType = await this.databaseService.mealType.findFirst({
+        where: { 
+          id, 
+          orgId: orgId || undefined,
+          isDeleted: true // Look for deleted records
+        },
+      });
+
+      if (!mealType) {
+        throw new NotFoundException('Deleted meal type not found');
+      }
+
+      const restoredMealType = await this.databaseService.mealType.update({
+        where: { id },
+        data: { 
+          isDeleted: false,
+        },
+      });
+
+      return {
+        success: true,
+        message: 'Meal type restored successfully',
+        id: restoredMealType.id,
+        name: restoredMealType.name,
+        isDeleted: restoredMealType.isDeleted
+      };
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new BadRequestException(`Failed to restore meal type: ${error.message}`);
+    }
+  }
 
   async update(
     id: number,
@@ -175,7 +248,10 @@ export class MealTypeService {
   ) {
     try {
       const mealType = await this.databaseService.mealType.findFirst({
-        where: { id, orgId: orgId || undefined, isDeleted: false },
+        where: { 
+          id, 
+          ...this.getBaseWhereClause(orgId)
+        },
       });
 
       if (!mealType) throw new NotFoundException('Meal type not found');
@@ -196,11 +272,12 @@ export class MealTypeService {
       });
     } catch (error) {
       if (error instanceof NotFoundException) throw error;
-      throw new BadRequestException(`Failed to update meal type: ${error.message}`);
+      throw new BadRequestException(
+        `Failed to update meal type: ${error.message}`,
+      );
     }
   }
 
-  
   async findTodayAndTomorrow(orgId?: string) {
     try {
       const now = addMinutes(new Date(), 330);
@@ -218,23 +295,32 @@ export class MealTypeService {
         where: {
           isDefault: true,
           orgId: orgId || undefined,
-          isDeleted: false,
+          isDeleted: false, // Exclude soft-deleted records
         },
         orderBy: { name: 'asc' },
       });
 
-      const getMergedMeals = async (start: Date, end: Date, dateString: string) => {
-        const scheduledMeals = await this.scheduledMealService.findByDate(dateString, orgId);
+      const getMergedMeals = async (
+        start: Date,
+        end: Date,
+        dateString: string,
+      ) => {
+        const scheduledMeals = await this.scheduledMealService.findByDate(
+          dateString,
+          orgId,
+        );
 
         const usedDefaultMeals = defaultMeals.filter((defaultMeal) =>
-          scheduledMeals.some((schedule) => schedule.mealTypeId === defaultMeal.id),
+          scheduledMeals.some(
+            (schedule) => schedule.mealTypeId === defaultMeal.id,
+          ),
         );
 
         const mealsWithDate = await this.databaseService.mealType.findMany({
           where: {
             date: { gte: start, lte: end },
             orgId: orgId || undefined,
-            isDeleted: false,
+            isDeleted: false, // Exclude soft-deleted records
           },
           orderBy: { name: 'asc' },
         });
@@ -259,10 +345,18 @@ export class MealTypeService {
     }
   }
 
-  async patchTimeElement(id: number, index: 0 | 1, newTime: string, orgId?: string) {
+  async patchTimeElement(
+    id: number,
+    index: 0 | 1,
+    newTime: string,
+    orgId?: string,
+  ) {
     try {
       const mealType = await this.databaseService.mealType.findFirst({
-        where: { id, orgId: orgId || undefined, isDeleted: false },
+        where: { 
+          id, 
+          ...this.getBaseWhereClause(orgId)
+        },
       });
 
       if (!mealType) throw new NotFoundException('Meal type not found');
@@ -283,7 +377,9 @@ export class MealTypeService {
       });
     } catch (error) {
       if (error instanceof NotFoundException) throw error;
-      throw new BadRequestException(`Failed to patch time element: ${error.message}`);
+      throw new BadRequestException(
+        `Failed to patch time element: ${error.message}`,
+      );
     }
   }
 
@@ -298,9 +394,12 @@ export class MealTypeService {
 
       const meals = await this.databaseService.mealType.findMany({
         where: {
-          isDeleted: false,
+          isDeleted: false, // Exclude soft-deleted records
           OR: [
-            { isDefault: true, orgId: orgId || undefined },
+            { 
+              isDefault: true, 
+              orgId: orgId || undefined 
+            },
             {
               date: {
                 gte: dayStartUTC,
@@ -315,9 +414,41 @@ export class MealTypeService {
 
       return meals;
     } catch (error) {
-      throw new BadRequestException('Failed to retrieve meal types for the given date');
+      throw new BadRequestException(
+        'Failed to retrieve meal types for the given date',
+      );
+    }
+  }
+
+  // Additional method to get soft-deleted records for reports/admin purposes
+  async findAllIncludingDeleted(orgId?: string, includeDeleted: boolean = false) {
+    try {
+      const whereClause = {
+        orgId: orgId || undefined,
+        ...(includeDeleted ? {} : { isDeleted: false })
+      };
+
+      return this.databaseService.mealType.findMany({
+        where: whereClause,
+        orderBy: [{ isDefault: 'desc' }, { name: 'asc' }, { isDeleted: 'asc' }],
+      });
+    } catch (error) {
+      throw new BadRequestException('Failed to retrieve meal types');
+    }
+  }
+
+  // Method to get only soft-deleted records for admin/reporting
+  async findDeleted(orgId?: string) {
+    try {
+      return this.databaseService.mealType.findMany({
+        where: {
+          orgId: orgId || undefined,
+          isDeleted: true,
+        },
+        orderBy: { name: 'asc' },
+      });
+    } catch (error) {
+      throw new BadRequestException('Failed to retrieve deleted meal types');
     }
   }
 }
-
-

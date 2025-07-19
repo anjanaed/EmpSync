@@ -58,6 +58,11 @@ const MealPlanner = () => {
   const [previousSchedules, setPreviousSchedules] = useState([]);
   const { authData } = useAuth();
   const [isUpdateLoading, setIsUpdateLoading] = useState(false);
+  const [deleteConfirmModal, setDeleteConfirmModal] = useState({
+  visible: false,
+  meal: null,
+  isDefault: false
+});
 
   const token = authData?.accessToken;
 
@@ -333,46 +338,10 @@ const MealPlanner = () => {
   };
 
  
-const handleDeleteMeal = async (meal) => {
-  try {
-    // Using DELETE method with the correct endpoint that matches your controller
-    await axios.delete(
-      `${urL}/meal-types/${meal.id}`, // ✅ Correct endpoint: DELETE /meal-types/:id
-      {
-        params: { orgId: authData?.orgId }, // ✅ orgId as query parameter
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    
-    // Update the UI by removing the deleted meal from the list
-    setDefaultMeals((prevMeals) => prevMeals.filter((m) => m.id !== meal.id));
-    message.success(`${meal.name} has been deleted successfully`);
-    
-    // If the deleted meal was the active tab, reset the active tab
-    if (activeTab === meal.id.toString()) {
-      setActiveTab("");
-      setActiveMealType(null);
-      
-      // Set the first available meal as active if any exist
-      const remainingMeals = defaultMeals.filter((m) => m.id !== meal.id);
-      if (remainingMeals.length > 0) {
-        const firstMealId = remainingMeals[0].id;
-        setActiveTab(firstMealId.toString());
-        setActiveMealType(remainingMeals[0]);
-      }
-    }
-    
-  } catch (error) {
-    console.error("Error deleting meal:", error);
-    handleDeleteError(error, meal.name);
-  }
-};
 
 const handleDeleteError = (error, mealName) => {
   if (error.response?.status === 404) {
-    message.error(`${mealName} not found or endpoint not available`);
+    message.error(`${mealName} not found or already deleted`);
   } else if (error.response?.status === 403) {
     message.error("You don't have permission to delete this meal type");
   } else if (error.response?.status === 400) {
@@ -383,7 +352,8 @@ const handleDeleteError = (error, mealName) => {
     message.error("Failed to delete meal type. Please try again.");
   }
 };
-  
+
+
 
   const handleStartTimeChange = async (time, mealId) => {
     try {

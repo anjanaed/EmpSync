@@ -1,3 +1,5 @@
+// meal-type.controller.ts - Updated controller with soft delete management
+
 import {
   Controller,
   Get,
@@ -10,6 +12,7 @@ import {
   ParseIntPipe,
   BadRequestException,
   Query,
+  ParseBoolPipe,
 } from '@nestjs/common';
 import { MealTypeService } from './meal-type.service';
 import { AuthGuard } from '@nestjs/passport';
@@ -21,10 +24,25 @@ export class MealTypeController {
   constructor(private readonly mealTypeService: MealTypeService) {}
 
   @Get()
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
-  async findAll(@Query('orgId') orgId?: string) {
+  // @UseGuards(AuthGuard('jwt'), RolesGuard)
+  async findAll(
+    @Query('orgId') orgId?: string,
+    @Query('includeDeleted', new ParseBoolPipe({ optional: true })) includeDeleted?: boolean
+  ) {
     try {
-      return await this.mealTypeService.findAll(orgId);
+      // Use the new method that can optionally include deleted records
+      return await this.mealTypeService.findAllIncludingDeleted(orgId, includeDeleted || false);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
+
+  @Get('deleted')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('KITCHEN_ADMIN', 'HR_ADMIN')
+  async findDeleted(@Query('orgId') orgId?: string) {
+    try {
+      return await this.mealTypeService.findDeleted(orgId);
     } catch (error) {
       throw new BadRequestException(error.message);
     }
@@ -151,7 +169,7 @@ export class MealTypeController {
     }
   }
 
-  // Single soft delete endpoint - using DELETE for semantic clarity
+  // Soft delete endpoint
   @Delete(':id')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles('KITCHEN_ADMIN', 'HR_ADMIN')
@@ -167,6 +185,5 @@ export class MealTypeController {
   }
 
   
-
   
 }

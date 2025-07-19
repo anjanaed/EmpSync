@@ -291,7 +291,7 @@ const Report = () => {
 
       if (!mealTypesData || mealTypesData.length === 0) {
         try {
-          const mealTypesResponse = await axios.get(`${urL}/meal-types`, {
+          const mealTypesResponse = await axios.get(`${urL}/meal-types?includeDeleted=true`, {
             params: {
               orgId: authData?.orgId,
             },
@@ -752,7 +752,7 @@ const Report = () => {
   const fetchMealTypes = async () => {
     try {
       console.log("Fetching meal types...");
-      const response = await axios.get(`${urL}/meal-types`, {
+      const response = await axios.get(`${urL}/meal-types?includeDeleted=true`, {
         params: {
           orgId: authData?.orgId,
         },
