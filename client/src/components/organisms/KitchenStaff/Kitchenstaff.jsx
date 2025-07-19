@@ -239,6 +239,8 @@ const Dashbord = () => {
         setMealTypes(dynamicMealTypes);
         if (!manualOverride && dynamicMealTypes.length > 0) {
           setActiveTab(dynamicMealTypes[0]);
+        } else if (dynamicMealTypes.length === 0) {
+          setActiveTab("");
         }
         return cachedData.data;
       }
@@ -284,6 +286,9 @@ const Dashbord = () => {
       // Set default active tab to first meal type if not manually overridden
       if (!manualOverride && dynamicMealTypes.length > 0) {
         setActiveTab(dynamicMealTypes[0]);
+      } else if (dynamicMealTypes.length === 0) {
+        // No meal types available, clear active tab
+        setActiveTab("");
       }
       
       return data;
@@ -297,6 +302,9 @@ const Dashbord = () => {
         setMealData(cachedData.data);
         const dynamicMealTypes = Object.keys(cachedData.data);
         setMealTypes(dynamicMealTypes);
+        if (dynamicMealTypes.length === 0) {
+          setActiveTab("");
+        }
         message.warning("Using cached data due to network error");
       }
     } finally {
@@ -653,7 +661,24 @@ const Dashbord = () => {
         </div>
 
         <div className={styles.content}>
-          {renderTabContent()}
+          {mealTypes.length === 0 && !loading ? (
+            <div style={{ 
+              textAlign: 'center', 
+              padding: '50px',
+              color: '#666',
+              backgroundColor: '#f8f9fa',
+              borderRadius: '8px',
+              margin: '20px 0'
+            }}>
+              <h3 style={{ color: '#999', marginBottom: '10px' }}>No Orders Found</h3>
+              <p>No meals have been ordered for {selectedDate.toLocaleDateString()} yet.</p>
+              <p style={{ fontSize: '14px', marginTop: '10px' }}>
+                Check back later or try a different date.
+              </p>
+            </div>
+          ) : (
+            renderTabContent()
+          )}
         </div>
       </div>
       

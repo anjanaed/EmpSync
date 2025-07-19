@@ -312,7 +312,12 @@ export class MealsServingService {
         });
       });
 
-      // Initialize result structure with all meal types
+      // If no orders found, return empty object (no meal types shown)
+      if (!orders || orders.length === 0) {
+        return {};
+      }
+
+      // Initialize result structure - only include meal types that have orders
       const result: {
         [mealTypeName: string]: Array<{
           mealId: number;
@@ -324,31 +329,6 @@ export class MealsServingService {
           ingredients: string[];
         }>;
       } = {};
-
-      // Initialize all meal types (even if no orders exist)
-      mealTypes.forEach(mealType => {
-        const mealTypeName = mealType.name.toLowerCase();
-        result[mealTypeName] = [];
-        
-        // Add all scheduled meals for this meal type with 0 count
-        const scheduledForType = scheduledMealsByType.get(mealType.id) || [];
-        scheduledForType.forEach(meal => {
-          result[mealTypeName].push({
-            mealId: meal.id,
-            name: meal.nameEnglish,
-            totalCount: 0,
-            imageUrl: meal.imageUrl,
-            mealTypeId: mealType.id,
-            description: meal.description || null,
-            ingredients: meal.ingredients,
-          });
-        });
-      });
-
-      // If no orders found, return the initialized structure with scheduled meals
-      if (!orders || orders.length === 0) {
-        return result;
-      }
 
       // Process orders and update counts for the specific date
       const mealCounts: {
@@ -363,11 +343,6 @@ export class MealsServingService {
           } 
         };
       } = {};
-
-      // Initialize meal type categories
-      mealTypes.forEach(mealType => {
-        mealCounts[mealType.name.toLowerCase()] = {};
-      });
 
       // Process orders - only count orders that match the exact date
       for (const order of orders) {
@@ -427,42 +402,25 @@ export class MealsServingService {
         }
       }
 
-      // Update the result with actual counts
+      // Only include meal types that have at least one order
       for (const [mealTypeName, meals] of Object.entries(mealCounts)) {
-        result[mealTypeName] = Object.entries(meals).map(([mealId, { name, totalCount, imageUrl, mealTypeId, description, ingredients }]) => ({
-          mealId: Number(mealId),
-          name,
-          totalCount,
-          imageUrl,
-          mealTypeId,
-          description,
-          ingredients,
-        }));
-      }
+        const mealsWithOrders = Object.entries(meals)
+          .filter(([mealId, mealData]) => mealData.totalCount > 0) // Only include meals with orders
+          .map(([mealId, { name, totalCount, imageUrl, mealTypeId, description, ingredients }]) => ({
+            mealId: Number(mealId),
+            name,
+            totalCount,
+            imageUrl,
+            mealTypeId,
+            description,
+            ingredients,
+          }));
 
-      // Ensure all scheduled meals are included (merge with counted meals)
-      mealTypes.forEach(mealType => {
-        const mealTypeName = mealType.name.toLowerCase();
-        const scheduledForType = scheduledMealsByType.get(mealType.id) || [];
-        
-        // Create a map of existing results for this meal type
-        const existingMeals = new Map(result[mealTypeName].map(meal => [meal.mealId, meal]));
-        
-        // Add any scheduled meals that weren't in the orders
-        scheduledForType.forEach(scheduledMeal => {
-          if (!existingMeals.has(scheduledMeal.id)) {
-            result[mealTypeName].push({
-              mealId: scheduledMeal.id,
-              name: scheduledMeal.nameEnglish,
-              totalCount: 0,
-              imageUrl: scheduledMeal.imageUrl,
-              mealTypeId: mealType.id,
-              description: scheduledMeal.description || null,
-              ingredients: scheduledMeal.ingredients,
-            });
-          }
-        });
-      });
+        // Only add the meal type to result if it has meals with orders
+        if (mealsWithOrders.length > 0) {
+          result[mealTypeName] = mealsWithOrders;
+        }
+      }
 
       return result;
     } catch (error) {
