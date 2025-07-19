@@ -158,7 +158,7 @@ export class MealsServingService {
     }
   }
 
-  // New method to get meal counts allocated by meal time (dynamic)
+  // Optimized method to get meal counts allocated by meal time (dynamic)
   async getMealCountsByMealTime(orderDate: Date, orgId?: string) {
     try {
       const startOfDay = new Date(orderDate);
@@ -179,15 +179,59 @@ export class MealsServingService {
         whereCondition.orgId = orgId;
       }
 
-      const orders = await this.databaseService.order.findMany({
-        where: whereCondition,
-        // Remove the include if the relation does not exist in your Prisma schema
-        // and instead join or fetch mealType separately if needed
-      });
+      // Fetch orders, meal types, and meals in parallel for better performance
+      const [orders, mealTypes, meals] = await Promise.all([
+        this.databaseService.order.findMany({
+          where: whereCondition,
+          select: {
+            id: true,
+            mealTypeId: true,
+            meals: true,
+          }
+        }),
+        this.databaseService.mealType.findMany({
+          where: orgId ? { orgId } : {},
+          select: {
+            id: true,
+            name: true,
+          }
+        }),
+        this.databaseService.meal.findMany({
+          where: orgId ? { orgId } : {},
+          select: {
+            id: true,
+            nameEnglish: true,
+            imageUrl: true,
+            description: true,
+            ingredients: {
+              include: {
+                ingredient: {
+                  select: { name: true }
+                }
+              }
+            }
+          }
+        })
+      ]);
 
       if (!orders || orders.length === 0) {
-        throw new NotFoundException('No orders found for the specified date');
+        // Return empty structure with available meal types instead of throwing error
+        const emptyResult: { [mealTypeName: string]: any[] } = {};
+        mealTypes.forEach(mealType => {
+          emptyResult[mealType.name.toLowerCase()] = [];
+        });
+        return emptyResult;
       }
+
+      // Create lookup maps for faster access
+      const mealTypeMap = new Map(mealTypes.map(mt => [mt.id, mt.name.toLowerCase()]));
+      const mealMap = new Map(meals.map(meal => [
+        meal.id, 
+        {
+          ...meal,
+          ingredients: meal.ingredients.map(mi => mi.ingredient.name)
+        }
+      ]));
 
       // Dynamic meal counts object
       const mealCounts: {
@@ -203,19 +247,14 @@ export class MealsServingService {
         };
       } = {};
 
+      // Initialize meal type categories
+      mealTypes.forEach(mealType => {
+        mealCounts[mealType.name.toLowerCase()] = {};
+      });
+
+      // Process orders more efficiently
       for (const order of orders) {
-        // Fetch meal type name using mealTypeId
-        let mealTypeName = 'unknown';
-        let mealTypeId = order.mealTypeId;
-        if (mealTypeId !== undefined && mealTypeId !== null) {
-          const mealType = await this.databaseService.mealType.findUnique({
-            where: { id: mealTypeId },
-            select: { name: true },
-          });
-          if (mealType && mealType.name) {
-            mealTypeName = mealType.name.toLowerCase();
-          }
-        }
+        const mealTypeName = mealTypeMap.get(order.mealTypeId) || 'unknown';
         
         // Initialize meal type if not exists
         if (!mealCounts[mealTypeName]) {
@@ -228,40 +267,25 @@ export class MealsServingService {
           const count = Number(countStr);
 
           if (isNaN(mealId) || isNaN(count)) {
-            throw new BadRequestException(`Invalid meal entry format: ${mealEntry}`);
+            console.warn(`Invalid meal entry format: ${mealEntry}`);
+            continue;
           }
 
-          const meal = await this.databaseService.meal.findUnique({
-            where: { id: mealId },
-            select: { 
-              id: true, 
-              nameEnglish: true, 
-              imageUrl: true, 
-              description: true,
-              ingredients: {
-                include: {
-                  ingredient: {
-                    select: { name: true }
-                  }
-                }
-              }
-            },
-          });
-
+          const meal = mealMap.get(mealId);
           if (!meal) {
-            throw new NotFoundException(`Meal with ID ${mealId} not found`);
+            console.warn(`Meal with ID ${mealId} not found`);
+            continue;
           }
 
           // Initialize meal in this meal type if not exists
           if (!mealCounts[mealTypeName][mealId]) {
-            const ingredientNames = meal.ingredients.map(mealIngredient => mealIngredient.ingredient.name);
             mealCounts[mealTypeName][mealId] = { 
               name: meal.nameEnglish, 
               totalCount: 0, 
               imageUrl: meal.imageUrl,
               mealTypeId: order.mealTypeId,
               description: meal.description || null,
-              ingredients: ingredientNames
+              ingredients: meal.ingredients
             };
           }
 
