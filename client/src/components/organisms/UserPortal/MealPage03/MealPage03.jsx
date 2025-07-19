@@ -30,6 +30,7 @@ const Loading = ({ text }) => (
 
 const MealPage03 = () => {
   const { authData } = useAuth();
+  const baseURL = import.meta.env.VITE_BASE_URL;
   const userId = authData?.user?.id;
   const username = authData?.user || { name: "Guest" };
   const organizationId = authData?.user?.organizationId; // Extract organizationId
@@ -95,8 +96,8 @@ const MealPage03 = () => {
       try {
         // Add organizationId parameter if available
         const url = organizationId 
-          ? `http://localhost:3000/meal-types/fetch?orgId=${organizationId}`
-          : `http://localhost:3000/meal-types/fetch`;
+          ? `${baseURL}/meal-types/fetch?orgId=${organizationId}`
+          : `${baseURL}/meal-types/fetch`;
         
         const res = await axios.get(url);
         const mealTimes = Array.isArray(res.data) ? res.data : [[], []];
@@ -148,7 +149,7 @@ const MealPage03 = () => {
 
         // Add organizationId parameter to the schedule API call
         const scheduleResponse = await axios.get(
-          `http://localhost:3000/schedule/${formattedDate}?orgId=${organizationId}`
+          `${baseURL}/schedule/${formattedDate}?orgId=${organizationId}`
         );
         const scheduleData = Array.isArray(scheduleResponse.data)
           ? scheduleResponse.data
@@ -280,7 +281,7 @@ const MealPage03 = () => {
       });
 
       const response = await axios.get(
-        `http://localhost:3000/meal/suggestions/${userId}`,
+        `${baseURL}/meal/suggestions/${userId}`,
         {
           params: {
             date: formattedDate,
@@ -366,7 +367,7 @@ const MealPage03 = () => {
           JSON.stringify(orderData, null, 2)
         );
         const response = await axios.post(
-          "http://localhost:3000/orders",
+          `${baseURL}/orders`,
           orderData
         );
 

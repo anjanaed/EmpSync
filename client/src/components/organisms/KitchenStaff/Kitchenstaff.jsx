@@ -190,6 +190,7 @@ const cartStyles = {
 };
 
 const Dashbord = () => {
+  const baseURL = import.meta.env.VITE_BASE_URL;
   const [activeTab, setActiveTab] = useState(""); // Will be set dynamically
   const [manualOverride, setManualOverride] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -249,7 +250,7 @@ const Dashbord = () => {
     try {
       setLoading(true);
       const response = await fetch(
-        `http://localhost:3000/meals-serving/meal-counts-by-time?date=${dateString}&orgId=${organizationId}`,
+        `${baseURL}/meals-serving/meal-counts-by-time?date=${dateString}&orgId=${organizationId}`,
         {
           headers: {
             'Content-Type': 'application/json',

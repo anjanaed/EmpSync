@@ -74,6 +74,7 @@ const Page3 = ({
   setResetPin,
 }) => {
   const { authData } = useAuth();
+  const baseURL = import.meta.env.VITE_BASE_URL;
   const [baseTime, setBaseTime] = useState(null);
   const currentTimeRef = useRef(new Date());
   const [selectedDate, setSelectedDate] = useState("today");
@@ -128,8 +129,8 @@ const Page3 = ({
       try {
         // Add organizationId parameter if available
         const url = organizationId 
-          ? `http://localhost:3000/meal-types/fetch?orgId=${organizationId}`
-          : `http://localhost:3000/meal-types/fetch`;
+          ? `${baseURL}/meal-types/fetch?orgId=${organizationId}`
+          : `${baseURL}/meal-types/fetch`;
         
         const res = await axios.get(url);
         const mealTimes = Array.isArray(res.data) ? res.data : [[], []];
@@ -181,7 +182,7 @@ const Page3 = ({
 
         // Add organizationId parameter to the schedule API call
         const scheduleResponse = await axios.get(
-          `http://localhost:3000/schedule/${formattedDate}?orgId=${organizationId}`
+          `${baseURL}/schedule/${formattedDate}?orgId=${organizationId}`
         );
         const scheduleData = Array.isArray(scheduleResponse.data)
           ? scheduleResponse.data
@@ -313,7 +314,7 @@ const Page3 = ({
       const formattedDate = baseDate.toLocaleDateString("en-CA");
 
       const response = await axios.get(
-        `http://localhost:3000/meal/suggestions/${userId}`,
+        `${baseURL}/meal/suggestions/${userId}`,
         {
           params: {
             date: formattedDate,
@@ -396,7 +397,7 @@ const Page3 = ({
           JSON.stringify(orderData, null, 2)
         );
         const response = await axios.post(
-          "http://localhost:3000/orders",
+          `${baseURL}/orders`,
           orderData
         );
 

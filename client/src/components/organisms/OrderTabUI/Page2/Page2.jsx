@@ -19,6 +19,7 @@ const Page2 = ({
   setResetPin,
 }) => {
   const navigate = useNavigate();
+  const baseURL = import.meta.env.VITE_BASE_URL;
   const [errorMessage, setErrorMessage] = useState("");
   const [pin, setPin] = useState("");
   const text = translations[language];
@@ -218,7 +219,7 @@ const Page2 = ({
 
           // Check which thumbIds are not in the database
           try {
-            const response = await fetch('http://localhost:3000/user-finger-print-register-backend/all-fingerprints');
+            const response = await fetch(`${baseURL}/user-finger-print-register-backend/all-fingerprints`);
             if (response.ok) {
               const dbFingerprints = await response.json();
               const dbThumbIds = dbFingerprints.map(fp => fp.thumbid);
@@ -261,7 +262,7 @@ const Page2 = ({
   // Fetch employee ID by thumbid (fingerprint ID) and set username for Page3
   const fetchUserByFingerprintId = async (fingerId) => {
     try {
-      const response = await fetch(`http://localhost:3000/user-finger-print-register-backend/fingerprint?thumbid=${fingerId}`);
+      const response = await fetch(`${baseURL}/user-finger-print-register-backend/fingerprint?thumbid=${fingerId}`);
       if (!response.ok) {
         throw new Error("Fingerprint not found");
       }
@@ -270,7 +271,7 @@ const Page2 = ({
       if (!empId) {
         throw new Error("No employee ID found for this fingerprint");
       }
-      const userResponse = await fetch(`http://localhost:3000/user/${empId}`);
+      const userResponse = await fetch(`${baseURL}/user/${empId}`);
       if (!userResponse.ok) {
         throw new Error("User not found for this employee ID");
       }
@@ -296,7 +297,7 @@ const Page2 = ({
     if (pin.length === 6) {
       setScanning(true);
       try {
-        const response = await fetch(`http://localhost:3000/user/passkey/${pin}`);
+        const response = await fetch(`${baseURL}/user/passkey/${pin}`);
         if (!response.ok) {
           throw new Error("User not found");
         }
