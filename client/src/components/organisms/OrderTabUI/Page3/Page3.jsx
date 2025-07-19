@@ -793,7 +793,7 @@ const Page3 = ({
                                             type="text"
                                             onClick={() =>
                                               updateOrderItemCount(
-                                                meal?.id,
+                                                item.mealId,
                                                 item.date,
                                                 item.mealTime,
                                                 false
@@ -812,7 +812,7 @@ const Page3 = ({
                                             type="text"
                                             onClick={() =>
                                               updateOrderItemCount(
-                                                meal?.id,
+                                                item.mealId,
                                                 item.date,
                                                 item.mealTime,
                                                 true
