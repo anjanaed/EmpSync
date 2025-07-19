@@ -891,6 +891,21 @@ const Page3 = ({
                         </Button>
                         <Button
                           onClick={() => {
+                            // Reset all data states
+                            setOrderItems([]);
+                            setMeals([]);
+                            setAllMeals([]);
+                            setSelectedMealTime(null);
+                            setSelectedDate("today");
+                            setMealTime([[], []]);
+                            setSuggestions([]);
+                            setShowSuggestions(false);
+                            setLoadingSuggestions(false);
+                            setShowSuccess(false);
+                            setShowError(false);
+                            setLoading(true);
+                            
+                            // Reset pin and navigate
                             setResetPin(true);
                             carouselRef.current?.goTo(1);
                           }}
