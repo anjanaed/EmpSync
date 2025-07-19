@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import {
   DatePicker,
@@ -54,7 +55,7 @@ const MealPlanner = () => {
   const [activeMealType, setActiveMealType] = useState(null);
   const [existingSchedule, setExistingSchedule] = useState(null);
   const [scheduledMeals, setScheduledMeals] = useState({});
-  const [previousSchedules, setPreviousSchedules] = useState([]); // New state for previous schedules
+  const [previousSchedules, setPreviousSchedules] = useState([]);
   const { authData } = useAuth();
   const [isUpdateLoading, setIsUpdateLoading] = useState(false);
 
@@ -145,7 +146,6 @@ const MealPlanner = () => {
     }
   };
 
-  // New function to fetch previous schedules for the same meal type
   const fetchPreviousSchedules = async () => {
     if (!activeTab || !currentDate) return;
 
@@ -153,14 +153,12 @@ const MealPlanner = () => {
       const mealTypeId = parseInt(activeTab);
       const currentDateStr = currentDate.format("YYYY-MM-DD");
 
-      // Fetch schedules from the last 30 days
       const endDate = currentDate.subtract(1, "day");
       const startDate = currentDate.subtract(30, "days");
 
       const promises = [];
       let tempDate = endDate;
 
-      // Check previous 30 days for schedules with the same meal type
       while (tempDate.isAfter(startDate) || tempDate.isSame(startDate)) {
         const dateStr = tempDate.format("YYYY-MM-DD");
         promises.push(
@@ -196,7 +194,6 @@ const MealPlanner = () => {
         }
       });
 
-      // Sort by date (most recent first)
       previousSchedulesForMealType.sort(
         (a, b) => dayjs(b.date).unix() - dayjs(a.date).unix()
       );
@@ -253,7 +250,7 @@ const MealPlanner = () => {
     setScheduledMeals({});
     setSelectedMeals([]);
     setExistingSchedule(null);
-    setPreviousSchedules([]); // Clear previous schedules when date changes
+    setPreviousSchedules([]);
   };
 
   const modalStyles = {
@@ -270,25 +267,11 @@ const MealPlanner = () => {
     }
   };
 
-  // // New function to copy meals from previous schedule
-  // const handleCopyFromPrevious = (previousSchedule) => {
-  //   if (previousSchedule.schedule && previousSchedule.schedule.meals) {
-  //     const mealIds = previousSchedule.schedule.meals.map((meal) => meal.id);
-  //     setSelectedMeals(mealIds);
-  //     message.success(
-  //       `Copied ${mealIds.length} meals from ${dayjs(
-  //         previousSchedule.date
-  //       ).format("MMM DD, YYYY")}`
-  //     );
-  //   }
-  // };
-
   const handleCopyFromPrevious = async (previousSchedule) => {
     if (previousSchedule.schedule && previousSchedule.schedule.meals) {
       const mealIds = previousSchedule.schedule.meals.map((meal) => meal.id);
       setSelectedMeals(mealIds);
 
-      // Optional: Immediately update the schedule on the server
       if (activeTab && currentDate && authData?.orgId && token) {
         const payload = {
           date: currentDate.format("YYYY-MM-DD"),
@@ -349,25 +332,61 @@ const MealPlanner = () => {
     }
   };
 
-  const handleDeleteMeal = async (meal) => {
-    try {
-      if (!meal.isDefault) {
-        await axios.delete(`${urL}/meal-types/${meal.id}`, {
-          params: { orgId: authData?.orgId },
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+ 
+const handleDeleteMeal = async (meal) => {
+  try {
+    // Using DELETE method with the correct endpoint that matches your controller
+    await axios.delete(
+      `${urL}/meal-types/${meal.id}`, // ✅ Correct endpoint: DELETE /meal-types/:id
+      {
+        params: { orgId: authData?.orgId }, // ✅ orgId as query parameter
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       }
-      setDefaultMeals((prevMeals) => prevMeals.filter((m) => m.id !== meal.id));
-    } catch (err) {
-      console.error("Error deleting meal:", err);
+    );
+    
+    // Update the UI by removing the deleted meal from the list
+    setDefaultMeals((prevMeals) => prevMeals.filter((m) => m.id !== meal.id));
+    message.success(`${meal.name} has been deleted successfully`);
+    
+    // If the deleted meal was the active tab, reset the active tab
+    if (activeTab === meal.id.toString()) {
+      setActiveTab("");
+      setActiveMealType(null);
+      
+      // Set the first available meal as active if any exist
+      const remainingMeals = defaultMeals.filter((m) => m.id !== meal.id);
+      if (remainingMeals.length > 0) {
+        const firstMealId = remainingMeals[0].id;
+        setActiveTab(firstMealId.toString());
+        setActiveMealType(remainingMeals[0]);
+      }
     }
-  };
+    
+  } catch (error) {
+    console.error("Error deleting meal:", error);
+    handleDeleteError(error, meal.name);
+  }
+};
+
+const handleDeleteError = (error, mealName) => {
+  if (error.response?.status === 404) {
+    message.error(`${mealName} not found or endpoint not available`);
+  } else if (error.response?.status === 403) {
+    message.error("You don't have permission to delete this meal type");
+  } else if (error.response?.status === 400) {
+    message.error(error.response.data?.message || "Invalid request");
+  } else if (error.response?.data?.message) {
+    message.error(error.response.data.message);
+  } else {
+    message.error("Failed to delete meal type. Please try again.");
+  }
+};
+  
 
   const handleStartTimeChange = async (time, mealId) => {
     try {
-      // Update local state to reflect the change
       const formattedTime = time ? time.format("HH:mm") : null;
       setDefaultMeals((prevMeals) =>
         prevMeals.map((meal) =>
@@ -396,13 +415,12 @@ const MealPlanner = () => {
       message.error(
         err.response?.data?.message || "Failed to update start time"
       );
-      await fetchDefaultMeals(currentDate); // Revert on error
+      await fetchDefaultMeals(currentDate);
     }
   };
 
   const handleEndTimeChange = async (time, mealId) => {
     try {
-      // Update local state to reflect the change
       const formattedTime = time ? time.format("HH:mm") : null;
       setDefaultMeals((prevMeals) =>
         prevMeals.map((meal) =>
@@ -429,7 +447,7 @@ const MealPlanner = () => {
     } catch (err) {
       console.error("Error changing end time:", err);
       message.error(err.response?.data?.message || "Failed to update end time");
-      await fetchDefaultMeals(currentDate); // Revert on error
+      await fetchDefaultMeals(currentDate);
     }
   };
 
@@ -443,7 +461,7 @@ const MealPlanner = () => {
     }
     setSelectedMeals([]);
     setExistingSchedule(null);
-    setPreviousSchedules([]); // Clear previous schedules when tab changes
+    setPreviousSchedules([]);
   };
 
   const goToNextDay = () => {
@@ -460,6 +478,7 @@ const MealPlanner = () => {
     setIsModalVisible(false);
   };
 
+  // Updated handleModalOk to include isDeleted field
   const handleModalOk = () => {
     form.validateFields().then(async (values) => {
       try {
@@ -470,9 +489,13 @@ const MealPlanner = () => {
             values.startTime ? values.startTime.format("HH:mm") : null,
             values.endTime ? values.endTime.format("HH:mm") : null,
           ],
-          isDefault: values.isDefault,
+          isDefault: values.isDefault || false,
+          isDeleted: false, // Explicitly set isDeleted to false for new meal types
           date: currentDate.format("YYYY-MM-DD"),
         };
+        
+        console.log("Creating meal type with payload:", payload); // Debug log
+        
         await axios.post(`${urL}/meal-types`, payload, {
           params: { orgId: authData?.orgId },
           headers: {
@@ -483,7 +506,12 @@ const MealPlanner = () => {
         message.success("Meal type created successfully");
       } catch (err) {
         console.error("Error creating meal type:", err);
-        message.error("Failed to create meal type");
+        console.error("Error response:", err.response?.data); // More detailed error logging
+        message.error(
+          err.response?.data?.message || 
+          err.response?.data?.error || 
+          "Failed to create meal type"
+        );
       }
       setIsModalVisible(false);
     });
@@ -495,7 +523,6 @@ const MealPlanner = () => {
       return;
     }
 
-    // Check if there's already a schedule for this meal type and date
     const existingScheduleForToday = scheduledMeals[parseInt(activeTab)];
 
     if (
@@ -503,7 +530,6 @@ const MealPlanner = () => {
       existingScheduleForToday.meals &&
       existingScheduleForToday.meals.length > 0
     ) {
-      // If schedule exists, show the modal
       setIsUpdateModalVisible(true);
       setSearchTerm("");
       const mealType = defaultMeals.find(
@@ -516,12 +542,10 @@ const MealPlanner = () => {
       await fetchExistingSchedule();
       await fetchPreviousSchedules();
     } else {
-      // If no schedule exists, try to auto-copy from previous day
       await handleAutoUpdateFromPrevious();
     }
   };
 
-  // New function to automatically update menu from previous day
   const handleAutoUpdateFromPrevious = async () => {
     if (!activeTab || !currentDate) {
       message.error("Missing required information");
@@ -537,7 +561,6 @@ const MealPlanner = () => {
         return;
       }
 
-      // Check previous 7 days for the same meal type schedule
       let foundPreviousSchedule = null;
       let previousDate = null;
 
@@ -556,17 +579,15 @@ const MealPlanner = () => {
             if (matchingSchedule) {
               foundPreviousSchedule = matchingSchedule;
               previousDate = checkDate;
-              break; // Found the most recent one, stop searching
+              break;
             }
           }
         } catch (error) {
-          // Continue searching if this date has no schedules
           continue;
         }
       }
 
       if (foundPreviousSchedule) {
-        // Auto-create schedule with meals from previous day
         const payload = {
           date: currentDate.format("YYYY-MM-DD"),
           orgId: authData?.orgId,
@@ -589,7 +610,6 @@ const MealPlanner = () => {
 
         await fetchAllSchedules(currentDate);
       } else {
-        // No previous schedule found, show the modal for manual selection
         message.info(
           `No previous ${mealType.name} schedule found in the last 7 days. Opening menu selector.`
         );
@@ -604,7 +624,6 @@ const MealPlanner = () => {
       console.error("Error auto-updating menu:", error);
       message.error("Failed to auto-update menu. Please try manually.");
 
-      // Fallback to showing the modal
       setIsUpdateModalVisible(true);
       setSearchTerm("");
       const mealType = defaultMeals.find(
@@ -623,7 +642,7 @@ const MealPlanner = () => {
     setIsUpdateModalVisible(false);
     setSearchTerm("");
     setSelectedMeals([]);
-    setPreviousSchedules([]); // Clear previous schedules when modal closes
+    setPreviousSchedules([]);
   };
 
   const handleClearSchedule = async () => {
@@ -674,7 +693,7 @@ const MealPlanner = () => {
       mealIds: selectedMeals,
     };
 
-    setIsUpdateLoading(true); // Start loading
+    setIsUpdateLoading(true);
     try {
       if (existingSchedule) {
         await axios.patch(`${urL}/schedule/${existingSchedule.id}`, payload, {
@@ -700,10 +719,10 @@ const MealPlanner = () => {
         error.response?.data?.message || "Failed to update meal schedule"
       );
     } finally {
-      setIsUpdateLoading(false); // End loading
+      setIsUpdateLoading(false);
       setIsUpdateModalVisible(false);
       setSelectedMeals([]);
-      setPreviousSchedules([]); // Clear previous schedules after update
+      setPreviousSchedules([]);
     }
   };
 
@@ -798,7 +817,6 @@ const MealPlanner = () => {
     }
   }, [defaultMeals, activeTab]);
 
-  // Validate time to ensure valid dayjs object for defaultValue
   const validateTime = (time) => {
     if (!time) return null;
     const parsed = dayjs(time, "HH:mm", true);

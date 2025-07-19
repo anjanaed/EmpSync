@@ -14,7 +14,7 @@ import {
   parseISO,
 } from 'date-fns';
 
-// ...existing imports...
+
 @Injectable()
 export class MealTypeService {
   constructor(
@@ -22,12 +22,13 @@ export class MealTypeService {
     private readonly scheduledMealService: ScheduledMealService,
   ) {}
 
-  // Get all meal types, with defaults first
+  // Get all meal types, excluding soft-deleted ones
   async findAll(orgId?: string) {
     try {
       return this.databaseService.mealType.findMany({
         where: {
           orgId: orgId || undefined,
+          isDeleted: false,
         },
         orderBy: [
           { isDefault: 'desc' },
@@ -39,11 +40,10 @@ export class MealTypeService {
     }
   }
 
-  // Find a single meal type by ID
   async findOne(id: number, orgId?: string) {
     try {
       const mealType = await this.databaseService.mealType.findFirst({
-        where: { id, orgId: orgId || undefined },
+        where: { id, orgId: orgId || undefined, isDeleted: false },
       });
 
       if (!mealType) {
@@ -52,9 +52,7 @@ export class MealTypeService {
 
       return mealType;
     } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw error;
-      }
+      if (error instanceof NotFoundException) throw error;
       throw new BadRequestException(error.message);
     }
   }
@@ -62,31 +60,23 @@ export class MealTypeService {
   async toggleIsDefault(id: number, orgId?: string) {
     try {
       const mealType = await this.databaseService.mealType.findFirst({
-        where: { id, orgId: orgId || undefined },
+        where: { id, orgId: orgId || undefined, isDeleted: false },
       });
 
       if (!mealType) {
         throw new NotFoundException('Meal type not found');
       }
 
-      // Toggle the isDefault value
-      const updated = await this.databaseService.mealType.update({
+      return await this.databaseService.mealType.update({
         where: { id },
         data: { isDefault: !mealType.isDefault },
       });
-
-      return updated;
     } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw error;
-      }
-      throw new BadRequestException(
-        `Failed to toggle isDefault: ${error.message}`,
-      );
+      if (error instanceof NotFoundException) throw error;
+      throw new BadRequestException(`Failed to toggle isDefault: ${error.message}`);
     }
   }
 
-  // Get default meal types only
   async findDefaults(orgId?: string) {
     try {
       const todayStart = startOfDay(new Date());
@@ -94,6 +84,7 @@ export class MealTypeService {
 
       return this.databaseService.mealType.findMany({
         where: {
+          isDeleted: false,
           OR: [
             { isDefault: true, orgId: orgId || undefined },
             {
@@ -112,7 +103,6 @@ export class MealTypeService {
     }
   }
 
-  // Create a new meal type
   async create(
     name: string,
     time?: string[] | string,
@@ -123,11 +113,7 @@ export class MealTypeService {
     try {
       let timeArr: string[] | undefined = undefined;
       if (time !== undefined) {
-        if (Array.isArray(time)) {
-          timeArr = time;
-        } else if (typeof time === 'string') {
-          timeArr = [time];
-        }
+        timeArr = Array.isArray(time) ? time : [time];
       }
 
       const data: any = {
@@ -135,24 +121,53 @@ export class MealTypeService {
         time: timeArr,
         isDefault: isDefault ?? false,
         orgId: orgId || undefined,
+        isDeleted: false,
       };
 
       if (date) {
-        const baseDate = new Date(date);
-        data.date = addMinutes(baseDate, 330);
+        data.date = addMinutes(new Date(date), 330);
       }
 
-      return this.databaseService.mealType.create({
-        data,
-      });
+      return this.databaseService.mealType.create({ data });
     } catch (error) {
-      throw new BadRequestException(
-        `Failed to create meal type: ${error.message}`,
-      );
+      throw new BadRequestException(`Failed to create meal type: ${error.message}`);
     }
   }
 
-  // Update a meal type
+  async softDelete(id: number, orgId?: string) {
+  try {
+    // First check if the meal type exists and belongs to the organization
+    const mealType = await this.databaseService.mealType.findFirst({
+      where: { 
+        id, 
+        orgId: orgId || undefined, 
+        isDeleted: false 
+      },
+    });
+
+    if (!mealType) {
+      throw new NotFoundException('Meal type not found or already deleted');
+    }
+
+    // Perform the soft delete
+    const updatedMealType = await this.databaseService.mealType.update({
+      where: { id },
+      data: { 
+        isDeleted: true,
+        
+      },
+    });
+
+    return updatedMealType;
+  } catch (error) {
+    if (error instanceof NotFoundException) {
+      throw error;
+    }
+    console.error('Soft delete error:', error);
+    throw new BadRequestException(`Failed to delete meal type: ${error.message}`);
+  }
+}
+
   async update(
     id: number,
     data: { name?: string; time?: string[] | string; isDefault?: boolean },
@@ -160,20 +175,14 @@ export class MealTypeService {
   ) {
     try {
       const mealType = await this.databaseService.mealType.findFirst({
-        where: { id, orgId: orgId || undefined },
+        where: { id, orgId: orgId || undefined, isDeleted: false },
       });
 
-      if (!mealType) {
-        throw new NotFoundException('Meal type not found');
-      }
+      if (!mealType) throw new NotFoundException('Meal type not found');
 
       let timeArr: string[] | undefined = undefined;
       if (data.time !== undefined) {
-        if (Array.isArray(data.time)) {
-          timeArr = data.time;
-        } else if (typeof data.time === 'string') {
-          timeArr = [data.time];
-        }
+        timeArr = Array.isArray(data.time) ? data.time : [data.time];
       }
 
       const updateData: any = {
@@ -186,41 +195,15 @@ export class MealTypeService {
         data: updateData,
       });
     } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw error;
-      }
-      throw new BadRequestException(
-        `Failed to update meal type: ${error.message}`,
-      );
+      if (error instanceof NotFoundException) throw error;
+      throw new BadRequestException(`Failed to update meal type: ${error.message}`);
     }
   }
 
-  // Delete a meal type (only if not used in any schedules)
-  async remove(id: number, orgId?: string) {
-    try {
-      const mealType = await this.databaseService.mealType.findFirst({
-        where: { id, orgId: orgId || undefined },
-      });
-
-      if (!mealType) {
-        throw new NotFoundException('Meal type not found');
-      }
-
-      return await this.databaseService.mealType.delete({
-        where: { id },
-      });
-    } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw error;
-      }
-      throw new BadRequestException(error.message);
-    }
-  }
-
+  
   async findTodayAndTomorrow(orgId?: string) {
     try {
-      const timezoneOffsetMinutes = 330;
-      const now = addMinutes(new Date(), timezoneOffsetMinutes);
+      const now = addMinutes(new Date(), 330);
 
       const todayStart = startOfDay(now);
       const todayEnd = endOfDay(now);
@@ -232,15 +215,15 @@ export class MealTypeService {
       const tomorrowIST = tomorrow.toISOString().split('T')[0];
 
       const defaultMeals = await this.databaseService.mealType.findMany({
-        where: { isDefault: true, orgId: orgId || undefined },
+        where: {
+          isDefault: true,
+          orgId: orgId || undefined,
+          isDeleted: false,
+        },
         orderBy: { name: 'asc' },
       });
 
-      const getMergedMeals = async (
-        start: Date,
-        end: Date,
-        dateString: string,
-      ): Promise<any[]> => {
+      const getMergedMeals = async (start: Date, end: Date, dateString: string) => {
         const scheduledMeals = await this.scheduledMealService.findByDate(dateString, orgId);
 
         const usedDefaultMeals = defaultMeals.filter((defaultMeal) =>
@@ -251,6 +234,7 @@ export class MealTypeService {
           where: {
             date: { gte: start, lte: end },
             orgId: orgId || undefined,
+            isDeleted: false,
           },
           orderBy: { name: 'asc' },
         });
@@ -278,12 +262,10 @@ export class MealTypeService {
   async patchTimeElement(id: number, index: 0 | 1, newTime: string, orgId?: string) {
     try {
       const mealType = await this.databaseService.mealType.findFirst({
-        where: { id, orgId: orgId || undefined },
+        where: { id, orgId: orgId || undefined, isDeleted: false },
       });
 
-      if (!mealType) {
-        throw new NotFoundException('Meal type not found');
-      }
+      if (!mealType) throw new NotFoundException('Meal type not found');
 
       let updatedTime: string[] = Array.isArray(mealType.time)
         ? [...mealType.time]
@@ -301,13 +283,10 @@ export class MealTypeService {
       });
     } catch (error) {
       if (error instanceof NotFoundException) throw error;
-      throw new BadRequestException(
-        `Failed to patch time element: ${error.message}`,
-      );
+      throw new BadRequestException(`Failed to patch time element: ${error.message}`);
     }
   }
 
-  // Get meal types created at a specific date (IST) and all default meals
   async findByDateOrDefault(dateString: string, orgId?: string) {
     try {
       const dateIST = addMinutes(parseISO(dateString), 330);
@@ -319,6 +298,7 @@ export class MealTypeService {
 
       const meals = await this.databaseService.mealType.findMany({
         where: {
+          isDeleted: false,
           OR: [
             { isDefault: true, orgId: orgId || undefined },
             {
@@ -335,9 +315,9 @@ export class MealTypeService {
 
       return meals;
     } catch (error) {
-      throw new BadRequestException(
-        'Failed to retrieve meal types for the given date',
-      );
+      throw new BadRequestException('Failed to retrieve meal types for the given date');
     }
   }
 }
+
+

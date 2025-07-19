@@ -69,7 +69,7 @@ model Permission {
 
 model Ingredient {
   id             Int              @id @default(autoincrement())
-  orgId          String
+  orgId          String?         
   name           String
   price_per_unit Decimal          @db.Decimal(10, 2)
   quantity       Decimal          @db.Decimal(10, 2)
@@ -82,7 +82,7 @@ model Ingredient {
 
 model Payroll {
   id         Int        @id @default(autoincrement())
-  orgId      String
+  orgId      String?
   empId      String
   employee   User       @relation(fields: [empId], references: [id], onDelete: Cascade)
   range      DateTime[]
@@ -172,6 +172,7 @@ model MealType {
   orgId     String
   time      String[] // Optional time in HH:MM format
   isDefault Boolean         @default(false) // To mark system defaults
+  isDeleted Boolean  @default(false)
   schedules ScheduledMeal[]
   date      DateTime
 }

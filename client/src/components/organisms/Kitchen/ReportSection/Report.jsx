@@ -768,7 +768,6 @@ const Report = () => {
     }
   };
 
-  // Enhanced data processing with actual order prices
   // Enhanced data processing with actual order prices - FIXED VERSION
   const processEmployeeMealData = (orders, employees, mealTypes) => {
     console.log("Processing data with:", {

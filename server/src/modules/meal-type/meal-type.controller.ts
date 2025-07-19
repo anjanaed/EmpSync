@@ -49,7 +49,10 @@ export class MealTypeController {
   }
 
   @Get('by-date/:date')
-  async findByDateOrDefault(@Param('date') date: string, @Query('orgId') orgId?: string) {
+  async findByDateOrDefault(
+    @Param('date') date: string,
+    @Query('orgId') orgId?: string,
+  ) {
     try {
       return await this.mealTypeService.findByDateOrDefault(date, orgId);
     } catch (error) {
@@ -58,7 +61,10 @@ export class MealTypeController {
   }
 
   @Get(':id')
-  async findOne(@Param('id', ParseIntPipe) id: number, @Query('orgId') orgId?: string) {
+  async findOne(
+    @Param('id', ParseIntPipe) id: number,
+    @Query('orgId') orgId?: string,
+  ) {
     try {
       return await this.mealTypeService.findOne(id, orgId);
     } catch (error) {
@@ -68,7 +74,7 @@ export class MealTypeController {
 
   @Post()
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles('KITCHEN_ADMIN','HR_ADMIN')
+  @Roles('KITCHEN_ADMIN', 'HR_ADMIN')
   async create(
     @Body()
     body: {
@@ -94,8 +100,11 @@ export class MealTypeController {
 
   @Patch(':id/toggle-default')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles('KITCHEN_ADMIN','HR_ADMIN')
-  async toggleDefault(@Param('id', ParseIntPipe) id: number, @Query('orgId') orgId?: string) {
+  @Roles('KITCHEN_ADMIN', 'HR_ADMIN')
+  async toggleDefault(
+    @Param('id', ParseIntPipe) id: number,
+    @Query('orgId') orgId?: string,
+  ) {
     try {
       return await this.mealTypeService.toggleIsDefault(id, orgId);
     } catch (error) {
@@ -105,7 +114,7 @@ export class MealTypeController {
 
   @Patch('timeupdate/:id/:index')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles('KITCHEN_ADMIN','HR_ADMIN')
+  @Roles('KITCHEN_ADMIN', 'HR_ADMIN')
   async patchTimeElement(
     @Param('id', ParseIntPipe) id: number,
     @Param('index', ParseIntPipe) index: number,
@@ -129,7 +138,7 @@ export class MealTypeController {
 
   @Patch(':id')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles('KITCHEN_ADMIN','HR_ADMIN')
+  @Roles('KITCHEN_ADMIN', 'HR_ADMIN')
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() body: { name?: string; time?: string; isDefault?: boolean },
@@ -142,14 +151,22 @@ export class MealTypeController {
     }
   }
 
+  // Single soft delete endpoint - using DELETE for semantic clarity
   @Delete(':id')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles('KITCHEN_ADMIN','HR_ADMIN')
-  async remove(@Param('id', ParseIntPipe) id: number, @Query('orgId') orgId?: string) {
+  @Roles('KITCHEN_ADMIN', 'HR_ADMIN')
+  async softDelete(
+    @Param('id', ParseIntPipe) id: number,
+    @Query('orgId') orgId?: string,
+  ) {
     try {
-      return await this.mealTypeService.remove(id, orgId);
+      return await this.mealTypeService.softDelete(id, orgId);
     } catch (error) {
       throw new BadRequestException(error.message);
     }
   }
+
+  
+
+  
 }
