@@ -35,7 +35,7 @@ export class MealsServingService {
   }
 
   // Retrieve orders by a specific date
-  async findOrdersByDate(orderDate: Date) {
+  async findOrdersByDate(orderDate: Date, orgId?: string) {
     try {
       const startOfDay = new Date(orderDate);
       startOfDay.setHours(0, 0, 0, 0);
@@ -43,13 +43,20 @@ export class MealsServingService {
       const endOfDay = new Date(orderDate);
       endOfDay.setHours(23, 59, 59, 999);
 
-      const orders = await this.databaseService.order.findMany({
-        where: {
-          orderDate: {
-            gte: startOfDay,
-            lte: endOfDay,
-          },
+      const whereCondition: any = {
+        orderDate: {
+          gte: startOfDay,
+          lte: endOfDay,
         },
+      };
+
+      // Add organization filter if provided
+      if (orgId) {
+        whereCondition.orgId = orgId;
+      }
+
+      const orders = await this.databaseService.order.findMany({
+        where: whereCondition,
       });
 
       if (!orders || orders.length === 0) {
@@ -79,7 +86,7 @@ export class MealsServingService {
   }
 
   // Get total count of each meal ordered on a specific date
-  async getMealOrderCountsByDate(orderDate: Date) {
+  async getMealOrderCountsByDate(orderDate: Date, orgId?: string) {
     try {
       const startOfDay = new Date(orderDate);
       startOfDay.setHours(0, 0, 0, 0);
@@ -87,13 +94,20 @@ export class MealsServingService {
       const endOfDay = new Date(orderDate);
       endOfDay.setHours(23, 59, 59, 999);
 
-      const orders = await this.databaseService.order.findMany({
-        where: {
-          orderDate: {
-            gte: startOfDay,
-            lte: endOfDay,
-          },
+      const whereCondition: any = {
+        orderDate: {
+          gte: startOfDay,
+          lte: endOfDay,
         },
+      };
+
+      // Add organization filter if provided
+      if (orgId) {
+        whereCondition.orgId = orgId;
+      }
+
+      const orders = await this.databaseService.order.findMany({
+        where: whereCondition,
       });
 
       if (!orders || orders.length === 0) {
@@ -145,7 +159,7 @@ export class MealsServingService {
   }
 
   // New method to get meal counts allocated by meal time (dynamic)
-  async getMealCountsByMealTime(orderDate: Date) {
+  async getMealCountsByMealTime(orderDate: Date, orgId?: string) {
     try {
       const startOfDay = new Date(orderDate);
       startOfDay.setHours(0, 0, 0, 0);
@@ -153,13 +167,20 @@ export class MealsServingService {
       const endOfDay = new Date(orderDate);
       endOfDay.setHours(23, 59, 59, 999);
 
-      const orders = await this.databaseService.order.findMany({
-        where: {
-          orderDate: {
-            gte: startOfDay,
-            lte: endOfDay,
-          },
+      const whereCondition: any = {
+        orderDate: {
+          gte: startOfDay,
+          lte: endOfDay,
         },
+      };
+
+      // Add organization filter if provided
+      if (orgId) {
+        whereCondition.orgId = orgId;
+      }
+
+      const orders = await this.databaseService.order.findMany({
+        where: whereCondition,
         // Remove the include if the relation does not exist in your Prisma schema
         // and instead join or fetch mealType separately if needed
       });

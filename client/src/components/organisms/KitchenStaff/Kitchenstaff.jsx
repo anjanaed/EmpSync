@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Calendar, Plus, Trash2 } from "lucide-react";
 import { DatePicker, Card } from "antd";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../../contexts/AuthContext"; // Add authentication context
 import "antd/dist/reset.css";
 import styles from "./Kitchenstaff.module.css";
 
@@ -189,15 +190,17 @@ const cartStyles = {
 };
 
 const Dashbord = () => {
-  const [activeTab, setActiveTab] = useState("breakfast");
+  const [activeTab, setActiveTab] = useState(""); // Will be set dynamically
   const [manualOverride, setManualOverride] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
-  const [mealData, setMealData] = useState({ breakfast: [], lunch: [], dinner: [] }); // State to store meal data
+  const [mealData, setMealData] = useState({}); // Dynamic meal data
+  const [mealTypes, setMealTypes] = useState([]); // Dynamic meal types
   const [showPopup, setShowPopup] = useState(false);
   const [selectedMeal, setSelectedMeal] = useState(null);
   const [isViewingTomorrow, setIsViewingTomorrow] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [cartItems, setCartItems] = useState([]);
+  const { authData } = useAuth(); // Get authentication data
   const navigate = useNavigate();
 
   const currentDate = new Date();
@@ -217,23 +220,40 @@ const Dashbord = () => {
   useEffect(() => {
     const fetchMealData = async () => {
       try {
+        // Get organization ID from authentication data
+        const organizationId = authData?.user?.organizationId;
+        if (!organizationId) {
+          console.error("No organization ID found in auth data");
+          return;
+        }
+
+        const dateString = selectedDate.toISOString().split("T")[0];
         const response = await fetch(
-          `http://localhost:3000/meals-serving/meal-counts-by-time?date=${selectedDate
-            .toISOString()
-            .split("T")[0]}`
+          `http://localhost:3000/meals-serving/meal-counts-by-time?date=${dateString}&orgId=${organizationId}`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch meal data");
         }
         const data = await response.json();
-        setMealData(data); // Update state with fetched data
+        
+        // Extract meal types dynamically from the response
+        const dynamicMealTypes = Object.keys(data);
+        setMealTypes(dynamicMealTypes);
+        setMealData(data);
+        
+        // Set default active tab to first meal type if not manually overridden
+        if (!manualOverride && dynamicMealTypes.length > 0) {
+          setActiveTab(dynamicMealTypes[0]);
+        }
       } catch (error) {
         console.error("Error fetching meal data:", error);
       }
     };
 
-    fetchMealData();
-  }, [selectedDate]);
+    if (authData?.user?.organizationId) {
+      fetchMealData();
+    }
+  }, [selectedDate, authData, manualOverride]);
 
   // Handle manual tab switching
   const handleTabSwitch = (tab) => {
@@ -457,30 +477,17 @@ const Dashbord = () => {
 
         <div className={styles.tabContainer}>
           <div className={styles.tabs}>
-            <button
-              className={`${styles.tab} ${
-                activeTab === "breakfast" ? styles.activeTab : ""
-              }`}
-              onClick={() => handleTabSwitch("breakfast")}
-            >
-              Breakfast Sets
-            </button>
-            <button
-              className={`${styles.tab} ${
-                activeTab === "lunch" ? styles.activeTab : ""
-              }`}
-              onClick={() => handleTabSwitch("lunch")}
-            >
-              Lunch Set
-            </button>
-            <button
-              className={`${styles.tab} ${
-                activeTab === "dinner" ? styles.activeTab : ""
-              }`}
-              onClick={() => handleTabSwitch("dinner")}
-            >
-              Dinner Set
-            </button>
+            {mealTypes.map((mealType) => (
+              <button
+                key={mealType}
+                className={`${styles.tab} ${
+                  activeTab === mealType ? styles.activeTab : ""
+                }`}
+                onClick={() => handleTabSwitch(mealType)}
+              >
+                {mealType.charAt(0).toUpperCase() + mealType.slice(1)} Sets
+              </button>
+            ))}
           </div>
         </div>
 
