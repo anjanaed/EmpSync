@@ -33,6 +33,69 @@ const Page2 = ({
   const [serialReadingActive, setSerialReadingActive] = useState(false);
   const [showFingerprintPopup, setShowFingerprintPopup] = useState(false);
 
+  // Check for existing fingerprint connection on component mount
+  useEffect(() => {
+    if (window.fingerprintSerialPort && !fingerprintConnected) {
+      console.log("Restoring existing fingerprint connection");
+      setFingerprintConnected(true);
+      
+      // Try to get the unit name from global storage or query the device
+      if (window.fingerprintUnitName) {
+        setFingerprintUnitName(window.fingerprintUnitName);
+      } else {
+        // Query the unit name if not stored
+        setTimeout(async () => {
+          try {
+            const writer = window.fingerprintSerialPort.writable.getWriter();
+            await writer.write(new TextEncoder().encode("UNIT_NAME\n"));
+            writer.releaseLock();
+          } catch (e) {
+            console.error("Error querying unit name on restore:", e);
+          }
+        }, 500);
+      }
+    }
+    
+    // Listen for connection changes from other components
+    const handleConnectionChange = (event) => {
+      console.log("Page2 received connection change event:", event.detail);
+      if (event.detail.connected) {
+        setFingerprintConnected(true);
+        if (window.fingerprintUnitName) {
+          setFingerprintUnitName(window.fingerprintUnitName);
+        }
+      } else {
+        setFingerprintConnected(false);
+        setFingerprintUnitName("");
+      }
+    };
+    
+    window.addEventListener('fingerprintConnectionChanged', handleConnectionChange);
+    
+    // Listen for registration completion to restart reading
+    const handleRegistrationComplete = () => {
+      console.log("Registration complete, restarting Page2 reading loop");
+      // Reset reading state and restart if connected
+      if (fingerprintConnected && window.fingerprintSerialPort) {
+        setSerialReadingActive(false);
+        setTimeout(() => {
+          if (!window.fingerprintActiveReader) {
+            console.log("Restarting Page2 serial reading after registration");
+            // Force restart the reading loop
+            setSerialReadingActive(false);
+          }
+        }, 500);
+      }
+    };
+    
+    window.addEventListener('fingerprintRegistrationComplete', handleRegistrationComplete);
+    
+    return () => {
+      window.removeEventListener('fingerprintConnectionChanged', handleConnectionChange);
+      window.removeEventListener('fingerprintRegistrationComplete', handleRegistrationComplete);
+    };
+  }, []);
+
   // Sync selectedLanguage with language prop
   useEffect(() => {
     const langMap = {
@@ -43,17 +106,22 @@ const Page2 = ({
     setSelectedLanguage(langMap[language] || "English");
   }, [language]);
 
-  // Cleanup serial reader on component unmount
+  // Cleanup serial reader on component unmount (but keep connection alive)
   useEffect(() => {
     return () => {
       setSerialReadingActive(false);
       if (serialReader) {
         serialReader.cancel().catch(() => {});
         serialReader.releaseLock();
+        // Clear global reader reference if it matches our local reader
+        if (window.fingerprintActiveReader === serialReader) {
+          window.fingerprintActiveReader = null;
+        }
       }
-      if (window.fingerprintSerialPort) {
-        window.fingerprintSerialPort.close().catch(() => {});
-      }
+      // Don't close the fingerprint port - keep it alive for other pages
+      // if (window.fingerprintSerialPort) {
+      //   window.fingerprintSerialPort.close().catch(() => {});
+      // }
     };
   }, [serialReader]);
 
@@ -65,9 +133,18 @@ const Page2 = ({
       const readSerial = async () => {
         let buffer = '';
         try {
+          // Check if there's already an active reader from another instance
+          if (window.fingerprintActiveReader) {
+            console.log("Another component is already reading serial data");
+            setSerialReadingActive(false);
+            return;
+          }
+          
           const reader = window.fingerprintSerialPort.readable.getReader();
           setSerialReader(reader);
-          while (!cancelled) {
+          window.fingerprintActiveReader = reader; // Mark as active globally
+          
+          while (!cancelled && window.fingerprintSerialPort) {
             const { value, done } = await reader.read();
             if (done || cancelled) break;
             buffer += new TextDecoder().decode(value);
@@ -86,6 +163,7 @@ const Page2 = ({
               } else if (line.startsWith('UnitName: ')) {
                 const unitName = line.substring(10).trim();
                 setFingerprintUnitName(unitName);
+                window.fingerprintUnitName = unitName; // Store globally for persistence
                 console.log(`Unit Name received: ${unitName}`);
               } else if (line.includes('Fingerprint ID #') && line.includes('deleted')) {
                 console.log(`✅ R307 Delete Success: ${line}`);
@@ -100,10 +178,12 @@ const Page2 = ({
           }
           reader.releaseLock();
           setSerialReader(null);
+          window.fingerprintActiveReader = null; // Clear global reader reference
         }
 
         catch (err) {
           console.error('Serial read error:', err);
+          window.fingerprintActiveReader = null; // Clear global reader reference on error
         }
         setSerialReadingActive(false);
       };
@@ -415,6 +495,11 @@ const Page2 = ({
       await port.open({ baudRate: 115200 });
       window.fingerprintSerialPort = port;
       setFingerprintConnected(true);
+      
+      // Broadcast connection status to other components
+      window.dispatchEvent(new CustomEvent('fingerprintConnectionChanged', { 
+        detail: { connected: true, port: port } 
+      }));
 
       // Send UNIT_NAME command to request unit name
       try {
@@ -449,6 +534,7 @@ const Page2 = ({
             unitName = match[1];
             clearTimeout(timeout);
             setFingerprintUnitName(unitName);
+            window.fingerprintUnitName = unitName; // Store globally for persistence
             console.log(`Unit Name set: ${unitName}`);
             break;
           }
@@ -558,6 +644,13 @@ const Page2 = ({
             <button
               className={styles.registerButton}
               onClick={() => navigate("/user-fingerprint-register")}
+              disabled={!fingerprintConnected}
+              style={{
+                opacity: fingerprintConnected ? 1 : 0.5,
+                cursor: fingerprintConnected ? "pointer" : "not-allowed",
+                backgroundColor: fingerprintConnected ? undefined : "#cccccc"
+              }}
+              title={!fingerprintConnected ? "Connect to a fingerprint unit first" : "Register a new user"}
             >
               New User Register
             </button>
