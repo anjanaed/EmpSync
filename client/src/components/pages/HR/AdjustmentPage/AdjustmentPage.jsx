@@ -11,7 +11,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import NavBar from '../../../organisms/NavBar/NavBar';
-import Adjustment from '../../../Organisms/HR/IndividualAdjustmentList/Adjustment';
+import Adjustment from '../../../organisms/HR/IndividualAdjustmentList/Adjustment';
 import { useAuth } from "../../../../contexts/AuthContext";
 
 const AdjustmentPage = () => {

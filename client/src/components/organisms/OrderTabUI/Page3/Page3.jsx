@@ -12,7 +12,7 @@ import {
   Space,
   Modal,
 } from "antd";
-import { CheckCircleOutlined, CloseOutlined } from "@ant-design/icons";
+import { CheckCircleOutlined, CloseOutlined, LogoutOutlined } from "@ant-design/icons";
 import { motion } from "framer-motion";
 import styles from "./Page3.module.css";
 import { IoClose } from "react-icons/io5";
@@ -74,6 +74,7 @@ const Page3 = ({
   setResetPin,
 }) => {
   const { authData } = useAuth();
+  const baseURL = import.meta.env.VITE_BASE_URL;
   const [baseTime, setBaseTime] = useState(null);
   const currentTimeRef = useRef(new Date());
   const [selectedDate, setSelectedDate] = useState("today");
@@ -90,6 +91,16 @@ const Page3 = ({
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [loadingSuggestions, setLoadingSuggestions] = useState(false);
   const text = translations[language];
+
+  // Get organizationId from username prop
+  const organizationId = username?.organizationId;
+
+  // Debug log to verify organizationId is received
+  useEffect(() => {
+    console.log("Page3 received username:", username);
+    console.log("Page3 received organizationId:", organizationId);
+    console.log("Page3 received userId:", userId);
+  }, [username, organizationId, userId]);
 
   useEffect(() => {
     const initTime = () => {
@@ -109,9 +120,19 @@ const Page3 = ({
       }
     }, 1000);
 
+    return () => clearInterval(timer);
+  }, []);
+
+  // Separate useEffect for fetching meal times when organizationId is available
+  useEffect(() => {
     const fetchMealTime = async () => {
       try {
-        const res = await axios.get(`http://localhost:3000/meal-types/fetch`);
+        // Add organizationId parameter if available
+        const url = organizationId 
+          ? `${baseURL}/meal-types/fetch?orgId=${organizationId}`
+          : `${baseURL}/meal-types/fetch`;
+        
+        const res = await axios.get(url);
         const mealTimes = Array.isArray(res.data) ? res.data : [[], []];
         setMealTime(mealTimes);
         const availableMealTimes =
@@ -124,10 +145,11 @@ const Page3 = ({
         setMealTime([[], []]);
       }
     };
-    fetchMealTime();
 
-    return () => clearInterval(timer);
-  }, []);
+    if (organizationId) {
+      fetchMealTime();
+    }
+  }, [organizationId, selectedDate]);
 
   useEffect(() => {
     const availableMealTimes =
@@ -144,7 +166,7 @@ const Page3 = ({
 
   useEffect(() => {
     const fetchMeals = async () => {
-      if (!selectedMealTime) {
+      if (!selectedMealTime || !organizationId) {
         setMeals([]);
         return;
       }
@@ -158,8 +180,9 @@ const Page3 = ({
           timeZone: "Asia/Kolkata",
         });
 
+        // Add organizationId parameter to the schedule API call
         const scheduleResponse = await axios.get(
-          `http://localhost:3000/schedule/${formattedDate}`
+          `${baseURL}/schedule/${formattedDate}?orgId=${organizationId}`
         );
         const scheduleData = Array.isArray(scheduleResponse.data)
           ? scheduleResponse.data
@@ -189,7 +212,7 @@ const Page3 = ({
       }
     };
     fetchMeals();
-  }, [selectedDate, selectedMealTime, baseTime]);
+  }, [selectedDate, selectedMealTime, baseTime, organizationId]);
 
   const formatDateForDisplay = (date) => {
     return date.toLocaleDateString("en-IN");
@@ -276,8 +299,8 @@ const Page3 = ({
   };
 
   const fetchMealSuggestions = async () => {
-    if (!userId || !selectedMealTime) {
-      console.log("Missing userId or selectedMealTime for suggestions");
+    if (!userId || !selectedMealTime || !organizationId) {
+      console.log("Missing userId, selectedMealTime, or organizationId for suggestions");
       return;
     }
 
@@ -291,12 +314,12 @@ const Page3 = ({
       const formattedDate = baseDate.toLocaleDateString("en-CA");
 
       const response = await axios.get(
-        `http://localhost:3000/meal/suggestions/${userId}`,
+        `${baseURL}/meal/suggestions/${userId}`,
         {
           params: {
             date: formattedDate,
             mealTypeId: selectedMealTime,
-            orgId: authData?.orgId,
+            orgId: organizationId,
           },
         }
       );
@@ -360,6 +383,7 @@ const Page3 = ({
 
         const orderData = {
           employeeId: userId || "unknown",
+          orgId: organizationId,
           meals: mealsArray,
           orderDate,
           mealTypeId: mealTime,
@@ -373,7 +397,7 @@ const Page3 = ({
           JSON.stringify(orderData, null, 2)
         );
         const response = await axios.post(
-          "http://localhost:3000/orders",
+          `${baseURL}/orders`,
           orderData
         );
 
@@ -417,7 +441,14 @@ const Page3 = ({
   const availableMealTimes =
     selectedDate === "today" ? mealTime[0] : mealTime[1];
 
+  // Only show loading animations if user has actually progressed to Page3 (has userId)
+  // This prevents loading animations when going back to Page1/Page2
+  if (!userId) return null;
+
   if (!baseTime) return <Loading text={text.loading || "Initializing..."} />;
+  
+  // Wait for organizationId to be available
+  if (!organizationId) return <Loading text="Loading organization data..." />;
 
   return (
     <>
@@ -762,7 +793,7 @@ const Page3 = ({
                                             type="text"
                                             onClick={() =>
                                               updateOrderItemCount(
-                                                meal?.id,
+                                                item.mealId,
                                                 item.date,
                                                 item.mealTime,
                                                 false
@@ -781,7 +812,7 @@ const Page3 = ({
                                             type="text"
                                             onClick={() =>
                                               updateOrderItemCount(
-                                                meal?.id,
+                                                item.mealId,
                                                 item.date,
                                                 item.mealTime,
                                                 true
@@ -815,6 +846,19 @@ const Page3 = ({
                         )}
                       </Card>
                     </div>
+                    <div>
+                      <Text strong>
+                        Total: Rs.{" "}
+                        {orderItems
+                          .reduce((total, item) => {
+                            const meal = allMeals.find(
+                              (meal) => meal.id === item.mealId
+                            );
+                            return total + (meal ? meal.price * item.count : 0);
+                          }, 0)
+                          .toFixed(2)}
+                      </Text>
+                    </div>
                     <Button
                       type="primary"
                       block
@@ -829,17 +873,10 @@ const Page3 = ({
                     >
                       {text.placeOrder}
                     </Button>
+                    
                     <div className={styles.totalContainer}>
                       <Text strong>
-                        Total: Rs.{" "}
-                        {orderItems
-                          .reduce((total, item) => {
-                            const meal = allMeals.find(
-                              (meal) => meal.id === item.mealId
-                            );
-                            return total + (meal ? meal.price * item.count : 0);
-                          }, 0)
-                          .toFixed(2)}
+                        {" "}
                       </Text>
                       <div style={{ display: 'flex', gap: '8px' }}>
                         <Button
@@ -854,12 +891,28 @@ const Page3 = ({
                         </Button>
                         <Button
                           onClick={() => {
+                            // Reset all data states
+                            setOrderItems([]);
+                            setMeals([]);
+                            setAllMeals([]);
+                            setSelectedMealTime(null);
+                            setSelectedDate("today");
+                            setMealTime([[], []]);
+                            setSuggestions([]);
+                            setShowSuggestions(false);
+                            setLoadingSuggestions(false);
+                            setShowSuccess(false);
+                            setShowError(false);
+                            setLoading(true);
+                            
+                            // Reset pin and navigate
                             setResetPin(true);
                             carouselRef.current?.goTo(1);
                           }}
                           className={styles.backButton}
+                          icon={<LogoutOutlined />}
                         >
-                          Cancel Order
+                          Logout
                         </Button>
                         
                       </div>

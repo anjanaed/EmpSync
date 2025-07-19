@@ -95,7 +95,7 @@ export class MealTypeService {
       return this.databaseService.mealType.findMany({
         where: {
           OR: [
-            { isDefault: true, orgId: orgId || undefined },
+            { orgId: orgId || undefined }, // Include all meal types for the organization
             {
               date: {
                 gte: todayStart,
@@ -105,7 +105,10 @@ export class MealTypeService {
             },
           ],
         },
-        orderBy: { name: 'asc' },
+        orderBy: [
+          { isDefault: 'desc' }, // Show defaults first, but include all
+          { name: 'asc' },
+        ],
       });
     } catch (error) {
       throw new BadRequestException('Failed to retrieve default meal types');
@@ -231,9 +234,13 @@ export class MealTypeService {
       const todayIST = now.toISOString().split('T')[0];
       const tomorrowIST = tomorrow.toISOString().split('T')[0];
 
-      const defaultMeals = await this.databaseService.mealType.findMany({
-        where: { isDefault: true, orgId: orgId || undefined },
-        orderBy: { name: 'asc' },
+      // Get all meal types for the organization, not just defaults
+      const allMeals = await this.databaseService.mealType.findMany({
+        where: { orgId: orgId || undefined },
+        orderBy: [
+          { isDefault: 'desc' }, // Show defaults first, but include all
+          { name: 'asc' },
+        ],
       });
 
       const getMergedMeals = async (
@@ -243,8 +250,8 @@ export class MealTypeService {
       ): Promise<any[]> => {
         const scheduledMeals = await this.scheduledMealService.findByDate(dateString, orgId);
 
-        const usedDefaultMeals = defaultMeals.filter((defaultMeal) =>
-          scheduledMeals.some((schedule) => schedule.mealTypeId === defaultMeal.id),
+        const usedAllMeals = allMeals.filter((meal) =>
+          scheduledMeals.some((schedule) => schedule.mealTypeId === meal.id),
         );
 
         const mealsWithDate = await this.databaseService.mealType.findMany({
@@ -256,7 +263,7 @@ export class MealTypeService {
         });
 
         const mealMap = new Map<number, any>();
-        [...mealsWithDate, ...usedDefaultMeals].forEach((meal) =>
+        [...mealsWithDate, ...usedAllMeals].forEach((meal) =>
           mealMap.set(meal.id, meal),
         );
 
@@ -320,7 +327,7 @@ export class MealTypeService {
       const meals = await this.databaseService.mealType.findMany({
         where: {
           OR: [
-            { isDefault: true, orgId: orgId || undefined },
+            { orgId: orgId || undefined }, // Include all meal types for the organization
             {
               date: {
                 gte: dayStartUTC,
@@ -330,7 +337,10 @@ export class MealTypeService {
             },
           ],
         },
-        orderBy: { name: 'asc' },
+        orderBy: [
+          { isDefault: 'desc' }, // Show defaults first, but include all
+          { name: 'asc' },
+        ],
       });
 
       return meals;
