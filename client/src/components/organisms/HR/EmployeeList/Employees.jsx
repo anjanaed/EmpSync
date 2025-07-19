@@ -164,7 +164,6 @@ const Employees = () => {
       dataIndex: "no",
       key: "no",
       align: "center",
-      defaultSortOrder: "ascend",
       sorter: (a, b) => {
         const numA = parseInt(a.id.match(/\d+/)?.[0] || "0", 10);
         const numB = parseInt(b.id.match(/\d+/)?.[0] || "0", 10);
