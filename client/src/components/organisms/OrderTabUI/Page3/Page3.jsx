@@ -91,6 +91,16 @@ const Page3 = ({
   const [loadingSuggestions, setLoadingSuggestions] = useState(false);
   const text = translations[language];
 
+  // Get organizationId from username prop
+  const organizationId = username?.organizationId;
+
+  // Debug log to verify organizationId is received
+  useEffect(() => {
+    console.log("Page3 received username:", username);
+    console.log("Page3 received organizationId:", organizationId);
+    console.log("Page3 received userId:", userId);
+  }, [username, organizationId, userId]);
+
   useEffect(() => {
     const initTime = () => {
       const localTime = new Date();
@@ -109,9 +119,19 @@ const Page3 = ({
       }
     }, 1000);
 
+    return () => clearInterval(timer);
+  }, []);
+
+  // Separate useEffect for fetching meal times when organizationId is available
+  useEffect(() => {
     const fetchMealTime = async () => {
       try {
-        const res = await axios.get(`http://localhost:3000/meal-types/fetch`);
+        // Add organizationId parameter if available
+        const url = organizationId 
+          ? `http://localhost:3000/meal-types/fetch?orgId=${organizationId}`
+          : `http://localhost:3000/meal-types/fetch`;
+        
+        const res = await axios.get(url);
         const mealTimes = Array.isArray(res.data) ? res.data : [[], []];
         setMealTime(mealTimes);
         const availableMealTimes =
@@ -124,10 +144,11 @@ const Page3 = ({
         setMealTime([[], []]);
       }
     };
-    fetchMealTime();
 
-    return () => clearInterval(timer);
-  }, []);
+    if (organizationId) {
+      fetchMealTime();
+    }
+  }, [organizationId, selectedDate]);
 
   useEffect(() => {
     const availableMealTimes =
@@ -144,7 +165,7 @@ const Page3 = ({
 
   useEffect(() => {
     const fetchMeals = async () => {
-      if (!selectedMealTime) {
+      if (!selectedMealTime || !organizationId) {
         setMeals([]);
         return;
       }
@@ -158,8 +179,9 @@ const Page3 = ({
           timeZone: "Asia/Kolkata",
         });
 
+        // Add organizationId parameter to the schedule API call
         const scheduleResponse = await axios.get(
-          `http://localhost:3000/schedule/${formattedDate}`
+          `http://localhost:3000/schedule/${formattedDate}?orgId=${organizationId}`
         );
         const scheduleData = Array.isArray(scheduleResponse.data)
           ? scheduleResponse.data
@@ -189,7 +211,7 @@ const Page3 = ({
       }
     };
     fetchMeals();
-  }, [selectedDate, selectedMealTime, baseTime]);
+  }, [selectedDate, selectedMealTime, baseTime, organizationId]);
 
   const formatDateForDisplay = (date) => {
     return date.toLocaleDateString("en-IN");
@@ -276,8 +298,8 @@ const Page3 = ({
   };
 
   const fetchMealSuggestions = async () => {
-    if (!userId || !selectedMealTime) {
-      console.log("Missing userId or selectedMealTime for suggestions");
+    if (!userId || !selectedMealTime || !organizationId) {
+      console.log("Missing userId, selectedMealTime, or organizationId for suggestions");
       return;
     }
 
@@ -296,7 +318,7 @@ const Page3 = ({
           params: {
             date: formattedDate,
             mealTypeId: selectedMealTime,
-            orgId: authData?.orgId,
+            orgId: organizationId,
           },
         }
       );
@@ -360,6 +382,7 @@ const Page3 = ({
 
         const orderData = {
           employeeId: userId || "unknown",
+          orgId: organizationId,
           meals: mealsArray,
           orderDate,
           mealTypeId: mealTime,
@@ -418,6 +441,9 @@ const Page3 = ({
     selectedDate === "today" ? mealTime[0] : mealTime[1];
 
   if (!baseTime) return <Loading text={text.loading || "Initializing..."} />;
+  
+  // Wait for organizationId to be available
+  if (!organizationId) return <Loading text="Loading organization data..." />;
 
   return (
     <>

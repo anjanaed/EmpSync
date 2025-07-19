@@ -275,10 +275,11 @@ const Page2 = ({
         throw new Error("User not found for this employee ID");
       }
       const user = await userResponse.json();
-      setUsername({ name: user.name, gender: user.gender });
+      setUsername({ name: user.name, gender: user.gender, organizationId: user.organizationId });
       setUserId(user.id);
       console.log("Retrieved Username:", user.name);
       console.log("Retrieved User ID:", user.id);
+      console.log("Retrieved Organization ID:", user.organizationId);
       setTimeout(() => {
         carouselRef.current.goTo(2);
       }, 100);
@@ -300,10 +301,11 @@ const Page2 = ({
           throw new Error("User not found");
         }
         const user = await response.json();
-        setUsername({ name: user.name, gender: user.gender });
+        setUsername({ name: user.name, gender: user.gender, organizationId: user.organizationId });
         setUserId(user.id);
         console.log("Retrieved Username:", user.name);
         console.log("Retrieved User ID:", user.id);
+        console.log("Retrieved Organization ID:", user.organizationId);
         setTimeout(() => {
           carouselRef.current.goTo(2);
         }, 100);

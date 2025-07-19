@@ -178,6 +178,7 @@ export class UserService {
           id: true,
           name: true,
           gender: true,
+          organizationId: true,
         },
       });
       if (user) {
