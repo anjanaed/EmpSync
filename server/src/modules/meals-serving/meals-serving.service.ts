@@ -57,18 +57,51 @@ export class MealsServingService {
 
       const orders = await this.databaseService.order.findMany({
         where: whereCondition,
+        select: {
+          id: true,
+          employeeId: true,
+          orgId: true,
+          mealTypeId: true,
+          meals: true,
+          orderDate: true,
+          orderPlacedTime: true,
+          price: true,
+          serve: true,
+        }
       });
 
       if (!orders || orders.length === 0) {
         throw new NotFoundException('No orders found for the specified date');
       }
 
+      // Filter orders to ensure they match the exact date (additional safety check)
+      const filteredOrders = orders.filter(order => {
+        const orderDateOnly = new Date(order.orderDate);
+        orderDateOnly.setHours(0, 0, 0, 0);
+        const queryDateOnly = new Date(orderDate);
+        queryDateOnly.setHours(0, 0, 0, 0);
+        
+        return orderDateOnly.getTime() === queryDateOnly.getTime();
+      });
+
       const ordersWithMeals = await Promise.all(
-        orders.map(async (order) => {
+        filteredOrders.map(async (order) => {
           const mealDetails = await Promise.all(
             order.meals.map(async (mealEntry) => {
               const [mealId, count] = mealEntry.split(':').map((value) => Number(value));// Split the meal entry into ID and count
-              const meal = await this.databaseService.meal.findUnique({ where: { id: mealId } });
+              const meal = await this.databaseService.meal.findUnique({ 
+                where: { id: mealId },
+                select: {
+                  id: true,
+                  nameEnglish: true,
+                  nameSinhala: true,
+                  nameTamil: true,
+                  description: true,
+                  price: true,
+                  imageUrl: true,
+                  category: true,
+                }
+              });
               return { ...meal, count };
             })
           );
@@ -108,6 +141,11 @@ export class MealsServingService {
 
       const orders = await this.databaseService.order.findMany({
         where: whereCondition,
+        select: {
+          id: true,
+          meals: true,
+          orderDate: true,
+        }
       });
 
       if (!orders || orders.length === 0) {
@@ -117,6 +155,16 @@ export class MealsServingService {
       const mealCounts: { [mealId: number]: { name: string; totalCount: number } } = {};
 
       for (const order of orders) {
+        // Double-check that this order is for the exact date we're querying
+        const orderDateOnly = new Date(order.orderDate);
+        orderDateOnly.setHours(0, 0, 0, 0);
+        const queryDateOnly = new Date(orderDate);
+        queryDateOnly.setHours(0, 0, 0, 0);
+        
+        if (orderDateOnly.getTime() !== queryDateOnly.getTime()) {
+          continue; // Skip orders that don't match the exact date
+        }
+
         for (const mealEntry of order.meals) {
           const [mealIdStr, countStr] = mealEntry.split(':');
           const mealId = Number(mealIdStr);
@@ -158,7 +206,7 @@ export class MealsServingService {
     }
   }
 
-  // Optimized method to get meal counts allocated by meal time (dynamic)
+  // Optimized method to get meal counts allocated by meal time for specific date (dynamic)
   async getMealCountsByMealTime(orderDate: Date, orgId?: string) {
     try {
       const startOfDay = new Date(orderDate);
@@ -179,34 +227,62 @@ export class MealsServingService {
         whereCondition.orgId = orgId;
       }
 
-      // Fetch orders, meal types, and meals in parallel for better performance
-      const [orders, mealTypes, meals] = await Promise.all([
+      // First, get meal types for the organization and date
+      const mealTypeWhere: any = {};
+      if (orgId) {
+        mealTypeWhere.orgId = orgId;
+      }
+
+      // Get scheduled meals for the specific date to know which meals should be available
+      const scheduledMealsWhere: any = {
+        date: {
+          gte: startOfDay,
+          lte: endOfDay,
+        }
+      };
+      if (orgId) {
+        scheduledMealsWhere.orgId = orgId;
+      }
+
+      // Fetch orders, meal types, meals, and scheduled meals in parallel for better performance
+      const [orders, mealTypes, scheduledMeals] = await Promise.all([
         this.databaseService.order.findMany({
           where: whereCondition,
           select: {
             id: true,
             mealTypeId: true,
             meals: true,
+            orderDate: true,
           }
         }),
         this.databaseService.mealType.findMany({
-          where: orgId ? { orgId } : {},
+          where: mealTypeWhere,
           select: {
             id: true,
             name: true,
           }
         }),
-        this.databaseService.meal.findMany({
-          where: orgId ? { orgId } : {},
-          select: {
-            id: true,
-            nameEnglish: true,
-            imageUrl: true,
-            description: true,
-            ingredients: {
-              include: {
-                ingredient: {
-                  select: { name: true }
+        this.databaseService.scheduledMeal.findMany({
+          where: scheduledMealsWhere,
+          include: {
+            mealType: {
+              select: {
+                id: true,
+                name: true,
+              }
+            },
+            meals: {
+              select: {
+                id: true,
+                nameEnglish: true,
+                imageUrl: true,
+                description: true,
+                ingredients: {
+                  include: {
+                    ingredient: {
+                      select: { name: true }
+                    }
+                  }
                 }
               }
             }
@@ -214,26 +290,67 @@ export class MealsServingService {
         })
       ]);
 
-      if (!orders || orders.length === 0) {
-        // Return empty structure with available meal types instead of throwing error
-        const emptyResult: { [mealTypeName: string]: any[] } = {};
-        mealTypes.forEach(mealType => {
-          emptyResult[mealType.name.toLowerCase()] = [];
-        });
-        return emptyResult;
-      }
-
       // Create lookup maps for faster access
       const mealTypeMap = new Map(mealTypes.map(mt => [mt.id, mt.name.toLowerCase()]));
-      const mealMap = new Map(meals.map(meal => [
-        meal.id, 
-        {
-          ...meal,
-          ingredients: meal.ingredients.map(mi => mi.ingredient.name)
-        }
-      ]));
+      
+      // Create a map of meals available for each meal type on this specific date
+      const scheduledMealsByType = new Map<number, any[]>();
+      const allScheduledMeals = new Map<number, any>();
 
-      // Dynamic meal counts object
+      scheduledMeals.forEach(scheduled => {
+        if (!scheduledMealsByType.has(scheduled.mealTypeId)) {
+          scheduledMealsByType.set(scheduled.mealTypeId, []);
+        }
+        
+        scheduled.meals.forEach(meal => {
+          const mealWithIngredients = {
+            ...meal,
+            ingredients: meal.ingredients.map(mi => mi.ingredient.name)
+          };
+          scheduledMealsByType.get(scheduled.mealTypeId)!.push(mealWithIngredients);
+          allScheduledMeals.set(meal.id, mealWithIngredients);
+        });
+      });
+
+      // Initialize result structure with all meal types
+      const result: {
+        [mealTypeName: string]: Array<{
+          mealId: number;
+          name: string;
+          totalCount: number;
+          imageUrl: string | null;
+          mealTypeId: number;
+          description: string | null;
+          ingredients: string[];
+        }>;
+      } = {};
+
+      // Initialize all meal types (even if no orders exist)
+      mealTypes.forEach(mealType => {
+        const mealTypeName = mealType.name.toLowerCase();
+        result[mealTypeName] = [];
+        
+        // Add all scheduled meals for this meal type with 0 count
+        const scheduledForType = scheduledMealsByType.get(mealType.id) || [];
+        scheduledForType.forEach(meal => {
+          result[mealTypeName].push({
+            mealId: meal.id,
+            name: meal.nameEnglish,
+            totalCount: 0,
+            imageUrl: meal.imageUrl,
+            mealTypeId: mealType.id,
+            description: meal.description || null,
+            ingredients: meal.ingredients,
+          });
+        });
+      });
+
+      // If no orders found, return the initialized structure with scheduled meals
+      if (!orders || orders.length === 0) {
+        return result;
+      }
+
+      // Process orders and update counts for the specific date
       const mealCounts: {
         [mealTypeName: string]: { 
           [mealId: number]: { 
@@ -252,10 +369,26 @@ export class MealsServingService {
         mealCounts[mealType.name.toLowerCase()] = {};
       });
 
-      // Process orders more efficiently
+      // Process orders - only count orders that match the exact date
       for (const order of orders) {
+        // Double-check that this order is for the exact date we're querying
+        const orderDateOnly = new Date(order.orderDate);
+        orderDateOnly.setHours(0, 0, 0, 0);
+        const queryDateOnly = new Date(orderDate);
+        queryDateOnly.setHours(0, 0, 0, 0);
+        
+        if (orderDateOnly.getTime() !== queryDateOnly.getTime()) {
+          continue; // Skip orders that don't match the exact date
+        }
+
         const mealTypeName = mealTypeMap.get(order.mealTypeId) || 'unknown';
         
+        // Skip if meal type doesn't exist
+        if (!mealTypeMap.has(order.mealTypeId)) {
+          console.warn(`Unknown meal type ID: ${order.mealTypeId}`);
+          continue;
+        }
+
         // Initialize meal type if not exists
         if (!mealCounts[mealTypeName]) {
           mealCounts[mealTypeName] = {};
@@ -271,9 +404,10 @@ export class MealsServingService {
             continue;
           }
 
-          const meal = mealMap.get(mealId);
+          // Only count meals that are actually scheduled for this date and meal type
+          const meal = allScheduledMeals.get(mealId);
           if (!meal) {
-            console.warn(`Meal with ID ${mealId} not found`);
+            console.warn(`Meal with ID ${mealId} not scheduled for date ${orderDate.toISOString().split('T')[0]}`);
             continue;
           }
 
@@ -293,19 +427,7 @@ export class MealsServingService {
         }
       }
 
-      // Format the result
-      const result: {
-        [mealTypeName: string]: Array<{
-          mealId: number;
-          name: string;
-          totalCount: number;
-          imageUrl: string | null;
-          mealTypeId: number;
-          description: string | null;
-          ingredients: string[];
-        }>;
-      } = {};
-
+      // Update the result with actual counts
       for (const [mealTypeName, meals] of Object.entries(mealCounts)) {
         result[mealTypeName] = Object.entries(meals).map(([mealId, { name, totalCount, imageUrl, mealTypeId, description, ingredients }]) => ({
           mealId: Number(mealId),
@@ -317,6 +439,30 @@ export class MealsServingService {
           ingredients,
         }));
       }
+
+      // Ensure all scheduled meals are included (merge with counted meals)
+      mealTypes.forEach(mealType => {
+        const mealTypeName = mealType.name.toLowerCase();
+        const scheduledForType = scheduledMealsByType.get(mealType.id) || [];
+        
+        // Create a map of existing results for this meal type
+        const existingMeals = new Map(result[mealTypeName].map(meal => [meal.mealId, meal]));
+        
+        // Add any scheduled meals that weren't in the orders
+        scheduledForType.forEach(scheduledMeal => {
+          if (!existingMeals.has(scheduledMeal.id)) {
+            result[mealTypeName].push({
+              mealId: scheduledMeal.id,
+              name: scheduledMeal.nameEnglish,
+              totalCount: 0,
+              imageUrl: scheduledMeal.imageUrl,
+              mealTypeId: mealType.id,
+              description: scheduledMeal.description || null,
+              ingredients: scheduledMeal.ingredients,
+            });
+          }
+        });
+      });
 
       return result;
     } catch (error) {
