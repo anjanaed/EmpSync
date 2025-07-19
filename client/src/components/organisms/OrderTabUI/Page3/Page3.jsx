@@ -441,6 +441,10 @@ const Page3 = ({
   const availableMealTimes =
     selectedDate === "today" ? mealTime[0] : mealTime[1];
 
+  // Only show loading animations if user has actually progressed to Page3 (has userId)
+  // This prevents loading animations when going back to Page1/Page2
+  if (!userId) return null;
+
   if (!baseTime) return <Loading text={text.loading || "Initializing..."} />;
   
   // Wait for organizationId to be available
