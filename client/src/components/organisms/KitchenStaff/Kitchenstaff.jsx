@@ -4,7 +4,7 @@ import { DatePicker, Card, Spin, message } from "antd";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../contexts/AuthContext"; // Add authentication context
 import "antd/dist/reset.css";
-import styles from "./Kitchenstaff.module.css";
+import styles from "./KitchenStaff.module.css";
 
 const { Meta } = Card;
 
