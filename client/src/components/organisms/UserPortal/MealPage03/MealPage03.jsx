@@ -515,8 +515,9 @@ const MealPage03 = () => {
                       <Button
                         type="default"
                         icon={<RiAiGenerate />}
-                        onClick={() => console.log("Filter button clicked")}
+                        onClick={fetchMealSuggestions}
                         className={styles.filterButton}
+                        loading={loadingSuggestions}
                       >
                         Suggestions
                       </Button>
@@ -543,9 +544,9 @@ const MealPage03 = () => {
                         <Button
                           type="default"
                           icon={<RiAiGenerate />}
-                          onClick={() => console.log("Filter button clicked")}
+                          onClick={fetchMealSuggestions}
                           className={styles.filterButton}
-
+                          loading={loadingSuggestions}
                         >
                           Suggestions
                         </Button>
