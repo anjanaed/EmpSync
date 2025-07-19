@@ -169,9 +169,15 @@ export class SuperAdminService {
 
       return lastOrg.id;
     } catch (error) {
+      // Let NotFoundException bubble up
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+
       throw new BadRequestException('Failed to fetch last organization ID: ' + error.message);
     }
   }
+
 
 
   // User CRUD operations
