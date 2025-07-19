@@ -793,7 +793,7 @@ const Page3 = ({
                                             type="text"
                                             onClick={() =>
                                               updateOrderItemCount(
-                                                meal?.id,
+                                                item.mealId,
                                                 item.date,
                                                 item.mealTime,
                                                 false
@@ -812,7 +812,7 @@ const Page3 = ({
                                             type="text"
                                             onClick={() =>
                                               updateOrderItemCount(
-                                                meal?.id,
+                                                item.mealId,
                                                 item.date,
                                                 item.mealTime,
                                                 true
@@ -891,6 +891,21 @@ const Page3 = ({
                         </Button>
                         <Button
                           onClick={() => {
+                            // Reset all data states
+                            setOrderItems([]);
+                            setMeals([]);
+                            setAllMeals([]);
+                            setSelectedMealTime(null);
+                            setSelectedDate("today");
+                            setMealTime([[], []]);
+                            setSuggestions([]);
+                            setShowSuggestions(false);
+                            setLoadingSuggestions(false);
+                            setShowSuccess(false);
+                            setShowError(false);
+                            setLoading(true);
+                            
+                            // Reset pin and navigate
                             setResetPin(true);
                             carouselRef.current?.goTo(1);
                           }}
