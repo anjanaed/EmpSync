@@ -12,7 +12,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Button } from "antd";
 import { useNavigate } from "react-router-dom";
 import NavBar from '../../../organisms/NavBar/NavBar';
-import Employees from "../../../Organisms/HR/EmployeeList/Employees";
+import Employees from "../../../organisms/HR/EmployeeList/Employees";
 import { useAuth } from "../../../../contexts/AuthContext"; 
 
 const EmployeePage = () => {
