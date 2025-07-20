@@ -162,7 +162,10 @@ export class MealTypeService {
             },
           ],
         },
-        orderBy: { name: 'asc' },
+        orderBy: [
+          { isDefault: 'desc' }, // Show defaults first, but include all
+          { name: 'asc' },
+        ],
       });
     } catch (error) {
       throw new BadRequestException('Failed to retrieve default meal types');
@@ -443,7 +446,7 @@ export class MealTypeService {
         });
 
         const mealMap = new Map<number, any>();
-        [...mealsWithDate, ...usedDefaultMeals].forEach((meal) =>
+        [...mealsWithDate, ...usedAllMeals].forEach((meal) =>
           mealMap.set(meal.id, meal),
         );
 
@@ -526,7 +529,10 @@ export class MealTypeService {
             },
           ],
         },
-        orderBy: { name: 'asc' },
+        orderBy: [
+          { isDefault: 'desc' }, // Show defaults first, but include all
+          { name: 'asc' },
+        ],
       });
 
       return meals;

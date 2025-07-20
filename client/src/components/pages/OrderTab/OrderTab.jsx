@@ -1,9 +1,9 @@
 import React, { useRef, useState } from 'react';
 import { Carousel } from 'antd';
 import styles from './OrderTab.module.css'; // Import CSS module for styling
-import Page1 from "../../organisms/OrderTabUI/Page1/Page1"; // Import Page1 component
-import Page2 from "../../organisms/OrderTabUI/Page2/Page2"; // Import Page2 component
-import Page3 from "../../organisms/OrderTabUI/Page3/Page3"; // Import Page3 component
+import Page1 from "../../organisms/OrderTabUI/Page1/Page1.jsx"; // Import Page1 component
+import Page2 from "../../organisms/OrderTabUI/Page2/Page2.jsx"; // Import Page2 component
+import Page3 from "../../organisms/OrderTabUI/Page3/Page3.jsx"; // Import Page3 component
 
 // OrderTab component to manage the carousel of ordering pages
 const OrderTab = () => {
@@ -31,6 +31,9 @@ const OrderTab = () => {
                 dots={false} // Hide navigation dots
                 accessibility={false} // Disable default accessibility features
                 speed={0}
+                swipe={false} // Disable swipe navigation
+                draggable={false} // Disable drag navigation
+                touchMove={false} // Disable touch move
                 initialSlide={initialSlide} // Start at Page2.jsx
             >
                 {/* Page 1: Language selection */}

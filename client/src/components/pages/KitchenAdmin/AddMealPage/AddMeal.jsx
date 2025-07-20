@@ -1,6 +1,6 @@
 import React from "react";
-import NavBar from "../../../organisms/Kitchen/Header/HeaderNew";
-import Content from "../../../organisms/Kitchen/MealDetails/MealDetailsForm";
+import NavBar from "../../../organisms/Kitchen/Header/HeaderNew.jsx";
+import Content from "../../../organisms/Kitchen/MealDetails/MealDetailsForm.jsx";
 
 const MealAdd = () => {
   return (

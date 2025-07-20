@@ -3,15 +3,15 @@ import axios from "axios";
 import { Table, Space, Modal, ConfigProvider, Select, Popconfirm } from "antd";
 import { FiEdit } from "react-icons/fi";
 import { MdOutlineDeleteOutline } from "react-icons/md";
-import EditModal from "../../../templates/HR/EditModal/EditModal";
-import Loading from "../../../atoms/loading/loading";
+import EditModal from "../../../templates/HR/EditModal.jsx";
+import Loading from "../../../atoms/loading/loading.jsx";
 import styles from "./Employee.module.css";
-import SearchBar from "../../../molecules/SearchBar/SearchBar";
+import SearchBar from "../../../molecules/SearchBar/SearchBar.jsx";
 import { Toaster, toast } from "sonner";
-import { useAuth } from "../../../../contexts/AuthContext";
+import { useAuth } from "../../../../contexts/AuthContext.jsx";
 import { debounce } from "lodash";
-import { usePopup } from "../../../../contexts/PopupContext";
-import { useTheme } from "../../../../contexts/ThemeContext";
+import { usePopup } from "../../../../contexts/PopupContext.jsx";
+import { useTheme } from "../../../../contexts/ThemeContext.jsx";
 
 // Theme configurations moved to CSS module
 const getCustomTheme = () => ({
@@ -164,7 +164,6 @@ const Employees = () => {
       dataIndex: "no",
       key: "no",
       align: "center",
-      defaultSortOrder: "ascend",
       sorter: (a, b) => {
         const numA = parseInt(a.id.match(/\d+/)?.[0] || "0", 10);
         const numB = parseInt(b.id.match(/\d+/)?.[0] || "0", 10);
@@ -215,6 +214,7 @@ const Employees = () => {
           <FiEdit
             onClick={() => openModal(record.id)}
             className={styles.icons}
+            color="black"
             size="15px"
           />
           <Popconfirm
@@ -232,7 +232,7 @@ const Employees = () => {
             cancelText={<span className={styles.popconfirmButton}>No</span>}
           >
             {" "}
-            <MdOutlineDeleteOutline className={styles.icons} size="17px" />
+            <MdOutlineDeleteOutline color="red" className={styles.icons} size="17px" />
           </Popconfirm>
         </Space>
       ),
@@ -283,20 +283,16 @@ const Employees = () => {
                 optionFilterProp="label"
                 options={[
                   {
-                    value: "HR Manager",
-                    label: "HR Manager",
+                    value: "HR_ADMIN",
+                    label: "Human Resource Manager",
                   },
                   {
-                    value: "Kitchen Admin",
-                    label: "Kitchen Admin",
+                    value: "Kitchen_Admin",
+                    label: "Kitchen Administrator",
                   },
                   {
-                    value: "Kitchen Staff",
+                    value: "Kitchen_Staff",
                     label: "Kitchen Staff",
-                  },
-                  {
-                    value: "Inventory Manager",
-                    label: "Inventory Manager",
                   },
                 ]}
               />

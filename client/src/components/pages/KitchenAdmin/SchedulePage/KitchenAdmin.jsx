@@ -11,11 +11,11 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Button } from "antd";
-import NavBar from '../../../organisms/NavBar/NavBar';
-import Menu from "../../../organisms/Kitchen/Schedule/Calendar";
-import NotificationPanel from "../../../organisms/Kitchen/NotificationPanel/NotificationPanel";
-import { useNotifications } from "../../../../contexts/NotificationsContext";
-import { useAuth } from "../../../../contexts/AuthContext";
+import NavBar from '../../../organisms/NavBar/NavBar.jsx';
+import Menu from "../../../organisms/Kitchen/Schedule/Calendar.jsx";
+import NotificationPanel from "../../../organisms/Kitchen/NotificationPanel/NotificationPanel.jsx";
+import { useNotifications } from "../../../../contexts/NotificationsContext.jsx";
+import { useAuth } from "../../../../contexts/AuthContext.jsx";
 import styles from "../../../organisms/Kitchen/NotificationPanel/NotificationPanel.module.css";
 
 const AnalysisDashboard = () => {

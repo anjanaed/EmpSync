@@ -10,7 +10,7 @@ import {
   Calendar,
   Tag,
 } from "antd";
-import { useAuth } from "../../../../contexts/AuthContext";
+import { useAuth } from "../../../../contexts/AuthContext.jsx";
 import axios from "axios";
 import styles from "./Meals.module.css";
 import { QrcodeOutlined } from "@ant-design/icons";
@@ -165,6 +165,7 @@ const Cart = ({
 
 const Meals = () => {
   const { authData } = useAuth();
+  const baseURL = import.meta.env.VITE_BASE_URL;
   const [activeTab, setActiveTab] = useState("current");
   const [currentOrders, setCurrentOrders] = useState([]);
   const [pastOrders, setPastOrders] = useState([]);
@@ -187,7 +188,7 @@ const Meals = () => {
     const fetchOrders = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3000/orders?employeeId=${employeeId}`,
+          `${baseURL}/orders?employeeId=${employeeId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -210,7 +211,7 @@ const Meals = () => {
         const mealResponses = await Promise.all(
           uniqueMealIds.map((mealId) =>
             axios
-              .get(`http://localhost:3000/meal/${mealId}`)
+              .get(`${baseURL}/meal/${mealId}`)
               .then((response) => response.data)
               .catch(() => null)
           )
@@ -231,7 +232,7 @@ const Meals = () => {
         const mealTypeResponses = await Promise.all(
           uniqueMealTypeIds.map((mealTypeId) =>
             axios
-              .get(`http://localhost:3000/meal-type/${mealTypeId}`)
+              .get(`${baseURL}/meal-type/${mealTypeId}`)
               .then((response) => response.data)
               .catch(() => null)
           )
@@ -279,7 +280,7 @@ const Meals = () => {
 
   const handleCancelOrder = async (orderId) => {
     try {
-      await axios.delete(`http://localhost:3000/orders/${orderId}`, {
+      await axios.delete(`${baseURL}/orders/${orderId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

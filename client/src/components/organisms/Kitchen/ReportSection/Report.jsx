@@ -18,7 +18,7 @@ import {
   TrendingDown,
 } from "lucide-react";
 import styles from "./Report.module.css";
-import { useAuth } from "../../../../contexts/AuthContext";
+import { useAuth } from "../../../../contexts/AuthContext.jsx";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 import axios from "axios";

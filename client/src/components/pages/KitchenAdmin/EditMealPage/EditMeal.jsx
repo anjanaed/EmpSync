@@ -1,8 +1,8 @@
 import React from "react";
 
-import NavBar from "../../../organisms/Kitchen/Header/HeaderNew";
+import NavBar from "../../../organisms/Kitchen/Header/HeaderNew.jsx";
 
-import ContentEdit from "../../../organisms/Kitchen/EditMeal/Edit";
+import ContentEdit from "../../../organisms/Kitchen/EditMeal/Edit.jsx";
 
 const MealEdit = () => {
   return (

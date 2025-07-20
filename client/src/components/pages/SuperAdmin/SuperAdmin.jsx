@@ -1,21 +1,22 @@
 import { Layout, Modal } from 'antd';
 import { useState, useEffect } from 'react';
-import { useAuth } from '../../../contexts/AuthContext';
+import { useAuth } from '../../../contexts/AuthContext.jsx';
 import axios from 'axios';
-import Navbar from '../../organisms/SuperAdmin/components/Navbar/Navbar';
-import AppHeader from '../../organisms/SuperAdmin/components/AppHeader/AppHeader';
-import OrganizationList from '../../organisms/SuperAdmin/pages/Organizations/Organization List/OrganizationList';
-import AddOrganizationModal from '../../organisms/SuperAdmin/pages/Organizations/Add Organization/AddOrganizationModal';
-import UpdateOrganizationModal from '../../organisms/SuperAdmin/pages/Organizations/Update Organizations/updateOrganiztionModal';
-import RolesList from '../../organisms/SuperAdmin/pages/Roles/RolesList';
-import PermissionsList from '../../organisms/SuperAdmin/pages/Permissions/PermissionsList';
-import Loading from "../../atoms/loading/loading";
+import Navbar from '../../organisms/SuperAdmin/components/Navbar/Navbar.jsx';
+import AppHeader from '../../organisms/SuperAdmin/components/AppHeader/AppHeader.jsx';
+import OrganizationList from '../../organisms/SuperAdmin/pages/Organizations/Organization List/OrganizationList.jsx';
+import AddOrganizationModal from '../../organisms/SuperAdmin/pages/Organizations/Add Organization/AddOrganizationModal.jsx';
+import UpdateOrganizationModal from '../../organisms/SuperAdmin/pages/Organizations/Update Organizations/updateOrganiztionModal.jsx';
+import RolesList from '../../organisms/SuperAdmin/pages/Roles/RolesList.jsx';
+import PermissionsList from '../../organisms/SuperAdmin/pages/Permissions/PermissionsList.jsx';
+import Loading from "../../atoms/loading/loading.jsx";
 import styles from './SuperAdmin.module.css';
 
 const { Content } = Layout;
 const { confirm } = Modal;
 
 const SuperAdmin = () => {
+  const baseURL = import.meta.env.VITE_BASE_URL;
   const [activeMenu, setActiveMenu] = useState('organizations');
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isUpdateModalVisible, setIsUpdateModalVisible] = useState(false);
@@ -61,7 +62,7 @@ const SuperAdmin = () => {
     }
     setLoading(true);
     try {
-      const res = await axios.get('http://localhost:3000/super-admin/organizations', {
+      const res = await axios.get(`${baseURL}/super-admin/organizations`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setData(mapOrganizations(res.data));
@@ -94,7 +95,7 @@ const SuperAdmin = () => {
   const handleOk = async (values) => {
     if (!token) return;
     try {
-      await axios.post('http://localhost:3000/super-admin/organizations', values, {
+      await axios.post(`${baseURL}/super-admin/organizations`, values, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
@@ -117,7 +118,7 @@ const SuperAdmin = () => {
   const updateOrganization = async (orgId, values) => {
     if (!token) return;
     try {
-      await axios.put(`http://localhost:3000/super-admin/organizations/${orgId}`, values, {
+      await axios.put(`${baseURL}/super-admin/organizations/${orgId}`, values, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
@@ -151,7 +152,7 @@ const SuperAdmin = () => {
       async onOk() {
         if (!token) return;
         try {
-          await axios.delete(`http://localhost:3000/super-admin/organizations/${item.key}`, {
+          await axios.delete(`${baseURL}/super-admin/organizations/${item.key}`, {
             headers: { Authorization: `Bearer ${token}` },
           });
           await fetchOrganizations();
