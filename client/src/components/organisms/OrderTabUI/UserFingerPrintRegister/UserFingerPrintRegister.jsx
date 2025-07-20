@@ -254,23 +254,23 @@ function PinSection() {
                     // Extract thumbID and save to database
                     const match = line.match(/ThumbID Registered: (FPU\d{3}\d{4})/);
                     if (match && user) {
-                        const thumbId = match[1];
+                        const thumbid = match[1];
+                        const empId = user.id;
                         try {
-                            const baseURL = import.meta.env.VITE_BASE_URL || '';
-                            const response = await fetch(`${baseURL}/user-finger-print-register-backend/register`, {
+                            const response = await fetch('/user-finger-print-register-backend/fingerprint', {
                                 method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                },
-                                body: JSON.stringify({
-                                    empId: user.id,
-                                    thumbid: thumbId
-                                })
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ thumbid, empId })
                             });
                             
                             if (response.ok) {
                                 console.log("Fingerprint saved to database successfully");
                                 setRegisterStatus("✅ Fingerprint registered and saved!");
+                                
+                                // Refresh user fingerprints to update the button states
+                                if (user && user.id) {
+                                    await fetchUserFingerprints(user.id);
+                                }
                                 
                                 // Dispatch event to inform other components
                                 window.dispatchEvent(new CustomEvent('fingerprintRegistrationComplete'));
@@ -280,12 +280,13 @@ function PinSection() {
                                     navigate('/OrderTab');
                                 }, 2000);
                             } else {
+                                const errorData = await response.json().catch(() => ({}));
                                 console.error("Failed to save fingerprint to database");
-                                setRegisterStatus("❌ Registration failed. Database error.");
+                                setRegisterStatus("❌ Registration failed: " + (errorData.message || response.statusText));
                             }
                         } catch (dbError) {
                             console.error("Database save error:", dbError);
-                            setRegisterStatus("❌ Registration failed. Database error.");
+                            setRegisterStatus("❌ Registration failed: " + dbError.message);
                         }
                     }
                 }
@@ -307,79 +308,6 @@ function PinSection() {
         } catch (error) {
             setRegisterStatus('Error sending BLE command: ' + error.message);
             console.error('BLE command error:', error);
-        }
-    };
-
-    // Process incoming serial messages
-    const processSerialMessage = async (data) => {
-        console.log('Received:', data);
-        // Registration steps and status (show only one at a time)
-        if (data.includes('Waiting for valid finger to enroll as')) {
-            setRegisterStatus('Place your finger on the scanner');
-        } else if (data.includes('Image taken')) {
-            setRegisterStatus('Image taken. Remove your finger.');
-        } else if (data.includes('Remove finger')) {
-            setRegisterStatus('Remove your finger from the scanner');
-        } else if (data.includes('Place same finger again')) {
-            setRegisterStatus('Place the same finger again');
-        } else if (data.includes('First image conversion failed')) {
-            setRegisterStatus('First image conversion failed. Try again.');
-        } else if (data.includes('Second image conversion failed')) {
-            setRegisterStatus('Second image conversion failed. Try again.');
-        } else if (data.includes('Fingerprints did not match')) {
-            setRegisterStatus('Fingerprints did not match. Try again.');
-        } else if (data.includes('ThumbID Registered')) {
-            setRegisterStatus('Fingerprint registered successfully!');
-            // Extract thumbid (e.g., FPU0020001)
-            const match = data.match(/(FPU\d{7})/);
-            if (match && user && user.id) {
-                const thumbid = match[1];
-                const empId = user.id;
-                try {
-                    const response = await fetch('/user-finger-print-register-backend/fingerprint', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ thumbid, empId })
-                    });
-                    if (!response.ok) {
-                        const errorData = await response.json().catch(() => ({}));
-                        setRegisterStatus('Failed to save fingerprint: ' + (errorData.message || response.statusText));
-                    } else {
-                        setRegisterStatus('Fingerprint registered and saved!');
-                        
-                        // Refresh user fingerprints to update the button states
-                        if (user && user.id) {
-                            await fetchUserFingerprints(user.id);
-                        }
-                    }
-                } catch (err) {
-                    setRegisterStatus('Error saving fingerprint: ' + err.message);
-                }
-            }
-            // Show alert and auto-back
-            setTimeout(() => {
-                alert("User's Finger Registered Successfully");
-                setShowFingerprintSection(false);
-                setScanning(false);
-                setRegisterStatus('Please place your finger on the scanner');
-                setRegisterSteps([]);
-                
-                // Notify Page2 that registration is complete and it can resume reading
-                window.dispatchEvent(new CustomEvent('fingerprintRegistrationComplete'));
-            }, 100);
-        } else if (data.includes('No available IDs')) {
-            setRegisterStatus('No available IDs for enrollment.');
-        } else if (data.includes('Communication error')) {
-            setRegisterStatus('Communication error.');
-        } else if (data.includes('Imaging error')) {
-            setRegisterStatus('Imaging error.');
-        } else if (data.includes('Unknown error')) {
-            setRegisterStatus('Unknown error.');
-        }
-        // Always log the message
-        if (data.includes('ThumbID Registered')) {
-            // Example: "FPU0010002 ThumbID Registered"
-            console.log('Received:', data);
         }
     };
 
