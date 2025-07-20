@@ -15,6 +15,8 @@ import {
 } from '@ant-design/icons';
 import styles from './ResponsiveNav.module.css';
 import logoImg from '../../../../assets/Logo/Logo.png';
+import logowImg from '../../../../assets/Logo/Logow.png';
+
 
 // ResponsiveNav component for navigation bar
 const ResponsiveNav = () => {
@@ -55,7 +57,11 @@ const ResponsiveNav = () => {
     <nav className={`${styles.navbar} ${isDark ? styles.dark : ''}`}>
       {/* Company logo section */}
       <div className={styles.companyName}>
-        <img className={styles.logo} src={logoImg} alt="Logo" />
+        <img
+          className={styles.logo}
+          src={isDark ? logowImg : logoImg}
+          alt="Logo"
+        />
       </div>
 
       {/* Navigation links */}
