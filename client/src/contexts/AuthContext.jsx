@@ -24,13 +24,13 @@ export const AuthProvider = ({ children }) => {
       setAuthLoading(false);
     };
     const loadSuperAuthData = async () => {
-      const stored = localStorage.getItem("superAdminUserData");
+      const stored = localStorage.getItem("superAuthData");
       if (stored) {
         try {
           const parsedData = JSON.parse(stored);
           setSuperAuthData(parsedData);
         } catch (error) {
-          localStorage.removeItem("superAdminUserData");
+          localStorage.removeItem("superAuthData");
         }
       }
       setAuthLoading(false);
@@ -104,7 +104,7 @@ export const AuthProvider = ({ children }) => {
 
   const superLogout = () => {
     setSuperAuthData(null);
-    localStorage.removeItem("superAdminUserData");
+    localStorage.removeItem("superAuthData");
     localStorage.clear();
   };
 
