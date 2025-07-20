@@ -492,58 +492,65 @@ const MealPlanner = () => {
 
   // Updated handleModalOk to include isDeleted field
   const handleModalOk = () => {
-    form
-      .validateFields()
-      .then(async (values) => {
-        try {
-          const payload = {
-            name: values.mealName.trim(), // Trim whitespace
-            orgId: authData?.orgId,
-            time: [
-              values.startTime ? values.startTime.format("HH:mm") : null,
-              values.endTime ? values.endTime.format("HH:mm") : null,
-            ],
-            isDefault: values.isDefault || false,
-            isDeleted: false,
-            date: currentDate.format("YYYY-MM-DD"),
-          };
-
-          console.log("Creating meal type with payload:", payload);
-
-          await axios.post(`${urL}/meal-types`, payload, {
-            params: { orgId: authData?.orgId },
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-
-          await fetchDefaultMeals(currentDate);
-          message.success("Meal type created successfully");
-          setIsModalVisible(false);
-        } catch (err) {
-          console.error("Error creating meal type:", err);
-
-          if (err.response?.status === 409) {
-            // Handle ConflictException (duplicate meal type)
-            message.error(
-              err.response?.data?.message ||
-                "A meal type with this name already exists for this date"
-            );
-          } else if (err.response?.status === 400) {
-            // Handle BadRequestException
-            message.error(
-              err.response?.data?.message || "Invalid meal type data"
-            );
-          } else {
-            // Handle other errors
-            message.error("Failed to create meal type. Please try again.");
-          }
+  form
+    .validateFields()
+    .then(async (values) => {
+      try {
+        // Validate that both start and end times are provided
+        if (!values.startTime || !values.endTime) {
+          message.error("Please provide both start and end times");
+          return;
         }
-      })
-      .catch((validationError) => {
-        console.error("Form validation failed:", validationError);
-      });
-  };
+
+        const payload = {
+          name: values.mealName.trim(), // Trim whitespace
+          orgId: authData?.orgId,
+          time: [
+            values.startTime.format("HH:mm"),
+            values.endTime.format("HH:mm"),
+          ],
+          isDefault: values.isDefault || false,
+          isDeleted: false,
+          date: currentDate.format("YYYY-MM-DD"),
+        };
+
+        console.log("Creating meal type with payload:", payload);
+
+        await axios.post(`${urL}/meal-types`, payload, {
+          params: { orgId: authData?.orgId },
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        await fetchDefaultMeals(currentDate);
+        message.success("Meal type created successfully");
+        setIsModalVisible(false);
+        form.resetFields(); // Reset form after successful creation
+      } catch (err) {
+        console.error("Error creating meal type:", err);
+
+        if (err.response?.status === 409) {
+          // Handle ConflictException (duplicate meal type)
+          message.error(
+            err.response?.data?.message ||
+              "A meal type with this name already exists for this date"
+          );
+        } else if (err.response?.status === 400) {
+          // Handle BadRequestException
+          message.error(
+            err.response?.data?.message || "Invalid meal type data"
+          );
+        } else {
+          // Handle other errors
+          message.error("Failed to create meal type. Please try again.");
+        }
+      }
+    })
+    .catch((validationError) => {
+      console.error("Form validation failed:", validationError);
+    });
+};
 
   const mealNameRules = [
     { required: true, message: "Please enter a meal name" },
