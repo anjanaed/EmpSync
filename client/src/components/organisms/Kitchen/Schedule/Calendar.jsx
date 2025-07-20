@@ -88,16 +88,35 @@ const MealPlanner = () => {
             : null,
         ],
       }));
-      setDefaultMeals(normalizedData);
-      if (normalizedData.length > 0 && !activeTab) {
-        const firstMealId = normalizedData[0].id;
+
+      // Sort meals with breakfast, lunch, dinner first
+      const sortedMeals = sortMealTypes(normalizedData);
+      setDefaultMeals(sortedMeals);
+
+      if (sortedMeals.length > 0 && !activeTab) {
+        const firstMealId = sortedMeals[0].id;
         setActiveTab(firstMealId.toString());
-        setActiveMealType(normalizedData[0]);
+        setActiveMealType(sortedMeals[0]);
       }
     } catch (error) {
       console.error("Error fetching default meals:", error);
       message.error("Failed to load meal types");
     }
+  };
+  const sortMealTypes = (meals) => {
+    const mealOrder = { breakfast: 1, lunch: 2, dinner: 3 };
+
+    return meals.sort((a, b) => {
+      const aOrder = mealOrder[a.name.toLowerCase()] || 999;
+      const bOrder = mealOrder[b.name.toLowerCase()] || 999;
+
+      if (aOrder !== bOrder) {
+        return aOrder - bOrder;
+      }
+
+      // If both have same priority (or both are "others"), sort by name
+      return a.name.localeCompare(b.name);
+    });
   };
 
   const fetchAvailableMeals = async () => {
@@ -172,9 +191,10 @@ const MealPlanner = () => {
 
         const remainingMeals = defaultMeals.filter((m) => m.id !== meal.id);
         if (remainingMeals.length > 0) {
-          const firstMealId = remainingMeals[0].id;
+          const sortedRemaining = sortMealTypes(remainingMeals);
+          const firstMealId = sortedRemaining[0].id;
           setActiveTab(firstMealId.toString());
-          setActiveMealType(remainingMeals[0]);
+          setActiveMealType(sortedRemaining[0]);
         }
       }
 
@@ -472,78 +492,85 @@ const MealPlanner = () => {
 
   // Updated handleModalOk to include isDeleted field
   const handleModalOk = () => {
-  form.validateFields().then(async (values) => {
-    try {
-      const payload = {
-        name: values.mealName.trim(), // Trim whitespace
-        orgId: authData?.orgId,
-        time: [
-          values.startTime ? values.startTime.format("HH:mm") : null,
-          values.endTime ? values.endTime.format("HH:mm") : null,
-        ],
-        isDefault: values.isDefault || false,
-        isDeleted: false,
-        date: currentDate.format("YYYY-MM-DD"),
-      };
+    form
+      .validateFields()
+      .then(async (values) => {
+        try {
+          const payload = {
+            name: values.mealName.trim(), // Trim whitespace
+            orgId: authData?.orgId,
+            time: [
+              values.startTime ? values.startTime.format("HH:mm") : null,
+              values.endTime ? values.endTime.format("HH:mm") : null,
+            ],
+            isDefault: values.isDefault || false,
+            isDeleted: false,
+            date: currentDate.format("YYYY-MM-DD"),
+          };
 
-      console.log("Creating meal type with payload:", payload);
+          console.log("Creating meal type with payload:", payload);
 
-      await axios.post(`${urL}/meal-types`, payload, {
-        params: { orgId: authData?.orgId },
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+          await axios.post(`${urL}/meal-types`, payload, {
+            params: { orgId: authData?.orgId },
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          await fetchDefaultMeals(currentDate);
+          message.success("Meal type created successfully");
+          setIsModalVisible(false);
+        } catch (err) {
+          console.error("Error creating meal type:", err);
+
+          if (err.response?.status === 409) {
+            // Handle ConflictException (duplicate meal type)
+            message.error(
+              err.response?.data?.message ||
+                "A meal type with this name already exists for this date"
+            );
+          } else if (err.response?.status === 400) {
+            // Handle BadRequestException
+            message.error(
+              err.response?.data?.message || "Invalid meal type data"
+            );
+          } else {
+            // Handle other errors
+            message.error("Failed to create meal type. Please try again.");
+          }
+        }
+      })
+      .catch((validationError) => {
+        console.error("Form validation failed:", validationError);
       });
-      
-      await fetchDefaultMeals(currentDate);
-      message.success("Meal type created successfully");
-      setIsModalVisible(false);
-      
-    } catch (err) {
-      console.error("Error creating meal type:", err);
-      
-      if (err.response?.status === 409) {
-        // Handle ConflictException (duplicate meal type)
-        message.error(err.response?.data?.message || "A meal type with this name already exists for this date");
-      } else if (err.response?.status === 400) {
-        // Handle BadRequestException
-        message.error(err.response?.data?.message || "Invalid meal type data");
-      } else {
-        // Handle other errors
-        message.error("Failed to create meal type. Please try again.");
-      }
-    }
-  }).catch((validationError) => {
-    console.error("Form validation failed:", validationError);
-  });
-};
+  };
 
-const mealNameRules = [
-  { required: true, message: "Please enter a meal name" },
-  { min: 2, message: "Meal name must be at least 2 characters long" },
-  { max: 50, message: "Meal name must be less than 50 characters" },
-  {
-    pattern: /^[a-zA-Z0-9\s]+$/,
-    message: "Meal name can only contain letters, numbers, and spaces"
-  },
-  {
-    validator: async (_, value) => {
-      if (value && value.trim().length !== value.length) {
-        throw new Error("Meal name cannot start or end with spaces");
-      }
-    }
-  }
-];
+  const mealNameRules = [
+    { required: true, message: "Please enter a meal name" },
+    { min: 2, message: "Meal name must be at least 2 characters long" },
+    { max: 50, message: "Meal name must be less than 50 characters" },
+    {
+      pattern: /^[a-zA-Z0-9\s]+$/,
+      message: "Meal name can only contain letters, numbers, and spaces",
+    },
+    {
+      validator: async (_, value) => {
+        if (value && value.trim().length !== value.length) {
+          throw new Error("Meal name cannot start or end with spaces");
+        }
+      },
+    },
+  ];
 
-const validateMealTypeName = async (mealName) => {
-  if (!mealName || mealName.trim().length === 0) {
-    return false;
-  }
-  
-  // You could also add a client-side check by calling an API endpoint
-  // to check if the meal type exists before submitting the form
-  return true;
-};
+  const validateMealTypeName = async (mealName) => {
+    if (!mealName || mealName.trim().length === 0) {
+      return false;
+    }
+
+    // You could also add a client-side check by calling an API endpoint
+    // to check if the meal type exists before submitting the form
+    return true;
+  };
   const showUpdateMenuModal = async () => {
     if (!activeTab) {
       message.warning("Please select a meal time first");

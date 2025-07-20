@@ -99,6 +99,7 @@ model Meal {
   nameSinhala String
   nameTamil   String
   description String?
+  isDeleted Boolean  @default(false)
   price       Float
   imageUrl    String?
   category    String[]

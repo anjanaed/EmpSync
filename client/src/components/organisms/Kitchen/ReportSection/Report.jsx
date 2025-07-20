@@ -67,7 +67,7 @@ const Report = () => {
   const fetchMeals = async () => {
     try {
       console.log("Fetching meals data...");
-      const response = await axios.get(`${urL}/meal`, {
+      const response = await axios.get(`${urL}/meal?includeDeleted=true`, {
         params: {
           orgId: authData?.orgId,
         },
