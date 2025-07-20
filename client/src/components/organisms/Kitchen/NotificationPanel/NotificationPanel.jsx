@@ -2,8 +2,8 @@ import React from "react";
 import { Button } from "antd";
 import { CloseOutlined, CalendarOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
-import { useNotifications } from "../../../../contexts/NotificationsContext";
-import { useTheme } from "../../../../contexts/ThemeContext";
+import { useNotifications } from "../../../../contexts/NotificationsContext.jsx";
+import { useTheme } from "../../../../contexts/ThemeContext.jsx";
 import styles from "./NotificationPanel.module.css";
 
 const NotificationPanel = () => {
