@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button, Tooltip } from 'antd';
 import { SunOutlined, MoonOutlined } from '@ant-design/icons';
-import { useTheme } from '../../contexts/ThemeContext';
+import { useTheme } from '../../contexts/ThemeContext.jsx';
 import styles from './ThemeToggle.module.css';
 
 const ThemeToggle = () => {
