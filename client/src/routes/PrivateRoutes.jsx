@@ -1,49 +1,49 @@
 import React from "react";
 import { Route } from "react-router-dom";
-import ProtectedRoute from "../../src/guards/ProtectedRoutes";
-import SuperAdminProtectedRoute from "../../src/guards/SuperAdminProtectedRoute";
-import LoginRole from "../components/Pages/Login/LoginAsPage/LoginRole";
-import Login from "../components/pages/Login/LoginPage/Login";
+import ProtectedRoute from "../../src/guards/ProtectedRoutes.jsx";
+import SuperAdminProtectedRoute from "../../src/guards/SuperAdminProtectedRoute.jsx";
+import LoginRole from "../components/pages/Login/LoginAsPage/LoginRole.jsx";
+import Login from "../components/pages/Login/LoginPage/Login.jsx";
 
 // HR_ADMIN
-import EmployeePage from "../components/Pages/HR/EmployeePage/EmployeePage";
-import RegisterPage from "../components/Pages/HR/RegisterPage/RegisterPage";
-import PayrollPage from "../components/Pages/HR/PayrollPage/PayrollPage";
-import AdjustmentPage from "../components/Pages/HR/AdjustmentPage/AdjustmentPage";
-import PayslipPage from "../components/Pages/HR/PayslipPage/PayslipPage";
+import EmployeePage from "../components/pages/HR/EmployeePage/EmployeePage.jsx";
+import RegisterPage from "../components/pages/HR/RegisterPage/RegisterPage.jsx";
+import PayrollPage from "../components/pages/HR/PayrollPage/PayrollPage.jsx";
+import AdjustmentPage from "../components/pages/HR/AdjustmentPage/AdjustmentPage.jsx";
+import PayslipPage from "../components/pages/HR/PayslipPage/PayslipPage.jsx";
 
 // KITCHEN_ADMIN
-import KitchenAdmin from "../components/pages/KitchenAdmin/SchedulePage/KitchenAdmin";
-import Reports from "../components/pages/KitchenAdmin/ReportPage/Report";
-import Meals from "../components/pages/KitchenAdmin/MealPage/Meal";
-import MealDetailsForm from "../components/pages/KitchenAdmin/AddMealPage/AddMeal";
-import EditMeal from "../components/pages/KitchenAdmin/EditMealPage/EditMeal";
+import KitchenAdmin from "../components/pages/KitchenAdmin/SchedulePage/KitchenAdmin.jsx";
+import Reports from "../components/pages/KitchenAdmin/ReportPage/Report.jsx";
+import Meals from "../components/pages/KitchenAdmin/MealPage/Meal.jsx";
+import MealDetailsForm from "../components/pages/KitchenAdmin/AddMealPage/AddMeal.jsx";
+import EditMeal from "../components/pages/KitchenAdmin/EditMealPage/EditMeal.jsx";
 
 // ServingStaff
-import Serving from "../components/Pages/ServingStaff/BarcodeScan/Serving";
-import MealConform from "../components/pages/ServingStaff/MealConfirm/MealConform";
+import Serving from "../components/pages/ServingStaff/BarcodeScan/Serving.jsx";
+import MealConform from "../components/pages/ServingStaff/MealConfirm/MealConform.jsx";
 
 // KitchenStaff
-import KitchenStaff from "../components/Pages/kitchenStaff/kitchenStaff";
+import KitchenStaff from "../components/pages/KitchenStaff/kitchenStaff.jsx";
 
 // INVENTORY_ADMIN
-import Ingredients from "../components/Pages/InventoryAdmin/Dashboard/Ingredients";
-import AnalysisDashboard from "../components/Pages/InventoryAdmin/AnalysisDashboard/AnalysisDashboard";
-import OrderReportDashboard from "../components/Pages/InventoryAdmin/OrderReportDashboard/OrderReportDashboard";
-import OrderHistory from "../components/Pages/InventoryAdmin/OrderHistory/OrderHistory";
-import CostAnalysis from "../components/organisms/Inventory/Analysis/Cost Analysis/CostAnalysis";
-import LoginRouting from "../guards/LoginRouting";
+import Ingredients from "../components/Pages/InventoryAdmin/Dashboard/Ingredients.jsx";
+import AnalysisDashboard from "../components/Pages/InventoryAdmin/AnalysisDashboard/AnalysisDashboard.jsx";
+import OrderReportDashboard from "../components/Pages/InventoryAdmin/OrderReportDashboard/OrderReportDashboard.jsx";
+import OrderHistory from "../components/Pages/InventoryAdmin/OrderHistory/OrderHistory.jsx";
+import CostAnalysis from "../components/organisms/Inventory/Analysis/Cost Analysis/CostAnalysis.jsx";
+import LoginRouting from "../guards/LoginRouting.jsx";
 
 //UserAccout
-import ProfilePage from "../components/Pages/UserAccount/ProfilePage/ProfilePage";
-import UserMeals from "../components/Pages/UserAccount/MealsPage/MealsPage";
+import ProfilePage from "../components/pages/UserAccount/ProfilePage/ProfilePage.jsx";
+import UserMeals from "../components/pages/UserAccount/MealsPage/MealsPage.jsx";
 
 // SuperAdmin
-import SuperAdmin from "../components/pages/SuperAdmin/SuperAdmin";
-import SuperAdminLogin from '../components/pages/Login/SuperAdmin/LoginPage/Login';
-import Organizations from '../components/organisms/SuperAdmin/pages/Organizations/Organization List/OrganizationList';
-import Roles from '../components/organisms/SuperAdmin/pages/Roles/RolesList';
-import Permissions from '../components/organisms/SuperAdmin/pages/Permissions/PermissionsList';
+import SuperAdmin from "../components/pages/SuperAdmin/SuperAdmin.jsx";
+import SuperAdminLogin from '../components/pages/Login/SuperAdmin/LoginPage/Login.jsx';
+import Organizations from '../components/organisms/SuperAdmin/pages/Organizations/Organization List/OrganizationList.jsx';
+import Roles from '../components/organisms/SuperAdmin/pages/Roles/RolesList.jsx';
+import Permissions from '../components/organisms/SuperAdmin/pages/Permissions/PermissionsList.jsx';
 
 const PrivateRoutes = () => (
   <>
