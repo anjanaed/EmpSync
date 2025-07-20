@@ -67,7 +67,7 @@ const Report = () => {
   const fetchMeals = async () => {
     try {
       console.log("Fetching meals data...");
-      const response = await axios.get(`${urL}/meal`, {
+      const response = await axios.get(`${urL}/meal?includeDeleted=true`, {
         params: {
           orgId: authData?.orgId,
         },
@@ -291,7 +291,7 @@ const Report = () => {
 
       if (!mealTypesData || mealTypesData.length === 0) {
         try {
-          const mealTypesResponse = await axios.get(`${urL}/meal-types`, {
+          const mealTypesResponse = await axios.get(`${urL}/meal-types?includeDeleted=true`, {
             params: {
               orgId: authData?.orgId,
             },
@@ -752,7 +752,7 @@ const Report = () => {
   const fetchMealTypes = async () => {
     try {
       console.log("Fetching meal types...");
-      const response = await axios.get(`${urL}/meal-types`, {
+      const response = await axios.get(`${urL}/meal-types?includeDeleted=true`, {
         params: {
           orgId: authData?.orgId,
         },
@@ -768,7 +768,6 @@ const Report = () => {
     }
   };
 
-  // Enhanced data processing with actual order prices
   // Enhanced data processing with actual order prices - FIXED VERSION
   const processEmployeeMealData = (orders, employees, mealTypes) => {
     console.log("Processing data with:", {

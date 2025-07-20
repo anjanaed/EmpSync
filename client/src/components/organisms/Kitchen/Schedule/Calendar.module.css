@@ -41,6 +41,45 @@
   transition: all 0.3s ease;
 }
 
+.clearButton {
+  border-radius: 6px;
+  padding: 0 24px;
+  height: 30px;
+  margin-top: 6px !important;
+  font-weight: 400;
+  transition: all 0.3s ease;
+  background-color: #fff;
+  border: 1px solid #ff4d4f;
+  color: #ff4d4f;
+  box-shadow: 0 2px 6px rgba(255, 77, 79, 0.2);
+}
+
+.clearButton:hover {
+  background-color: #ff4d4f !important;
+  border-color: #ff4d4f !important;
+  color: #fff !important;
+  box-shadow: 0 2px 8px rgba(255, 77, 79, 0.3);
+}
+
+.updateModalBtn {
+  background-color: #e53935;
+  border-color: #e53935;
+  border-radius: 6px;
+  padding: 0 24px;
+  height: 30px;
+  font-weight: 400;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 6px rgba(229, 57, 53, 0.2);
+  color: #fff;
+}
+
+.updateModalBtn:hover {
+  background-color: #d32f2f !important;
+  border-color: #d32f2f !important;
+  color: #fff !important;
+  box-shadow: 0 2px 8px rgba(211, 47, 47, 0.3);
+}
+
 .tomorrowBtn:hover {
   background-color: rgba(229, 57, 53, 0.1);
 }
@@ -56,8 +95,12 @@
   border-radius: 6px;
 }
 
+.datePicker:hover{
+  border-color: #d32f2f !important;
+}
+
 .datePicker :global(.ant-picker-input > input) {
-  color: #e53935;
+  color: #e53935 !important;
   font-weight: 500;
 }
 
@@ -722,5 +765,7 @@
 [data-theme="dark"] .noMealsMessage :global(.ant-empty-description) {
   color: white !important;
 }
+
+
 
 

@@ -68,24 +68,26 @@ export class MealService {
   }
 
 
-  async findAllWithIngredients(orgId?: string) {
-    try {
-      return await this.databaseService.meal.findMany({
-        where: {
-          orgId : orgId || undefined,
-        },
-        include: {
-          ingredients: {
-            include: {
-              ingredient: true,
-            },
+  async findAllWithIngredients(orgId?: string, includeDeleted = false) {
+  try {
+    return await this.databaseService.meal.findMany({
+      where: {
+        orgId: orgId || undefined,
+        ...(includeDeleted ? {} : { isDeleted: false }),
+      },
+      include: {
+        ingredients: {
+          include: {
+            ingredient: true,
           },
         },
-      });
-    } catch (error) {
-      throw new BadRequestException('Failed to retrieve meals');
-    }
+      },
+    });
+  } catch (error) {
+    throw new BadRequestException('Failed to retrieve meals');
   }
+}
+
 
   async updateWithIngredients(
     id: number,
@@ -141,29 +143,28 @@ export class MealService {
     }
   }
 
-  async remove(id: number, orgId?: string) {
-    try {
-      const meal = await this.databaseService.meal.findFirst({
-        where: {
-          id,
-           orgId : orgId || undefined,
-        },
-      });
+  
 
-      if (!meal) {
-        throw new NotFoundException('Meal not found');
-      }
+  async softDelete(id: number, orgId?: string) {
+  const meal = await this.databaseService.meal.findFirst({
+    where: {
+      id,
+      orgId: orgId || undefined,
+    },
+  });
 
-   
-      return await this.databaseService.meal.delete({
-        where: { id },
-      });
-    } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw error;
-      }
-      throw new BadRequestException(error.message);
-    }
+  if (!meal) {
+    throw new NotFoundException('Meal not found');
   }
+
+  return await this.databaseService.meal.update({
+    where: { id },
+    data: {
+      isDeleted: true,
+    },
+  });
+}
+
+
 
 }

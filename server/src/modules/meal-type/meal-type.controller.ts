@@ -1,3 +1,5 @@
+// meal-type.controller.ts - Updated controller with soft delete management
+
 import {
   Controller,
   Get,
@@ -10,6 +12,7 @@ import {
   ParseIntPipe,
   BadRequestException,
   Query,
+  ParseBoolPipe,
 } from '@nestjs/common';
 import { MealTypeService } from './meal-type.service';
 import { AuthGuard } from '@nestjs/passport';
@@ -21,10 +24,25 @@ export class MealTypeController {
   constructor(private readonly mealTypeService: MealTypeService) {}
 
   @Get()
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
-  async findAll(@Query('orgId') orgId?: string) {
+  // @UseGuards(AuthGuard('jwt'), RolesGuard)
+  async findAll(
+    @Query('orgId') orgId?: string,
+    @Query('includeDeleted', new ParseBoolPipe({ optional: true })) includeDeleted?: boolean
+  ) {
     try {
-      return await this.mealTypeService.findAll(orgId);
+      // Use the new method that can optionally include deleted records
+      return await this.mealTypeService.findAllIncludingDeleted(orgId, includeDeleted || false);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
+
+  @Get('deleted')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('KITCHEN_ADMIN', 'HR_ADMIN')
+  async findDeleted(@Query('orgId') orgId?: string) {
+    try {
+      return await this.mealTypeService.findDeleted(orgId);
     } catch (error) {
       throw new BadRequestException(error.message);
     }
@@ -49,7 +67,10 @@ export class MealTypeController {
   }
 
   @Get('by-date/:date')
-  async findByDateOrDefault(@Param('date') date: string, @Query('orgId') orgId?: string) {
+  async findByDateOrDefault(
+    @Param('date') date: string,
+    @Query('orgId') orgId?: string,
+  ) {
     try {
       return await this.mealTypeService.findByDateOrDefault(date, orgId);
     } catch (error) {
@@ -58,7 +79,10 @@ export class MealTypeController {
   }
 
   @Get(':id')
-  async findOne(@Param('id', ParseIntPipe) id: number, @Query('orgId') orgId?: string) {
+  async findOne(
+    @Param('id', ParseIntPipe) id: number,
+    @Query('orgId') orgId?: string,
+  ) {
     try {
       return await this.mealTypeService.findOne(id, orgId);
     } catch (error) {
@@ -68,7 +92,7 @@ export class MealTypeController {
 
   @Post()
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles('KITCHEN_ADMIN','HR_ADMIN')
+  @Roles('KITCHEN_ADMIN', 'HR_ADMIN')
   async create(
     @Body()
     body: {
@@ -94,8 +118,11 @@ export class MealTypeController {
 
   @Patch(':id/toggle-default')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles('KITCHEN_ADMIN','HR_ADMIN')
-  async toggleDefault(@Param('id', ParseIntPipe) id: number, @Query('orgId') orgId?: string) {
+  @Roles('KITCHEN_ADMIN', 'HR_ADMIN')
+  async toggleDefault(
+    @Param('id', ParseIntPipe) id: number,
+    @Query('orgId') orgId?: string,
+  ) {
     try {
       return await this.mealTypeService.toggleIsDefault(id, orgId);
     } catch (error) {
@@ -105,7 +132,7 @@ export class MealTypeController {
 
   @Patch('timeupdate/:id/:index')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles('KITCHEN_ADMIN','HR_ADMIN')
+  @Roles('KITCHEN_ADMIN', 'HR_ADMIN')
   async patchTimeElement(
     @Param('id', ParseIntPipe) id: number,
     @Param('index', ParseIntPipe) index: number,
@@ -129,7 +156,7 @@ export class MealTypeController {
 
   @Patch(':id')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles('KITCHEN_ADMIN','HR_ADMIN')
+  @Roles('KITCHEN_ADMIN', 'HR_ADMIN')
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() body: { name?: string; time?: string; isDefault?: boolean },
@@ -142,14 +169,21 @@ export class MealTypeController {
     }
   }
 
+  // Soft delete endpoint
   @Delete(':id')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles('KITCHEN_ADMIN','HR_ADMIN')
-  async remove(@Param('id', ParseIntPipe) id: number, @Query('orgId') orgId?: string) {
+  @Roles('KITCHEN_ADMIN', 'HR_ADMIN')
+  async softDelete(
+    @Param('id', ParseIntPipe) id: number,
+    @Query('orgId') orgId?: string,
+  ) {
     try {
-      return await this.mealTypeService.remove(id, orgId);
+      return await this.mealTypeService.softDelete(id, orgId);
     } catch (error) {
       throw new BadRequestException(error.message);
     }
   }
+
+  
+  
 }
