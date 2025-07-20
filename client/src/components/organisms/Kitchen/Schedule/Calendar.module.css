@@ -603,8 +603,8 @@
 
 [data-theme="dark"] .addMealBtn {
   color: rgb(255, 255, 255) !important;
-  background-color: rgb(0, 81, 255) !important;
-  border-color: rgb(0, 52, 224) !important;
+  background-color: rgb(18, 17, 17) !important;
+  border-color: rgb(165, 165, 165) !important;
 }
 
 [data-theme="dark"] .addMealBtn:hover {
@@ -715,6 +715,7 @@
 
 [data-theme="dark"] .calendarIcon {
   color: rgb(224, 0, 0) !important;
+  border: #d32f2f;
 }
 
 [data-theme="dark"] .deleteMealBtn {
