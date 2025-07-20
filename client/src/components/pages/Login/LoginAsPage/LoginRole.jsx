@@ -4,8 +4,8 @@ import styles from "./LoginRole.module.css";
 import illustration from "../../../../assets/Login/LoginRole.svg";
 import { UserOutlined } from "@ant-design/icons";
 import { Avatar } from "antd";
-import { useAuth } from "../../../../contexts/AuthContext";
-import Loading from "../../../atoms/loading/loading";
+import { useAuth } from "../../../../contexts/AuthContext.jsx";
+import Loading from "../../../atoms/loading/loading.jsx";
 
 const roleDisplayMap = {
   HR_ADMIN: "Human Resource Admin",

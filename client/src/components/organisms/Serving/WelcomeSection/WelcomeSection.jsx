@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Typography } from 'antd';
-import DateTime from '../DateAndTime/DateTime'
+import DateTime from '../DateAndTime/DateTime.jsx'
 import './WelcomeSection.css';
 
 const { Title, Text } = Typography;

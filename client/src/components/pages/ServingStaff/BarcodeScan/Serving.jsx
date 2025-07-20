@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Layout, Space, message } from 'antd';
 import { useNavigate } from 'react-router-dom';
-import WelcomeSection from '../../../organisms/Serving/WelcomeSection/WelcomeSection';
-import MealSection from '../../../organisms/Serving/MealSection/MealSection';
-import ScanSection from '../../../organisms/Serving/ScanSection/ScanSection';
+import WelcomeSection from '../../../organisms/Serving/WelcomeSection/WelcomeSection.jsx';
+import MealSection from '../../../organisms/Serving/MealSection/MealSection.jsx';
+import ScanSection from '../../../organisms/Serving/ScanSection/ScanSection.jsx';
 import './Serving.css';
 
 const { Content } = Layout;

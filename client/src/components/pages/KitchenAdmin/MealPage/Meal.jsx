@@ -11,12 +11,12 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { BellOutlined } from "@ant-design/icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import NavBar from '../../../organisms/NavBar/NavBar';
-import NotificationPanel from "../../../organisms/Kitchen/NotificationPanel/NotificationPanel";
-import { useNotifications } from "../../../../contexts/NotificationsContext";
+import NavBar from '../../../organisms/NavBar/NavBar.jsx';
+import NotificationPanel from "../../../organisms/Kitchen/NotificationPanel/NotificationPanel.jsx";
+import { useNotifications } from "../../../../contexts/NotificationsContext.jsx";
 import styles from "../../../organisms/Kitchen/NotificationPanel/NotificationPanel.module.css";
-import MealSection from "../../../organisms/Kitchen/MealsSection/Meal";
-import { useAuth } from "../../../../contexts/AuthContext";
+import MealSection from "../../../organisms/Kitchen/MealsSection/Meal.jsx";
+import { useAuth } from "../../../../contexts/AuthContext.jsx";
 
 const MealDash = () => {
   const { authData } = useAuth();

@@ -20,10 +20,10 @@ import { MdLanguage, MdTranslate } from "react-icons/md";
 import { RiAiGenerate } from "react-icons/ri";
 import { LoadingOutlined } from "@ant-design/icons";
 import { Spin } from "antd";
-import translations from "../../../../utils/translations";
-import { useAuth } from "../../../../contexts/AuthContext";
+import translations from "../../../../utils/translations.jsx";
+import { useAuth } from "../../../../contexts/AuthContext.jsx";
 import axios from "axios";
-import DateAndTime from "../DateAndTime/DateAndTime";
+import DateAndTime from "../DateAndTime/DateAndTime.jsx";
 
 const { Content } = Layout;
 const { Title, Text } = Typography;

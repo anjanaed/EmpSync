@@ -4,14 +4,14 @@ import { Table, Space, Modal, ConfigProvider, Select, Popconfirm } from "antd";
 import { FiEdit } from "react-icons/fi";
 import { MdOutlineDeleteOutline } from "react-icons/md";
 import EditModal from "../../../templates/HR/EditModal/EditModal.jsx";
-import Loading from "../../../atoms/loading/loading";
+import Loading from "../../../atoms/loading/loading.jsx";
 import styles from "./Employee.module.css";
-import SearchBar from "../../../molecules/SearchBar/SearchBar";
+import SearchBar from "../../../molecules/SearchBar/SearchBar.jsx";
 import { Toaster, toast } from "sonner";
-import { useAuth } from "../../../../contexts/AuthContext";
+import { useAuth } from "../../../../contexts/AuthContext.jsx";
 import { debounce } from "lodash";
-import { usePopup } from "../../../../contexts/PopupContext";
-import { useTheme } from "../../../../contexts/ThemeContext";
+import { usePopup } from "../../../../contexts/PopupContext.jsx";
+import { useTheme } from "../../../../contexts/ThemeContext.jsx";
 
 // Theme configurations moved to CSS module
 const getCustomTheme = () => ({

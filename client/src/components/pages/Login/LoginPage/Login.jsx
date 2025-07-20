@@ -4,8 +4,8 @@ import { useNavigate } from "react-router-dom";
 import styles from "./Login.module.css";
 import illustration from "../../../../assets/Login/Loginpage.png";
 import axios from "axios";
-import { useAuth } from "../../../../contexts/AuthContext";
-import Loading from "../../../atoms/loading/loading";
+import { useAuth } from "../../../../contexts/AuthContext.jsx";
+import Loading from "../../../atoms/loading/loading.jsx";
 
 
 const LoginPage = () => {

@@ -4,9 +4,9 @@ import { Table, Space, ConfigProvider } from "antd";
 import axios from "axios";
 import { IoMdDownload } from "react-icons/io";
 import { LuEye } from "react-icons/lu";
-import SearchBar from "../../../molecules/SearchBar/SearchBar";
-import Loading from "../../../atoms/loading/loading";
-import { useAuth } from "../../../../contexts/AuthContext";
+import SearchBar from "../../../molecules/SearchBar/SearchBar.jsx";
+import Loading from "../../../atoms/loading/loading.jsx";
+import { useAuth } from "../../../../contexts/AuthContext.jsx";
 import { IoMdRemoveCircleOutline } from "react-icons/io";
 
 const customTheme = {

@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import Loading from "../../../atoms/loading/loading";
 import { ReloadOutlined, EyeOutlined, DeleteOutlined } from "@ant-design/icons";
+import Loading from "../../../atoms/loading/loading.jsx";
 import { Pie } from '@ant-design/plots';
 import { Table, ConfigProvider, Modal, Button, Popconfirm, Space } from "antd";
 import styles from "./FingerPrints.module.css";
 import axios from "axios";
-import { useAuth } from "../../../../contexts/AuthContext";
+import { useAuth } from "../../../../contexts/AuthContext.jsx";
 
 const customTheme = {
   components: {
