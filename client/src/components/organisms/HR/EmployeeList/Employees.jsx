@@ -3,7 +3,7 @@ import axios from "axios";
 import { Table, Space, Modal, ConfigProvider, Select, Popconfirm } from "antd";
 import { FiEdit } from "react-icons/fi";
 import { MdOutlineDeleteOutline } from "react-icons/md";
-import EditModal from "../../../templates/HR/EditModal.jsx";
+import EditModal from "../../../templates/HR/EditModal/EditModal.jsx";
 import Loading from "../../../atoms/loading/loading.jsx";
 import styles from "./Employee.module.css";
 import SearchBar from "../../../molecules/SearchBar/SearchBar.jsx";
