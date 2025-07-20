@@ -772,9 +772,6 @@
   color: white !important;
 }
 
-.noMealTypesBox {
-  /* No extra styles needed for light mode, uses inline styles */
-}
 
 /* Dark mode override */
 [data-theme="dark"] .noMealTypesBox {
