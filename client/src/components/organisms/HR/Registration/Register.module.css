@@ -281,7 +281,7 @@
 :global(.dark .ant-picker),
 :global(.dark .ant-picker:hover),
 :global(.dark .ant-picker:focus) {
-  background-color: #404040 !important;
+  background-color: #853f3f !important;
   border-color: #555555 !important;
   color: #ffffff !important;
 }

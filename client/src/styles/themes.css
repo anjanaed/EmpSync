@@ -259,7 +259,7 @@
 
 /* Input field styling for picker */
 [data-theme="dark"] .ant-picker {
-  background-color: var(--bg-tertiary) !important;
+  background-color: var(--border-color) !important;
   border-color: var(--border-color) !important;
   color: var(--text-primary) !important;
 }
