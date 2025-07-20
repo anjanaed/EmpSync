@@ -6,6 +6,7 @@ import otbImage from "../../../../assets/Order/otb1.jpg";
 
 import fingerprintIcon from "../../../../assets/Order/fingerprints-icons-5897.png";
 import FingerPrint from "../../../atoms/FingerPrint/FingerPrint.jsx";
+import FingerprintBLE from "../../../../utils/fingerprintBLE.js";
 
 const UserFingerPrintRegister = () => {
     return (
@@ -39,12 +40,11 @@ function PinSection() {
     const [user, setUser] = useState(null);
     const [error, setError] = useState("");
 
-    // Serial communication state for fingerprint registration
+    // BLE communication state for fingerprint registration
     const [registerStatus, setRegisterStatus] = useState("Tap here and then place your finger on the scanner");
     const [registerSteps, setRegisterSteps] = useState([]); // Array of step messages
-    const serialPortRef = useRef(null);
-    const serialReaderRef = useRef(null);
-    const [serialConnected, setSerialConnected] = useState(false);
+    const fingerprintBLERef = useRef(null);
+    const [bleConnected, setBleConnected] = useState(false);
     
     // User fingerprint state
     const [userFingerprints, setUserFingerprints] = useState([]);
@@ -149,13 +149,18 @@ function PinSection() {
         setRegisteredFingersOnCurrentUnit(currentUnitFingerprints.length);
     };
 
-    // --- Serial Communication Functions ---
-    // Check and use existing ESP32 connection from global window object
-    const checkExistingConnection = () => {
-        if (window.fingerprintSerialPort && !serialPortRef.current) {
-            serialPortRef.current = window.fingerprintSerialPort;
-            setSerialConnected(true);
-            console.log("Using existing fingerprint connection from Page2");
+    // --- BLE Communication Functions ---
+    // Check and use existing ESP32 BLE connection from global window object
+    const checkExistingBLEConnection = () => {
+        if (window.fingerprintBLEInstance && window.fingerprintBLEInstance.getConnectionStatus() && !fingerprintBLERef.current) {
+            fingerprintBLERef.current = window.fingerprintBLEInstance;
+            setBleConnected(true);
+            console.log("Using existing BLE fingerprint connection from Page2");
+            
+            // Set up data handler for registration
+            fingerprintBLERef.current.onData((data) => {
+                processBLEMessage(data);
+            });
             
             // Restore unit name if available
             if (window.fingerprintUnitName) {
@@ -167,98 +172,141 @@ function PinSection() {
         return false;
     };
 
-    // Connect to ESP32 via Web Serial API (fallback if no existing connection)
-    const connectESP32 = async () => {
+    // Connect to ESP32 via Web Bluetooth API (fallback if no existing connection)
+    const connectESP32BLE = async () => {
         try {
             // First check if there's already a connection from Page2
-            if (checkExistingConnection()) {
+            if (checkExistingBLEConnection()) {
                 return;
             }
 
-            if (!('serial' in navigator)) {
-                setRegisterStatus('Web Serial API not supported in this browser.');
-                return;
-            }
-            if (!serialPortRef.current) {
-                const port = await navigator.serial.requestPort({});
-                await port.open({ baudRate: 115200 });
-                serialPortRef.current = port;
-                window.fingerprintSerialPort = port; // Store globally for consistency
-                setSerialConnected(true);
-                // Don't start reading here - let startEnroll handle it
-                console.log("New fingerprint connection established for registration");
+            if (!fingerprintBLERef.current) {
+                const bleInstance = new FingerprintBLE();
+                
+                if (!bleInstance.isSupported()) {
+                    setRegisterStatus('Web Bluetooth API not supported in this browser.');
+                    return;
+                }
+                
+                await bleInstance.connect();
+                fingerprintBLERef.current = bleInstance;
+                window.fingerprintBLEInstance = bleInstance; // Store globally for consistency
+                setBleConnected(true);
+                
+                // Set up data handler for registration
+                bleInstance.onData((data) => {
+                    processBLEMessage(data);
+                });
+                
+                console.log("New BLE fingerprint connection established for registration");
             }
         } catch (error) {
-            setRegisterStatus('Connection failed: ' + error.message);
+            setRegisterStatus('BLE Connection failed: ' + error.message);
         }
     };
 
-    // Read from serial port
-    const readSerial = async () => {
-        if (!serialPortRef.current) return;
-        
-        // For registration, we need to take control even if another reader exists
-        if (window.fingerprintActiveReader && scanning) {
-            console.log("Taking control of serial reading for registration");
-            try {
-                window.fingerprintActiveReader.cancel();
-                window.fingerprintActiveReader.releaseLock();
-            } catch (e) {
-                console.log("Could not stop existing reader:", e.message);
-            }
-            window.fingerprintActiveReader = null;
-        } else if (window.fingerprintActiveReader && !scanning) {
-            console.log("Another component is reading serial data, skipping readSerial");
-            return;
-        }
-        
-        const reader = serialPortRef.current.readable.getReader();
-        serialReaderRef.current = reader;
-        window.fingerprintActiveReader = reader; // Mark as active globally
-        let buffer = '';
-        try {
-            console.log("Starting serial reading for registration");
-            while (true) {
-                const { value, done } = await reader.read();
-                if (done) break;
-                buffer += new TextDecoder().decode(value);
-                let lines = buffer.split('\n');
-                buffer = lines.pop();
-                for (let line of lines) {
-                    line = line.trim();
-                    if (line) {
-                        console.log("Registration serial data:", line);
-                        processSerialMessage(line);
+    // Process incoming BLE messages
+    const processBLEMessage = async (data) => {
+        const lines = data.split('\n');
+        for (let line of lines) {
+            line = line.trim();
+            if (line) {
+                console.log('Registration BLE data:', line);
+                // Registration steps and status (show only one at a time)
+                if (line.includes('Waiting for valid finger to enroll as')) {
+                    setRegisterStatus("Place your finger on the scanner");
+                    setRegisterSteps([line]);
+                } else if (line.includes('Image taken')) {
+                    setRegisterStatus("Image captured successfully");
+                    setRegisterSteps([line]);
+                } else if (line.includes('Image converted')) {
+                    setRegisterStatus("Processing fingerprint...");
+                    setRegisterSteps([line]);
+                } else if (line.includes('Remove finger')) {
+                    setRegisterStatus("Remove your finger and wait");
+                    setRegisterSteps([line]);
+                } else if (line.includes('Place same finger again')) {
+                    setRegisterStatus("Place the same finger again");
+                    setRegisterSteps([line]);
+                } else if (line.includes('Prints matched!')) {
+                    setRegisterStatus("Fingerprints matched! Storing...");
+                    setRegisterSteps([line]);
+                } else if (line.includes('Stored!')) {
+                    setRegisterStatus("✅ Fingerprint registered successfully!");
+                    setRegisterSteps([line]);
+                } else if (line.includes('Fingerprints did not match')) {
+                    setRegisterStatus("❌ Fingerprints did not match. Try again.");
+                    setRegisterSteps([line]);
+                } else if (line.includes('Image too messy')) {
+                    setRegisterStatus("❌ Image quality too poor. Try again.");
+                    setRegisterSteps([line]);
+                } else if (line.includes('Could not find fingerprint features')) {
+                    setRegisterStatus("❌ Could not detect fingerprint. Try again.");
+                    setRegisterSteps([line]);
+                }
+                
+                // Always log the message
+                if (line.includes('ThumbID Registered')) {
+                    console.log("Registration completed:", line);
+                    setRegisterStatus("✅ Registration completed successfully!");
+                    setScanning(false);
+                    
+                    // Extract thumbID and save to database
+                    const match = line.match(/ThumbID Registered: (FPU\d{3}\d{4})/);
+                    if (match && user) {
+                        const thumbId = match[1];
+                        try {
+                            const baseURL = import.meta.env.VITE_BASE_URL || '';
+                            const response = await fetch(`${baseURL}/user-finger-print-register-backend/register`, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({
+                                    empId: user.id,
+                                    thumbid: thumbId
+                                })
+                            });
+                            
+                            if (response.ok) {
+                                console.log("Fingerprint saved to database successfully");
+                                setRegisterStatus("✅ Fingerprint registered and saved!");
+                                
+                                // Dispatch event to inform other components
+                                window.dispatchEvent(new CustomEvent('fingerprintRegistrationComplete'));
+                                
+                                // Navigate back after delay
+                                setTimeout(() => {
+                                    navigate('/OrderTab');
+                                }, 2000);
+                            } else {
+                                console.error("Failed to save fingerprint to database");
+                                setRegisterStatus("❌ Registration failed. Database error.");
+                            }
+                        } catch (dbError) {
+                            console.error("Database save error:", dbError);
+                            setRegisterStatus("❌ Registration failed. Database error.");
+                        }
                     }
                 }
             }
-        } catch (e) {
-            console.log('Read serial stopped:', e.message);
-        } finally {
-            reader.releaseLock();
-            window.fingerprintActiveReader = null; // Clear global reader reference
-            console.log("Registration serial reading stopped");
         }
     };
 
-    // Write to serial port
-    const writeSerial = async (data) => {
+    // Send command via BLE
+    const sendBLECommand = async (command) => {
         try {
-            if (serialPortRef.current && serialPortRef.current.writable) {
-                console.log(`Attempting to send command: ${data}`);
-                const writer = serialPortRef.current.writable.getWriter();
-                await writer.write(new TextEncoder().encode(data + '\n'));
-                writer.releaseLock();
-                console.log(`Successfully sent command: ${data}`);
+            if (fingerprintBLERef.current && fingerprintBLERef.current.getConnectionStatus()) {
+                console.log(`Attempting to send BLE command: ${command}`);
+                await fingerprintBLERef.current.sendCommand(command);
+                console.log(`Successfully sent BLE command: ${command}`);
             } else {
-                setRegisterStatus('Not connected to ESP32');
-                console.error('Serial port not available for writing');
-                console.error('serialPortRef.current:', serialPortRef.current);
-                console.error('writable:', serialPortRef.current?.writable);
+                setRegisterStatus('Not connected to ESP32 via BLE');
+                console.error('BLE connection not available');
             }
         } catch (error) {
-            setRegisterStatus('Error sending command: ' + error.message);
-            console.error('Write serial error:', error);
+            setRegisterStatus('Error sending BLE command: ' + error.message);
+            console.error('BLE command error:', error);
         }
     };
 
@@ -338,81 +386,62 @@ function PinSection() {
     // Start registration process
     const startEnroll = async () => {
         // Check for existing connection first
-        if (checkExistingConnection()) {
-            setRegisterStatus('Using existing connection...');
+        if (checkExistingBLEConnection()) {
+            setRegisterStatus('Using existing BLE connection...');
             setScanning(true);
             setRegisterStatus('Starting enrollment...');
             setRegisterSteps(['Starting enrollment...']);
-            await writeSerial('ENROLL');
-            
-            // Always start our own reading loop for registration to ensure we capture responses
-            // Stop any existing reader first
-            if (window.fingerprintActiveReader) {
-                try {
-                    window.fingerprintActiveReader.cancel();
-                    window.fingerprintActiveReader.releaseLock();
-                    window.fingerprintActiveReader = null;
-                    console.log("Stopped existing reader for registration");
-                } catch (e) {
-                    console.log("Could not stop existing reader:", e.message);
-                }
-            }
-            
-            // Start our own reader for registration
-            setTimeout(() => readSerial(), 100);
+            await sendBLECommand('ENROLL');
         } else {
-            setRegisterStatus('Connecting to ESP32...');
+            setRegisterStatus('Connecting to ESP32 via BLE...');
             setRegisterSteps([]);
-            await connectESP32();
+            await connectESP32BLE();
             setScanning(true);
             setRegisterStatus('Starting enrollment...');
             setRegisterSteps(['Starting enrollment...']);
-            await writeSerial('ENROLL');
-            
-            // Start reading for new connections too
-            setTimeout(() => readSerial(), 100);
+            await sendBLECommand('ENROLL');
         }
     };
 
     // Check for existing connection on component mount
     React.useEffect(() => {
-        const hasConnection = checkExistingConnection();
+        const hasConnection = checkExistingBLEConnection();
         if (hasConnection) {
-            console.log("Fingerprint connection restored on mount");
+            console.log("BLE Fingerprint connection restored on mount");
         }
         
         // Listen for connection changes from other components
         const handleConnectionChange = (event) => {
-            console.log("Received connection change event:", event.detail);
-            if (event.detail.connected && event.detail.port) {
-                serialPortRef.current = event.detail.port;
-                setSerialConnected(true);
+            console.log("Received BLE connection change event:", event.detail);
+            if (event.detail.connected && event.detail.device) {
+                fingerprintBLERef.current = window.fingerprintBLEInstance;
+                setBleConnected(true);
             } else {
-                serialPortRef.current = null;
-                setSerialConnected(false);
+                fingerprintBLERef.current = null;
+                setBleConnected(false);
             }
         };
         
-        window.addEventListener('fingerprintConnectionChanged', handleConnectionChange);
+        window.addEventListener('fingerprintBLEConnectionChanged', handleConnectionChange);
         
         // Set up a periodic check to ensure connection state is accurate
         const checkInterval = setInterval(() => {
-            const currentlyConnected = window.fingerprintSerialPort && window.fingerprintSerialPort.readable;
-            if (currentlyConnected !== serialConnected) {
-                setSerialConnected(currentlyConnected);
+            const currentlyConnected = window.fingerprintBLEInstance && window.fingerprintBLEInstance.getConnectionStatus();
+            if (currentlyConnected !== bleConnected) {
+                setBleConnected(currentlyConnected);
                 if (currentlyConnected) {
-                    serialPortRef.current = window.fingerprintSerialPort;
+                    fingerprintBLERef.current = window.fingerprintBLEInstance;
                 } else {
-                    serialPortRef.current = null;
+                    fingerprintBLERef.current = null;
                 }
             }
         }, 1000);
         
         return () => {
-            window.removeEventListener('fingerprintConnectionChanged', handleConnectionChange);
+            window.removeEventListener('fingerprintBLEConnectionChanged', handleConnectionChange);
             clearInterval(checkInterval);
         };
-    }, [serialConnected]);
+    }, [bleConnected]);
 
     // Re-analyze fingerprints when unit name changes
     React.useEffect(() => {
@@ -421,18 +450,14 @@ function PinSection() {
         }
     }, [window.fingerprintUnitName, userFingerprints]);
 
-    // Cleanup serial on unmount
+    // Cleanup BLE on unmount
     React.useEffect(() => {
         return () => {
-            // Don't close the global connection as it might be used by Page2
-            // Only reset local references and cleanup our reader if it's the active one
-            if (serialReaderRef.current && window.fingerprintActiveReader === serialReaderRef.current) {
-                serialReaderRef.current.cancel().catch(() => {});
-                serialReaderRef.current.releaseLock();
-                window.fingerprintActiveReader = null;
+            // Don't close the global BLE connection as it might be used by Page2
+            // Only reset local references
+            if (fingerprintBLERef.current) {
+                fingerprintBLERef.current = null;
             }
-            serialPortRef.current = null;
-            serialReaderRef.current = null;
         };
     }, []);
 
@@ -457,8 +482,8 @@ function PinSection() {
                         <br />
                         {/* Connection Status */}
                         <div style={{ marginBottom: '10px', fontSize: '14px', fontWeight: 'bold' }}>
-                            Status: <span style={{ color: serialConnected ? '#4CAF50' : '#f44336' }}>
-                                {serialConnected ? '✓ Fingerprint Unit Connected' : '✗ Fingerprint Unit Not Connected'}
+                            Status: <span style={{ color: bleConnected ? '#4CAF50' : '#f44336' }}>
+                                {bleConnected ? '✓ Fingerprint Unit Connected' : '✗ Fingerprint Unit Not Connected'}
                             </span>
                         </div>
                         <span className={styles.SectionTexts}>
@@ -469,7 +494,7 @@ function PinSection() {
                         className={styles.fingerprintScanner}
                         onClick={() => {
                             if (!scanning) {
-                                if (serialConnected) {
+                                if (bleConnected) {
                                     startEnroll();
                                 } else {
                                     setRegisterStatus('Please connect to fingerprint device first');
@@ -478,8 +503,8 @@ function PinSection() {
                             }
                         }}
                         style={{ 
-                            cursor: scanning ? 'not-allowed' : (serialConnected ? 'pointer' : 'not-allowed'), 
-                            opacity: (scanning || !serialConnected) ? 0.6 : 1 
+                            cursor: scanning ? 'not-allowed' : (bleConnected ? 'pointer' : 'not-allowed'), 
+                            opacity: (scanning || !bleConnected) ? 0.6 : 1 
                         }}
                     >
                         <div className={styles.fingerprintAnimationWrapper}>
@@ -525,15 +550,15 @@ function PinSection() {
                     You can register two fingers on the device.
                     {/* Connection Status */}
                     <div style={{ marginTop: '15px', fontSize: '14px', fontWeight: 'bold' }}>
-                        Device Status: <span style={{ color: serialConnected ? '#4CAF50' : '#f44336' }}>
-                            {serialConnected ? '✓ Connected' : '✗ Not Connected'}
+                        Device Status: <span style={{ color: bleConnected ? '#4CAF50' : '#f44336' }}>
+                            {bleConnected ? '✓ Connected' : '✗ Not Connected'}
                         </span>
-                        {serialConnected && (
+                        {bleConnected && (
                             <div style={{ fontSize: '12px', color: '#666', fontWeight: 'normal', marginTop: '5px' }}>
                                 Ready to register fingerprints
                             </div>
                         )}
-                        {serialConnected && window.fingerprintUnitName && (
+                        {bleConnected && window.fingerprintUnitName && (
                             <div style={{ fontSize: '12px', color: '#333', fontWeight: 'normal', marginTop: '5px' }}>
                                 Unit: {window.fingerprintUnitName} | Registered fingers: {registeredFingersOnCurrentUnit}/2
                             </div>
@@ -545,13 +570,13 @@ function PinSection() {
                         type="button"
                         className={styles.fingerprintButton + " " + styles.fingerprintButtonOne}
                         onClick={() => setShowFingerprintSection(true)}
-                        disabled={!serialConnected || registeredFingersOnCurrentUnit >= 1}
+                        disabled={!bleConnected || registeredFingersOnCurrentUnit >= 1}
                         style={{
-                            opacity: (serialConnected && registeredFingersOnCurrentUnit < 1) ? 1 : 0.5,
-                            cursor: (serialConnected && registeredFingersOnCurrentUnit < 1) ? "pointer" : "not-allowed"
+                            opacity: (bleConnected && registeredFingersOnCurrentUnit < 1) ? 1 : 0.5,
+                            cursor: (bleConnected && registeredFingersOnCurrentUnit < 1) ? "pointer" : "not-allowed"
                         }}
                         title={
-                            !serialConnected 
+                            !bleConnected 
                                 ? "Connect to fingerprint device first" 
                                 : registeredFingersOnCurrentUnit >= 1 
                                     ? "Finger 1 already registered on this unit" 
@@ -577,13 +602,13 @@ function PinSection() {
                         type="button"
                         className={styles.fingerprintButton + " " + styles.fingerprintButtonTwo}
                         onClick={() => setShowFingerprintSection(true)}
-                        disabled={!serialConnected || registeredFingersOnCurrentUnit >= 2}
+                        disabled={!bleConnected || registeredFingersOnCurrentUnit >= 2}
                         style={{
-                            opacity: (serialConnected && registeredFingersOnCurrentUnit < 2) ? 1 : 0.5,
-                            cursor: (serialConnected && registeredFingersOnCurrentUnit < 2) ? "pointer" : "not-allowed"
+                            opacity: (bleConnected && registeredFingersOnCurrentUnit < 2) ? 1 : 0.5,
+                            cursor: (bleConnected && registeredFingersOnCurrentUnit < 2) ? "pointer" : "not-allowed"
                         }}
                         title={
-                            !serialConnected 
+                            !bleConnected 
                                 ? "Connect to fingerprint device first" 
                                 : registeredFingersOnCurrentUnit >= 2 
                                     ? "Finger 2 already registered on this unit" 
