@@ -1,6 +1,6 @@
 import React from "react";
-import NavBar from "../../../organisms/UserPortal/ResponsiveNavbar/ResponsiveNav";
-import Cart from "../../../organisms/UserPortal/Meals/Meals"; // Import Cart component
+import NavBar from "../../../organisms/UserPortal/ResponsiveNavbar/ResponsiveNav.jsx";
+import Cart from "../../../organisms/UserPortal/Meals/Meals.jsx"; // Import Cart component
 
 const MealsPage = () => {
   return (

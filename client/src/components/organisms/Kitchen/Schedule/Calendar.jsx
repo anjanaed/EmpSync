@@ -31,9 +31,9 @@ import {
 } from "@ant-design/icons";
 import dayjs from "dayjs";
 import styles from "./Calendar.module.css";
-import Loading from "../../../atoms/loading/loading";
+import Loading from "../../../atoms/loading/loading.jsx";
 import axios from "axios";
-import { useAuth } from "../../../../contexts/AuthContext";
+import { useAuth } from "../../../../contexts/AuthContext.jsx";
 
 const { TabPane } = Tabs;
 

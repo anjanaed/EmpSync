@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Table, Button, Space, Tag, Modal, Form, Input, message, Select } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
-import { useAuth } from '../../../../../contexts/AuthContext';
+import { useAuth } from '../../../../../contexts/AuthContext.jsx';
 import styles from './RolesList.module.css';
 import axios from 'axios';
 

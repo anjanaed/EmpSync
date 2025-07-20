@@ -1,7 +1,7 @@
 import React from "react";
-import UserProfile from "../../../organisms/UserPortal/Userprofile/Userprofile";
-import NavBar from "../../../organisms/UserPortal/ResponsiveNavbar/ResponsiveNav";
-import { useAuth } from "../../../../contexts/AuthContext";
+import UserProfile from "../../../organisms/UserPortal/Userprofile/Userprofile.jsx";
+import NavBar from "../../../organisms/UserPortal/ResponsiveNavbar/ResponsiveNav.jsx";
+import { useAuth } from "../../../../contexts/AuthContext.jsx";
 
 const ProfilePage = () => {
   const { authData } = useAuth();

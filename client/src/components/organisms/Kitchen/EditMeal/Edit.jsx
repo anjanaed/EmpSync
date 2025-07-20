@@ -28,7 +28,7 @@ import {
   getDownloadURL,
   deleteObject,
 } from "firebase/storage";
-import { useAuth } from "../../../../contexts/AuthContext";
+import { useAuth } from "../../../../contexts/AuthContext.jsx";
 
 const { TextArea } = Input;
 const { Title } = Typography;

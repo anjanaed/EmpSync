@@ -5,7 +5,7 @@ import styles from "./UserFingerPrintRegister.module.css";
 import otbImage from "../../../../assets/Order/otb1.jpg";
 
 import fingerprintIcon from "../../../../assets/Order/fingerprints-icons-5897.png";
-import FingerPrint from "../../../atoms/FingerPrint/FingerPrint";
+import FingerPrint from "../../../atoms/FingerPrint/FingerPrint.jsx";
 
 const UserFingerPrintRegister = () => {
     return (

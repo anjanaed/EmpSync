@@ -31,7 +31,7 @@ import {
 import { getStorage, ref, deleteObject } from "firebase/storage";
 
 import styles from "./Meals.module.css";
-import { useAuth } from "../../../../contexts/AuthContext";
+import { useAuth } from "../../../../contexts/AuthContext.jsx";
 import axios from "axios"; // Import axios
 
 const { Title } = Typography;

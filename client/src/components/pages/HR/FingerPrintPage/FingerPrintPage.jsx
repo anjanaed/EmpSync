@@ -10,10 +10,10 @@ import {
   faBowlFood,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import NavBar from "../../../organisms/NavBar/NavBar";
-import FingerPrintsContent from "../../../organisms/HR/FingerPrints/FingerPrints";
-import FingerPrints from '../../../organisms/HR/FingerPrints/FingerPrints';
-import { useAuth } from "../../../../contexts/AuthContext"; 
+import NavBar from "../../../organisms/NavBar/NavBar.jsx";
+import FingerPrintsContent from "../../../organisms/HR/FingerPrints/FingerPrints.jsx";
+import FingerPrints from '../../../organisms/HR/FingerPrints/FingerPrints.jsx';
+import { useAuth } from "../../../../contexts/AuthContext.jsx"; 
 
 const FingerPrintPage = () => {
   const { authData } = useAuth();

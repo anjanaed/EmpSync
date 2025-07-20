@@ -1,6 +1,6 @@
 import React, { createContext, useContext } from 'react';
 import { message, ConfigProvider } from 'antd';
-import { useTheme } from './ThemeContext';
+import { useTheme } from './ThemeContext.jsx';
 
 const PopupContext = createContext();
 

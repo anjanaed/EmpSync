@@ -1,15 +1,15 @@
 import { Layout, Modal } from 'antd';
 import { useState, useEffect } from 'react';
-import { useAuth } from '../../../contexts/AuthContext';
+import { useAuth } from '../../../contexts/AuthContext.jsx';
 import axios from 'axios';
-import Navbar from '../../organisms/SuperAdmin/components/Navbar/Navbar';
-import AppHeader from '../../organisms/SuperAdmin/components/AppHeader/AppHeader';
-import OrganizationList from '../../organisms/SuperAdmin/pages/Organizations/Organization List/OrganizationList';
-import AddOrganizationModal from '../../organisms/SuperAdmin/pages/Organizations/Add Organization/AddOrganizationModal';
-import UpdateOrganizationModal from '../../organisms/SuperAdmin/pages/Organizations/Update Organizations/updateOrganiztionModal';
-import RolesList from '../../organisms/SuperAdmin/pages/Roles/RolesList';
-import PermissionsList from '../../organisms/SuperAdmin/pages/Permissions/PermissionsList';
-import Loading from "../../atoms/loading/loading";
+import Navbar from '../../organisms/SuperAdmin/components/Navbar/Navbar.jsx';
+import AppHeader from '../../organisms/SuperAdmin/components/AppHeader/AppHeader.jsx';
+import OrganizationList from '../../organisms/SuperAdmin/pages/Organizations/Organization List/OrganizationList.jsx';
+import AddOrganizationModal from '../../organisms/SuperAdmin/pages/Organizations/Add Organization/AddOrganizationModal.jsx';
+import UpdateOrganizationModal from '../../organisms/SuperAdmin/pages/Organizations/Update Organizations/updateOrganiztionModal.jsx';
+import RolesList from '../../organisms/SuperAdmin/pages/Roles/RolesList.jsx';
+import PermissionsList from '../../organisms/SuperAdmin/pages/Permissions/PermissionsList.jsx';
+import Loading from "../../atoms/loading/loading.jsx";
 import styles from './SuperAdmin.module.css';
 
 const { Content } = Layout;

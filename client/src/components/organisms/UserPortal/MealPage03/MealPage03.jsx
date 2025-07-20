@@ -6,10 +6,10 @@ import { MdLanguage } from "react-icons/md";
 import { RiAiGenerate } from "react-icons/ri";
 import { Spin } from "antd";
 import { motion } from "framer-motion";
-import { useAuth } from "../../../../contexts/AuthContext";
-import ResponsiveNav from "../ResponsiveNavbar/ResponsiveNav";
+import { useAuth } from "../../../../contexts/AuthContext.jsx";
+import ResponsiveNav from "../ResponsiveNavbar/ResponsiveNav.jsx";
 import styles from "./MealPage03.module.css";
-import translations from "../../../../utils/translations";
+import translations from "../../../../utils/translations.jsx";
 import axios from "axios";
 
 const { Content } = Layout;

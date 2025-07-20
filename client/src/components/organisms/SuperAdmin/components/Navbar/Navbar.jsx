@@ -10,7 +10,7 @@ import {
 import React, { useEffect , useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './Navbar.module.css';
-import { useAuth } from "../../../../../contexts/AuthContext";
+import { useAuth } from "../../../../../contexts/AuthContext.jsx";
 
 const { Sider } = Layout;
 

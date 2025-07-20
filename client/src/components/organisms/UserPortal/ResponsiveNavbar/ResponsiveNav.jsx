@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../../../contexts/AuthContext';
-import { useTheme } from '../../../../contexts/ThemeContext';
+import { useAuth } from '../../../../contexts/AuthContext.jsx';
+import { useTheme } from '../../../../contexts/ThemeContext.jsx';
 import {
   MenuOutlined,
   UserOutlined,
