@@ -186,7 +186,7 @@
   border-radius: 10px;
   padding: 0.5vw;
   height: auto;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25), 0 3px 6px rgba(0, 0, 0, 0.22);
+  box-shadow: 0 6px 12px rgba(114, 113, 113, 0.25), 0 3px 6px rgba(0, 0, 0, 0.22);
   overflow-y: auto;
 }
 
@@ -211,50 +211,6 @@ Table {
   text-align: center !important;
   font-size: 14px !important;
 }
-
-/* Dark theme table headers */
-.home.dark .contentBox :global(.ant-table-thead > tr > th),
-.home.dark .contentBox :global(.ant-table-thead > tr > th:hover),
-.home.dark .contentBox :global(.ant-table-thead > tr > th.ant-table-column-has-sorters),
-.home.dark .contentBox :global(.ant-table-thead > tr > th.ant-table-column-has-sorters:hover),
-.home.dark .contentBox :global(.ant-table-thead > tr > th.ant-table-column-sort),
-.home.dark .contentBox :global(.ant-table-thead > tr > th.ant-table-selection-column),
-.home.dark .contentBox :global(.ant-table-thead > tr > th:first-child),
-.home.dark .contentBox :global(.ant-table-thead > tr > th:last-child),
-.home.dark .contentBox :global(.ant-table thead th),
-.home.dark .contentBox :global(.ant-table .ant-table-thead > tr > th) {
-  background-color: #2b00ff !important;
-  color: #ffffff !important;
-  font-weight: bold !important;
-  border-bottom: 1px solid #ffffff !important;
-  border-top: 1px solid #ffffff !important;
-  border-left: 1px solid #ffffff !important;
-  border-right: 1px solid #ffffff !important;
-  text-align: center !important;
-  font-size: 14px !important;
-}
-
-/* Dark theme table header hover effects */
-.home.dark .contentBox :global(.ant-table-thead > tr > th:hover),
-.home.dark .contentBox :global(.ant-table-thead > tr > th.ant-table-column-has-sorters:hover) {
-  background-color: #cc0000 !important;
-  transition: background-color 0.3s ease !important;
-}
-
-/* Dark theme table container */
-.home.dark .contentBox :global(.ant-table) {
-  background-color: #1a1a1a !important;
-  border: 1px solid #404040 !important;
-}
-
-.home.dark .contentBox :global(.ant-table-container) {
-  background-color: #1a1a1a !important;
-}
-
-.home.dark .contentBox :global(.ant-table-content) {
-  background-color: #1a1a1a !important;
-}
-
 
 
 /* Table cell text colors */
