@@ -186,14 +186,24 @@
   font-family: "Figtree", sans-serif !important;
   font-weight: 550;
   border-radius: 0;
-}
-
-.profileMenuItem {
   color: #333;
 }
 
 .logoutMenuItem {
   color: #960000;
+}
+
+/* Dark mode dropdown menu items */
+.darkMenuItem {
+  color: #ffffff !important;
+}
+
+.darkLogoutMenuItem {
+  color: #ff6b6b !important;
+}
+
+.darkDropdown {
+  background-color: #181818 !important;
 }
 
 .userDetails .userName {
@@ -281,9 +291,8 @@
   background-color: #212121;
 }
 
-/* Dark mode dropdown menu */
+/* Enhanced Dark mode dropdown menu styling */
 :global(.dark .ant-dropdown),
-:global(.dark .ant-dropdown .ant-dropdown-menu),
 :global(.dark .ant-dropdown-menu) {
   background-color: #181818 !important;
   border: 1px solid #333333 !important;
@@ -305,20 +314,16 @@
   border-bottom: none !important;
 }
 
-:global(.dark) .profileMenuItem {
-  color: #ffffff !important;
-}
-
-:global(.dark) .logoutMenuItem {
-  color: #f20707 !important;
-}
-
-/* Dark mode dropdown menu item content */
+/* Force white text in dark mode dropdown items */
 :global(.dark .ant-dropdown-menu-item .ant-dropdown-menu-title-content) {
   color: #ffffff !important;
 }
 
-/* Dark mode for dropdown menu icons */
+:global(.dark .ant-dropdown-menu-item .ant-dropdown-menu-title-content *) {
+  color: #ffffff !important;
+}
+
+/* Dark mode dropdown menu item icons */
 :global(.dark .ant-dropdown-menu-item .anticon) {
   color: #ffffff !important;
 }
@@ -328,11 +333,34 @@
 }
 
 /* Specific styling for logout item in dark mode */
+:global(.dark .ant-dropdown-menu-item:last-child) {
+  color: #ff6b6b !important;
+}
+
+:global(.dark .ant-dropdown-menu-item:last-child .ant-dropdown-menu-title-content) {
+  color: #ff6b6b !important;
+}
+
+:global(.dark .ant-dropdown-menu-item:last-child .ant-dropdown-menu-title-content *) {
+  color: #ff6b6b !important;
+}
+
 :global(.dark .ant-dropdown-menu-item:last-child .anticon) {
-  color: #f20707 !important;
+  color: #ff6b6b !important;
 }
 
 :global(.dark .ant-dropdown-menu-item:last-child:hover .anticon) {
+  color: #ff8080 !important;
+}
+
+/* Force styling on our custom classes */
+:global(.dark) .darkMenuItem,
+:global(.dark) .darkMenuItem * {
+  color: #ffffff !important;
+}
+
+:global(.dark) .darkLogoutMenuItem,
+:global(.dark) .darkLogoutMenuItem * {
   color: #ff6b6b !important;
 }
 
@@ -342,7 +370,6 @@
   background-color: rgba(255, 255, 255, 0.1) !important;
   border-color: #555555 !important;
 }
-
 
 :global(.dark .ant-btn:focus) {
   color: #ffffff !important;
@@ -375,4 +402,3 @@
 :global(.dark .ant-menu-item:hover) {
   background-color: #2a2a2a !important;
 }
-
