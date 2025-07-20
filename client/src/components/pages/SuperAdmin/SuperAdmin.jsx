@@ -16,6 +16,7 @@ const { Content } = Layout;
 const { confirm } = Modal;
 
 const SuperAdmin = () => {
+  const baseURL = import.meta.env.VITE_BASE_URL;
   const [activeMenu, setActiveMenu] = useState('organizations');
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isUpdateModalVisible, setIsUpdateModalVisible] = useState(false);
@@ -61,7 +62,7 @@ const SuperAdmin = () => {
     }
     setLoading(true);
     try {
-      const res = await axios.get('http://localhost:3000/super-admin/organizations', {
+      const res = await axios.get(`${baseURL}/super-admin/organizations`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setData(mapOrganizations(res.data));
@@ -94,7 +95,7 @@ const SuperAdmin = () => {
   const handleOk = async (values) => {
     if (!token) return;
     try {
-      await axios.post('http://localhost:3000/super-admin/organizations', values, {
+      await axios.post(`${baseURL}/super-admin/organizations`, values, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
@@ -117,7 +118,7 @@ const SuperAdmin = () => {
   const updateOrganization = async (orgId, values) => {
     if (!token) return;
     try {
-      await axios.put(`http://localhost:3000/super-admin/organizations/${orgId}`, values, {
+      await axios.put(`${baseURL}/super-admin/organizations/${orgId}`, values, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
@@ -151,7 +152,7 @@ const SuperAdmin = () => {
       async onOk() {
         if (!token) return;
         try {
-          await axios.delete(`http://localhost:3000/super-admin/organizations/${item.key}`, {
+          await axios.delete(`${baseURL}/super-admin/organizations/${item.key}`, {
             headers: { Authorization: `Bearer ${token}` },
           });
           await fetchOrganizations();

@@ -31,6 +31,9 @@ const OrderTab = () => {
                 dots={false} // Hide navigation dots
                 accessibility={false} // Disable default accessibility features
                 speed={0}
+                swipe={false} // Disable swipe navigation
+                draggable={false} // Disable drag navigation
+                touchMove={false} // Disable touch move
                 initialSlide={initialSlide} // Start at Page2.jsx
             >
                 {/* Page 1: Language selection */}
