@@ -40,11 +40,15 @@ function PinSection() {
     const [error, setError] = useState("");
 
     // Serial communication state for fingerprint registration
-    const [registerStatus, setRegisterStatus] = useState("Please place your finger on the scanner");
+    const [registerStatus, setRegisterStatus] = useState("Tap here and then place your finger on the scanner");
     const [registerSteps, setRegisterSteps] = useState([]); // Array of step messages
     const serialPortRef = useRef(null);
     const serialReaderRef = useRef(null);
     const [serialConnected, setSerialConnected] = useState(false);
+    
+    // User fingerprint state
+    const [userFingerprints, setUserFingerprints] = useState([]);
+    const [registeredFingersOnCurrentUnit, setRegisteredFingersOnCurrentUnit] = useState(0);
 
     // Fetch user info when pin is 6 digits
     React.useEffect(() => {
@@ -60,6 +64,8 @@ function PinSection() {
                     if (!response.ok) {
                         setError("Invalid Pass Key, check Again");
                         setUser(null);
+                        setUserFingerprints([]);
+                        setRegisteredFingersOnCurrentUnit(0);
                         return;
                     }
                     const data = await response.json();
@@ -69,14 +75,21 @@ function PinSection() {
                     if (data && data.id && data.name) {
                         console.log("Fetched user ID:", data.id);
                         console.log("Fetched user name:", data.name);
+                        
+                        // Fetch user's existing fingerprints
+                        await fetchUserFingerprints(data.id);
                     }
                 } catch (err) {
                     setError("Invalid Pass Key, check Again");
                     setUser(null);
+                    setUserFingerprints([]);
+                    setRegisteredFingersOnCurrentUnit(0);
                 }
             } else {
                 setError("");
                 setUser(null);
+                setUserFingerprints([]);
+                setRegisteredFingersOnCurrentUnit(0);
             }
         };
         fetchUser();
@@ -92,10 +105,76 @@ function PinSection() {
         setPin(pin.slice(0, -1));
     };
 
+    // Fetch user's existing fingerprints
+    const fetchUserFingerprints = async (userId) => {
+        try {
+            // First try to get all fingerprints and then filter by empId
+            const response = await fetch(`/user-finger-print-register-backend/all-fingerprints`);
+            if (response.ok) {
+                const allFingerprints = await response.json();
+                // Filter fingerprints for this specific user
+                const userFingerprints = allFingerprints.filter(fp => fp.empId === userId);
+                setUserFingerprints(userFingerprints);
+                console.log("Fetched user fingerprints:", userFingerprints);
+                
+                // Analyze fingerprints for current unit
+                analyzeRegisteredFingers(userFingerprints);
+            } else {
+                console.log("No existing fingerprints found or error fetching fingerprints");
+                setUserFingerprints([]);
+                setRegisteredFingersOnCurrentUnit(0);
+            }
+        } catch (error) {
+            console.error("Error fetching user fingerprints:", error);
+            setUserFingerprints([]);
+            setRegisteredFingersOnCurrentUnit(0);
+        }
+    };
+
+    // Analyze registered fingers for current unit
+    const analyzeRegisteredFingers = (fingerprints) => {
+        if (!window.fingerprintUnitName || !fingerprints.length) {
+            setRegisteredFingersOnCurrentUnit(0);
+            return;
+        }
+
+        // Filter fingerprints that match the current unit
+        const currentUnitFingerprints = fingerprints.filter(fp => {
+            // Extract first 6 characters (unit name) from thumbid
+            const unitName = fp.thumbid.substring(0, 6);
+            return unitName === window.fingerprintUnitName;
+        });
+
+        console.log(`Found ${currentUnitFingerprints.length} registered fingers on unit ${window.fingerprintUnitName}`);
+        setRegisteredFingersOnCurrentUnit(currentUnitFingerprints.length);
+    };
+
     // --- Serial Communication Functions ---
-    // Connect to ESP32 via Web Serial API
+    // Check and use existing ESP32 connection from global window object
+    const checkExistingConnection = () => {
+        if (window.fingerprintSerialPort && !serialPortRef.current) {
+            serialPortRef.current = window.fingerprintSerialPort;
+            setSerialConnected(true);
+            console.log("Using existing fingerprint connection from Page2");
+            
+            // Restore unit name if available
+            if (window.fingerprintUnitName) {
+                console.log("Restored unit name:", window.fingerprintUnitName);
+            }
+            
+            return true;
+        }
+        return false;
+    };
+
+    // Connect to ESP32 via Web Serial API (fallback if no existing connection)
     const connectESP32 = async () => {
         try {
+            // First check if there's already a connection from Page2
+            if (checkExistingConnection()) {
+                return;
+            }
+
             if (!('serial' in navigator)) {
                 setRegisterStatus('Web Serial API not supported in this browser.');
                 return;
@@ -104,8 +183,10 @@ function PinSection() {
                 const port = await navigator.serial.requestPort({});
                 await port.open({ baudRate: 115200 });
                 serialPortRef.current = port;
+                window.fingerprintSerialPort = port; // Store globally for consistency
                 setSerialConnected(true);
-                readSerial();
+                // Don't start reading here - let startEnroll handle it
+                console.log("New fingerprint connection established for registration");
             }
         } catch (error) {
             setRegisterStatus('Connection failed: ' + error.message);
@@ -115,10 +196,28 @@ function PinSection() {
     // Read from serial port
     const readSerial = async () => {
         if (!serialPortRef.current) return;
+        
+        // For registration, we need to take control even if another reader exists
+        if (window.fingerprintActiveReader && scanning) {
+            console.log("Taking control of serial reading for registration");
+            try {
+                window.fingerprintActiveReader.cancel();
+                window.fingerprintActiveReader.releaseLock();
+            } catch (e) {
+                console.log("Could not stop existing reader:", e.message);
+            }
+            window.fingerprintActiveReader = null;
+        } else if (window.fingerprintActiveReader && !scanning) {
+            console.log("Another component is reading serial data, skipping readSerial");
+            return;
+        }
+        
         const reader = serialPortRef.current.readable.getReader();
         serialReaderRef.current = reader;
+        window.fingerprintActiveReader = reader; // Mark as active globally
         let buffer = '';
         try {
+            console.log("Starting serial reading for registration");
             while (true) {
                 const { value, done } = await reader.read();
                 if (done) break;
@@ -127,24 +226,39 @@ function PinSection() {
                 buffer = lines.pop();
                 for (let line of lines) {
                     line = line.trim();
-                    if (line) processSerialMessage(line);
+                    if (line) {
+                        console.log("Registration serial data:", line);
+                        processSerialMessage(line);
+                    }
                 }
             }
         } catch (e) {
-            // Ignore for now
+            console.log('Read serial stopped:', e.message);
         } finally {
             reader.releaseLock();
+            window.fingerprintActiveReader = null; // Clear global reader reference
+            console.log("Registration serial reading stopped");
         }
     };
 
     // Write to serial port
     const writeSerial = async (data) => {
-        if (serialPortRef.current && serialPortRef.current.writable) {
-            const writer = serialPortRef.current.writable.getWriter();
-            await writer.write(new TextEncoder().encode(data + '\n'));
-            writer.releaseLock();
-        } else {
-            setRegisterStatus('Not connected to ESP32');
+        try {
+            if (serialPortRef.current && serialPortRef.current.writable) {
+                console.log(`Attempting to send command: ${data}`);
+                const writer = serialPortRef.current.writable.getWriter();
+                await writer.write(new TextEncoder().encode(data + '\n'));
+                writer.releaseLock();
+                console.log(`Successfully sent command: ${data}`);
+            } else {
+                setRegisterStatus('Not connected to ESP32');
+                console.error('Serial port not available for writing');
+                console.error('serialPortRef.current:', serialPortRef.current);
+                console.error('writable:', serialPortRef.current?.writable);
+            }
+        } catch (error) {
+            setRegisterStatus('Error sending command: ' + error.message);
+            console.error('Write serial error:', error);
         }
     };
 
@@ -184,6 +298,11 @@ function PinSection() {
                         setRegisterStatus('Failed to save fingerprint: ' + (errorData.message || response.statusText));
                     } else {
                         setRegisterStatus('Fingerprint registered and saved!');
+                        
+                        // Refresh user fingerprints to update the button states
+                        if (user && user.id) {
+                            await fetchUserFingerprints(user.id);
+                        }
                     }
                 } catch (err) {
                     setRegisterStatus('Error saving fingerprint: ' + err.message);
@@ -196,6 +315,9 @@ function PinSection() {
                 setScanning(false);
                 setRegisterStatus('Please place your finger on the scanner');
                 setRegisterSteps([]);
+                
+                // Notify Page2 that registration is complete and it can resume reading
+                window.dispatchEvent(new CustomEvent('fingerprintRegistrationComplete'));
             }, 100);
         } else if (data.includes('No available IDs')) {
             setRegisterStatus('No available IDs for enrollment.');
@@ -215,22 +337,102 @@ function PinSection() {
 
     // Start registration process
     const startEnroll = async () => {
-        setRegisterStatus('Connecting to ESP32...');
-        setRegisterSteps([]);
-        await connectESP32();
-        setScanning(true);
-        setRegisterStatus('Starting enrollment...');
-        setRegisterSteps(['Starting enrollment...']);
-        await writeSerial('ENROLL');
+        // Check for existing connection first
+        if (checkExistingConnection()) {
+            setRegisterStatus('Using existing connection...');
+            setScanning(true);
+            setRegisterStatus('Starting enrollment...');
+            setRegisterSteps(['Starting enrollment...']);
+            await writeSerial('ENROLL');
+            
+            // Always start our own reading loop for registration to ensure we capture responses
+            // Stop any existing reader first
+            if (window.fingerprintActiveReader) {
+                try {
+                    window.fingerprintActiveReader.cancel();
+                    window.fingerprintActiveReader.releaseLock();
+                    window.fingerprintActiveReader = null;
+                    console.log("Stopped existing reader for registration");
+                } catch (e) {
+                    console.log("Could not stop existing reader:", e.message);
+                }
+            }
+            
+            // Start our own reader for registration
+            setTimeout(() => readSerial(), 100);
+        } else {
+            setRegisterStatus('Connecting to ESP32...');
+            setRegisterSteps([]);
+            await connectESP32();
+            setScanning(true);
+            setRegisterStatus('Starting enrollment...');
+            setRegisterSteps(['Starting enrollment...']);
+            await writeSerial('ENROLL');
+            
+            // Start reading for new connections too
+            setTimeout(() => readSerial(), 100);
+        }
     };
+
+    // Check for existing connection on component mount
+    React.useEffect(() => {
+        const hasConnection = checkExistingConnection();
+        if (hasConnection) {
+            console.log("Fingerprint connection restored on mount");
+        }
+        
+        // Listen for connection changes from other components
+        const handleConnectionChange = (event) => {
+            console.log("Received connection change event:", event.detail);
+            if (event.detail.connected && event.detail.port) {
+                serialPortRef.current = event.detail.port;
+                setSerialConnected(true);
+            } else {
+                serialPortRef.current = null;
+                setSerialConnected(false);
+            }
+        };
+        
+        window.addEventListener('fingerprintConnectionChanged', handleConnectionChange);
+        
+        // Set up a periodic check to ensure connection state is accurate
+        const checkInterval = setInterval(() => {
+            const currentlyConnected = window.fingerprintSerialPort && window.fingerprintSerialPort.readable;
+            if (currentlyConnected !== serialConnected) {
+                setSerialConnected(currentlyConnected);
+                if (currentlyConnected) {
+                    serialPortRef.current = window.fingerprintSerialPort;
+                } else {
+                    serialPortRef.current = null;
+                }
+            }
+        }, 1000);
+        
+        return () => {
+            window.removeEventListener('fingerprintConnectionChanged', handleConnectionChange);
+            clearInterval(checkInterval);
+        };
+    }, [serialConnected]);
+
+    // Re-analyze fingerprints when unit name changes
+    React.useEffect(() => {
+        if (userFingerprints.length > 0) {
+            analyzeRegisteredFingers(userFingerprints);
+        }
+    }, [window.fingerprintUnitName, userFingerprints]);
 
     // Cleanup serial on unmount
     React.useEffect(() => {
         return () => {
-            if (serialPortRef.current) {
-                serialPortRef.current.close();
-                serialPortRef.current = null;
+            // Don't close the global connection as it might be used by Page2
+            // Only reset local references and cleanup our reader if it's the active one
+            if (serialReaderRef.current && window.fingerprintActiveReader === serialReaderRef.current) {
+                serialReaderRef.current.cancel().catch(() => {});
+                serialReaderRef.current.releaseLock();
+                window.fingerprintActiveReader = null;
             }
+            serialPortRef.current = null;
+            serialReaderRef.current = null;
         };
     }, []);
 
@@ -253,6 +455,12 @@ function PinSection() {
                     </button>
                     <p>
                         <br />
+                        {/* Connection Status */}
+                        <div style={{ marginBottom: '10px', fontSize: '14px', fontWeight: 'bold' }}>
+                            Status: <span style={{ color: serialConnected ? '#4CAF50' : '#f44336' }}>
+                                {serialConnected ? '✓ Fingerprint Unit Connected' : '✗ Fingerprint Unit Not Connected'}
+                            </span>
+                        </div>
                         <span className={styles.SectionTexts}>
                             {registerStatus || (scanning ? 'Scanning...' : 'Please place your finger on the scanner')}
                         </span>
@@ -260,9 +468,19 @@ function PinSection() {
                     <div
                         className={styles.fingerprintScanner}
                         onClick={() => {
-                            if (!scanning) startEnroll();
+                            if (!scanning) {
+                                if (serialConnected) {
+                                    startEnroll();
+                                } else {
+                                    setRegisterStatus('Please connect to fingerprint device first');
+                                    setTimeout(() => setRegisterStatus('Please place your finger on the scanner'), 2000);
+                                }
+                            }
                         }}
-                        style={{ cursor: scanning ? 'not-allowed' : 'pointer', opacity: scanning ? 0.6 : 1 }}
+                        style={{ 
+                            cursor: scanning ? 'not-allowed' : (serialConnected ? 'pointer' : 'not-allowed'), 
+                            opacity: (scanning || !serialConnected) ? 0.6 : 1 
+                        }}
                     >
                         <div className={styles.fingerprintAnimationWrapper}>
                             <FingerPrint />
@@ -275,6 +493,9 @@ function PinSection() {
                             setScanning(false);
                             setRegisterStatus('Please place your finger on the scanner');
                             setRegisterSteps([]);
+                            
+                            // Notify Page2 that registration is cancelled and it can resume reading
+                            window.dispatchEvent(new CustomEvent('fingerprintRegistrationComplete'));
                         }}
                         style={{position: 'fixed', right: 32, bottom: 32, zIndex: 1000}}
                     >
@@ -302,31 +523,87 @@ function PinSection() {
                         {user && user.name ? `Hello..! ${user.name} ` : null}
                     </h2>
                     You can register two fingers on the device.
+                    {/* Connection Status */}
+                    <div style={{ marginTop: '15px', fontSize: '14px', fontWeight: 'bold' }}>
+                        Device Status: <span style={{ color: serialConnected ? '#4CAF50' : '#f44336' }}>
+                            {serialConnected ? '✓ Connected' : '✗ Not Connected'}
+                        </span>
+                        {serialConnected && (
+                            <div style={{ fontSize: '12px', color: '#666', fontWeight: 'normal', marginTop: '5px' }}>
+                                Ready to register fingerprints
+                            </div>
+                        )}
+                        {serialConnected && window.fingerprintUnitName && (
+                            <div style={{ fontSize: '12px', color: '#333', fontWeight: 'normal', marginTop: '5px' }}>
+                                Unit: {window.fingerprintUnitName} | Registered fingers: {registeredFingersOnCurrentUnit}/2
+                            </div>
+                        )}
+                    </div>
                 </div>
                 <div className={styles.fingerprintButtonGroup + " " + styles.fingerprintOptions}>
                     <button
                         type="button"
                         className={styles.fingerprintButton + " " + styles.fingerprintButtonOne}
                         onClick={() => setShowFingerprintSection(true)}
+                        disabled={!serialConnected || registeredFingersOnCurrentUnit >= 1}
+                        style={{
+                            opacity: (serialConnected && registeredFingersOnCurrentUnit < 1) ? 1 : 0.5,
+                            cursor: (serialConnected && registeredFingersOnCurrentUnit < 1) ? "pointer" : "not-allowed"
+                        }}
+                        title={
+                            !serialConnected 
+                                ? "Connect to fingerprint device first" 
+                                : registeredFingersOnCurrentUnit >= 1 
+                                    ? "Finger 1 already registered on this unit" 
+                                    : "Register finger 1"
+                        }
                     >
                         <img
                             src={fingerprintIcon}
                             alt="Register Fingerprint"
                             className={styles.fingerprintImg + " " + styles.fingerprintImgSmall}
                         />
-                        <span className={styles.fingerprintLabel + " " + styles.fingerprintLabelBlue}>Finger 01</span>
+                        <span className={styles.fingerprintLabel + " " + styles.fingerprintLabelBlue}>
+                            {registeredFingersOnCurrentUnit >= 1 ? (
+                                <>
+                                    Finger 01
+                                    <br /><br />
+                                    Registered
+                                </>
+                            ): "Finger 01"}
+                        </span>
                     </button>
                     <button
                         type="button"
                         className={styles.fingerprintButton + " " + styles.fingerprintButtonTwo}
                         onClick={() => setShowFingerprintSection(true)}
+                        disabled={!serialConnected || registeredFingersOnCurrentUnit >= 2}
+                        style={{
+                            opacity: (serialConnected && registeredFingersOnCurrentUnit < 2) ? 1 : 0.5,
+                            cursor: (serialConnected && registeredFingersOnCurrentUnit < 2) ? "pointer" : "not-allowed"
+                        }}
+                        title={
+                            !serialConnected 
+                                ? "Connect to fingerprint device first" 
+                                : registeredFingersOnCurrentUnit >= 2 
+                                    ? "Finger 2 already registered on this unit" 
+                                    : "Register finger 2"
+                        }
                     >
                         <img
                             src={fingerprintIcon}
                             alt="Register Fingerprint"
                             className={styles.fingerprintImg + " " + styles.fingerprintImgSmall}
                         />
-                        <span className={styles.fingerprintLabel + " " + styles.fingerprintLabelOrange}>Finger 02</span>
+                        <span className={styles.fingerprintLabel + " " + styles.fingerprintLabelOrange}>
+                            {registeredFingersOnCurrentUnit >= 2 ? (
+                                <>
+                                    Finger 02
+                                    <br /><br />
+                                    Registered
+                                </>
+                            ) : "Finger 02"}
+                        </span>
                     </button>
                 </div>
                 <button
