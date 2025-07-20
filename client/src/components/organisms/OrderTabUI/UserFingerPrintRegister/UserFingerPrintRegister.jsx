@@ -8,7 +8,7 @@ import fingerprintIcon from "../../../../assets/Order/fingerprints-icons-5897.pn
 import FingerPrint from "../../../atoms/FingerPrint/FingerPrint.jsx";
 import FingerprintBLE from "../../../../utils/fingerprintBLE.js";
 
-const UserFingerPrintRegister = () => {
+const UserFingerPrintRegister = ({ onClose, fingerprintBLE, fingerprintConnected, fingerprintUnitName }) => {
     return (
         <div
             className={styles.full}
@@ -25,13 +25,18 @@ const UserFingerPrintRegister = () => {
                 </h2>
             </div>
             <div className={styles.content}>
-                <PinSection />
+                <PinSection 
+                    onClose={onClose}
+                    fingerprintBLE={fingerprintBLE}
+                    fingerprintConnected={fingerprintConnected}
+                    fingerprintUnitName={fingerprintUnitName}
+                />
             </div>
         </div>
     );
 };
 
-function PinSection() {
+function PinSection({ onClose, fingerprintBLE, fingerprintConnected, fingerprintUnitName }) {
 
     const [pin, setPin] = useState("");
     const navigate = useNavigate();
@@ -43,12 +48,18 @@ function PinSection() {
     // BLE communication state for fingerprint registration
     const [registerStatus, setRegisterStatus] = useState("Tap here and then place your finger on the scanner");
     const [registerSteps, setRegisterSteps] = useState([]); // Array of step messages
-    const fingerprintBLERef = useRef(null);
-    const [bleConnected, setBleConnected] = useState(false);
+    const fingerprintBLERef = useRef(fingerprintBLE); // Use the passed BLE instance
+    const [bleConnected, setBleConnected] = useState(fingerprintConnected);
     
     // User fingerprint state
     const [userFingerprints, setUserFingerprints] = useState([]);
     const [registeredFingersOnCurrentUnit, setRegisteredFingersOnCurrentUnit] = useState(0);
+
+    // Sync with passed props
+    React.useEffect(() => {
+        fingerprintBLERef.current = fingerprintBLE;
+        setBleConnected(fingerprintConnected);
+    }, [fingerprintBLE, fingerprintConnected]);
 
     // Fetch user info when pin is 6 digits
     React.useEffect(() => {

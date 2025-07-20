@@ -9,6 +9,7 @@ import { IoKeypadSharp } from "react-icons/io5";
 import { BiFingerprint } from "react-icons/bi";
 import { useNavigate } from "react-router-dom";
 import FingerprintBLE from "../../../../utils/fingerprintBLE.js";
+import UserFingerPrintRegister from "../UserFingerPrintRegister/UserFingerPrintRegister.jsx";
 
 const Page2 = ({
   carouselRef,
@@ -33,6 +34,7 @@ const Page2 = ({
   const [fingerprintBLE, setFingerprintBLE] = useState(null);
   const [showFingerprintPopup, setShowFingerprintPopup] = useState(false);
   const [bleReadingActive, setBleReadingActive] = useState(false);
+  const [showUserRegister, setShowUserRegister] = useState(false);
 
   // Check for existing fingerprint connection on component mount
   useEffect(() => {
@@ -580,181 +582,192 @@ const Page2 = ({
 
   return (
     <Spin spinning={loading} tip="Loading...">
-      <div className={styles.full}>
-        <div>
-          <Typography.Title level={1} className={styles.mainTitle1}>
-            Welcome to <span>Helix</span> Food Ordering
-          </Typography.Title>
-        </div>
-        <div className={styles.dateAndTime}>
-          <DateAndTime />
-        </div>
-        <div className={styles.full}>
-          <Card className={styles.card} bodyStyle={{ padding: 3 }}>
-            <div className={styles.content}>
-              {showFingerprint ? (
-                <div className={styles.fingerprintSection}>
-                  <div className={styles.fingerprintScanner} onClick={() => {
-                    if (!fingerprintConnected || !fingerprintBLE) {
-                      setErrorMessage(text.fingerprintNotConnected || "Fingerprint unit not connected");
-                      setTimeout(() => setErrorMessage(""), 2000);
-                      return;
-                    }
-                    handleFingerprint();
-                  }}>
-                    <FingerPrint />
-                  </div>
-                  <p>
-                    {scanning ? (
-                      <span className={styles.SectionTexts}>Scanning...</span>
-                    ) : (
-                      <span className={styles.SectionTexts}>{text.fingerprint}</span>
-                    )}
-                  </p>
-                </div>
-              ) : (
-                <div className={styles.pinSection}>
-                  <div className={styles.SectionTexts}>{text.enterPin}</div>
-                  <div className={styles.pinDots}>
-                    {[0, 1, 2, 3, 4, 5].map((idx) => (
-                      <span
-                        key={idx}
-                        className={`${styles.pinDot} ${pin.length > idx ? styles.filled : ""}`}
-                      />
-                    ))}
-                  </div>
-                  <div className={styles.pinButtons}>
-                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, "#", 0].map((digit) => (
+      {showUserRegister ? (
+        // Render UserFingerPrintRegister while maintaining BLE connection
+        <UserFingerPrintRegister 
+          onClose={() => setShowUserRegister(false)}
+          fingerprintBLE={fingerprintBLE}
+          fingerprintConnected={fingerprintConnected}
+          fingerprintUnitName={fingerprintUnitName}
+        />
+      ) : (
+        <>
+          <div className={styles.full}>
+            <div>
+              <Typography.Title level={1} className={styles.mainTitle1}>
+                Welcome to <span>Helix</span> Food Ordering
+              </Typography.Title>
+            </div>
+            <div className={styles.dateAndTime}>
+              <DateAndTime />
+            </div>
+            <div className={styles.full}>
+              <Card className={styles.card} bodyStyle={{ padding: 3 }}>
+                <div className={styles.content}>
+                  {showFingerprint ? (
+                    <div className={styles.fingerprintSection}>
+                      <div className={styles.fingerprintScanner} onClick={() => {
+                        if (!fingerprintConnected || !fingerprintBLE) {
+                          setErrorMessage(text.fingerprintNotConnected || "Fingerprint unit not connected");
+                          setTimeout(() => setErrorMessage(""), 2000);
+                          return;
+                        }
+                        handleFingerprint();
+                      }}>
+                        <FingerPrint />
+                      </div>
+                      <p>
+                        {scanning ? (
+                          <span className={styles.SectionTexts}>Scanning...</span>
+                        ) : (
+                          <span className={styles.SectionTexts}>{text.fingerprint}</span>
+                        )}
+                      </p>
+                    </div>
+                  ) : (
+                    <div className={styles.pinSection}>
+                      <div className={styles.SectionTexts}>{text.enterPin}</div>
+                      <div className={styles.pinDots}>
+                        {[0, 1, 2, 3, 4, 5].map((idx) => (
+                          <span
+                            key={idx}
+                            className={`${styles.pinDot} ${pin.length > idx ? styles.filled : ""}`}
+                          />
+                        ))}
+                      </div>
+                      <div className={styles.pinButtons}>
+                        {[1, 2, 3, 4, 5, 6, 7, 8, 9, "#", 0].map((digit) => (
+                            <button
+                                key={digit}
+                                type="button"
+                                className={styles.keypadButton}
+                                onClick={() => handlePinInput(digit.toString())}
+                                disabled={pin.length >= 6}
+                            >
+                                {digit}
+                            </button>
+                        ))}
                         <button
-                            key={digit}
                             type="button"
                             className={styles.keypadButton}
-                            onClick={() => handlePinInput(digit.toString())}
-                            disabled={pin.length >= 6}
+                            onClick={handleBackspace}
                         >
-                            {digit}
+                            ⮌
                         </button>
-                    ))}
-                    <button
-                        type="button"
-                        className={styles.keypadButton}
-                        onClick={handleBackspace}
-                    >
-                        ⮌
-                    </button>
-                  </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
-              )}
+              </Card>
             </div>
-          </Card>
-        </div>
-        <div className={styles.buttonRowContainer}>
-          <div className={styles.leftButtonCorner}>
-            {!fingerprintConnected ? (
-              <button
-                className={styles.connectFingerprintButton}
-                onClick={handleOpenFingerprintPopup}
-              >
-                Connect FingerPrint
-              </button>
-            ) : (
-              <div style={{ fontWeight: "bold", color: "#4CAF50", marginTop: 8 }}>
-                {/* UNIT NAME: {fingerprintUnitName} */}
+            <div className={styles.buttonRowContainer}>
+              <div className={styles.leftButtonCorner}>
+                {!fingerprintConnected ? (
+                  <button
+                    className={styles.connectFingerprintButton}
+                    onClick={handleOpenFingerprintPopup}
+                  >
+                    Connect FingerPrint
+                  </button>
+                ) : (
+                  <div style={{ fontWeight: "bold", color: "#4CAF50", marginTop: 8 }}>
+                    {/* UNIT NAME: {fingerprintUnitName} */}
+                  </div>
+                )}
+                <button
+                  className={styles.registerButton}
+                  onClick={() => setShowUserRegister(true)}
+                  disabled={!fingerprintConnected}
+                  style={{
+                    opacity: fingerprintConnected ? 1 : 0.5,
+                    cursor: fingerprintConnected ? "pointer" : "not-allowed",
+                    backgroundColor: fingerprintConnected ? undefined : "#cccccc"
+                  }}
+                  title={!fingerprintConnected ? "Connect to a fingerprint unit first" : "Register a new user"}
+                >
+                  New User Register
+                </button>
               </div>
-            )}
-            <button
-              className={styles.registerButton}
-              onClick={() => navigate("/user-fingerprint-register")}
-              disabled={!fingerprintConnected}
-              style={{
-                opacity: fingerprintConnected ? 1 : 0.5,
-                cursor: fingerprintConnected ? "pointer" : "not-allowed",
-                backgroundColor: fingerprintConnected ? undefined : "#cccccc"
-              }}
-              title={!fingerprintConnected ? "Connect to a fingerprint unit first" : "Register a new user"}
-            >
-              New User Register
-            </button>
-          </div>
-          <div>
-            <span style={{ fontSize: "70px", fontWeight: "bold"}}>
-              {fingerprintUnitName}
-
-            </span>
-          </div>
-          <div className={styles.backButtonContainer}>
-            <button
-              className={styles.toggleButton}
-              onClick={() => setShowFingerprint((prev) => !prev)}
-            >
-              {showFingerprint ? <IoKeypadSharp size={30} /> : <BiFingerprint size={30} />}
-            </button>
-            <button
-              onClick={() => {
-                console.log(`Page2.jsx: Back button clicked, ${selectedLanguage} selected`);
-                carouselRef.current.goTo(0);
-              }}
-              className={styles.backButton}
-            >
-              <MdLanguage size={20} /> <div>{selectedLanguage}</div>
-            </button>
-          </div>
-        </div>
-      </div>
-      
-      {/* Fingerprint Connection Popup */}
-      {showFingerprintPopup && (
-        <div 
-          className={styles.popupOverlay}
-          onClick={(e) => {
-            if (e.target === e.currentTarget) {
-              handleCloseFingerprintPopup();
-            }
-          }}
-        >
-          <div className={styles.popupContent}>
-            <h3 style={{ marginBottom: "20px", textAlign: "center", color: "#333" }}>Fingerprint Options</h3>
-            <div className={styles.popupButtons}>
-              <button
-                className={styles.popupButton}
-                onClick={async () => {
-                  if (!fingerprintConnected) {
-                    await handleConnectFingerprint();
-                  }
-                }}
-                style={{ backgroundColor: fingerprintConnected ? "#4CAF50" : "#4CAF50", color: "white", opacity: fingerprintConnected ? 0.6 : 1, cursor: fingerprintConnected ? "not-allowed" : "pointer" }}
-                disabled={fingerprintConnected}
-              >
-                {fingerprintConnected ? "Device Connected" : "Connect FingerPrint Unit"}
-              </button>
-              <button
-                className={styles.popupButton}
-                onClick={async () => {
-                  handleCloseFingerprintPopup();
-                  await handleCleanupUnregisteredFingerprints();
-                }}
-                disabled={!fingerprintConnected}
-                style={{ 
-                  backgroundColor: fingerprintConnected ? "#ff9800" : "#cccccc",
-                  color: fingerprintConnected ? "white" : "#666666",
-                  cursor: fingerprintConnected ? "pointer" : "not-allowed"
-                }}
-                title={!fingerprintConnected ? "Connect to a fingerprint unit first" : "Clean up unregistered fingerprints from R307 storage"}
-              >
-                Cleanup R307 Storage
-              </button>
+              <div>
+                <span style={{ fontSize: "70px", fontWeight: "bold"}}>
+                  {fingerprintUnitName}
+                </span>
+              </div>
+              <div className={styles.backButtonContainer}>
+                <button
+                  className={styles.toggleButton}
+                  onClick={() => setShowFingerprint((prev) => !prev)}
+                >
+                  {showFingerprint ? <IoKeypadSharp size={30} /> : <BiFingerprint size={30} />}
+                </button>
+                <button
+                  onClick={() => {
+                    console.log(`Page2.jsx: Back button clicked, ${selectedLanguage} selected`);
+                    carouselRef.current.goTo(0);
+                  }}
+                  className={styles.backButton}
+                >
+                  <MdLanguage size={20} /> <div>{selectedLanguage}</div>
+                </button>
+              </div>
             </div>
-            <button
-              className={styles.popupCloseButton}
-              onClick={handleCloseFingerprintPopup}
-            >
-              Close
-            </button>
           </div>
-        </div>
+          
+          {/* Fingerprint Connection Popup */}
+          {showFingerprintPopup && (
+            <div 
+              className={styles.popupOverlay}
+              onClick={(e) => {
+                if (e.target === e.currentTarget) {
+                  handleCloseFingerprintPopup();
+                }
+              }}
+            >
+              <div className={styles.popupContent}>
+                <h3 style={{ marginBottom: "20px", textAlign: "center", color: "#333" }}>Fingerprint Options</h3>
+                <div className={styles.popupButtons}>
+                  <button
+                    className={styles.popupButton}
+                    onClick={async () => {
+                      if (!fingerprintConnected) {
+                        await handleConnectFingerprint();
+                      }
+                    }}
+                    style={{ backgroundColor: fingerprintConnected ? "#4CAF50" : "#4CAF50", color: "white", opacity: fingerprintConnected ? 0.6 : 1, cursor: fingerprintConnected ? "not-allowed" : "pointer" }}
+                    disabled={fingerprintConnected}
+                  >
+                    {fingerprintConnected ? "Device Connected" : "Connect FingerPrint Unit"}
+                  </button>
+                  <button
+                    className={styles.popupButton}
+                    onClick={async () => {
+                      handleCloseFingerprintPopup();
+                      await handleCleanupUnregisteredFingerprints();
+                    }}
+                    disabled={!fingerprintConnected}
+                    style={{ 
+                      backgroundColor: fingerprintConnected ? "#ff9800" : "#cccccc",
+                      color: fingerprintConnected ? "white" : "#666666",
+                      cursor: fingerprintConnected ? "pointer" : "not-allowed"
+                    }}
+                    title={!fingerprintConnected ? "Connect to a fingerprint unit first" : "Clean up unregistered fingerprints from R307 storage"}
+                  >
+                    Cleanup R307 Storage
+                  </button>
+                </div>
+                <button
+                  className={styles.popupCloseButton}
+                  onClick={handleCloseFingerprintPopup}
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          )}
+          
+          {errorMessage && <div className={styles.errorPopup}>{errorMessage}</div>}
+        </>
       )}
-      
-      {errorMessage && <div className={styles.errorPopup}>{errorMessage}</div>}
     </Spin>
   );
 };
