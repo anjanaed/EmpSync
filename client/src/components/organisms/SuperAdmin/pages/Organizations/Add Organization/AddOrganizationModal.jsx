@@ -5,8 +5,7 @@ const AddOrganizationModal = ({ visible, onSubmit, onCancel }) => {
   const [form] = Form.useForm();
 
   const handleSubmit = (values) => {
-    onSubmit(values);
-    form.resetFields();
+    onSubmit(values, () => form.resetFields());
   };
 
   const handleCancel = () => {
