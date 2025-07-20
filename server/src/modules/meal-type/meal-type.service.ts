@@ -446,7 +446,7 @@ export class MealTypeService {
         });
 
         const mealMap = new Map<number, any>();
-        [...mealsWithDate, ...usedAllMeals].forEach((meal) =>
+        [...mealsWithDate, ...usedDefaultMeals].forEach((meal) =>
           mealMap.set(meal.id, meal),
         );
 
