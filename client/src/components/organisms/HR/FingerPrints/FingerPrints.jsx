@@ -211,6 +211,10 @@ const FingerPrintsContent = () => {
     return <Loading text="Regenerating passkey..." />;
   }
 
+    if (loading) {
+    return <Loading />;
+  }
+
   return (
     <>
       <div className={styles.sectors}>

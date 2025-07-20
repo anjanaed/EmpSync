@@ -151,9 +151,10 @@ const Employees = () => {
     debouncedFetch(search, frole);
   }, [search, frole, debouncedFetch]);
 
+
   if (loading) {
-    return <Loading />;
-  }
+  return <Loading type={theme === "dark" ? "dark" : undefined} />;
+}
 
   const columns = [
     {
