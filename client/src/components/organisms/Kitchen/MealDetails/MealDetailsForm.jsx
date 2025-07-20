@@ -22,7 +22,7 @@ import styles from "./MealDetailsForm.module.css";
 import { useNavigate } from "react-router-dom";
 import { storage } from "../../../../firebase/config";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { useAuth } from "../../../../contexts/AuthContext";
+import { useAuth } from "../../../../contexts/AuthContext.jsx";
 import axios from "axios";
 
 const { TextArea } = Input;
