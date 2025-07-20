@@ -441,11 +441,11 @@ const Register = () => {
               </div>
             </div>
             <div className={styles.btnContainer}>
-              <Gbutton width={200} onClick={handleNext}>
+              <button width={200} className={styles.mainBtns}  onClick={handleNext}>
                 <>
                   Next &nbsp; <AiOutlineCaretRight />
                 </>
-              </Gbutton>
+              </button>
             </div>
           </Form>
         </>
@@ -466,13 +466,13 @@ const Register = () => {
             </div>
           </div>
           <div className={styles.btnContainer}>
-            <Gbutton
+            <button
               width={300}
               onClick={handleRegister}
-              className={styles.btn}
+              className={styles.mainBtns} 
             >
               Complete Registration
-            </Gbutton>
+            </button>
           </div>
         </>
       )}
@@ -484,10 +484,10 @@ const Register = () => {
             <div className={styles.passkeyValue}><b>{passkey}</b></div>
           </div>
           <div className={styles.btnContainer}>
-            <Gbutton width={200} onClick={() => navigate("/FingerPrint")}>Fingerprint Management</Gbutton>
-            <Gbutton width={200} onClick={() => navigate("/EmployeePage")}>
+            <button width={200} className={styles.mainBtns} onClick={() => navigate("/FingerPrint")}>Fingerprint Management</button>
+            <button width={200} className={styles.mainBtns} onClick={() => navigate("/EmployeePage")}>
               Back To Employees
-            </Gbutton>
+            </button>
           </div>
         </>
       )}
