@@ -150,6 +150,45 @@ const MealPlanner = () => {
     }
   };
 
+  const confirmDeleteMeal = async () => {
+    const { meal } = deleteConfirmModal;
+
+    try {
+      // Delete the non-default meal
+      await axios.delete(`${urL}/meal-types/${meal.id}`, {
+        params: { orgId: authData?.orgId },
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      // Update UI by removing from displayed list
+      setDefaultMeals((prevMeals) => prevMeals.filter((m) => m.id !== meal.id));
+
+      message.success(`${meal.name} has been deleted successfully`);
+
+      // Handle active tab logic
+      if (activeTab === meal.id.toString()) {
+        setActiveTab("");
+        setActiveMealType(null);
+
+        const remainingMeals = defaultMeals.filter((m) => m.id !== meal.id);
+        if (remainingMeals.length > 0) {
+          const firstMealId = remainingMeals[0].id;
+          setActiveTab(firstMealId.toString());
+          setActiveMealType(remainingMeals[0]);
+        }
+      }
+
+      // Refresh the meal list
+      await fetchDefaultMeals(currentDate);
+    } catch (error) {
+      console.error("Error deleting meal:", error);
+      handleDeleteError(error, meal.name);
+    } finally {
+      // Close confirmation modal
+      setDeleteConfirmModal({ visible: false, meal: null, isDefault: false });
+    }
+  };
+
   const fetchPreviousSchedules = async () => {
     if (!activeTab || !currentDate) return;
 
@@ -318,136 +357,7 @@ const MealPlanner = () => {
     }
   };
 
-  const handlePinMeal = async (id) => {
-    const meal = defaultMeals.find((m) => m.id === id);
-
-    if (meal?.isDefault) {
-      // If it's currently default, update it to non-default for this date
-      try {
-        const updatePayload = {
-          isDefault: false, // Convert to non-default
-          date: currentDate.format("YYYY-MM-DD"), // Update for specific date
-        };
-
-        // Update the existing meal type to non-default for this date
-        await axios.patch(`${urL}/meal-types/${meal.id}`, updatePayload, {
-          params: { orgId: authData?.orgId },
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        // Update local state to reflect the change
-        setDefaultMeals((prevMeals) =>
-          prevMeals.map((m) => (m.id === id ? { ...m, isDefault: false } : m))
-        );
-
-        message.success(
-          `${meal.name} is now editable for ${currentDate.format(
-            "YYYY-MM-DD"
-          )} only. Other days will keep the default meal type.`
-        );
-      } catch (error) {
-        console.error("Error updating meal type to non-default:", error);
-        message.error("Failed to make meal type editable for this date");
-      }
-    } else {
-      // If it's not default, toggle as usual
-      try {
-        await axios.patch(`${urL}/meal-types/${id}/toggle-default`, {
-          params: { orgId: authData?.orgId },
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        setDefaultMeals((prevMeals) =>
-          prevMeals.map((meal) =>
-            meal.id === id ? { ...meal, isDefault: !meal.isDefault } : meal
-          )
-        );
-      } catch (err) {
-        console.error("Error toggling meal pin:", err);
-        message.error("Failed to toggle meal type status");
-      }
-    }
-
-    // Refresh the meal list to reflect changes
-    await fetchDefaultMeals(currentDate);
-  };
-
-  const handleDeleteMeal = async (meal) => {
-    // Show confirmation modal first
-    setDeleteConfirmModal({
-      visible: true,
-      meal: meal,
-      isDefault: meal.isDefault,
-    });
-  };
-
-  const confirmDeleteMeal = async () => {
-    const { meal, isDefault } = deleteConfirmModal;
-
-    try {
-      if (isDefault) {
-        // For default meals, first update it to non-default for this date
-        const updatePayload = {
-          isDefault: false, // Convert to non-default
-          date: currentDate.format("YYYY-MM-DD"), // Update for specific date
-        };
-
-        // Update the existing meal type to non-default for this date
-        await axios.patch(`${urL}/meal-types/${meal.id}`, updatePayload, {
-          params: { orgId: authData?.orgId },
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        // Update local state to reflect the change
-        setDefaultMeals((prevMeals) =>
-          prevMeals.map((m) =>
-            m.id === meal.id ? { ...m, isDefault: false } : m
-          )
-        );
-
-        message.success(
-          `${meal.name} converted to non-default for ${currentDate.format(
-            "YYYY-MM-DD"
-          )} and can now be deleted`
-        );
-      } else {
-        // For non-default meals, proceed with deletion
-        await axios.delete(`${urL}/meal-types/${meal.id}`, {
-          params: { orgId: authData?.orgId },
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        // Update UI by removing from displayed list
-        setDefaultMeals((prevMeals) =>
-          prevMeals.filter((m) => m.id !== meal.id)
-        );
-
-        message.success(`${meal.name} has been deleted successfully`);
-
-        // Handle active tab logic
-        if (activeTab === meal.id.toString()) {
-          setActiveTab("");
-          setActiveMealType(null);
-
-          const remainingMeals = defaultMeals.filter((m) => m.id !== meal.id);
-          if (remainingMeals.length > 0) {
-            const firstMealId = remainingMeals[0].id;
-            setActiveTab(firstMealId.toString());
-            setActiveMealType(remainingMeals[0]);
-          }
-        }
-      }
-
-      // Refresh the meal list
-      await fetchDefaultMeals(currentDate);
-    } catch (error) {
-      console.error("Error handling meal deletion:", error);
-      handleDeleteError(error, meal.name);
-    } finally {
-      // Close confirmation modal
-      setDeleteConfirmModal({ visible: false, meal: null, isDefault: false });
-    }
-  };
+  // Update the pin button to show disabled state for default meals:
 
   const cancelDeleteMeal = () => {
     setDeleteConfirmModal({ visible: false, meal: null, isDefault: false });
@@ -562,43 +472,78 @@ const MealPlanner = () => {
 
   // Updated handleModalOk to include isDeleted field
   const handleModalOk = () => {
-    form.validateFields().then(async (values) => {
-      try {
-        const payload = {
-          name: values.mealName,
-          orgId: authData?.orgId,
-          time: [
-            values.startTime ? values.startTime.format("HH:mm") : null,
-            values.endTime ? values.endTime.format("HH:mm") : null,
-          ],
-          isDefault: values.isDefault || false,
-          isDeleted: false, // Explicitly set isDeleted to false for new meal types
-          date: currentDate.format("YYYY-MM-DD"),
-        };
+  form.validateFields().then(async (values) => {
+    try {
+      const payload = {
+        name: values.mealName.trim(), // Trim whitespace
+        orgId: authData?.orgId,
+        time: [
+          values.startTime ? values.startTime.format("HH:mm") : null,
+          values.endTime ? values.endTime.format("HH:mm") : null,
+        ],
+        isDefault: values.isDefault || false,
+        isDeleted: false,
+        date: currentDate.format("YYYY-MM-DD"),
+      };
 
-        console.log("Creating meal type with payload:", payload); // Debug log
+      console.log("Creating meal type with payload:", payload);
 
-        await axios.post(`${urL}/meal-types`, payload, {
-          params: { orgId: authData?.orgId },
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        await fetchDefaultMeals(currentDate);
-        message.success("Meal type created successfully");
-      } catch (err) {
-        console.error("Error creating meal type:", err);
-        console.error("Error response:", err.response?.data); // More detailed error logging
-        message.error(
-          err.response?.data?.message ||
-            err.response?.data?.error ||
-            "Failed to create meal type"
-        );
-      }
+      await axios.post(`${urL}/meal-types`, payload, {
+        params: { orgId: authData?.orgId },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      
+      await fetchDefaultMeals(currentDate);
+      message.success("Meal type created successfully");
       setIsModalVisible(false);
-    });
-  };
+      
+    } catch (err) {
+      console.error("Error creating meal type:", err);
+      
+      if (err.response?.status === 409) {
+        // Handle ConflictException (duplicate meal type)
+        message.error(err.response?.data?.message || "A meal type with this name already exists for this date");
+      } else if (err.response?.status === 400) {
+        // Handle BadRequestException
+        message.error(err.response?.data?.message || "Invalid meal type data");
+      } else {
+        // Handle other errors
+        message.error("Failed to create meal type. Please try again.");
+      }
+    }
+  }).catch((validationError) => {
+    console.error("Form validation failed:", validationError);
+  });
+};
 
+const mealNameRules = [
+  { required: true, message: "Please enter a meal name" },
+  { min: 2, message: "Meal name must be at least 2 characters long" },
+  { max: 50, message: "Meal name must be less than 50 characters" },
+  {
+    pattern: /^[a-zA-Z0-9\s]+$/,
+    message: "Meal name can only contain letters, numbers, and spaces"
+  },
+  {
+    validator: async (_, value) => {
+      if (value && value.trim().length !== value.length) {
+        throw new Error("Meal name cannot start or end with spaces");
+      }
+    }
+  }
+];
+
+const validateMealTypeName = async (mealName) => {
+  if (!mealName || mealName.trim().length === 0) {
+    return false;
+  }
+  
+  // You could also add a client-side check by calling an API endpoint
+  // to check if the meal type exists before submitting the form
+  return true;
+};
   const showUpdateMenuModal = async () => {
     if (!activeTab) {
       message.warning("Please select a meal time first");
@@ -846,6 +791,20 @@ const MealPlanner = () => {
     }
     return filteredByCategory;
   };
+  const handleDeleteMeal = async (meal) => {
+    // Check if it's a default meal and prevent deletion
+    if (meal.isDefault) {
+      message.warning("Default meals cannot be deleted");
+      return;
+    }
+
+    // Show confirmation modal for non-default meals only
+    setDeleteConfirmModal({
+      visible: true,
+      meal: meal,
+      isDefault: false,
+    });
+  };
 
   const isShowingSnackFallback = () => {
     if (!activeMealType || !availableMeals.length) return false;
@@ -974,24 +933,28 @@ const MealPlanner = () => {
                         meal.isDefault ? (
                           <PushpinFilled style={{ color: "red" }} />
                         ) : (
-                          <PushpinOutlined />
+                          <PushpinOutlined style={{ color: "#d9d9d9" }} />
                         )
                       }
-                      onClick={() => handlePinMeal(meal.id)}
                       size="small"
+                      disabled={true} // Always disabled - no functionality
+                      title={
+                        meal.isDefault
+                          ? "Default meal type"
+                          : "Non-default meal type"
+                      }
                     />
                     <Button
                       type="text"
                       icon={<DeleteOutlined />}
                       onClick={() => handleDeleteMeal(meal)}
                       size="small"
-                      // Remove the danger prop for default meals since they can't be directly deleted
                       danger={!meal.isDefault}
-                      // Add a different style for default meals
+                      disabled={meal.isDefault} // Add this line to disable the button for default meals
                       style={meal.isDefault ? { color: "#d9d9d9" } : {}}
                       title={
                         meal.isDefault
-                          ? "Convert to non-default first to enable deletion"
+                          ? "Default meals cannot be deleted"
                           : "Delete meal type"
                       }
                     />
@@ -1315,49 +1278,25 @@ const MealPlanner = () => {
           />
         </div>
       </Modal>
-
       <Modal
         title="Confirm Deletion"
         open={deleteConfirmModal.visible}
         onOk={confirmDeleteMeal}
         onCancel={cancelDeleteMeal}
-        okText={
-          deleteConfirmModal.isDefault ? "Convert & Allow Delete" : "Delete"
-        }
+        okText="Delete"
         cancelText="Cancel"
-        okButtonProps={{
-          danger: !deleteConfirmModal.isDefault,
-          type: deleteConfirmModal.isDefault ? "primary" : "primary",
-        }}
+        okButtonProps={{ danger: true }}
         styles={modalStyles}
       >
-        {deleteConfirmModal.isDefault ? (
-          <div>
-            <p>
-              <strong>{deleteConfirmModal.meal?.name}</strong> is a default meal
-              type that applies to all days.
-            </p>
-            <p>
-              To delete it for{" "}
-              <strong>{currentDate.format("MMMM DD, YYYY")}</strong> only, we'll
-              first update it to non-default for this date.
-            </p>
-            <p style={{ color: "#666", fontSize: "14px" }}>
-              • This will make it editable and deletable for this date only
-              <br />• The meal type can then be deleted after conversion
-            </p>
-          </div>
-        ) : (
-          <div>
-            <p>
-              Are you sure you want to delete{" "}
-              <strong>{deleteConfirmModal.meal?.name}</strong>?
-            </p>
-            <p style={{ color: "#ff4d4f", fontSize: "14px" }}>
-              This action cannot be undone.
-            </p>
-          </div>
-        )}
+        <div>
+          <p>
+            Are you sure you want to delete{" "}
+            <strong>{deleteConfirmModal.meal?.name}</strong>?
+          </p>
+          <p style={{ color: "#ff4d4f", fontSize: "14px" }}>
+            This action cannot be undone.
+          </p>
+        </div>
       </Modal>
     </div>
   );

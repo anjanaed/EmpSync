@@ -2,6 +2,7 @@ import {
   Injectable,
   NotFoundException,
   BadRequestException,
+  ConflictException,
 } from '@nestjs/common';
 import { DatabaseService } from '../../database/database.service';
 import { ScheduledMealService } from '../schedule/schedule.service';
@@ -12,6 +13,7 @@ import {
   subMinutes,
   addMinutes,
   parseISO,
+  format,
 } from 'date-fns';
 
 @Injectable()
@@ -27,6 +29,58 @@ export class MealTypeService {
       orgId: orgId || undefined,
       isDeleted: false, // Always exclude soft-deleted records
     };
+  }
+
+  // Helper method to check for duplicate meal types
+  private async checkDuplicateMealType(
+    name: string,
+    date: Date | string,
+    orgId?: string,
+    excludeId?: number
+  ) {
+    try {
+      const targetDate = new Date(date);
+      const dayStart = startOfDay(targetDate);
+      const dayEnd = endOfDay(targetDate);
+
+      const whereClause: any = {
+        name: {
+          equals: name,
+          mode: 'insensitive', // Case-insensitive comparison
+        },
+        orgId: orgId || undefined,
+        isDeleted: false,
+        OR: [
+          {
+            // Check for default meal types (they apply to all days)
+            isDefault: true,
+          },
+          {
+            // Check for meal types created for the specific date
+            date: {
+              gte: dayStart,
+              lte: dayEnd,
+            },
+          },
+        ],
+      };
+
+      // If we're updating, exclude the current record
+      if (excludeId) {
+        whereClause.id = {
+          not: excludeId,
+        };
+      }
+
+      const existingMealType = await this.databaseService.mealType.findFirst({
+        where: whereClause,
+      });
+
+      return existingMealType;
+    } catch (error) {
+      console.error('Error checking duplicate meal type:', error);
+      throw new BadRequestException('Failed to validate meal type uniqueness');
+    }
   }
 
   // Get all meal types, excluding soft-deleted ones
@@ -123,13 +177,42 @@ export class MealTypeService {
     orgId?: string,
   ) {
     try {
+      // Validate required parameters
+      if (!name || name.trim().length === 0) {
+        throw new BadRequestException('Meal type name is required');
+      }
+
+      // Set default date if not provided
+      const targetDate = date ? new Date(date) : new Date();
+      
+      // Check for duplicate meal types
+      const existingMealType = await this.checkDuplicateMealType(
+        name.trim(),
+        targetDate,
+        orgId
+      );
+
+      if (existingMealType) {
+        const dateStr = format(targetDate, 'yyyy-MM-dd');
+        let errorMessage: string;
+
+        if (existingMealType.isDefault) {
+          errorMessage = `A default meal type with the name "${name}" already exists. Please choose a different name.`;
+        } else {
+          const existingDateStr = format(new Date(existingMealType.date), 'yyyy-MM-dd');
+          errorMessage = `A meal type with the name "${name}" already exists for ${existingDateStr}. Please choose a different name or date.`;
+        }
+
+        throw new ConflictException(errorMessage);
+      }
+
       let timeArr: string[] | undefined = undefined;
       if (time !== undefined) {
         timeArr = Array.isArray(time) ? time : [time];
       }
 
       const data: any = {
-        name,
+        name: name.trim(),
         time: timeArr,
         isDefault: isDefault ?? false,
         orgId: orgId || undefined,
@@ -138,10 +221,20 @@ export class MealTypeService {
 
       if (date) {
         data.date = addMinutes(new Date(date), 330);
+      } else {
+        data.date = addMinutes(new Date(), 330);
       }
 
-      return this.databaseService.mealType.create({ data });
+      const createdMealType = await this.databaseService.mealType.create({ data });
+      
+      console.log(`Created meal type: ${createdMealType.name} for date: ${format(targetDate, 'yyyy-MM-dd')}`);
+      
+      return createdMealType;
     } catch (error) {
+      if (error instanceof ConflictException || error instanceof BadRequestException) {
+        throw error;
+      }
+      console.error('Error creating meal type:', error);
       throw new BadRequestException(
         `Failed to create meal type: ${error.message}`,
       );
@@ -256,6 +349,23 @@ export class MealTypeService {
 
       if (!mealType) throw new NotFoundException('Meal type not found');
 
+      // If name is being updated, check for duplicates
+      if (data.name && data.name.trim() !== mealType.name) {
+        const existingMealType = await this.checkDuplicateMealType(
+          data.name.trim(),
+          mealType.date,
+          orgId,
+          id // Exclude current record from duplicate check
+        );
+
+        if (existingMealType) {
+          const dateStr = format(new Date(mealType.date), 'yyyy-MM-dd');
+          throw new ConflictException(
+            `A meal type with the name "${data.name}" already exists for ${dateStr}. Please choose a different name.`
+          );
+        }
+      }
+
       let timeArr: string[] | undefined = undefined;
       if (data.time !== undefined) {
         timeArr = Array.isArray(data.time) ? data.time : [data.time];
@@ -266,12 +376,19 @@ export class MealTypeService {
         time: timeArr,
       };
 
+      // Trim name if provided
+      if (updateData.name) {
+        updateData.name = updateData.name.trim();
+      }
+
       return this.databaseService.mealType.update({
         where: { id },
         data: updateData,
       });
     } catch (error) {
-      if (error instanceof NotFoundException) throw error;
+      if (error instanceof NotFoundException || error instanceof ConflictException) {
+        throw error;
+      }
       throw new BadRequestException(
         `Failed to update meal type: ${error.message}`,
       );
@@ -449,6 +566,20 @@ export class MealTypeService {
       });
     } catch (error) {
       throw new BadRequestException('Failed to retrieve deleted meal types');
+    }
+  }
+
+  // Helper method to check if a meal type name exists for a specific date
+  async checkMealTypeExists(name: string, date: Date | string, orgId?: string) {
+    try {
+      const existingMealType = await this.checkDuplicateMealType(name, date, orgId);
+      return {
+        exists: !!existingMealType,
+        mealType: existingMealType,
+        isDefault: existingMealType?.isDefault || false,
+      };
+    } catch (error) {
+      throw new BadRequestException('Failed to check meal type existence');
     }
   }
 }
