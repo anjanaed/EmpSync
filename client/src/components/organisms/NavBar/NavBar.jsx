@@ -57,8 +57,10 @@ const darkTheme = {
       itemBorderRadius: 25,
     },
     Dropdown: {
-      colorBgElevated: "#000000",
+      colorBgElevated: "#181818",
       colorText: "#ffffff",
+      colorTextSecondary: "#ffffff",
+      colorBorder: "#333333",
     },
   },
 };
@@ -108,7 +110,7 @@ const NavBar = ({ Comp, titleLines = [], menuItems = [] }) => {
     {
       key: "1",
       label: (
-        <div className={styles.profileMenuItem}>
+        <div className={`${styles.profileMenuItem} ${theme === "dark" ? styles.darkMenuItem : ""}`}>
           <UserOutlined className={styles.menuItemIcon} /> &nbsp;Profile
         </div>
       ),
@@ -117,7 +119,7 @@ const NavBar = ({ Comp, titleLines = [], menuItems = [] }) => {
     {
       key: "2",
       label: (
-        <div className={styles.logoutMenuItem}>
+        <div className={`${styles.logoutMenuItem} ${theme === "dark" ? styles.darkLogoutMenuItem : ""}`}>
           <LogoutOutlined className={styles.menuItemIcon} />
           &nbsp;Log out
         </div>
@@ -211,7 +213,7 @@ const NavBar = ({ Comp, titleLines = [], menuItems = [] }) => {
               menu={{ items: dropdownItems }}
               placement="bottomRight"
               trigger={["click"]}
-              overlayClassName={styles.userDropdownMenu}
+              overlayClassName={`${styles.userDropdownMenu} ${theme === "dark" ? styles.darkDropdown : ""}`}
             >
               <div className={styles.userInfo}>
                 <Avatar
