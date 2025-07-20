@@ -348,6 +348,16 @@
   color: #000000 !important;
 }
 
+:global(.dark) .passkeyContainer{
+  background-color: #0f0f0f;
+}
+
+:global(.dark) .passkeyValue{
+  color: #cccccc;
+}
+
+
+
 :global(.dark .ant-input-affix-wrapper:focus) {
   border-color: rgb(87, 99, 255) !important;
   box-shadow: 0 0 0 2px rgba(87, 99, 255, 0.2) !important;

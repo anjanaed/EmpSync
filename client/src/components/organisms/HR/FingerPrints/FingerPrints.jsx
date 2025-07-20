@@ -10,10 +10,10 @@ import { useAuth } from "../../../../contexts/AuthContext.jsx";
 const customTheme = {
   components: {
     Table: {
-      headerBg: "rgba(151, 0, 0, 0.78)",
+      headerBg: "#960000",
       headerColor: "white",
-      headerSortActiveBg: "rgba(151, 0, 0, 0.78)",
-      headerSortHoverBg: "rgba(183, 0, 0, 0.78)",
+      headerSortActiveBg: "#960000",
+      headerSortHoverBg: "#960000",
       fontSize: 12,
       cellPaddingBlock: 12,
       fontFamily: '"Figtree", sans-serif',
@@ -117,12 +117,6 @@ const FingerPrintsContent = () => {
       dataIndex: "id",
       key: "id",
       align: "center",
-      defaultSortOrder: "ascend",
-      sorter: (a, b) => {
-        const numA = parseInt(a.id.match(/\d+/)?.[0] || "0", 10);
-        const numB = parseInt(b.id.match(/\d+/)?.[0] || "0", 10);
-        return numA - numB;
-      },
       ellipsis: true,
     },
     {
@@ -223,7 +217,7 @@ const FingerPrintsContent = () => {
       </div>
       <div className={styles.unitsCards}>
         {deviceCards.length === 0 ? (
-          <div className={styles.noDeviceData}>No device usage data found.</div>
+          <div className={styles.noDeviceData}>No Device Data Found.</div>
         ) : (
           deviceCards.map(card => {
             const pieData = [

@@ -123,28 +123,29 @@ const Register = () => {
     }
   };
 
-  const generateUserId = async () => {
-    const org = authData?.orgId || "O1";
-    if (!org) return;
+const generateUserId = async () => {
+  const org = authData?.orgId || "O001";
+  if (!org) return;
 
-    try {
-      const res = await axios.get(`${urL}/user/last-empno/${org}`);
-      const lastEmpNo = res.data;
-      let newEmpNo;
+  try {
+    const res = await axios.get(`${urL}/user/last-empno/${org}`);
+    const lastEmpNo = res.data;
+    let newEmpNo;
+    console.log("Last Employee No:", lastEmpNo);
 
-      if (lastEmpNo) {
-        const prefix = lastEmpNo.slice(0, 3); // "O1E"
-        const num = parseInt(lastEmpNo.slice(3)) + 1;
-        newEmpNo = `${prefix}${num.toString().padStart(3, "0")}`;
-      } else {
-        newEmpNo = `${org}E001`;
-      }
-      setId(newEmpNo);
-      console.log(newEmpNo);
-    } catch (err) {
-      console.error("Failed to generate user ID", err);
+    if (lastEmpNo && lastEmpNo.startsWith(org + "E")) {
+      // Extract the number after the last 'E'
+      const num = parseInt(lastEmpNo.slice((org + "E").length - 1 + 1)) + 1;
+      newEmpNo = `${org}E${num.toString().padStart(3, "0")}`;
+    } else {
+      newEmpNo = `${org}E001`;
     }
-  };
+    setId(newEmpNo);
+    console.log(newEmpNo);
+  } catch (err) {
+    console.error("Failed to generate user ID", err);
+  }
+};
 
   const signUpUser = async ({ email, password, id }) => {
     try {
@@ -313,9 +314,6 @@ const Register = () => {
                           Kitchen Administrator
                         </Option>
                         <Option value="KITCHEN_STAFF">Kitchen Staff</Option>
-                        <Option value="INVENTORY_ADMIN">
-                          Inventory Manager
-                        </Option>
                         <Option value="Other">Other</Option>
                       </Select>
                     </Form.Item>

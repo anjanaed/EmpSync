@@ -81,9 +81,8 @@
 }
 
 .customTableRow:hover {
-  background-color: #c01515 !important;
-  transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  background-color: #e6e6e657 !important;
+
 }
 
 .evenRow {
@@ -102,9 +101,8 @@
 }
 
 .customTableRowDark:hover {
-  background-color: #374151 !important;
-  transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(255, 255, 255, 0.15);
+  background-color: #000000 !important;
+  border: none  ;
 }
 
 .evenRowDark {
@@ -247,7 +245,7 @@ Table {
   color: #ffffff !important;
   font-weight: bold !important;
   text-align: center !important;
-  font-size: 14px !important;
+  font-size: 12px !important;
 }
 
 /* Employee table header styles - Dark mode */
@@ -264,15 +262,16 @@ Table {
   background-color: #232323 !important;
   color: #ffffff !important;
   font-weight: bold !important;
+  border: none;;
   text-align: center !important;
-  font-size: 14px !important;
+  font-size: 12px !important;
 }
 
 /* Table cell text colors - Light mode */
 .contentBox :global(.ant-table-tbody > tr > td) {
   color: #333333 !important;
   border-bottom: 1px solid #e8e8e8 !important;
-  font-size: 13px !important;
+  font-size: 12px !important;
   background-color: inherit;
 }
 
@@ -280,7 +279,7 @@ Table {
 .dark .contentBox :global(.ant-table-tbody > tr > td) {
   color: #ffffff !important;
   border-bottom: 1px solid #4b5563 !important;
-  font-size: 13px !important;
+  font-size: 12px !important;
   background-color: inherit;
 }
 
@@ -288,7 +287,7 @@ Table {
 .dark .contentBox :global(.ant-table),
 .dark .contentBox :global(.ant-table-container),
 .dark .contentBox :global(.ant-table-content) {
-  background-color: #374151 !important;
+  background-color: #00000000 !important;
 }
 
 /* Pagination styles - Dark mode */
@@ -307,7 +306,7 @@ Table {
 
 .dark .contentBox :global(.ant-pagination .ant-pagination-item-active) {
   background-color: #343434 !important;
-  border-color: #0400ff !important;
+  border-color: #bbbbbb !important;
 }
 
 .dark .contentBox :global(.ant-pagination .ant-pagination-item-active a) {
