@@ -331,11 +331,9 @@ const EditMealPage = () => {
         ? [values.category]
         : [];
 
-      // Prepare the data to be sent to the API
+      // Prepare the data to be sent to the API - exclude name fields from update
       const updateData = {
-        nameEnglish: values.nameEnglish,
-        nameSinhala: values.nameSinhala,
-        nameTamil: values.nameTamil,
+
         description: values.description,
         price: parseFloat(values.price),
         imageUrl: finalImageUrl,
@@ -560,12 +558,15 @@ const EditMealPage = () => {
                           message: "Please enter name in English",
                         },
                       ]}
+                      
                       noStyle
                     >
                       <Input
                         placeholder="Enter in English"
                         className={styles.languageInput}
+                        disabled
                       />
+                      
                     </Form.Item>
                     <Form.Item
                       name="nameSinhala"
@@ -580,6 +581,7 @@ const EditMealPage = () => {
                       <Input
                         placeholder="Enter in Sinhala"
                         className={styles.languageInput}
+                        disabled
                       />
                     </Form.Item>
                     <Form.Item
@@ -595,6 +597,7 @@ const EditMealPage = () => {
                       <Input
                         placeholder="Enter in Tamil"
                         className={styles.languageInput}
+                        disabled
                       />
                     </Form.Item>
                   </div>
