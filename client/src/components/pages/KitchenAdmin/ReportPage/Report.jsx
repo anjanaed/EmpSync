@@ -11,12 +11,12 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { BellOutlined } from "@ant-design/icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import NavBar from '../../../organisms/NavBar/NavBar';
-import NotificationPanel from "../../../organisms/Kitchen/NotificationPanel/NotificationPanel";
-import { useNotifications } from "../../../../contexts/NotificationsContext";
+import NavBar from '../../../organisms/NavBar/NavBar.jsx';
+import NotificationPanel from "../../../organisms/Kitchen/NotificationPanel/NotificationPanel.jsx";
+import { useNotifications } from "../../../../contexts/NotificationsContext.jsx";
 import styles from "../../../organisms/Kitchen/NotificationPanel/NotificationPanel.module.css";
-import Section from "../../../organisms/Kitchen/ReportSection/Report";
-import { useAuth } from "../../../../contexts/AuthContext"; 
+import Section from "../../../organisms/Kitchen/ReportSection/Report.jsx";
+import { useAuth } from "../../../../contexts/AuthContext.jsx"; 
 
 const Report = () => {
   // Get and parse authData from localStorage
