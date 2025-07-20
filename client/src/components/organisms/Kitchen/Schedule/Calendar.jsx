@@ -931,6 +931,7 @@ const MealPlanner = () => {
 
         {defaultMeals.length === 0 ? (
           <div
+            className={styles.noMealTypesBox}
             style={{
               textAlign: "center",
               padding: "40px 20px",
@@ -945,7 +946,6 @@ const MealPlanner = () => {
             </div>
             <div style={{ fontSize: "14px" }}>
               Please create a meal type to get started with meal planning
-              
             </div>
           </div>
         ) : (
