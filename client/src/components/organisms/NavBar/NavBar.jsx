@@ -5,10 +5,10 @@ import { UserOutlined } from "@ant-design/icons";
 import { Button, Layout, Menu, ConfigProvider, Dropdown, Avatar } from "antd";
 import img from "../../../assets/Logo/logo.png";
 import { useNavigate } from "react-router-dom";
-import Loading from "../../atoms/loading/loading";
-import { useAuth } from "../../../contexts/AuthContext";
-import { useTheme } from "../../../contexts/ThemeContext";
-import ThemeToggle from "../../ThemeToggle/ThemeToggle";
+import Loading from "../../atoms/loading/loading.jsx";
+import { useAuth } from "../../../contexts/AuthContext.jsx";
+import { useTheme } from "../../../contexts/ThemeContext.jsx";
+import ThemeToggle from "../../ThemeToggle/ThemeToggle.jsx";
 const { Sider } = Layout;
 
 const roleDisplayMap = {
