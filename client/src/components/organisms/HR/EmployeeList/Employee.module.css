@@ -7,18 +7,12 @@
 
 /* Theme configurations for Ant Design Table */
 .customTheme {
-  --table-header-bg: #960000;
-  --table-header-color: #ffffff;
-  --table-header-sort-active-bg: #960000;
-  --table-header-sort-hover-bg: #7a0000;
-  --table-border-color: #960000;
   --table-font-size: 12px;
   --table-cell-padding: 12px;
   --table-font-family: "Figtree", sans-serif;
 }
 
 .darkTheme {
-  --table-header-bg: #ff0000;
   --table-header-color: #ffffff;
   --table-header-sort-active-bg: #ff0000;
   --table-header-sort-hover-bg: #cc0000;
@@ -62,7 +56,7 @@
 
 /* Table header cell styles */
 .tableHeaderCell {
-  background-color: #960000 !important;
+
   color: #ffffff !important;
   font-weight: bold !important;
 }
@@ -229,7 +223,7 @@ Table {
 .home.dark .contentBox :global(.ant-table-thead > tr > th:last-child),
 .home.dark .contentBox :global(.ant-table thead th),
 .home.dark .contentBox :global(.ant-table .ant-table-thead > tr > th) {
-  background-color: #ff0000 !important;
+  background-color: #2b00ff !important;
   color: #ffffff !important;
   font-weight: bold !important;
   border-bottom: 1px solid #ffffff !important;
@@ -261,21 +255,6 @@ Table {
   background-color: #1a1a1a !important;
 }
 
-/* Table body row styles */
-.contentBox :global(.ant-table-tbody > tr) {
-  background-color: #ffffff !important;
-  transition: all 0.3s ease !important;
-}
-
-.contentBox :global(.ant-table-tbody > tr:hover) {
-  background-color: #ebe8eb !important;
-  transform: translateY(-1px) !important;
-}
-
-.contentBox :global(.ant-table-tbody > tr:nth-child(even)) {
-  background-color: #f9f9f9 !important;
-}
-
 
 
 /* Table cell text colors */
@@ -286,49 +265,7 @@ Table {
 }
 
 /* Dark mode pagination styles */
-.home.dark .contentBox :global(.ant-pagination) {
-  background-color: transparent !important;
-}
 
-.home.dark .contentBox :global(.ant-pagination .ant-pagination-item) {
-  background-color: #303030 !important;
-  border-color: #404040 !important;
-}
-
-.home.dark .contentBox :global(.ant-pagination .ant-pagination-item a) {
-  color: #ffffff !important;
-}
-
-.home.dark .contentBox :global(.ant-pagination .ant-pagination-item:hover) {
-  border-color: #ff0000 !important;
-}
-
-.home.dark .contentBox :global(.ant-pagination .ant-pagination-item:hover a) {
-  color: #ff0000 !important;
-}
-
-.home.dark .contentBox :global(.ant-pagination .ant-pagination-item-active) {
-  background-color: #404040 !important;
-  border-color: #ff0000 !important;
-}
-
-.home.dark .contentBox :global(.ant-pagination .ant-pagination-item-active a) {
-  color: #ff0000 !important;
-}
-
-.home.dark .contentBox :global(.ant-pagination .ant-pagination-prev),
-.home.dark .contentBox :global(.ant-pagination .ant-pagination-next) {
-  color: #ffffff !important;
-}
-
-.home.dark .contentBox :global(.ant-pagination .ant-pagination-prev:hover),
-.home.dark .contentBox :global(.ant-pagination .ant-pagination-next:hover) {
-  color: #ff0000 !important;
-}
-
-.home.dark .contentBox :global(.ant-pagination .ant-pagination-total-text) {
-  color: #ffffff !important;
-}
 
 @media(max-width:768px){
 

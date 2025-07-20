@@ -30,7 +30,6 @@ const getDarkTheme = () => ({
       fontSize: 12,
       cellPaddingBlock: 12,
       fontFamily: '"Figtree", sans-serif',
-      colorText: "#ffffff",
 
     },
     Pagination: {
