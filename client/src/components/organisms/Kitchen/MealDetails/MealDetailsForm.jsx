@@ -95,7 +95,7 @@ const AddMealPage = () => {
       return;
     }
     if (selectedIngredients.length === 0) {
-          message.warning("Please select  ingredient for the meal");
+          message.warning("Please select  ingredients for the meal");
           return;
         }
 

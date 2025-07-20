@@ -664,9 +664,9 @@ const MealPlanner = () => {
 
         await fetchAllSchedules(currentDate);
       } else {
-        message.info(
-          `No previous ${mealType.name} schedule found in the last 7 days. Opening menu selector.`
-        );
+        // message.info(
+        //   `No previous ${mealType.name} schedule found in the last 7 days. Opening menu selector.`
+        // );
         setIsUpdateModalVisible(true);
         setSearchTerm("");
         setActiveMealType(mealType);
@@ -945,6 +945,7 @@ const MealPlanner = () => {
             </div>
             <div style={{ fontSize: "14px" }}>
               Please create a meal type to get started with meal planning
+              
             </div>
           </div>
         ) : (
@@ -1161,13 +1162,11 @@ const MealPlanner = () => {
         width={800}
         styles={modalStyles}
         footer={[
-          <Button key="clear" onClick={handleClearSchedule} danger>
-            <ClearOutlined /> Clear Schedule
+          <Button key="clear" onClick={handleClearSchedule} className={styles.clearButton}>
+            <ClearOutlined /> Clear 
           </Button>,
-          <Button key="cancel" onClick={handleUpdateMenuCancel}>
-            Cancel
-          </Button>,
-          <Button key="submit" type="primary" onClick={handleUpdateMenuOk}>
+
+          <Button key="submit" type="primary" onClick={handleUpdateMenuOk} className={styles.updateModalBtn}>
             {existingSchedule ? "Update Menu" : "Create Menu"}
           </Button>,
         ]}
