@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Typography, Card, Spin, Dropdown, Menu } from "antd";
 import styles from "./Page2.module.css";
-import DateAndTime from "../DateAndTime/DateAndTime";
-import translations from "../../../../utils/translations";
-import FingerPrint from "../../../atoms/FingerPrint/FingerPrint";
+import DateAndTime from "../DateAndTime/DateAndTime.jsx";
+import translations from "../../../../utils/translations.jsx";
+import FingerPrint from "../../../atoms/FingerPrint/FingerPrint.jsx";
 import { MdLanguage } from "react-icons/md";
 import { IoKeypadSharp } from "react-icons/io5";
 import { BiFingerprint } from "react-icons/bi";
