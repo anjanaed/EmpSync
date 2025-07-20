@@ -15,16 +15,16 @@ import { FaRegSave } from "react-icons/fa";
 import { LuEye } from "react-icons/lu";
 import Gbutton from "../../../atoms/button/Button";
 import { MdCalculate } from "react-icons/md";
-import AdjustmentModal from "../../../templates/HR/AdjustmentModal/AdjustmentModal";
+import AdjustmentModal from "../../../templates/HR/AdjustmentModal/AdjustmentModal.jsx";
 import { InfoCircleOutlined } from "@ant-design/icons";
 import axios from "axios";
 import { IoOpenOutline } from "react-icons/io5";
-import Loading from "../../../atoms/loading/loading";
+import Loading from "../../../atoms/loading/loading.jsx";
 import { IoMdRemoveCircleOutline } from "react-icons/io";
-import PayeModal from "../../../templates/HR/PayeModal/PayeModal";
-import { useAuth } from "../../../../contexts/AuthContext";
+import PayeModal from "../../../templates/HR/PayeModal/PayeModal.jsx";
+import { useAuth } from "../../../../contexts/AuthContext.jsx";
 
-import { usePopup } from "../../../../contexts/PopupContext";
+import { usePopup } from "../../../../contexts/PopupContext.jsx";
 const { RangePicker } = DatePicker;
 
 const Payroll = () => {
