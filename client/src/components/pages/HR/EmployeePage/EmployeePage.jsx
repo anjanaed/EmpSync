@@ -11,9 +11,9 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Button } from "antd";
 import { useNavigate } from "react-router-dom";
-import NavBar from '../../../organisms/NavBar/NavBar';
-import Employees from "../../../Organisms/HR/EmployeeList/Employees";
-import { useAuth } from "../../../../contexts/AuthContext"; 
+import NavBar from '../../../organisms/NavBar/NavBar.jsx';
+import Employees from "../../../Organisms/HR/EmployeeList/Employees.jsx";
+import { useAuth } from "../../../../contexts/AuthContext.jsx"; 
 
 const EmployeePage = () => {
   const navigate = useNavigate();

@@ -10,9 +10,9 @@ import {
   faBowlFood,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import NavBar from '../../../organisms/NavBar/NavBar';
-import Payslip from "../../../organisms/HR/Payslips/Payslip";
-import { useAuth } from "../../../../contexts/AuthContext"; 
+import NavBar from '../../../organisms/NavBar/NavBar.jsx';
+import Payslip from "../../../organisms/HR/Payslips/Payslip.jsx";
+import { useAuth } from "../../../../contexts/AuthContext.jsx"; 
 
 const PayslipPage = () => {
   const { authData } = useAuth();

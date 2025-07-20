@@ -10,9 +10,9 @@ import {
   faBowlFood,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import NavBar from '../../../organisms/NavBar/NavBar';
-import Register from "../../../organisms/HR/Registration/Register";
-import { useAuth } from "../../../../contexts/AuthContext"; 
+import NavBar from '../../../organisms/NavBar/NavBar.jsx';
+import Register from "../../../organisms/HR/Registration/Register.jsx";
+import { useAuth } from "../../../../contexts/AuthContext.jsx"; 
 
 const RegisterPage = () => {
   const { authData } = useAuth();
