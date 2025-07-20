@@ -619,10 +619,10 @@ const Dashbord = () => {
               className={styles.dateButton}
               onClick={handleRefresh}
               disabled={loading}
-              style={{ marginLeft: '10px', background: '#52c41a' }}
+              style={{ marginLeft: '10px', background: '#0a0a0aff',color:'#ffffff' }}
               title="Refresh data"
             >
-              🔄 Refresh
+              Refresh
             </button>
             <button
               className={styles.gotoDashboardButton}
