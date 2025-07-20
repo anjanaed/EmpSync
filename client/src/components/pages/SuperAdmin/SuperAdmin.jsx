@@ -1,4 +1,4 @@
-import { Layout, Modal } from 'antd';
+import { Layout, message, Modal } from 'antd';
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../../contexts/AuthContext.jsx';
 import axios from 'axios';
@@ -34,8 +34,9 @@ const SuperAdmin = () => {
 
   const [permissionsData] = useState([
     { key: '1', name: 'User Management', description: 'Manage users: create, edit, delete, and view user accounts.' },
-    { key: '2', name: 'Meal Management', description: 'Manage meals: add, edit, delete, and view meal items.' },
-    { key: '3', name: 'Reports', description: 'Access and export system reports.' },
+    {key: '2', name: 'Payroll', description: 'Manage payroll: create, edit, delete, and view payroll records.'},
+    { key: '3', name: 'Meal Management', description: 'Manage meals: add, edit, delete, and view meal items.' },
+    { key: '4', name: 'Reports', description: 'Access and export system reports.' },
   ]);
 
   const token = superAuthData?.accessToken;
@@ -92,7 +93,7 @@ const SuperAdmin = () => {
 
   const showModal = () => setIsModalVisible(true);
 
-  const handleOk = async (values) => {
+  const handleOk = async (values, resetForm) => {
     if (!token) return;
     try {
       await axios.post(`${baseURL}/super-admin/organizations`, values, {
@@ -103,8 +104,10 @@ const SuperAdmin = () => {
       });
       await fetchOrganizations();
       setIsModalVisible(false);
+      if (resetForm) resetForm(); // <-- Reset only on success
     } catch (err) {
       console.error(err);
+      message.error('Failed to add organization. Please try again.');
     }
   };
 
@@ -215,7 +218,10 @@ const SuperAdmin = () => {
         <>
           <AddOrganizationModal
             visible={isModalVisible}
-            onSubmit={handleOk}
+            onSubmit={(values) => handleOk(values, () => {
+              // Find the form instance and reset fields
+              // This will be handled in the modal below
+            })}
             onCancel={handleCancel}
             className={styles.modal}
           />
