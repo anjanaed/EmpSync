@@ -13,13 +13,17 @@ import { debounce } from "lodash";
 import { usePopup } from "../../../../contexts/PopupContext.jsx";
 import { useTheme } from "../../../../contexts/ThemeContext.jsx";
 
-// Theme configurations moved to CSS module
+// Theme configurations
 const getCustomTheme = () => ({
   components: {
     Table: {
       fontSize: 12,
       cellPaddingBlock: 12,
       fontFamily: '"Figtree", sans-serif',
+    },
+    Popconfirm: {
+      colorText: "#333333",
+      colorTextHeading: "#333333",
     },
   },
 });
@@ -30,13 +34,23 @@ const getDarkTheme = () => ({
       fontSize: 12,
       cellPaddingBlock: 12,
       fontFamily: '"Figtree", sans-serif',
-
+      colorBgContainer: "#2a2a2a",
+      colorText: "#ffffff",
+      headerBg: "#1e40af",
+      headerColor: "#ffffff",
+      rowHoverBg: "#374151",
     },
     Pagination: {
       colorBgContainer: "#303030",
       colorText: "#ffffff",
       colorBorder: "#404040",
       itemActiveBg: "#404040",
+    },
+    Popconfirm: {
+      colorBgElevated: "#374151",
+      colorText: "#ffffff",
+      colorTextHeading: "#ffffff",
+      colorBorder: "#4b5563",
     },
   },
 });
@@ -73,8 +87,6 @@ const Employees = () => {
 
   const fetchEmployee = async (searchValue, roleValue) => {
     try {
-      
-
       const response = await axios.get(`${urL}/user`, {
         params: {
           search: searchValue || undefined,
@@ -108,8 +120,6 @@ const Employees = () => {
     }, 300),
     []
   );
-
-  // Modal styles moved to CSS module
 
   const handleDelete = async (id, email) => {
     setLoading(true);
@@ -201,24 +211,33 @@ const Employees = () => {
           <FiEdit
             onClick={() => openModal(record.id)}
             className={styles.icons}
-            color="black"
+            color={theme === 'dark' ? "#ffffff" : "black"}
             size="15px"
           />
           <Popconfirm
             title={
-              <span className={styles.popconfirmTitle}>Delete User {record.id}</span>
+              <span className={`${styles.popconfirmTitle} ${theme === 'dark' ? styles.darkPopconfirmTitle : ''}`}>
+                Delete User {record.id}
+              </span>
             }
             placement="bottom"
             onConfirm={() => handleDelete(record.id, record.email)}
             description={
-              <span className={styles.popconfirmDescription}>
+              <span className={`${styles.popconfirmDescription} ${theme === 'dark' ? styles.darkPopconfirmDescription : ''}`}>
                 Are You Sure to Delete
               </span>
             }
-            okText={<span className={styles.popconfirmButton}>Yes</span>}
-            cancelText={<span className={styles.popconfirmButton}>No</span>}
+            okText={
+              <span className={`${styles.popconfirmButton} ${theme === 'dark' ? styles.darkPopconfirmButton : ''}`}>
+                Yes
+              </span>
+            }
+            cancelText={
+              <span className={`${styles.popconfirmButton} ${theme === 'dark' ? styles.darkPopconfirmButton : ''}`}>
+                No
+              </span>
+            }
           >
-            {" "}
             <MdOutlineDeleteOutline color="red" className={styles.icons} size="17px" />
           </Popconfirm>
         </Space>
@@ -250,7 +269,7 @@ const Employees = () => {
         />
       </Modal>
 
-      <div className={`${styles.home} ${theme === 'dark' ? 'dark' : ''}`}>
+      <div className={`${styles.home} ${theme === 'dark' ? styles.dark : ''}`}>
         <div className={styles.homeContent}>
           <div className={styles.homeHead}>
             <div className={styles.headLeft}>Registered Employee Details</div>
@@ -290,6 +309,11 @@ const Employees = () => {
               <Table
                 columns={columns}
                 dataSource={employee}
+                rowClassName={(record, index) => 
+                  theme === 'dark' 
+                    ? `${styles.customTableRowDark} ${index % 2 === 0 ? styles.evenRowDark : styles.oddRowDark}`
+                    : `${styles.customTableRow} ${index % 2 === 0 ? styles.evenRow : styles.oddRow}`
+                }
                 pagination={{
                   position: ["bottomCenter"],
                   pageSize: 25,

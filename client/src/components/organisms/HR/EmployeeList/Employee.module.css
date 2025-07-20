@@ -3,9 +3,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Bree+Serif&family=Figtree:ital,wght@0,300..900;1,300..900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Itim&family=Roboto+Slab:wght@100..900&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap");
 
 /* Custom color variables for easy customization */
-
-
-/* Theme configurations for Ant Design Table */
 .customTheme {
   --table-font-size: 12px;
   --table-cell-padding: 12px;
@@ -35,18 +32,34 @@
   backdrop-filter: blur(12px);
 }
 
-/* Popconfirm text styles */
+/* Popconfirm text styles - Light mode */
 .popconfirmTitle {
   font-size: 0.8vw;
+  color: #333333;
 }
 
 .popconfirmDescription {
   font-style: italic;
   font-size: 0.7vw;
+  color: #666666;
 }
 
 .popconfirmButton {
   font-size: 0.7vw;
+  color: #333333;
+}
+
+/* Popconfirm text styles - Dark mode */
+.darkPopconfirmTitle {
+  color: #ffffff !important;
+}
+
+.darkPopconfirmDescription {
+  color: #ffffff !important;
+}
+
+.darkPopconfirmButton {
+  color: #000000 !important;
 }
 
 /* SearchBar inline style replacement */
@@ -56,14 +69,14 @@
 
 /* Table header cell styles */
 .tableHeaderCell {
-
   color: #ffffff !important;
   font-weight: bold !important;
 }
 
-/* Custom table row styles */
+/* Custom table row styles - Light mode */
 .customTableRow {
   background-color: #ffffff;
+  color: #333333;
   transition: all 0.3s ease;
 }
 
@@ -73,25 +86,39 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
+.evenRow {
+  background-color: #f9f9f9;
+}
+
+.oddRow {
+  background-color: #ffffff;
+}
+
+/* Custom table row styles - Dark mode */
 .customTableRowDark {
   background-color: #2a2a2a;
-  color: #ffffff;
+  color: #ffffff !important;
   transition: all 0.3s ease;
 }
 
 .customTableRowDark:hover {
-  background-color: #ff6b6b !important;
+  background-color: #374151 !important;
   transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(255, 0, 0, 0.25);
+  box-shadow: 0 2px 8px rgba(255, 255, 255, 0.15);
 }
 
-/* Alternating row colors */
-.customTableRow:nth-child(even) {
-  background-color: #f9f9f9;
-}
-
-.customTableRowDark:nth-child(even) {
+.evenRowDark {
   background-color: #353535;
+}
+
+.oddRowDark {
+  background-color: #2a2a2a;
+}
+
+/* Dark mode container */
+.dark {
+  background-color: #1f2937;
+  color: #ffffff;
 }
 
 .home {
@@ -135,6 +162,11 @@
   font-weight: 600;
   margin: auto 0;
 }
+
+.dark .headLeft {
+  color: #ffffff;
+}
+
 .headRight {
   margin-left: auto;
   display: flex;
@@ -149,11 +181,10 @@
   margin-right: 1vw;
   width: 20vw;
 }
+
 :global(.ant-select-dropdown .ant-select-item-option-content) {
   font-size: 0.7rem;
 }
-
-
 
 .headRight select {
   font-size: 1vw;
@@ -167,6 +198,7 @@
 .empty {
   padding: 3vw;
 }
+
 .icons {
   margin: 0vw 0.5vw;
   cursor: pointer;
@@ -188,13 +220,19 @@
   height: auto;
   box-shadow: 0 6px 12px rgba(114, 113, 113, 0.25), 0 3px 6px rgba(0, 0, 0, 0.22);
   overflow-y: auto;
+  background-color: #ffffff;
+}
+
+.dark .contentBox {
+  background-color: #434343;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4), 0 3px 6px rgba(0, 0, 0, 0.3);
 }
 
 Table {
   margin-top: 1vw;
 }
 
-/* Employee table header styles - scoped to this component only */
+/* Employee table header styles - Light mode */
 .contentBox :global(.ant-table-thead > tr > th),
 .contentBox :global(.ant-table-thead > tr > th:hover),
 .contentBox :global(.ant-table-thead > tr > th.ant-table-column-has-sorters),
@@ -212,20 +250,100 @@ Table {
   font-size: 14px !important;
 }
 
+/* Employee table header styles - Dark mode */
+.dark .contentBox :global(.ant-table-thead > tr > th),
+.dark .contentBox :global(.ant-table-thead > tr > th:hover),
+.dark .contentBox :global(.ant-table-thead > tr > th.ant-table-column-has-sorters),
+.dark .contentBox :global(.ant-table-thead > tr > th.ant-table-column-has-sorters:hover),
+.dark .contentBox :global(.ant-table-thead > tr > th.ant-table-column-sort),
+.dark .contentBox :global(.ant-table-thead > tr > th.ant-table-selection-column),
+.dark .contentBox :global(.ant-table-thead > tr > th:first-child),
+.dark .contentBox :global(.ant-table-thead > tr > th:last-child),
+.dark .contentBox :global(.ant-table thead th),
+.dark .contentBox :global(.ant-table .ant-table-thead > tr > th) {
+  background-color: #666666 !important;
+  color: #ffffff !important;
+  font-weight: bold !important;
+  text-align: center !important;
+  font-size: 14px !important;
+}
 
-/* Table cell text colors */
+/* Table cell text colors - Light mode */
 .contentBox :global(.ant-table-tbody > tr > td) {
   color: #333333 !important;
   border-bottom: 1px solid #e8e8e8 !important;
   font-size: 13px !important;
+  background-color: inherit;
 }
 
-/* Dark mode pagination styles */
+/* Table cell text colors - Dark mode */
+.dark .contentBox :global(.ant-table-tbody > tr > td) {
+  color: #ffffff !important;
+  border-bottom: 1px solid #4b5563 !important;
+  font-size: 13px !important;
+  background-color: inherit;
+}
 
+/* Table container background - Dark mode */
+.dark .contentBox :global(.ant-table),
+.dark .contentBox :global(.ant-table-container),
+.dark .contentBox :global(.ant-table-content) {
+  background-color: #374151 !important;
+}
+
+/* Pagination styles - Dark mode */
+.dark .contentBox :global(.ant-pagination) {
+  color: #ffffff !important;
+}
+
+.dark .contentBox :global(.ant-pagination .ant-pagination-item) {
+  background-color: #4b5563 !important;
+  border-color: #6b7280 !important;
+}
+
+.dark .contentBox :global(.ant-pagination .ant-pagination-item a) {
+  color: #ffffff !important;
+}
+
+.dark .contentBox :global(.ant-pagination .ant-pagination-item-active) {
+  background-color: #1eaf31 !important;
+  border-color: #af1e83 !important;
+}
+
+.dark .contentBox :global(.ant-pagination .ant-pagination-item-active a) {
+  color: #ffffff !important;
+}
+
+.dark .contentBox :global(.ant-pagination .ant-pagination-prev),
+.dark .contentBox :global(.ant-pagination .ant-pagination-next) {
+  color: #ffffff !important;
+}
+
+.dark .contentBox :global(.ant-pagination .ant-pagination-prev .ant-pagination-item-link),
+.dark .contentBox :global(.ant-pagination .ant-pagination-next .ant-pagination-item-link) {
+  background-color: #c537c7 !important;
+  border-color: #6b7280 !important;
+  color: #ffffff !important;
+}
+
+.dark .contentBox :global(.ant-pagination .ant-pagination-total-text) {
+  color: #ffffff !important;
+}
 
 @media(max-width:768px){
-
   .headLeft{
     font-size: 15px;
+  }
+  
+  .popconfirmTitle {
+    font-size: 12px;
+  }
+  
+  .popconfirmDescription {
+    font-size: 11px;
+  }
+  
+  .popconfirmButton {
+    font-size: 11px;
   }
 }
