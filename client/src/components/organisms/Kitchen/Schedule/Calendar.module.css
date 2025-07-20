@@ -710,12 +710,17 @@
 }
 
 [data-theme="dark"] .datePicker :global(.ant-picker-input > input) {
-  color: rgb(224, 0, 0) !important;
+  color: #fff !important;
 }
 
 [data-theme="dark"] .calendarIcon {
-  color: rgb(224, 0, 0) !important;
+  color: #fff !important;
   border: #d32f2f;
+}
+
+/* Make the calendar input button text color white in dark mode */
+[data-theme="dark"] .datePicker :global(.ant-picker-input > input) {
+  color: #fff !important;
 }
 
 [data-theme="dark"] .deleteMealBtn {
