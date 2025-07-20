@@ -17,11 +17,6 @@ import { useTheme } from "../../../../contexts/ThemeContext.jsx";
 const getCustomTheme = () => ({
   components: {
     Table: {
-      headerBg: "#960000",
-      headerColor: "#ffffff",
-      headerSortActiveBg: "#960000",
-      headerSortHoverBg: "#7a0000",
-      borderColor: "#960000",
       fontSize: 12,
       cellPaddingBlock: 12,
       fontFamily: '"Figtree", sans-serif',
@@ -32,18 +27,11 @@ const getCustomTheme = () => ({
 const getDarkTheme = () => ({
   components: {
     Table: {
-      headerBg: "#ff0000",
-      headerColor: "#ffffff",
-      headerSortActiveBg: "#ff0000",
-      headerSortHoverBg: "#cc0000",
-      borderColor: "#ff0000",
       fontSize: 12,
       cellPaddingBlock: 12,
       fontFamily: '"Figtree", sans-serif',
-      colorBgContainer: "#303030",
       colorText: "#ffffff",
-      rowHoverBg: "#ff6b6b",
-      colorBorder: "#404040",
+
     },
     Pagination: {
       colorBgContainer: "#303030",
