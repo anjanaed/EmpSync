@@ -297,7 +297,13 @@ const FingerPrintsContent = () => {
         <div className={styles.container}>
           <h3 className={styles.unitsTitle}>User Fingerprint Details</h3>
           {/* Search Bar for Employee ID or Name */}
-          <div className={styles.searchBarRow}>
+          <div
+            className={
+              theme === "dark"
+                ? `${styles.searchBarRow} ${styles.searchBarRowDark}`
+                : styles.searchBarRow
+            }
+          >
             <input
               type="text"
               placeholder="Search by Employee ID or Name..."
@@ -306,7 +312,11 @@ const FingerPrintsContent = () => {
                 setSearchValue(e.target.value);
                 setSearchError("");
               }}
-              className={styles.searchInput}
+              className={
+                theme === "dark"
+                  ? `${styles.searchInput} ${styles.searchInputDark}`
+                  : styles.searchInput
+              }
             />
             <Button
               type="default"

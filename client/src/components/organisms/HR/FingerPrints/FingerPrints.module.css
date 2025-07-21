@@ -74,6 +74,10 @@
   gap: 12px;
 }
 
+.searchBarRowDark {
+  background: #232323;
+}
+
 .searchInput {
   padding: 8px 12px;
   border-radius: 6px;
@@ -82,7 +86,25 @@
   width: 260px;
 }
 
+.searchInputDark {
+  background: #2a2a2a;
+  color: #fff;
+  border: 1px solid #404040;
+}
 
+/* .searchBtn styles removed because the ruleset was empty */
+
+.searchBtnDark {
+  background: #404040;
+  color: #fff;
+  border: 1px solid #970000;
+}
+
+/* .clearBtn ruleset removed because it was empty */
+
+.clearBtnDark {
+  color: #fff;
+}
 
 .searchError {
   color: #970000;
