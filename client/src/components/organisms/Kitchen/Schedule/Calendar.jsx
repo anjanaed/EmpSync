@@ -807,6 +807,12 @@ const MealPlanner = () => {
     return null;
   };
 
+
+  if (isUpdateLoading){
+    return <Loading  />;
+
+  }
+
   return (
     <div className={styles.container}>
       <div className={styles.header}>
