@@ -7,6 +7,7 @@ import FingerPrint from "../../../atoms/FingerPrint/FingerPrint.jsx";
 import { MdLanguage } from "react-icons/md";
 import { IoKeypadSharp } from "react-icons/io5";
 import { BiFingerprint } from "react-icons/bi";
+import { MdSync } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import FingerprintBLE from "../../../../utils/fingerprintBLE.js";
 
@@ -772,13 +773,18 @@ const Page2 = ({
                 }}
                 disabled={!fingerprintConnected}
                 style={{ 
-                  backgroundColor: fingerprintConnected ? "#ff9800" : "#cccccc",
+                  backgroundColor: fingerprintConnected ? "#2196F3" : "#cccccc",
                   color: fingerprintConnected ? "white" : "#666666",
-                  cursor: fingerprintConnected ? "pointer" : "not-allowed"
+                  cursor: fingerprintConnected ? "pointer" : "not-allowed",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "8px"
                 }}
-                title={!fingerprintConnected ? "Connect to a fingerprint unit first" : "Clean up unregistered fingerprints from R307 storage"}
+                title={!fingerprintConnected ? "Connect to a fingerprint unit first" : "Sync system and clean up unregistered fingerprints from R307 storage"}
               >
-                Cleanup R307 Storage
+                <MdSync size={18} />
+                Sync System
               </button>
             </div>
             <button
