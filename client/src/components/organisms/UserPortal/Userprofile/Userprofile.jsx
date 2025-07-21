@@ -67,52 +67,9 @@ export default function UserProfile({ user }) {
     },
     profileLayout: {
       display: 'grid',
-      gridTemplateColumns: '1fr 1.2fr',
+      gridTemplateColumns: '1fr', // Always single column
       gap: '0',
       minHeight: '600px'
-    },
-    imageSection: {
-      position: 'relative',
-      backgroundImage: isDark
-        ? `url(${leftimag})`
-        : `url(${leftimag})`,
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      color: 'white',
-      textAlign: 'center'
-    },
-    imageOverlay: {
-      position: 'absolute',
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      background: isDark 
-        ? 'linear-gradient(135deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.8) 100%)'
-        : 'linear-gradient(135deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.6) 100%)',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: '2rem'
-    },
-    imageContent: {
-      zIndex: 1,
-      textAlign: 'center'
-    },
-    imageTitle: {
-      fontSize: '2.5rem',
-      fontWeight: '700',
-      marginBottom: '1rem',
-      textShadow: '2px 2px 4px rgba(0,0,0,0.3)'
-    },
-    imageSubtitle: {
-      fontSize: '1.25rem',
-      opacity: 0.9,
-      marginBottom: '2rem'
     },
     detailsSection: {
       padding: '2rem',
@@ -393,18 +350,7 @@ export default function UserProfile({ user }) {
       </div>
 
       <div style={styles.profileCard}>
-        <div style={window.innerWidth <= 768 ? {...styles.profileLayout, gridTemplateColumns: '1fr'} : styles.profileLayout}>
-          {window.innerWidth > 768 && (
-            <div style={styles.imageSection}>
-              <div style={styles.imageOverlay}>
-                {/* <div style={styles.imageContent}>
-                  <h2 style={styles.imageTitle}>Employee Portal</h2>
-                  <p style={styles.imageSubtitle}>Manage your profile information</p>
-                </div> */}
-              </div>
-            </div>
-          )}
-          
+        <div style={styles.profileLayout}>
           <div style={styles.detailsSection}>
             <div style={styles.employeeInfo}>
               <div style={styles.infoItem}>
