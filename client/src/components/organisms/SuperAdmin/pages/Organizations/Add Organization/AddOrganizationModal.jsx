@@ -1,11 +1,20 @@
+import { useState } from 'react';
 import { Modal, Form, Input, Button, Switch, InputNumber } from 'antd';
 import styles from './AddOrganizationModal.module.css';
 
 const AddOrganizationModal = ({ visible, onSubmit, onCancel }) => {
   const [form] = Form.useForm();
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (values) => {
-    onSubmit(values, () => form.resetFields());
+  const handleSubmit = async (values) => {
+    setLoading(true);
+    try {
+      await onSubmit(values, () => form.resetFields());
+    } catch (err) {
+    // optional: handle error or show message
+    } finally {
+      setLoading(false); // turn off loading in all cases
+    }
   };
 
   const handleCancel = () => {
@@ -67,7 +76,7 @@ const AddOrganizationModal = ({ visible, onSubmit, onCancel }) => {
         </Form.Item>
         <Form.Item>
           <div className={styles.buttonGroup}>
-            <Button type="primary" htmlType="submit" className={styles.submitButton}>
+            <Button type="primary" htmlType="submit"  loading={loading} className={styles.submitButton}>
               Add Organization
             </Button>
             <Button onClick={handleCancel} className={styles.cancelButton}>
