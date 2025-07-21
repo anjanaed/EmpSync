@@ -9,6 +9,7 @@ import AddOrganizationModal from '../../organisms/SuperAdmin/pages/Organizations
 import UpdateOrganizationModal from '../../organisms/SuperAdmin/pages/Organizations/Update Organizations/updateOrganiztionModal.jsx';
 import RolesList from '../../organisms/SuperAdmin/pages/Roles/RolesList.jsx';
 import PermissionsList from '../../organisms/SuperAdmin/pages/Permissions/PermissionsList.jsx';
+import SystemStatistics from '../../organisms/SuperAdmin/pages/Dashboard/SystemStatistics.jsx';
 import Loading from "../../atoms/loading/loading.jsx";
 import styles from './SuperAdmin.module.css';
 
@@ -17,7 +18,7 @@ const { confirm } = Modal;
 
 const SuperAdmin = () => {
   const baseURL = import.meta.env.VITE_BASE_URL;
-  const [activeMenu, setActiveMenu] = useState('organizations');
+  const [activeMenu, setActiveMenu] = useState('dashboard');
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isUpdateModalVisible, setIsUpdateModalVisible] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
@@ -152,6 +153,7 @@ const SuperAdmin = () => {
       okText: 'Yes, Delete',
       okType: 'danger',
       cancelText: 'Cancel',
+      className: styles.customConfirm,
       async onOk() {
         if (!token) return;
         try {
@@ -171,6 +173,8 @@ const SuperAdmin = () => {
 
   const renderContent = () => {
     switch (activeMenu) {
+      case 'dashboard':
+        return <SystemStatistics />;
       case 'organizations':
         return (
           <OrganizationList
@@ -210,7 +214,7 @@ const SuperAdmin = () => {
       <Layout>
         <AppHeader title={getPageTitle()} />
         <Content className={styles.content} style={{ padding: 24 }}>
-          {loading ? <Loading /> : renderContent()}
+          {loading ? <Loading type="dark" /> : renderContent()}
         </Content>
       </Layout>
 
