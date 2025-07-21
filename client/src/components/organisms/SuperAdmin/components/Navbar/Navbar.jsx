@@ -5,7 +5,8 @@ import {
   LockOutlined, 
   LogoutOutlined,
   MenuFoldOutlined,
-  MenuUnfoldOutlined 
+  MenuUnfoldOutlined,
+  DashboardOutlined  
 } from '@ant-design/icons';
 import React, { useEffect , useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -21,6 +22,12 @@ const Navbar = ({ activeMenu, onMenuChange }) => {
   const navigate = useNavigate();
 
   const menuItems = [
+    {
+      key: 'dashboard',
+      icon: <DashboardOutlined  />,
+      label: 'Dashboard',
+      className: styles.menuItem
+    },
     {
       key: 'organizations',
       icon: <TeamOutlined />,
