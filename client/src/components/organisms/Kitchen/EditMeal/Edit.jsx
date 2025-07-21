@@ -39,7 +39,8 @@ const EditMealPage = () => {
   const [imageUrl, setImageUrl] = useState(null);
   const [originalImageUrl, setOriginalImageUrl] = useState(null);
   const fileInputRef = useRef(null);
-  const [isIngredientsModalVisible, setIsIngredientsModalVisible] =useState(false);
+  const [isIngredientsModalVisible, setIsIngredientsModalVisible] =
+    useState(false);
   const [loadingIngredients, setLoadingIngredients] = useState(false);
   const [searchIngredient, setSearchIngredient] = useState("");
   const [selectedIngredients, setSelectedIngredients] = useState([]);
@@ -57,57 +58,56 @@ const EditMealPage = () => {
 
   // Define parseIngredientsFromMealData function first
   const parseIngredientsFromMealData = async (ingredientsArray) => {
-  if (!ingredientsArray || ingredientsArray.length === 0) {
-    return [];
-  }
+    if (!ingredientsArray || ingredientsArray.length === 0) {
+      return [];
+    }
 
-  try {
-    const response = await axios.get(`${urL}/ingredients`, {
-      params: {
-        orgId: authData?.orgId, // Make sure you have `authData` accessible in the edit page too
-      },
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    try {
+      const response = await axios.get(`${urL}/ingredients`, {
+        params: {
+          orgId: authData?.orgId, // Make sure you have `authData` accessible in the edit page too
+        },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-    const allIngredients = Array.isArray(response.data) ? response.data : [];
+      const allIngredients = Array.isArray(response.data) ? response.data : [];
 
-    // Format all ingredients with selected: false initially
-    const formattedIngredients = allIngredients.map((ingredient) => ({
-      id: ingredient.id,
-      name: ingredient.name,
-      selected: false,
-    }));
+      // Format all ingredients with selected: false initially
+      const formattedIngredients = allIngredients.map((ingredient) => ({
+        id: ingredient.id,
+        name: ingredient.name,
+        selected: false,
+      }));
 
-    // Set selected to true for ingredients in the meal
-    const usedIngredientIds = ingredientsArray.map((ing) =>
-      typeof ing === "object" && ing.ingredientId ? ing.ingredientId : ing
-    );
+      // Set selected to true for ingredients in the meal
+      const usedIngredientIds = ingredientsArray.map((ing) =>
+        typeof ing === "object" && ing.ingredientId ? ing.ingredientId : ing
+      );
 
-    const parsedIngredients = formattedIngredients.map((ingredient) => ({
-      ...ingredient,
-      selected: usedIngredientIds.includes(ingredient.id),
-    }));
+      const parsedIngredients = formattedIngredients.map((ingredient) => ({
+        ...ingredient,
+        selected: usedIngredientIds.includes(ingredient.id),
+      }));
 
-    console.log("Parsed ingredients for edit:", parsedIngredients);
-    return parsedIngredients;
-  } catch (error) {
-    const errorMessage = error.response?.data?.message || error.message;
-    console.error("Error fetching ingredients:", errorMessage);
+      console.log("Parsed ingredients for edit:", parsedIngredients);
+      return parsedIngredients;
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || error.message;
+      console.error("Error fetching ingredients:", errorMessage);
 
-    // Fallback to display only used ingredients
-    return ingredientsArray.map((ingredient) => {
-      const ingredientId = ingredient.ingredientId || ingredient;
-      return {
-        id: ingredientId,
-        name: `Ingredient ID: ${ingredientId}`,
-        selected: true,
-      };
-    });
-  }
-};
-
+      // Fallback to display only used ingredients
+      return ingredientsArray.map((ingredient) => {
+        const ingredientId = ingredient.ingredientId || ingredient;
+        return {
+          id: ingredientId,
+          name: `Ingredient ID: ${ingredientId}`,
+          selected: true,
+        };
+      });
+    }
+  };
 
   // Now use the function in useEffect
   useEffect(() => {
@@ -333,7 +333,9 @@ const EditMealPage = () => {
 
       // Prepare the data to be sent to the API - exclude name fields from update
       const updateData = {
-
+        nameEnglish: values.nameEnglish,
+        nameSinhala: values.nameSinhala,
+        nameTamil: values.nameTamil,
         description: values.description,
         price: parseFloat(values.price),
         imageUrl: finalImageUrl,
@@ -558,15 +560,12 @@ const EditMealPage = () => {
                           message: "Please enter name in English",
                         },
                       ]}
-                      
                       noStyle
                     >
                       <Input
                         placeholder="Enter in English"
                         className={styles.languageInput}
-                        disabled
                       />
-                      
                     </Form.Item>
                     <Form.Item
                       name="nameSinhala"
@@ -581,7 +580,6 @@ const EditMealPage = () => {
                       <Input
                         placeholder="Enter in Sinhala"
                         className={styles.languageInput}
-                        disabled
                       />
                     </Form.Item>
                     <Form.Item
@@ -597,7 +595,6 @@ const EditMealPage = () => {
                       <Input
                         placeholder="Enter in Tamil"
                         className={styles.languageInput}
-                        disabled
                       />
                     </Form.Item>
                   </div>

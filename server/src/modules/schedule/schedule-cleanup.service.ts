@@ -10,7 +10,7 @@ export class ScheduleCleanupService {
 
   // Runs every day at 2:00 AM
 @Cron(CronExpression.EVERY_DAY_AT_2AM)
-//   @Cron(CronExpression.EVERY_MINUTE)//for the checking
+  // @Cron(CronExpression.EVERY_MINUTE)//for the checking
   async handleCleanup() {
     const twoWeeksAgo = new Date();
     twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14);
