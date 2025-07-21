@@ -282,7 +282,7 @@ private async checkDuplicateMealType(
       });
 
       if (activeSchedules > 0) {
-        console.log(`Warning: Meal type ${id} (${mealType.name}) is being used in ${activeSchedules} schedules`);
+        // console.log(`Warning: Meal type ${id} (${mealType.name}) is being used in ${activeSchedules} schedules`);
       }
 
       // Perform the soft delete - ONLY update isDeleted to true
@@ -295,7 +295,7 @@ private async checkDuplicateMealType(
       });
 
       // Log the soft delete operation for debugging
-      console.log(`Meal type ${id} (${mealType.name}) has been soft deleted`);
+      // console.log(`Meal type ${id} (${mealType.name}) has been soft deleted`);
 
       return {
         success: true,
