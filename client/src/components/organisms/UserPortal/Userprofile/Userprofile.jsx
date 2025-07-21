@@ -18,18 +18,26 @@ export default function UserProfile({ user }) {
 
   const isDark = theme === 'dark';
 
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const styles = {
     container: {
       maxWidth: '100%',
       margin: '0 auto',
-      padding: '2rem',
+      padding: windowWidth <= 768 ? '1rem' : '2rem',
       fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
       backgroundColor: isDark ? 'var(--bg-secondary)' : '#f8fafc',
       color: isDark ? 'var(--text-primary)' : '#1a202c',
       minHeight: '100vh'
     },
     header: {
-      display: 'flex',
+      display: windowWidth <= 480 ? 'block' : 'flex',
       justifyContent: 'space-between',
       alignItems: 'center',
       marginBottom: '2rem',
@@ -37,15 +45,18 @@ export default function UserProfile({ user }) {
       borderBottom: `2px solid ${isDark ? 'var(--border-color)' : '#e2e8f0'}`
     },
     title: {
-      fontSize: '2rem',
+      fontSize: windowWidth <= 480 ? '1.5rem' : '2rem',
       fontWeight: '700',
       color: isDark ? 'var(--text-primary)' : '#1a202c',
-      margin: 0
+      margin: 0,
+      marginBottom: windowWidth <= 480 ? '1rem' : 0
     },
     editButton: {
       display: 'flex',
       alignItems: 'center',
       gap: '0.5rem',
+      width: windowWidth <= 480 ? '100%' : 'auto',
+      marginTop: windowWidth <= 480 ? '0.5rem' : 0,
       padding: '0.75rem 1.5rem',
       backgroundColor: isDark ? 'var(--accent)' : '#4f46e5',
       color: 'white',
@@ -67,7 +78,7 @@ export default function UserProfile({ user }) {
     },
     profileLayout: {
       display: 'grid',
-      gridTemplateColumns: '1fr', // Always single column
+      gridTemplateColumns: windowWidth <= 768 ? '1fr' : '1fr',
       gap: '0',
       minHeight: '600px'
     },
@@ -80,10 +91,10 @@ export default function UserProfile({ user }) {
     },
     employeeInfo: {
       display: 'grid',
-      gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-      gap: '1.5rem',
+      gridTemplateColumns: windowWidth <= 768 ? '1fr' : 'repeat(auto-fit, minmax(250px, 1fr))',
+      gap: windowWidth <= 768 ? '1rem' : '1.5rem',
       marginBottom: '2rem',
-      padding: '1.5rem',
+      padding: windowWidth <= 768 ? '1rem' : '1.5rem',
       backgroundColor: isDark ? 'var(--bg-tertiary)' : '#f1f5f9',
       borderRadius: '0.75rem',
       border: `1px solid ${isDark ? 'var(--border-color)' : '#e2e8f0'}`
@@ -113,7 +124,7 @@ export default function UserProfile({ user }) {
     },
     formGrid: {
       display: 'grid',
-      gridTemplateColumns: window.innerWidth <= 768 ? '1fr' : 'repeat(2, 1fr)',
+      gridTemplateColumns: windowWidth <= 768 ? '1fr' : 'repeat(2, 1fr)',
       gap: '1rem'
     },
     formGroup: {
