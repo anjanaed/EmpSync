@@ -324,6 +324,14 @@ export class SuperAdminService {
     }
   }
 
+  async getLastEmpIDByOrg(organizationId: string) {
+    const lastUser = await this.databaseService.user.findFirst({
+      where: { organizationId },
+      orderBy: { id: 'desc' },
+    });
+    return lastUser?.id || null;
+  }
+
   // Permission CRUD operations
   async createPermission(data: Prisma.PermissionCreateInput) {
     try {
