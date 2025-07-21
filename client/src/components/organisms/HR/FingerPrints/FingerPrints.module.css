@@ -98,3 +98,38 @@
 .reloadBtn {
   margin-left: 8px;
 }
+.customTableRow {
+  background-color: #ffffff;
+  color: #333333;
+  transition: all 0.3s ease;
+}
+.customTableRow:hover {
+  background-color: #e6e6e657 !important;
+}
+.evenRow {
+  background-color: #f9f9f9;
+}
+.oddRow {
+  background-color: #ffffff;
+}
+.customTableRowDark {
+  background-color: #2a2a2a;
+  color: #ffffff !important;
+  transition: all 0.3s ease;
+}
+.customTableRowDark:hover {
+  background-color: #000000 !important;
+  border: none;
+}
+.evenRowDark {
+  background-color: #353535;
+}
+.oddRowDark {
+  background-color: #2a2a2a;
+}
+.registeredDark {
+  color: #90ee90 !important;
+}
+.pendingDark {
+  color: #ffb6b6 !important;
+}
