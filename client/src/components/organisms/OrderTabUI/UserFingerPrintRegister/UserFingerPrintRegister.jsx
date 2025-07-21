@@ -304,13 +304,17 @@ function PinSection() {
                                 // Refresh user fingerprints to update the button states
                                 await fetchUserFingerprints(currentUser.id);
                                 
-                                // Dispatch event to inform other components
-                                window.dispatchEvent(new CustomEvent('fingerprintRegistrationComplete'));
-                                
-                                // Navigate back after delay
+                                // Show success alert and return to fingerprint options
                                 setTimeout(() => {
-                                    navigate('/OrderTab');
-                                }, 2000);
+                                    alert("Fingerprint registered successfully!");
+                                    setShowFingerprintSection(false);
+                                    setScanning(false);
+                                    setRegisterStatus("Tap here and then place your finger on the scanner");
+                                    setRegisterSteps([]);
+                                    
+                                    // Dispatch event to inform other components
+                                    window.dispatchEvent(new CustomEvent('fingerprintRegistrationComplete'));
+                                }, 1000);
                             } else {
                                 const errorData = await response.json().catch(() => ({}));
                                 console.error("Failed to save fingerprint to database:", errorData);
