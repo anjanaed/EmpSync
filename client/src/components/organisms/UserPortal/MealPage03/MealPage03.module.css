@@ -394,6 +394,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: 40px 20px;
   min-height: 60vh;
 }
 
@@ -454,6 +455,9 @@
 
   .mealCard {
     margin-bottom: 8px;
+    width: 100% !important; /* or set a specific px value */
+    min-width: 0;
+    margin: 0 auto 12px auto;
   }
 
   .mealImage {
@@ -502,6 +506,10 @@
 
   .mobileHeader {
     display: flex;
+  }
+
+  .tabContent {
+    padding: 0 !important;
   }
 }
 
@@ -878,6 +886,16 @@
   .cartButton {
     padding: 8px 12px; /* Adjust padding for mobile */
     font-size: 0.9rem; /* Slightly smaller font */
+  }
+
+  .mealCard {
+    width: 100% !important; /* or set a specific px value */
+    min-width: 0;
+    margin: 0 auto 12px auto;
+  }
+
+  .tabContent {
+    padding: 0 !important;
   }
 }
 
