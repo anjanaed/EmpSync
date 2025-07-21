@@ -173,7 +173,7 @@ const handleDelete = (id, email) => {
             },
           });
           await axios.post(
-            `${urL}/auth/delete`,
+            `${urL}/superadmin/delete`,
             { email },
             {
               headers: {
