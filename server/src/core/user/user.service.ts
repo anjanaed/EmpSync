@@ -151,9 +151,9 @@ export class UserService {
 
     const lastUser = await this.databaseService.user.findFirst({
       where: { organizationId },
-      orderBy: { empNo: 'desc' },
+      orderBy: { id: 'desc' },
     });
-    return lastUser?.empNo || null;
+    return lastUser?.id || null;
   }
 
   async findNameByIdAndOrg(id: string, orgId: string) {

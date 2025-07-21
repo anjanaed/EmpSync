@@ -438,6 +438,20 @@
   color: var(--accent);
 }
 
+/* No Data Message */
+.noDataMessage {
+  color: var(--text-secondary);
+  /* font-size: 16px;
+  text-align: center;
+  margin: 24px 0;
+  font-family: var(--primary-font); */
+}
+
+/* Dark mode override */
+.dark .noDataMessage {
+  color: #fff;
+}
+
 /* Responsive Design */
 @media (max-width: 1200px) {
   .analysisGrid {

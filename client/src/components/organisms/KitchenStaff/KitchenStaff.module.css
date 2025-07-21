@@ -425,6 +425,24 @@
   color: #d32f2f;
 }
 
+.themeEmptyState {
+  text-align: center;
+  padding: 50px;
+  background-color: var(--bg-secondary);
+  color: var(--text-secondary);
+  border-radius: 8px;
+  margin: 20px 0;
+}
+.themeEmptyState h3 {
+  color: var(--text-tertiary);
+  margin-bottom: 10px;
+}
+.themeEmptyState p {
+  font-size: 14px;
+  margin-top: 10px;
+  color: var(--text-secondary);
+}
+
 
 
 

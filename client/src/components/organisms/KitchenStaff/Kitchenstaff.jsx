@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../contexts/AuthContext"; // Add authentication context
 import "antd/dist/reset.css";
 import styles from "./KitchenStaff.module.css";
+import '../../../styles/variables.css';
 
 const { Meta } = Card;
 
@@ -619,10 +620,10 @@ const Dashbord = () => {
               className={styles.dateButton}
               onClick={handleRefresh}
               disabled={loading}
-              style={{ marginLeft: '10px', background: '#52c41a' }}
+              style={{ marginLeft: '10px', background: '#0a0a0aff',color:'#ffffff' }}
               title="Refresh data"
             >
-              🔄 Refresh
+              Refresh
             </button>
             <button
               className={styles.gotoDashboardButton}
@@ -663,17 +664,10 @@ const Dashbord = () => {
 
         <div className={styles.content}>
           {mealTypes.length === 0 && !loading ? (
-            <div style={{ 
-              textAlign: 'center', 
-              padding: '50px',
-              color: '#666',
-              backgroundColor: '#f8f9fa',
-              borderRadius: '8px',
-              margin: '20px 0'
-            }}>
-              <h3 style={{ color: '#999', marginBottom: '10px' }}>No Orders Found</h3>
+            <div className={styles.themeEmptyState}>
+              <h3>No Orders Found</h3>
               <p>No meals have been ordered for {selectedDate.toLocaleDateString()} yet.</p>
-              <p style={{ fontSize: '14px', marginTop: '10px' }}>
+              <p>
                 Check back later or try a different date.
               </p>
             </div>
