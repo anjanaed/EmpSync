@@ -21,6 +21,7 @@ const PermissionsList = ({
   const [selectedUser, setSelectedUser] = useState(null);
   const [rolePermissions, setRolePermissions] = useState([]);
   const { superAuthData } = useAuth();
+  const [loading, setLoading] = useState(false);
   const urL = import.meta.env.VITE_BASE_URL;
 
   // Get token from localStorage (or your preferred method)
@@ -92,6 +93,7 @@ const PermissionsList = ({
 
   const handleSavePermissions = async () => {
   if (selectedUser) {
+    setLoading(true);
     const orgId = selectedOrganization;
     const user = users.find(u => u.id === selectedUser);
     const role = user?.role || 'N/A';
@@ -149,6 +151,8 @@ const PermissionsList = ({
     } catch (error) {
       message.error('Failed to update permissions. Please try again.');
       console.error(error);
+    } finally {
+      setLoading(false);
     }
   }
 };
@@ -225,6 +229,7 @@ const PermissionsList = ({
             onClick={handleSavePermissions}
             disabled={!selectedUser || rolePermissions.length === 0}
             className={styles.saveButton}
+            loading={loading}
           >
             Save Permissions
           </Button>
@@ -248,7 +253,7 @@ const PermissionsList = ({
       <Table 
         columns={columns} 
         dataSource={data} 
-        pagination={{ pageSize: 4 }}
+        pagination={false}
         rowKey="id"
         className={styles.table}
       />
