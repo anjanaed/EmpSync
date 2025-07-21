@@ -66,15 +66,30 @@ function PinSection() {
                         setUser(null);
                         setUserFingerprints([]);
                         setRegisteredFingersOnCurrentUnit(0);
+                        // Clear organization data
+                        window.userOrganizationId = null;
+                        window.currentRegistrationUser = null;
                         return;
                     }
                     const data = await response.json();
                     setUser(data);
+                    // Store user data globally to persist during registration
+                    window.currentRegistrationUser = data;
+                    
                     // Log user info and passkey
                     console.log("Correct passkey entered:", passkey);
                     if (data && data.id && data.name) {
                         console.log("Fetched user ID:", data.id);
                         console.log("Fetched user name:", data.name);
+                        
+                        // Set organizationId globally for browser access
+                        if (data.organizationId) {
+                            window.userOrganizationId = data.organizationId;
+                            console.log("User organizationId set:", data.organizationId);
+                        } else {
+                            window.userOrganizationId = null;
+                            console.log("No organizationId found for user");
+                        }
                         
                         // Fetch user's existing fingerprints
                         await fetchUserFingerprints(data.id);
@@ -84,12 +99,18 @@ function PinSection() {
                     setUser(null);
                     setUserFingerprints([]);
                     setRegisteredFingersOnCurrentUnit(0);
+                    // Clear organization data on error
+                    window.userOrganizationId = null;
+                    window.currentRegistrationUser = null;
                 }
             } else {
                 setError("");
                 setUser(null);
                 setUserFingerprints([]);
                 setRegisteredFingersOnCurrentUnit(0);
+                // Clear organization data when pin is cleared
+                window.userOrganizationId = null;
+                window.currentRegistrationUser = null;
             }
         };
         fetchUser();
@@ -252,9 +273,16 @@ function PinSection() {
                     setScanning(false);
                     
                     // Extract thumbID and save to database
-                    const match = line.match(/ThumbID Registered: (FPU\d{3}\d{4})/);
-                    if (match && user) {
+                    const match = line.match(/ThumbID Registered: (FPU\d{7})/);
+                    // Check both current user state and stored user data
+                    const currentUser = user || window.currentRegistrationUser;
+                    
+                    if (match && currentUser) {
                         const thumbId = match[1];
+                        console.log("Extracted thumbId:", thumbId);
+                        console.log("User ID (empId):", currentUser.id);
+                        console.log("Organization ID:", window.userOrganizationId);
+                        
                         try {
                             const baseURL = import.meta.env.VITE_BASE_URL || '';
                             const response = await fetch(`${baseURL}/user-finger-print-register-backend/register`, {
@@ -263,14 +291,18 @@ function PinSection() {
                                     'Content-Type': 'application/json',
                                 },
                                 body: JSON.stringify({
-                                    empId: user.id,
+                                    empId: currentUser.id,
                                     thumbid: thumbId
                                 })
                             });
                             
                             if (response.ok) {
-                                console.log("Fingerprint saved to database successfully");
+                                const result = await response.json();
+                                console.log("Fingerprint saved to database successfully:", result);
                                 setRegisterStatus("✅ Fingerprint registered and saved!");
+                                
+                                // Refresh user fingerprints to update the button states
+                                await fetchUserFingerprints(currentUser.id);
                                 
                                 // Dispatch event to inform other components
                                 window.dispatchEvent(new CustomEvent('fingerprintRegistrationComplete'));
@@ -280,13 +312,21 @@ function PinSection() {
                                     navigate('/OrderTab');
                                 }, 2000);
                             } else {
-                                console.error("Failed to save fingerprint to database");
-                                setRegisterStatus("❌ Registration failed. Database error.");
+                                const errorData = await response.json().catch(() => ({}));
+                                console.error("Failed to save fingerprint to database:", errorData);
+                                setRegisterStatus("❌ Registration failed: " + (errorData.message || 'Database error'));
                             }
                         } catch (dbError) {
                             console.error("Database save error:", dbError);
                             setRegisterStatus("❌ Registration failed. Database error.");
                         }
+                    } else {
+                        console.error("Missing thumbId match or user data");
+                        console.log("Line content:", line);
+                        console.log("Current user state:", user);
+                        console.log("Stored user data:", window.currentRegistrationUser);
+                        console.log("Regex match result:", line.match(/ThumbID Registered: (FPU\d{7})/));
+                        setRegisterStatus("❌ Registration failed. Missing data.");
                     }
                 }
             }
@@ -458,6 +498,10 @@ function PinSection() {
             if (fingerprintBLERef.current) {
                 fingerprintBLERef.current = null;
             }
+            
+            // Clear organization data when component unmounts
+            window.userOrganizationId = null;
+            window.currentRegistrationUser = null;
         };
     }, []);
 

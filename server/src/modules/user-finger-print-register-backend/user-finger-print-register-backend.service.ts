@@ -14,6 +14,7 @@ export class UserFingerPrintRegisterBackendService {
       select: {
         id: true,
         name: true,
+        organizationId: true,
       },
     });
   }
