@@ -164,42 +164,79 @@ const Page2 = ({
 
   // Handle stored fingerprints for cleanup
   const handleStoredFingerprints = async (idsLine) => {
-    if (!fingerprintUnitName) return;
+    // Use local state first, then fallback to global storage
+    const unitName = fingerprintUnitName || window.fingerprintUnitName;
+    
+    if (!unitName) {
+      console.warn('Unit name not available for fingerprint cleanup');
+      console.log('fingerprintUnitName state:', fingerprintUnitName);
+      console.log('window.fingerprintUnitName:', window.fingerprintUnitName);
+      setErrorMessage("Unit name not available. Please reconnect the fingerprint unit.");
+      setTimeout(() => setErrorMessage(""), 2000);
+      return;
+    }
     
     const idsMatch = idsLine.match(/IDS:([\d,]*)/);
     if (idsMatch) {
       const idsStr = idsMatch[1];
       if (idsStr.length === 0) {
         console.log('No fingerprints stored in R307');
+        setErrorMessage("No fingerprints found in R307 storage");
+        setTimeout(() => setErrorMessage(""), 2000);
         return;
       }
       
       const ids = idsStr.split(',').map(id => id.trim()).filter(id => id.length > 0);
-      const thumbIds = ids.map(id => `${fingerprintUnitName}${id.padStart(4, '0')}`);
+      
+      // Convert IDs to standard thumbID format using unit name
+      // Example: Unit FPU004, ID 1 -> FPU0040001
+      const thumbIds = ids.map(id => `${unitName}${id.padStart(4, '0')}`);
+      console.log(`Found ${ids.length} fingerprints in R307 storage:`);
+      console.log('Unit Name Used:', unitName);
+      console.log('Original IDs:', ids.join(', '));
       console.log('Standard Thumb IDs:', thumbIds.join(', '));
 
       // Check which thumbIds are not in the database
       try {
+        setErrorMessage("Checking database for registered fingerprints...");
         const response = await fetch(`${baseURL}/user-finger-print-register-backend/all-fingerprints`);
         if (response.ok) {
           const dbFingerprints = await response.json();
           const dbThumbIds = dbFingerprints.map(fp => fp.thumbid);
+          
+          // Find IDs that are in R307 but not in database
           const notInDb = thumbIds.filter(id => !dbThumbIds.includes(id));
+          
           if (notInDb.length > 0) {
-            console.log('These IDs are not in database:', notInDb.join(', '));
-            console.log(`Found ${notInDb.length} unregistered fingerprints in R307 storage`);
+            console.log('🔍 Analysis Results:');
+            console.log(`✅ Registered in database: ${thumbIds.length - notInDb.length} fingerprints`);
+            console.log(`❌ Not in database: ${notInDb.length} fingerprints`);
+            console.log('Unregistered Thumb IDs:', notInDb.join(', '));
             
-            // Automatically convert thumb IDs back to original IDs and delete them from R307 storage
-            console.log('Starting automatic cleanup of unregistered fingerprints...');
-            await deleteUnregisteredFingerprintsFromR307(notInDb, fingerprintUnitName);
+            setErrorMessage(`Found ${notInDb.length} unregistered fingerprints. Cleaning up...`);
+            
+            // Convert thumb IDs back to original IDs and delete them from R307 storage
+            console.log('🧹 Starting cleanup of unregistered fingerprints...');
+            await deleteUnregisteredFingerprintsFromR307(notInDb, unitName);
+            
+            setTimeout(() => {
+              setErrorMessage(`Successfully cleaned up ${notInDb.length} unregistered fingerprints`);
+              setTimeout(() => setErrorMessage(""), 3000);
+            }, 1000);
           } else {
-            console.log('All fingerprints in R307 storage are properly registered in database');
+            console.log('✅ All fingerprints in R307 storage are properly registered in database');
+            setErrorMessage("All fingerprints are properly registered. No cleanup needed.");
+            setTimeout(() => setErrorMessage(""), 3000);
           }
         } else {
           console.warn('Could not fetch fingerprints from database');
+          setErrorMessage("Error: Could not access fingerprint database");
+          setTimeout(() => setErrorMessage(""), 2000);
         }
       } catch (err) {
         console.error('Error checking thumbids in database:', err);
+        setErrorMessage("Error checking fingerprint database: " + err.message);
+        setTimeout(() => setErrorMessage(""), 2000);
       }
     }
   };
@@ -224,50 +261,74 @@ const Page2 = ({
   };
 
   // Convert thumb IDs to original IDs and delete from R307 storage
-  // Example conversion: FPU0010003 -> 3, FPU0010004 -> 4, FPU0010005 -> 5, FPU0010006 -> 6
+  // Example conversion: FPU0040003 -> 3, FPU0040004 -> 4, FPU0040005 -> 5
   const deleteUnregisteredFingerprintsFromR307 = async (thumbIds, unitName) => {
-    if (!fingerprintConnected || !fingerprintBLE) {
+    // Use global BLE instance for more reliable connection checking
+    const bleInstance = fingerprintBLE || window.fingerprintBLEInstance;
+    const isConnected = fingerprintConnected || (window.fingerprintBLEInstance && window.fingerprintBLEInstance.getConnectionStatus());
+    
+    if (!isConnected || !bleInstance) {
       console.error('Fingerprint unit not connected');
+      console.log('fingerprintConnected state:', fingerprintConnected);
+      console.log('fingerprintBLE instance:', !!fingerprintBLE);
+      console.log('window.fingerprintBLEInstance:', !!window.fingerprintBLEInstance);
+      console.log('global connection status:', window.fingerprintBLEInstance?.getConnectionStatus());
+      setErrorMessage("Fingerprint unit not connected");
+      setTimeout(() => setErrorMessage(""), 2000);
       return;
     }
 
     if (!unitName) {
       console.error('Unit name not available for conversion');
+      setErrorMessage("Unit name not available for cleanup");
+      setTimeout(() => setErrorMessage(""), 2000);
       return;
     }
 
     try {
-      console.log(`Starting deletion of ${thumbIds.length} unregistered fingerprints from R307 storage`);
+      console.log(`🗑️ Starting deletion of ${thumbIds.length} unregistered fingerprints from R307 storage`);
+      console.log(`📋 Unit: ${unitName}`);
+      console.log(`📋 Unregistered Thumb IDs to clean: ${thumbIds.join(', ')}`);
 
+      let deletedCount = 0;
       for (const thumbId of thumbIds) {
         // Convert thumb ID back to original ID
         // Remove unit name prefix and leading zeros
-        // Example: FPU0010003 -> remove FPU001 -> 0003 -> 3
+        // Example: FPU0040003 -> remove FPU004 -> 0003 -> 3
         let originalId = thumbId.replace(unitName, '');
         originalId = originalId.replace(/^0+/, '') || '0'; // Remove leading zeros, but keep at least one digit
         
         // Validate the original ID is a number
         const idNumber = parseInt(originalId, 10);
         if (isNaN(idNumber) || idNumber < 1 || idNumber > 1000) {
-          console.warn(`Invalid original ID extracted from ${thumbId}: ${originalId}, skipping deletion`);
+          console.warn(`⚠️ Invalid original ID extracted from ${thumbId}: ${originalId}, skipping deletion`);
           continue;
         }
         
-        console.log(`Converting ${thumbId} to original ID: ${originalId}`);
+        console.log(`🔄 Converting ${thumbId} → Original ID: ${originalId}`);
         
         // Send delete command to ESP32 via BLE
         const deleteCommand = `DELETE_ID:${originalId}`;
-        await fingerprintBLE.sendCommand(deleteCommand);
-        console.log(`Sent BLE delete command: DELETE_ID:${originalId}`);
+        await bleInstance.sendCommand(deleteCommand);
+        console.log(`📤 Sent BLE delete command: ${deleteCommand}`);
+        deletedCount++;
         
         // Small delay between commands to avoid overwhelming the module
         await new Promise(resolve => setTimeout(resolve, 500));
       }
       
-      console.log(`Successfully sent delete commands for ${thumbIds.length} unregistered fingerprints`);
+      console.log(`✅ Successfully sent delete commands for ${deletedCount}/${thumbIds.length} unregistered fingerprints`);
+      
+      if (deletedCount === thumbIds.length) {
+        console.log(`🎉 All ${deletedCount} unregistered fingerprints have been cleaned from R307 storage`);
+      } else {
+        console.log(`⚠️ ${deletedCount} out of ${thumbIds.length} fingerprints were processed`);
+      }
       
     } catch (error) {
-      console.error('Error deleting fingerprints from R307 storage:', error);
+      console.error('❌ Error deleting fingerprints from R307 storage:', error);
+      setErrorMessage("Error during cleanup: " + error.message);
+      setTimeout(() => setErrorMessage(""), 2000);
     }
   };
 
@@ -420,22 +481,46 @@ const Page2 = ({
 
   // Handle manual cleanup of unregistered fingerprints
   const handleCleanupUnregisteredFingerprints = async () => {
-    if (!fingerprintConnected || !fingerprintBLE) {
+    // Use global BLE instance for more reliable connection checking
+    const bleInstance = fingerprintBLE || window.fingerprintBLEInstance;
+    const isConnected = fingerprintConnected || (window.fingerprintBLEInstance && window.fingerprintBLEInstance.getConnectionStatus());
+    
+    if (!isConnected || !bleInstance) {
       setErrorMessage("Fingerprint unit not connected");
       setTimeout(() => setErrorMessage(""), 2000);
       return;
     }
 
+    // Use local state first, then fallback to global storage
+    const unitName = fingerprintUnitName || window.fingerprintUnitName;
+    
+    if (!unitName) {
+      setErrorMessage("Unit name not available. Please reconnect the fingerprint unit.");
+      setTimeout(() => setErrorMessage(""), 2000);
+      return;
+    }
+
+    // Ensure unit name is stored globally for consistency
+    if (fingerprintUnitName && !window.fingerprintUnitName) {
+      window.fingerprintUnitName = fingerprintUnitName;
+    }
+
     try {
-      // First, get the current IDs from the R307 module via BLE
-      await fingerprintBLE.sendCommand("GET_IDS");
+      console.log("🧹 Manual cleanup initiated");
+      console.log(`📋 Unit: ${unitName}`);
+      console.log('📋 Local state unit name:', fingerprintUnitName);
+      console.log('📋 Global unit name:', window.fingerprintUnitName);
       
-      console.log("Requesting IDs from R307 module for cleanup...");
-      setErrorMessage("Scanning R307 storage for cleanup...");
-      setTimeout(() => setErrorMessage(""), 3000);
+      // First, get the current IDs from the R307 module via BLE
+      await bleInstance.sendCommand("GET_IDS");
+      
+      console.log("📤 Requesting IDs from R307 module for cleanup...");
+      setErrorMessage("Scanning R307 storage for unregistered fingerprints...");
+      
+      // The actual cleanup will happen in handleStoredFingerprints when the IDS: response is received
       
     } catch (error) {
-      console.error("Error initiating cleanup:", error);
+      console.error("❌ Error initiating cleanup:", error);
       setErrorMessage("Error initiating cleanup: " + error.message);
       setTimeout(() => setErrorMessage(""), 2000);
     }
