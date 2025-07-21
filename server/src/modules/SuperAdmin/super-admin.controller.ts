@@ -29,7 +29,7 @@ export class SuperAdminController {
   }
 
   @Get('organizations')
-  // @UseGuards(AuthGuard('superadmin-jwt'))
+  @UseGuards(AuthGuard('superadmin-jwt'))
   async getOrganizations() {
     return this.superAdminService.getOrganizations();
   }
@@ -135,7 +135,7 @@ export class SuperAdminController {
   }
 
   @Get('organizations/:orgId/last-employee-id')
-  // @UseGuards(AuthGuard('superadmin-jwt'))
+  @UseGuards(AuthGuard('superadmin-jwt'))
   async getLastEmployeeNoByOrg(@Param('orgId') orgId: string) {
     return this.superAdminService.getLastEmpIDByOrg(orgId);
   }
@@ -172,5 +172,11 @@ export class SuperAdminController {
   @UseGuards(AuthGuard('superadmin-jwt'))
   async deletePermission(@Param('id') id: string) {
     return this.superAdminService.deletePermission(id);
+  }
+
+  @Get('system-statistics')
+  @UseGuards(AuthGuard('superadmin-jwt'))
+  async getSystemStatistics() {
+    return await this.superAdminService.getSystemStatistics();
   }
 }
