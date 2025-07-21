@@ -126,34 +126,82 @@ class FingerprintBLE {
   }
 
   /**
-   * Send command to ESP32
+   * Send command to ESP32 with enhanced error handling and retry logic
    */
-  async sendCommand(command) {
-    try {
-      if (!this.isConnected || !this.characteristic) {
-        throw new Error('Device not connected');
-      }
+  async sendCommand(command, retries = 2) {
+    let lastError;
+    
+    for (let attempt = 0; attempt <= retries; attempt++) {
+      try {
+        if (!this.isConnected || !this.characteristic) {
+          throw new Error('Device not connected');
+        }
 
-      // Add a small delay to ensure the characteristic is ready
-      await new Promise(resolve => setTimeout(resolve, 100));
+        // Add a small delay to ensure the characteristic is ready
+        await new Promise(resolve => setTimeout(resolve, 100));
 
-      const encoder = new TextEncoder();
-      const data = encoder.encode(command);
-      
-      console.log('Sending BLE command:', command);
-      
-      // Check if characteristic supports write with response
-      if (this.characteristic.properties.writeWithoutResponse) {
-        await this.characteristic.writeValueWithoutResponse(data);
-      } else {
-        await this.characteristic.writeValue(data);
+        const encoder = new TextEncoder();
+        const data = encoder.encode(command);
+        
+        console.log(`Sending BLE command (attempt ${attempt + 1}/${retries + 1}):`, command);
+        
+        // Check if characteristic supports write with response
+        if (this.characteristic.properties.writeWithoutResponse) {
+          await this.characteristic.writeValueWithoutResponse(data);
+        } else {
+          await this.characteristic.writeValue(data);
+        }
+        
+        return true;
+      } catch (error) {
+        lastError = error;
+        console.error(`Error sending BLE command (attempt ${attempt + 1}):`, error);
+        
+        if (attempt < retries) {
+          console.log(`Retrying command "${command}" in 500ms...`);
+          await new Promise(resolve => setTimeout(resolve, 500));
+        }
       }
-      
-      return true;
-    } catch (error) {
-      console.error('Error sending BLE command:', error);
-      throw error;
     }
+    
+    throw lastError;
+  }
+
+  /**
+   * Send command and wait for specific response pattern
+   */
+  async sendCommandAndWaitForResponse(command, responsePattern, timeout = 5000) {
+    return new Promise((resolve, reject) => {
+      const timeoutId = setTimeout(() => {
+        reject(new Error(`Timeout waiting for response to command: ${command}`));
+      }, timeout);
+
+      // Store original callback
+      const originalCallback = this.onDataCallback;
+      
+      // Set temporary callback to wait for response
+      this.onData((data) => {
+        // Still call original callback
+        if (originalCallback) {
+          originalCallback(data);
+        }
+        
+        // Check if response matches pattern
+        if (data.includes(responsePattern)) {
+          clearTimeout(timeoutId);
+          // Restore original callback
+          this.onData(originalCallback);
+          resolve(data);
+        }
+      });
+
+      // Send the command
+      this.sendCommand(command).catch(error => {
+        clearTimeout(timeoutId);
+        this.onData(originalCallback);
+        reject(error);
+      });
+    });
   }
 
   /**

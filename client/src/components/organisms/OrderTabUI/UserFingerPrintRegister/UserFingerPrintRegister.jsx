@@ -49,6 +49,12 @@ function PinSection() {
     // User fingerprint state
     const [userFingerprints, setUserFingerprints] = useState([]);
     const [registeredFingersOnCurrentUnit, setRegisteredFingersOnCurrentUnit] = useState(0);
+    
+    // R307 module state tracking
+    const [moduleStoredIds, setModuleStoredIds] = useState([]);
+    const [nextAvailableId, setNextAvailableId] = useState(null);
+    const [enrollmentTargetId, setEnrollmentTargetId] = useState(null);
+    const [verificationAttempts, setVerificationAttempts] = useState(0);
 
     // Fetch user info when pin is 6 digits
     React.useEffect(() => {
@@ -171,6 +177,175 @@ function PinSection() {
     };
 
     // --- BLE Communication Functions ---
+    
+    // Check R307 module storage and determine next available ID
+    const checkModuleStorageAndGetNextId = async () => {
+        try {
+            if (!fingerprintBLERef.current || !fingerprintBLERef.current.getConnectionStatus()) {
+                throw new Error('BLE connection not available');
+            }
+            
+            setRegisterStatus('Checking R307 storage...');
+            console.log('🔍 Checking R307 module storage before enrollment');
+            
+            // Reset state
+            setModuleStoredIds([]);
+            setNextAvailableId(null);
+            setEnrollmentTargetId(null);
+            
+            // Use the enhanced BLE method if available
+            if (fingerprintBLERef.current.sendCommandAndWaitForResponse) {
+                try {
+                    console.log('📤 Using enhanced BLE method to get storage info');
+                    const response = await fingerprintBLERef.current.sendCommandAndWaitForResponse('GET_IDS', 'IDS:', 8000);
+                    const result = processStorageInfo(response);
+                    return result;
+                } catch (error) {
+                    console.warn('Enhanced BLE method failed, falling back to standard method:', error);
+                    // Fall through to standard method
+                }
+            }
+            
+            // Standard method with manual response handling
+            console.log('📤 Using standard BLE method to get storage info');
+            await fingerprintBLERef.current.sendCommand('GET_IDS');
+            console.log('📤 Sent GET_IDS command to R307 module');
+            
+            // Wait for IDS response with timeout
+            return new Promise((resolve, reject) => {
+                const timeout = setTimeout(() => {
+                    reject(new Error('Timeout waiting for R307 storage information'));
+                }, 8000);
+                
+                // Set up temporary handler for IDS response
+                const originalHandler = fingerprintBLERef.current.onDataCallback;
+                fingerprintBLERef.current.onData((data) => {
+                    // Call original handler first
+                    if (originalHandler) originalHandler(data);
+                    
+                    // Check for IDS response
+                    if (data.includes('IDS:')) {
+                        clearTimeout(timeout);
+                        // Restore original handler
+                        if (originalHandler) {
+                            fingerprintBLERef.current.onData(originalHandler);
+                        }
+                        
+                        try {
+                            const result = processStorageInfo(data);
+                            resolve(result);
+                        } catch (error) {
+                            reject(error);
+                        }
+                    }
+                });
+            });
+            
+        } catch (error) {
+            console.error('❌ Error checking R307 storage:', error);
+            setRegisterStatus('Error checking fingerprint storage: ' + error.message);
+            throw error;
+        }
+    };
+    
+    // Process storage information from R307 module
+    const processStorageInfo = (data) => {
+        try {
+            const idsMatch = data.match(/IDS:([\d,]*)/);
+            if (!idsMatch) {
+                throw new Error('Invalid IDS response format');
+            }
+            
+            const idsStr = idsMatch[1];
+            let storedIds = [];
+            
+            if (idsStr.length > 0) {
+                storedIds = idsStr.split(',')
+                    .map(id => id.trim())
+                    .filter(id => id.length > 0)
+                    .map(id => parseInt(id, 10))
+                    .filter(id => !isNaN(id))
+                    .sort((a, b) => a - b);
+            }
+            
+            setModuleStoredIds(storedIds);
+            console.log('📋 R307 stored IDs:', storedIds);
+            
+            // Find next available ID (starting from 1)
+            let nextId = 1;
+            while (storedIds.includes(nextId)) {
+                nextId++;
+            }
+            
+            // Validate ID is within reasonable range (R307 typically supports 1-1000)
+            if (nextId > 1000) {
+                throw new Error('R307 storage is full (maximum 1000 fingerprints)');
+            }
+            
+            setNextAvailableId(nextId);
+            setEnrollmentTargetId(nextId);
+            
+            console.log(`✅ Next available ID determined: ${nextId}`);
+            console.log(`📊 R307 storage: ${storedIds.length}/1000 slots used`);
+            
+            return {
+                storedIds,
+                nextAvailableId: nextId,
+                storageUsed: storedIds.length,
+                storageCapacity: 1000
+            };
+            
+        } catch (error) {
+            console.error('❌ Error processing storage info:', error);
+            throw error;
+        }
+    };
+    
+    // Verify enrollment completed with expected ID
+    const verifyEnrollmentId = async (reportedId) => {
+        try {
+            const expectedId = enrollmentTargetId;
+            if (!expectedId) {
+                console.warn('⚠️ No target ID set for verification');
+                return true; // Skip verification if no target set
+            }
+            
+            console.log(`🔍 Verifying enrollment: Expected ID ${expectedId}, Reported ID ${reportedId}`);
+            
+            if (parseInt(reportedId, 10) !== expectedId) {
+                console.error(`❌ ID Mismatch! Expected: ${expectedId}, Got: ${reportedId}`);
+                
+                // Increment verification attempts
+                const attempts = verificationAttempts + 1;
+                setVerificationAttempts(attempts);
+                
+                if (attempts >= 3) {
+                    throw new Error(`Critical: R307 assigned wrong ID ${reportedId} instead of ${expectedId} after ${attempts} attempts`);
+                }
+                
+                // Try to delete the wrongly assigned ID and retry
+                console.log(`🔄 Attempting to fix ID mismatch (attempt ${attempts}/3)`);
+                setRegisterStatus(`ID mismatch detected. Fixing... (${attempts}/3)`);
+                
+                // Delete the wrong ID
+                await fingerprintBLERef.current.sendCommand(`DELETE_ID:${reportedId}`);
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                // Re-check storage and retry enrollment
+                await checkModuleStorageAndGetNextId();
+                return false; // Indicate retry needed
+            }
+            
+            console.log('✅ Enrollment ID verification passed');
+            setVerificationAttempts(0); // Reset on success
+            return true;
+            
+        } catch (error) {
+            console.error('❌ Error verifying enrollment ID:', error);
+            throw error;
+        }
+    };
+    
     // Check and use existing ESP32 BLE connection from global window object
     const checkExistingBLEConnection = () => {
         if (window.fingerprintBLEInstance && window.fingerprintBLEInstance.getConnectionStatus() && !fingerprintBLERef.current) {
@@ -233,9 +408,41 @@ function PinSection() {
             line = line.trim();
             if (line) {
                 console.log('Registration BLE data:', line);
+                
+                // Handle storage information response
+                if (line.startsWith('IDS:')) {
+                    // This is handled by checkModuleStorageAndGetNextId
+                    continue;
+                }
+                
                 // Registration steps and status (show only one at a time)
                 if (line.includes('Waiting for valid finger to enroll as')) {
-                    setRegisterStatus("Place your finger on the scanner");
+                    // Extract the ID that the module is trying to assign
+                    const idMatch = line.match(/enroll as #(\d+)/);
+                    if (idMatch) {
+                        const assignedId = parseInt(idMatch[1], 10);
+                        console.log(`📍 R307 wants to assign ID: ${assignedId}`);
+                        console.log(`📍 Expected ID: ${enrollmentTargetId}`);
+                        
+                        if (enrollmentTargetId && assignedId !== enrollmentTargetId) {
+                            console.warn(`⚠️ ID Mismatch during enrollment setup! Expected: ${enrollmentTargetId}, Module assigned: ${assignedId}`);
+                            setRegisterStatus(`ID conflict detected. Rechecking storage...`);
+                            
+                            // Re-check storage to ensure consistency
+                            try {
+                                await checkModuleStorageAndGetNextId();
+                                setRegisterStatus("Storage rechecked. Place your finger on the scanner");
+                            } catch (error) {
+                                setRegisterStatus("❌ Error rechecking storage: " + error.message);
+                                setScanning(false);
+                                return;
+                            }
+                        } else {
+                            setRegisterStatus("Place your finger on the scanner");
+                        }
+                    } else {
+                        setRegisterStatus("Place your finger on the scanner");
+                    }
                     setRegisterSteps([line]);
                 } else if (line.includes('Image taken')) {
                     setRegisterStatus("Image captured successfully");
@@ -266,71 +473,107 @@ function PinSection() {
                     setRegisterSteps([line]);
                 }
                 
-                // Always log the message
+                // Handle registration completion with verification
                 if (line.includes('ThumbID Registered')) {
                     console.log("Registration completed:", line);
-                    setRegisterStatus("✅ Registration completed successfully!");
-                    setScanning(false);
                     
-                    // Extract thumbID and save to database
-                    const match = line.match(/ThumbID Registered: (FPU\d{7})/);
-                    // Check both current user state and stored user data
-                    const currentUser = user || window.currentRegistrationUser;
+                    // Extract thumbID and the internal ID
+                    const thumbIdMatch = line.match(/ThumbID Registered: (FPU\d{7})/);
+                    const internalIdMatch = line.match(/ThumbID Registered: FPU\d{3}(\d{4})/);
                     
-                    if (match && currentUser) {
-                        const thumbId = match[1];
+                    if (thumbIdMatch && internalIdMatch) {
+                        const thumbId = thumbIdMatch[1];
+                        const internalId = parseInt(internalIdMatch[1], 10);
+                        
                         console.log("Extracted thumbId:", thumbId);
-                        console.log("User ID (empId):", currentUser.id);
-                        console.log("Organization ID:", window.userOrganizationId);
+                        console.log("Extracted internal ID:", internalId);
                         
                         try {
-                            const baseURL = import.meta.env.VITE_BASE_URL || '';
-                            const response = await fetch(`${baseURL}/user-finger-print-register-backend/register`, {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                },
-                                body: JSON.stringify({
-                                    empId: currentUser.id,
-                                    thumbid: thumbId
-                                })
-                            });
+                            // Verify the assigned ID matches our expectation
+                            const verificationPassed = await verifyEnrollmentId(internalId);
                             
-                            if (response.ok) {
-                                const result = await response.json();
-                                console.log("Fingerprint saved to database successfully:", result);
-                                setRegisterStatus("✅ Fingerprint registered and saved!");
+                            if (!verificationPassed) {
+                                console.log("🔄 Verification failed, retrying enrollment...");
+                                setRegisterStatus("ID mismatch detected. Retrying...");
                                 
-                                // Refresh user fingerprints to update the button states
-                                await fetchUserFingerprints(currentUser.id);
-                                
-                                // Show success alert and return to fingerprint options
-                                setTimeout(() => {
-                                    alert("Fingerprint registered successfully!");
-                                    setShowFingerprintSection(false);
-                                    setScanning(false);
-                                    setRegisterStatus("Tap here and then place your finger on the scanner");
-                                    setRegisterSteps([]);
-                                    
-                                    // Dispatch event to inform other components
-                                    window.dispatchEvent(new CustomEvent('fingerprintRegistrationComplete'));
-                                }, 1000);
-                            } else {
-                                const errorData = await response.json().catch(() => ({}));
-                                console.error("Failed to save fingerprint to database:", errorData);
-                                setRegisterStatus("❌ Registration failed: " + (errorData.message || 'Database error'));
+                                // Restart enrollment process
+                                setTimeout(async () => {
+                                    try {
+                                        await startEnroll();
+                                    } catch (error) {
+                                        console.error("Error retrying enrollment:", error);
+                                        setRegisterStatus("❌ Retry failed: " + error.message);
+                                        setScanning(false);
+                                    }
+                                }, 2000);
+                                return;
                             }
-                        } catch (dbError) {
-                            console.error("Database save error:", dbError);
-                            setRegisterStatus("❌ Registration failed. Database error.");
+                            
+                            // Verification passed, proceed with database save
+                            setRegisterStatus("✅ Registration verified! Saving...");
+                            
+                            // Check both current user state and stored user data
+                            const currentUser = user || window.currentRegistrationUser;
+                            
+                            if (currentUser) {
+                                console.log("User ID (empId):", currentUser.id);
+                                console.log("Organization ID:", window.userOrganizationId);
+                                
+                                const baseURL = import.meta.env.VITE_BASE_URL || '';
+                                const response = await fetch(`${baseURL}/user-finger-print-register-backend/register`, {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                    },
+                                    body: JSON.stringify({
+                                        empId: currentUser.id,
+                                        thumbid: thumbId
+                                    })
+                                });
+                                
+                                if (response.ok) {
+                                    const result = await response.json();
+                                    console.log("Fingerprint saved to database successfully:", result);
+                                    setRegisterStatus("✅ Fingerprint registered and saved!");
+                                    
+                                    // Update module storage tracking
+                                    const newStoredIds = [...moduleStoredIds, internalId].sort((a, b) => a - b);
+                                    setModuleStoredIds(newStoredIds);
+                                    
+                                    // Refresh user fingerprints to update the button states
+                                    await fetchUserFingerprints(currentUser.id);
+                                    
+                                    // Show success alert and return to fingerprint options
+                                    setTimeout(() => {
+                                        alert("Fingerprint registered successfully!");
+                                        setShowFingerprintSection(false);
+                                        setScanning(false);
+                                        setRegisterStatus("Tap here and then place your finger on the scanner");
+                                        setRegisterSteps([]);
+                                        setVerificationAttempts(0);
+                                        
+                                        // Dispatch event to inform other components
+                                        window.dispatchEvent(new CustomEvent('fingerprintRegistrationComplete'));
+                                    }, 1000);
+                                } else {
+                                    const errorData = await response.json().catch(() => ({}));
+                                    console.error("Failed to save fingerprint to database:", errorData);
+                                    setRegisterStatus("❌ Registration failed: " + (errorData.message || 'Database error'));
+                                }
+                            } else {
+                                console.error("Missing user data");
+                                setRegisterStatus("❌ Registration failed. Missing user data.");
+                            }
+                            
+                        } catch (verificationError) {
+                            console.error("Verification error:", verificationError);
+                            setRegisterStatus("❌ Verification failed: " + verificationError.message);
+                            setScanning(false);
                         }
+                        
                     } else {
-                        console.error("Missing thumbId match or user data");
-                        console.log("Line content:", line);
-                        console.log("Current user state:", user);
-                        console.log("Stored user data:", window.currentRegistrationUser);
-                        console.log("Regex match result:", line.match(/ThumbID Registered: (FPU\d{7})/));
-                        setRegisterStatus("❌ Registration failed. Missing data.");
+                        console.error("Failed to extract thumbId or internal ID from:", line);
+                        setRegisterStatus("❌ Registration failed. Invalid response format.");
                     }
                 }
             }
@@ -353,6 +596,29 @@ function PinSection() {
             console.error('BLE command error:', error);
         }
     };
+
+    // Debug function to log current state
+    const logCurrentState = () => {
+        console.log('📊 Current Registration State:');
+        console.log('  🔗 BLE Connected:', bleConnected);
+        console.log('  👤 User:', user?.name || 'None');
+        console.log('  🏷️ Unit Name:', window.fingerprintUnitName || 'Unknown');
+        console.log('  📦 Stored IDs in R307:', moduleStoredIds);
+        console.log('  🎯 Next Available ID:', nextAvailableId);
+        console.log('  🎪 Target Enrollment ID:', enrollmentTargetId);
+        console.log('  🔄 Verification Attempts:', verificationAttempts);
+        console.log('  📊 Registered Fingers on Unit:', registeredFingersOnCurrentUnit);
+        console.log('  📝 Current Status:', registerStatus);
+        console.log('  ⚡ Scanning:', scanning);
+    };
+
+    // Make debug function available globally for easier debugging
+    React.useEffect(() => {
+        window.debugFingerprintRegistration = logCurrentState;
+        return () => {
+            delete window.debugFingerprintRegistration;
+        };
+    }, [bleConnected, user, moduleStoredIds, nextAvailableId, enrollmentTargetId, verificationAttempts, registeredFingersOnCurrentUnit, registerStatus, scanning]);
 
     // Process incoming serial messages
     const processSerialMessage = async (data) => {
@@ -429,21 +695,58 @@ function PinSection() {
 
     // Start registration process
     const startEnroll = async () => {
-        // Check for existing connection first
-        if (checkExistingBLEConnection()) {
-            setRegisterStatus('Using existing BLE connection...');
+        try {
+            // Check for existing connection first
+            if (checkExistingBLEConnection()) {
+                setRegisterStatus('Using existing BLE connection...');
+            } else {
+                setRegisterStatus('Connecting to ESP32 via BLE...');
+                setRegisterSteps([]);
+                await connectESP32BLE();
+            }
+            
             setScanning(true);
-            setRegisterStatus('Starting enrollment...');
-            setRegisterSteps(['Starting enrollment...']);
-            await sendBLECommand('ENROLL');
-        } else {
-            setRegisterStatus('Connecting to ESP32 via BLE...');
-            setRegisterSteps([]);
-            await connectESP32BLE();
-            setScanning(true);
-            setRegisterStatus('Starting enrollment...');
-            setRegisterSteps(['Starting enrollment...']);
-            await sendBLECommand('ENROLL');
+            setRegisterStatus('Preparing for enrollment...');
+            setRegisterSteps(['Preparing for enrollment...']);
+            
+            // First, check R307 storage and determine next available ID
+            console.log('🔍 Checking R307 storage before enrollment...');
+            setRegisterStatus('Checking fingerprint storage...');
+            
+            try {
+                const storageInfo = await checkModuleStorageAndGetNextId();
+                console.log(`✅ Storage check complete. Next ID: ${storageInfo.nextAvailableId}`);
+                console.log(`📊 Storage usage: ${storageInfo.storageUsed}/${storageInfo.storageCapacity}`);
+                
+                // Log current state for debugging
+                logCurrentState();
+                
+                // Update status with storage info
+                setRegisterStatus(`Ready to enroll (ID ${storageInfo.nextAvailableId}, ${storageInfo.storageUsed}/${storageInfo.storageCapacity} used)`);
+                
+                // Brief delay to show storage info
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                // Now start enrollment
+                setRegisterStatus('Starting enrollment...');
+                setRegisterSteps(['Starting enrollment...']);
+                await sendBLECommand('ENROLL');
+                
+                console.log(`✅ Enrollment started. Expected ID: ${enrollmentTargetId}`);
+                
+            } catch (storageError) {
+                console.error('❌ Error checking storage:', storageError);
+                logCurrentState(); // Log state on error too
+                setRegisterStatus('❌ Error checking storage: ' + storageError.message);
+                setScanning(false);
+                throw storageError;
+            }
+            
+        } catch (error) {
+            console.error('❌ Error starting enrollment:', error);
+            setRegisterStatus('❌ Error starting enrollment: ' + error.message);
+            setScanning(false);
+            throw error;
         }
     };
 
@@ -506,8 +809,22 @@ function PinSection() {
             // Clear organization data when component unmounts
             window.userOrganizationId = null;
             window.currentRegistrationUser = null;
+            
+            // Reset verification state
+            setModuleStoredIds([]);
+            setNextAvailableId(null);
+            setEnrollmentTargetId(null);
+            setVerificationAttempts(0);
         };
     }, []);
+
+    // Reset verification state when user changes
+    React.useEffect(() => {
+        setModuleStoredIds([]);
+        setNextAvailableId(null);
+        setEnrollmentTargetId(null);
+        setVerificationAttempts(0);
+    }, [user?.id]);
 
     // Only allow moving forward if user is found and no error
     if (pin.length === 6 && user && !error) {
@@ -543,7 +860,15 @@ function PinSection() {
                         onClick={() => {
                             if (!scanning) {
                                 if (bleConnected) {
-                                    startEnroll();
+                                    // Reset verification state before starting new enrollment
+                                    setVerificationAttempts(0);
+                                    setRegisterSteps([]);
+                                    
+                                    startEnroll().catch(error => {
+                                        console.error('Error starting enrollment:', error);
+                                        setRegisterStatus('❌ Error starting enrollment: ' + error.message);
+                                        setScanning(false);
+                                    });
                                 } else {
                                     setRegisterStatus('Please connect to fingerprint device first');
                                     setTimeout(() => setRegisterStatus('Please place your finger on the scanner'), 2000);
@@ -609,6 +934,16 @@ function PinSection() {
                         {bleConnected && window.fingerprintUnitName && (
                             <div style={{ fontSize: '12px', color: '#333', fontWeight: 'normal', marginTop: '5px' }}>
                                 Unit: {window.fingerprintUnitName} | Registered fingers: {registeredFingersOnCurrentUnit}/2
+                                {moduleStoredIds.length > 0 && (
+                                    <span style={{ marginLeft: '10px', color: '#666' }}>
+                                        (R307: {moduleStoredIds.length} stored)
+                                    </span>
+                                )}
+                                {nextAvailableId && (
+                                    <span style={{ marginLeft: '10px', color: '#2196F3' }}>
+                                        Next ID: {nextAvailableId}
+                                    </span>
+                                )}
                             </div>
                         )}
                     </div>
