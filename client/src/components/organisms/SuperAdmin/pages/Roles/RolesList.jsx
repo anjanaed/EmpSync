@@ -19,6 +19,7 @@ const RolesList = ({ data, onAddNew, onUpdate, onDelete, className, authData}) =
   const [editingUser, setEditingUser] = useState(null);
 
   const { superAuthData } = useAuth();
+  const { confirm } = Modal;
 
   const urL = import.meta.env.VITE_BASE_URL;
   const auth0Url = import.meta.env.VITE_AUTH0_URL;
@@ -155,26 +156,43 @@ const RolesList = ({ data, onAddNew, onUpdate, onDelete, className, authData}) =
     localStorage.setItem('orgid', orgId);
   };
 
-  const handleDelete = async (id, email) => {
-    setLoading(true);
-    try {
-      await axios.delete(`${urL}/super-admin/users/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      await axios.post(`${urL}/superadmin/delete`, { email: email }, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      message.success("User Removed Successfully!");
-      fetchOrgUsers(); // <-- Fetch users after deleting
-    } catch (err) {
-      console.log(err);
-      message.error("Something went Wrong!");
-    }
-    setLoading(false);
+const handleDelete = (id, email) => {
+    confirm({
+      title: 'Are you sure you want to delete this user?',
+      content: `This will permanently delete the user with email "${email}" and cannot be undone.`,
+      okText: 'Yes, Delete',
+      okType: 'danger',
+      cancelText: 'Cancel',
+      className: styles.customConfirm,
+      async onOk() {
+        setLoading(true);
+        try {
+          await axios.delete(`${urL}/super-admin/users/${id}`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          await axios.post(
+            `${urL}/auth/delete`,
+            { email },
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          message.success('User Removed Successfully!');
+          fetchOrgUsers(); // Refresh user list
+        } catch (err) {
+          console.log(err);
+          message.error('Something went wrong!');
+        }
+        setLoading(false);
+      },
+      onCancel() {
+        console.log('User deletion cancelled');
+      },
+    });
   };
 
   const handleEditClick = (user) => {
@@ -316,6 +334,7 @@ const RolesList = ({ data, onAddNew, onUpdate, onDelete, className, authData}) =
           form={form}
           layout="vertical"
           name="add_role_form"
+          disabled={loading}
         >
           <Form.Item
             label="Name"
@@ -380,7 +399,7 @@ const RolesList = ({ data, onAddNew, onUpdate, onDelete, className, authData}) =
           </Form.Item>
         </Form>
         <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginTop: 12 }}>
-          <Button type="primary" onClick={handleAdd} className={styles.submitButton}>
+          <Button type="primary" onClick={handleAdd} loading={loading} className={styles.submitButton}>
             Add
           </Button>
           <Button onClick={handleCancel} className={styles.cancelButton}>
