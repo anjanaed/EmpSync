@@ -6,8 +6,9 @@ import { Table, ConfigProvider, Modal, Button, Popconfirm, Space } from "antd";
 import styles from "./FingerPrints.module.css";
 import axios from "axios";
 import { useAuth } from "../../../../contexts/AuthContext.jsx";
+import { useTheme } from "../../../../contexts/ThemeContext.jsx";
 
-const customTheme = {
+const getCustomTheme = () => ({
   components: {
     Table: {
       headerBg: "#960000",
@@ -19,7 +20,28 @@ const customTheme = {
       fontFamily: '"Figtree", sans-serif',
     },
   },
-};
+});
+
+const getDarkTheme = () => ({
+  components: {
+    Table: {
+      fontSize: 12,
+      cellPaddingBlock: 12,
+      fontFamily: '"Figtree", sans-serif',
+      colorBgContainer: "#2a2a2a",
+      colorText: "#ffffff",
+      headerBg: "#232323",
+      headerColor: "#ffffff",
+      rowHoverBg: "#000000",
+    },
+    Pagination: {
+      colorBgContainer: "#303030",
+      colorText: "#ffffff",
+      colorBorder: "#404040",
+      itemActiveBg: "#404040",
+    },
+  },
+});
 
 const FingerPrintsContent = () => {
   const [regeneratingId, setRegeneratingId] = useState(null);
@@ -33,6 +55,7 @@ const FingerPrintsContent = () => {
   const [searchValue, setSearchValue] = useState("");
   const [searchError, setSearchError] = useState("");
   const { authData } = useAuth();
+  const { theme } = useTheme();
 
   // Fetch fingerprint device usage
   useEffect(() => {
@@ -166,7 +189,15 @@ const FingerPrintsContent = () => {
       align: "center",
       ellipsis: true,
       render: (status) => (
-        <span className={status === "Registered" ? styles.registered : styles.pending}>{status}</span>
+        <span
+          className={
+            status === "Registered"
+              ? `${styles.registered} ${theme === "dark" ? styles.registeredDark : ""}`
+              : `${styles.pending} ${theme === "dark" ? styles.pendingDark : ""}`
+          }
+        >
+          {status}
+        </span>
       ),
     },
     {
@@ -266,7 +297,13 @@ const FingerPrintsContent = () => {
         <div className={styles.container}>
           <h3 className={styles.unitsTitle}>User Fingerprint Details</h3>
           {/* Search Bar for Employee ID or Name */}
-          <div className={styles.searchBarRow}>
+          <div
+            className={
+              theme === "dark"
+                ? `${styles.searchBarRow} ${styles.searchBarRowDark}`
+                : styles.searchBarRow
+            }
+          >
             <input
               type="text"
               placeholder="Search by Employee ID or Name..."
@@ -275,7 +312,11 @@ const FingerPrintsContent = () => {
                 setSearchValue(e.target.value);
                 setSearchError("");
               }}
-              className={styles.searchInput}
+              className={
+                theme === "dark"
+                  ? `${styles.searchInput} ${styles.searchInputDark}`
+                  : styles.searchInput
+              }
             />
             <Button
               type="default"
@@ -303,7 +344,7 @@ const FingerPrintsContent = () => {
               <Button type="link" className={styles.clearBtn} onClick={() => setSearchValue("")}>Clear</Button>
             )}
           </div>
-          <ConfigProvider theme={customTheme}>
+          <ConfigProvider theme={theme === "dark" ? getDarkTheme() : getCustomTheme()}>
             <Table
               columns={columns}
               dataSource={
@@ -326,6 +367,11 @@ const FingerPrintsContent = () => {
                 showTotal: (total, range) => `${range[0]}–${range[1]} of ${total} items`,
                 showSizeChanger: false,
               }}
+              rowClassName={(record, index) =>
+                theme === "dark"
+                  ? `${styles.customTableRowDark} ${index % 2 === 0 ? styles.evenRowDark : styles.oddRowDark}`
+                  : `${styles.customTableRow} ${index % 2 === 0 ? styles.evenRow : styles.oddRow}`
+              }
             />
           </ConfigProvider>
           <Modal
