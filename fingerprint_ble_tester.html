@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ESP32 BLE Fingerprint Unit Tester</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            min-height: 100vh;
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 10px;
+        }
+        
+        .section {
+            background: white;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border-left: 4px solid #667eea;
+        }
+        
+        .section h3 {
+            margin-top: 0;
+            color: #667eea;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 10px;
+        }
+        
+        button {
+            padding: 12px 24px;
+            margin: 8px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+        
+        button:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .status-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #28a745;
+        }
+        
+        .status-card.disconnected {
+            border-left-color: #dc3545;
+        }
+        
+        .logs {
+            height: 300px;
+            overflow-y: auto;
+            background: #1a1a1a;
+            color: #00ff00;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            border: 2px solid #333;
+        }
+        
+        .log-entry {
+            margin: 5px 0;
+            padding: 3px 0;
+        }
+        
+        .log-entry.error {
+            color: #ff6b6b;
+        }
+        
+        .log-entry.success {
+            color: #51cf66;
+        }
+        
+        .log-entry.info {
+            color: #74c0fc;
+        }
+        
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+        
+        .input-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 10px 0;
+        }
+        
+        input[type="number"] {
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            width: 100px;
+        }
+        
+        .fingerprint-animation {
+            width: 100px;
+            height: 100px;
+            margin: 20px auto;
+            border: 3px solid #667eea;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.7; }
+            50% { transform: scale(1.1); opacity: 1; }
+        }
+        
+        .alert {
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        
+        .alert.warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        
+        .alert.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .alert.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .device-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        .device-info-item {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        
+        .device-info-item strong {
+            display: block;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔐 ESP32 BLE Fingerprint Unit Tester</h1>
+            <p>Advanced testing interface for R307 fingerprint sensor with BLE connectivity</p>
+            <div id="platformInfo" class="alert warning">
+                📱 Checking device compatibility...
+            </div>
+        </div>
+
+        <div class="section">
+            <h3>📡 Connection Status</h3>
+            <div class="status-grid">
+                <div class="status-card" id="connectionCard">
+                    <strong>Connection</strong>
+                    <div id="connectionStatus">Disconnected</div>
+                </div>
+                <div class="status-card" id="deviceCard">
+                    <strong>Device</strong>
+                    <div id="deviceName">-</div>
+                </div>
+                <div class="status-card" id="unitCard">
+                    <strong>Unit Name</strong>
+                    <div id="unitName">-</div>
+                </div>
+                <div class="status-card" id="statusCard">
+                    <strong>Status</strong>
+                    <div id="currentStatus">Ready</div>
+                </div>
+            </div>
+            
+            <div class="button-group">
+                <button id="connectButton">📶 Connect to ESP32</button>
+                <button id="disconnectButton" disabled>❌ Disconnect</button>
+                <button id="refreshButton" disabled>🔄 Refresh Status</button>
+            </div>
+        </div>
+
+        <div class="section">
+            <h3>👆 Fingerprint Operations</h3>
+            <div class="button-group">
+                <button id="scanButton" disabled>🔍 Start Scanning</button>
+                <button id="enrollButton" disabled>📝 Register New Fingerprint</button>
+                <button id="getIdsButton" disabled>📋 Get All IDs</button>
+                <button id="stopScanButton" disabled>⏹️ Stop Scanning</button>
+            </div>
+            
+            <div id="fingerprintAnimation" class="fingerprint-animation" style="display: none;">
+                👆
+            </div>
+            
+            <div id="operationStatus" class="alert" style="display: none;">
+                Ready for fingerprint operations
+            </div>
+        </div>
+
+        <div class="section">
+            <h3>🗑️ Management Operations</h3>
+            <div class="alert warning">
+                ⚠️ Warning: Delete operations are permanent and cannot be undone!
+            </div>
+            
+            <div class="input-group">
+                <label for="deleteIdInput">Delete specific ID:</label>
+                <input type="number" id="deleteIdInput" placeholder="Enter ID" min="1" max="1000" disabled>
+                <button id="deleteIdButton" disabled>❌ Delete ID</button>
+            </div>
+            
+            <div class="button-group">
+                <button id="deleteAllButton" disabled style="background: linear-gradient(45deg, #dc3545, #c82333);">
+                    🗑️ Delete All Fingerprints
+                </button>
+            </div>
+        </div>
+
+        <div class="section">
+            <h3>📊 Device Information</h3>
+            <div class="device-info">
+                <div class="device-info-item">
+                    <strong>Template Count</strong>
+                    <div id="templateCount">-</div>
+                </div>
+                <div class="device-info-item">
+                    <strong>Capacity</strong>
+                    <div id="deviceCapacity">1000</div>
+                </div>
+                <div class="device-info-item">
+                    <strong>Last Operation</strong>
+                    <div id="lastOperation">-</div>
+                </div>
+                <div class="device-info-item">
+                    <strong>Registered IDs</strong>
+                    <div id="registeredIds">-</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h3>📝 Communication Logs</h3>
+            <div class="button-group">
+                <button id="clearLogsButton">🧹 Clear Logs</button>
+                <button id="exportLogsButton">💾 Export Logs</button>
+            </div>
+            <div class="logs" id="logOutput">
+                <div class="log-entry info">[System] ESP32 BLE Fingerprint Tester initialized</div>
+                <div class="log-entry info">[System] Ready to connect to ESP32_Fingerprint_BLE device</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // BLE Configuration - matching your ESP32 Arduino code
+        const BLE_CONFIG = {
+            deviceName: 'ESP32_Fingerprint_BLE',
+            serviceUUID: '12345678-1234-1234-1234-123456789abc',
+            characteristicUUID: '87654321-4321-4321-4321-cba987654321'
+        };
+
+        // Global variables
+        let device = null;
+        let server = null;
+        let service = null;
+        let characteristic = null;
+        let isConnected = false;
+        let isScanning = false;
+        let scanningInterval = null;
+
+        // UI Elements
+        const elements = {
+            // Connection
+            connectButton: document.getElementById('connectButton'),
+            disconnectButton: document.getElementById('disconnectButton'),
+            refreshButton: document.getElementById('refreshButton'),
+            connectionStatus: document.getElementById('connectionStatus'),
+            deviceName: document.getElementById('deviceName'),
+            unitName: document.getElementById('unitName'),
+            currentStatus: document.getElementById('currentStatus'),
+            connectionCard: document.getElementById('connectionCard'),
+            deviceCard: document.getElementById('deviceCard'),
+            unitCard: document.getElementById('unitCard'),
+            statusCard: document.getElementById('statusCard'),
+            
+            // Operations
+            scanButton: document.getElementById('scanButton'),
+            enrollButton: document.getElementById('enrollButton'),
+            getIdsButton: document.getElementById('getIdsButton'),
+            stopScanButton: document.getElementById('stopScanButton'),
+            fingerprintAnimation: document.getElementById('fingerprintAnimation'),
+            operationStatus: document.getElementById('operationStatus'),
+            
+            // Management
+            deleteIdInput: document.getElementById('deleteIdInput'),
+            deleteIdButton: document.getElementById('deleteIdButton'),
+            deleteAllButton: document.getElementById('deleteAllButton'),
+            
+            // Info
+            templateCount: document.getElementById('templateCount'),
+            deviceCapacity: document.getElementById('deviceCapacity'),
+            lastOperation: document.getElementById('lastOperation'),
+            registeredIds: document.getElementById('registeredIds'),
+            
+            // Logs
+            logOutput: document.getElementById('logOutput'),
+            clearLogsButton: document.getElementById('clearLogsButton'),
+            exportLogsButton: document.getElementById('exportLogsButton'),
+            platformInfo: document.getElementById('platformInfo')
+        };
+
+        // Logging functions
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.className = `log-entry ${type}`;
+            logEntry.textContent = `[${timestamp}] ${message}`;
+            elements.logOutput.appendChild(logEntry);
+            elements.logOutput.scrollTop = elements.logOutput.scrollHeight;
+            
+            // Also log to browser console
+            console.log(`[${type.toUpperCase()}] ${message}`);
+        }
+
+        function logError(message) {
+            log(message, 'error');
+        }
+
+        function logSuccess(message) {
+            log(message, 'success');
+        }
+
+        // Platform detection
+        function checkPlatform() {
+            const userAgent = navigator.userAgent;
+            const isAndroid = /Android/i.test(userAgent);
+            const isChrome = /Chrome/i.test(userAgent);
+            const isMobile = /Mobi|Android/i.test(userAgent);
+            
+            let message = '';
+            let className = 'warning';
+            
+            if (!navigator.bluetooth) {
+                message = '❌ Web Bluetooth API not supported in this browser';
+                className = 'error';
+            } else if (isAndroid && isChrome) {
+                message = '✅ Perfect! Android Chrome detected - Full BLE support available';
+                className = 'success';
+            } else if (isAndroid) {
+                message = '⚠️ Android detected but not Chrome - Some features may not work';
+                className = 'warning';
+            } else if (isMobile) {
+                message = '⚠️ Mobile device detected - BLE support may be limited';
+                className = 'warning';
+            } else {
+                message = '💻 Desktop browser detected - BLE features available';
+                className = 'success';
+            }
+            
+            elements.platformInfo.textContent = message;
+            elements.platformInfo.className = `alert ${className}`;
+            
+            log(`Platform: ${userAgent}`, 'info');
+            log(message, className === 'error' ? 'error' : 'info');
+        }
+
+        // Update UI based on connection status
+        function updateUI() {
+            const connected = isConnected;
+            
+            // Update connection status
+            elements.connectionStatus.textContent = connected ? 'Connected' : 'Disconnected';
+            elements.connectionCard.className = `status-card ${connected ? '' : 'disconnected'}`;
+            
+            // Update buttons
+            elements.connectButton.disabled = connected;
+            elements.disconnectButton.disabled = !connected;
+            elements.refreshButton.disabled = !connected;
+            
+            // Fingerprint operations
+            elements.scanButton.disabled = !connected;
+            elements.enrollButton.disabled = !connected;
+            elements.getIdsButton.disabled = !connected;
+            elements.stopScanButton.disabled = !connected || !isScanning;
+            
+            // Management operations
+            elements.deleteIdInput.disabled = !connected;
+            elements.deleteIdButton.disabled = !connected;
+            elements.deleteAllButton.disabled = !connected;
+            
+            // Update status display
+            if (!connected) {
+                elements.deviceName.textContent = '-';
+                elements.unitName.textContent = '-';
+                elements.currentStatus.textContent = 'Disconnected';
+                hideOperationStatus();
+                hideAnimation();
+            }
+        }
+
+        // Show/hide operation status
+        function showOperationStatus(message, type = 'info') {
+            elements.operationStatus.textContent = message;
+            elements.operationStatus.className = `alert ${type}`;
+            elements.operationStatus.style.display = 'block';
+        }
+
+        function hideOperationStatus() {
+            elements.operationStatus.style.display = 'none';
+        }
+
+        // Show/hide fingerprint animation
+        function showAnimation() {
+            elements.fingerprintAnimation.style.display = 'block';
+        }
+
+        function hideAnimation() {
+            elements.fingerprintAnimation.style.display = 'none';
+        }
+
+        // BLE Communication functions
+        async function connectToDevice() {
+            try {
+                log('Starting BLE connection...', 'info');
+                showOperationStatus('Connecting to ESP32...', 'info');
+                
+                // Request device
+                device = await navigator.bluetooth.requestDevice({
+                    filters: [{ name: BLE_CONFIG.deviceName }],
+                    optionalServices: [BLE_CONFIG.serviceUUID]
+                });
+                
+                log(`Device found: ${device.name}`, 'success');
+                elements.deviceName.textContent = device.name;
+                
+                // Connect to GATT server
+                server = await device.gatt.connect();
+                log('Connected to GATT server', 'success');
+                
+                // Get service
+                service = await server.getPrimaryService(BLE_CONFIG.serviceUUID);
+                log('Service acquired', 'success');
+                
+                // Get characteristic
+                characteristic = await service.getCharacteristic(BLE_CONFIG.characteristicUUID);
+                log('Characteristic acquired', 'success');
+                
+                // Start notifications
+                await characteristic.startNotifications();
+                characteristic.addEventListener('characteristicvaluechanged', handleNotification);
+                log('Notifications started', 'success');
+                
+                // Set connection status
+                isConnected = true;
+                updateUI();
+                
+                logSuccess('✅ Successfully connected to ESP32 fingerprint unit!');
+                showOperationStatus('Connected successfully! Ready for operations.', 'success');
+                
+                // Request unit name and IDs
+                setTimeout(() => {
+                    sendCommand('UNIT_NAME');
+                    setTimeout(() => sendCommand('GET_IDS'), 500);
+                }, 1000);
+                
+                // Handle disconnection
+                device.addEventListener('gattserverdisconnected', handleDisconnection);
+                
+            } catch (error) {
+                logError(`Connection failed: ${error.message}`);
+                showOperationStatus(`Connection failed: ${error.message}`, 'error');
+                isConnected = false;
+                updateUI();
+            }
+        }
+
+        async function disconnectFromDevice() {
+            try {
+                if (device && device.gatt.connected) {
+                    await device.gatt.disconnect();
+                    log('Manually disconnected from device', 'info');
+                }
+            } catch (error) {
+                logError(`Disconnection error: ${error.message}`);
+            }
+            
+            handleDisconnection();
+        }
+
+        function handleDisconnection() {
+            log('Device disconnected', 'info');
+            isConnected = false;
+            isScanning = false;
+            device = null;
+            server = null;
+            service = null;
+            characteristic = null;
+            
+            if (scanningInterval) {
+                clearInterval(scanningInterval);
+                scanningInterval = null;
+            }
+            
+            updateUI();
+            showOperationStatus('Device disconnected', 'warning');
+        }
+
+        async function sendCommand(command) {
+            if (!characteristic || !isConnected) {
+                logError('Not connected to device');
+                return false;
+            }
+            
+            try {
+                const encoder = new TextEncoder();
+                await characteristic.writeValue(encoder.encode(command));
+                log(`Command sent: ${command}`, 'info');
+                elements.lastOperation.textContent = command;
+                return true;
+            } catch (error) {
+                logError(`Failed to send command "${command}": ${error.message}`);
+                return false;
+            }
+        }
+
+        function handleNotification(event) {
+            const value = event.target.value;
+            const decoder = new TextDecoder('utf-8');
+            const message = decoder.decode(value).trim();
+            
+            if (!message) return;
+            
+            log(`Received: ${message}`, 'info');
+            
+            // Parse different types of messages
+            if (message.startsWith('UnitName:')) {
+                const unitName = message.substring(9).trim();
+                elements.unitName.textContent = unitName;
+                elements.currentStatus.textContent = 'Unit identified';
+                logSuccess(`Unit name: ${unitName}`);
+                
+            } else if (message.startsWith('IDS:')) {
+                const idsString = message.substring(4).trim();
+                const ids = idsString ? idsString.split(',') : [];
+                elements.registeredIds.textContent = ids.length > 0 ? idsString : 'None';
+                elements.templateCount.textContent = ids.length;
+                logSuccess(`Found ${ids.length} registered fingerprints: ${idsString || 'None'}`);
+                
+            } else if (message.includes('ThumbID:')) {
+                const match = message.match(/ThumbID: (FPU\d+)/);
+                if (match) {
+                    const thumbId = match[1];
+                    logSuccess(`✅ Fingerprint recognized: ${thumbId}`);
+                    showOperationStatus(`Fingerprint match found: ${thumbId}`, 'success');
+                    elements.currentStatus.textContent = `Match: ${thumbId}`;
+                    hideAnimation();
+                }
+                
+            } else if (message.includes('ThumbID Registered:')) {
+                const match = message.match(/ThumbID Registered: (FPU\d+)/);
+                if (match) {
+                    const thumbId = match[1];
+                    logSuccess(`✅ New fingerprint registered: ${thumbId}`);
+                    showOperationStatus(`Registration successful: ${thumbId}`, 'success');
+                    elements.currentStatus.textContent = `Registered: ${thumbId}`;
+                    hideAnimation();
+                    // Refresh IDs after registration
+                    setTimeout(() => sendCommand('GET_IDS'), 1000);
+                }
+                
+            } else if (message.includes('Waiting for valid finger')) {
+                showOperationStatus('Place your finger on the sensor...', 'info');
+                elements.currentStatus.textContent = 'Waiting for finger';
+                showAnimation();
+                
+            } else if (message.includes('Image taken')) {
+                showOperationStatus('Image captured, processing...', 'info');
+                elements.currentStatus.textContent = 'Image captured';
+                
+            } else if (message.includes('Remove finger')) {
+                showOperationStatus('Remove your finger and wait...', 'info');
+                elements.currentStatus.textContent = 'Remove finger';
+                hideAnimation();
+                
+            } else if (message.includes('Place same finger again')) {
+                showOperationStatus('Place the same finger again...', 'info');
+                elements.currentStatus.textContent = 'Place again';
+                showAnimation();
+                
+            } else if (message.includes('Prints matched')) {
+                showOperationStatus('Fingerprints matched! Saving...', 'success');
+                elements.currentStatus.textContent = 'Prints matched';
+                
+            } else if (message.includes('deleted')) {
+                if (message.includes('All fingerprints deleted')) {
+                    logSuccess('✅ All fingerprints deleted');
+                    showOperationStatus('All fingerprints deleted successfully', 'success');
+                    elements.templateCount.textContent = '0';
+                    elements.registeredIds.textContent = 'None';
+                } else {
+                    logSuccess(`✅ ${message}`);
+                    showOperationStatus(message, 'success');
+                    // Refresh IDs after deletion
+                    setTimeout(() => sendCommand('GET_IDS'), 1000);
+                }
+                elements.currentStatus.textContent = 'Deletion completed';
+                
+            } else if (message.includes('Switched to Scan mode')) {
+                elements.currentStatus.textContent = 'Scanning mode';
+                showOperationStatus('Scanning mode active - place finger to scan', 'info');
+                
+            } else if (message.includes('error') || message.includes('failed')) {
+                logError(message);
+                showOperationStatus(message, 'error');
+                elements.currentStatus.textContent = 'Error';
+                hideAnimation();
+                
+            } else {
+                // Generic status update
+                elements.currentStatus.textContent = message;
+                if (message.includes('Total templates:')) {
+                    const count = message.match(/\d+/);
+                    if (count) {
+                        elements.templateCount.textContent = count[0];
+                    }
+                }
+            }
+        }
+
+        // Operation functions
+        async function startScanning() {
+            if (await sendCommand('SCAN')) {
+                isScanning = true;
+                updateUI();
+                showOperationStatus('Scanning started - place finger on sensor', 'info');
+                showAnimation();
+                
+                // Auto-stop scanning after 30 seconds
+                setTimeout(() => {
+                    if (isScanning) {
+                        stopScanning();
+                    }
+                }, 30000);
+            }
+        }
+
+        async function stopScanning() {
+            isScanning = false;
+            updateUI();
+            hideAnimation();
+            showOperationStatus('Scanning stopped', 'info');
+            elements.currentStatus.textContent = 'Scan stopped';
+        }
+
+        async function startEnrollment() {
+            if (await sendCommand('ENROLL')) {
+                showOperationStatus('Enrollment started - follow the prompts', 'info');
+                showAnimation();
+            }
+        }
+
+        async function getIds() {
+            if (await sendCommand('GET_IDS')) {
+                showOperationStatus('Retrieving registered IDs...', 'info');
+            }
+        }
+
+        async function deleteSpecificId() {
+            const id = elements.deleteIdInput.value;
+            if (!id) {
+                logError('Please enter a valid ID number');
+                showOperationStatus('Please enter a valid ID number', 'error');
+                return;
+            }
+            
+            if (confirm(`Are you sure you want to delete fingerprint ID ${id}?`)) {
+                if (await sendCommand(`DELETE_ID:${id}`)) {
+                    showOperationStatus(`Deleting ID ${id}...`, 'info');
+                    elements.deleteIdInput.value = '';
+                }
+            }
+        }
+
+        async function deleteAllFingerprints() {
+            if (confirm('⚠️ WARNING: This will delete ALL registered fingerprints!\n\nThis action cannot be undone. Are you sure?')) {
+                if (await sendCommand('DELETE_ALL')) {
+                    showOperationStatus('Deleting all fingerprints...', 'warning');
+                }
+            }
+        }
+
+        function clearLogs() {
+            elements.logOutput.innerHTML = '';
+            log('Logs cleared', 'info');
+        }
+
+        function exportLogs() {
+            const logs = elements.logOutput.textContent;
+            const blob = new Blob([logs], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `fingerprint_logs_${new Date().toISOString().slice(0, 10)}.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+            log('Logs exported', 'info');
+        }
+
+        function refreshStatus() {
+            if (isConnected) {
+                sendCommand('UNIT_NAME');
+                setTimeout(() => sendCommand('GET_IDS'), 500);
+                showOperationStatus('Status refreshed', 'info');
+            }
+        }
+
+        // Event listeners
+        elements.connectButton.addEventListener('click', connectToDevice);
+        elements.disconnectButton.addEventListener('click', disconnectFromDevice);
+        elements.refreshButton.addEventListener('click', refreshStatus);
+        
+        elements.scanButton.addEventListener('click', startScanning);
+        elements.enrollButton.addEventListener('click', startEnrollment);
+        elements.getIdsButton.addEventListener('click', getIds);
+        elements.stopScanButton.addEventListener('click', stopScanning);
+        
+        elements.deleteIdButton.addEventListener('click', deleteSpecificId);
+        elements.deleteAllButton.addEventListener('click', deleteAllFingerprints);
+        
+        elements.clearLogsButton.addEventListener('click', clearLogs);
+        elements.exportLogsButton.addEventListener('click', exportLogsButton);
+        
+        elements.deleteIdInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                deleteSpecificId();
+            }
+        });
+
+        // Initialize
+        checkPlatform();
+        updateUI();
+        
+        // Check for Web Bluetooth support
+        if (!navigator.bluetooth) {
+            logError('Web Bluetooth API is not supported in this browser');
+            showOperationStatus('Web Bluetooth not supported - please use Chrome on Android or desktop', 'error');
+        } else {
+            log('Web Bluetooth API is available', 'success');
+        }
+    </script>
+</body>
+</html>

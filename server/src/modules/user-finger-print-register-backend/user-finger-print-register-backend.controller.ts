@@ -15,7 +15,7 @@ export class UserFingerPrintRegisterBackendController {
 
   /**
    * GET /user-finger-print-register-backend/user-by-passkey?passkey=1234
-   * Returns: { id, name } or 404 if not found
+   * Returns: { id, name, organizationId } or 404 if not found
    */
   @Get('user-by-passkey')
   async getUserByPasskey(@Query('passkey') passkey: string) {
@@ -36,6 +36,19 @@ export class UserFingerPrintRegisterBackendController {
    */
   @Post('fingerprint')
   async createFingerprint(@Body() body: { thumbid: string; empId: string }) {
+    if (!body.thumbid || !body.empId) {
+      throw new BadRequestException('thumbid and empId are required');
+    }
+    return this.userFingerPrintRegisterBackendService.createFingerprint(body.thumbid, body.empId);
+  }
+
+  /**
+   * POST /user-finger-print-register-backend/register
+   * Body: { thumbid: string, empId: string }
+   * Returns: created Fingerprint or error
+   */
+  @Post('register')
+  async registerFingerprint(@Body() body: { thumbid: string; empId: string }) {
     if (!body.thumbid || !body.empId) {
       throw new BadRequestException('thumbid and empId are required');
     }
