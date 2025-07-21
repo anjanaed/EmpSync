@@ -91,7 +91,7 @@ const Employees = () => {
         params: {
           search: searchValue || undefined,
           role: roleValue || undefined,
-          orgId: authData?.orgId, 
+          orgId: authData?.orgId,
         },
         headers: {
           Authorization: `Bearer ${token}`,
@@ -99,7 +99,7 @@ const Employees = () => {
       });
       const fetchedEmployee = response.data.map((emp) => ({
         key: emp.id,
-        no:emp.empNo,
+        no: emp.empNo,
         id: emp.id,
         name: emp.name,
         role: emp.role,
@@ -124,16 +124,20 @@ const Employees = () => {
   const handleDelete = async (id, email) => {
     setLoading(true);
     try {
-      await axios.delete(`${urL}/user/${id}`,{
+      await axios.delete(`${urL}/user/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-      await axios.post(`${urL}/auth/delete`, { email: email },{
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      await axios.post(
+        `${urL}/auth/delete`,
+        { email: email },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       fetchEmployee();
       success("User Removed Successfully!");
     } catch (err) {
@@ -152,7 +156,7 @@ const Employees = () => {
   }, [search, frole, debouncedFetch]);
 
   if (loading) {
-    return <Loading />;
+    return <Loading type={theme === "dark" ? "dark" : undefined} />;
   }
 
   const columns = [
@@ -211,34 +215,54 @@ const Employees = () => {
           <FiEdit
             onClick={() => openModal(record.id)}
             className={styles.icons}
-            color={theme === 'dark' ? "#ffffff" : "black"}
+            color={theme === "dark" ? "#ffffff" : "black"}
             size="15px"
           />
           <Popconfirm
             title={
-              <span className={`${styles.popconfirmTitle} ${theme === 'dark' ? styles.darkPopconfirmTitle : ''}`}>
+              <span
+                className={`${styles.popconfirmTitle} ${
+                  theme === "dark" ? styles.darkPopconfirmTitle : ""
+                }`}
+              >
                 Delete User {record.id}
               </span>
             }
             placement="bottom"
             onConfirm={() => handleDelete(record.id, record.email)}
             description={
-              <span className={`${styles.popconfirmDescription} ${theme === 'dark' ? styles.darkPopconfirmDescription : ''}`}>
+              <span
+                className={`${styles.popconfirmDescription} ${
+                  theme === "dark" ? styles.darkPopconfirmDescription : ""
+                }`}
+              >
                 Are You Sure to Delete
               </span>
             }
             okText={
-              <span className={`${styles.popconfirmButton} ${theme === 'dark' ? styles.darkPopconfirmButton : ''}`}>
+              <span
+                className={`${styles.popconfirmButton} ${
+                  theme === "dark" ? styles.darkPopconfirmButton : ""
+                }`}
+              >
                 Yes
               </span>
             }
             cancelText={
-              <span className={`${styles.popconfirmButton} ${theme === 'dark' ? styles.darkPopconfirmButton : ''}`}>
+              <span
+                className={`${styles.popconfirmButton} ${
+                  theme === "dark" ? styles.darkPopconfirmButton : ""
+                }`}
+              >
                 No
               </span>
             }
           >
-            <MdOutlineDeleteOutline color="red" className={styles.icons} size="17px" />
+            <MdOutlineDeleteOutline
+              color={theme === "dark" ? "white" : "red"}
+              className={styles.icons}
+              size="17px"
+            />{" "}
           </Popconfirm>
         </Space>
       ),
@@ -269,7 +293,7 @@ const Employees = () => {
         />
       </Modal>
 
-      <div className={`${styles.home} ${theme === 'dark' ? styles.dark : ''}`}>
+      <div className={`${styles.home} ${theme === "dark" ? styles.dark : ""}`}>
         <div className={styles.homeContent}>
           <div className={styles.homeHead}>
             <div className={styles.headLeft}>Registered Employee Details</div>
@@ -304,15 +328,21 @@ const Employees = () => {
               />
             </div>
           </div>
-          <ConfigProvider theme={theme === 'dark' ? getDarkTheme() : getCustomTheme()}>
+          <ConfigProvider
+            theme={theme === "dark" ? getDarkTheme() : getCustomTheme()}
+          >
             <div className={styles.contentBox}>
               <Table
                 columns={columns}
                 dataSource={employee}
-                rowClassName={(record, index) => 
-                  theme === 'dark' 
-                    ? `${styles.customTableRowDark} ${index % 2 === 0 ? styles.evenRowDark : styles.oddRowDark}`
-                    : `${styles.customTableRow} ${index % 2 === 0 ? styles.evenRow : styles.oddRow}`
+                rowClassName={(record, index) =>
+                  theme === "dark"
+                    ? `${styles.customTableRowDark} ${
+                        index % 2 === 0 ? styles.evenRowDark : styles.oddRowDark
+                      }`
+                    : `${styles.customTableRow} ${
+                        index % 2 === 0 ? styles.evenRow : styles.oddRow
+                      }`
                 }
                 pagination={{
                   position: ["bottomCenter"],
