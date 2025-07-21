@@ -32,56 +32,71 @@ export class MealTypeService {
   }
 
   // Helper method to check for duplicate meal types
-  private async checkDuplicateMealType(
-    name: string,
-    date: Date | string,
-    orgId?: string,
-    excludeId?: number
-  ) {
-    try {
-      const targetDate = new Date(date);
-      const dayStart = startOfDay(targetDate);
-      const dayEnd = endOfDay(targetDate);
-
-      const whereClause: any = {
-        name: {
-          equals: name,
-          mode: 'insensitive', // Case-insensitive comparison
-        },
-        orgId: orgId || undefined,
-        isDeleted: false,
-        OR: [
-          {
-            // Check for default meal types (they apply to all days)
-            isDefault: true,
-          },
-          {
-            // Check for meal types created for the specific date
-            date: {
-              gte: dayStart,
-              lte: dayEnd,
-            },
-          },
-        ],
-      };
-
-      // If we're updating, exclude the current record
-      if (excludeId) {
-        whereClause.id = {
-          not: excludeId,
-        };
-      }
-
-      const existingMealType = await this.databaseService.mealType.findFirst({
-        where: whereClause,
-      });
-
-      return existingMealType;
-    } catch (error) {
-      console.error('Error checking duplicate meal type:', error);
-      throw new BadRequestException('Failed to validate meal type uniqueness');
+  // Helper method to check for duplicate meal types
+private async checkDuplicateMealType(
+  name: string,
+  date: Date | string,
+  orgId?: string,
+  excludeId?: number
+) {
+  try {
+    const targetDate = new Date(date);
+    
+    // Add validation for invalid dates
+    if (isNaN(targetDate.getTime())) {
+      console.error('Invalid date provided to checkDuplicateMealType:', date);
+      throw new BadRequestException('Invalid date format');
     }
+
+    const dayStart = startOfDay(targetDate);
+    const dayEnd = endOfDay(targetDate);
+
+    const whereClause: any = {
+      name: {
+        equals: name,
+        mode: 'insensitive', // Case-insensitive comparison
+      },
+      isDeleted: false,
+      OR: [
+        {
+          // Check for default meal types (they apply to all days)
+          isDefault: true,
+          orgId: orgId || undefined,
+        },
+        {
+          // Check for meal types created for the specific date
+          date: {
+            gte: dayStart,
+            lte: dayEnd,
+          },
+          orgId: orgId || undefined,
+        },
+      ],
+    };
+
+    // If we're updating, exclude the current record
+    if (excludeId) {
+      whereClause.id = {
+        not: excludeId,
+      };
+    }
+
+    const existingMealType = await this.databaseService.mealType.findFirst({
+      where: whereClause,
+    });
+
+    return existingMealType;
+  } catch (error) {
+    console.error('Error checking duplicate meal type:', error);
+    
+    // Don't throw an error if it's just a database query with no results
+    if (error.code === 'P2025' || error.message?.includes('No records found')) {
+      return null;
+    }
+    
+    throw new BadRequestException('Failed to validate meal type uniqueness');
   }
+}
 
   // Get all meal types, excluding soft-deleted ones
   async findAll(orgId?: string) {
@@ -267,7 +282,7 @@ export class MealTypeService {
       });
 
       if (activeSchedules > 0) {
-        console.log(`Warning: Meal type ${id} (${mealType.name}) is being used in ${activeSchedules} schedules`);
+        // console.log(`Warning: Meal type ${id} (${mealType.name}) is being used in ${activeSchedules} schedules`);
       }
 
       // Perform the soft delete - ONLY update isDeleted to true
@@ -280,7 +295,7 @@ export class MealTypeService {
       });
 
       // Log the soft delete operation for debugging
-      console.log(`Meal type ${id} (${mealType.name}) has been soft deleted`);
+      // console.log(`Meal type ${id} (${mealType.name}) has been soft deleted`);
 
       return {
         success: true,

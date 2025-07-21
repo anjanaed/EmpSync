@@ -496,12 +496,18 @@ const MealPlanner = () => {
       .validateFields()
       .then(async (values) => {
         try {
+          // Validate that both start and end times are provided
+          if (!values.startTime || !values.endTime) {
+            message.error("Please provide both start and end times");
+            return;
+          }
+
           const payload = {
             name: values.mealName.trim(), // Trim whitespace
             orgId: authData?.orgId,
             time: [
-              values.startTime ? values.startTime.format("HH:mm") : null,
-              values.endTime ? values.endTime.format("HH:mm") : null,
+              values.startTime.format("HH:mm"),
+              values.endTime.format("HH:mm"),
             ],
             isDefault: values.isDefault || false,
             isDeleted: false,
@@ -520,6 +526,7 @@ const MealPlanner = () => {
           await fetchDefaultMeals(currentDate);
           message.success("Meal type created successfully");
           setIsModalVisible(false);
+          form.resetFields(); // Reset form after successful creation
         } catch (err) {
           console.error("Error creating meal type:", err);
 
@@ -818,18 +825,13 @@ const MealPlanner = () => {
     }
     return filteredByCategory;
   };
-  const handleDeleteMeal = async (meal) => {
-    // Check if it's a default meal and prevent deletion
-    if (meal.isDefault) {
-      message.warning("Default meals cannot be deleted");
-      return;
-    }
 
-    // Show confirmation modal for non-default meals only
+  const handleDeleteMeal = async (meal) => {
+    // Remove the isDefault check - allow deletion of both default and non-default meals
     setDeleteConfirmModal({
       visible: true,
       meal: meal,
-      isDefault: false,
+      isDefault: meal.isDefault, // Pass the isDefault flag to show appropriate warning
     });
   };
 
@@ -893,10 +895,8 @@ const MealPlanner = () => {
     return null;
   };
 
-
-  if (isUpdateLoading){
-    return <Loading  />;
-
+  if (isUpdateLoading) {
+    return <Loading />;
   }
 
   return (
@@ -971,11 +971,11 @@ const MealPlanner = () => {
                         )
                       }
                       size="small"
-                      disabled={true} // Always disabled - no functionality
+                      disabled={true} // Keep this disabled as it's just for visual indication
                       title={
                         meal.isDefault
-                          ? "Default meal type"
-                          : "Non-default meal type"
+                          ? "Default meal type (applies to all days)"
+                          : "Custom meal type (specific to this date)"
                       }
                     />
                     <Button
@@ -983,12 +983,11 @@ const MealPlanner = () => {
                       icon={<DeleteOutlined />}
                       onClick={() => handleDeleteMeal(meal)}
                       size="small"
-                      danger={!meal.isDefault}
-                      disabled={meal.isDefault} // Add this line to disable the button for default meals
-                      style={meal.isDefault ? { color: "#d9d9d9" } : {}}
+                      danger={true} // Always show as danger button
+                      // Remove the disabled={meal.isDefault} line
                       title={
                         meal.isDefault
-                          ? "Default meals cannot be deleted"
+                          ? "Delete default meal type (affects all days)"
                           : "Delete meal type"
                       }
                     />
@@ -1168,11 +1167,20 @@ const MealPlanner = () => {
         width={800}
         styles={modalStyles}
         footer={[
-          <Button key="clear" onClick={handleClearSchedule} className={styles.clearButton}>
-            <ClearOutlined /> Clear 
+          <Button
+            key="clear"
+            onClick={handleClearSchedule}
+            className={styles.clearButton}
+          >
+            <ClearOutlined /> Clear
           </Button>,
 
-          <Button key="submit" type="primary" onClick={handleUpdateMenuOk} className={styles.updateModalBtn}>
+          <Button
+            key="submit"
+            type="primary"
+            onClick={handleUpdateMenuOk}
+            className={styles.updateModalBtn}
+          >
             {existingSchedule ? "Update Menu" : "Create Menu"}
           </Button>,
         ]}
@@ -1325,9 +1333,29 @@ const MealPlanner = () => {
             Are you sure you want to delete{" "}
             <strong>{deleteConfirmModal.meal?.name}</strong>?
           </p>
-          <p style={{ color: "#ff4d4f", fontSize: "14px" }}>
-            This action cannot be undone.
-          </p>
+
+          {/* Show different warnings based on meal type */}
+          {deleteConfirmModal.isDefault ? (
+            <div>
+              <p
+                style={{
+                  color: "#ff4d4f",
+                  fontSize: "14px",
+                  fontWeight: "bold",
+                }}
+              >
+                ⚠️ Warning: This is a default meal type!
+              </p>
+              <p style={{ color: "#ff4d4f", fontSize: "14px" }}>
+                Deleting this default meal type will remove it from ALL DAYS,
+                not just today. 
+              </p>
+            </div>
+          ) : (
+            <p style={{ color: "#ff4d4f", fontSize: "14px" }}>
+              This action cannot be undone.
+            </p>
+          )}
         </div>
       </Modal>
     </div>

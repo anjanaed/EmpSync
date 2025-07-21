@@ -1,4 +1,4 @@
-import { Layout, Modal } from 'antd';
+import { Layout, message, Modal } from 'antd';
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../../contexts/AuthContext.jsx';
 import axios from 'axios';
@@ -9,6 +9,7 @@ import AddOrganizationModal from '../../organisms/SuperAdmin/pages/Organizations
 import UpdateOrganizationModal from '../../organisms/SuperAdmin/pages/Organizations/Update Organizations/updateOrganiztionModal.jsx';
 import RolesList from '../../organisms/SuperAdmin/pages/Roles/RolesList.jsx';
 import PermissionsList from '../../organisms/SuperAdmin/pages/Permissions/PermissionsList.jsx';
+import SystemStatistics from '../../organisms/SuperAdmin/pages/Dashboard/SystemStatistics.jsx';
 import Loading from "../../atoms/loading/loading.jsx";
 import styles from './SuperAdmin.module.css';
 
@@ -17,7 +18,7 @@ const { confirm } = Modal;
 
 const SuperAdmin = () => {
   const baseURL = import.meta.env.VITE_BASE_URL;
-  const [activeMenu, setActiveMenu] = useState('organizations');
+  const [activeMenu, setActiveMenu] = useState('dashboard');
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isUpdateModalVisible, setIsUpdateModalVisible] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
@@ -34,8 +35,9 @@ const SuperAdmin = () => {
 
   const [permissionsData] = useState([
     { key: '1', name: 'User Management', description: 'Manage users: create, edit, delete, and view user accounts.' },
-    { key: '2', name: 'Meal Management', description: 'Manage meals: add, edit, delete, and view meal items.' },
-    { key: '3', name: 'Reports', description: 'Access and export system reports.' },
+    {key: '2', name: 'Payroll', description: 'Manage payroll: create, edit, delete, and view payroll records.'},
+    { key: '3', name: 'Meal Management', description: 'Manage meals: add, edit, delete, and view meal items.' },
+    { key: '4', name: 'Reports', description: 'Access and export system reports.' },
   ]);
 
   const token = superAuthData?.accessToken;
@@ -92,7 +94,7 @@ const SuperAdmin = () => {
 
   const showModal = () => setIsModalVisible(true);
 
-  const handleOk = async (values) => {
+  const handleOk = async (values, resetForm) => {
     if (!token) return;
     try {
       await axios.post(`${baseURL}/super-admin/organizations`, values, {
@@ -103,8 +105,10 @@ const SuperAdmin = () => {
       });
       await fetchOrganizations();
       setIsModalVisible(false);
+      if (resetForm) resetForm(); // <-- Reset only on success
     } catch (err) {
       console.error(err);
+      message.error('Failed to add organization. Please try again.');
     }
   };
 
@@ -149,6 +153,7 @@ const SuperAdmin = () => {
       okText: 'Yes, Delete',
       okType: 'danger',
       cancelText: 'Cancel',
+      className: styles.customConfirm,
       async onOk() {
         if (!token) return;
         try {
@@ -168,6 +173,8 @@ const SuperAdmin = () => {
 
   const renderContent = () => {
     switch (activeMenu) {
+      case 'dashboard':
+        return <SystemStatistics />;
       case 'organizations':
         return (
           <OrganizationList
@@ -207,7 +214,7 @@ const SuperAdmin = () => {
       <Layout>
         <AppHeader title={getPageTitle()} />
         <Content className={styles.content} style={{ padding: 24 }}>
-          {loading ? <Loading /> : renderContent()}
+          {loading ? <Loading type="dark" /> : renderContent()}
         </Content>
       </Layout>
 
@@ -215,7 +222,10 @@ const SuperAdmin = () => {
         <>
           <AddOrganizationModal
             visible={isModalVisible}
-            onSubmit={handleOk}
+            onSubmit={(values) => handleOk(values, () => {
+              // Find the form instance and reset fields
+              // This will be handled in the modal below
+            })}
             onCancel={handleCancel}
             className={styles.modal}
           />

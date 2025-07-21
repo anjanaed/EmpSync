@@ -91,7 +91,7 @@ export class SuperAdminController {
   }
 
   @Get('users/:id/permissions')
-  // @UseGuards(AuthGuard('superadmin-jwt'))
+  @UseGuards(AuthGuard('superadmin-jwt'))
   async getPermissionsByUserId(@Param('id') id: string) {
     return this.superAdminService.getPermissionsByUserId(id);
   }
@@ -134,6 +134,12 @@ export class SuperAdminController {
     return this.superAdminService.deleteUser(id);
   }
 
+  @Get('organizations/:orgId/last-employee-id')
+  @UseGuards(AuthGuard('superadmin-jwt'))
+  async getLastEmployeeNoByOrg(@Param('orgId') orgId: string) {
+    return this.superAdminService.getLastEmpIDByOrg(orgId);
+  }
+
   // Permission endpoints
   @Post('permissions')
   @UseGuards(AuthGuard('superadmin-jwt'))
@@ -166,5 +172,11 @@ export class SuperAdminController {
   @UseGuards(AuthGuard('superadmin-jwt'))
   async deletePermission(@Param('id') id: string) {
     return this.superAdminService.deletePermission(id);
+  }
+
+  @Get('system-statistics')
+  @UseGuards(AuthGuard('superadmin-jwt'))
+  async getSystemStatistics() {
+    return await this.superAdminService.getSystemStatistics();
   }
 }

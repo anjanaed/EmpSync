@@ -71,10 +71,6 @@ model Ingredient {
   id             Int              @id @default(autoincrement())
   orgId          String        
   name           String
-  price_per_unit Decimal          @db.Decimal(10, 2)
-  quantity       Decimal          @db.Decimal(10, 2)
-  type           String
-  priority       Int
   createdAt      DateTime         @default(now())
   usedInMeals    MealIngredient[]
 }

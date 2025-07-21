@@ -324,6 +324,14 @@ export class SuperAdminService {
     }
   }
 
+  async getLastEmpIDByOrg(organizationId: string) {
+    const lastUser = await this.databaseService.user.findFirst({
+      where: { organizationId },
+      orderBy: { id: 'desc' },
+    });
+    return lastUser?.id || null;
+  }
+
   // Permission CRUD operations
   async createPermission(data: Prisma.PermissionCreateInput) {
     try {
@@ -483,6 +491,60 @@ export class SuperAdminService {
         throw error;
       }
       throw new BadRequestException('Failed to fetch user actions: ' + error.message);
+    }
+  }
+
+  async getSystemStatistics() {
+    try {
+      // Fetch all organizations with their users
+      const organizations = await this.databaseService.organization.findMany({
+        include: {
+          users: true,
+        },
+      });
+
+      // Total organization count
+      const totalOrganizations = organizations.length;
+
+      // Initialize role counters
+      let totalHRAdmins = 0;
+      let totalKitchenAdmins = 0;
+      let totalOtherUsers = 0;
+
+      // Structure to hold user count per organization
+      const organizationUserCounts = organizations.map((org) => {
+        const userCount = org.users.length;
+
+        // Count roles within this org
+        org.users.forEach((user) => {
+          if (user.role === 'HR_ADMIN') {
+            totalHRAdmins++;
+          } else if (user.role === 'KITCHEN_ADMIN') {
+            totalKitchenAdmins++;
+          } else {
+            totalOtherUsers++;
+          }
+        });
+
+        return {
+          orgId: org.id,
+          orgName: org.name,
+          totalUsers: userCount,
+        };
+      });
+
+      const totalUsers = totalHRAdmins + totalKitchenAdmins + totalOtherUsers;
+
+      return {
+        totalOrganizations,
+        totalUsers,
+        totalHRAdmins,
+        totalKitchenAdmins,
+        totalOtherUsers,
+        usersPerOrganization: organizationUserCounts,
+      };
+    } catch (error) {
+      throw new BadRequestException('Failed to fetch system statistics: ' + error.message);
     }
   }
 }

@@ -19,6 +19,7 @@ const RolesList = ({ data, onAddNew, onUpdate, onDelete, className, authData}) =
   const [editingUser, setEditingUser] = useState(null);
 
   const { superAuthData } = useAuth();
+  const { confirm } = Modal;
 
   const urL = import.meta.env.VITE_BASE_URL;
   const auth0Url = import.meta.env.VITE_AUTH0_URL;
@@ -85,30 +86,54 @@ const RolesList = ({ data, onAddNew, onUpdate, onDelete, className, authData}) =
   // Main registration handler
   const handleRegister = async (values) => {
     setLoading(true);
-    const { employeeId, name, role, email, password } = values;
+    const { name, role, email, password } = values;
+    const orgId = localStorage.getItem('orgid') || selectedOrg;
     try {
+      // 1. Get last employee ID
+      const lastIdRes = await axios.get(`${urL}/super-admin/organizations/${orgId}/last-employee-id`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      let newEmployeeId;
+      const lastEmployeeId = lastIdRes.data;
+      if (!lastEmployeeId) {
+        newEmployeeId = `${orgId}E001`;
+      } else {
+        // lastEmployeeId is like "O002E004"
+        const match = lastEmployeeId.match(/(.*E)(\d+)$/);
+        if (match) {
+          const prefix = match[1];
+          const num = String(parseInt(match[2], 10) + 1).padStart(3, '0');
+          newEmployeeId = `${prefix}${num}`;
+        } else {
+          newEmployeeId = `${orgId}E001`;
+        }
+      }
+
+      // 2. Register with Auth0 first
+      await signUpUser({ email, password, id: newEmployeeId });
+      
+
+      // 3. Add to database
       const payload = {
-        id: employeeId,
+        id: newEmployeeId,
         name,
         role,
         email,
-        organizationId: localStorage.getItem('orgid') || selectedOrg,
-        dob : "1990-01-01",
-        telephone : "+1234567890",
-        gender : "male",
-        address : "123 Street, City",  
-        salary: 50000,                             
+        organizationId: orgId,
+        dob: "1990-01-01",
+        telephone: "+1234567890",
+        gender: "male",
+        address: "123 Street, City",
+        salary: 50000,
       };
       await axios.post(`${urL}/super-admin/users`, payload, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
-      await signUpUser({ email, password, id: employeeId });
+
       message.success("User Registered Successfully");
       setIsModalVisible(false);
       form.resetFields();
-      fetchOrgUsers(); // <-- Fetch users after adding
+      fetchOrgUsers();
     } catch (err) {
       message.error(`Registration Failed: ${err.response?.data?.message || "Unknown error"}`);
       console.log("Registration Error:", err);
@@ -131,26 +156,43 @@ const RolesList = ({ data, onAddNew, onUpdate, onDelete, className, authData}) =
     localStorage.setItem('orgid', orgId);
   };
 
-  const handleDelete = async (id, email) => {
-    setLoading(true);
-    try {
-      await axios.delete(`${urL}/super-admin/users/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      await axios.post(`${urL}/superadmin/delete`, { email: email }, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      message.success("User Removed Successfully!");
-      fetchOrgUsers(); // <-- Fetch users after deleting
-    } catch (err) {
-      console.log(err);
-      message.error("Something went Wrong!");
-    }
-    setLoading(false);
+const handleDelete = (id, email) => {
+    confirm({
+      title: 'Are you sure you want to delete this user?',
+      content: `This will permanently delete the user with email "${email}" and cannot be undone.`,
+      okText: 'Yes, Delete',
+      okType: 'danger',
+      cancelText: 'Cancel',
+      className: styles.customConfirm,
+      async onOk() {
+        setLoading(true);
+        try {
+          await axios.delete(`${urL}/super-admin/users/${id}`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          await axios.post(
+            `${urL}/superadmin/delete`,
+            { email },
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          message.success('User Removed Successfully!');
+          fetchOrgUsers(); // Refresh user list
+        } catch (err) {
+          console.log(err);
+          message.error('Something went wrong!');
+        }
+        setLoading(false);
+      },
+      onCancel() {
+        console.log('User deletion cancelled');
+      },
+    });
   };
 
   const handleEditClick = (user) => {
@@ -292,14 +334,8 @@ const RolesList = ({ data, onAddNew, onUpdate, onDelete, className, authData}) =
           form={form}
           layout="vertical"
           name="add_role_form"
+          disabled={loading}
         >
-          <Form.Item
-            label="Employee ID"
-            name="employeeId"
-            rules={[{ required: true, message: 'Please input the Employee ID!' }]}
-          >
-            <Input placeholder="Enter Employee ID" />
-          </Form.Item>
           <Form.Item
             label="Name"
             name="name"
@@ -363,7 +399,7 @@ const RolesList = ({ data, onAddNew, onUpdate, onDelete, className, authData}) =
           </Form.Item>
         </Form>
         <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginTop: 12 }}>
-          <Button type="primary" onClick={handleAdd} className={styles.submitButton}>
+          <Button type="primary" onClick={handleAdd} loading={loading} className={styles.submitButton}>
             Add
           </Button>
           <Button onClick={handleCancel} className={styles.cancelButton}>
