@@ -491,12 +491,7 @@ const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
                           placeholder="Enter Weight (Kg)"
                         />
                       </Form.Item>
-                      <label className={styles.fingerLabel}>
-                        Finger Print:{" "}
-                      </label>
-                      <button className={styles.rescanBtn}>
-                        <RiFingerprintLine size={20} /> &nbsp;Rescan
-                      </button>
+                      
                     </div>
                     <div className={styles.subBtn}>
                       <button onClick={handleUpdate} className={styles.saveBtn}>
