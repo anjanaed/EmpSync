@@ -74,6 +74,10 @@
   gap: 12px;
 }
 
+.searchBarRowDark {
+  background: #232323;
+}
+
 .searchInput {
   padding: 8px 12px;
   border-radius: 6px;
@@ -82,7 +86,25 @@
   width: 260px;
 }
 
+.searchInputDark {
+  background: #2a2a2a;
+  color: #fff;
+  border: 1px solid #404040;
+}
 
+/* .searchBtn styles removed because the ruleset was empty */
+
+.searchBtnDark {
+  background: #404040;
+  color: #fff;
+  border: 1px solid #970000;
+}
+
+/* .clearBtn ruleset removed because it was empty */
+
+.clearBtnDark {
+  color: #fff;
+}
 
 .searchError {
   color: #970000;
@@ -97,4 +119,39 @@
 
 .reloadBtn {
   margin-left: 8px;
+}
+.customTableRow {
+  background-color: #ffffff;
+  color: #333333;
+  transition: all 0.3s ease;
+}
+.customTableRow:hover {
+  background-color: #e6e6e657 !important;
+}
+.evenRow {
+  background-color: #f9f9f9;
+}
+.oddRow {
+  background-color: #ffffff;
+}
+.customTableRowDark {
+  background-color: #2a2a2a;
+  color: #ffffff !important;
+  transition: all 0.3s ease;
+}
+.customTableRowDark:hover {
+  background-color: #000000 !important;
+  border: none;
+}
+.evenRowDark {
+  background-color: #353535;
+}
+.oddRowDark {
+  background-color: #2a2a2a;
+}
+.registeredDark {
+  color: #90ee90 !important;
+}
+.pendingDark {
+  color: #ffb6b6 !important;
 }
