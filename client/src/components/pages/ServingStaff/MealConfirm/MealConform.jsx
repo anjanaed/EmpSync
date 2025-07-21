@@ -1,4 +1,4 @@
-import { Button, Card, Typography, Space, Divider, notification } from 'antd';
+import { Button, Card, Typography, Space, Divider, notification, Result } from 'antd';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import styles from './MealConform.module.css';
@@ -27,6 +27,7 @@ const MealConform = () => {
         const orderRes = await fetch(`${urL}/orders/${id}`);
         if (!orderRes.ok) throw new Error('Failed to fetch order details');
         const orderData = await orderRes.json();
+
         setOrderDetails(orderData);
 
         const [mealIdPart] = orderData.meals[0].split(':');
@@ -39,6 +40,18 @@ const MealConform = () => {
         if (!nameRes.ok) throw new Error('Failed to fetch employee name');
         const nameData = await nameRes.json();
         setEmployeeName(nameData.name);
+
+        // If order is already served, redirect after showing message
+        if (orderData.serve) {
+          notification.info({
+            message: 'Order Already Served',
+            description: `Order ${orderData.orderNumber || id} has already been served.`,
+            duration: 2,
+          });
+          setTimeout(() => {
+            navigate('/serving');
+          }, 1500);
+        }
       } catch (error) {
         notification.error({
           message: 'Error',
@@ -51,7 +64,7 @@ const MealConform = () => {
     };
 
     fetchDetails();
-  }, [id]);
+  }, [id, navigate]);
 
   const handleCancel = () => {
     notification.warning({
@@ -94,6 +107,17 @@ const MealConform = () => {
 
   if (isLoading || !orderDetails || !mealDetails) {
     return <Loading />;
+  }
+
+  // If order is already served, show a message (optional, since we redirect above)
+  if (orderDetails.serve) {
+    return (
+      <Result
+        status="success"
+        title="Order Already Served"
+        subTitle={`Order ${orderDetails.orderNumber || id} has already been served.`}
+      />
+    );
   }
 
   return (
