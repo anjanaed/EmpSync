@@ -29,7 +29,7 @@ import {
 
 // Import Firebase storage related functions
 import { getStorage, ref, deleteObject } from "firebase/storage";
-
+import Loading from "../../../atoms/loading/loading.jsx";
 import styles from "./Meals.module.css";
 import { useAuth } from "../../../../contexts/AuthContext.jsx";
 import axios from "axios"; // Import axios
@@ -333,10 +333,8 @@ const AvailableMeals = () => {
       </div>
 
       {loading ? (
-        <div style={{ textAlign: "center", padding: "40px" }}>
-          <Spin size="large" />
-          <p style={{ marginTop: "10px" }}>Loading meals...</p>
-        </div>
+        <Loading />
+
       ) : (
         <Row gutter={[16, 16]}>
           {filteredMeals.length === 0 ? (
