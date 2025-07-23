@@ -44,6 +44,9 @@ const AddMealPage = () => {
   const [selectedIngredients, setSelectedIngredients] = useState([]);
   const [uploading, setUploading] = useState(false);
   const [loadingIngredients, setLoadingIngredients] = useState(false);
+  const [newIngredientName, setNewIngredientName] = useState("");
+  const [addingIngredient, setAddingIngredient] = useState(false);
+
 
   const navigate = useNavigate();
 
@@ -51,10 +54,7 @@ const AddMealPage = () => {
   const fetchIngredients = async () => {
   setLoadingIngredients(true);
   try {
-    const response = await axios.get(`${urL}/ingredients`, {
-      params: {
-        orgId: authData?.orgId,
-      },
+    const response = await axios.get(`${urL}/ingredients/org/${authData?.orgId}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -217,6 +217,42 @@ const AddMealPage = () => {
   const filteredIngredients = ingredients.filter((ingredient) =>
     ingredient.name.toLowerCase().includes(searchIngredient.toLowerCase())
   );
+
+  const handleAddNewIngredient = async () => {
+  if (!newIngredientName.trim()) {
+    message.warning("Ingredient name cannot be empty.");
+    return;
+  }
+
+  setAddingIngredient(true);
+
+  try {
+    const response = await axios.post(
+      `${urL}/ingredients`,
+      {
+        name: newIngredientName.trim(),
+        orgId: authData?.orgId,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (response.status === 201 || response.status === 200) {
+      message.success("Ingredient added successfully!");
+      setNewIngredientName("");
+      fetchIngredients(); // Refresh ingredient list
+    }
+  } catch (error) {
+    const errorMessage = error.response?.data?.message || error.message;
+    message.error(`Failed to add ingredient: ${errorMessage}`);
+  } finally {
+    setAddingIngredient(false);
+  }
+
+};
 
   return (
     <div className={styles.pageContainer}>
@@ -436,6 +472,24 @@ const AddMealPage = () => {
             className={styles.ingredientsSearchInput}
           />
           <Button className={styles.searchButton}>Search</Button>
+        </div>
+
+        <div className={styles.addNewIngredientSection}>
+          <Input
+            placeholder="New ingredient name"
+            value={newIngredientName}
+            onChange={(e) => setNewIngredientName(e.target.value)}
+            className={styles.newIngredientInput}
+          />
+          <Button
+            type="dashed"
+            onClick={handleAddNewIngredient}
+            loading={addingIngredient}
+            disabled={!newIngredientName.trim()}
+            className={styles.addIngredientButton}
+          >
+            Add Ingredient
+          </Button>
         </div>
 
         <div className={styles.ingredientsListContainer}>
