@@ -356,6 +356,33 @@
   color: #cccccc;
 }
 
+.importBtn{
+  margin-right: 2vw;
+  padding: 10px 20px;
+  background-color: #960000;
+  cursor: pointer;
+  border-radius: 10px;
+  border: none;
+  color: white;
+
+}
+
+.headingRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  height:10vh;
+}
+
+.heading {
+  flex: 1;
+  margin: auto;
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
 
 
 :global(.dark .ant-input-affix-wrapper:focus) {

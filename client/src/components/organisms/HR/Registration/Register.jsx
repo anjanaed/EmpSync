@@ -6,12 +6,13 @@ import { IoIosArrowBack } from "react-icons/io";
 // import FingerPrint from "../../../Atoms/FingerPrint/FingerPrint";
 
 import Loading from "../../../atoms/loading/loading.jsx";
+import ImportModal from "../../../templates/HR/ImportModal/ImportModal.jsx";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
 import { AiOutlineCaretRight } from "react-icons/ai";
 import Gbutton from "../../../atoms/button/Button.jsx";
 import { useAuth } from "../../../../contexts/AuthContext.jsx";
-
+import { Modal } from "antd";
 import axios from "axios";
 import { usePopup } from "../../../../contexts/PopupContext.jsx";
 
@@ -51,6 +52,7 @@ const Register = () => {
   const [address, setAddress] = useState(null);
   const [tel, setTel] = useState(null);
   const [salary, setSalary] = useState(null);
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [name, setName] = useState(null);
   const [jobRole, setJobRole] = useState("");
   const [customJobRole, setCustomJobRole] = useState(null);
@@ -123,29 +125,29 @@ const Register = () => {
     }
   };
 
-const generateUserId = async () => {
-  const org = authData?.orgId || "O001";
-  if (!org) return;
+  const generateUserId = async () => {
+    const org = authData?.orgId || "O001";
+    if (!org) return;
 
-  try {
-    const res = await axios.get(`${urL}/user/last-empno/${org}`);
-    const lastEmpNo = res.data;
-    let newEmpNo;
-    console.log("Last Employee No:", lastEmpNo);
+    try {
+      const res = await axios.get(`${urL}/user/last-empno/${org}`);
+      const lastEmpNo = res.data;
+      let newEmpNo;
+      console.log("Last Employee No:", lastEmpNo);
 
-    if (lastEmpNo && lastEmpNo.startsWith(org + "E")) {
-      // Extract the number after the last 'E'
-      const num = parseInt(lastEmpNo.slice((org + "E").length - 1 + 1)) + 1;
-      newEmpNo = `${org}E${num.toString().padStart(3, "0")}`;
-    } else {
-      newEmpNo = `${org}E001`;
+      if (lastEmpNo && lastEmpNo.startsWith(org + "E")) {
+        // Extract the number after the last 'E'
+        const num = parseInt(lastEmpNo.slice((org + "E").length - 1 + 1)) + 1;
+        newEmpNo = `${org}E${num.toString().padStart(3, "0")}`;
+      } else {
+        newEmpNo = `${org}E001`;
+      }
+      setId(newEmpNo);
+      console.log(newEmpNo);
+    } catch (err) {
+      console.error("Failed to generate user ID", err);
     }
-    setId(newEmpNo);
-    console.log(newEmpNo);
-  } catch (err) {
-    console.error("Failed to generate user ID", err);
-  }
-};
+  };
 
   const signUpUser = async ({ email, password, id }) => {
     try {
@@ -175,9 +177,30 @@ const generateUserId = async () => {
   }
   return (
     <div className={styles.formContainer}>
+      <Modal
+        open={isImportModalOpen}
+        footer={null}
+        width="70vw"
+        onCancel={() => setIsImportModalOpen(false)}
+        styles={{
+          mask: {
+            backdropFilter: "blur(12px)",
+          },
+        }}
+      >
+        <ImportModal/>
+      </Modal>
       {menu == 1 && (
         <>
-          <div className={styles.heading}>New Employee Onboarding</div>
+          <div className={styles.headingRow}>
+            <div className={styles.heading}>New Employee Onboarding</div>
+            <button
+              className={styles.importBtn}
+              onClick={() => setIsImportModalOpen(true)}
+            >
+              Import
+            </button>
+          </div>
           <Form
             {...formItemLayout}
             form={form}
@@ -439,7 +462,11 @@ const generateUserId = async () => {
               </div>
             </div>
             <div className={styles.btnContainer}>
-              <button width={200} className={styles.mainBtns}  onClick={handleNext}>
+              <button
+                width={200}
+                className={styles.mainBtns}
+                onClick={handleNext}
+              >
                 <>
                   Next &nbsp; <AiOutlineCaretRight />
                 </>
@@ -467,7 +494,7 @@ const generateUserId = async () => {
             <button
               width={300}
               onClick={handleRegister}
-              className={styles.mainBtns} 
+              className={styles.mainBtns}
             >
               Complete Registration
             </button>
@@ -479,11 +506,23 @@ const generateUserId = async () => {
         <>
           <div className={styles.passkeyContainer}>
             <div className={styles.head}>New user Finger-Print Passkey:</div>
-            <div className={styles.passkeyValue}><b>{passkey}</b></div>
+            <div className={styles.passkeyValue}>
+              <b>{passkey}</b>
+            </div>
           </div>
           <div className={styles.btnContainer}>
-            <button width={200} className={styles.mainBtns} onClick={() => navigate("/FingerPrint")}>Fingerprint Management</button>
-            <button width={200} className={styles.mainBtns} onClick={() => navigate("/EmployeePage")}>
+            <button
+              width={200}
+              className={styles.mainBtns}
+              onClick={() => navigate("/FingerPrint")}
+            >
+              Fingerprint Management
+            </button>
+            <button
+              width={200}
+              className={styles.mainBtns}
+              onClick={() => navigate("/EmployeePage")}
+            >
               Back To Employees
             </button>
           </div>
