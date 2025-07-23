@@ -1161,8 +1161,6 @@ const Report = () => {
   const loadData = async (customStartDate = null, customEndDate = null) => {
     setLoading(true);
     try {
-      console.log("Starting data load...");
-
       const [ordersData, employeesData, mealTypesData] =
         await Promise.allSettled([
           fetchOrders(),
@@ -1215,15 +1213,22 @@ const Report = () => {
         if (result && result.processedData) {
           setEmployeeData(result.processedData);
 
-          if (result.processedData.length === 0) {
-            message.info("No data found for the selected time period");
+          if (result.processedData.length > 0) {
+            message.success(
+              `${
+                timePeriod.charAt(0).toUpperCase() + timePeriod.slice(1)
+              } report generated successfully!`
+            );
+          } else {
+            message.warning("No data available for the selected time period");
           }
         } else {
           setEmployeeData([]);
-          message.warning("Unable to process data.");
+          message.warning("No data available for the selected time period");
         }
       } else {
         setEmployeeData([]);
+        message.warning("No data available for the selected time period");
       }
     } catch (error) {
       console.error("Error loading data:", error);
@@ -1403,11 +1408,7 @@ const Report = () => {
 
     loadData(customStartDate, customEndDate);
 
-    message.success(
-      `${
-        timePeriod.charAt(0).toUpperCase() + timePeriod.slice(1)
-      } report generated successfully!`
-    );
+   
   };
 
   // Generate summary row for table with actual prices
@@ -1860,6 +1861,8 @@ const Report = () => {
                   locale={{
                     emptyText: loading
                       ? "Loading data..."
+                      : employeeData.length === 0 && activeTab === "summary"
+                      ? "Click 'Generate Report' to view summary data"
                       : "No data available for the selected time period",
                   }}
                   summary={
