@@ -212,11 +212,76 @@ const Report = () => {
       date: formatDate(order.orderDate || order.order_date),
       mealType: order.mealTypeName || `Meal Type ${order.mealTypeId}`,
       orderTime: formatTime(order.orderPlacedTime || order.order_placed_time),
-      status: order.serve || order.served ? "Served" : "Pending",
+      status: determineOrderStatus(order, mealTypes), // Use the new logic
       price: `Rs. ${(order.price || 0).toFixed(2)}`,
       orderId: order.id,
       ...order, // Include all order data for potential future use
     }));
+  };
+
+  const determineOrderStatus = (order, mealTypes) => {
+    // If order is already served, return 'Served'
+    if (order.serve === true || order.served === true) {
+      return "Served";
+    }
+
+    // Get order date
+    const orderDate = new Date(order.orderDate || order.order_date);
+    const today = new Date();
+
+    // Set time to start of day for comparison
+    const orderDateOnly = new Date(
+      orderDate.getFullYear(),
+      orderDate.getMonth(),
+      orderDate.getDate()
+    );
+    const todayDateOnly = new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      today.getDate()
+    );
+
+    // If order is from previous day, it's 'Not Served'
+    if (orderDateOnly < todayDateOnly) {
+      return "Not Served";
+    }
+
+    // If order is from today, check meal type end time
+    if (orderDateOnly.getTime() === todayDateOnly.getTime()) {
+      // Find the meal type for this order
+      const mealType = mealTypes.find(
+        (mt) =>
+          mt.id === order.mealTypeId ||
+          mt.mealTypeId === order.mealTypeId ||
+          mt.meal_type_id === order.mealTypeId
+      );
+
+      if (
+        mealType &&
+        mealType.time &&
+        Array.isArray(mealType.time) &&
+        mealType.time.length >= 2
+      ) {
+        // Get end time (second element in the time array)
+        const endTime = mealType.time[1]; // e.g., "21:00"
+
+        // Create current time and meal end time for comparison
+        const now = new Date();
+        const currentTime = now.getHours() * 60 + now.getMinutes(); // Convert to minutes
+
+        // Parse meal end time
+        const [endHours, endMinutes] = endTime.split(":").map(Number);
+        const mealEndTime = endHours * 60 + endMinutes; // Convert to minutes
+
+        // If current time has passed meal end time, it's 'Not Served'
+        if (currentTime > mealEndTime) {
+          return "Not Served";
+        }
+      }
+    }
+
+    // Default to 'Pending' for today's orders within time or if we can't determine meal type time
+    return "Pending";
   };
 
   // Function to format date
@@ -291,14 +356,17 @@ const Report = () => {
 
       if (!mealTypesData || mealTypesData.length === 0) {
         try {
-          const mealTypesResponse = await axios.get(`${urL}/meal-types?includeDeleted=true`, {
-            params: {
-              orgId: authData?.orgId,
-            },
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
+          const mealTypesResponse = await axios.get(
+            `${urL}/meal-types?includeDeleted=true`,
+            {
+              params: {
+                orgId: authData?.orgId,
+              },
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
 
           mealTypesData = mealTypesResponse.data;
         } catch (error) {
@@ -451,28 +519,24 @@ const Report = () => {
       title: "Date",
       dataIndex: "date",
       key: "date",
-
       sorter: (a, b) => new Date(a.date) - new Date(b.date),
     },
     {
       title: "Meal Type",
       dataIndex: "mealType",
       key: "mealType",
-      // width: 150,
       render: (text) => <span className={styles.mealTypeText}>{text}</span>,
     },
     {
       title: "Order Time",
       dataIndex: "orderTime",
       key: "orderTime",
-      // width: 120,
       align: "center",
     },
     {
       title: "Price",
       dataIndex: "price",
       key: "price",
-      // width: 100,
       align: "center",
       render: (text) => <span className={styles.priceText}>{text}</span>,
     },
@@ -480,13 +544,14 @@ const Report = () => {
       title: "Status",
       dataIndex: "status",
       key: "status",
-      // width: 120,
       align: "center",
       render: (status) => (
         <span
           className={
             status === "Served"
               ? styles.statusBadgeServed
+              : status === "Not Served"
+              ? styles.statusBadgeNotServed // You'll need to add this CSS class
               : styles.statusBadgePending
           }
         >
@@ -503,16 +568,24 @@ const Report = () => {
         totalOrders: 0,
         servedOrders: 0,
         pendingOrders: 0,
+        notServedOrders: 0,
         totalAmount: 0,
         efficiency: 0,
       };
     }
 
-    const totalOrders = individualEmployeeData.length;
-    const servedOrders = individualEmployeeData.filter(
-      (order) => order.serve || order.served
+    const reportData = generateEmployeeReportData();
+    const totalOrders = reportData.length;
+    const servedOrders = reportData.filter(
+      (order) => order.status === "Served"
     ).length;
-    const pendingOrders = totalOrders - servedOrders;
+    const pendingOrders = reportData.filter(
+      (order) => order.status === "Pending"
+    ).length;
+    const notServedOrders = reportData.filter(
+      (order) => order.status === "Not Served"
+    ).length;
+
     const totalAmount = individualEmployeeData.reduce(
       (sum, order) => sum + (order.price || 0),
       0
@@ -524,6 +597,7 @@ const Report = () => {
       totalOrders,
       servedOrders,
       pendingOrders,
+      notServedOrders,
       totalAmount,
       efficiency,
     };
@@ -752,14 +826,17 @@ const Report = () => {
   const fetchMealTypes = async () => {
     try {
       console.log("Fetching meal types...");
-      const response = await axios.get(`${urL}/meal-types?includeDeleted=true`, {
-        params: {
-          orgId: authData?.orgId,
-        },
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axios.get(
+        `${urL}/meal-types?includeDeleted=true`,
+        {
+          params: {
+            orgId: authData?.orgId,
+          },
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       return Array.isArray(response.data) ? response.data : [];
     } catch (error) {
       console.error("Error fetching meal types:", error);
@@ -1910,7 +1987,7 @@ const Report = () => {
                       ),
                     },
                     {
-                      title: "Efficiency",
+                      title: "Served Percentage",
                       dataIndex: "efficiency",
                       key: "efficiency",
                       width: 150,
@@ -1995,7 +2072,7 @@ const Report = () => {
                             >
                               {overallEfficiency}%
                             </strong>
-                            <div>Overall Efficiency</div>
+                            <div>Overall served %</div>
                           </div>
                         </Table.Summary.Cell>
                       </Table.Summary.Row>
@@ -2124,7 +2201,8 @@ const Report = () => {
                         <Table.Summary.Cell index={4} align="center">
                           <strong>
                             {summary.servedOrders} Served /{" "}
-                            {summary.pendingOrders} Pending
+                            {summary.pendingOrders} Pending /{" "}
+                            {summary.notServedOrders} Not Served
                           </strong>
                         </Table.Summary.Cell>
                       </Table.Summary.Row>
