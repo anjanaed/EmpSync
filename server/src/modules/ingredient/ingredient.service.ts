@@ -6,43 +6,21 @@ import { DatabaseService } from '../../database/database.service';
 export class IngredientsService {
   constructor(private readonly databaseServices: DatabaseService) {}
 
-  async create(
-    createIngredientDto: Prisma.IngredientCreateInput | Prisma.IngredientCreateInput[]
-  ) {
+  async create(createIngredientDto: Prisma.IngredientCreateInput) {
     try {
-      if (Array.isArray(createIngredientDto)) {
-        const formattedData = createIngredientDto.map(ingredient => ({
-          ...ingredient,
-        }));
-
-        return await this.databaseServices.ingredient.createMany({
-          data: formattedData,
-          skipDuplicates: true // optional: prevent unique constraint errors
-        });
-      }
-
-      const formattedSingle = {
-        ...createIngredientDto,
-      };
-
-      return await this.databaseServices.ingredient.create({
-        data: formattedSingle
+      const newIngredient = await this.databaseServices.ingredient.create({
+        data: createIngredientDto,
       });
 
+      return newIngredient;
     } catch (error) {
-      if (error?.code === 'P2002') {
-        throw new HttpException(
-          'Ingredient with this ID or Name already exists',
-          HttpStatus.CONFLICT
-        );
-      }
+      console.error('Ingredient creation failed:', error);
       throw new HttpException(
         'Failed to create ingredient',
         HttpStatus.INTERNAL_SERVER_ERROR
       );
     }
   }
-
 
   async findAll() {
     const ingredients = await this.databaseServices.ingredient.findMany({});
