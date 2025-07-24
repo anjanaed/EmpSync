@@ -222,26 +222,114 @@
   .cardContainer {
     display: flex;
     flex-wrap: wrap;
-    gap: 16px; /* Space between cards */
-    justify-content: center; /* Center the cards */
+    gap: 16px;
+    justify-content: flex-start;
   }
   
-  .cardContainer > div {
-    flex: 1 1 calc(20% - 16px); /* Ensure 5 cards per row */
-    max-width: 240px; /* Limit the width of each card */
+  .card {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    border: 1px solid #eee;
+    width: 260px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: box-shadow 0.2s;
   }
 
-  .card {
-    width: 240px; /* Set card width */
+  .card:hover {
+    box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+  }
+
+  .cardImageWrapper {
+    background: #f3f3f3;
+    height: 140px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .cardImage {
-    height: 200px; /* Set image height */
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 
-  .mealCountText {
-    font-weight: bold; /* Make text bold */
-    font-size: 18px; /* Set font size */
+  .cardBody {
+    padding: 18px 16px 16px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .cardHeaderRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 2px;
+  }
+
+  .cardTitle {
+    font-size: 18px;
+    font-weight: 700;
+    color: #222;
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .cardOrderCount {
+    font-size: 28px;
+    font-weight: 700;
+    color: #222;
+    margin-left: 10px;
+  }
+
+  .cardSubRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    color: #888;
+    margin-bottom: 4px;
+  }
+
+  .cardMealId {
+    color: #888;
+  }
+
+  .cardOrderLabel {
+    color: #888;
+    font-size: 13px;
+  }
+
+  .cardDescription {
+    font-size: 13px;
+    color: #555;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 4px;
+  }
+
+  .cardIngredients {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 4px;
+  }
+
+  .cardIngredient {
+    background: #fff3cd;
+    color: #856404;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+    border: 1px solid #ffeaa7;
+    white-space: nowrap;
   }
 
   /* Cart Section */
