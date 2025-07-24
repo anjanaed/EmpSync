@@ -465,8 +465,9 @@ const Dashbord = () => {
             Order - {formattedDate} {isViewingTomorrow && "(Tomorrow)"}
             {loading && <Spin size="small" style={{ marginLeft: '10px' }} />}
           </h2>
-          <p className={styles.time}>
-            {formattedTime}
+          <p>
+          {/* <p className={styles.time}> */}
+            {/* {formattedTime} */}
             {lastFetch && (
               <span style={{ fontSize: '12px', color: '#666', marginLeft: '10px' }}>
                 Last updated: {new Date(lastFetch).toLocaleTimeString()}
