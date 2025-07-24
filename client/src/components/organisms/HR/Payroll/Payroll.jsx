@@ -227,7 +227,7 @@ const Payroll = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-      const userIds = userRes.data.map((user) => user.id);
+      const userIds = userRes.data.map((user) => user.empNo);
       const processedIds = new Set();
 
       for (const adj of individualAdjustment) {
@@ -254,7 +254,7 @@ const Payroll = () => {
           if (processedIds.has(id)) continue;
 
           const payload = {
-            empId: id,
+            empNo: id,
             label: adj.details,
             orgId: authData?.orgId,
             allowance: adj.isAllowance,
@@ -442,9 +442,7 @@ const Payroll = () => {
         />
       </Modal>
       <div className={styles.mainBox}>
-        <div className={styles.topTitle}>
-          Payroll Configuration & Salary Adjustments
-        </div>
+        <div className={styles.topTitle}>Payroll Settings & Adjustments</div>
         <div className={styles.topInput}>
           <div className={styles.inputLine}>
             <div className={styles.inputSet}>
@@ -488,7 +486,7 @@ const Payroll = () => {
               </Form.Item>
             </div>
             <div className={styles.inputSet}>
-              <label>Employer Provident Fund (EPF) Rate</label>
+              <label>Employer's Provident Fund (EPF) Rate</label>
               <br />
 
               <Form.Item
@@ -534,10 +532,9 @@ const Payroll = () => {
             </div>
           </div>
           <div className={styles.payee}>
-            <span>*</span> Income Paye Taxes Will Be Applied Automatically
-            &nbsp;
+            <span>*</span> Note: PAYE taxes are applied automatically. &nbsp;
             <div className={styles.link} onClick={handlePayeModalOpen}>
-              Reconfigure PAYE Taxes <IoOpenOutline size={15} />
+              Reconfigure PAYE Settings <IoOpenOutline size={15} />
             </div>
           </div>
           <div className={styles.dates}>
@@ -575,8 +572,8 @@ const Payroll = () => {
             <div key={index} className={styles.inputLine}>
               <div>
                 <label>
-                  Employee ID/IDs{" "}
-                  <Tooltip title="Separate IDs with Comma">
+                  Employee Number(s){" "}
+                  <Tooltip title="Separate Numbers with Comma">
                     <InfoCircleOutlined
                       style={{ marginLeft: 4, color: "#1890ff" }}
                     />
@@ -588,12 +585,12 @@ const Payroll = () => {
                   rules={[
                     {
                       required: true,
-                      message: "Enter ID",
+                      message: "Enter No",
                     },
                   ]}
                 >
                   <Input
-                    placeholder="IDs"
+                    placeholder="Employee No"
                     onChange={(e) => {
                       const newList = [...individualAdjustment];
                       newList[index].id = e.target.value;
@@ -603,7 +600,7 @@ const Payroll = () => {
                 </Form.Item>
               </div>
               <div>
-                <label>Adjustment Reason</label>
+                <label>Reason for Adjustment</label>
                 <Form.Item
                   name={[index, "des"]}
                   style={{ marginBottom: 0, width: "300px" }}
@@ -712,7 +709,7 @@ const Payroll = () => {
                       setIndividualAdjustment(newList);
                     }}
                   >
-                    Value
+                    Fixed Amount
                   </Checkbox>
                 </div>
               </div>
@@ -754,7 +751,10 @@ const Payroll = () => {
               <span>Generate Payroll</span>
             </span>
           </button>
-          <button onClick={() => navigate("/payslip")} className={styles.generateBtn}>
+          <button
+            onClick={() => navigate("/payslip")}
+            className={styles.generateBtn}
+          >
             <span className={styles.btnContent}>
               <LuEye size={19} />
               <span>View Payrolls</span>

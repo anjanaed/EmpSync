@@ -2,19 +2,17 @@ import React, { useState } from "react";
 import { DatePicker, Form, Space, Input, Select, InputNumber } from "antd";
 import styles from "./Register.module.css";
 import { IoIosArrowBack } from "react-icons/io";
-
-// import FingerPrint from "../../../Atoms/FingerPrint/FingerPrint";
-
 import Loading from "../../../atoms/loading/loading.jsx";
 import ImportModal from "../../../templates/HR/ImportModal/ImportModal.jsx";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
 import { AiOutlineCaretRight } from "react-icons/ai";
-import Gbutton from "../../../atoms/button/Button.jsx";
 import { useAuth } from "../../../../contexts/AuthContext.jsx";
 import { Modal } from "antd";
 import axios from "axios";
 import { usePopup } from "../../../../contexts/PopupContext.jsx";
+import { FaFileImport } from "react-icons/fa6";
+
 
 const { Option } = Select;
 
@@ -197,8 +195,9 @@ const Register = () => {
             <button
               className={styles.importBtn}
               onClick={() => setIsImportModalOpen(true)}
-            >
-              Import
+            ><><FaFileImport />  Import
+            </>
+               
             </button>
           </div>
           <Form
@@ -487,7 +486,7 @@ const Register = () => {
               Your Employee ID: <b>{id}</b>
             </span>
             <div className={styles.idNote}>
-              <small>This ID can be use for login.</small>
+              <small>Employee ID can be used for login.</small>
             </div>
           </div>
           <div className={styles.btnContainer}>

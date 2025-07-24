@@ -30,20 +30,35 @@ const Adjustment = () => {
   const token = authData?.accessToken;
 
   const fetchAdjustment = async (searchValue) => {
+    setLoading(true);
     try {
+      // 1. Fetch all users for the org (id and empNo)
+      const usersRes = await axios.get(`${urL}/user`, {
+        params: { orgId: authData?.orgId },
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const userMap = {};
+      usersRes.data.forEach((u) => {
+        userMap[u.id] = u.empNo;
+      });
+
+      // 2. Fetch adjustments
       const response = await axios.get(`${urL}/indiadjustment`, {
         params: {
           search: searchValue || undefined,
-          orgId: authData?.orgId, 
+          orgId: authData?.orgId,
         },
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
+
+      // 3. Map adjustments to include empNo
       const fetchedAdjustment = response.data.map((adj) => ({
         key: adj.id,
         label: adj.label,
         empId: adj.empId,
+        empNo: userMap[adj.empId] || "N/A",
         allowance: adj.allowance ? "Addition" : "Deduction",
         amount: adj.isPercentage ? `${adj.amount}%` : `${adj.amount} LKR`,
       }));
@@ -53,7 +68,7 @@ const Adjustment = () => {
     }
     setLoading(false);
   };
-
+  
   const handleDelete = async (id) => {
     setLoading(true);
     try {
@@ -72,9 +87,9 @@ const Adjustment = () => {
   //Columns
   const columns = [
     {
-      title: "Employee ID",
-      dataIndex: "empId",
-      key: "empId",
+      title: "Employee No",
+      dataIndex: "empNo",
+      key: "empNo",
       align: "center",
       defaultSortOrder: "ascend",
       sorter: (a, b) => {

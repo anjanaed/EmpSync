@@ -356,12 +356,19 @@
   color: #cccccc;
 }
 
+:global(.dark) .importBtn{
+  background-color: #fff;
+  color: black;
+}
+
 .importBtn{
   margin-right: 2vw;
   padding: 10px 20px;
   background-color: #960000;
   cursor: pointer;
-  border-radius: 10px;
+  border-radius: 25px;
+  display: flex;
+  gap: 5px;
   border: none;
   color: white;
 

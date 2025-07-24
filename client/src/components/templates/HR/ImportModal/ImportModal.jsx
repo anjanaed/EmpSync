@@ -5,6 +5,7 @@ import styles from "./ImportModal.module.css";
 import axios from "axios";
 import Loading from "../../../atoms/loading/loading";
 
+
 // These columns must match your CSV headers and form fields
 const REQUIRED_COLUMNS = [
   "Full Name",
@@ -153,19 +154,16 @@ const ImportModal = () => {
 
     for (let i = 0; i < previewData.length; i++) {
       const row = previewData[i];
-      let role = row["Job Role"];
-      if (role === "Other") {
-        role = row["Custom Role"] || "Other";
-      }
+
 
       // Use generated ID
       let id = generatedIds[i];
 
       const payload = {
         id,
-        empNo: id,
+        empNo: row["Employee No"],
         name: row["Full Name"],
-        role,
+        role:row["Job Role"],
         dob: row["Date of Birth"],
         telephone: row["Phone Number"],
         gender: row["Gender"],
@@ -298,7 +296,9 @@ const ImportModal = () => {
 
   return (
     <div className={styles.importModalContainer}>
-      <h3 className={styles.title}>Import Employees (CSV)</h3>
+      <h3 className={styles.title}>Import Employee Data (.CSV)
+
+</h3>
       <p className={styles.desc}>Select a CSV file to import employee data.</p>
       <div
         style={{
@@ -399,7 +399,7 @@ const ImportModal = () => {
             previewData.length === 0
           }
         >
-          Upload
+          Confirm
         </button>
       </div>
     </div>
