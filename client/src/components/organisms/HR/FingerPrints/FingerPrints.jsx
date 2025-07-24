@@ -246,7 +246,13 @@ const FingerPrintsContent = () => {
       <div className={styles.unitsTitle}>
         Fingerprint Units 
       </div>
-      <div className={styles.unitsCards}>
+      <div
+        className={
+          theme === "dark"
+            ? `${styles.unitsCards} ${styles.unitsCardsDark}`
+            : styles.unitsCards
+        }
+      >
         {deviceCards.length === 0 ? (
           <div className={styles.noDeviceData}>No Device Data Found.</div>
         ) : (
@@ -278,13 +284,26 @@ const FingerPrintsContent = () => {
               animation: false,
             };
             return (
-              <div key={card.unit} className={styles.unitCard}>
-                <div className={styles.unitName}>Unit Name: <span>{card.unit}</span></div>
+              <div
+                key={card.unit}
+                className={
+                  theme === "dark"
+                    ? `${styles.unitCard} ${styles.unitCardDark}`
+                    : styles.unitCard
+                }
+              >
+                <div className={styles.unitName}>
+                  Unit Name: <span>{card.unit}</span>
+                </div>
                 <div className={styles.pieWrapper}>
                   <Pie {...pieConfig} />
                 </div>
-                <div className={styles.unitStat}>Filled : <span>{card.filled}/1000</span></div>
-                <div className={styles.unitStat}>Available: <span>{card.available}/1000</span></div>
+                <div className={styles.unitStat}>
+                  Filled : <span>{card.filled}/1000</span>
+                </div>
+                <div className={styles.unitStat}>
+                  Available: <span>{card.available}/1000</span>
+                </div>
               </div>
             );
           })

@@ -13,6 +13,10 @@
   margin-left: 25px;
 }
 
+.unitsCardsDark {
+  background: #232323;
+}
+
 .noDeviceData {
   font-size: 1rem;
   color: #888;
@@ -39,6 +43,12 @@
   align-items: flex-start;
 }
 
+.unitCardDark {
+  background: #2a2a2a;
+  border: 2px solid #404040;
+  color: #fff;
+}
+
 .unitName {
   font-weight: 600;
   font-size: 1.1rem;
@@ -46,6 +56,10 @@
 }
 .unitName span {
   color: #970000;
+}
+
+.unitCardDark .unitName span {
+  color: #ffb6b6;
 }
 
 .pieWrapper {
@@ -61,6 +75,10 @@
 }
 .unitStat span {
   font-weight: 500;
+}
+
+.unitCardDark .unitStat span {
+  color: #fff;
 }
 
 .tableSection {
