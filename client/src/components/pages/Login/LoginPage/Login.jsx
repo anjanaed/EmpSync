@@ -84,7 +84,7 @@ const LoginPage = () => {
             </Form.Item>
 
             <div className={styles.loginOptions}>
-              <Checkbox>Remember me</Checkbox>
+              {/* <Checkbox>Remember me</Checkbox> */}
               <a
                 href="#"
                 className={styles.forgotPassword}
