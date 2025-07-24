@@ -222,7 +222,7 @@
   .cardContainer {
     display: flex;
     flex-wrap: wrap;
-    gap: 16px;
+    gap: 30px;
     justify-content: flex-start;
   }
   
@@ -260,7 +260,7 @@
     padding: 18px 16px 16px 16px;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 16px;
   }
 
   .cardHeaderRow {
@@ -281,7 +281,7 @@
   }
 
   .cardOrderCount {
-    font-size: 28px;
+    font-size: 38px;
     font-weight: 700;
     color: #222;
     margin-left: 10px;
@@ -308,9 +308,9 @@
   .cardDescription {
     font-size: 13px;
     color: #555;
-    white-space: nowrap;
+    /* white-space: nowrap;
     overflow: hidden;
-    text-overflow: ellipsis;
+    text-overflow: ellipsis; */
     margin-bottom: 4px;
   }
 
@@ -333,7 +333,7 @@
   }
 
   /* Cart Section */
-.cartContainer {
+/* .cartContainer {
   padding: 20px;
   background-color: #f8f9fa;
   margin: 20px;
@@ -389,7 +389,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-width: 80px;
+  min-width: 10px;
 }
 .count {
   font-size: 36px;
@@ -428,7 +428,7 @@
   font-size: 12px;
   font-weight: 500;
   border: 1px solid #ffeaa7;
-}
+} */
 
 /* Popup styles */
 .popupOverlay {
