@@ -11,15 +11,22 @@ export class UserService {
       let passkey: number;
       while (!unique) {
         passkey = Math.floor(100000 + Math.random() * 900000); // 6-digit
-        const existing = await this.databaseService.user.findFirst({ where: { passkey } });
+        const existing = await this.databaseService.user.findFirst({
+          where: { passkey },
+        });
         if (!existing) unique = true;
       }
       // Update user with new passkey
-      const user = await this.databaseService.user.findUnique({ where: { id } });
+      const user = await this.databaseService.user.findUnique({
+        where: { id },
+      });
       if (!user) {
         throw new HttpException('User Not found', HttpStatus.NOT_FOUND);
       }
-      await this.databaseService.user.update({ where: { id }, data: { passkey } });
+      await this.databaseService.user.update({
+        where: { id },
+        data: { passkey },
+      });
       return passkey;
     } catch (err) {
       throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
@@ -29,8 +36,11 @@ export class UserService {
 
   async create(dto: Prisma.UserCreateInput) {
     try {
-      if (dto.id == null || dto.name == null || dto.email == null ) {
-        throw new HttpException('Id, Name, Email must be filled', HttpStatus.BAD_REQUEST);
+      if (dto.id == null || dto.name == null || dto.email == null) {
+        throw new HttpException(
+          'Id, Name, Email must be filled',
+          HttpStatus.BAD_REQUEST,
+        );
       }
 
       // Generate a unique 6-digit passkey
@@ -38,7 +48,9 @@ export class UserService {
       let passkey: number;
       while (!unique) {
         passkey = Math.floor(100000 + Math.random() * 900000); // 6-digit
-        const existing = await this.databaseService.user.findFirst({ where: { passkey } });
+        const existing = await this.databaseService.user.findFirst({
+          where: { passkey },
+        });
         if (!existing) unique = true;
       }
       dto.passkey = passkey;
@@ -47,20 +59,23 @@ export class UserService {
       return passkey;
     } catch (err) {
       if (err.code === 'P2002') {
-        throw new HttpException(`Id or Email Already Registered`, HttpStatus.CONFLICT);
+        throw new HttpException(
+          `Id or Email Already Registered`,
+          HttpStatus.CONFLICT,
+        );
       }
       throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
     }
   }
 
-  async findAll(search?:string,role?:string, orgId?: string) {
+  async findAll(search?: string, role?: string, orgId?: string) {
     try {
       const users = await this.databaseService.user.findMany({
-        where:{
-          name:search?{contains:search,mode:'insensitive'}:undefined,
-          role:role||undefined,
+        where: {
+          name: search ? { contains: search, mode: 'insensitive' } : undefined,
+          role: role || undefined,
           organizationId: orgId || undefined,
-        }
+        },
       });
       if (users) {
         return users;
@@ -89,19 +104,18 @@ export class UserService {
     }
   }
 
-  async fetchRole(id:string){
-    try{
+  async fetchRole(id: string) {
+    try {
       const user = await this.databaseService.user.findUnique({
         where: {
           id,
         },
       });
-      if(!user){
+      if (!user) {
         throw new HttpException('User Not found', HttpStatus.NOT_FOUND);
       }
       return user.role;
-
-    }catch(err){
+    } catch (err) {
       throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
@@ -148,7 +162,6 @@ export class UserService {
   }
 
   async getLastEmpNoByOrg(organizationId: string) {
-
     const lastUser = await this.databaseService.user.findFirst({
       where: { organizationId },
       orderBy: { id: 'desc' },
@@ -166,6 +179,50 @@ export class UserService {
         name: true,
       },
     });
+  }
+
+  async findEmpNoByIdAndOrg(id: string, orgId: string) {
+    try {
+      const user = await this.databaseService.user.findFirst({
+        where: {
+          id,
+          organizationId: orgId,
+        },
+        select: {
+          empNo: true,
+        },
+      });
+
+      if (!user) {
+        throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+      }
+
+      return user;
+    } catch (err) {
+      throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async findIdByEmpNoAndOrg(empNo: string, orgId: string) {
+    try {
+      const user = await this.databaseService.user.findFirst({
+        where: {
+          empNo,
+          organizationId: orgId,
+        },
+        select: {
+          id: true,
+        },
+      });
+
+      if (!user) {
+        throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+      }
+
+      return user;
+    } catch (err) {
+      throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
   async findByPasskey(passkey: number) {

@@ -324,11 +324,7 @@ const Report = () => {
 
       // Filter orders by employee ID
       const employeeOrders = allOrders.filter((order) => {
-        const orderEmployeeId =
-          order.employeeId ||
-          order.employee_id ||
-          order.userId ||
-          order.user_id;
+        const orderEmployeeId = order.employeeId;
         return (
           orderEmployeeId &&
           orderEmployeeId.toString() === employeeId.toString()
@@ -376,14 +372,8 @@ const Report = () => {
 
       // Create meal type lookup
       const mealTypeMap = mealTypesData.reduce((acc, mealType) => {
-        const mealId =
-          mealType.id || mealType.mealTypeId || mealType.meal_type_id;
-        const mealName =
-          mealType.name ||
-          mealType.mealTypeName ||
-          mealType.meal_type_name ||
-          mealType.type ||
-          `Meal Type ${mealId}`;
+        const mealId = mealType.id;
+        const mealName = mealType.name || `Meal Type ${mealId}`;
 
         if (mealId) {
           acc[mealId] = mealName;
@@ -469,14 +459,7 @@ const Report = () => {
     }
 
     return orders.filter((order) => {
-      const orderDate = new Date(
-        order.orderDate ||
-          order.order_date ||
-          order.orderPlacedTime ||
-          order.order_placed_time ||
-          order.createdAt ||
-          order.created_at
-      );
+      const orderDate = new Date(order.orderDate || order.orderPlacedTime);
       return orderDate >= startDate && orderDate <= endDate;
     });
   };
@@ -490,24 +473,7 @@ const Report = () => {
     });
 
     if (employee) {
-      return (
-        employee.name ||
-        employee.userName ||
-        employee.user_name ||
-        employee.fullName ||
-        employee.full_name ||
-        employee.firstName ||
-        employee.first_name ||
-        (employee.firstName && employee.lastName
-          ? `${employee.firstName} ${employee.lastName}`
-          : null) ||
-        (employee.first_name && employee.last_name
-          ? `${employee.first_name} ${employee.last_name}`
-          : null) ||
-        employee.username ||
-        employee.email?.split("@")[0] ||
-        null
-      );
+      return employee.name;
     }
 
     return null;
@@ -679,7 +645,6 @@ const Report = () => {
         break;
 
       case "employee":
-        // For employee report, we need to implement the data structure first
         // This is a placeholder - you'll need to implement employee-specific data
         const employeeReportData = generateEmployeeReportData();
 
@@ -733,14 +698,8 @@ const Report = () => {
 
     // Create meal type lookup by ID to get the name
     const mealTypeMap = mealTypes.reduce((acc, mealType) => {
-      const mealId =
-        mealType.id || mealType.mealTypeId || mealType.meal_type_id;
-      const mealName =
-        mealType.name ||
-        mealType.mealTypeName ||
-        mealType.meal_type_name ||
-        mealType.type ||
-        `Meal Type ${mealId}`;
+      const mealId = mealType.id;
+      const mealName = mealType.name;
 
       if (mealId) {
         acc[mealId] = mealName;
@@ -755,8 +714,7 @@ const Report = () => {
     const groupedByMealType = {};
 
     orders.forEach((order) => {
-      const mealTypeId =
-        order.mealTypeId || order.meal_type_id || order.mealType;
+      const mealTypeId = order.mealTypeId;
       const mealTypeName =
         mealTypeMap[mealTypeId] ||
         mealTypeMap[mealTypeId?.toString()] ||
@@ -845,7 +803,7 @@ const Report = () => {
     }
   };
 
-  // Enhanced data processing with actual order prices - FIXED VERSION
+  // Enhanced data processing with actual order prices
   const processEmployeeMealData = (orders, employees, mealTypes) => {
     console.log("Processing data with:", {
       ordersCount: orders?.length || 0,
@@ -865,24 +823,8 @@ const Report = () => {
 
     // Create user lookup map where user.id maps to user name
     const employeeMap = employees.reduce((acc, user) => {
-      const userId = user.id || user.userId || user.user_id;
-      const userName =
-        user.name ||
-        user.userName ||
-        user.user_name ||
-        user.fullName ||
-        user.full_name ||
-        user.firstName ||
-        user.first_name ||
-        (user.firstName && user.lastName
-          ? `${user.firstName} ${user.lastName}`
-          : null) ||
-        (user.first_name && user.last_name
-          ? `${user.first_name} ${user.last_name}`
-          : null) ||
-        user.username ||
-        user.email?.split("@")[0] ||
-        `User ${userId}`;
+      const userId = user.id;
+      const userName = user.name;
 
       if (userId) {
         acc[userId] = userName;
@@ -898,14 +840,8 @@ const Report = () => {
 
     // Create meal type lookup map
     const mealTypeMap = mealTypes.reduce((acc, mealType) => {
-      const mealId =
-        mealType.id || mealType.mealTypeId || mealType.meal_type_id;
-      const mealName =
-        mealType.name ||
-        mealType.mealTypeName ||
-        mealType.meal_type_name ||
-        mealType.type ||
-        `Meal Type ${mealId}`;
+      const mealId = mealType.id;
+      const mealName = mealType.name;
 
       if (mealId) {
         acc[mealId] = mealName.toLowerCase();
@@ -924,11 +860,7 @@ const Report = () => {
     const uniqueEmployeeIds = [
       ...new Set(
         orders.map((order) => {
-          const empId =
-            order.employeeId ||
-            order.employee_id ||
-            order.userId ||
-            order.user_id;
+          const empId = order.employeeId;
           console.log(`Order employee ID: ${empId} (type: ${typeof empId})`);
           return empId;
         })
@@ -939,11 +871,7 @@ const Report = () => {
 
     // Get unique meal types from orders
     const uniqueMealTypeIds = [
-      ...new Set(
-        orders.map(
-          (order) => order.mealTypeId || order.meal_type_id || order.mealType
-        )
-      ),
+      ...new Set(orders.map((order) => order.mealTypeId)),
     ].filter((id) => id !== null && id !== undefined);
 
     const dynamicMealTypes = uniqueMealTypeIds.map((mealTypeId) => {
@@ -997,10 +925,8 @@ const Report = () => {
 
     // Process orders and count meals with actual prices - FIXED SECTION
     orders.forEach((order) => {
-      const employeeId =
-        order.employeeId || order.employee_id || order.userId || order.user_id;
-      const mealTypeId =
-        order.mealTypeId || order.meal_type_id || order.mealType;
+      const employeeId = order.employeeId;
+      const mealTypeId = order.mealTypeId;
 
       // FIXED: Properly parse the price from the order
       const orderPrice = parseFloat(order.price || 0);
@@ -1213,6 +1139,17 @@ const Report = () => {
         if (result && result.processedData) {
           setEmployeeData(result.processedData);
 
+          const updateEmpNos = async () => {
+            const updated = await Promise.all(
+              result.processedData.map(async (emp) => {
+                const empNo = await fetchEmpNoByUserId(emp.employeeId);
+                return { ...emp, employeeId: empNo };
+              })
+            );
+            setEmployeeData(updated);
+          };
+          updateEmpNos();
+
           if (result.processedData.length > 0) {
             message.success(
               `${
@@ -1323,7 +1260,7 @@ const Report = () => {
   // Table columns definition
   const columns = [
     {
-      title: "Employee ID",
+      title: "Employee No",
       dataIndex: "employeeId",
       key: "employeeId",
       width: 120,
@@ -1407,8 +1344,20 @@ const Report = () => {
     const customEndDate = timePeriod === "custom" ? endDate : null;
 
     loadData(customStartDate, customEndDate);
+  };
 
-   
+  const fetchEmpNoByUserId = async (userId) => {
+    if (!userId || !authData?.orgId) return null;
+    try {
+      const response = await axios.get(`${urL}/user/${userId}/empno`, {
+        params: { orgId: authData?.orgId },
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      return response.data.empNo || userId;
+    } catch (error) {
+      console.error(`Failed to fetch empNo for user ${userId}:`, error);
+      return userId; // fallback to userId if error
+    }
   };
 
   // Generate summary row for table with actual prices
@@ -1609,7 +1558,7 @@ const Report = () => {
 
     // Validate employee ID
     if (!employeeId || !employeeId.trim()) {
-      message.error("Please enter an Employee ID");
+      message.error("Please enter an Employee No");
       return;
     }
 
@@ -1628,9 +1577,25 @@ const Report = () => {
     }
 
     try {
+
+      // Convert empNo to user.id using the endpoint
+    const res = await axios.get(
+      `${urL}/user/empno/${employeeId}`,
+      {
+        params: { orgId: authData?.orgId },
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+    const userId = res.data?.id;
+    if (!userId) {
+      message.error("No user found for this Employee No");
+      setIndividualEmployeeData([]);
+      return;
+    }
+
       // Fetch individual employee orders with the selected time period
       const employeeOrders = await fetchIndividualEmployeeOrders(
-        employeeId,
+        userId,
         employeeTimePeriod
       );
       setIndividualEmployeeData(employeeOrders);
@@ -2109,12 +2074,12 @@ const Report = () => {
 
               <div className={styles.controlsContainerWrap}>
                 <div className={styles.controlGroup}>
-                  <label className={styles.controlLabel}>Employee ID</label>
+                  <label className={styles.controlLabel}>Employee No</label>
                   <input
                     type="text"
                     value={employeeId}
                     onChange={(e) => setEmployeeId(e.target.value)}
-                    placeholder="Enter Employee ID"
+                    placeholder="Enter Employee No"
                     className={styles.textInput}
                   />
                 </div>
