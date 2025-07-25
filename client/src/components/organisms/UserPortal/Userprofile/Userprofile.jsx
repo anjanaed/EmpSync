@@ -5,6 +5,7 @@ import moment from "moment";
 import { useAuth } from "../../../../contexts/AuthContext.jsx";
 import { useTheme } from "../../../../contexts/ThemeContext.jsx";
 import leftimag from "../../../../assets/Logo/profile.jpg";
+import { useNavigate } from "react-router-dom";
 
 export default function UserProfile({ user }) {
   const [isEditing, setIsEditing] = useState(false);
@@ -340,6 +341,8 @@ export default function UserProfile({ user }) {
     });
   };
 
+  const navigate = useNavigate();
+
   if (!userData) {
     return <div style={{ color: isDark ? 'var(--text-primary)' : '#1a202c' }}>Loading...</div>;
   }
@@ -623,8 +626,7 @@ export default function UserProfile({ user }) {
               <button 
                 style={styles.passwordChangeButton}
                 onClick={() => {
-                  // Add your password change navigation logic here
-                  console.log('Navigate to password change');
+                  navigate('/forgotpassword');
                 }}
                 onMouseEnter={e => e.target.style.backgroundColor = isDark ? '#16a34a' : '#047857'}
                 onMouseLeave={e => e.target.style.backgroundColor = isDark ? 'var(--success)' : '#059669'}

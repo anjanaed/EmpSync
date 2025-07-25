@@ -14,8 +14,8 @@ import {
   BellOutlined
 } from '@ant-design/icons';
 import styles from './ResponsiveNav.module.css';
-import logoImg from '../../../../assets/Logo/Logo.png';
-import logowImg from '../../../../assets/Logo/Logow.png';
+import logoImg from '../../../../assets/Logo/logo.png';
+import logowImg from '../../../../assets/Logo/logow.png';
 
 
 // ResponsiveNav component for navigation bar
