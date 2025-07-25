@@ -18,14 +18,12 @@ datasource db {
 model Organization {
   id                      String   @id
   name                    String   @unique
-  logoUrl                 String?
+  contactNumber           String?  
+  address                 String? 
   contactEmail            String
-  active                  Boolean  @default(true)
   createdAt               DateTime @default(now())
   updatedAt               DateTime @updatedAt
   users                   User[]
-  fingerprint_capacity    Int
-  fingerprint_per_machine Int
 }
 
 model Fingerprint {
