@@ -7,123 +7,6 @@ import "antd/dist/reset.css";
 import styles from "./KitchenStaff.module.css";
 import '../../../styles/variables.css';
 
-const { Meta } = Card;
-
-// Cart component styles
-const cartStyles = {
-  cartContainer: {
-    padding: "20px",
-    backgroundColor: "#f8f9fa",
-    margin: "20px",
-  },
-  cartGrid: {
-    display: "grid",
-    gridTemplateColumns: "repeat(4, 1fr)",
-    gap: "20px",
-    maxWidth: "1200px",
-    margin: "0 auto",
-  },
-  cartCard: {
-    backgroundColor: "white",
-    borderRadius: "8px",
-    padding: "20px",
-    boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-    border: "1px solid #e9ecef",
-  },
-  imageContainer: {
-    width: "100%",
-    height: "200px",
-    marginBottom: "16px",
-    backgroundColor: "#e9ecef",
-    borderRadius: "6px",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  imagePlaceholder: {
-    color: "#6c757d",
-    fontSize: "24px",
-  },
-  cardContent: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "12px",
-  },
-  cardHeader: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-    marginBottom: "8px",
-  },
-  itemName: {
-    fontSize: "24px",
-    fontWeight: "600",
-    color: "#333",
-    margin: "0",
-    flex: "1",
-  },
-  orderCount: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    minWidth: "80px",
-  },
-  count: {
-    fontSize: "36px",
-    fontWeight: "700",
-    color: "#333",
-    lineHeight: "1",
-  },
-  orderCountLabel: {
-    fontSize: "12px",
-    color: "#6c757d",
-    textAlign: "center",
-    marginTop: "2px",
-  },
-  mealId: {
-    fontSize: "14px",
-    color: "#6c757d",
-    marginBottom: "8px",
-  },
-  description: {
-    fontSize: "14px",
-    color: "#666",
-    lineHeight: "1.4",
-    margin: "0",
-    marginBottom: "12px",
-  },
-  ingredients: {
-    display: "flex",
-    flexWrap: "wrap",
-    gap: "8px",
-  },
-  ingredient: {
-    backgroundColor: "#fff3cd",
-    color: "#856404",
-    padding: "4px 8px",
-    borderRadius: "4px",
-    fontSize: "12px",
-    fontWeight: "500",
-    border: "1px solid #ffeaa7",
-  },
-  
-  closeButton: {
-    background: "none",
-    border: "none",
-    fontSize: "24px",
-    color: "#666",
-    cursor: "pointer",
-    padding: "0",
-    width: "30px",
-    height: "30px",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: "50%",
-    transition: "background-color 0.2s",
-  },
-};
-
 const Dashbord = () => {
   const baseURL = import.meta.env.VITE_BASE_URL;
   const [activeTab, setActiveTab] = useState(""); // Will be set dynamically
@@ -344,7 +227,7 @@ const Dashbord = () => {
     
     if (loading && meals.length === 0) {
       return (
-        <div style={{ display: 'flex', justifyContent: 'center', padding: '50px' }}>
+        <div className={styles.centeredLoading}>
           <Spin size="large" tip="Loading meal data..." />
         </div>
       );
@@ -352,7 +235,7 @@ const Dashbord = () => {
 
     if (meals.length === 0) {
       return (
-        <div style={{ textAlign: 'center', padding: '50px', color: '#666' }}>
+        <div className={styles.centeredEmpty}>
           <p>No meals found for {activeTab} on {selectedDate.toLocaleDateString()}</p>
         </div>
       );
@@ -400,15 +283,16 @@ const Dashbord = () => {
         </div>
         
         {/* Cart section under each meal tab */}
-        <div style={cartStyles.cartGrid}>
+        <div className={styles.cartGrid}>
           {cartItems.map((item) => (
             <div 
               key={item.id} 
-              style={{...cartStyles.cartCard, cursor: 'pointer'}} 
+              className={styles.cartCard}
               onClick={() => handleCartItemClick(item)}
+              style={{cursor: 'pointer'}}
             >
-              <div style={cartStyles.imageContainer}>
-                <div style={cartStyles.imagePlaceholder}>
+              <div className={styles.imageContainer}>
+                <div className={styles.imagePlaceholder}>
                   <svg
                     width="24"
                     height="24"
@@ -424,22 +308,22 @@ const Dashbord = () => {
                 </div>
               </div>
 
-              <div style={cartStyles.cardContent}>
-                <div style={cartStyles.cardHeader}>
-                  <h3 style={cartStyles.itemName}>{item.name}</h3>
-                  <div style={cartStyles.orderCount}>
-                    <span style={cartStyles.count}>{item.orderCount}</span>
-                    <span style={cartStyles.orderCountLabel}>Order Count</span>
+              <div className={styles.cardContent}>
+                <div className={styles.cardHeader}>
+                  <h3 className={styles.itemName}>{item.name}</h3>
+                  <div className={styles.orderCount}>
+                    <span className={styles.count}>{item.orderCount}</span>
+                    <span className={styles.orderCountLabel}>Order Count</span>
                   </div>
                 </div>
 
-                <div style={cartStyles.mealId}>Meal ID: {item.mealId}</div>
+                <div className={styles.mealId}>Meal ID: {item.mealId}</div>
 
-                <p style={cartStyles.description}>{item.description}</p>
+                <p className={styles.description}>{item.description}</p>
 
-                <div style={cartStyles.ingredients}>
+                <div className={styles.ingredients}>
                   {item.ingredients.map((ingredient, index) => (
-                    <span key={index} style={cartStyles.ingredient}>
+                    <span key={index} className={styles.ingredient}>
                       {ingredient}
                     </span>
                   ))}
@@ -466,10 +350,8 @@ const Dashbord = () => {
             {loading && <Spin size="small" style={{ marginLeft: '10px' }} />}
           </h2>
           <p>
-          {/* <p className={styles.time}> */}
-            {/* {formattedTime} */}
             {lastFetch && (
-              <span style={{ fontSize: '12px', color: '#666', marginLeft: '10px' }}>
+              <span className={styles.lastUpdated}>
                 Last updated: {new Date(lastFetch).toLocaleTimeString()}
               </span>
             )}
@@ -518,7 +400,7 @@ const Dashbord = () => {
                 >
                   {mealType.charAt(0).toUpperCase() + mealType.slice(1)} Sets
                   {activeTab === mealType && (
-                    <span style={{ marginLeft: '5px', fontSize: '12px' }}>
+                    <span className={styles.tabCount}>
                       ({mealData[mealType]?.length || 0})
                     </span>
                   )}
