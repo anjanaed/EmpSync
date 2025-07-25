@@ -5,7 +5,6 @@ dotenv.config();
 
 @Injectable()
 export class AuthService {
-  // Get values from the environment variables
   url = process.env.AUTH0_URL;
   clientId = process.env.AUTH0_CLIENT_ID;
   clientSecret = process.env.AUTH0_CLIENT_SECRET;
@@ -19,26 +18,26 @@ export class AuthService {
           grant_type: 'password',
           username: username,
           password: password,
-          audience: `https://${this.url}/api/v2/`, // Use the env variable for audience
-          client_id: this.clientId, // Use the env variable for client_id
-          client_secret: this.clientSecret, // Use the env variable for client_secret
+          audience: `https://${this.url}/api/v2/`, 
+          client_id: this.clientId, 
+          client_secret: this.clientSecret, 
           scope: 'openid profile email',
         },
         {
           headers: { 'Content-Type': 'application/json' },
         },
       );
-      console.log('Auth0 login successful:', response.data); // Log success message
-      return response.data;// Return the response data on success
+      console.log('Auth0 login successful:', response.data); 
+      return response.data;
       
 
     } catch (error) {
       console.error(
-        'Error during Auth0 login:',// Log the error
+        'Error during Auth0 login:',
         error.response?.data || error.message,
       );
       throw new HttpException(
-        error.response?.data?.error_description || // Use error description if available
+        error.response?.data?.error_description || 
           'Failed to authenticate with Auth0',
         error.response?.status || HttpStatus.INTERNAL_SERVER_ERROR,
       );
@@ -49,11 +48,11 @@ export class AuthService {
     try {
       // Step 1: Obtain a management API token
       const tokenRes = await axios.post(
-        `https://${this.url}/oauth/token`, // Use the env variable for the URL
+        `https://${this.url}/oauth/token`, 
         {
-          client_id: this.clientId, // Use the env variable for client_id
-          client_secret: this.clientSecret, // Use the env variable for client_secret
-          audience: `https://${this.url}/api/v2/`, // Use the env variable for audience
+          client_id: this.clientId, 
+          client_secret: this.clientSecret,
+          audience: `https://${this.url}/api/v2/`,
           grant_type: 'client_credentials',
         },
       );
@@ -78,14 +77,14 @@ export class AuthService {
         `https://${this.url}/api/v2/users/${userId}`,
         {
           headers: {
-            Authorization: `Bearer ${mgmtToken}`,// Authorization header with management token
+            Authorization: `Bearer ${mgmtToken}`,
           },
         },
       );
-      console.log(`User ${userId} deleted`) // Log success message
+      console.log(`User ${userId} deleted`) 
     } catch (error) {
       console.error(
-        'Error deleting user from Auth0:',// Log the error
+        'Error deleting user from Auth0:',
         error.response?.data || error.message,
       );
     }
