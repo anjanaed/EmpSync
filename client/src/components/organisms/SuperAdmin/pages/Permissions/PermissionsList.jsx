@@ -191,11 +191,15 @@ const PermissionsList = ({
           <div className={styles.selectGroup}>
             <label className={styles.selectLabel}>Organization:</label>
             <Select
+              showSearch
               placeholder="Select Organization"
               className={styles.selectControl}
               value={selectedOrganization}
               onChange={handleOrganizationChange}
               dropdownClassName="permission-org-dropdown-dark"
+              filterOption={(input, option) =>
+                option?.children?.toLowerCase().includes(input.toLowerCase())
+              }
             >
               {organizations.map(org => (
                 <Option key={org.id} value={org.id}>
@@ -208,12 +212,16 @@ const PermissionsList = ({
           <div className={styles.selectGroup}>
             <label className={styles.selectLabel}>User:</label>
             <Select
+              showSearch
               placeholder="Select User"
               className={styles.selectControl}
               value={selectedUser}
               onChange={handleUserChange}
               disabled={!selectedOrganization}
               dropdownClassName="user-dropdown-dark"
+              filterOption={(input, option) =>
+                option?.children?.toLowerCase().includes(input.toLowerCase())
+              }
             >
               {users.map(user => (
                 <Option key={user.id} value={user.id}>
