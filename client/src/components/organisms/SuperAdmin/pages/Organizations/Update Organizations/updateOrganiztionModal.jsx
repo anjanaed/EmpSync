@@ -1,12 +1,22 @@
+import { useState } from 'react';
 import { Modal, Form, Input, Button, Switch, InputNumber } from 'antd';
 import styles from './updateOrganiztionModal.module.css';
 
 const UpdateOrganizationModal = ({ visible, onSubmit, onCancel, initialValues }) => {
   const [form] = Form.useForm();
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (values) => {
-    onSubmit(values);
-    form.resetFields();
+  const handleSubmit = async (values) => {
+    setLoading(true);
+    try {
+       await onSubmit(values);
+    } catch (err) {
+    
+    } finally {
+      form.resetFields();
+      setLoading(false);
+    }
+   
   };
 
   const handleCancel = () => {
@@ -42,19 +52,29 @@ const UpdateOrganizationModal = ({ visible, onSubmit, onCancel, initialValues })
         >
           <Input placeholder="Enter contact email" />
         </Form.Item>
-        <Form.Item 
-          name="logoUrl" 
-          label="Logo URL" 
+
+        <Form.Item
+          name="contactNumber"
+          label="Contact Number"
           rules={[
-            { required: true, message: 'Please enter logo URL' },
-            { type: 'url', message: 'Please enter a valid URL' }
+            { required: true, message: 'Please enter contact number' },
+            { pattern: /^[0-9+]{9,15}$/, message: 'Please enter a valid contact number' },
           ]}
         >
-          <Input placeholder="Enter logo URL (e.g., https://example.com/logo.png)" />
+          <Input placeholder="Enter contact number (e.g., +94112223344)" />
         </Form.Item>
+
+        <Form.Item
+          name="address"
+          label="Address"
+          rules={[{ required: true, message: 'Please enter address' }]}
+        >
+          <Input.TextArea rows={3} placeholder="Enter organization address" />
+        </Form.Item>
+        
         <Form.Item>
           <div className={styles.buttonGroup}>
-            <Button type="primary" htmlType="submit" className={styles.submitButton}>
+            <Button type="primary" htmlType="submit" loading={loading} className={styles.submitButton}>
               Update Organization
             </Button>
             <Button onClick={handleCancel} className={styles.cancelButton}>
