@@ -1,0 +1,156 @@
+/* PayrollDemo Component Styles */
+.demoContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 24px;
+  background: #f5f5f5;
+  min-height: 100vh;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 48px;
+  background: #ffffff;
+  padding: 40px;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.header h1 {
+  margin-bottom: 16px !important;
+  color: #262626;
+  font-weight: 700;
+}
+
+.description {
+  font-size: 16px;
+  color: #8c8c8c;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.demoSection {
+  margin-bottom: 32px;
+}
+
+.demoCard {
+  border-radius: 16px !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08) !important;
+  border: 1px solid rgba(0, 0, 0, 0.06) !important;
+}
+
+.demoCard h3 {
+  margin-bottom: 16px !important;
+  display: flex;
+  align-items: center;
+}
+
+.demoWrapper {
+  margin-top: 24px;
+  background: #f5f5f5;
+  padding: 24px;
+  border-radius: 12px;
+  border: 2px dashed #d9d9d9;
+}
+
+.cardDemo {
+  margin-top: 24px;
+  background: #f5f5f5;
+  padding: 24px;
+  border-radius: 12px;
+  border: 2px dashed #d9d9d9;
+}
+
+.featureSection {
+  margin-top: 48px;
+}
+
+.featureSection h3 {
+  text-align: center;
+  margin-bottom: 32px !important;
+  color: #262626;
+  font-weight: 600;
+}
+
+.featureGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
+  margin-top: 24px;
+}
+
+.featureCard {
+  border-radius: 12px !important;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06) !important;
+  border: 1px solid rgba(0, 0, 0, 0.06) !important;
+  transition: all 0.3s ease;
+}
+
+.featureCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12) !important;
+}
+
+.featureCard h4 {
+  margin-bottom: 12px !important;
+  color: #262626;
+  font-size: 16px;
+}
+
+.featureCard .ant-typography {
+  color: #595959;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .demoContainer {
+    padding: 24px 16px;
+  }
+
+  .header {
+    padding: 24px;
+    margin-bottom: 32px;
+  }
+
+  .header h1 {
+    font-size: 24px !important;
+  }
+
+  .description {
+    font-size: 14px;
+  }
+
+  .demoWrapper,
+  .cardDemo {
+    padding: 16px;
+    margin-top: 16px;
+  }
+
+  .featureGrid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .featureSection {
+    margin-top: 32px;
+  }
+}
+
+/* Animation */
+.demoCard,
+.featureCard {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

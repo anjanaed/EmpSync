@@ -6,7 +6,6 @@ import Loading from "../components/atoms/loading/loading.jsx";
 const redirectRoles = [
   "KITCHEN_ADMIN",
   "KITCHEN_STAFF",
-  "INVENTORY_ADMIN",
   "HR_ADMIN",
 ];
 
@@ -21,7 +20,7 @@ const LoginRouting = ({ children }) => {
       if (redirectRoles.includes(userRole)) {
         navigate("/loginrole");
       } else {
-        navigate("/profile");
+        navigate("/ProfilePage");
       }
     }
   }, [authData, authLoading, navigate]);

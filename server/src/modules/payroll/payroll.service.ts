@@ -17,6 +17,45 @@ export class PayrollService {
     }
   }
 
+  // Get payroll records for a specific user (for user portal)
+  async findUserPayrolls(empId: string) {
+    try {
+      const payrolls = await this.databaseService.payroll.findMany({
+        where: {
+          empId: empId,
+        },
+        include: {
+          employee: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+        },
+        orderBy: {
+          createdAt: 'desc',
+        },
+      });
+
+      if (payrolls && payrolls.length > 0) {
+        return {
+          success: true,
+          message: 'Payrolls fetched successfully',
+          payrolls: payrolls,
+        };
+      } else {
+        return {
+          success: true,
+          message: 'No payroll records found',
+          payrolls: [],
+        };
+      }
+    } catch (err) {
+      throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
   async generatePayrollsForAll(dto: Prisma.PayrollCreateInput,orgId: string): Promise<any> {
     try {
     const users = await this.databaseService.user.findMany({

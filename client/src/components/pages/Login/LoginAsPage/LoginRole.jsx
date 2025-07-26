@@ -39,12 +39,6 @@ const LoginPage = () => {
     return <Loading />;
   }
 
-  // useEffect(() => {
-  //   if (!redirectRoles.includes(userRole)) {
-  //     navigate("/ProfilePage");
-  //   }
-  // }, []);
-
   const handleAdminLogin = () => {
     const userRole = authData.user.role;
     const route = roleRouteMap[userRole];
