@@ -741,7 +741,7 @@ const MealPage03 = () => {
                                     <Text strong className={styles.priceText}>
                                       Rs. {meal.price ? meal.price.toFixed(2) : "0.00"}
                                     </Text>
-                                    {!isPastDue && (
+                                    {/* {!isPastDue && (
                                       <Button 
                                         type="primary" 
                                         size="small"
@@ -754,7 +754,7 @@ const MealPage03 = () => {
                                       >
                                         Add
                                       </Button>
-                                    )}
+                                    )} */}
                                   </div>
                                 </div>
                               </Card>

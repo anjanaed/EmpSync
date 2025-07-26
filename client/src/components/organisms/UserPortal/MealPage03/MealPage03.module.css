@@ -75,6 +75,14 @@
   border-radius: 10px;
 }
 
+.cartButton span {
+  color: #FFFFFF !important;
+}
+
+.cartButton .ant-badge-status-text {
+  color: #FFFFFF !important;
+}
+
 .cardContainer {
   border-radius: 16px;
   border: none;
