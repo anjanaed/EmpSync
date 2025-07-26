@@ -1,0 +1,146 @@
+.container {
+  padding: 24px;
+  background-color: var(--bg-secondary);
+  
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  margin-bottom: 24px;
+  gap: 12px;
+  color: black;
+}
+
+.cardsContainer {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 130px;
+  max-width: 1800px;
+}
+
+.card {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  padding: 24px;
+}
+
+.cardTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-primary);
+  font-family: var(--primary-font);
+  font-weight: 600;
+}
+
+.pieChartContainer {
+  background-color: #f9fafb;
+  border-radius: 8px;
+  padding: 16px;
+  height: 400px;
+}
+
+.rankingsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.rankingItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  background-color: white;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  transition: all 0.2s ease;
+}
+
+.rankingItem:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.rankingLeft {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.colorIndicator {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.mealInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.mealName {
+  font-weight: 500;
+  color: #1f2937;
+  font-size: 14px;
+}
+
+.mealRank {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.orderInfo {
+  text-align: right;
+}
+
+.orderCount {
+  font-weight: 600;
+  color: #1f2937;
+  font-size: 16px;
+}
+
+.orderPercentage {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.customTooltip {
+  background-color: white;
+  padding: 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.tooltipTitle {
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 4px;
+}
+
+.tooltipText {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+@media (max-width: 768px) {
+  .cardsContainer {
+    grid-template-columns: 1fr;
+  }
+  
+  .container {
+    padding: 16px;
+  }
+  
+  .card {
+    padding: 16px;
+  }
+  
+  .pieChartContainer {
+    height: 300px;
+  }
+}
