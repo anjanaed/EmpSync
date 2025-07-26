@@ -90,58 +90,59 @@ export class MealService {
 
 
   async updateWithIngredients(
-    id: number,
-    mealData: Omit<Prisma.MealUpdateInput, 'ingredients'>,
-    ingredients?: Array<{ ingredientId: number }>,
-    orgId?: string,
-  ) {
-    try {
-      
-      const meal = await this.databaseService.meal.findFirst({
-        where: {
-          id,
-          orgId : orgId || undefined,
-        },
-      });
-      if (!meal) {
-        throw new NotFoundException('Meal not found');
-      }
+  id: number,
+  mealData: Omit<Prisma.MealUpdateInput, 'ingredients'>,
+  ingredients?: Array<{ ingredientId: number }>,
+  orgId?: string,
+) {
+  // First check: only throw NotFoundException if meal not found
+  const meal = await this.databaseService.meal.findFirst({
+    where: {
+      id,
+      orgId: orgId || undefined,
+    },
+  });
 
-      
-      return await this.databaseService.$transaction(async (prisma) => {
-        if (ingredients && ingredients.length > 0) {
-          await prisma.mealIngredient.deleteMany({
-            where: { mealId: id },
-          });
+  if (!meal) {
+    throw new NotFoundException('Meal not found');
+  }
 
-          for (const ing of ingredients) {
-            await prisma.mealIngredient.create({
-              data: {
-                mealId: id,
-                ingredientId: ing.ingredientId,
-              },
-            });
-          }
-        }
-
-        const updatedMeal = await prisma.meal.update({
-          where: { id },
-          data: mealData,
-          include: {
-            ingredients: {
-              include: {
-                ingredient: true,
-              },
-            },
-          },
+  try {
+    return await this.databaseService.$transaction(async (prisma) => {
+      if (ingredients && ingredients.length > 0) {
+        await prisma.mealIngredient.deleteMany({
+          where: { mealId: id },
         });
 
-        return updatedMeal;
+        for (const ing of ingredients) {
+          await prisma.mealIngredient.create({
+            data: {
+              mealId: id,
+              ingredientId: ing.ingredientId,
+            },
+          });
+        }
+      }
+
+      const updatedMeal = await prisma.meal.update({
+        where: { id },
+        data: mealData,
+        include: {
+          ingredients: {
+            include: {
+              ingredient: true,
+            },
+          },
+        },
       });
-    } catch (error) {
-      throw new BadRequestException(`Failed to update meal: ${error.message}`);
-    }
+
+      return updatedMeal;
+    });
+  } catch (error) {
+    throw new BadRequestException(`Failed to update meal: ${error.message}`);
   }
+}
+
 
   
 
