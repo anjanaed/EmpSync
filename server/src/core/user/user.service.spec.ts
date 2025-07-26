@@ -7,22 +7,38 @@ import { Prisma } from '@prisma/client';
 describe('UserService', () => {
   let userService: UserService;
   let databaseService: DatabaseService;
-  const dto: Prisma.UserCreateInput = {
+const userDto: Prisma.UserCreateInput = {
     id: '1',
+    empNo: 'EMP001',
     name: 'Alice Johnson',
     role: 'admin',
     dob: '1990-05-14',
     telephone: '1234567890',
     address: '123 Main St, NY',
     email: 'alice@example.com',
-    password: 'hashedpassword1',
-    thumbId: Buffer.from('b3f8a1d2', 'hex'),
+    gender: 'female',
+    salary: 50000,
+    passkey: 123456,
+    supId: 'sup123',
+    language: 'English',
+    height: 160,
+    weight: 60,
+    payrolls: {
+      create: [],
+    },
+    organization: {
+      connect: { id: 'org123' },
+    },
+    permissions: {
+      create: [],
+    },
   };
   const mockDatabaseService = {
     user: {
       create: jest.fn(),
       findMany: jest.fn(),
       findUnique: jest.fn(),
+      findFirst: jest.fn(),  
       update: jest.fn(),
       delete: jest.fn(),
     },
@@ -49,18 +65,18 @@ describe('UserService', () => {
   describe('create', () => {
     it('should create a user successfully', async () => {
 
-      mockDatabaseService.user.create.mockResolvedValue(dto);
+      mockDatabaseService.user.create.mockResolvedValue(userDto);
 
-      await expect(userService.create(dto)).resolves.not.toThrow();
+      await expect(userService.create(userDto)).resolves.not.toThrow();
       expect(mockDatabaseService.user.create).toHaveBeenCalledWith({
-        data: dto,
+        data: userDto,
       });
     });
     it('should throw conflict error if user ID or Name is not unique', async () => {
       mockDatabaseService.user.create.mockRejectedValue({ code: 'P2002' });
 
       await expect(
-        userService.create(dto),
+        userService.create(userDto),
       ).rejects.toThrow(HttpException);
       expect(mockDatabaseService.user.create).toHaveBeenCalled();
     });
@@ -69,9 +85,9 @@ describe('UserService', () => {
   describe('findAll',()=>{
     it('should return array of users',async()=>{
 
-        mockDatabaseService.user.findMany.mockResolvedValue(dto);
+        mockDatabaseService.user.findMany.mockResolvedValue(userDto);
 
-        await expect(userService.findAll()).resolves.toEqual(dto);
+        await expect(userService.findAll()).resolves.toEqual(userDto);
         expect (mockDatabaseService.user.findMany).toHaveBeenCalled();
     })
     it('should throw an error if no users are found', async () => {
@@ -84,9 +100,9 @@ describe('UserService', () => {
   describe('findOne', () => {
     it('should return a user by ID', async () => {
 
-      mockDatabaseService.user.findUnique.mockResolvedValue(dto);
+      mockDatabaseService.user.findUnique.mockResolvedValue(userDto);
 
-      await expect(userService.findOne('1')).resolves.toEqual(dto);
+      await expect(userService.findOne('1')).resolves.toEqual(userDto);
     });
 
     it('should throw an error if user is not found', async () => {
@@ -101,8 +117,8 @@ describe('UserService', () => {
 
       const updateData: Prisma.UserUpdateInput = { name: 'Jane Doe' };
 
-      mockDatabaseService.user.findUnique.mockResolvedValue(dto);
-      mockDatabaseService.user.update.mockResolvedValue({ ...dto, ...updateData });
+      mockDatabaseService.user.findUnique.mockResolvedValue(userDto);
+      mockDatabaseService.user.update.mockResolvedValue({ ...userDto, ...updateData });
 
       await expect(userService.update('1', updateData)).resolves.not.toThrow();
       expect(mockDatabaseService.user.update).toHaveBeenCalledWith({
@@ -121,8 +137,8 @@ describe('UserService', () => {
   describe('delete', () => {
     it('should delete a user if found', async () => {
 
-      mockDatabaseService.user.findUnique.mockResolvedValue(dto);
-      mockDatabaseService.user.delete.mockResolvedValue(dto);
+      mockDatabaseService.user.findUnique.mockResolvedValue(userDto);
+      mockDatabaseService.user.delete.mockResolvedValue(userDto);
 
       await expect(userService.delete('1')).resolves.not.toThrow();
       expect(mockDatabaseService.user.delete).toHaveBeenCalledWith({ where: { id: '1' } });
