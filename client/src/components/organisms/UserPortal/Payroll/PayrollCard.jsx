@@ -13,7 +13,10 @@ const PayrollCard = ({
   deductions,
   onView, 
   onDownload,
-  status = 'processed' 
+  status = 'processed',
+  isEstimated = false, // New prop to indicate estimated values
+  actualNetPay = null, // Actual net pay from backend
+  isDownloading = false // New prop to indicate download in progress
 }) => {
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('en-LK', {
@@ -82,7 +85,9 @@ const PayrollCard = ({
         <Row gutter={[16, 8]}>
           <Col span={12}>
             <div className={styles.summaryItem}>
-              <Text className={styles.summaryLabel}>Gross Pay</Text>
+              <Text className={styles.summaryLabel}>
+                Gross Pay {isEstimated && <span style={{ fontSize: '10px', color: '#8c8c8c' }}>(Est.)</span>}
+              </Text>
               <Text className={styles.summaryValue}>
                 {formatCurrency(grossPay)}
               </Text>
@@ -92,19 +97,26 @@ const PayrollCard = ({
             <div className={styles.summaryItem}>
               <Text className={styles.summaryLabel}>Net Pay</Text>
               <Text className={styles.summaryValuePrimary}>
-                {formatCurrency(netPay)}
+                {formatCurrency(actualNetPay || netPay)}
               </Text>
             </div>
           </Col>
           <Col span={24}>
             <div className={styles.summaryItem}>
-              <Text className={styles.summaryLabel}>Total Deductions</Text>
+              <Text className={styles.summaryLabel}>
+                Total Deductions {isEstimated && <span style={{ fontSize: '10px', color: '#8c8c8c' }}>(Est.)</span>}
+              </Text>
               <Text className={styles.summaryValueSecondary}>
                 {formatCurrency(deductions)}
               </Text>
             </div>
           </Col>
         </Row>
+        {isEstimated && (
+          <div style={{ marginTop: '8px', fontSize: '11px', color: '#8c8c8c', fontStyle: 'italic' }}>
+            * Gross pay and deductions are estimated. View PDF for exact details.
+          </div>
+        )}
       </div>
 
       {/* Action Buttons */}
@@ -123,8 +135,9 @@ const PayrollCard = ({
             icon={<DownloadOutlined />}
             onClick={() => onDownload(month, year)}
             className={styles.downloadButton}
+            loading={isDownloading}
           >
-            Download
+            {isDownloading ? 'Downloading...' : 'Download'}
           </Button>
         </Space>
       </div>

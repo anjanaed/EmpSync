@@ -12,6 +12,7 @@ const { Option } = Select;
 const UserPayroll = () => {
   const [payrollData, setPayrollData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [downloadingId, setDownloadingId] = useState(null); // Track which card is downloading
   const [searchTerm, setSearchTerm] = useState('');
   const [filterYear, setFilterYear] = useState('all');
   const [filterStatus, setFilterStatus] = useState('all');
@@ -38,16 +39,61 @@ const UserPayroll = () => {
 
       if (response.data && response.data.payrolls) {
         // Transform backend data to frontend format
-        const transformedData = response.data.payrolls.map((payroll, index) => ({
-          id: payroll.id || index,
-          month: payroll.month ? payroll.month.split('~')[0] : 'Unknown',
-          year: payroll.month ? parseInt(payroll.month.split('~')[1]) : new Date().getFullYear(),
-          grossPay: parseFloat(payroll.grossSalary) || 0,
-          netPay: parseFloat(payroll.netSalary) || 0,
-          deductions: parseFloat(payroll.totalDeduction) || 0,
-          status: 'processed', // You can add status field to backend if needed
-          originalMonth: payroll.month, // Keep original month format for API calls
-        }));
+        const transformedData = response.data.payrolls.map((payroll, index) => {
+          // Extract month and year from the month field (format: "MM~YYYY" or similar)
+          let monthName = 'Unknown';
+          let year = new Date().getFullYear();
+          
+          if (payroll.month) {
+            if (payroll.month.includes('~')) {
+              const [monthNum, yearStr] = payroll.month.split('~');
+              const monthNames = [
+                'January', 'February', 'March', 'April', 'May', 'June',
+                'July', 'August', 'September', 'October', 'November', 'December'
+              ];
+              monthName = monthNames[parseInt(monthNum) - 1] || `Month ${monthNum}`;
+              year = parseInt(yearStr) || new Date().getFullYear();
+            } else {
+              // Handle other month formats
+              monthName = payroll.month;
+            }
+          }
+          
+          // Get available data from backend
+          const netPay = parseFloat(payroll.netPay) || 0;
+          
+          // Since schema only has netPay, we'll estimate gross pay and deductions
+          // Using more realistic Sri Lankan payroll calculation estimates
+          let estimatedGrossPay, estimatedDeductions;
+          
+          if (payroll.employee && payroll.employee.salary) {
+            // If we have the employee's basic salary, use it for better estimation
+            const basicSalary = parseFloat(payroll.employee.salary) || 0;
+            // Typical allowances in Sri Lanka: 10-20% of basic salary
+            const estimatedAllowances = basicSalary * 0.15; // 15% average allowances
+            estimatedGrossPay = basicSalary + estimatedAllowances;
+            estimatedDeductions = estimatedGrossPay - netPay;
+          } else {
+            // Fallback estimation when basic salary is not available
+            // Assuming net pay is ~75% of gross pay (25% deductions)
+            estimatedGrossPay = netPay / 0.75;
+            estimatedDeductions = estimatedGrossPay - netPay;
+          }
+          
+          return {
+            id: payroll.id || index,
+            month: monthName,
+            year: year,
+            grossPay: estimatedGrossPay,
+            netPay: netPay,
+            deductions: estimatedDeductions,
+            status: 'processed', // You can add status field to backend if needed
+            originalMonth: payroll.month, // Keep original month format for API calls
+            // Store actual backend data for reference
+            actualNetPay: netPay,
+            isEstimated: true, // Flag to indicate these are estimated values
+          };
+        });
 
         setPayrollData(transformedData);
       } else {
@@ -55,7 +101,18 @@ const UserPayroll = () => {
       }
     } catch (error) {
       console.error('Error fetching payroll data:', error);
-      message.error('Failed to load payroll data. Please try again.');
+      
+      // More specific error handling
+      if (error.response?.status === 401) {
+        message.error('Authentication failed. Please login again.');
+      } else if (error.response?.status === 403) {
+        message.error('You do not have permission to view payroll data.');
+      } else if (error.response?.status === 404) {
+        message.info('No payroll records found for your account.');
+        setPayrollData([]);
+      } else {
+        message.error('Failed to load payroll data. Please try again.');
+      }
       setPayrollData([]);
     } finally {
       setLoading(false);
@@ -103,28 +160,43 @@ const UserPayroll = () => {
         return;
       }
 
-      // Get signed URL for downloading the payroll PDF
-      const response = await axios.get(`${urL}/payroll/geturl/by-month/${payrollRecord.originalMonth}`, {
+      // Set downloading state
+      setDownloadingId(payrollRecord.id);
+
+      // Use the streaming download endpoint to avoid CORS issues
+      const response = await axios.get(`${urL}/payroll/download/stream/by-month/${payrollRecord.originalMonth}`, {
         headers: {
           Authorization: `Bearer ${token}`,
-        }
+        },
+        responseType: 'blob', // Important: Tell axios to expect binary data
       });
 
-      if (response.data && response.data.url) {
-        // Create a temporary link element to trigger download
-        const link = document.createElement('a');
-        link.href = response.data.url;
-        link.download = `Payroll-${month}-${year}.pdf`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        message.success('Payroll download started');
-      } else {
-        message.error('Payroll document not available for download');
-      }
+      // Create a blob from the response data
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      
+      // Create a temporary URL for the blob
+      const blobUrl = window.URL.createObjectURL(blob);
+      
+      // Create a temporary link element to trigger download
+      const link = document.createElement('a');
+      link.href = blobUrl;
+      link.download = `Payroll-${month}-${year}.pdf`;
+      link.style.display = 'none';
+      
+      // Append to body, click, and remove
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      // Clean up the blob URL
+      window.URL.revokeObjectURL(blobUrl);
+      
+      message.success('Payroll download completed');
     } catch (error) {
       console.error('Error downloading payroll:', error);
       message.error('Failed to download payroll. Please try again.');
+    } finally {
+      setDownloadingId(null); // Clear downloading state
     }
   };
 
@@ -248,6 +320,9 @@ const UserPayroll = () => {
                   netPay={payroll.netPay}
                   deductions={payroll.deductions}
                   status={payroll.status}
+                  isEstimated={payroll.isEstimated}
+                  actualNetPay={payroll.actualNetPay}
+                  isDownloading={downloadingId === payroll.id}
                   onView={handleViewPayroll}
                   onDownload={handleDownloadPayroll}
                 />
