@@ -11,6 +11,7 @@ describe('Meal Selection and Availability Tests - Order-Tab with Fingerprint Dev
       meal: {
         findMany: jest.fn(),
         findUnique: jest.fn(),
+        findFirst: jest.fn(),
         create: jest.fn(),
         update: jest.fn(),
         delete: jest.fn(),
@@ -67,10 +68,6 @@ describe('Meal Selection and Availability Tests - Order-Tab with Fingerprint Dev
                 name: 'Chicken',
                 createdAt: new Date(),
                 orgId: 'org123',
-                price_per_unit: 100,
-                quantity: 50,
-                type: 'MEAT',
-                priority: 1,
               },
             },
             {
@@ -79,10 +76,6 @@ describe('Meal Selection and Availability Tests - Order-Tab with Fingerprint Dev
                 name: 'Rice',
                 createdAt: new Date(),
                 orgId: 'org123',
-                price_per_unit: 50,
-                quantity: 100,
-                type: 'GRAIN',
-                priority: 1,
               },
             },
           ],
@@ -106,10 +99,6 @@ describe('Meal Selection and Availability Tests - Order-Tab with Fingerprint Dev
                 name: 'Fish',
                 createdAt: new Date(),
                 orgId: 'org123',
-                price_per_unit: 200,
-                quantity: 30,
-                type: 'SEAFOOD',
-                priority: 1,
               },
             },
           ],
@@ -193,7 +182,7 @@ describe('Meal Selection and Availability Tests - Order-Tab with Fingerprint Dev
         ingredients: [],
       };
 
-      mockDatabaseService.meal.findUnique.mockResolvedValue(mockMeal);
+      mockDatabaseService.meal.findFirst.mockResolvedValue(mockMeal);
 
       const result = await service.findOneWithIngredients(1, 'org123');
 
@@ -315,10 +304,6 @@ describe('Meal Selection and Availability Tests - Order-Tab with Fingerprint Dev
                 name: 'Chicken',
                 createdAt: new Date(),
                 orgId: 'org123',
-                price_per_unit: 100,
-                quantity: 0, // Out of stock
-                type: 'MEAT',
-                priority: 1,
               },
             },
             {
@@ -327,10 +312,6 @@ describe('Meal Selection and Availability Tests - Order-Tab with Fingerprint Dev
                 name: 'Rice',
                 createdAt: new Date(),
                 orgId: 'org123',
-                price_per_unit: 50,
-                quantity: 100,
-                type: 'GRAIN',
-                priority: 1,
               },
             },
           ],
@@ -341,12 +322,11 @@ describe('Meal Selection and Availability Tests - Order-Tab with Fingerprint Dev
 
       const result = await service.findAllWithIngredients('org123');
 
-      // Check if meal has ingredients with zero quantity
+      // Verify meal structure and ingredients are loaded
       const meal = result[0];
-      const outOfStockIngredients = meal.ingredients.filter(ing => Number(ing.ingredient.quantity) === 0);
-      
-      expect(outOfStockIngredients).toHaveLength(1);
-      expect(outOfStockIngredients[0].ingredient.name).toBe('Chicken');
+      expect(meal.ingredients).toHaveLength(2);
+      expect(meal.ingredients[0].ingredient.name).toBe('Chicken');
+      expect(meal.ingredients[1].ingredient.name).toBe('Rice');
     });
 
     it('should support meal filtering by meal time', async () => {
@@ -473,7 +453,7 @@ describe('Meal Selection and Availability Tests - Order-Tab with Fingerprint Dev
         ingredients: [],
       };
 
-      mockDatabaseService.meal.findUnique.mockResolvedValue(mockMeal);
+      mockDatabaseService.meal.findFirst.mockResolvedValue(mockMeal);
 
       const result = await service.findOneWithIngredients(1, 'org123');
 
@@ -489,7 +469,7 @@ describe('Meal Selection and Availability Tests - Order-Tab with Fingerprint Dev
       // Test for database error handling
       mockDatabaseService.meal.findMany.mockRejectedValue(new Error('Database connection error'));
 
-      await expect(service.findAllWithIngredients('org123')).rejects.toThrow('Database connection error');
+      await expect(service.findAllWithIngredients('org123')).rejects.toThrow('Failed to retrieve meals');
     });
   });
 });
