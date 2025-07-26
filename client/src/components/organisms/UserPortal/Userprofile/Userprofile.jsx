@@ -6,6 +6,7 @@ import { useAuth } from "../../../../contexts/AuthContext.jsx";
 import { useTheme } from "../../../../contexts/ThemeContext.jsx";
 import leftimag from "../../../../assets/Logo/profile.jpg";
 import { useNavigate } from "react-router-dom";
+import Loading from "../../../atoms/loading/loading.jsx";
 
 export default function UserProfile({ user }) {
   const [isEditing, setIsEditing] = useState(false);
@@ -344,7 +345,12 @@ export default function UserProfile({ user }) {
   const navigate = useNavigate();
 
   if (!userData) {
-    return <div style={{ color: isDark ? 'var(--text-primary)' : '#1a202c' }}>Loading...</div>;
+    return (
+      <Loading
+        text="Loading your profile..."
+        type={isDark ? "dark" : "light"}
+      />
+    );
   }
 
   return (
