@@ -54,26 +54,6 @@ const AddOrganizationModal = ({ visible, onSubmit, onCancel }) => {
         >
           <Input placeholder="Enter logo URL (e.g., https://example.com/logo.png)" />
         </Form.Item>
-        <Form.Item 
-          name="fingerprint_capacity" 
-          label="Fingerprint Capacity" 
-          rules={[{ required: true, message: 'Please enter fingerprint capacity' }]}
-        >
-          <InputNumber 
-            min={1} 
-            style={{ width: '100%' }}
-          />
-        </Form.Item>
-        <Form.Item 
-          name="fingerprint_per_machine" 
-          label="Fingerprints per Machine" 
-          rules={[{ required: true, message: 'Please enter fingerprints per machine' }]}
-        >
-          <InputNumber 
-            min={1} 
-            style={{ width: '100%' }}
-          />
-        </Form.Item>
         <Form.Item>
           <div className={styles.buttonGroup}>
             <Button type="primary" htmlType="submit"  loading={loading} className={styles.submitButton}>

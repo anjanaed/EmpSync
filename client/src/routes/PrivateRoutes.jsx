@@ -27,7 +27,6 @@ import MealConform from "../components/pages/ServingStaff/MealConfirm/MealConfor
 import KitchenStaff from "../components/pages/KitchenStaff/kitchenStaff.jsx";
 
 // INVENTORY_ADMIN
-import Ingredients from "../components/Pages/InventoryAdmin/Dashboard/Ingredients.jsx";
 import AnalysisDashboard from "../components/Pages/InventoryAdmin/AnalysisDashboard/AnalysisDashboard.jsx";
 import OrderReportDashboard from "../components/Pages/InventoryAdmin/OrderReportDashboard/OrderReportDashboard.jsx";
 import OrderHistory from "../components/Pages/InventoryAdmin/OrderHistory/OrderHistory.jsx";
@@ -243,15 +242,7 @@ const PrivateRoutes = () => (
       }
     />
 
-    {/* INVENTORY_ADMIN Routes */}
-    <Route
-      path="/Ingredients"
-      element={
-        // <ProtectedRoute allowedRoles={["INVENTORY_ADMIN"]}>
-          <Ingredients />
-        // </ProtectedRoute>
-      }
-    />
+
     <Route
       path="/CostAnalysis"
       element={

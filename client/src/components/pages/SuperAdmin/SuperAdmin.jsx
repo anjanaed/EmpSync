@@ -57,6 +57,7 @@ const SuperAdmin = () => {
     users: org.users,
   }));
 
+  // Fetch organizations from the API
   const fetchOrganizations = async () => {
     if (!token) {
       console.error('Token not found');
@@ -94,6 +95,7 @@ const SuperAdmin = () => {
 
   const showModal = () => setIsModalVisible(true);
 
+  // Add organization handler
   const handleOk = async (values, resetForm) => {
     if (!token) return;
     try {
@@ -119,6 +121,7 @@ const SuperAdmin = () => {
     setIsUpdateModalVisible(true);
   };
 
+  // Update organization handler
   const updateOrganization = async (orgId, values) => {
     if (!token) return;
     try {
@@ -146,6 +149,7 @@ const SuperAdmin = () => {
     setSelectedItem(null);
   };
 
+  // Delete organization handler
   const handleDelete = (item) => {
     confirm({
       title: 'Are you sure you want to delete this organization?',

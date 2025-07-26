@@ -106,49 +106,7 @@ const cartStyles = {
     fontWeight: "500",
     border: "1px solid #ffeaa7",
   },
-  // Popup styles
-  popupOverlay: {
-    position: "fixed",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    zIndex: 1000,
-  },
-  popupContent: {
-    backgroundColor: "white",
-    borderRadius: "12px",
-    padding: "30px",
-    width: "400px",
-    maxWidth: "90vw",
-    boxShadow: "0 10px 30px rgba(0, 0, 0, 0.3)",
-    position: "relative",
-  },
-  popupHeader: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-    marginBottom: "20px",
-    borderBottom: "1px solid #e9ecef",
-    paddingBottom: "15px",
-  },
-  popupTitle: {
-    fontSize: "24px",
-    fontWeight: "600",
-    color: "#333",
-    margin: 0,
-  },
-  popupMealId: {
-    fontSize: "14px",
-    color: "#666",
-    fontWeight: "400",
-    marginTop: "4px",
-    margin: 0,
-  },
+  
   closeButton: {
     background: "none",
     border: "none",
@@ -164,30 +122,6 @@ const cartStyles = {
     borderRadius: "50%",
     transition: "background-color 0.2s",
   },
-  popupBody: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "15px",
-  },
-  countRow: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: "12px",
-    backgroundColor: "#f8f9fa",
-    borderRadius: "8px",
-    border: "1px solid #e9ecef",
-  },
-  countLabel: {
-    fontSize: "16px",
-    fontWeight: "500",
-    color: "#333",
-  },
-  countValue: {
-    fontSize: "20px",
-    fontWeight: "700",
-    color: "#d32f2f",
-  },
 };
 
 const Dashbord = () => {
@@ -197,7 +131,6 @@ const Dashbord = () => {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [mealData, setMealData] = useState({}); // Dynamic meal data
   const [mealTypes, setMealTypes] = useState([]); // Dynamic meal types
-  const [showPopup, setShowPopup] = useState(false);
   const [selectedMeal, setSelectedMeal] = useState(null);
   const [isViewingTomorrow, setIsViewingTomorrow] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -405,50 +338,6 @@ const Dashbord = () => {
     );
   };
 
-  const handleCartItemClick = (item) => {
-    setSelectedMeal(item);
-    setShowPopup(true);
-  };
-
-  const closePopup = () => {
-    setShowPopup(false);
-    setSelectedMeal(null);
-  };
-
-  const renderPopup = () => {
-    if (!showPopup || !selectedMeal) return null;
-
-    return (
-      <div style={cartStyles.popupOverlay} onClick={closePopup}>
-        <div style={cartStyles.popupContent} onClick={(e) => e.stopPropagation()}>
-          <div style={cartStyles.popupHeader}>
-            <div>
-              <h2 style={cartStyles.popupTitle}>{selectedMeal.name}</h2>
-              <p style={cartStyles.popupMealId}>Meal ID: {selectedMeal.mealId}</p>
-            </div>
-            <button style={cartStyles.closeButton} onClick={closePopup}>
-              ×
-            </button>
-          </div>
-          <div style={cartStyles.popupBody}>
-            <div style={cartStyles.countRow}>
-              <span style={cartStyles.countLabel}>Total Order Count:</span>
-              <span style={cartStyles.countValue}>{selectedMeal.orderCount}</span>
-            </div>
-            <div style={cartStyles.countRow}>
-              <span style={cartStyles.countLabel}>Served Order Count:</span>
-              <span style={cartStyles.countValue}>{selectedMeal.serveOrderCount}</span>
-            </div>
-            <div style={cartStyles.countRow}>
-              <span style={cartStyles.countLabel}>Pending Order Count:</span>
-              <span style={cartStyles.countValue}>{selectedMeal.pendingOrderCount}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   // Memoized tab content to prevent unnecessary re-renders
   const tabContent = useMemo(() => {
     const meals = mealData[activeTab] || [];
@@ -473,64 +362,40 @@ const Dashbord = () => {
       <div>
         <div className={styles.cardContainer}>
           {meals.map((meal) => (
-            <Card
-              key={`${meal.mealId}-${meal.totalCount}`} // Include count in key for updates
-              hoverable
-              className={styles.card}
-              loading={loading}
-              cover={
+            <div className={styles.card} key={`${meal.mealId}-${meal.totalCount}`}>
+              <div className={styles.cardImageWrapper}>
                 <img
                   alt={meal.name}
                   src={meal.imageUrl || "https://via.placeholder.com/240"}
                   className={styles.cardImage}
-                  loading="lazy" // Lazy load images for better performance
+                  loading="lazy"
                 />
-              }
-            >
-              <Meta
-                title={`${meal.name}`}
-                description={
-                  <div>
-                    <div style={{ fontSize: '12px', color: '#666', marginBottom: '4px' }}>
-                      Meal ID: {meal.mealId}
-                    </div>
-                    {meal.description && (
-                      <div style={{ fontSize: '13px', color: '#555', marginBottom: '8px', lineHeight: '1.3' }}>
-                        {meal.description}
-                      </div>
-                    )}
-                    {meal.ingredients && meal.ingredients.length > 0 && (
-                      <div style={{ marginBottom: '8px' }}>
-                        <div style={{ fontSize: '12px', fontWeight: '500', color: '#444', marginBottom: '4px' }}>
-                          Ingredients:
-                        </div>
-                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
-                          {meal.ingredients.map((ingredient, index) => (
-                            <span 
-                              key={index} 
-                              style={{
-                                backgroundColor: '#fff3cd',
-                                color: '#856404',
-                                padding: '2px 6px',
-                                borderRadius: '3px',
-                                fontSize: '10px',
-                                fontWeight: '500',
-                                border: '1px solid #ffeaa7',
-                              }}
-                            >
-                              {ingredient}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                    <span className={styles.mealCountText}>
-                      Total Count: <strong style={{ color: '#d32f2f' }}>{meal.totalCount}</strong>
-                    </span>
+              </div>
+              <div className={styles.cardBody}>
+                <div className={styles.cardHeaderRow}>
+                  <span className={styles.cardTitle}>{meal.name}</span>
+                  <span className={styles.cardOrderCount}>{meal.totalCount}</span>
+                </div>
+                <div className={styles.cardSubRow}>
+                  <span className={styles.cardMealId}>Meal ID: {meal.mealId}</span>
+                  <span className={styles.cardOrderLabel}>Order Count</span>
+                </div>
+                {meal.description && (
+                  <div className={styles.cardDescription} title={meal.description}>
+                    {meal.description}
                   </div>
-                }
-              />
-            </Card>
+                )}
+                {meal.ingredients && meal.ingredients.length > 0 && (
+                  <div className={styles.cardIngredients}>
+                    {meal.ingredients.map((ingredient, idx) => (
+                      <span className={styles.cardIngredient} key={idx}>
+                        {ingredient}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
           ))}
         </div>
         
@@ -600,8 +465,9 @@ const Dashbord = () => {
             Order - {formattedDate} {isViewingTomorrow && "(Tomorrow)"}
             {loading && <Spin size="small" style={{ marginLeft: '10px' }} />}
           </h2>
-          <p className={styles.time}>
-            {formattedTime}
+          <p>
+          {/* <p className={styles.time}> */}
+            {/* {formattedTime} */}
             {lastFetch && (
               <span style={{ fontSize: '12px', color: '#666', marginLeft: '10px' }}>
                 Last updated: {new Date(lastFetch).toLocaleTimeString()}
@@ -676,9 +542,6 @@ const Dashbord = () => {
           )}
         </div>
       </div>
-      
-      {/* Popup */}
-      {renderPopup()}
     </div>
   );
 };
