@@ -76,7 +76,14 @@ const ResponsiveNav = () => {
         
         {/* Payroll link */}
         <li>
-          <a href="#Payroll" className={styles.navLink}>
+          <a 
+            href="#"
+            className={styles.navLink}
+            onClick={e => {
+              e.preventDefault();
+              navigate('/UserPayroll');
+            }}
+          >
             <CreditCardOutlined style={{ fontSize: '18px', marginRight: '8px' }} />
             Payroll
           </a>
