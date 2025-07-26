@@ -545,7 +545,7 @@ const MealPage03 = () => {
                   </Button>
                 </div>
 
-                {/* Mobile Dropdown */}
+                {/* Meal Time Selection */}
                 {isMobile ? (
                   <div className={styles.mobileHeader}>
                     <div className={styles.mobileDropdownContainer}>
@@ -582,16 +582,18 @@ const MealPage03 = () => {
                         type="default"
                         icon={<RiAiGenerate />}
                         onClick={fetchMealSuggestions}
-                        className={styles.filterButton}
+                        className={`${styles.filterButton} ${styles.mobileFilterButton}`}
                         loading={loadingSuggestions}
+                        size="small"
                       >
                         Suggestions
                       </Button>
                       <Button
                         type="text"
                         icon={<ShoppingCartOutlined />}
-                        className={styles.cartButton}
+                        className={`${styles.cartButton} ${styles.mobileCartButtonStyle}`}
                         onClick={() => setIsCartVisible(true)}
+                        size="small"
                       >
                         <Badge count={orderItems.reduce((sum, item) => sum + item.count, 0)}>
                           Cart
