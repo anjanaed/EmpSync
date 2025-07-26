@@ -105,7 +105,7 @@ const Cart = ({
                     className={styles.mealType}
                     style={{ float: "left" }}
                   >
-                    {mealTypes[order.mealTypeId] || `Meal Type ${order.mealTypeId}`}
+                    {mealTypes[order.mealTypeId] || 'Loading...'}
                   </Text>
                   <Text
                     strong
@@ -232,9 +232,12 @@ const Meals = () => {
         const mealTypeResponses = await Promise.all(
           uniqueMealTypeIds.map((mealTypeId) =>
             axios
-              .get(`${baseURL}/meal-type/${mealTypeId}`)
+              .get(`${baseURL}/meal-types/${mealTypeId}`)
               .then((response) => response.data)
-              .catch(() => null)
+              .catch((error) => {
+                console.error(`Failed to fetch meal type ${mealTypeId}:`, error);
+                return null;
+              })
           )
         );
 
