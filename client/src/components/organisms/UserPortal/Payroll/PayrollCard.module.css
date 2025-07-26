@@ -1,0 +1,264 @@
+/* PayrollCard Component Styles */
+.payrollCard {
+  border-radius: 16px !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08) !important;
+  border: 1px solid rgba(0, 0, 0, 0.06) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  background: #ffffff;
+  overflow: hidden;
+  margin-bottom: 24px;
+  position: relative;
+}
+
+.payrollCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12) !important;
+  border-color: rgba(24, 144, 255, 0.2) !important;
+}
+
+.payrollCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #1890ff 0%, #52c41a 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.payrollCard:hover::before {
+  opacity: 1;
+}
+
+/* Header Section */
+.cardHeader {
+  margin-bottom: 16px;
+}
+
+.monthSection {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.monthIcon {
+  font-size: 24px;
+  color: #1890ff;
+  background: rgba(24, 144, 255, 0.1);
+  padding: 8px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
+  min-height: 40px;
+}
+
+.monthTitle {
+  margin: 0 !important;
+  color: #262626;
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 1.2;
+}
+
+.statusText {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+  font-size: 12px;
+  color: #8c8c8c;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.statusDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.divider {
+  margin: 16px 0 !important;
+  border-color: rgba(0, 0, 0, 0.06);
+}
+
+/* Summary Section */
+.summarySection {
+  margin-bottom: 20px;
+}
+
+.summaryItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.summaryLabel {
+  font-size: 12px;
+  color: #8c8c8c;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.summaryValue {
+  font-size: 16px;
+  font-weight: 600;
+  color: #262626;
+}
+
+.summaryValuePrimary {
+  font-size: 18px;
+  font-weight: 700;
+  color: #52c41a;
+}
+
+.summaryValueSecondary {
+  font-size: 14px;
+  font-weight: 600;
+  color: #ff4d4f;
+}
+
+/* Action Section */
+.actionSection {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.buttonGroup {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.viewButton {
+  border-radius: 8px !important;
+  height: 40px !important;
+  font-weight: 500 !important;
+  border-color: #d9d9d9 !important;
+  color: #595959 !important;
+  background: #fafafa !important;
+  transition: all 0.3s ease !important;
+  flex: 1;
+  margin-right: 8px;
+}
+
+.viewButton:hover {
+  border-color: #1890ff !important;
+  color: #1890ff !important;
+  background: rgba(24, 144, 255, 0.05) !important;
+  transform: translateY(-1px);
+}
+
+.downloadButton {
+  border-radius: 8px !important;
+  height: 40px !important;
+  font-weight: 500 !important;
+  background: #1890ff !important;
+  border-color: #1890ff !important;
+  transition: all 0.3s ease !important;
+  flex: 1;
+  margin-left: 8px;
+}
+
+.downloadButton:hover {
+  background: #40a9ff !important;
+  border-color: #40a9ff !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(24, 144, 255, 0.3) !important;
+}
+
+/* Dark Theme Support */
+.payrollCard[data-theme="dark"] {
+  background: #1f1f1f;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+.payrollCard[data-theme="dark"] .monthTitle {
+  color: #ffffff;
+}
+
+.payrollCard[data-theme="dark"] .summaryValue,
+.payrollCard[data-theme="dark"] .summaryValuePrimary {
+  color: #ffffff;
+}
+
+.payrollCard[data-theme="dark"] .summaryLabel,
+.payrollCard[data-theme="dark"] .statusText {
+  color: #bfbfbf;
+}
+
+.payrollCard[data-theme="dark"] .divider {
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.payrollCard[data-theme="dark"]:hover {
+  border-color: rgba(24, 144, 255, 0.4) !important;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .payrollCard {
+    margin-bottom: 16px;
+    border-radius: 12px !important;
+  }
+
+  .monthTitle {
+    font-size: 16px !important;
+  }
+
+  .summaryValuePrimary {
+    font-size: 16px !important;
+  }
+
+  .summaryValue {
+    font-size: 14px !important;
+  }
+
+  .buttonGroup {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .viewButton,
+  .downloadButton {
+    margin: 0 !important;
+    height: 36px !important;
+  }
+
+  .actionSection {
+    margin-top: 16px;
+    padding-top: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .payrollCard {
+    border-radius: 8px !important;
+  }
+
+  .monthSection {
+    gap: 8px;
+  }
+
+  .monthIcon {
+    min-width: 32px;
+    min-height: 32px;
+    font-size: 18px;
+  }
+
+  .monthTitle {
+    font-size: 14px !important;
+  }
+
+  .summaryValuePrimary {
+    font-size: 14px !important;
+  }
+}

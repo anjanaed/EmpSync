@@ -12,6 +12,9 @@ import PayrollPage from "../components/pages/HR/PayrollPage/PayrollPage.jsx";
 import AdjustmentPage from "../components/pages/HR/AdjustmentPage/AdjustmentPage.jsx";
 import PayslipPage from "../components/pages/HR/PayslipPage/PayslipPage.jsx";
 
+// User Portal
+import UserPayrollPage from "../components/pages/UserPortal/PayrollPage.jsx";
+
 // KITCHEN_ADMIN
 import KitchenAdmin from "../components/pages/KitchenAdmin/SchedulePage/KitchenAdmin.jsx";
 import Reports from "../components/pages/KitchenAdmin/ReportPage/Report.jsx";
@@ -167,6 +170,15 @@ const PrivateRoutes = () => (
       element={
         <ProtectedRoute allowedRoles={["*"]}>
           <UserMeals />
+        </ProtectedRoute>
+      }
+    />
+
+    <Route
+      path="/UserPayroll"
+      element={
+        <ProtectedRoute allowedRoles={["*"]}>
+          <UserPayrollPage />
         </ProtectedRoute>
       }
     />
