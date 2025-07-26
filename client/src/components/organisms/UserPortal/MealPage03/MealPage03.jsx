@@ -1,6 +1,31 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Button, Card, Tabs, Badge, Row, Col, Typography, Layout, Alert, Space, Modal, Select } from "antd";
-import { CheckCircleOutlined, CloseOutlined, LoadingOutlined, ShoppingCartOutlined } from "@ant-design/icons";
+import { 
+  Button, 
+  Card, 
+  Tabs, 
+  Badge, 
+  Row, 
+  Col, 
+  Typography, 
+  Layout, 
+  Alert, 
+  Space, 
+  Modal, 
+  Select,
+  Divider,
+  Input,
+  Tooltip
+} from "antd";
+import { 
+  CheckCircleOutlined, 
+  CloseOutlined, 
+  LoadingOutlined, 
+  ShoppingCartOutlined,
+  PlusOutlined,
+  MinusOutlined,
+  SearchOutlined,
+  FilterOutlined
+} from "@ant-design/icons";
 import { IoClose } from "react-icons/io5";
 import { MdLanguage } from "react-icons/md";
 import { RiAiGenerate } from "react-icons/ri";
@@ -17,13 +42,23 @@ const { Title, Text } = Typography;
 
 const Loading = ({ text }) => (
   <div className={styles.loadingContainer}>
-    <Spin
-      indicator={<LoadingOutlined style={{ fontSize: 75, color: "#06C167" }} spin />}
-    />
+    <motion.div
+      animate={{ rotate: 360 }}
+      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+    >
+      <Spin
+        indicator={<LoadingOutlined style={{ fontSize: 48, color: "#06C167" }} spin />}
+      />
+    </motion.div>
     {text && (
-      <div className={styles.loadingText}>
+      <motion.div 
+        className={styles.loadingText}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.2 }}
+      >
         {text}
-      </div>
+      </motion.div>
     )}
   </div>
 );
@@ -471,13 +506,19 @@ const MealPage03 = () => {
               </motion.div>
             ) : (
               <Card
-                bodyStyle={{ padding: "10px" }}
+                bodyStyle={{ padding: "24px" }}
                 title={
-                  <Title level={2} className={styles.cardTitle}>
-                    {text.title}
-                  </Title>
+                  <div style={{ textAlign: 'left' }}>
+                    <Title level={1} className={styles.cardTitle}>
+                      {text.title}
+                    </Title>
+                    <Text type="secondary" style={{ fontSize: '16px' }}>
+                      Discover delicious meals for {selectedDate === "today" ? "today" : "tomorrow"}
+                    </Text>
+                  </div>
                 }
                 className={styles.cardContainer}
+                bordered={false}
               >
                 <div className={styles.dateButtonGroup}>
                   <Button
@@ -635,68 +676,89 @@ const MealPage03 = () => {
                             key={meal.id}
                             className={styles.tabContent}
                           >
-                            <Card
-                              bodyStyle={{ padding: 8 }}
-                              cover={
-                                <img
-                                  alt={
-                                    meal[
+                            <motion.div
+                              initial={{ opacity: 0, y: 20 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{ delay: meal.id * 0.1 }}
+                            >
+                              <Card
+                                bodyStyle={{ padding: 16 }}
+                                cover={
+                                  <div style={{ position: 'relative' }}>
+                                    <img
+                                      alt={
+                                        meal[
+                                          `name${language
+                                            .charAt(0)
+                                            .toUpperCase()}${language.slice(1)}`
+                                        ] || "Meal"
+                                      }
+                                      src={
+                                        meal.imageUrl ||
+                                        "https://via.placeholder.com/300x180?text=Delicious+Meal"
+                                      }
+                                      className={`${styles.mealImage} ${
+                                        isPastDue ? styles.pastDueImage : ""
+                                      }`}
+                                    />
+                                    {isMealSelected(meal.id) && (
+                                      <div className={styles.selectedBadge}>
+                                        <CheckCircleOutlined />
+                                      </div>
+                                    )}
+                                    {isPastDue && (
+                                      <div className={styles.unavailableBadge}>
+                                        Unavailable
+                                      </div>
+                                    )}
+                                  </div>
+                                }
+                                className={`${styles.mealCard} ${
+                                  isPastDue ? styles.pastDueCard : ""
+                                } ${
+                                  isMealSelected(meal.id)
+                                    ? styles.selectedMealCard
+                                    : ""
+                                }`}
+                                onClick={() =>
+                                  !isPastDue && toggleOrderItem(meal.id)
+                                }
+                                hoverable={!isPastDue}
+                                bordered={false}
+                              >
+                                <div className={styles.mealInfo}>
+                                  <Title level={4} className={styles.mealTitle}>
+                                    {meal[
                                       `name${language
                                         .charAt(0)
                                         .toUpperCase()}${language.slice(1)}`
-                                    ] || "Meal"
-                                  }
-                                  src={
-                                    meal.imageUrl ||
-                                    "https://via.placeholder.com/200"
-                                  }
-                                  className={`${styles.mealImage} ${
-                                    isPastDue ? styles.pastDueImage : ""
-                                  }`}
-                                />
-                              }
-                              className={`${styles.mealCard} ${
-                                isPastDue ? styles.pastDueCard : ""
-                              } ${
-                                isMealSelected(meal.id)
-                                  ? styles.selectedMealCard
-                                  : ""
-                              }`}
-                              onClick={() =>
-                                !isPastDue && toggleOrderItem(meal.id)
-                              }
-                              hoverable={!isPastDue}
-                            >
-                              <hr className={styles.mealCardhr} />
-                              <Card.Meta
-                                title={
-                                  <div>
-                                    <Text className={styles.mealTitle}>
-                                      {meal[
-                                        `name${language
-                                          .charAt(0)
-                                          .toUpperCase()}${language.slice(1)}`
-                                      ] || "Unnamed Meal"}
+                                    ] || "Unnamed Meal"}
+                                  </Title>
+                                  <Text className={styles.descriptionText}>
+                                    {meal.description || "No description available"}
+                                  </Text>
+                                  <div className={styles.priceContainer}>
+                                    <Text strong className={styles.priceText}>
+                                      Rs. {meal.price ? meal.price.toFixed(2) : "0.00"}
                                     </Text>
-                                    <div className={styles.descriptionText}>
-                                      {meal.description ||
-                                        "No description available"}
-                                    </div>
-                                    <div className={styles.priceContainer}>
-                                      <Text
-                                        strong
-                                        className={styles.priceText}
+                                    {!isPastDue && (
+                                      <Button 
+                                        type="primary" 
+                                        size="small"
+                                        className={styles.addButton}
+                                        icon={<PlusOutlined />}
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          toggleOrderItem(meal.id);
+                                        }}
                                       >
-                                        Rs.{" "}
-                                        {meal.price
-                                          ? meal.price.toFixed(2)
-                                          : "0.00"}
-                                      </Text>
-                                    </div>
+                                        Add
+                                      </Button>
+                                    )}
                                   </div>
-                                }
-                              />
-                            </Card>
+                                </div>
+                              </Card>
+                            </motion.div>
                           </Col>
                         );
                       })}
@@ -775,6 +837,8 @@ const MealPage03 = () => {
                                   <div className={styles.counter}>
                                     <Button
                                       type="text"
+                                      shape="circle"
+                                      icon={<MinusOutlined />}
                                       onClick={() =>
                                         updateOrderItemCount(
                                           meal?.id,
@@ -783,15 +847,16 @@ const MealPage03 = () => {
                                           false
                                         )
                                       }
-                                      className={styles.actionButton}
-                                    >
-                                      -
-                                    </Button>
+                                      className={styles.counterButton}
+                                      size="small"
+                                    />
                                     <Text className={styles.itemCountBadge}>
                                       {item.count}
                                     </Text>
                                     <Button
                                       type="text"
+                                      shape="circle"
+                                      icon={<PlusOutlined />}
                                       onClick={() =>
                                         updateOrderItemCount(
                                           meal?.id,
@@ -800,10 +865,9 @@ const MealPage03 = () => {
                                           true
                                         )
                                       }
-                                      className={styles.actionButton}
-                                    >
-                                      +
-                                    </Button>
+                                      className={styles.counterButton}
+                                      size="small"
+                                    />
                                   </div>
                                   <div className={styles.priceDiv}>
                                     <Text strong>
