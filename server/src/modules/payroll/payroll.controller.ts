@@ -70,6 +70,30 @@ export class PayrollController {
     }
   }
 
+  //For User Portal - Get user's own payroll records
+  @Get('user/my-payrolls')
+  @UseGuards(AuthGuard('jwt'))
+  async getUserPayrolls(@Request() req) {
+    try {
+      let empId = req.user.employeeId;
+      if (empId) {
+        empId = empId.toUpperCase();
+      }
+
+      const payrolls = await this.payrollService.findUserPayrolls(empId);
+      return payrolls;
+    } catch (err) {
+      throw new HttpException(
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          error: 'Failed to fetch user payrolls',
+          message: err.message,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
   @Get(':empId/:month')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles('HR_ADMIN','KITCHEN_ADMIN')

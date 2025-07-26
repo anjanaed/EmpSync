@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Row, Col, Typography, Empty, Spin, Input, Select, Space, Button } from 'antd';
+import { Row, Col, Typography, Empty, Spin, Input, Select, Space, Button, message } from 'antd';
 import { SearchOutlined, FilterOutlined, ReloadOutlined } from '@ant-design/icons';
 import PayrollCard from './PayrollCard';
 import styles from './UserPayroll.module.css';
 import { useAuth } from '../../../../contexts/AuthContext';
+import axios from 'axios';
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -15,101 +16,120 @@ const UserPayroll = () => {
   const [filterYear, setFilterYear] = useState('all');
   const [filterStatus, setFilterStatus] = useState('all');
   const { authData } = useAuth();
+  const urL = import.meta.env.VITE_BASE_URL;
+  const token = authData?.accessToken;
 
-  // Sample data - replace with actual API call
-  const samplePayrollData = [
-    {
-      id: 1,
-      month: 'July',
-      year: 2025,
-      grossPay: 5500.00,
-      netPay: 4125.50,
-      deductions: 1374.50,
-      status: 'processed'
-    },
-    {
-      id: 2,
-      month: 'June',
-      year: 2025,
-      grossPay: 5500.00,
-      netPay: 4125.50,
-      deductions: 1374.50,
-      status: 'processed'
-    },
-    {
-      id: 3,
-      month: 'May',
-      year: 2025,
-      grossPay: 5500.00,
-      netPay: 4125.50,
-      deductions: 1374.50,
-      status: 'processed'
-    },
-    {
-      id: 4,
-      month: 'April',
-      year: 2025,
-      grossPay: 5500.00,
-      netPay: 4125.50,
-      deductions: 1374.50,
-      status: 'pending'
-    },
-    {
-      id: 5,
-      month: 'March',
-      year: 2025,
-      grossPay: 5300.00,
-      netPay: 3975.25,
-      deductions: 1324.75,
-      status: 'processed'
-    },
-    {
-      id: 6,
-      month: 'February',
-      year: 2025,
-      grossPay: 5300.00,
-      netPay: 3975.25,
-      deductions: 1324.75,
-      status: 'processed'
-    }
-  ];
-
-  useEffect(() => {
-    // Simulate API call
-    const fetchPayrollData = async () => {
-      try {
-        setLoading(true);
-        // Simulate network delay
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        setPayrollData(samplePayrollData);
-      } catch (error) {
-        console.error('Error fetching payroll data:', error);
-      } finally {
-        setLoading(false);
+  // Fetch user's payroll data from backend
+  const fetchPayrollData = async () => {
+    try {
+      setLoading(true);
+      
+      if (!token) {
+        console.error('No authentication token available');
+        return;
       }
-    };
 
-    fetchPayrollData();
-  }, []);
+      // Get user's payroll records
+      const response = await axios.get(`${urL}/payroll/user/my-payrolls`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        }
+      });
 
-  const handleViewPayroll = (month, year) => {
-    console.log(`Viewing payroll for ${month} ${year}`);
-    // Navigate to detailed payroll view
-    // navigate(`/payroll/details/${year}/${month}`);
+      if (response.data && response.data.payrolls) {
+        // Transform backend data to frontend format
+        const transformedData = response.data.payrolls.map((payroll, index) => ({
+          id: payroll.id || index,
+          month: payroll.month ? payroll.month.split('~')[0] : 'Unknown',
+          year: payroll.month ? parseInt(payroll.month.split('~')[1]) : new Date().getFullYear(),
+          grossPay: parseFloat(payroll.grossSalary) || 0,
+          netPay: parseFloat(payroll.netSalary) || 0,
+          deductions: parseFloat(payroll.totalDeduction) || 0,
+          status: 'processed', // You can add status field to backend if needed
+          originalMonth: payroll.month, // Keep original month format for API calls
+        }));
+
+        setPayrollData(transformedData);
+      } else {
+        setPayrollData([]);
+      }
+    } catch (error) {
+      console.error('Error fetching payroll data:', error);
+      message.error('Failed to load payroll data. Please try again.');
+      setPayrollData([]);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleDownloadPayroll = (month, year) => {
-    console.log(`Downloading payroll for ${month} ${year}`);
-    // Implement download functionality
-    // This could trigger a PDF download or API call
+  useEffect(() => {
+    fetchPayrollData();
+  }, [token, authData?.employeeId]);
+
+  const handleViewPayroll = async (month, year) => {
+    try {
+      // Find the payroll record to get the original month format
+      const payrollRecord = payrollData.find(p => p.month === month && p.year === year);
+      if (!payrollRecord) {
+        message.error('Payroll record not found');
+        return;
+      }
+
+      // Get signed URL for viewing the payroll PDF
+      const response = await axios.get(`${urL}/payroll/geturl/by-month/${payrollRecord.originalMonth}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        }
+      });
+
+      if (response.data && response.data.url) {
+        // Open PDF in new tab
+        window.open(response.data.url, '_blank');
+      } else {
+        message.error('Payroll document not available');
+      }
+    } catch (error) {
+      console.error('Error viewing payroll:', error);
+      message.error('Failed to view payroll. Please try again.');
+    }
+  };
+
+  const handleDownloadPayroll = async (month, year) => {
+    try {
+      // Find the payroll record to get the original month format
+      const payrollRecord = payrollData.find(p => p.month === month && p.year === year);
+      if (!payrollRecord) {
+        message.error('Payroll record not found');
+        return;
+      }
+
+      // Get signed URL for downloading the payroll PDF
+      const response = await axios.get(`${urL}/payroll/geturl/by-month/${payrollRecord.originalMonth}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        }
+      });
+
+      if (response.data && response.data.url) {
+        // Create a temporary link element to trigger download
+        const link = document.createElement('a');
+        link.href = response.data.url;
+        link.download = `Payroll-${month}-${year}.pdf`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        message.success('Payroll download started');
+      } else {
+        message.error('Payroll document not available for download');
+      }
+    } catch (error) {
+      console.error('Error downloading payroll:', error);
+      message.error('Failed to download payroll. Please try again.');
+    }
   };
 
   const handleRefresh = () => {
-    setLoading(true);
-    // Refetch data
-    setTimeout(() => {
-      setLoading(false);
-    }, 1000);
+    fetchPayrollData();
   };
 
   // Filter data based on search and filters

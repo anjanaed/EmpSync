@@ -16,10 +16,29 @@ const PayrollCard = ({
   status = 'processed' 
 }) => {
   const formatCurrency = (amount) => {
-    return new Intl.NumberFormat('en-US', {
+    return new Intl.NumberFormat('en-LK', {
       style: 'currency',
-      currency: 'USD',
+      currency: 'LKR',
     }).format(amount);
+  };
+
+  const formatMonthName = (monthString) => {
+    // Handle different month formats
+    if (monthString && monthString.includes('~')) {
+      const [monthPart] = monthString.split('~');
+      return monthPart;
+    }
+    
+    // If it's a number, convert to month name
+    if (!isNaN(monthString)) {
+      const months = [
+        'January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'
+      ];
+      return months[parseInt(monthString) - 1] || monthString;
+    }
+    
+    return monthString;
   };
 
   const getStatusColor = (status) => {
@@ -43,7 +62,7 @@ const PayrollCard = ({
           <CreditCardOutlined className={styles.monthIcon} />
           <div>
             <Title level={4} className={styles.monthTitle}>
-              {month} {year}
+              {formatMonthName(month)} {year}
             </Title>
             <Text className={styles.statusText}>
               <span 
