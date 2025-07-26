@@ -100,6 +100,30 @@ export class FirebaseService implements OnModuleInit {
     }
   }
 
+  async getFileBuffer(
+    empId: string,
+    month: string,
+  ): Promise<Buffer> {
+    try {
+      const filename = `${empId}-${month}.pdf`;
+      const filePath = `payrolls/${empId}/${filename}`;
+      const file = this.bucket.bucket().file(filePath);
+      
+      // Check if file exists
+      const [exists] = await file.exists();
+      if (!exists) {
+        throw new Error(`File ${filePath} does not exist in Firebase Storage`);
+      }
+      
+      // Download file as buffer
+      const [fileBuffer] = await file.download();
+      return fileBuffer;
+    } catch (error) {
+      console.error('Error downloading file buffer:', error);
+      throw new Error('Failed to download file from Firebase Storage');
+    }
+  }
+
   async deleteFile(
     empId: string,
     month: string,

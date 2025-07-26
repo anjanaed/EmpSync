@@ -13,13 +13,35 @@ const PayrollCard = ({
   deductions,
   onView, 
   onDownload,
-  status = 'processed' 
+  status = 'processed',
+  isEstimated = false, // New prop to indicate estimated values
+  actualNetPay = null, // Actual net pay from backend
+  isDownloading = false // New prop to indicate download in progress
 }) => {
   const formatCurrency = (amount) => {
-    return new Intl.NumberFormat('en-US', {
+    return new Intl.NumberFormat('en-LK', {
       style: 'currency',
-      currency: 'USD',
+      currency: 'LKR',
     }).format(amount);
+  };
+
+  const formatMonthName = (monthString) => {
+    // Handle different month formats
+    if (monthString && monthString.includes('~')) {
+      const [monthPart] = monthString.split('~');
+      return monthPart;
+    }
+    
+    // If it's a number, convert to month name
+    if (!isNaN(monthString)) {
+      const months = [
+        'January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'
+      ];
+      return months[parseInt(monthString) - 1] || monthString;
+    }
+    
+    return monthString;
   };
 
   const getStatusColor = (status) => {
@@ -43,7 +65,7 @@ const PayrollCard = ({
           <CreditCardOutlined className={styles.monthIcon} />
           <div>
             <Title level={4} className={styles.monthTitle}>
-              {month} {year}
+              {formatMonthName(month)} {year}
             </Title>
             <Text className={styles.statusText}>
               <span 
@@ -63,7 +85,9 @@ const PayrollCard = ({
         <Row gutter={[16, 8]}>
           <Col span={12}>
             <div className={styles.summaryItem}>
-              <Text className={styles.summaryLabel}>Gross Pay</Text>
+              <Text className={styles.summaryLabel}>
+                Gross Pay {isEstimated && <span style={{ fontSize: '10px', color: '#8c8c8c' }}>(Est.)</span>}
+              </Text>
               <Text className={styles.summaryValue}>
                 {formatCurrency(grossPay)}
               </Text>
@@ -73,19 +97,26 @@ const PayrollCard = ({
             <div className={styles.summaryItem}>
               <Text className={styles.summaryLabel}>Net Pay</Text>
               <Text className={styles.summaryValuePrimary}>
-                {formatCurrency(netPay)}
+                {formatCurrency(actualNetPay || netPay)}
               </Text>
             </div>
           </Col>
           <Col span={24}>
             <div className={styles.summaryItem}>
-              <Text className={styles.summaryLabel}>Total Deductions</Text>
+              <Text className={styles.summaryLabel}>
+                Total Deductions {isEstimated && <span style={{ fontSize: '10px', color: '#8c8c8c' }}>(Est.)</span>}
+              </Text>
               <Text className={styles.summaryValueSecondary}>
                 {formatCurrency(deductions)}
               </Text>
             </div>
           </Col>
         </Row>
+        {isEstimated && (
+          <div style={{ marginTop: '8px', fontSize: '11px', color: '#8c8c8c', fontStyle: 'italic' }}>
+            * Gross pay and deductions are estimated. View PDF for exact details.
+          </div>
+        )}
       </div>
 
       {/* Action Buttons */}
@@ -104,8 +135,9 @@ const PayrollCard = ({
             icon={<DownloadOutlined />}
             onClick={() => onDownload(month, year)}
             className={styles.downloadButton}
+            loading={isDownloading}
           >
-            Download
+            {isDownloading ? 'Downloading...' : 'Download'}
           </Button>
         </Space>
       </div>

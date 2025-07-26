@@ -70,6 +70,30 @@ export class PayrollController {
     }
   }
 
+  //For User Portal - Get user's own payroll records
+  @Get('user/my-payrolls')
+  @UseGuards(AuthGuard('jwt'))
+  async getUserPayrolls(@Request() req) {
+    try {
+      let empId = req.user.employeeId;
+      if (empId) {
+        empId = empId.toUpperCase();
+      }
+
+      const payrolls = await this.payrollService.findUserPayrolls(empId);
+      return payrolls;
+    } catch (err) {
+      throw new HttpException(
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          error: 'Failed to fetch user payrolls',
+          message: err.message,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
   @Get(':empId/:month')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles('HR_ADMIN','KITCHEN_ADMIN')
@@ -199,6 +223,70 @@ async deletePayrollsByMonth(
         {
           status: HttpStatus.INTERNAL_SERVER_ERROR,
           error: 'Failed to get signed URL',
+          message: err.message,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  //For User Portal Usage - Download
+  @Get('geturl/download/by-month/:month')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  async getDownloadUrlFromToken(@Request() req, @Param('month') month: string) {
+    let empId = req.user.employeeId;
+    if (empId) {
+      empId = empId.toUpperCase();
+    }
+
+    try {
+      const url = await this.firebaseService.getSignedUrlFromParamsDownload(
+        empId,
+        month,
+      );
+      return { url };
+    } catch (err) {
+      throw new HttpException(
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          error: 'Failed to get download URL',
+          message: err.message,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  //For User Portal Usage - Stream Download (CORS-friendly)
+  @Get('download/stream/by-month/:month')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  async streamDownloadPayroll(@Request() req, @Param('month') month: string, @Res() res: Response) {
+    let empId = req.user.employeeId;
+    if (empId) {
+      empId = empId.toUpperCase();
+    }
+
+    try {
+      // Get the file buffer from Firebase
+      const fileBuffer = await this.firebaseService.getFileBuffer(empId, month);
+      
+      // Set appropriate headers for PDF download
+      res.set({
+        'Content-Type': 'application/pdf',
+        'Content-Disposition': `attachment; filename="${empId}-${month}.pdf"`,
+        'Content-Length': fileBuffer.length.toString(),
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0'
+      });
+
+      // Stream the file
+      res.send(fileBuffer);
+    } catch (err) {
+      throw new HttpException(
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          error: 'Failed to download payroll',
           message: err.message,
         },
         HttpStatus.INTERNAL_SERVER_ERROR,

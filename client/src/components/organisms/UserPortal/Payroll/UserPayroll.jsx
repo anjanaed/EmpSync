@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Row, Col, Typography, Empty, Spin, Input, Select, Space, Button } from 'antd';
+import { Row, Col, Typography, Empty, Spin, Input, Select, Space, Button, message } from 'antd';
 import { SearchOutlined, FilterOutlined, ReloadOutlined } from '@ant-design/icons';
 import PayrollCard from './PayrollCard';
 import styles from './UserPayroll.module.css';
 import { useAuth } from '../../../../contexts/AuthContext';
+import axios from 'axios';
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -11,105 +12,196 @@ const { Option } = Select;
 const UserPayroll = () => {
   const [payrollData, setPayrollData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [downloadingId, setDownloadingId] = useState(null); // Track which card is downloading
   const [searchTerm, setSearchTerm] = useState('');
   const [filterYear, setFilterYear] = useState('all');
   const [filterStatus, setFilterStatus] = useState('all');
   const { authData } = useAuth();
+  const urL = import.meta.env.VITE_BASE_URL;
+  const token = authData?.accessToken;
 
-  // Sample data - replace with actual API call
-  const samplePayrollData = [
-    {
-      id: 1,
-      month: 'July',
-      year: 2025,
-      grossPay: 5500.00,
-      netPay: 4125.50,
-      deductions: 1374.50,
-      status: 'processed'
-    },
-    {
-      id: 2,
-      month: 'June',
-      year: 2025,
-      grossPay: 5500.00,
-      netPay: 4125.50,
-      deductions: 1374.50,
-      status: 'processed'
-    },
-    {
-      id: 3,
-      month: 'May',
-      year: 2025,
-      grossPay: 5500.00,
-      netPay: 4125.50,
-      deductions: 1374.50,
-      status: 'processed'
-    },
-    {
-      id: 4,
-      month: 'April',
-      year: 2025,
-      grossPay: 5500.00,
-      netPay: 4125.50,
-      deductions: 1374.50,
-      status: 'pending'
-    },
-    {
-      id: 5,
-      month: 'March',
-      year: 2025,
-      grossPay: 5300.00,
-      netPay: 3975.25,
-      deductions: 1324.75,
-      status: 'processed'
-    },
-    {
-      id: 6,
-      month: 'February',
-      year: 2025,
-      grossPay: 5300.00,
-      netPay: 3975.25,
-      deductions: 1324.75,
-      status: 'processed'
-    }
-  ];
-
-  useEffect(() => {
-    // Simulate API call
-    const fetchPayrollData = async () => {
-      try {
-        setLoading(true);
-        // Simulate network delay
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        setPayrollData(samplePayrollData);
-      } catch (error) {
-        console.error('Error fetching payroll data:', error);
-      } finally {
-        setLoading(false);
+  // Fetch user's payroll data from backend
+  const fetchPayrollData = async () => {
+    try {
+      setLoading(true);
+      
+      if (!token) {
+        console.error('No authentication token available');
+        return;
       }
-    };
 
-    fetchPayrollData();
-  }, []);
+      // Get user's payroll records
+      const response = await axios.get(`${urL}/payroll/user/my-payrolls`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        }
+      });
 
-  const handleViewPayroll = (month, year) => {
-    console.log(`Viewing payroll for ${month} ${year}`);
-    // Navigate to detailed payroll view
-    // navigate(`/payroll/details/${year}/${month}`);
+      if (response.data && response.data.payrolls) {
+        // Transform backend data to frontend format
+        const transformedData = response.data.payrolls.map((payroll, index) => {
+          // Extract month and year from the month field (format: "MM~YYYY" or similar)
+          let monthName = 'Unknown';
+          let year = new Date().getFullYear();
+          
+          if (payroll.month) {
+            if (payroll.month.includes('~')) {
+              const [monthNum, yearStr] = payroll.month.split('~');
+              const monthNames = [
+                'January', 'February', 'March', 'April', 'May', 'June',
+                'July', 'August', 'September', 'October', 'November', 'December'
+              ];
+              monthName = monthNames[parseInt(monthNum) - 1] || `Month ${monthNum}`;
+              year = parseInt(yearStr) || new Date().getFullYear();
+            } else {
+              // Handle other month formats
+              monthName = payroll.month;
+            }
+          }
+          
+          // Get available data from backend
+          const netPay = parseFloat(payroll.netPay) || 0;
+          
+          // Since schema only has netPay, we'll estimate gross pay and deductions
+          // Using more realistic Sri Lankan payroll calculation estimates
+          let estimatedGrossPay, estimatedDeductions;
+          
+          if (payroll.employee && payroll.employee.salary) {
+            // If we have the employee's basic salary, use it for better estimation
+            const basicSalary = parseFloat(payroll.employee.salary) || 0;
+            // Typical allowances in Sri Lanka: 10-20% of basic salary
+            const estimatedAllowances = basicSalary * 0.15; // 15% average allowances
+            estimatedGrossPay = basicSalary + estimatedAllowances;
+            estimatedDeductions = estimatedGrossPay - netPay;
+          } else {
+            // Fallback estimation when basic salary is not available
+            // Assuming net pay is ~75% of gross pay (25% deductions)
+            estimatedGrossPay = netPay / 0.75;
+            estimatedDeductions = estimatedGrossPay - netPay;
+          }
+          
+          return {
+            id: payroll.id || index,
+            month: monthName,
+            year: year,
+            grossPay: estimatedGrossPay,
+            netPay: netPay,
+            deductions: estimatedDeductions,
+            status: 'processed', // You can add status field to backend if needed
+            originalMonth: payroll.month, // Keep original month format for API calls
+            // Store actual backend data for reference
+            actualNetPay: netPay,
+            isEstimated: true, // Flag to indicate these are estimated values
+          };
+        });
+
+        setPayrollData(transformedData);
+      } else {
+        setPayrollData([]);
+      }
+    } catch (error) {
+      console.error('Error fetching payroll data:', error);
+      
+      // More specific error handling
+      if (error.response?.status === 401) {
+        message.error('Authentication failed. Please login again.');
+      } else if (error.response?.status === 403) {
+        message.error('You do not have permission to view payroll data.');
+      } else if (error.response?.status === 404) {
+        message.info('No payroll records found for your account.');
+        setPayrollData([]);
+      } else {
+        message.error('Failed to load payroll data. Please try again.');
+      }
+      setPayrollData([]);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleDownloadPayroll = (month, year) => {
-    console.log(`Downloading payroll for ${month} ${year}`);
-    // Implement download functionality
-    // This could trigger a PDF download or API call
+  useEffect(() => {
+    fetchPayrollData();
+  }, [token, authData?.employeeId]);
+
+  const handleViewPayroll = async (month, year) => {
+    try {
+      // Find the payroll record to get the original month format
+      const payrollRecord = payrollData.find(p => p.month === month && p.year === year);
+      if (!payrollRecord) {
+        message.error('Payroll record not found');
+        return;
+      }
+
+      // Get signed URL for viewing the payroll PDF
+      const response = await axios.get(`${urL}/payroll/geturl/by-month/${payrollRecord.originalMonth}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        }
+      });
+
+      if (response.data && response.data.url) {
+        // Open PDF in new tab
+        window.open(response.data.url, '_blank');
+      } else {
+        message.error('Payroll document not available');
+      }
+    } catch (error) {
+      console.error('Error viewing payroll:', error);
+      message.error('Failed to view payroll. Please try again.');
+    }
+  };
+
+  const handleDownloadPayroll = async (month, year) => {
+    try {
+      // Find the payroll record to get the original month format
+      const payrollRecord = payrollData.find(p => p.month === month && p.year === year);
+      if (!payrollRecord) {
+        message.error('Payroll record not found');
+        return;
+      }
+
+      // Set downloading state
+      setDownloadingId(payrollRecord.id);
+
+      // Use the streaming download endpoint to avoid CORS issues
+      const response = await axios.get(`${urL}/payroll/download/stream/by-month/${payrollRecord.originalMonth}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        responseType: 'blob', // Important: Tell axios to expect binary data
+      });
+
+      // Create a blob from the response data
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      
+      // Create a temporary URL for the blob
+      const blobUrl = window.URL.createObjectURL(blob);
+      
+      // Create a temporary link element to trigger download
+      const link = document.createElement('a');
+      link.href = blobUrl;
+      link.download = `Payroll-${month}-${year}.pdf`;
+      link.style.display = 'none';
+      
+      // Append to body, click, and remove
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      // Clean up the blob URL
+      window.URL.revokeObjectURL(blobUrl);
+      
+      message.success('Payroll download completed');
+    } catch (error) {
+      console.error('Error downloading payroll:', error);
+      message.error('Failed to download payroll. Please try again.');
+    } finally {
+      setDownloadingId(null); // Clear downloading state
+    }
   };
 
   const handleRefresh = () => {
-    setLoading(true);
-    // Refetch data
-    setTimeout(() => {
-      setLoading(false);
-    }, 1000);
+    fetchPayrollData();
   };
 
   // Filter data based on search and filters
@@ -228,6 +320,9 @@ const UserPayroll = () => {
                   netPay={payroll.netPay}
                   deductions={payroll.deductions}
                   status={payroll.status}
+                  isEstimated={payroll.isEstimated}
+                  actualNetPay={payroll.actualNetPay}
+                  isDownloading={downloadingId === payroll.id}
                   onView={handleViewPayroll}
                   onDownload={handleDownloadPayroll}
                 />
