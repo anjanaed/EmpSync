@@ -135,7 +135,7 @@ async findAll(
     }
   }
 
-  // NEW ENDPOINT: GET meal cost for employee within date range
+  // GET meal cost for employee within date range
   @Get('meal-cost/:empId')
   async getMealCost(
     @Param('empId') empId: string,

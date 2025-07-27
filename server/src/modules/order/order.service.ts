@@ -132,7 +132,7 @@ async create(createOrderDto: Prisma.OrderCreateInput) {
   }
 
   async getMealCost(empId: string, orgId: string, startDate: Date, endDate: Date) {
-    // Set time to start and end of day for proper date range filtering
+    //set time period
     const startOfDay = new Date(startDate);
     startOfDay.setHours(0, 0, 0, 0);
     
@@ -150,16 +150,15 @@ async create(createOrderDto: Prisma.OrderCreateInput) {
         },
       },
       select: {
-        price: true, // Only select price field for efficiency
+        price: true, 
       },
     });
 
-    // Calculate total meal cost
+    // total meal cost
     const totalMealCost = orders.reduce((sum, order) => {
       return sum + (order.price || 0);
     }, 0);
 
-    // Return only the meal cost
     return {
       mealCost: totalMealCost,
     };
