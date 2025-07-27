@@ -10,7 +10,6 @@ import {
   Form,
   List,
   Divider,
-  Spin,
   Empty,
   message,
   Card,
@@ -19,7 +18,6 @@ import {
 } from "antd";
 import {
   PlusOutlined,
-  CloseOutlined,
   CalendarOutlined,
   PushpinOutlined,
   DeleteOutlined,
@@ -42,13 +40,11 @@ const MealPlanner = () => {
   const urL = import.meta.env.VITE_BASE_URL;
   const [defaultMeals, setDefaultMeals] = useState([]);
   const [activeTab, setActiveTab] = useState("");
-  const [menuItems, setMenuItems] = useState({});
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isUpdateModalVisible, setIsUpdateModalVisible] = useState(false);
   const [newMealName, setNewMealName] = useState("");
   const [availableMeals, setAvailableMeals] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [showSearchResults, setShowSearchResults] = useState(false);
   const [form] = Form.useForm();
   const [selectedMeals, setSelectedMeals] = useState([]);
   const [activeMealType, setActiveMealType] = useState(null);
@@ -103,6 +99,7 @@ const MealPlanner = () => {
       message.error("Failed to load meal types");
     }
   };
+
   const sortMealTypes = (meals) => {
     const mealOrder = { breakfast: 1, lunch: 2, dinner: 3 };
 
@@ -214,10 +211,9 @@ const MealPlanner = () => {
 
     try {
       const mealTypeId = parseInt(activeTab);
-      const currentDateStr = currentDate.format("YYYY-MM-DD");
 
       const endDate = currentDate.subtract(1, "day");
-      const startDate = currentDate.subtract(30, "days");
+      const startDate = currentDate.subtract(7, "days");
 
       const promises = [];
       let tempDate = endDate;
@@ -376,8 +372,6 @@ const MealPlanner = () => {
       }
     }
   };
-
-  // Update the pin button to show disabled state for default meals:
 
   const cancelDeleteMeal = () => {
     setDeleteConfirmModal({ visible: false, meal: null, isDefault: false });
@@ -551,33 +545,7 @@ const MealPlanner = () => {
         console.error("Form validation failed:", validationError);
       });
   };
-
-  const mealNameRules = [
-    { required: true, message: "Please enter a meal name" },
-    { min: 2, message: "Meal name must be at least 2 characters long" },
-    { max: 50, message: "Meal name must be less than 50 characters" },
-    {
-      pattern: /^[a-zA-Z0-9\s]+$/,
-      message: "Meal name can only contain letters, numbers, and spaces",
-    },
-    {
-      validator: async (_, value) => {
-        if (value && value.trim().length !== value.length) {
-          throw new Error("Meal name cannot start or end with spaces");
-        }
-      },
-    },
-  ];
-
-  const validateMealTypeName = async (mealName) => {
-    if (!mealName || mealName.trim().length === 0) {
-      return false;
-    }
-
-    // You could also add a client-side check by calling an API endpoint
-    // to check if the meal type exists before submitting the form
-    return true;
-  };
+//update schedule
   const showUpdateMenuModal = async () => {
     if (!activeTab) {
       message.warning("Please select a meal time first");
@@ -606,7 +574,7 @@ const MealPlanner = () => {
       await handleAutoUpdateFromPrevious();
     }
   };
-
+  //Auto update from previous schedule
   const handleAutoUpdateFromPrevious = async () => {
     if (!activeTab || !currentDate) {
       message.error("Missing required information");
@@ -671,9 +639,6 @@ const MealPlanner = () => {
 
         await fetchAllSchedules(currentDate);
       } else {
-        // message.info(
-        //   `No previous ${mealType.name} schedule found in the last 7 days. Opening menu selector.`
-        // );
         setIsUpdateModalVisible(true);
         setSearchTerm("");
         setActiveMealType(mealType);
@@ -827,11 +792,10 @@ const MealPlanner = () => {
   };
 
   const handleDeleteMeal = async (meal) => {
-    // Remove the isDefault check - allow deletion of both default and non-default meals
     setDeleteConfirmModal({
       visible: true,
       meal: meal,
-      isDefault: meal.isDefault, // Pass the isDefault flag to show appropriate warning
+      isDefault: meal.isDefault,
     });
   };
 

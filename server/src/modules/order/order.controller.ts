@@ -134,4 +134,81 @@ async findAll(
       );
     }
   }
+
+  // GET meal cost for employee within date range
+  @Get('meal-cost/:empId')
+  async getMealCost(
+    @Param('empId') empId: string,
+    @Query('orgId') orgId: string,
+    @Query('startDate') startDate: string,
+    @Query('endDate') endDate: string,
+  ) {
+    try {
+      // Validate required parameters
+      if (!orgId) {
+        throw new HttpException(
+          {
+            status: HttpStatus.BAD_REQUEST,
+            error: 'Bad Request',
+            message: 'orgId is required',
+          },
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
+      if (!startDate || !endDate) {
+        throw new HttpException(
+          {
+            status: HttpStatus.BAD_REQUEST,
+            error: 'Bad Request',
+            message: 'startDate and endDate are required',
+          },
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
+      // Validate date format
+      const start = new Date(startDate);
+      const end = new Date(endDate);
+      
+      if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+        throw new HttpException(
+          {
+            status: HttpStatus.BAD_REQUEST,
+            error: 'Bad Request',
+            message: 'Invalid date format. Use YYYY-MM-DD',
+          },
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
+      if (start > end) {
+        throw new HttpException(
+          {
+            status: HttpStatus.BAD_REQUEST,
+            error: 'Bad Request',
+            message: 'startDate cannot be greater than endDate',
+          },
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
+      return await this.ordersService.getMealCost(empId, orgId, start, end);
+    } catch (err) {
+      // If it's already an HttpException, re-throw it
+      if (err instanceof HttpException) {
+        throw err;
+      }
+      
+      // Handle other errors with INTERNAL_SERVER_ERROR
+      throw new HttpException(
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          error: 'Internal Server Error',
+          message: err.message,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
 }
