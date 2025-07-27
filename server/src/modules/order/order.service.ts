@@ -130,4 +130,39 @@ async create(createOrderDto: Prisma.OrderCreateInput) {
       throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
     }
   }
+
+  async getMealCost(empId: string, orgId: string, startDate: Date, endDate: Date) {
+    // Set time to start and end of day for proper date range filtering
+    const startOfDay = new Date(startDate);
+    startOfDay.setHours(0, 0, 0, 0);
+    
+    const endOfDay = new Date(endDate);
+    endOfDay.setHours(23, 59, 59, 999);
+
+    // Find all orders for the employee within the date range
+    const orders = await this.databaseService.order.findMany({
+      where: {
+        employeeId: empId,
+        orgId: orgId,
+        orderDate: {
+          gte: startOfDay,
+          lte: endOfDay,
+        },
+      },
+      select: {
+        price: true, // Only select price field for efficiency
+      },
+    });
+
+    // Calculate total meal cost
+    const totalMealCost = orders.reduce((sum, order) => {
+      return sum + (order.price || 0);
+    }, 0);
+
+    // Return only the meal cost
+    return {
+      mealCost: totalMealCost,
+    };
+  }
+
 }
