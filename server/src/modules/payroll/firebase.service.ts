@@ -91,7 +91,7 @@ export class FirebaseService implements OnModuleInit {
       const [url] = await file.getSignedUrl({
         action: 'read',
         expires: Date.now() + 5 * 60 * 1000, // 5 minutes
-        responseDisposition: `attachment; filename="${filePath.split('/').pop()}"`, // Force download with filename
+        responseDisposition: `attachment; filename="${filePath.split('/').pop()}"`, 
       });
       return url;
     } catch (error) {
