@@ -590,7 +590,7 @@ private async checkDuplicateMealType(
     }
   }
 
-  // Helper method to check if a meal type name exists for a specific date
+  //  check if a meal type name exists for a specific date
   async checkMealTypeExists(name: string, date: Date | string, orgId?: string) {
     try {
       const existingMealType = await this.checkDuplicateMealType(name, date, orgId);
