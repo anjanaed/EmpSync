@@ -36,12 +36,12 @@ model Fingerprint {
 
 model User {
   id             String        @id
-  empNo          String?
+  empNo          String
   name           String
   role           String
   dob            String?
   telephone      String?
-  gender         String?
+  gender         Gender
   address        String?
   email          String        @unique
   salary         Int?
@@ -55,6 +55,13 @@ model User {
   organization   Organization? @relation(fields: [organizationId], references: [id])
   permissions    Permission[]
   createdAt      DateTime      @default(now())
+  individualSalaryAdjustments IndividualSalaryAdjustments[] 
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
 }
 
 // Permission model
@@ -86,6 +93,7 @@ model Payroll {
   netPay     Float
   payrollPdf String
   createdAt  DateTime   @default(now())
+  @@unique([id, month])
 }
 
 model Meal {
@@ -129,6 +137,8 @@ model IndividualSalaryAdjustments {
   isPercentage Boolean
   allowance    Boolean
   amount       Float
+  employee User @relation(fields: [empId], references: [id], onDelete: Cascade)
+
 }
 
 model Order {
