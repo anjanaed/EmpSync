@@ -166,6 +166,7 @@ model IndividualSalaryAdjustments {
   allowance    Boolean
   amount       Float
   employee User @relation(fields: [empId], references: [id], onDelete: Cascade)
+  organization Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
 }
 
 model Order {
