@@ -69,6 +69,7 @@ export const AuthProvider = ({ children }) => {
       } catch (permErr) {
         console.error("Failed to fetch permissions:", permErr);
       }
+      console.log(currentUser)
       const userData = {
         accessToken: access_token,
         idToken: id_token,

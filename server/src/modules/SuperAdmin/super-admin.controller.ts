@@ -97,7 +97,7 @@ export class SuperAdminController {
   }
 
   @Get('users/:userId/actions')
-  @UseGuards(AuthGuard('superadmin-jwt'))
+  // @UseGuards(AuthGuard('superadmin-jwt'))
   async getUserActions(@Param('userId') userId: string) {
     try {
       const actions = await this.superAdminService.getUserActionsByUserId(userId);
