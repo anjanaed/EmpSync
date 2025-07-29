@@ -43,7 +43,7 @@ const RolesList = ({ data, onAddNew, onUpdate, onDelete, className, authData}) =
         connection: "Username-Password-Authentication",
       });
     } catch (err) {
-      console.error("Auth0 Registration Error:", err);
+      console.error("Auth0 Registration Error:", err.response?.data || err);
       message.error(`Registration Failed: ${err.response?.data?.message || err.message}`);
       setLoading(false);
       throw err;
@@ -110,6 +110,7 @@ const RolesList = ({ data, onAddNew, onUpdate, onDelete, className, authData}) =
       }
 
       // 2. Register with Auth0 first
+      console.log("Registering user with Auth0:", { email, password, id: newEmployeeId });
       await signUpUser({ email, password, id: newEmployeeId });
       
 
@@ -122,7 +123,7 @@ const RolesList = ({ data, onAddNew, onUpdate, onDelete, className, authData}) =
         organizationId: orgId,
         dob: "1990-01-01",
         telephone: "+1234567890",
-        gender: "male",
+        gender: "MALE",
         address: "123 Street, City",
         salary: 50000,
       };
