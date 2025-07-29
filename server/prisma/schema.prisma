@@ -59,9 +59,9 @@ model User {
 }
 
 enum Gender {
-  MALE
-  FEMALE
-  OTHER
+  Male
+  Female
+  Other
 }
 
 // Permission model
@@ -138,7 +138,6 @@ model IndividualSalaryAdjustments {
   allowance    Boolean
   amount       Float
   employee User @relation(fields: [empId], references: [id], onDelete: Cascade)
-
 }
 
 model Order {
