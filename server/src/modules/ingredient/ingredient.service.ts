@@ -13,6 +13,7 @@ export class IngredientsService {
       if (Array.isArray(createIngredientDto)) {
         const formattedData = createIngredientDto.map(ingredient => ({
           ...ingredient,
+          orgId: ingredient.organization?.connect?.id, // Assuming organization is connected by ID
         }));
 
         return await this.databaseServices.ingredient.createMany({
