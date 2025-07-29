@@ -23,13 +23,13 @@ export class SuperAdminController {
   // Organization endpoints
   
   @Post('organizations')
-  // @UseGuards(AuthGuard('superadmin-jwt'))
+  @UseGuards(AuthGuard('superadmin-jwt'))
   async createOrganization(@Body() data: Prisma.OrganizationCreateInput) {
     return this.superAdminService.createOrganization(data);
   }
 
   @Get('organizations')
-  // @UseGuards(AuthGuard('superadmin-jwt'))
+  @UseGuards(AuthGuard('superadmin-jwt'))
   async getOrganizations() {
     return this.superAdminService.getOrganizations();
   }
@@ -41,7 +41,7 @@ export class SuperAdminController {
   }
 
   @Get('admins/:orgId')
-  // @UseGuards(AuthGuard('superadmin-jwt'))
+  @UseGuards(AuthGuard('superadmin-jwt'))
   async getByOrg(@Param('orgId') orgId: string) {
     return this.superAdminService.getByOrg(orgId);
   }
@@ -85,7 +85,7 @@ export class SuperAdminController {
   }
 
   @Get('users/:id')
-  // @UseGuards(AuthGuard('superadmin-jwt'))
+  @UseGuards(AuthGuard('superadmin-jwt'))
   async getUserById(@Param('id') id: string) {
     return this.superAdminService.getUserById(id);
   }
@@ -136,7 +136,7 @@ export class SuperAdminController {
   }
 
   @Get('organizations/:orgId/last-employee-id')
-  // @UseGuards(AuthGuard('superadmin-jwt'))
+  @UseGuards(AuthGuard('superadmin-jwt'))
   async getLastEmployeeNoByOrg(@Param('orgId') orgId: string) {
     return this.superAdminService.getLastEmpIDByOrg(orgId);
   }
