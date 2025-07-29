@@ -27,8 +27,8 @@ export class IndiAdjustmentService {
         throw new BadRequestException('Employee not found for given empNo and orgId');
       }
       // Set empId to the found user's id
-      createIndiAdjustmentDto.empId = user.id;
-      // Remove empNo from DTO to avoid Prisma error
+
+      createIndiAdjustmentDto.employee = { connect: { id: String(user.id) } };
       delete createIndiAdjustmentDto.empNo;
     }
     return await this.databaseService.individualSalaryAdjustments.create({
