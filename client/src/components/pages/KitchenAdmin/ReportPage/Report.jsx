@@ -1,4 +1,4 @@
-// import React from "react";
+import React from "react";
 import {
   faUsers,
   faUserPlus,
@@ -11,15 +11,14 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { BellOutlined } from "@ant-design/icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import NavBar from "../../../organisms/NavBar/NavBar.jsx";
+import NavBar from '../../../organisms/NavBar/NavBar.jsx';
 import NotificationPanel from "../../../organisms/Kitchen/NotificationPanel/NotificationPanel.jsx";
 import { useNotifications } from "../../../../contexts/NotificationsContext.jsx";
 import styles from "../../../organisms/Kitchen/NotificationPanel/NotificationPanel.module.css";
 import Section from "../../../organisms/Kitchen/ReportSection/Report.jsx";
 import Analyze from "../../../organisms/Kitchen/AnalyzeSection/Analyze.jsx";
-import React, { useMemo } from "react";
 
-import { useAuth } from "../../../../contexts/AuthContext.jsx";
+import { useAuth } from "../../../../contexts/AuthContext.jsx"; 
 
 const Report = () => {
   // Get and parse authData from localStorage
@@ -79,7 +78,7 @@ const Report = () => {
       action: "Reports",
       icon: <FontAwesomeIcon icon={faChartLine} />,
       link: "/kitchen-report",
-    },
+    }, 
   ];
 
   // Create notification menu item
@@ -103,18 +102,16 @@ const Report = () => {
     actions.includes(item.action)
   );
 
-  const CompContent = useMemo(() => (
-    <>
-      <Analyze />
-      <Section />
-    </>
-  ), []);
-
-
   return (
     <>
-       <NavBar
-        Comp={() => CompContent}
+      <NavBar
+        Comp={() => (
+          <>
+            <Analyze />
+            <Section />
+          </>
+        )}
+        
         titleLines={["Meal", "Schedule", "Management"]}
         menuItems={filteredMenuItems}
       />

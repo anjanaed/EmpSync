@@ -23,14 +23,7 @@ const Analyze = () => {
 
   const fetchMealAnalytics = async () => {
     try {
-      setLoading(true);
-      setError(null);
-
-      if (!authData?.orgId) {
-        setError("Organization ID not found.");
-        return;
-      }
-
+      
       const response = await axios.get(`${urL}/orders/analytics/meals`, {
         params: { orgId: authData.orgId },
         headers: { Authorization: `Bearer ${token}` },
@@ -69,8 +62,6 @@ const Analyze = () => {
     .sort((a, b) => a.count - b.count)
     .slice(0, 3);
 
-  if (loading) return <div className={styles.container}>Loading...</div>;
-  if (error) return <div className={styles.container}>Error: {error}</div>;
 
   return (
     <div className={styles.container}>
