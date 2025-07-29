@@ -11,7 +11,7 @@ export class OrdersService {
 async create(createOrderDto: Prisma.OrderCreateInput) {
   try {
     // If orgId is not provided, fetch it from the User table using employeeId
-    if (!createOrderDto.orgId && createOrderDto.employeeId) {
+    if (!(createOrderDto as any).orgId && createOrderDto.employeeId) {
       const user = await this.databaseService.user.findUnique({
         where: { id: createOrderDto.employeeId },
         select: { organizationId: true },
@@ -19,7 +19,7 @@ async create(createOrderDto: Prisma.OrderCreateInput) {
       if (!user) {
         throw new HttpException('User not found for order', HttpStatus.BAD_REQUEST);
       }
-      createOrderDto.orgId = user.organizationId;
+      (createOrderDto as any).orgId = user.organizationId;
     }
 
     // Attempt to create an order in the database
