@@ -181,7 +181,7 @@ export class PayrollService {
         //Create Payroll Record
         const payroll = await this.create({
           employee: { connect: { id: user.id } },
-          orgId: orgId,
+          organization: { connect: { id: orgId } },
           month: month,
           netPay: values.netSalary,
           payrollPdf: `payrolls/${user.id}/${user.id}-${month}.pdf`,
