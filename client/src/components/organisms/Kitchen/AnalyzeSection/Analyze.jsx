@@ -56,13 +56,9 @@ const Analyze = () => {
 
   const top3Meals = [...mealOrderData]
     .sort((a, b) => b.count - a.count)
-    .slice(0, 3);
+    .slice(0, 4);
 
-  const bottom3Meals = [...mealOrderData]
-    .sort((a, b) => a.count - b.count)
-    .slice(0, 3);
-
-
+  
   return (
     <div className={styles.container}>
       <div className={styles.analysisSection}>
