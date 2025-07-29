@@ -1,118 +1,164 @@
 .container {
-  padding: 2rem;
-  background-color: #f9f9f9;
-  min-height: 100vh;
-  font-family: "Segoe UI", sans-serif;
+   width: 100%;
+  margin: 0 auto;
+  padding: 24px;
+  background-color: var(--bg-secondary);
+  font-family: var(--primary-font);
 }
 
-.title {
-  font-size: 28px;
-  font-weight: 700;
-  color: #1a1a1a;
-  margin-bottom: 2rem;
-  text-align: center;
+/* Analysis Section */
+.analysisSection {
+  margin-bottom: 32px;
 }
 
-.cardsContainer {
+.sectionHeader {
   display: flex;
-  flex-wrap: wrap;
-  gap: 2rem;
-  justify-content: center;
+  align-items: center;
+  margin-bottom: 24px;
+  gap: 12px;
+  color: black;
 }
 
-.card {
-  background-color: white;
-  border: 1px solid #e6e6e6;
-  border-radius: 12px;
-  padding: 1.5rem;
-  flex: 1 1 400px;
-  max-width: 600px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+.sectionIcon {
+  color: var(--accent);
+  width: 24px;
+  height: 24px;
+}
+
+.sectionTitle {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--text-primary);
+  font-family: var(--primary-font);
+}
+
+.analysisGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
 }
 
 .cardTitle {
-  font-size: 20px;
-  font-weight: 600;
-  color: #333;
-  margin-bottom: 1.5rem;
-}
-
-.pieChartContainer {
-  width: 100%;
   display: flex;
-  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-primary);
+  font-family: var(--primary-font);
+  font-weight: 600;
 }
 
-.rankingsContainer {
+.highDemandIcon {
+  color: var(--success);
+}
+
+.lowDemandIcon {
+  color: var(--error);
+}
+
+.mealItem {
+  margin-bottom: 16px;
+  color: var(--text-primary);
+  font-family: var(--primary-font);
+}
+
+.mealHeader {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  color: var(--text-primary);
+  font-family: var(--primary-font);
+}
+
+.highDemandPercentage {
+  color: var(--success);
+  font-weight: 600;
+}
+
+.lowDemandPercentage {
+  color: var(--error);
+  font-weight: 600;
+}
+
+.summaryGrid {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  justify-content: space-between;
 }
 
-.rankingItem {
+.summaryCard {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  font-size: 18px;
+  font-weight: bold;
+  background-color: #f0f9ff;
+  border: 1px solid #91d5ff;
+  border-radius: 8px;
+}
+
+.summaryValue {
+  font-size: 28px;
+  color: #1890ff;
+  margin-top: 0.5rem;
+}
+
+.cardContent {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.75rem 1rem;
-  background-color: #f5faff;
-  border: 1px solid #e6f4ff;
-  border-radius: 8px;
-  transition: background-color 0.3s ease;
+  padding: 12px 4px;
 }
 
-.rankingItem:hover {
-  background-color: #e6f7ff;
+.cardLabel {
+  font-size: 16px;
+  color: var(--text-primary);
+  font-weight: 600;
+  margin-bottom: 4px;
 }
 
-.rankingLeft {
+.cardValue {
+  font-size: 28px;
+  font-weight: bold;
+  line-height: 1;
+}
+
+.cardSubtext {
+  font-size: 13px;
+  color: #888;
+  margin: 0;
+}
+
+.cardIcon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
-  gap: 1rem;
+  justify-content: center;
 }
 
-.colorIndicator {
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
+.iconSvg {
+  width: 20px;
+  height: 20px;
+  stroke-width: 2;
 }
 
-.mealInfo {
-  display: flex;
-  flex-direction: column;
+.blueBg {
+  background-color: #e6f7ff;
+  color: #2f54eb;
 }
 
-.mealName {
-  font-size: 16px;
-  font-weight: 600;
-  color: #333;
-  margin: 0;
+.greenBg {
+  background-color: #f6ffed;
+  color: #52c41a;
 }
 
-.mealRank {
-  font-size: 12px;
-  color: #999;
-  margin: 0;
+.orangeBg {
+  background-color: #fff7e6;
+  color: #fa541c;
 }
 
-.orderInfo {
-  text-align: right;
-}
-
-.orderCount {
-  font-size: 16px;
-  font-weight: 600;
-  color: #333;
-  margin: 0;
-}
-
-.orderPercentage {
-  font-size: 12px;
-  color: #999;
-  margin: 0;
-}
-
-/* Spinner animation */
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
