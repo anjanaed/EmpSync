@@ -9,7 +9,7 @@ import {
   Delete,
   HttpException,
   HttpStatus,
-  Query
+  Query,
 } from '@nestjs/common';
 import { OrdersService } from './order.service';
 import { Prisma } from '@prisma/client';
@@ -58,24 +58,24 @@ export class OrdersController {
   //   }
   // }
 
-@Get()
-async findAll(
-  @Query('orgId') orgId?: string,
-  @Query('employeeId') employeeId?: string,
-) {
-  try {
-    return await this.ordersService.findAll(orgId, employeeId);
-  } catch (err) {
-    throw new HttpException(
-      {
-        status: HttpStatus.INTERNAL_SERVER_ERROR,
-        error: 'Internal Server Error',
-        message: err.message,
-      },
-      HttpStatus.INTERNAL_SERVER_ERROR,
-    );
+  @Get()
+  async findAll(
+    @Query('orgId') orgId?: string,
+    @Query('employeeId') employeeId?: string,
+  ) {
+    try {
+      return await this.ordersService.findAll(orgId, employeeId);
+    } catch (err) {
+      throw new HttpException(
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          error: 'Internal Server Error',
+          message: err.message,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
-}
 
   // GET endpoint to retrieve a single order by ID
   @Get(':id')
@@ -131,6 +131,26 @@ async findAll(
           message: err.message,
         },
         HttpStatus.NOT_FOUND,
+      );
+    }
+  }
+
+  @Get('analytics/meals')
+  async getMealOrderAnalytics(@Query('orgId') orgId: string) {
+    try {
+      if (!orgId) {
+        throw new HttpException('orgId is required', HttpStatus.BAD_REQUEST);
+      }
+
+      return await this.ordersService.getMealOrderAnalytics(orgId);
+    } catch (err) {
+      throw new HttpException(
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          error: 'Internal Server Error',
+          message: err.message,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
   }

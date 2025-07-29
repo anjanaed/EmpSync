@@ -2,160 +2,91 @@ import React, { useState, useEffect } from "react";
 import styles from "./Analyze.module.css";
 import axios from "axios";
 import { Pie } from '@ant-design/plots';
+import { useAuth } from "../../../../contexts/AuthContext.jsx";
 
 const Analyze = () => {
   const [mealOrderData, setMealOrderData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [totalOrders, setTotalOrders] = useState(0);
+  const [totalMealOrders, setTotalMealOrders] = useState(0);
   
+  const { authData } = useAuth();
+  const token = authData?.accessToken;
   const urL = import.meta.env.VITE_BASE_URL;
-  
-  // Get auth data (multiple fallback methods)
-  const getAuthData = () => {
-    try {
-      // Try different possible storage keys
-      let authData = JSON.parse(localStorage.getItem('authData') || '{}');
-      if (!authData.orgId) {
-        authData = JSON.parse(localStorage.getItem('user') || '{}');
-      }
-      if (!authData.orgId) {
-        authData = JSON.parse(sessionStorage.getItem('authData') || '{}');
-      }
-      return authData;
-    } catch (e) {
-      console.error('Error parsing auth data:', e);
-      return {};
-    }
-  };
-
-  const getToken = () => {
-    return localStorage.getItem('token') || 
-           localStorage.getItem('authToken') || 
-           localStorage.getItem('accessToken') || 
-           sessionStorage.getItem('token') || '';
-  };
-
-  const authData = getAuthData();
-  const token = getToken();
 
   useEffect(() => {
-    fetchAndProcessData();
+    fetchMealAnalytics();
   }, []);
 
-  const fetchAndProcessData = async () => {
+  const fetchMealAnalytics = async () => {
     try {
       setLoading(true);
       setError(null);
 
-      console.log('Auth Data:', authData);
-      console.log('Token:', token);
-      console.log('Base URL:', urL);
 
-      // Step 1: Fetch all orders for the organization
-      console.log('Fetching orders...');
-      const ordersResponse = await axios.get(`${urL}/orders`, {
-        params: {
-          orgId: authData?.orgId,
-        },
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      console.log('Orders Response:', ordersResponse.data);
-      const orders = Array.isArray(ordersResponse.data) ? ordersResponse.data : ordersResponse.data.data || [];
-      console.log('Processed Orders:', orders);
-
-      // Step 2: Fetch all meals
-      console.log('Fetching meals...');
-      const mealsResponse = await axios.get(`${urL}/meal?includeDeleted=true`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      console.log('Meals Response:', mealsResponse.data);
-      const meals = Array.isArray(mealsResponse.data) ? mealsResponse.data : mealsResponse.data.data || [];
-      console.log('Processed Meals:', meals);
-
-      // Step 3: Process orders to calculate meal demand
-      const mealDemandMap = new Map();
-
-      console.log('Processing orders...');
-      orders.forEach((order, index) => {
-        console.log(`Processing order ${index + 1}:`, order);
-        
-        if (order.meals && Array.isArray(order.meals)) {
-          order.meals.forEach(mealString => {
-            console.log('Processing meal string:', mealString);
-            
-            // Parse meal string format "3:1" (mealId:quantity)
-            const [mealId, quantity] = mealString.split(':').map(Number);
-            console.log('Parsed - MealId:', mealId, 'Quantity:', quantity);
-            
-            if (mealId && quantity && !isNaN(mealId) && !isNaN(quantity)) {
-              const currentCount = mealDemandMap.get(mealId) || 0;
-              mealDemandMap.set(mealId, currentCount + quantity);
-              console.log(`Updated meal ${mealId} count to:`, currentCount + quantity);
-            } else {
-              console.warn('Invalid meal data:', { mealId, quantity, mealString });
-            }
-          });
-        } else {
-          console.warn('Order has no meals or meals is not an array:', order);
-        }
-      });
-
-      console.log('Final meal demand map:', Array.from(mealDemandMap.entries()));
-
-      // Step 4: Calculate total orders and create meal data with percentages
-      const totalOrders = Array.from(mealDemandMap.values()).reduce((sum, count) => sum + count, 0);
-      console.log('Total orders:', totalOrders);
-      
-      if (totalOrders === 0) {
-        console.warn('No orders found or processed');
-        setMealOrderData([]);
+      if (!authData?.orgId) {
+        setError('Organization ID not found. Please check your authentication.');
+        setLoading(false);
         return;
       }
 
-      const mealData = Array.from(mealDemandMap.entries())
-        .map(([mealId, orderCount]) => {
-          // Find meal name from meals array
-          const meal = meals.find(m => m.id === mealId);
-          const mealName = meal ? meal.nameEnglish : `Meal ID: ${mealId}`;
-          const percentage = totalOrders > 0 ? parseFloat(((orderCount / totalOrders) * 100).toFixed(1)) : 0;
-          
-          console.log(`Meal ${mealId} (${mealName}): ${orderCount} orders, ${percentage}%`);
-          
-          return {
-            id: mealId,
-            name: mealName,
-            orders: orderCount,
-            percentage: percentage,
-            type: mealName // Used for colorField in pie chart
-          };
-        })
-        .filter(item => item.orders > 0) // Only include meals with orders
-        .sort((a, b) => b.orders - a.orders); // Sort by highest demand first
+      // Call the  API endpoint
+      console.log('Fetching meal analytics from API...');
+      const response = await axios.get(`${urL}/orders/analytics/meals`, {
+        params: {
+          orgId: authData.orgId,
+        },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-      console.log('Final meal data:', mealData);
+      console.log('API Response:', response.data);
       
-      if (mealData.length === 0) {
+      const { totalOrders: apiTotalOrders, totalMealOrders: apiTotalMealOrders, mealAnalytics } = response.data;
+      
+      
+      setTotalOrders(apiTotalOrders);
+      setTotalMealOrders(apiTotalMealOrders);
+
+      // Transform API data to match the component's expected format
+      const transformedData = mealAnalytics.map((item, index) => ({
+        id: item.mealId,
+        name: item.mealName || `Meal ID: ${item.mealId}`,
+        orders: item.orderCount,
+        percentage: item.percentage,
+        type: item.mealName || `Meal ID: ${item.mealId}`, // Used for colorField in pie chart
+      }));
+
+      console.log('Transformed meal data:', transformedData);
+      
+      if (transformedData.length === 0) {
         console.warn('No meal data to display');
         setMealOrderData([]);
         return;
       }
       
-      setMealOrderData(mealData);
+      setMealOrderData(transformedData);
       
     } catch (err) {
-      console.error('Error fetching data:', err);
+      console.error('Error fetching meal analytics:', err);
       console.error('Error details:', {
         message: err.message,
         response: err.response?.data,
         status: err.response?.status
       });
-      setError(`Failed to fetch meal data: ${err.message}`);
+      
+      // More specific error messages
+      if (err.response?.status === 401) {
+        setError('Authentication failed. Please login again.');
+      } else if (err.response?.status === 400) {
+        setError('Invalid request. Please check your organization ID.');
+      } else if (err.response?.status === 404) {
+        setError('API endpoint not found. Please check the server configuration.');
+      } else {
+        setError(`Failed to fetch meal analytics: ${err.message}`);
+      }
     } finally {
       setLoading(false);
     }
@@ -237,7 +168,7 @@ const Analyze = () => {
           fontWeight: 'bold',
           color: '#666'
         },
-        content: 'Total Orders'
+        content: 'Total Meal Orders'
       },
       content: {
         style: {
@@ -245,7 +176,7 @@ const Analyze = () => {
           fontWeight: 'bold',
           color: '#1890ff'
         },
-        content: pieChartData.reduce((sum, item) => sum + item.orders, 0).toString()
+        content: totalMealOrders.toString()
       }
     },
     animation: {
@@ -262,7 +193,16 @@ const Analyze = () => {
       <div className={styles.container}>
         <h2 className={styles.title}>Kitchen Analyze Section</h2>
         <div style={{ textAlign: 'center', padding: '2rem' }}>
-          <p>Loading meal data...</p>
+          <div style={{ fontSize: '16px', marginBottom: '1rem' }}>Loading meal analytics...</div>
+          <div style={{ 
+            width: '40px', 
+            height: '40px', 
+            border: '4px solid #f3f3f3',
+            borderTop: '4px solid #1890ff',
+            borderRadius: '50%',
+            animation: 'spin 1s linear infinite',
+            margin: '0 auto'
+          }}></div>
         </div>
       </div>
     );
@@ -273,9 +213,31 @@ const Analyze = () => {
     return (
       <div className={styles.container}>
         <h2 className={styles.title}>Kitchen Analyze Section</h2>
-        <div style={{ textAlign: 'center', padding: '2rem', color: 'red' }}>
-          <p>{error}</p>
-          <button onClick={fetchAndProcessData}>Retry</button>
+        <div style={{ 
+          textAlign: 'center', 
+          padding: '2rem', 
+          backgroundColor: '#fff2f0',
+          border: '1px solid #ffccc7',
+          borderRadius: '8px',
+          margin: '1rem'
+        }}>
+          <div style={{ color: '#ff4d4f', fontSize: '16px', marginBottom: '1rem' }}>
+            ⚠️ {error}
+          </div>
+          <button 
+            onClick={fetchMealAnalytics}
+            style={{
+              padding: '0.75rem 1.5rem',
+              backgroundColor: '#1890ff',
+              color: 'white',
+              border: 'none',
+              borderRadius: '6px',
+              cursor: 'pointer',
+              fontSize: '14px'
+            }}
+          >
+            Retry
+          </button>
         </div>
       </div>
     );
@@ -286,10 +248,33 @@ const Analyze = () => {
     return (
       <div className={styles.container}>
         <h2 className={styles.title}>Kitchen Analyze Section</h2>
-        <div style={{ textAlign: 'center', padding: '2rem' }}>
-          <p>No meal order data available for this organization.</p>
-          <button onClick={fetchAndProcessData} style={{ marginTop: '1rem', padding: '0.5rem 1rem' }}>
-            Retry
+        <div style={{ 
+          textAlign: 'center', 
+          padding: '2rem',
+          backgroundColor: '#f6ffed',
+          border: '1px solid #b7eb8f',
+          borderRadius: '8px',
+          margin: '1rem'
+        }}>
+          <div style={{ color: '#52c41a', fontSize: '16px', marginBottom: '1rem' }}>
+            📊 No meal order data available for this organization.
+          </div>
+          <div style={{ color: '#666', fontSize: '14px', marginBottom: '1rem' }}>
+            Total Orders: {totalOrders} | Total Meal Orders: {totalMealOrders}
+          </div>
+          <button 
+            onClick={fetchMealAnalytics}
+            style={{
+              padding: '0.75rem 1.5rem',
+              backgroundColor: '#52c41a',
+              color: 'white',
+              border: 'none',
+              borderRadius: '6px',
+              cursor: 'pointer',
+              fontSize: '14px'
+            }}
+          >
+            Refresh
           </button>
         </div>
       </div>
@@ -299,6 +284,61 @@ const Analyze = () => {
   return (
     <div className={styles.container}>
       <h2 className={styles.title}>Kitchen Analyze Section</h2>
+      
+      {/* Summary Stats */}
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        gap: '2rem', 
+        marginBottom: '2rem',
+        flexWrap: 'wrap'
+      }}>
+        <div style={{
+          padding: '1rem 2rem',
+          backgroundColor: '#f0f9ff',
+          border: '2px solid #1890ff',
+          borderRadius: '8px',
+          textAlign: 'center',
+          minWidth: '150px'
+        }}>
+          <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#1890ff' }}>
+            {totalOrders}
+          </div>
+          <div style={{ fontSize: '14px', color: '#666' }}>
+            Total Orders
+          </div>
+        </div>
+        <div style={{
+          padding: '1rem 2rem',
+          backgroundColor: '#f6ffed',
+          border: '2px solid #52c41a',
+          borderRadius: '8px',
+          textAlign: 'center',
+          minWidth: '150px'
+        }}>
+          <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#52c41a' }}>
+            {totalMealOrders}
+          </div>
+          <div style={{ fontSize: '14px', color: '#666' }}>
+            Total Meal Orders
+          </div>
+        </div>
+        <div style={{
+          padding: '1rem 2rem',
+          backgroundColor: '#fff7e6',
+          border: '2px solid #fa8c16',
+          borderRadius: '8px',
+          textAlign: 'center',
+          minWidth: '150px'
+        }}>
+          <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#fa8c16' }}>
+            {mealOrderData.length}
+          </div>
+          <div style={{ fontSize: '14px', color: '#666' }}>
+            Different Meals
+          </div>
+        </div>
+      </div>
       
       <div className={styles.cardsContainer}>
         {/* Left Card - Ring Chart */}

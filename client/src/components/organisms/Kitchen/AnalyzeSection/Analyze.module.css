@@ -1,80 +1,79 @@
 .container {
-  padding: 24px;
-  background-color: var(--bg-secondary);
-  
+  padding: 2rem;
+  background-color: #f9f9f9;
+  min-height: 100vh;
+  font-family: "Segoe UI", sans-serif;
 }
 
 .title {
-  display: flex;
-  align-items: center;
-  margin-bottom: 24px;
-  gap: 12px;
-  color: black;
+  font-size: 28px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 2rem;
+  text-align: center;
 }
 
 .cardsContainer {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 130px;
-  max-width: 1800px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  justify-content: center;
 }
 
 .card {
   background-color: white;
+  border: 1px solid #e6e6e6;
   border-radius: 12px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  padding: 24px;
+  padding: 1.5rem;
+  flex: 1 1 400px;
+  max-width: 600px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .cardTitle {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--text-primary);
-  font-family: var(--primary-font);
+  font-size: 20px;
   font-weight: 600;
+  color: #333;
+  margin-bottom: 1.5rem;
 }
 
 .pieChartContainer {
-  background-color: #f9fafb;
-  border-radius: 8px;
-  padding: 16px;
-  height: 400px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
 }
 
 .rankingsContainer {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 1rem;
 }
 
 .rankingItem {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  padding: 16px;
-  background-color: white;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  background-color: #f5faff;
+  border: 1px solid #e6f4ff;
   border-radius: 8px;
-  border: 1px solid #e5e7eb;
-  transition: all 0.2s ease;
+  transition: background-color 0.3s ease;
 }
 
 .rankingItem:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  background-color: #e6f7ff;
 }
 
 .rankingLeft {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 1rem;
 }
 
 .colorIndicator {
-  width: 16px;
-  height: 16px;
+  width: 14px;
+  height: 14px;
   border-radius: 50%;
-  flex-shrink: 0;
 }
 
 .mealInfo {
@@ -83,14 +82,16 @@
 }
 
 .mealName {
-  font-weight: 500;
-  color: #1f2937;
-  font-size: 14px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
 }
 
 .mealRank {
   font-size: 12px;
-  color: #6b7280;
+  color: #999;
+  margin: 0;
 }
 
 .orderInfo {
@@ -98,49 +99,20 @@
 }
 
 .orderCount {
-  font-weight: 600;
-  color: #1f2937;
   font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
 }
 
 .orderPercentage {
   font-size: 12px;
-  color: #6b7280;
+  color: #999;
+  margin: 0;
 }
 
-.customTooltip {
-  background-color: white;
-  padding: 12px;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-}
-
-.tooltipTitle {
-  font-weight: 600;
-  color: #1f2937;
-  margin-bottom: 4px;
-}
-
-.tooltipText {
-  font-size: 12px;
-  color: #6b7280;
-}
-
-@media (max-width: 768px) {
-  .cardsContainer {
-    grid-template-columns: 1fr;
-  }
-  
-  .container {
-    padding: 16px;
-  }
-  
-  .card {
-    padding: 16px;
-  }
-  
-  .pieChartContainer {
-    height: 300px;
-  }
+/* Spinner animation */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
