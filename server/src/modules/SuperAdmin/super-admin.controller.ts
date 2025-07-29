@@ -23,13 +23,13 @@ export class SuperAdminController {
   // Organization endpoints
   
   @Post('organizations')
-  // @UseGuards(AuthGuard('superadmin-jwt'))
+  @UseGuards(AuthGuard('superadmin-jwt'))
   async createOrganization(@Body() data: Prisma.OrganizationCreateInput) {
     return this.superAdminService.createOrganization(data);
   }
 
   @Get('organizations')
-  // @UseGuards(AuthGuard('superadmin-jwt'))
+  @UseGuards(AuthGuard('superadmin-jwt'))
   async getOrganizations() {
     return this.superAdminService.getOrganizations();
   }
@@ -41,7 +41,7 @@ export class SuperAdminController {
   }
 
   @Get('admins/:orgId')
-  // @UseGuards(AuthGuard('superadmin-jwt'))
+  @UseGuards(AuthGuard('superadmin-jwt'))
   async getByOrg(@Param('orgId') orgId: string) {
     return this.superAdminService.getByOrg(orgId);
   }
@@ -56,7 +56,7 @@ export class SuperAdminController {
   }
 
   @Delete('organizations/:id')
-  // @UseGuards(AuthGuard('superadmin-jwt'))
+  @UseGuards(AuthGuard('superadmin-jwt'))
   async deleteOrganization(@Param('id') id: string) {
     return this.superAdminService.deleteOrganization(id);
   }
@@ -73,7 +73,7 @@ export class SuperAdminController {
 
   // User endpoints
   @Post('users')
-  // @UseGuards(AuthGuard('superadmin-jwt'))
+  @UseGuards(AuthGuard('superadmin-jwt'))
   async createUser(@Body() data: Prisma.UserCreateInput) {
     return this.superAdminService.createUser(data);
   }
@@ -85,7 +85,7 @@ export class SuperAdminController {
   }
 
   @Get('users/:id')
-  // @UseGuards(AuthGuard('superadmin-jwt'))
+  @UseGuards(AuthGuard('superadmin-jwt'))
   async getUserById(@Param('id') id: string) {
     return this.superAdminService.getUserById(id);
   }
@@ -97,7 +97,6 @@ export class SuperAdminController {
   }
 
   @Get('users/:userId/actions')
-  // @UseGuards(AuthGuard('superadmin-jwt'))
   async getUserActions(@Param('userId') userId: string) {
     try {
       const actions = await this.superAdminService.getUserActionsByUserId(userId);
@@ -130,13 +129,13 @@ export class SuperAdminController {
   }
 
   @Delete('users/:id')
-  // @UseGuards(AuthGuard('superadmin-jwt'))
+  @UseGuards(AuthGuard('superadmin-jwt'))
   async deleteUser(@Param('id') id: string) {
     return this.superAdminService.deleteUser(id);
   }
 
   @Get('organizations/:orgId/last-employee-id')
-  // @UseGuards(AuthGuard('superadmin-jwt'))
+  @UseGuards(AuthGuard('superadmin-jwt'))
   async getLastEmployeeNoByOrg(@Param('orgId') orgId: string) {
     return this.superAdminService.getLastEmpIDByOrg(orgId);
   }
