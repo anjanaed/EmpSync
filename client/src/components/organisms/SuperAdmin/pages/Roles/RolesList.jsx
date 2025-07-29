@@ -88,33 +88,29 @@ const RolesList = ({ data, onAddNew, onUpdate, onDelete, className, authData}) =
     setLoading(true);
     const { name, role, email, password } = values;
     const orgId = localStorage.getItem('orgid') || selectedOrg;
-    try {
-      // 1. Get last employee ID
-      const lastIdRes = await axios.get(`${urL}/super-admin/organizations/${orgId}/last-employee-id`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      let newEmployeeId;
-      const lastEmployeeId = lastIdRes.data;
-      if (!lastEmployeeId) {
-        newEmployeeId = `${orgId}E001`;
+
+    // Get last employee ID
+    const lastIdRes = await axios.get(`${urL}/super-admin/organizations/${orgId}/last-employee-id`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    let newEmployeeId;
+    const lastEmployeeId = lastIdRes.data;
+    if (!lastEmployeeId) {
+      newEmployeeId = `${orgId}E001`;
+    } else {
+      // lastEmployeeId is like "O002E004"
+      const match = lastEmployeeId.match(/(.*E)(\d+)$/);
+      if (match) {
+        const prefix = match[1];
+        const num = String(parseInt(match[2], 10) + 1).padStart(3, '0');
+        newEmployeeId = `${prefix}${num}`;
       } else {
-        // lastEmployeeId is like "O002E004"
-        const match = lastEmployeeId.match(/(.*E)(\d+)$/);
-        if (match) {
-          const prefix = match[1];
-          const num = String(parseInt(match[2], 10) + 1).padStart(3, '0');
-          newEmployeeId = `${prefix}${num}`;
-        } else {
-          newEmployeeId = `${orgId}E001`;
-        }
+        newEmployeeId = `${orgId}E001`;
       }
+    }
 
-      // 2. Register with Auth0 first
-      console.log("Registering user with Auth0:", { email, password, id: newEmployeeId });
-      await signUpUser({ email, password, id: newEmployeeId });
-      
-
-      // 3. Add to database
+    try {
+      // Add to database
       const payload = {
         id: newEmployeeId,
         name,
@@ -123,22 +119,41 @@ const RolesList = ({ data, onAddNew, onUpdate, onDelete, className, authData}) =
         organizationId: orgId,
         dob: "1990-01-01",
         telephone: "+1234567890",
-        gender: "MALE",
+        gender: "Male",
         address: "123 Street, City",
         salary: 50000,
       };
       await axios.post(`${urL}/super-admin/users`, payload, {
         headers: { Authorization: `Bearer ${token}` },
       });
+    }
+    catch (err) {
+      error(
+        `Registration Failed: ${err.response?.data?.message || "Unknown error"}`
+      );
+      setLoading(false);
+      return;
+    }
 
+    try {
+      // Register with Auth0 
+      await signUpUser({ email, password, id: newEmployeeId });
       message.success("User Registered Successfully");
       setIsModalVisible(false);
       form.resetFields();
       fetchOrgUsers();
-    } catch (err) {
+    }
+    catch (err) {
+      await axios.delete(`${urL}/super-admin/users/${newEmployeeId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       message.error(`Registration Failed: ${err.response?.data?.message || "Unknown error"}`);
-      console.log("Registration Error:", err);
-    } finally {
+      console.error("Registration Error:", err);
+      error(
+        `Registration Failed: ${err.response?.data?.message || "Unknown error"}`
+      );
+    }
+    finally {
       setLoading(false);
     }
   };
