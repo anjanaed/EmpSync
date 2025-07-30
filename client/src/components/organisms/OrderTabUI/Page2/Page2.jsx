@@ -839,7 +839,15 @@ const Page2 = ({
       )}
       
       {errorMessage && <div className={styles.errorPopup}>{errorMessage}</div>}
-      {verifiedMessage && <div className={styles.verifiedPopup}>{verifiedMessage}</div>}
+      {verifiedMessage && (
+        <>
+          <div className={styles.verifiedBackdrop}></div>
+          <div className={styles.verifiedPopup}>
+            <div className={styles.verifiedIcon}>✓</div>
+            <div>{verifiedMessage}</div>
+          </div>
+        </>
+      )}
     </Spin>
   );
 };
