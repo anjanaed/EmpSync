@@ -12,7 +12,7 @@ export async function generatePayslip({
   employerFundRate,
   ETF,
   month,
-  firebaseService, // <-- pass this in
+  firebaseService, 
 }) {
   const deductions = values.totalDeductionArray;
   const earnings = values.totalAllowanceArray;
