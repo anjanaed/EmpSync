@@ -64,8 +64,9 @@ function PinSection() {
                     setError("");
                     setUser(null);
                     const passkey = parseInt(pin, 10);
+                    const baseURL = import.meta.env.VITE_BASE_URL || '';
                     const response = await fetch(
-                        `/user-finger-print-register-backend/user-by-passkey?passkey=${passkey}`
+                        `${baseURL}/user-finger-print-register-backend/user-by-passkey?passkey=${passkey}`
                     );
                     if (!response.ok) {
                         setError("Invalid Pass Key, check Again");
@@ -136,7 +137,8 @@ function PinSection() {
     const fetchUserFingerprints = async (userId) => {
         try {
             // First try to get all fingerprints and then filter by empId
-            const response = await fetch(`/user-finger-print-register-backend/all-fingerprints`);
+            const baseURL = import.meta.env.VITE_BASE_URL || '';
+            const response = await fetch(`${baseURL}/user-finger-print-register-backend/all-fingerprints`);
             if (response.ok) {
                 const allFingerprints = await response.json();
                 // Filter fingerprints for this specific user
@@ -646,7 +648,8 @@ function PinSection() {
                 const thumbid = match[1];
                 const empId = user.id;
                 try {
-                    const response = await fetch('/user-finger-print-register-backend/fingerprint', {
+                    const baseURL = import.meta.env.VITE_BASE_URL || '';
+                    const response = await fetch(`${baseURL}/user-finger-print-register-backend/fingerprint`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ thumbid, empId })
