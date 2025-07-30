@@ -10,6 +10,7 @@ import { BiFingerprint } from "react-icons/bi";
 import { MdSync } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import FingerprintBLE from "../../../../utils/fingerprintBLE.js";
+import { useMealData } from "../../../../contexts/MealDataContext.jsx";
 
 const Page2 = ({
   carouselRef,
@@ -22,6 +23,7 @@ const Page2 = ({
 }) => {
   const navigate = useNavigate();
   const baseURL = import.meta.env.VITE_BASE_URL;
+  const { preloadMealData, clearData } = useMealData(); // Add meal data context
   const [errorMessage, setErrorMessage] = useState("");
   const [pin, setPin] = useState("");
   const text = translations[language];
@@ -253,8 +255,10 @@ const Page2 = ({
       setPin("");
       setErrorMessage("");
       setResetPin(false);
+      // Clear meal data when resetting/logging out
+      clearData();
     }
-  }, [resetPin, setResetPin]);
+  }, [resetPin, setResetPin, clearData]);
 
   // Handle backspace for PIN
   const handleBackspace = () => {
@@ -383,6 +387,19 @@ const Page2 = ({
       console.log("Retrieved Username:", user.name);
       console.log("Retrieved User ID:", user.id);
       console.log("Retrieved Organization ID:", user.organizationId);
+      
+      // Preload meal data before navigation
+      if (user.organizationId) {
+        console.log("Preloading meal data for organization:", user.organizationId);
+        try {
+          await preloadMealData(user.organizationId, new Date());
+          console.log("Meal data preloaded successfully");
+        } catch (preloadError) {
+          console.error("Error preloading meal data:", preloadError);
+          // Continue with navigation even if preloading fails
+        }
+      }
+      
       setTimeout(() => {
         carouselRef.current.goTo(2);
       }, 100);
@@ -409,6 +426,19 @@ const Page2 = ({
         console.log("Retrieved Username:", user.name);
         console.log("Retrieved User ID:", user.id);
         console.log("Retrieved Organization ID:", user.organizationId);
+        
+        // Preload meal data before navigation
+        if (user.organizationId) {
+          console.log("Preloading meal data for organization:", user.organizationId);
+          try {
+            await preloadMealData(user.organizationId, new Date());
+            console.log("Meal data preloaded successfully");
+          } catch (preloadError) {
+            console.error("Error preloading meal data:", preloadError);
+            // Continue with navigation even if preloading fails
+          }
+        }
+        
         setTimeout(() => {
           carouselRef.current.goTo(2);
         }, 100);
