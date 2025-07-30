@@ -91,12 +91,36 @@ export class FirebaseService implements OnModuleInit {
       const [url] = await file.getSignedUrl({
         action: 'read',
         expires: Date.now() + 5 * 60 * 1000, // 5 minutes
-        responseDisposition: `attachment; filename="${filePath.split('/').pop()}"`, // Force download with filename
+        responseDisposition: `attachment; filename="${filePath.split('/').pop()}"`, 
       });
       return url;
     } catch (error) {
       console.error('Error generating signed URL:', error);
       throw new Error('Failed to generate signed URL');
+    }
+  }
+
+  async getFileBuffer(
+    empId: string,
+    month: string,
+  ): Promise<Buffer> {
+    try {
+      const filename = `${empId}-${month}.pdf`;
+      const filePath = `payrolls/${empId}/${filename}`;
+      const file = this.bucket.bucket().file(filePath);
+      
+      // Check if file exists
+      const [exists] = await file.exists();
+      if (!exists) {
+        throw new Error(`File ${filePath} does not exist in Firebase Storage`);
+      }
+      
+      // Download file as buffer
+      const [fileBuffer] = await file.download();
+      return fileBuffer;
+    } catch (error) {
+      console.error('Error downloading file buffer:', error);
+      throw new Error('Failed to download file from Firebase Storage');
     }
   }
 

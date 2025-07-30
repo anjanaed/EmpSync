@@ -142,7 +142,7 @@ const AdjustmentModal = ({ handleCancel, fetch, success, error }) => {
                     checked={isTypeChecked}
                     onChange={handleTypeChange}
                   >
-                    Value
+                    Fixed Amount
                   </Checkbox>
                   &nbsp;
                   <Checkbox

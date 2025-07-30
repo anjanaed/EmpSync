@@ -51,7 +51,7 @@ export const AuthProvider = ({ children }) => {
       const currentUser = response.data;
 
       const userRole = currentUser.role;
-      const orgId = currentUser.organizationId || NULL; // Fallback to a default org ID if not present
+      const orgId = currentUser.organizationId || NULL; 
       let permissions = [];
       try {
         const permRes = await axios.get(

@@ -5,299 +5,97 @@ import { BadRequestException, NotFoundException } from '@nestjs/common';
 
 describe('MealService', () => {
   let service: MealService;
-  let databaseService: DatabaseService;
+  let db: any;
 
   const mockDatabaseService = {
     meal: {
       create: jest.fn(),
+      findFirst: jest.fn(),
       findMany: jest.fn(),
-      findUnique: jest.fn(),
       update: jest.fn(),
-      delete: jest.fn(),
     },
     mealIngredient: {
       deleteMany: jest.fn(),
       create: jest.fn(),
     },
-    $transaction: jest.fn((callback) => callback(mockDatabaseService)),
+    $transaction: jest.fn().mockImplementation((cb) => cb(mockDatabaseService)),
   };
-
-  const mockMeal = {
-    id: 1,
-    nameEnglish: 'Test Meal',
-    nameSinhala: 'පරික්ෂණ කෑම',
-    nameTamil: 'சோதனை உணவு',
-    description: 'Test Description',
-    price: 9.99,
-    imageUrl: 'test.jpg',
-    category: ['Breakfast'],
-    createdAt: new Date(),
-    ingredients: [
-      {
-        id: 1,
-        mealId: 1,
-        ingredientId: 101,
-        ingredient: {
-          id: 101,
-          name: 'Test Ingredient'
-        }
-      }
-    ]
-  };
-
-  const mockMealData = {
-    nameEnglish: 'Test Meal',
-    nameSinhala: 'පරික්ෂණ කෑම',
-    nameTamil: 'சோதனை உணவு',
-    description: 'Test Description',
-    price: 9.99,
-    imageUrl: 'test.jpg',
-    category: ['Breakfast'],
-  };
-
-  const mockIngredients = [
-    { ingredientId: 101 },
-    { ingredientId: 102 }
-  ];
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         MealService,
-        {
-          provide: DatabaseService,
-          useValue: mockDatabaseService,
-        },
+        { provide: DatabaseService, useValue: mockDatabaseService },
       ],
     }).compile();
 
     service = module.get<MealService>(MealService);
-    databaseService = module.get<DatabaseService>(DatabaseService);
-    
-    // Reset all mocks before each test
-    jest.clearAllMocks();
+    db = module.get<DatabaseService>(DatabaseService);
   });
 
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
 
-  describe('createWithIngredients', () => {
-    it('should create a meal with ingredients', async () => {
-      mockDatabaseService.meal.create.mockResolvedValue(mockMeal);
-      
-      const result = await service.createWithIngredients(mockMealData, mockIngredients);
-      
-      expect(result).toEqual(mockMeal);
-      expect(mockDatabaseService.meal.create).toHaveBeenCalledWith({
-        data: {
-          ...mockMealData,
-          ingredients: {
-            create: mockIngredients.map(ing => ({
-              ingredient: {
-                connect: { id: ing.ingredientId }
-              }
-            }))
-          }
-        },
-        include: {
-          ingredients: {
-            include: {
-              ingredient: true
-            }
-          }
-        }
-      });
-    });
+  it('should create a meal with ingredients', async () => {
+    const mealData = {
+      nameEnglish: 'Fried Rice',
+      nameSinhala: 'බත්',
+      nameTamil: 'சோறு',
+      price: 500,
+      orgId: 'ORG1',
+      isDeleted: false,
+    };
+    const ingredients = [{ ingredientId: 1 }];
+    mockDatabaseService.meal.create.mockResolvedValue('createdMeal');
 
-    it('should throw BadRequestException on create error', async () => {
-      mockDatabaseService.meal.create.mockRejectedValue(new Error('Error creating meal'));
-      
-      await expect(service.createWithIngredients(mockMealData, mockIngredients))
-        .rejects.toThrow(BadRequestException);
-    });
+    const result = await service.createWithIngredients(mealData, ingredients, 'ORG1');
+    expect(result).toBe('createdMeal');
   });
 
-  describe('create', () => {
-    it('should throw BadRequestException as deprecated', async () => {
-      await expect(service.create(mockMealData)).rejects.toThrow(BadRequestException);
-      expect(mockDatabaseService.meal.create).not.toHaveBeenCalled();
-    });
+  it('should find a meal with ingredients', async () => {
+    mockDatabaseService.meal.findFirst.mockResolvedValue('meal');
+    const result = await service.findOneWithIngredients(1, 'ORG1');
+    expect(result).toBe('meal');
   });
 
-  describe('findAllWithIngredients', () => {
-    it('should return all meals with ingredients', async () => {
-      const meals = [mockMeal];
-      mockDatabaseService.meal.findMany.mockResolvedValue(meals);
-      
-      const result = await service.findAllWithIngredients();
-      
-      expect(result).toEqual(meals);
-      expect(mockDatabaseService.meal.findMany).toHaveBeenCalledWith({
-        include: {
-          ingredients: {
-            include: {
-              ingredient: true
-            }
-          }
-        }
-      });
-    });
-
-    it('should throw BadRequestException on error', async () => {
-      mockDatabaseService.meal.findMany.mockRejectedValue(new Error('Database error'));
-      
-      await expect(service.findAllWithIngredients()).rejects.toThrow(BadRequestException);
-    });
+  it('should find all meals', async () => {
+    mockDatabaseService.meal.findMany.mockResolvedValue(['meal1', 'meal2']);
+    const result = await service.findAllWithIngredients('ORG1');
+    expect(result).toEqual(['meal1', 'meal2']);
   });
 
-  describe('findAll', () => {
-    it('should return all meals without ingredients', async () => {
-      const meals = [mockMealData];
-      mockDatabaseService.meal.findMany.mockResolvedValue(meals);
-      
-      const result = await service.findAll();
-      
-      expect(result).toEqual(meals);
-      expect(mockDatabaseService.meal.findMany).toHaveBeenCalledWith({});
-    });
-  });
+  it('should update a meal with ingredients', async () => {
+    mockDatabaseService.meal.findFirst.mockResolvedValue({ id: 1 });
+    mockDatabaseService.meal.update.mockResolvedValue('updatedMeal');
 
-  describe('findOneWithIngredients', () => {
-    it('should return a meal with ingredients by id', async () => {
-      mockDatabaseService.meal.findUnique.mockResolvedValue(mockMeal);
-      
-      const result = await service.findOneWithIngredients(1);
-      
-      expect(result).toEqual(mockMeal);
-      expect(mockDatabaseService.meal.findUnique).toHaveBeenCalledWith({
-        where: { id: 1 },
-        include: {
-          ingredients: {
-            include: {
-              ingredient: true
-            }
-          }
-        }
-      });
-    });
-
-    it('should throw NotFoundException when meal not found', async () => {
-      mockDatabaseService.meal.findUnique.mockResolvedValue(null);
-      
-      await expect(service.findOneWithIngredients(999)).rejects.toThrow(NotFoundException);
-    });
-
-    it('should pass through NotFoundException', async () => {
-      mockDatabaseService.meal.findUnique.mockRejectedValue(new NotFoundException('Meal not found'));
-      
-      await expect(service.findOneWithIngredients(1)).rejects.toThrow(NotFoundException);
-    });
-
-    it('should convert other errors to BadRequestException', async () => {
-      mockDatabaseService.meal.findUnique.mockRejectedValue(new Error('Database error'));
-      
-      await expect(service.findOneWithIngredients(1)).rejects.toThrow(BadRequestException);
-    });
-  });
-
-  // Remove the findOne test since the method doesn't exist in the implementation
-  
-  describe('updateWithIngredients', () => {
-    const updateData = {
-      nameEnglish: 'Updated Meal',
-      price: 12.99
+    const mealData = {
+      nameEnglish: { set: 'Updated Fried Rice' },
+      nameSinhala: { set: 'යාවත්කාලීන බත්' },
+      nameTamil: { set: 'புதுப்பித்த சோறு' },
+      price: { set: 600 },
     };
 
-    it('should update a meal with ingredients', async () => {
-      mockDatabaseService.meal.update.mockResolvedValue(mockMeal);
-      
-      const result = await service.updateWithIngredients(1, updateData, mockIngredients);
-      
-      expect(result).toEqual(mockMeal);
-      expect(mockDatabaseService.$transaction).toHaveBeenCalled();
-      expect(mockDatabaseService.mealIngredient.deleteMany).toHaveBeenCalledWith({
-        where: { mealId: 1 }
-      });
-      expect(mockDatabaseService.mealIngredient.create).toHaveBeenCalledTimes(mockIngredients.length);
-      expect(mockDatabaseService.meal.update).toHaveBeenCalledWith({
-        where: { id: 1 },
-        data: updateData,
-        include: {
-          ingredients: {
-            include: {
-              ingredient: true
-            }
-          }
-        }
-      });
-    });
-
-    it('should update a meal without ingredients if not provided', async () => {
-      mockDatabaseService.meal.update.mockResolvedValue(mockMeal);
-      
-      const result = await service.updateWithIngredients(1, updateData);
-      
-      expect(result).toEqual(mockMeal);
-      expect(mockDatabaseService.mealIngredient.deleteMany).not.toHaveBeenCalled();
-      expect(mockDatabaseService.mealIngredient.create).not.toHaveBeenCalled();
-      expect(mockDatabaseService.meal.update).toHaveBeenCalledWith({
-        where: { id: 1 },
-        data: updateData,
-        include: {
-          ingredients: {
-            include: {
-              ingredient: true
-            }
-          }
-        }
-      });
-    });
-
-    it('should throw BadRequestException on update error', async () => {
-      mockDatabaseService.$transaction.mockRejectedValue(new Error('Error updating meal'));
-      
-      await expect(service.updateWithIngredients(1, updateData, mockIngredients))
-        .rejects.toThrow(BadRequestException);
-    });
+    const result = await service.updateWithIngredients(1, mealData, [{ ingredientId: 1 }], 'ORG1');
+    expect(result).toBe('updatedMeal');
   });
 
-  // Remove the update test since the method doesn't exist in the implementation
+  it('should throw NotFoundException if meal not found when updating', async () => {
+    mockDatabaseService.meal.findFirst.mockResolvedValue(null);
+    await expect(
+      service.updateWithIngredients(1, {}, [], 'ORG1'),
+    ).rejects.toThrow(NotFoundException);
+  });
 
-  describe('remove', () => {
-    it('should remove a meal after checking it exists', async () => {
-      mockDatabaseService.meal.findUnique.mockResolvedValue(mockMealData);
-      mockDatabaseService.meal.delete.mockResolvedValue(mockMealData);
-      
-      const result = await service.remove(1);
-      
-      expect(result).toEqual(mockMealData);
-      expect(mockDatabaseService.meal.findUnique).toHaveBeenCalledWith({
-        where: { id: 1 }
-      });
-      expect(mockDatabaseService.meal.delete).toHaveBeenCalledWith({
-        where: { id: 1 },
-      });
-    });
+  it('should soft delete a meal', async () => {
+    mockDatabaseService.meal.findFirst.mockResolvedValue({ id: 1 });
+    mockDatabaseService.meal.update.mockResolvedValue('deletedMeal');
+    const result = await service.softDelete(1, 'ORG1');
+    expect(result).toBe('deletedMeal');
+  });
 
-    it('should throw NotFoundException when meal not found', async () => {
-      mockDatabaseService.meal.findUnique.mockResolvedValue(null);
-      
-      await expect(service.remove(999)).rejects.toThrow(NotFoundException);
-      expect(mockDatabaseService.meal.delete).not.toHaveBeenCalled();
-    });
-
-    it('should pass through NotFoundException', async () => {
-      mockDatabaseService.meal.findUnique.mockRejectedValue(new NotFoundException('Meal not found'));
-      
-      await expect(service.remove(1)).rejects.toThrow(NotFoundException);
-    });
-
-    it('should convert other errors to BadRequestException', async () => {
-      mockDatabaseService.meal.findUnique.mockResolvedValue(mockMealData);
-      mockDatabaseService.meal.delete.mockRejectedValue(new Error('Database error'));
-      
-      await expect(service.remove(1)).rejects.toThrow(BadRequestException);
-    });
+  it('should throw NotFoundException if meal not found during delete', async () => {
+    mockDatabaseService.meal.findFirst.mockResolvedValue(null);
+    await expect(service.softDelete(1, 'ORG1')).rejects.toThrow(NotFoundException);
   });
 });

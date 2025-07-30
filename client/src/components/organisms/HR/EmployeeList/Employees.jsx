@@ -210,62 +210,68 @@ const Employees = () => {
       title: "Actions",
       key: "actions",
       align: "center",
-      render: (_, record) => (
-        <Space size="middle">
-          <FiEdit
-            onClick={() => openModal(record.id)}
-            className={styles.icons}
-            color={theme === "dark" ? "#ffffff" : "black"}
-            size="15px"
-          />
-          <Popconfirm
-            title={
-              <span
-                className={`${styles.popconfirmTitle} ${
-                  theme === "dark" ? styles.darkPopconfirmTitle : ""
-                }`}
-              >
-                Delete User {record.id}
-              </span>
-            }
-            placement="bottom"
-            onConfirm={() => handleDelete(record.id, record.email)}
-            description={
-              <span
-                className={`${styles.popconfirmDescription} ${
-                  theme === "dark" ? styles.darkPopconfirmDescription : ""
-                }`}
-              >
-                Are You Sure to Delete
-              </span>
-            }
-            okText={
-              <span
-                className={`${styles.popconfirmButton} ${
-                  theme === "dark" ? styles.darkPopconfirmButton : ""
-                }`}
-              >
-                Yes
-              </span>
-            }
-            cancelText={
-              <span
-                className={`${styles.popconfirmButton} ${
-                  theme === "dark" ? styles.darkPopconfirmButton : ""
-                }`}
-              >
-                No
-              </span>
-            }
-          >
-            <MdOutlineDeleteOutline
-              color={theme === "dark" ? "white" : "red"}
+      render: (_, record) => {
+        // Hide delete button if this is the logged-in user
+        const isCurrentUser = record.id === authData?.user?.id;
+        return (
+          <Space size="middle">
+            <FiEdit
+              onClick={() => openModal(record.id)}
               className={styles.icons}
-              size="17px"
-            />{" "}
-          </Popconfirm>
-        </Space>
-      ),
+              color={theme === "dark" ? "#ffffff" : "black"}
+              size="15px"
+            />
+            {!isCurrentUser && (
+              <Popconfirm
+                title={
+                  <span
+                    className={`${styles.popconfirmTitle} ${
+                      theme === "dark" ? styles.darkPopconfirmTitle : ""
+                    }`}
+                  >
+                    Delete User {record.id}
+                  </span>
+                }
+                placement="bottom"
+                onConfirm={() => handleDelete(record.id, record.email)}
+                description={
+                  <span
+                    className={`${styles.popconfirmDescription} ${
+                      theme === "dark" ? styles.darkPopconfirmDescription : ""
+                    }`}
+                  >
+                    Are You Sure to Delete
+                  </span>
+                }
+                okText={
+                  <span
+                    className={`${styles.popconfirmButton} ${
+                      theme === "dark" ? styles.darkPopconfirmButton : ""
+                    }`}
+                  >
+                    Yes
+                  </span>
+                }
+                cancelText={
+                  <span
+                    className={`${styles.popconfirmButton} ${
+                      theme === "dark" ? styles.darkPopconfirmButton : ""
+                    }`}
+                  >
+                    No
+                  </span>
+                }
+              >
+                <MdOutlineDeleteOutline
+                  color={theme === "dark" ? "white" : "red"}
+                  className={styles.icons}
+                  size="17px"
+                />
+              </Popconfirm>
+            )}
+          </Space>
+        );
+      },
       onHeaderCell: () => ({
         className: styles.tableHeaderCell,
       }),

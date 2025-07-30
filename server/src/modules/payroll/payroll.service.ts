@@ -3,11 +3,12 @@ import { Prisma } from '@prisma/client';
 import { DatabaseService } from '../../database/database.service';
 import { calculateSalary } from './payroll-cal/calculator';
 import { generatePayslip } from './payroll-cal/pdf-gen';
+import { OrdersService } from '../order/order.service';
 import { FirebaseService } from './firebase.service';
 
 @Injectable()
 export class PayrollService {
-  constructor(private readonly databaseService: DatabaseService,private readonly firebaseService: FirebaseService) {}
+  constructor(private readonly databaseService: DatabaseService,private readonly firebaseService: FirebaseService,private readonly ordersService: OrdersService) {}
 
   async create(dto: Prisma.PayrollCreateInput) {
     try {
@@ -17,156 +18,152 @@ export class PayrollService {
     }
   }
 
-  async generatePayrollsForAll(dto: Prisma.PayrollCreateInput,orgId: string): Promise<any> {
+  // Get payroll records for a specific user (for user portal)
+  async findUserPayrolls(empId: string) {
     try {
-    const users = await this.databaseService.user.findMany({
-      where: {
-        organizationId: orgId,
-      },
-    });
-      const payeData = await this.databaseService.payeTaxSlab.findMany({
-      where: {
-        orgId: orgId,
-      },
-    });
-      const allAdjustments =
-        await this.databaseService.salaryAdjustments.findMany({
-      where: {
-        orgId: orgId,
-      },
-    });
-      const allIndividualAdjustments =
-        await this.databaseService.individualSalaryAdjustments.findMany({
-      where: {
-        orgId: orgId,
-      },
-    });
-      const employerFundRate = allAdjustments.find(
-        (adj) => adj.label == 'EmployerFund',
-      ).amount;
-      const ETF = allAdjustments.find((adj) => adj.label == 'ETF').amount;
-      const range = dto.range;
-      const month = dto.month;
-
-      //Function to divide additions and deduction based on their type (percentage & value)
-      function extractAdjustments(
-        data: any,
-        allowance: boolean,
-        percentage: boolean,
-      ) {
-        return data
-          .filter(
-            (adj: any) =>
-              adj.isPercentage == percentage && adj.allowance == allowance,
-          )
-          .map((adj: any) => ({ label: adj.label, amount: adj.amount }));
-      }
-
-      //Function to divide individual additions and deduction based on their type (percentage & value)
-      function extractIndividualAdjustment(
-        data: any,
-        user: string,
-        allowance: boolean,
-        percentage: boolean,
-      ) {
-        return data
-          .filter(
-            (adj: any) =>
-              adj.empId == user &&
-              adj.allowance == allowance &&
-              adj.isPercentage == percentage,
-          )
-          .map((adj: any) => ({ label: adj.label, amount: adj.amount }));
-      }
-
-      //Extraction of General Adjustments
-      const allAllowanceP = extractAdjustments(allAdjustments, true, true);
-      const allAllowanceV = extractAdjustments(allAdjustments, true, false);
-      const allDeductionV = extractAdjustments(allAdjustments, false, false);
-
-      //Filter Out Company Contributions from Employee deductions
-      const allDeductionP = allAdjustments
-        .filter(
-          (adj) =>
-            adj.isPercentage &&
-            !adj.allowance &&
-            !['ETF', 'EmployerFund'].includes(adj.label),
-        )
-        .map((adj) => ({ label: adj.label, amount: adj.amount }));
-
-      //Process Individual Adjustments for each user
-      for (const user of users) {
-        const indiAllowanceP = extractIndividualAdjustment(
-          allIndividualAdjustments,
-          user.id,
-          true,
-          true,
-        );
-        const indiAllowanceV = extractIndividualAdjustment(
-          allIndividualAdjustments,
-          user.id,
-          true,
-          false,
-        );
-        const indiDeductionsP = extractIndividualAdjustment(
-          allIndividualAdjustments,
-          user.id,
-          false,
-          true,
-        );
-        const indiDeductionsV = extractIndividualAdjustment(
-          allIndividualAdjustments,
-          user.id,
-          false,
-          false,
-        );
-
-        //Merging Individual Adjustments and General Adjustments
-        const allowanceP = [...indiAllowanceP, ...allAllowanceP];
-        const allowanceV = [...indiAllowanceV, ...allAllowanceV];
-        const deductionsP = [...indiDeductionsP, ...allDeductionP];
-        const deductionsV = [...indiDeductionsV, ...allDeductionV];
-
-        //Passing Data to receive calculated Data
-        const values = calculateSalary(
-          {
-            basicSalary: user.salary,
-            allowanceP,
-            allowanceV,
-            deductionsP,
-            deductionsV,
+      const payrolls = await this.databaseService.payroll.findMany({
+        where: {
+          empId: empId,
+        },
+        include: {
+          employee: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
           },
-          payeData,
-        );
+        },
+        orderBy: {
+          createdAt: 'desc',
+        },
+      });
 
-        //Create Payroll Record
-        const payroll = await this.create({
-          employee: { connect: { id: user.id } },
-          orgId: orgId,
-          month: month,
-          netPay: values.netSalary,
-          payrollPdf: `payrolls/${user.id}/${user.id}-${month}.pdf`,
-        });
-
-        //Passing Calculated Data & Payroll record Data for PDF generation
-        await generatePayslip({
-          employee: user,
-          values,
-          payroll: {
-            id: payroll.id,
-            createdAt: payroll.createdAt,
-          },
-          employerFundRate,
-          ETF,
-          month,
-          firebaseService: this.firebaseService,
-        });
+      if (payrolls && payrolls.length > 0) {
+        return {
+          success: true,
+          message: 'Payrolls fetched successfully',
+          payrolls: payrolls,
+        };
+      } else {
+        return {
+          success: true,
+          message: 'No payroll records found',
+          payrolls: [],
+        };
       }
-      console.log('Payrolls Generated');
     } catch (err) {
-      console.log(err);
+      throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
+
+async generatePayrollsForAll(dto: Prisma.PayrollCreateInput, orgId: string): Promise<any> {
+  try {
+    const users = await this.databaseService.user.findMany({
+      where: { organizationId: orgId },
+    });
+
+    const payeData = await this.databaseService.payeTaxSlab.findMany({
+      where: { orgId },
+    });
+
+    const allAdjustments = await this.databaseService.salaryAdjustments.findMany({
+      where: { orgId },
+    });
+
+    const allIndividualAdjustments = await this.databaseService.individualSalaryAdjustments.findMany({
+      where: { orgId },
+    });
+
+    const employerFundRate = allAdjustments.find((adj) => adj.label === 'EmployerFund')?.amount || 0;
+    const ETF = allAdjustments.find((adj) => adj.label === 'ETF')?.amount || 0;
+
+    const range = dto.range;
+    const month = dto.month;
+
+    function extractAdjustments(data: any, allowance: boolean, percentage: boolean) {
+      return data
+        .filter((adj: any) => adj.isPercentage === percentage && adj.allowance === allowance)
+        .map((adj: any) => ({ label: adj.label, amount: adj.amount }));
+    }
+
+    function extractIndividualAdjustment(data: any, user: string, allowance: boolean, percentage: boolean) {
+      return data
+        .filter((adj: any) =>
+          adj.empId === user && adj.allowance === allowance && adj.isPercentage === percentage
+        )
+        .map((adj: any) => ({ label: adj.label, amount: adj.amount }));
+    }
+
+    const allAllowanceP = extractAdjustments(allAdjustments, true, true);
+    const allAllowanceV = extractAdjustments(allAdjustments, true, false);
+    const allDeductionV = extractAdjustments(allAdjustments, false, false);
+
+    const allDeductionP = allAdjustments
+      .filter(
+        (adj) =>
+          adj.isPercentage &&
+          !adj.allowance &&
+          !['ETF', 'EmployerFund'].includes(adj.label)
+      )
+      .map((adj) => ({ label: adj.label, amount: adj.amount }));
+
+    for (const user of users) {
+      const indiAllowanceP = extractIndividualAdjustment(allIndividualAdjustments, user.id, true, true);
+      const indiAllowanceV = extractIndividualAdjustment(allIndividualAdjustments, user.id, true, false);
+      const indiDeductionsP = extractIndividualAdjustment(allIndividualAdjustments, user.id, false, true);
+      const indiDeductionsV = extractIndividualAdjustment(allIndividualAdjustments, user.id, false, false);
+
+     
+      const mealResult = await this.ordersService.getMealCost(user.id, orgId, range[0], range[1]);
+      const mealCost = mealResult.mealCost || 0;
+
+      indiDeductionsV.push({ label: 'Meal Consumption', amount: mealCost });
+
+      const allowanceP = [...indiAllowanceP, ...allAllowanceP];
+      const allowanceV = [...indiAllowanceV, ...allAllowanceV];
+      const deductionsP = [...indiDeductionsP, ...allDeductionP];
+      const deductionsV = [...indiDeductionsV, ...allDeductionV];
+
+      const values = calculateSalary(
+        {
+          basicSalary: user.salary,
+          allowanceP,
+          allowanceV,
+          deductionsP,
+          deductionsV,
+        },
+        payeData,
+      );
+
+      const payroll = await this.create({
+        employee: { connect: { id: user.id } },
+        orgId: orgId,
+        month: month,
+        netPay: values.netSalary,
+        payrollPdf: `payrolls/${user.id}/${user.id}-${month}.pdf`,
+      });
+
+      await generatePayslip({
+        employee: user,
+        values,
+        payroll: {
+          id: payroll.id,
+          createdAt: payroll.createdAt,
+        },
+        employerFundRate,
+        ETF,
+        month,
+        firebaseService: this.firebaseService,
+      });
+    }
+
+    console.log('Payrolls Generated');
+  } catch (err) {
+    console.log(err);
+  }
+}
+
 
 async findAll(search?: string, orgId?: string) {
   try {

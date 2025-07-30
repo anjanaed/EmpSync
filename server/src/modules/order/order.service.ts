@@ -137,85 +137,37 @@ export class OrdersService {
     }
   }
 
-  async getMealOrderAnalytics(orgId: string) {
-    try {
-      // Step 1: Get all orders for the organization
-      const orders = await this.databaseService.order.findMany({
-        where: { orgId },
-      });
+  async getMealCost(empId: string, orgId: string, startDate: Date, endDate: Date) {
+    //set time period
+    const startOfDay = new Date(startDate);
+    startOfDay.setHours(0, 0, 0, 0);
+    
+    const endOfDay = new Date(endDate);
+    endOfDay.setHours(23, 59, 59, 999);
 
-      if (!orders || orders.length === 0) {
-        return {
-          orgId,
-          totalOrders: 0,
-          mealAnalytics: [],
-        };
-      }
-
-      // Step 2: Parse meals from all orders and count occurrences
-      const mealCounts = new Map<number, number>();
-      let totalMealOrders = 0;
-
-      orders.forEach((order) => {
-        if (order.meals && Array.isArray(order.meals)) {
-          order.meals.forEach((mealString) => {
-            // Parse "mealId:quantity" format
-            const [mealIdStr, quantityStr] = mealString.split(':');
-            const mealId = parseInt(mealIdStr);
-            const quantity = parseInt(quantityStr) || 1;
-
-            if (!isNaN(mealId)) {
-              const currentCount = mealCounts.get(mealId) || 0;
-              mealCounts.set(mealId, currentCount + quantity);
-              totalMealOrders += quantity;
-            }
-          });
-        }
-      });
-
-      // Step 3: Get meal details for all meal IDs
-      const mealIds = Array.from(mealCounts.keys());
-      const meals = await this.databaseService.meal.findMany({
-        where: {
-          id: { in: mealIds },
-          orgId, // Ensure meals belong to the same organization
+    // Find all orders for the employee within the date range
+    const orders = await this.databaseService.order.findMany({
+      where: {
+        employeeId: empId,
+        orgId: orgId,
+        orderDate: {
+          gte: startOfDay,
+          lte: endOfDay,
         },
-        select: {
-          id: true,
-          nameEnglish: true,
-        },
-      });
+      },
+      select: {
+        price: true, 
+      },
+    });
 
-      // Step 4: Create analytics response
-      const mealAnalytics = meals.map((meal) => {
-        const orderCount = mealCounts.get(meal.id) || 0;
-        const percentage =
-          totalMealOrders > 0
-            ? Math.round((orderCount / totalMealOrders) * 100 * 100) / 100 // Round to 2 decimal places
-            : 0;
+    // total meal cost
+    const totalMealCost = orders.reduce((sum, order) => {
+      return sum + (order.price || 0);
+    }, 0);
 
-        return {
-          mealId: meal.id,
-          mealName: meal.nameEnglish,
-          orderCount,
-          percentage,
-        };
-      });
-
-      // Step 5: Sort by order count (descending)
-      mealAnalytics.sort((a, b) => b.orderCount - a.orderCount);
-
-      return {
-        orgId,
-        totalOrders: orders.length,
-        totalMealOrders,
-        mealAnalytics,
-      };
-    } catch (err) {
-      throw new HttpException(
-        `Error fetching meal analytics: ${err.message}`,
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
+    return {
+      mealCost: totalMealCost,
+    };
   }
+
 }

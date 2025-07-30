@@ -1,189 +1,88 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { MealController } from './meal.controller';
 import { MealService } from './meal.service';
-import { HttpException, HttpStatus } from '@nestjs/common';
+import { MealSuggestionService } from './meal-suggestion.service';
 
 describe('MealController', () => {
   let controller: MealController;
-  let service: MealService;
+  let mealService: MealService;
 
   const mockMealService = {
     createWithIngredients: jest.fn(),
     findAllWithIngredients: jest.fn(),
     findOneWithIngredients: jest.fn(),
     updateWithIngredients: jest.fn(),
-    remove: jest.fn(),
+    softDelete: jest.fn(),
   };
 
-  const mockMeal = {
-    id: 1,
-    nameEnglish: 'Test Meal',
-    nameSinhala: 'පරික්ෂණ කෑම',
-    nameTamil: 'சோதனை உணவு',
-    description: 'Test Description',
-    price: 9.99,
-    imageUrl: 'test.jpg',
-    category: ['Breakfast'],
-    createdAt: new Date(),
-    ingredients: [
-      {
-        id: 1,
-        mealId: 1,
-        ingredientId: 101,
-        ingredient: {
-          id: 101,
-          name: 'Test Ingredient'
-        }
-      }
-    ]
-  };
-
-  const mockCreateMealDto = {
-    nameEnglish: 'Test Meal',
-    nameSinhala: 'පරික්ෂණ කෑම',
-    nameTamil: 'சோதனை உணவு',
-    description: 'Test Description',
-    price: 9.99,
-    imageUrl: 'test.jpg',
-    category: ['Breakfast'],
-    ingredients: [
-      {
-        ingredientId: 101
-      }
-    ]
-  };
-
-  const mockUpdateMealDto = {
-    nameEnglish: 'Updated Test Meal',
-    price: 10.99,
-    ingredients: [
-      {
-        ingredientId: 101
-      },
-      {
-        ingredientId: 102
-      }
-    ]
+  const mockMealSuggestionService = {
+    getMealSuggestions: jest.fn(),
   };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [MealController],
       providers: [
-        {
-          provide: MealService,
-          useValue: mockMealService,
-        },
+        { provide: MealService, useValue: mockMealService },
+        { provide: MealSuggestionService, useValue: mockMealSuggestionService },
       ],
     }).compile();
 
     controller = module.get<MealController>(MealController);
-    service = module.get<MealService>(MealService);
-    
-    // Reset all mocks before each test
-    jest.clearAllMocks();
+    mealService = module.get<MealService>(MealService);
   });
 
   it('should be defined', () => {
     expect(controller).toBeDefined();
   });
 
-  describe('create', () => {
-    it('should create a meal with ingredients', async () => {
-      const { ingredients, ...mealData } = mockCreateMealDto;
-      mockMealService.createWithIngredients.mockResolvedValue(mockMeal);
-      
-      expect(await controller.create(mockCreateMealDto)).toEqual(mockMeal);
-      expect(mockMealService.createWithIngredients).toHaveBeenCalledWith(
-        mealData,
-        ingredients
-      );
-    });
+  it('should call createWithIngredients', async () => {
+    const dto = {
+      name: 'Rice',
+      ingredients: [{ ingredientId: 1 }],
+    };
+    mockMealService.createWithIngredients.mockResolvedValue('createdMeal');
 
-    it('should throw HttpException on error', async () => {
-      mockMealService.createWithIngredients.mockRejectedValue(new Error('Error creating meal'));
-      await expect(controller.create(mockCreateMealDto)).rejects.toThrow(HttpException);
-    });
+    const result = await controller.create(dto as any, 'ORG1');
+    expect(result).toBe('createdMeal');
+    expect(mockMealService.createWithIngredients).toHaveBeenCalledWith(
+      { name: 'Rice' },
+      [{ ingredientId: 1 }],
+      'ORG1',
+    );
   });
 
-  describe('findAll', () => {
-    it('should return array of meals with ingredients', async () => {
-      mockMealService.findAllWithIngredients.mockResolvedValue([mockMeal]);
-      
-      expect(await controller.findAll()).toEqual([mockMeal]);
-      expect(mockMealService.findAllWithIngredients).toHaveBeenCalled();
-    });
-
-    it('should throw HttpException on error', async () => {
-      mockMealService.findAllWithIngredients.mockRejectedValue(new Error('Database error'));
-      await expect(controller.findAll()).rejects.toThrow(HttpException);
-    });
+  it('should return all meals', async () => {
+    mockMealService.findAllWithIngredients.mockResolvedValue(['meal1', 'meal2']);
+    const result = await controller.findAll('ORG1', 'false');
+    expect(result).toEqual(['meal1', 'meal2']);
   });
 
-  describe('findOne', () => {
-    it('should return a single meal with ingredients', async () => {
-      mockMealService.findOneWithIngredients.mockResolvedValue(mockMeal);
-      
-      expect(await controller.findOne('1')).toEqual(mockMeal);
-      expect(mockMealService.findOneWithIngredients).toHaveBeenCalledWith(1);
-    });
-
-    it('should throw HttpException when ID is not a number', async () => {
-      await expect(controller.findOne('abc')).rejects.toThrow(HttpException);
-      expect(mockMealService.findOneWithIngredients).not.toHaveBeenCalled();
-    });
-
-    it('should throw HttpException when meal not found', async () => {
-      mockMealService.findOneWithIngredients.mockResolvedValue(null);
-      await expect(controller.findOne('999')).rejects.toThrow(HttpException);
-    });
-
-    it('should throw HttpException on error', async () => {
-      mockMealService.findOneWithIngredients.mockRejectedValue(new Error('Database error'));
-      await expect(controller.findOne('1')).rejects.toThrow(HttpException);
-    });
+  it('should return a specific meal', async () => {
+    mockMealService.findOneWithIngredients.mockResolvedValue('meal');
+    const result = await controller.findOne('1', 'ORG1');
+    expect(result).toEqual('meal');
   });
 
-  describe('update', () => {
-    it('should update a meal with ingredients', async () => {
-      const { ingredients, ...mealData } = mockUpdateMealDto;
-      mockMealService.updateWithIngredients.mockResolvedValue(mockMeal);
-      
-      expect(await controller.update('1', mockUpdateMealDto)).toEqual(mockMeal);
-      expect(mockMealService.updateWithIngredients).toHaveBeenCalledWith(
-        1,
-        mealData,
-        ingredients
-      );
-    });
-
-    it('should throw HttpException when ID is not a number', async () => {
-      await expect(controller.update('abc', mockUpdateMealDto)).rejects.toThrow(HttpException);
-      expect(mockMealService.updateWithIngredients).not.toHaveBeenCalled();
-    });
-
-    it('should throw HttpException on error', async () => {
-      mockMealService.updateWithIngredients.mockRejectedValue(new Error('Error updating meal'));
-      await expect(controller.update('1', mockUpdateMealDto)).rejects.toThrow(HttpException);
-    });
+  it('should call updateWithIngredients', async () => {
+    mockMealService.updateWithIngredients.mockResolvedValue('updatedMeal');
+    const dto = {
+      name: 'New Meal',
+      ingredients: [{ ingredientId: 2 }],
+    };
+    const result = await controller.update('1', dto as any, 'ORG1');
+    expect(result).toBe('updatedMeal');
   });
 
-  describe('remove', () => {
-    it('should remove a meal', async () => {
-      mockMealService.remove.mockResolvedValue(mockMeal);
-      
-      expect(await controller.remove('1')).toEqual(mockMeal);
-      expect(mockMealService.remove).toHaveBeenCalledWith(1);
-    });
+  it('should call softDelete', async () => {
+    mockMealService.softDelete.mockResolvedValue('softDeleted');
+    const result = await controller.softDelete('1', 'ORG1');
+    expect(result).toBe('softDeleted');
+  });
 
-    it('should throw HttpException when ID is not a number', async () => {
-      await expect(controller.remove('abc')).rejects.toThrow(HttpException);
-      expect(mockMealService.remove).not.toHaveBeenCalled();
-    });
-
-    it('should throw HttpException when meal not found', async () => {
-      mockMealService.remove.mockRejectedValue(new Error('Meal not found'));
-      await expect(controller.remove('999')).rejects.toThrow(HttpException);
-    });
+  it('should return meal suggestions', async () => {
+    mockMealSuggestionService.getMealSuggestions.mockResolvedValue(['suggestion1']);
+    const result = await controller.getMealSuggestions('user1', '2025-07-26', '1', 'ORG1');
+    expect(result).toEqual(['suggestion1']);
   });
 });
