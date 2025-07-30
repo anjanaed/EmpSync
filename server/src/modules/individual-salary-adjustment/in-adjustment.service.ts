@@ -11,7 +11,7 @@ export class IndiAdjustmentService {
   constructor(private readonly databaseService: DatabaseService) {}
 
   async create(
-  createIndiAdjustmentDto: Prisma.IndividualSalaryAdjustmentsCreateInput & { empNo?: string }
+  createIndiAdjustmentDto: Prisma.IndividualSalaryAdjustmentsCreateInput & { empNo?: string, orgId?: string }
 ) {
   try {
     // If empNo is provided, look up the user by empNo and orgId
@@ -30,9 +30,13 @@ export class IndiAdjustmentService {
 
       createIndiAdjustmentDto.employee = { connect: { id: String(user.id) } };
       delete createIndiAdjustmentDto.empNo;
+      delete createIndiAdjustmentDto.orgId;
     }
+    // Create a copy of createIndiAdjustmentDto without empNo and orgId
+    const { empNo, orgId, ...dataForCreate } = createIndiAdjustmentDto;
+
     return await this.databaseService.individualSalaryAdjustments.create({
-      data: createIndiAdjustmentDto,
+      data: dataForCreate,
     });
   } catch (error) {
     throw new BadRequestException(error.message);

@@ -6,7 +6,7 @@ import { DatabaseService } from '../../database/database.service';
 export class PayeTaxService {
   constructor(private readonly databaseService: DatabaseService) {}
 
-  async create(createPayeTaxDto: Prisma.PayeTaxSlabCreateInput) {
+  async create(createPayeTaxDto: Prisma.PayeTaxSlabCreateManyInput | Prisma.PayeTaxSlabCreateManyInput[]) {
     try {
       return await this.databaseService.payeTaxSlab.createMany({ data: createPayeTaxDto });
     } catch (error) {

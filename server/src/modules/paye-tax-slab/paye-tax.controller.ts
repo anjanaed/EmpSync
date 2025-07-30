@@ -24,7 +24,7 @@ export class PayeTaxController {
   @Post()
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles('HR_ADMIN','KITCHEN_ADMIN')
-  async create(@Body() dto: Prisma.PayeTaxSlabCreateInput) {
+  async create(@Body() dto: Prisma.PayeTaxSlabCreateManyInput) {
     try {
       return await this.payeTaxService.create(dto);
     } catch (error) {
