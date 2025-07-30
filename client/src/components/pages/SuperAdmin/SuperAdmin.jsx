@@ -26,12 +26,7 @@ const SuperAdmin = () => {
   const [loading, setLoading] = useState(false);
   const { superAuthData } = useAuth();
 
-  const [rolesData] = useState([
-    { key: '1', name: 'Super Admin', description: 'Full system access', permissions: 15 },
-    { key: '2', name: 'Admin', description: 'Organization admin access', permissions: 10 },
-    { key: '3', name: 'Manager', description: 'Department management access', permissions: 7 },
-    { key: '4', name: 'Employee', description: 'Basic employee access', permissions: 3 },
-  ]);
+  const [rolesData] = useState([]);
 
   const [permissionsData] = useState([
     { key: '1', name: 'User Management', description: 'Manage users: create, edit, delete, and view user accounts.' },
@@ -48,13 +43,11 @@ const SuperAdmin = () => {
     domain: org.contactEmail,
     color: '#9254DE',
     letter: org.name.charAt(0).toUpperCase(),
-    logoUrl: org.logoUrl,
-    active: org.active,
     createdAt: org.createdAt,
     updatedAt: org.updatedAt,
-    fingerprint_capacity: org.fingerprint_capacity,
-    fingerprint_per_machine: org.fingerprint_per_machine,
     users: org.users,
+    contactNumber: org.contactNumber,
+    address: org.address,
   }));
 
   // Fetch organizations from the API

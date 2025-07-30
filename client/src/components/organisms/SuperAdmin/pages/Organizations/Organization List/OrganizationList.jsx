@@ -75,9 +75,9 @@ const OrganizationList = ({ data, onAddNew, onUpdate, onDelete }) => {
                   <div className={styles.itemMeta}>
                     <span style={{ color: 'white' }}>{item.domain}</span>
                     <span style={{ margin: '0 12px', color: 'white' }}>|</span>
-                    <span style={{ color: 'white' }}>Fingerprint Limit: {item.fingerprint_capacity}</span>
+                    <span style={{ color: 'white' }}>Contact Number : {item.contactNumber}</span>
                     <span style={{ margin: '0 12px', color: 'white' }}>|</span>
-                    <span style={{ color: 'white' }}>Fingerprints per Machine: {item.fingerprint_per_machine}</span>
+                    <span style={{ color: 'white' }}>Address : {item.address}</span>
                   </div>
                 </div>
               </div>

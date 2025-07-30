@@ -60,6 +60,10 @@ const SystemStatistics = () => {
     return <Spin size="large" className={styles.spinner} />;
   }
 
+  if (!stats) {
+    return <div className={styles.centeredMessage} >Statistics not available.</div>;
+  }
+
   return (
     <div className={styles.container}>
       <h2 className={styles.title}>System Statistics</h2>
@@ -96,7 +100,7 @@ const SystemStatistics = () => {
         <Card className={styles.statCard}>
           <Statistic
             title="Other Users"
-            value={stats.totalOtherUsers}
+            value={stats.totalOtherUser}
             prefix={<span className={styles.iconOther}><UserOutlined /></span>}
           />
         </Card>
