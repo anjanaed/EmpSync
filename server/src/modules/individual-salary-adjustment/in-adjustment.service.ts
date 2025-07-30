@@ -26,12 +26,14 @@ export class IndiAdjustmentService {
       if (!user) {
         throw new BadRequestException('Employee not found for given empNo and orgId');
       }
-      // Set empId to the found user's id
-
+      // Set employee relation
       createIndiAdjustmentDto.employee = { connect: { id: String(user.id) } };
+      // Set organization relation
+      createIndiAdjustmentDto.organization = { connect: { id: createIndiAdjustmentDto.orgId } };
       delete createIndiAdjustmentDto.empNo;
       delete createIndiAdjustmentDto.orgId;
     }
+    
     // Create a copy of createIndiAdjustmentDto without empNo and orgId
     const { empNo, orgId, ...dataForCreate } = createIndiAdjustmentDto;
 

@@ -160,21 +160,52 @@ const Employees = () => {
   }
 
   const columns = [
-    {
-      title: "Employee No",
-      dataIndex: "no",
-      key: "no",
-      align: "center",
-      sorter: (a, b) => {
-        const numA = parseInt(a.id.match(/\d+/)?.[0] || "0", 10);
-        const numB = parseInt(b.id.match(/\d+/)?.[0] || "0", 10);
-        return numA - numB;
-      },
-      ellipsis: true,
-      onHeaderCell: () => ({
-        className: styles.tableHeaderCell,
-      }),
+{
+    title: "Employee No",
+    dataIndex: "no",
+    key: "no",
+    align: "center",
+    sorter: (a, b) => {
+      // Extract alphabetic and numeric parts
+      const parseEmpNo = (empNo) => {
+        const match = empNo.match(/^([A-Za-z]*)(\d+)$/);
+        if (match) {
+          return {
+            alpha: match[1] || '',
+            numeric: parseInt(match[2], 10)
+          };
+        }
+        // Fallback for pure numbers
+        const numMatch = empNo.match(/^\d+$/);
+        if (numMatch) {
+          return {
+            alpha: '',
+            numeric: parseInt(empNo, 10)
+          };
+        }
+        // Fallback for anything else
+        return {
+          alpha: empNo,
+          numeric: 0
+        };
+      };
+
+      const aParsed = parseEmpNo(a.no);
+      const bParsed = parseEmpNo(b.no);
+
+      // First sort by alphabetic part
+      if (aParsed.alpha !== bParsed.alpha) {
+        return aParsed.alpha.localeCompare(bParsed.alpha);
+      }
+      
+      // Then sort by numeric part
+      return aParsed.numeric - bParsed.numeric;
     },
+    ellipsis: true,
+    onHeaderCell: () => ({
+      className: styles.tableHeaderCell,
+    }),
+  },
     {
       title: "Name",
       dataIndex: "name",
