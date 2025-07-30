@@ -53,7 +53,6 @@ const ScanSection = ({ isScanning, onScanSuccess }) => {
 
   return (
     <div style={{ display: isScanning ? 'block' : 'none', textAlign: 'center' }}>
-      <p>Scanning Barcode with Camera...</p>
       <video ref={videoRef} style={{ width: '100%', maxWidth: '400px' }} />
     </div>
   );

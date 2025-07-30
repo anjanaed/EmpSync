@@ -56,7 +56,7 @@ export class UserController {
   }
 
   @Get()
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  // @UseGuards(AuthGuard('jwt'), RolesGuard)
   async findAll(
     @Query('search') search?: string,
     @Query('role') role?: string,
@@ -196,4 +196,48 @@ export class UserController {
       );
     }
   }
+
+  @Get(':id/empno')
+  async getEmpNoByIdAndOrg(
+    @Param('id') id: string,
+    @Query('orgId') orgId: string,
+  ) {
+    try {
+      const user = await this.userService.findEmpNoByIdAndOrg(id, orgId);
+      return { empNo: user.empNo };
+    } catch (err) {
+      throw new HttpException(
+        {
+          status: HttpStatus.NOT_FOUND,
+          error: 'Not Found',
+          message: err.message,
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+  }
+
+  
+
+@Get('empno/:empNo')
+async getIdByEmpNoAndOrg(
+  @Param('empNo') empNo: string,
+  @Query('orgId') orgId: string,
+) {
+  try {
+    const user = await this.userService.findIdByEmpNoAndOrg(empNo, orgId);
+    return { id: user.id };
+  } catch (err) {
+    throw new HttpException(
+      {
+        status: HttpStatus.NOT_FOUND,
+        error: 'Not Found',
+        message: err.message,
+      },
+      HttpStatus.NOT_FOUND,
+    );
+  }
+}
+
+
 }

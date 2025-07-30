@@ -1,0 +1,263 @@
+.container {
+   width: 100%;
+  margin: 0 auto;
+  padding: 24px;
+  background-color: var(--bg-secondary);
+  font-family: var(--primary-font);
+}
+
+/* Analysis Section */
+.analysisSection {
+  margin-bottom: 32px;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  margin-bottom: 24px;
+  gap: 12px;
+  color: black;
+}
+
+.sectionIcon {
+  color: var(--accent);
+  width: 24px;
+  height: 24px;
+}
+
+.sectionTitle {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--text-primary);
+  font-family: var(--primary-font);
+}
+
+.analysisGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.cardTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-primary);
+  font-family: var(--primary-font);
+  font-weight: 600;
+}
+
+.highDemandIcon {
+  color: var(--success);
+}
+
+.lowDemandIcon {
+  color: var(--error);
+}
+
+.mealItem {
+  margin-bottom: 16px;
+  color: var(--text-primary);
+  font-family: var(--primary-font);
+}
+
+.mealHeader {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  color: var(--text-primary);
+  font-family: var(--primary-font);
+}
+
+.highDemandPercentage {
+  color: var(--success);
+  font-weight: 600;
+}
+
+.lowDemandPercentage {
+  color: var(--error);
+  font-weight: 600;
+}
+
+.summaryGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  justify-content: space-between;
+}
+
+.summaryCard {
+  height: auto;
+  min-height: 60px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-radius: 8px;
+  border: 1px solid #f0f0f0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  background: white;
+}
+
+.summaryCard:hover {
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+.summaryCard::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: var(--border-color);
+}
+
+.summaryCard.blueCard::before {
+  background: #2f54eb;
+}
+
+.summaryCard.greenCard::before {
+  background: #52c41a;
+}
+
+.summaryCard.orangeCard::before {
+  background: #fa541c;
+}
+
+.summaryValue {
+  font-size: 28px;
+  color: #1890ff;
+  margin-top: 0.5rem;
+}
+
+.cardContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  height: 100%;
+}
+
+.cardLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.cardLabel {
+  font-size: 14px;
+  color: #8c8c8c;
+  font-weight: 500;
+  margin: 0;
+  font-family: var(--primary-font);
+}
+
+.cardValue {
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1;
+  margin: 4px 0 2px 0;
+}
+
+.cardSubtext {
+  font-size: 12px;
+  color: #bfbfbf;
+  margin: 0;
+  font-weight: 400;
+}
+
+.cardIcon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.iconSvg {
+  width: 18px;
+  height: 18px;
+  stroke-width: 2;
+}
+
+.blueBg {
+  background-color: #f0f5ff;
+  color: #2f54eb;
+}
+
+.greenBg {
+  background-color: #f6ffed;
+  color: #52c41a;
+}
+
+.orangeBg {
+  background-color: #fff7e6;
+  color: #fa541c;
+}
+
+/* Card specific styles */
+.card {
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.mealName {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.mealStats {
+  font-weight: 500;
+  color: #8c8c8c;
+  font-size: 14px;
+}
+
+.mealDetails {
+  margin-top: 8px;
+}
+
+.mealId {
+  font-size: 12px;
+  color: #bfbfbf;
+}
+
+.noDataMessage {
+  text-align: center;
+  color: #8c8c8c;
+  padding: 24px;
+  font-style: italic;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .analysisGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .cardContent {
+    padding: 16px 20px;
+  }
+  
+  .cardValue {
+    font-size: 28px;
+  }
+  
+  .cardIcon {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .iconSvg {
+    width: 20px;
+    height: 20px;
+  }
+}

@@ -34,6 +34,7 @@ const AddOrganizationModal = ({ visible, onSubmit, onCancel }) => {
         <Form.Item name="name" label="Organization Name" rules={[{ required: true, message: 'Please enter organization name' }]}>
           <Input placeholder="Enter organization name" />
         </Form.Item>
+        
         <Form.Item 
           name="contactEmail" 
           label="Contact Email" 
@@ -44,36 +45,26 @@ const AddOrganizationModal = ({ visible, onSubmit, onCancel }) => {
         >
           <Input placeholder="Enter contact email" />
         </Form.Item>
-        <Form.Item 
-          name="logoUrl" 
-          label="Logo URL" 
+        
+        <Form.Item
+          name="contactNumber"
+          label="Contact Number"
           rules={[
-            { required: true, message: 'Please enter logo URL' },
-            { type: 'url', message: 'Please enter a valid URL' }
+            { required: true, message: 'Please enter contact number' },
+            { pattern: /^[0-9+]{9,15}$/, message: 'Please enter a valid contact number' },
           ]}
         >
-          <Input placeholder="Enter logo URL (e.g., https://example.com/logo.png)" />
+          <Input placeholder="Enter contact number (e.g., +94112223344)" />
         </Form.Item>
-        <Form.Item 
-          name="fingerprint_capacity" 
-          label="Fingerprint Capacity" 
-          rules={[{ required: true, message: 'Please enter fingerprint capacity' }]}
+
+        <Form.Item
+          name="address"
+          label="Address"
+          rules={[{ required: true, message: 'Please enter address' }]}
         >
-          <InputNumber 
-            min={1} 
-            style={{ width: '100%' }}
-          />
+          <Input.TextArea rows={3} placeholder="Enter organization address" />
         </Form.Item>
-        <Form.Item 
-          name="fingerprint_per_machine" 
-          label="Fingerprints per Machine" 
-          rules={[{ required: true, message: 'Please enter fingerprints per machine' }]}
-        >
-          <InputNumber 
-            min={1} 
-            style={{ width: '100%' }}
-          />
-        </Form.Item>
+        
         <Form.Item>
           <div className={styles.buttonGroup}>
             <Button type="primary" htmlType="submit"  loading={loading} className={styles.submitButton}>

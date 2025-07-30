@@ -593,6 +593,22 @@
   color: var(--text-primary) !important;
 }
 
+.addNewIngredientSection {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+  align-items: center;
+}
+
+.newIngredientInput {
+  flex: 1;
+}
+
+.addIngredientButton {
+  white-space: nowrap;
+}
+
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .cancelButtonCol,

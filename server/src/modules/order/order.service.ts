@@ -8,29 +8,35 @@ export class OrdersService {
   constructor(private readonly databaseService: DatabaseService) {}
 
   // Create a new order
-async create(createOrderDto: Prisma.OrderCreateInput) {
-  try {
-    // If orgId is not provided, fetch it from the User table using employeeId
-    if (!createOrderDto.orgId && createOrderDto.employeeId) {
-      const user = await this.databaseService.user.findUnique({
-        where: { id: createOrderDto.employeeId },
-        select: { organizationId: true },
-      });
-      if (!user) {
-        throw new HttpException('User not found for order', HttpStatus.BAD_REQUEST);
+  async create(createOrderDto: Prisma.OrderCreateInput) {
+    try {
+      // If orgId is not provided, fetch it from the User table using employeeId
+      if (!createOrderDto.orgId && createOrderDto.employeeId) {
+        const user = await this.databaseService.user.findUnique({
+          where: { id: createOrderDto.employeeId },
+          select: { organizationId: true },
+        });
+        if (!user) {
+          throw new HttpException(
+            'User not found for order',
+            HttpStatus.BAD_REQUEST,
+          );
+        }
+        createOrderDto.orgId = user.organizationId;
       }
-      createOrderDto.orgId = user.organizationId;
-    }
 
-    // Attempt to create an order in the database
-    return await this.databaseService.order.create({ data: createOrderDto });
-  } catch (err) {
-    if (err.code === 'P2002') {
-      throw new HttpException('Order Number must be unique', HttpStatus.CONFLICT);
+      // Attempt to create an order in the database
+      return await this.databaseService.order.create({ data: createOrderDto });
+    } catch (err) {
+      if (err.code === 'P2002') {
+        throw new HttpException(
+          'Order Number must be unique',
+          HttpStatus.CONFLICT,
+        );
+      }
+      throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
     }
-    throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
   }
-}
 
   // Retrieve all orders
   // async findAll() {
@@ -49,26 +55,26 @@ async create(createOrderDto: Prisma.OrderCreateInput) {
   // }
 
   async findAll(orgId?: string, employeeId?: string) {
-  try {
-    const whereClause: any = {};
-    
-    if (orgId) {
-      whereClause.orgId = orgId;
-    }
-    
-    if (employeeId) {
-      whereClause.employeeId = employeeId;
-    }
+    try {
+      const whereClause: any = {};
 
-    const orders = await this.databaseService.order.findMany({
-      where: whereClause,
-    });
-    // Instead of throwing, just return empty array
-    return orders || [];
-  } catch (err) {
-    throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
+      if (orgId) {
+        whereClause.orgId = orgId;
+      }
+
+      if (employeeId) {
+        whereClause.employeeId = employeeId;
+      }
+
+      const orders = await this.databaseService.order.findMany({
+        where: whereClause,
+      });
+      // Instead of throwing, just return empty array
+      return orders || [];
+    } catch (err) {
+      throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
-}
 
   // Retrieve a single order by ID
   async findOne(id: number) {

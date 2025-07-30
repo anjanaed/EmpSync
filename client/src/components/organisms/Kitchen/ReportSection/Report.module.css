@@ -38,6 +38,7 @@
   align-items: center;
   margin-bottom: 24px;
   gap: 12px;
+  color: black;
 }
 
 .sectionIcon {
@@ -380,8 +381,18 @@
 }
 
 .efficiencyBadgePoor,
-.statusBadgePending {
+.statusBadgeNotServed {
   background-color: var(--error);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 16px;
+  font-size: 12px;
+  font-weight: 500;
+  font-family: var(--primary-font);
+}
+
+.statusBadgePending {
+  background-color: rgb(246, 209, 23);
   color: white;
   padding: 6px 12px;
   border-radius: 16px;
