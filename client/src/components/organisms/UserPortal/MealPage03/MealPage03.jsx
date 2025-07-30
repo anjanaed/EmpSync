@@ -32,6 +32,7 @@ import { RiAiGenerate } from "react-icons/ri";
 import { Spin } from "antd";
 import { motion } from "framer-motion";
 import { useAuth } from "../../../../contexts/AuthContext.jsx";
+import { useMealData } from "../../../../contexts/MealDataContext.jsx";
 import ResponsiveNav from "../ResponsiveNavbar/ResponsiveNav.jsx";
 import styles from "./MealPage03.module.css";
 import translations from "../../../../utils/translations.jsx";
@@ -66,6 +67,17 @@ const Loading = ({ text }) => (
 const MealPage03 = () => {
   const { authData } = useAuth();
   const baseURL = import.meta.env.VITE_BASE_URL;
+  const {
+    mealTimes,
+    allMeals,
+    isDataLoaded,
+    isLoading: contextLoading,
+    getMealsForType,
+    getAvailableMealTimes,
+    preloadMealData,
+    clearData,
+  } = useMealData(); // Use meal data context
+  
   const userId = authData?.user?.id;
   const username = authData?.user || { name: "Guest" };
   const organizationId = authData?.user?.organizationId; // Extract organizationId
@@ -78,8 +90,6 @@ const MealPage03 = () => {
   const [showSuccess, setShowSuccess] = useState(false);
   const [showError, setShowError] = useState(false);
   const [meals, setMeals] = useState([]);
-  const [mealTime, setMealTime] = useState([[], []]);
-  const [allMeals, setAllMeals] = useState([]);
   const [_, setRenderTrigger] = useState(0);
   const [isCartVisible, setIsCartVisible] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -110,7 +120,9 @@ const MealPage03 = () => {
       const localTime = new Date();
       currentTimeRef.current = localTime;
       setBaseTime(localTime);
-      setLoading(false);
+      
+      // Set loading to false if data is already loaded from context
+      setLoading(!isDataLoaded);
     };
 
     initTime();
@@ -123,98 +135,58 @@ const MealPage03 = () => {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [userId]);
+  }, [userId, isDataLoaded]);
 
-  // Separate useEffect for fetching meal times when organizationId is available
+  // Update loading state based on context data loading
   useEffect(() => {
-    const fetchMealTime = async () => {
-      try {
-        // Add organizationId parameter if available
-        const url = organizationId 
-          ? `${baseURL}/meal-types/fetch?orgId=${organizationId}`
-          : `${baseURL}/meal-types/fetch`;
-        
-        const res = await axios.get(url);
-        const mealTimes = Array.isArray(res.data) ? res.data : [[], []];
-        setMealTime(mealTimes);
-        const availableMealTimes =
-          selectedDate === "today" ? mealTimes[0] : mealTimes[1];
-        if (availableMealTimes.length > 0 && !selectedMealTime) {
-          setSelectedMealTime(availableMealTimes[0].id);
-        }
-      } catch (error) {
-        console.error("Error fetching meal times:", error);
-        setMealTime([[], []]);
-      }
-    };
+    setLoading(contextLoading || !isDataLoaded);
+  }, [contextLoading, isDataLoaded]);
 
-    if (organizationId) {
-      fetchMealTime();
+  // Preload meal data when user is authenticated and organizationId is available
+  useEffect(() => {
+    if (userId && organizationId && baseTime && !isDataLoaded) {
+      console.log("Preloading meal data for MealPage03:", organizationId);
+      preloadMealData(organizationId, baseTime).catch(error => {
+        console.error("Error preloading meal data in MealPage03:", error);
+      });
     }
-  }, [organizationId, selectedDate]);
+  }, [userId, organizationId, baseTime, isDataLoaded, preloadMealData]);
 
+  // Set initial meal time when meal times are loaded from context
   useEffect(() => {
-    const availableMealTimes =
-      selectedDate === "today" ? mealTime[0] : mealTime[1];
-    if (availableMealTimes.length > 0) {
-      const validMealTime =
-        availableMealTimes.find((meal) => isMealTimeAvailable(meal)) ||
-        availableMealTimes[0];
-      setSelectedMealTime(validMealTime?.id || null);
+    if (isDataLoaded && mealTimes && mealTimes.length >= 2) {
+      const availableMealTimes = getAvailableMealTimes(selectedDate);
+      if (availableMealTimes.length > 0 && !selectedMealTime) {
+        setSelectedMealTime(availableMealTimes[0].id);
+      }
+    }
+  }, [isDataLoaded, mealTimes, selectedDate, selectedMealTime, getAvailableMealTimes]);
+
+  // Update selected meal time when date changes
+  useEffect(() => {
+    if (isDataLoaded) {
+      const availableMealTimes = getAvailableMealTimes(selectedDate);
+      if (availableMealTimes.length > 0) {
+        const validMealTime =
+          availableMealTimes.find((meal) => isMealTimeAvailable(meal)) ||
+          availableMealTimes[0];
+        setSelectedMealTime(validMealTime?.id || null);
+      } else {
+        setSelectedMealTime(null);
+      }
+    }
+  }, [selectedDate, isDataLoaded, getAvailableMealTimes]);
+
+  // Use meals from context instead of fetching
+  useEffect(() => {
+    if (isDataLoaded && selectedMealTime) {
+      const mealsForType = getMealsForType(selectedDate, selectedMealTime);
+      setMeals(mealsForType);
+      console.log("Meals loaded from context:", selectedDate, selectedMealTime, mealsForType);
     } else {
-      setSelectedMealTime(null);
+      setMeals([]);
     }
-  }, [selectedDate, mealTime]);
-
-  useEffect(() => {
-    const fetchMeals = async () => {
-      if (!selectedMealTime || !organizationId) {
-        setMeals([]);
-        return;
-      }
-      try {
-        setLoading(true);
-        const baseDate =
-          selectedDate === "today"
-            ? baseTime
-            : new Date(baseTime.getTime() + 24 * 60 * 60 * 1000);
-        const formattedDate = baseDate.toLocaleDateString("en-CA", {
-          timeZone: "Asia/Kolkata",
-        });
-
-        // Add organizationId parameter to the schedule API call
-        const scheduleResponse = await axios.get(
-          `${baseURL}/schedule/${formattedDate}?orgId=${organizationId}`
-        );
-        const scheduleData = Array.isArray(scheduleResponse.data)
-          ? scheduleResponse.data
-          : [];
-        const scheduleEntry = scheduleData.find(
-          (entry) =>
-            (entry.mealTypeId || entry.mealType?.id) === selectedMealTime
-        );
-        const mealDetails =
-          scheduleEntry?.meals && Array.isArray(scheduleEntry.meals)
-            ? scheduleEntry.meals
-            : [];
-        console.log("Meal Details:", formattedDate, mealDetails);
-        setMeals(mealDetails);
-        setAllMeals((prev) => {
-          const existingMealIds = new Set(prev.map((m) => m.id));
-          const newMeals = mealDetails.filter(
-            (meal) => !existingMealIds.has(meal.id)
-          );
-          return [...prev, ...newMeals];
-        });
-      } catch (error) {
-        console.error("Error fetching meals:", error);
-        setMeals([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchMeals();
-  }, [selectedDate, selectedMealTime, baseTime, organizationId]);
+  }, [isDataLoaded, selectedDate, selectedMealTime, getMealsForType]);
 
   const formatDateForDisplay = (date) => {
     return date.toLocaleDateString("en-IN");
@@ -442,8 +414,7 @@ const MealPage03 = () => {
         item.date === selectedDate
     );
 
-  const availableMealTimes =
-    selectedDate === "today" ? mealTime[0] : mealTime[1];
+  const availableMealTimes = getAvailableMealTimes(selectedDate);
 
   useEffect(() => {
     const checkMobile = () => {

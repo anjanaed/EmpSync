@@ -304,6 +304,82 @@
   font-size: 1.2rem;
 }
 
+/* Verified popup backdrop for glassmorphism effect */
+.verifiedBackdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.1); /* Very light dark overlay */
+  backdrop-filter: blur(5px); /* Light background blur */
+  -webkit-backdrop-filter: blur(5px); /* Safari support */
+  z-index: 9999;
+  animation: backdropFadeIn 0.3s ease-out;
+}
+
+.verifiedPopup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); /* Perfect center */
+  background: rgba(76, 175, 80, 0.15); /* Semi-transparent green */
+  backdrop-filter: blur(20px); /* Glassmorphism blur effect */
+  -webkit-backdrop-filter: blur(20px); /* Safari support */
+  border: 1px solid rgba(76, 175, 80, 0.3); /* Subtle border */
+  border-radius: 20px; /* More rounded corners */
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.2),
+    0 0 0 1px rgba(255, 255, 255, 0.1); /* Multi-layered shadow */
+  color: #4caf50; /* Green text */
+  padding: 30px 50px;
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+  z-index: 10000; /* Ensure it's on top */
+  animation: verifiedFadeIn 0.3s ease-out;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+.verifiedIcon {
+  font-size: 3rem;
+  color: #4caf50;
+  background: rgba(76, 175, 80, 0.2);
+  border-radius: 50%;
+  width: 70px;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+  box-shadow: 0 4px 16px rgba(76, 175, 80, 0.3);
+}
+
+/* Animation for backdrop */
+@keyframes backdropFadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* Animation for verified popup */
+@keyframes verifiedFadeIn {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
 /* Custom popup styles */
 .customPopup {
   position: fixed;
