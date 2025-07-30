@@ -2,9 +2,8 @@ import React, { useState, useEffect } from "react";
 import styles from "./Analyze.module.css";
 import axios from "axios";
 import { Card, Progress } from "antd";
-import { TrendingUp, TrendingDown } from "lucide-react";
+import { TrendingUp, BarChart3, Users, UtensilsCrossed } from "lucide-react";
 import { useAuth } from "../../../../contexts/AuthContext.jsx";
-
 
 const Analyze = () => {
   const [mealOrderData, setMealOrderData] = useState([]);
@@ -19,11 +18,13 @@ const Analyze = () => {
 
   useEffect(() => {
     fetchMealAnalytics();
-  }, []);
+  }, [token, urL, authData.orgId]); // Added dependencies to prevent unnecessary re-renders
 
   const fetchMealAnalytics = async () => {
+    if (!token || !authData.orgId) return; // Prevent API call if required data is missing
+    
     try {
-      
+      setLoading(true);
       const response = await axios.get(`${urL}/orders/analytics/meals`, {
         params: { orgId: authData.orgId },
         headers: { Authorization: `Bearer ${token}` },
@@ -58,7 +59,6 @@ const Analyze = () => {
     .sort((a, b) => b.count - a.count)
     .slice(0, 4);
 
-  
   return (
     <div className={styles.container}>
       <div className={styles.analysisSection}>
@@ -73,7 +73,7 @@ const Analyze = () => {
             title={
               <div className={styles.cardTitle}>
                 <TrendingUp className={styles.highDemandIcon} size={18} />
-                Top 3 Highest Demand Meals
+                 Highest Demand Meals
               </div>
             }
             className={styles.card}
@@ -110,9 +110,9 @@ const Analyze = () => {
 
           {/* Total Meal Orders + Different Meals Cards */}
           <div className={styles.summaryGrid}>
-            <Card className={styles.summaryCard}>
+            <Card className={`${styles.summaryCard} ${styles.blueCard}`}>
               <div className={styles.cardContent}>
-                <div>
+                <div className={styles.cardLeft}>
                   <h3 className={styles.cardLabel}>Total Orders</h3>
                   <div
                     className={styles.cardValue}
@@ -123,27 +123,14 @@ const Analyze = () => {
                   <p className={styles.cardSubtext}>All order types</p>
                 </div>
                 <div className={`${styles.cardIcon} ${styles.blueBg}`}>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className={styles.iconSvg}
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M3 17l6-6 4 4 8-8"
-                    />
-                  </svg>
+                  <BarChart3 className={styles.iconSvg} />
                 </div>
               </div>
             </Card>
 
-            <Card className={styles.summaryCard}>
+            <Card className={`${styles.summaryCard} ${styles.greenCard}`}>
               <div className={styles.cardContent}>
-                <div>
+                <div className={styles.cardLeft}>
                   <h3 className={styles.cardLabel}>Total Meal Orders</h3>
                   <div
                     className={styles.cardValue}
@@ -154,27 +141,14 @@ const Analyze = () => {
                   <p className={styles.cardSubtext}>Individual meals served</p>
                 </div>
                 <div className={`${styles.cardIcon} ${styles.greenBg}`}>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className={styles.iconSvg}
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M17 20h5v-2a4 4 0 00-3-3.87M9 20h6M3 20h5v-2a4 4 0 013-3.87M12 4a4 4 0 110 8 4 4 0 010-8z"
-                    />
-                  </svg>
+                  <Users className={styles.iconSvg} />
                 </div>
               </div>
             </Card>
 
-            <Card className={styles.summaryCard}>
+            <Card className={`${styles.summaryCard} ${styles.orangeCard}`}>
               <div className={styles.cardContent}>
-                <div>
+                <div className={styles.cardLeft}>
                   <h3 className={styles.cardLabel}>Different Meals</h3>
                   <div
                     className={styles.cardValue}
@@ -185,20 +159,7 @@ const Analyze = () => {
                   <p className={styles.cardSubtext}>Unique meal varieties</p>
                 </div>
                 <div className={`${styles.cardIcon} ${styles.orangeBg}`}>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className={styles.iconSvg}
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 8c-1.657 0-3-1.343-3-3a3 3 0 116 0c0 1.657-1.343 3-3 3zm0 2c2.761 0 5 1.567 5 3.5V18H7v-4.5C7 11.567 9.239 10 12 10z"
-                    />
-                  </svg>
+                  <UtensilsCrossed className={styles.iconSvg} />
                 </div>
               </div>
             </Card>
