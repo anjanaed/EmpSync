@@ -35,6 +35,7 @@ const Page2 = ({
   const [fingerprintUnitName, setFingerprintUnitName] = useState("");
   const [fingerprintBLE, setFingerprintBLE] = useState(null);
   const [showFingerprintPopup, setShowFingerprintPopup] = useState(false);
+  const [verifiedMessage, setVerifiedMessage] = useState("");
 
   // Check for existing fingerprint connection on component mount
   useEffect(() => {
@@ -248,12 +249,14 @@ const Page2 = ({
   useEffect(() => {
     setPin("");
     setErrorMessage("");
+    setVerifiedMessage("");
   }, []);
 
   useEffect(() => {
     if (resetPin) {
       setPin("");
       setErrorMessage("");
+      setVerifiedMessage("");
       setResetPin(false);
       // Clear meal data when resetting/logging out
       clearData();
@@ -388,6 +391,10 @@ const Page2 = ({
       console.log("Retrieved User ID:", user.id);
       console.log("Retrieved Organization ID:", user.organizationId);
       
+      // Show verified message
+      setVerifiedMessage("Verified");
+      setTimeout(() => setVerifiedMessage(""), 1500);
+      
       // Preload meal data before navigation
       if (user.organizationId) {
         console.log("Preloading meal data for organization:", user.organizationId);
@@ -426,6 +433,10 @@ const Page2 = ({
         console.log("Retrieved Username:", user.name);
         console.log("Retrieved User ID:", user.id);
         console.log("Retrieved Organization ID:", user.organizationId);
+        
+        // Show verified message
+        setVerifiedMessage("Verified");
+        setTimeout(() => setVerifiedMessage(""), 1500);
         
         // Preload meal data before navigation
         if (user.organizationId) {
@@ -828,6 +839,7 @@ const Page2 = ({
       )}
       
       {errorMessage && <div className={styles.errorPopup}>{errorMessage}</div>}
+      {verifiedMessage && <div className={styles.verifiedPopup}>{verifiedMessage}</div>}
     </Spin>
   );
 };

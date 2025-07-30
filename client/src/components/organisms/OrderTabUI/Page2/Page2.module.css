@@ -304,6 +304,21 @@
   font-size: 1.2rem;
 }
 
+.verifiedPopup {
+  position: fixed;
+  top: 10%;
+  right: 31%; /* Center horizontally with offset */
+  transform: translate(-50%, -50%); /* Center relative to its position */
+  background-color: #4caf50; /* Green background */
+  color: #fff; /* White text */
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow for depth */
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
 /* Custom popup styles */
 .customPopup {
   position: fixed;
