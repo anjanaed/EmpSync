@@ -1,23 +1,13 @@
 /*
   Warnings:
 
-  - You are about to drop the column `price_per_unit` on the `Ingredient` table. All the data in the column will be lost.
-  - You are about to drop the column `priority` on the `Ingredient` table. All the data in the column will be lost.
-  - You are about to drop the column `quantity` on the `Ingredient` table. All the data in the column will be lost.
-  - You are about to drop the column `type` on the `Ingredient` table. All the data in the column will be lost.
   - A unique constraint covering the columns `[id,month]` on the table `Payroll` will be added. If there are existing duplicate values, this will fail.
   - Added the required column `gender` to the `User` table without a default value. This is not possible if the table is not empty.
   - Made the column `empNo` on table `User` required. This step will fail if there are existing NULL values in that column.
 
 */
 -- CreateEnum
-CREATE TYPE "Gender" AS ENUM ('MALE', 'FEMALE', 'OTHER');
-
--- AlterTable
-ALTER TABLE "Ingredient" DROP COLUMN "price_per_unit",
-DROP COLUMN "priority",
-DROP COLUMN "quantity",
-DROP COLUMN "type";
+CREATE TYPE "Gender" AS ENUM ('Male', 'Female', 'Other');
 
 -- AlterTable
 ALTER TABLE "User" DROP COLUMN "gender",
