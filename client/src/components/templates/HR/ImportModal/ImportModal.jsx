@@ -4,6 +4,8 @@ import { useAuth } from "../../../../contexts/AuthContext";
 import styles from "./ImportModal.module.css";
 import axios from "axios";
 import Loading from "../../../atoms/loading/loading";
+import { usePopup } from "../../../../contexts/PopupContext.jsx";
+
 
 
 // These columns must match your CSV headers and form fields
@@ -105,6 +107,7 @@ const ImportModal = () => {
   const urL = import.meta.env.VITE_BASE_URL;
   const auth0Url = import.meta.env.VITE_AUTH0_URL;
   const auth0Id = import.meta.env.VITE_AUTH0_ID;
+  const { success } = usePopup();
   const token = authData?.accessToken;
 
   const signUpUser = async ({ email, password, id }) => {
@@ -229,11 +232,13 @@ const ImportModal = () => {
 
     // Only clear if all succeeded
     if (failedRowsArr.length === 0) {
+      success("Employees Imported Successfully!");
       setPreviewData([]);
       setFile(null);
       setValidationErrors([]);
       if (fileInputRef.current) fileInputRef.current.value = "";
     }
+    
   };
 
   const handleFileChange = (e) => {
