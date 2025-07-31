@@ -211,4 +211,24 @@ export class OrdersController {
       );
     }
   }
+
+  @Get('analytics/meals')
+async getMealOrderAnalytics(@Query('orgId') orgId: string) {
+  try {
+    if (!orgId) {
+      throw new HttpException('orgId is required', HttpStatus.BAD_REQUEST);
+    }
+    
+    return await this.ordersService.getMealOrderAnalytics(orgId);
+  } catch (err) {
+    throw new HttpException(
+      {
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        error: 'Internal Server Error',
+        message: err.message,
+      },
+      HttpStatus.INTERNAL_SERVER_ERROR,
+    );
+  }
+}
 }

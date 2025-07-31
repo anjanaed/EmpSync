@@ -436,7 +436,7 @@ const AddMealPage = () => {
                   className={styles.cancelButton}
                   disabled={uploading}
                 >
-                  Cancel
+                  Clear
                 </Button>
               </Col>
               <Col span={12} className={styles.confirmButtonCol}>
