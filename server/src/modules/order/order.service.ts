@@ -15,10 +15,8 @@ export class OrdersService {
     },
   ) {
     try {
-      let orgId = createOrderDto.orgId;
-
-      // If orgId is not provided, fetch it from the User table using employeeId
-      if (!orgId && createOrderDto.employeeId) {
+      // If organization is not provided, fetch it from the User table using employeeId
+      if (!createOrderDto.organization && createOrderDto.employeeId) {
         const user = await this.databaseService.user.findUnique({
           where: { id: createOrderDto.employeeId },
           select: { organizationId: true },
@@ -29,7 +27,7 @@ export class OrdersService {
             HttpStatus.BAD_REQUEST,
           );
         }
-        orgId = user.organizationId;
+        createOrderDto.organization = { connect: { id: user.organizationId } };
       }
 
       // Prepare the data for Prisma create
@@ -41,7 +39,7 @@ export class OrdersService {
         orderPlacedTime: createOrderDto.orderPlacedTime,
         price: createOrderDto.price,
         serve: createOrderDto.serve,
-        organization: { connect: { id: orgId } },
+        organization: createOrderDto.organization,
       };
 
       // Attempt to create an order in the database
