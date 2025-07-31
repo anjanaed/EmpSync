@@ -10,6 +10,7 @@ import PrivateRoutes from "./PrivateRoutes.jsx";
 import { NotificationsProvider } from "../contexts/NotificationsContext.jsx";
 import { PopupProvider } from "../contexts/PopupContext.jsx";
 import { ThemeProvider } from "../contexts/ThemeContext.jsx";
+import { MealDataProvider } from "../contexts/MealDataContext.jsx";
 import FingerPrints from '../components/organisms/HR/FingerPrints/FingerPrints.jsx';
 
 
@@ -25,7 +26,11 @@ const AppRoutes = () => (
           <Route path="/passwordReset" element={<PasswordReset />} />
           <Route path="/OrderTab" element={<OrderTab />} />
           <Route path="/user-fingerprint-register" element={<UserFingerPrintRegister />} />
-          <Route path="/MealPage03" element={<MealPage03 />} />
+          <Route path="/MealPage03" element={
+            <MealDataProvider>
+              <MealPage03 />
+            </MealDataProvider>
+          } />
           {PrivateRoutes()}
           <Route path="/fingerprint" element={<FingerPrintPage />} />
           <Route path="/FingerPrints" element={<FingerPrints />} />

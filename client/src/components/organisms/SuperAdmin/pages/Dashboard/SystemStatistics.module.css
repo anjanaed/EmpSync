@@ -316,6 +316,17 @@
   color: #f5222d; /* red */
 }
 
+.centeredMessage {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 60vh; /* adjust as needed */
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: #888;
+  text-align: center;
+}
+
 
 @media (max-width: 1200px) {
   .statCard {

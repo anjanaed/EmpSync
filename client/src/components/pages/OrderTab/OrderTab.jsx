@@ -4,6 +4,7 @@ import styles from './OrderTab.module.css'; // Import CSS module for styling
 import Page1 from "../../organisms/OrderTabUI/Page1/Page1.jsx"; // Import Page1 component
 import Page2 from "../../organisms/OrderTabUI/Page2/Page2.jsx"; // Import Page2 component
 import Page3 from "../../organisms/OrderTabUI/Page3/Page3.jsx"; // Import Page3 component
+import { MealDataProvider } from '../../../contexts/MealDataContext.jsx'; // Import MealDataProvider
 
 // OrderTab component to manage the carousel of ordering pages
 const OrderTab = () => {
@@ -22,9 +23,9 @@ const OrderTab = () => {
     };
     const [initialSlide, setInitialSlide] = useState(getInitialSlide());
 
-    // Render the carousel with three pages
+    // Render the carousel with three pages wrapped in MealDataProvider
     return (
-        <>
+        <MealDataProvider>
             <Carousel
                 ref={carouselRef}
                 infinite={false} // Disable infinite looping
@@ -74,7 +75,7 @@ const OrderTab = () => {
                     />
                 </div>
             </Carousel>
-        </>
+        </MealDataProvider>
     );
 };
 

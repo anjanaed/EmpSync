@@ -7,8 +7,19 @@ export class IngredientsController {
   constructor(private readonly ingredientsService: IngredientsService) {}
 
   @Post()
-  create(@Body() createIngredientDto: Prisma.IngredientCreateInput | Prisma.IngredientCreateInput[]) {
-    return this.ingredientsService.create(createIngredientDto);
+  async create(@Body() createIngredientDto: Prisma.IngredientCreateInput) {
+    try {
+      const newIngredient = await this.ingredientsService.create(createIngredientDto);
+      return {
+        message: 'Ingredient created successfully',
+        data: newIngredient,
+      };
+    } catch (error) {
+      throw new HttpException(
+        error.message || 'Failed to create ingredient',
+        error.status || HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
   @Get()

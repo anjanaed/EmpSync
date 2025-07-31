@@ -1,22 +1,6 @@
 import React, { useState, useEffect } from "react";
-import {
-  Card,
-  Progress,
-  Table,
-  Tabs,
-  Button,
-  Select,
-  Spin,
-  message,
-} from "antd";
-import {
-  BarChart3,
-  FileText,
-  Users,
-  Download,
-  TrendingUp,
-  TrendingDown,
-} from "lucide-react";
+import { Card, Table, Tabs, Button, Select, Spin, message } from "antd";
+import { BarChart3, FileText, Users, Download } from "lucide-react";
 import styles from "./Report.module.css";
 import { useAuth } from "../../../../contexts/AuthContext.jsx";
 import * as XLSX from "xlsx";
@@ -42,8 +26,6 @@ const Report = () => {
   const { authData } = useAuth();
   const [orderDetailsData, setOrderDetailsData] = useState([]);
   const token = authData?.accessToken;
-  const [highestDemandMeal, setHighestDemandMeal] = useState(null);
-  const [lowestDemandMeal, setLowestDemandMeal] = useState(null);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [orderStartDate, setOrderStartDate] = useState("");
@@ -51,173 +33,7 @@ const Report = () => {
   const [employeeStartDate, setEmployeeStartDate] = useState("");
   const [employeeEndDate, setEmployeeEndDate] = useState("");
 
-  useEffect(() => {
-    const loadAnalyzeData = async () => {
-      const { highestDemand, lowestDemand } = await analyzeMealOrders();
-      setHighestDemandMeal(highestDemand);
-      setLowestDemandMeal(lowestDemand);
-    };
-
-    if (authData?.orgId) {
-      loadAnalyzeData();
-    }
-  }, [authData?.orgId]);
-
-  // Function to fetch meals data
-  const fetchMeals = async () => {
-    try {
-      console.log("Fetching meals data...");
-      const response = await axios.get(`${urL}/meal?includeDeleted=true`, {
-        params: {
-          orgId: authData?.orgId,
-        },
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      return Array.isArray(response.data) ? response.data : [];
-    } catch (error) {
-      console.error("Error fetching meals:", error);
-      message.error(`Failed to fetch meals: ${error.message}`);
-      return [];
-    }
-  };
-
-  // Function to analyze meal orders and get single highest and lowest demand meals
-  const analyzeMealOrders = async () => {
-    try {
-      setLoading(true);
-
-      // Fetch orders and meals data
-      const [ordersData, mealsData] = await Promise.allSettled([
-        fetchOrders(),
-        fetchMeals(),
-      ]);
-
-      const orders = ordersData.status === "fulfilled" ? ordersData.value : [];
-      const meals = mealsData.status === "fulfilled" ? mealsData.value : [];
-
-      console.log("Orders data:", orders.length);
-      console.log("Meals data:", meals.length);
-
-      if (orders.length === 0) {
-        console.log("No orders found");
-        return { highestDemand: null, lowestDemand: null };
-      }
-
-      // Extract and count meal IDs from orders
-      const mealOrderCounts = {};
-
-      orders.forEach((order) => {
-        const mealsArray = order.meals || [];
-
-        mealsArray.forEach((mealString) => {
-          // Parse meal string format "mealId:quantity"
-          const [mealId, quantity] = mealString.split(":");
-          const parsedMealId = parseInt(mealId);
-          const parsedQuantity = parseInt(quantity) || 1;
-
-          if (!isNaN(parsedMealId)) {
-            mealOrderCounts[parsedMealId] =
-              (mealOrderCounts[parsedMealId] || 0) + parsedQuantity;
-          }
-        });
-      });
-
-      console.log("Meal order counts:", mealOrderCounts);
-
-      // Convert to array and sort by count (descending)
-      const sortedMealCounts = Object.entries(mealOrderCounts)
-        .map(([mealId, count]) => ({
-          mealId: parseInt(mealId),
-          count: count,
-        }))
-        .sort((a, b) => b.count - a.count);
-
-      console.log("Sorted meal counts:", sortedMealCounts);
-
-      if (sortedMealCounts.length === 0) {
-        return { highestDemand: null, lowestDemand: null };
-      }
-
-      // Create meals lookup map for efficient meal name retrieval
-      const mealsLookup = {};
-      meals.forEach((meal) => {
-        const mealId = meal.id || meal.mealId;
-        const mealName = meal.nameEnglish;
-
-        if (mealId) {
-          mealsLookup[mealId] = mealName;
-        }
-      });
-
-      console.log("Meals lookup:", mealsLookup);
-
-      // Function to get meal name by ID using lookup
-      const getMealNameById = (mealId) => {
-        return mealsLookup[mealId] || `Unknown Meal ${mealId}`;
-      };
-
-      // Calculate total orders for percentage calculation
-      const totalOrders = sortedMealCounts.reduce((sum, m) => sum + m.count, 0);
-
-      // Get highest demand meal (first in sorted array)
-      const highestDemandMeal = sortedMealCounts[0];
-      const highestDemand = {
-        mealId: highestDemandMeal.mealId,
-        name: getMealNameById(highestDemandMeal.mealId),
-        count: highestDemandMeal.count,
-        percentage: Math.round((highestDemandMeal.count / totalOrders) * 100),
-      };
-
-      // Get lowest demand meal (last in sorted array)
-      const lowestDemandMeal = sortedMealCounts[sortedMealCounts.length - 1];
-      const lowestDemand = {
-        mealId: lowestDemandMeal.mealId,
-        name: getMealNameById(lowestDemandMeal.mealId),
-        count: lowestDemandMeal.count,
-        percentage: Math.round((lowestDemandMeal.count / totalOrders) * 100),
-      };
-
-      console.log("Highest demand meal:", highestDemand);
-      console.log("Lowest demand meal:", lowestDemand);
-
-      return { highestDemand, lowestDemand };
-    } catch (error) {
-      console.error("Error analyzing meal orders:", error);
-      message.error("Failed to analyze meal orders");
-      return { highestDemand: null, lowestDemand: null };
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    const loadAnalyzeData = async () => {
-      const { mostOrdered, leastOrdered } = await analyzeMealOrders();
-      setMostOrderedMeals(mostOrdered);
-      setLeastOrderedMeals(leastOrdered);
-    };
-
-    loadAnalyzeData();
-  }, [authData?.orgId]);
-
-  const generateEmployeeReportData = () => {
-    if (!individualEmployeeData || individualEmployeeData.length === 0) {
-      return [];
-    }
-
-    return individualEmployeeData.map((order, index) => ({
-      key: (index + 1).toString(),
-      date: formatDate(order.orderDate || order.order_date),
-      mealType: order.mealTypeName || `Meal Type ${order.mealTypeId}`,
-      orderTime: formatTime(order.orderPlacedTime || order.order_placed_time),
-      status: order.serve || order.served ? "Served" : "Pending",
-      price: `Rs. ${(order.price || 0).toFixed(2)}`,
-      orderId: order.id,
-      ...order, // Include all order data for potential future use
-    }));
-  };
+  //  Common Functions.....
 
   // Function to format date
   const formatDate = (dateString) => {
@@ -237,299 +53,7 @@ const Report = () => {
     });
   };
 
-  // Function to fetch individual employee orders
-  const fetchIndividualEmployeeOrders = async (employeeId, timePeriod) => {
-    if (!employeeId || !employeeId.trim()) {
-      message.warning("Please enter an Employee ID");
-      return [];
-    }
-    try {
-      setLoading(true);
-      const response = await axios.get(`${urL}/orders`, {
-        params: {
-          orgId: authData?.orgId,
-          employeeId,
-        },
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      const allOrders = Array.isArray(response.data) ? response.data : [];
-      console.log("All orders fetched:", allOrders.length);
-
-      // Filter orders by employee ID
-      const employeeOrders = allOrders.filter((order) => {
-        const orderEmployeeId =
-          order.employeeId ||
-          order.employee_id ||
-          order.userId ||
-          order.user_id;
-        return (
-          orderEmployeeId &&
-          orderEmployeeId.toString() === employeeId.toString()
-        );
-      });
-
-      console.log(`Orders for employee ${employeeId}:`, employeeOrders.length);
-
-      if (employeeOrders.length === 0) {
-        message.info(`No orders found for Employee ID: ${employeeId}`);
-        return [];
-      }
-
-      // Filter by time period - pass custom dates if applicable
-      const filteredOrders = filterOrdersByTimePeriod(
-        employeeOrders,
-        timePeriod,
-        employeeTimePeriod === "custom" ? employeeStartDate : null,
-        employeeTimePeriod === "custom" ? employeeEndDate : null
-      );
-      console.log(`Orders after time filter:`, filteredOrders.length);
-
-      // Get meal types to map meal type IDs to names
-      let mealTypesData = mealTypes;
-
-      if (!mealTypesData || mealTypesData.length === 0) {
-        try {
-          const mealTypesResponse = await axios.get(`${urL}/meal-types?includeDeleted=true`, {
-            params: {
-              orgId: authData?.orgId,
-            },
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-
-          mealTypesData = mealTypesResponse.data;
-        } catch (error) {
-          console.error("Error fetching meal types:", error);
-        }
-      }
-
-      // Create meal type lookup
-      const mealTypeMap = mealTypesData.reduce((acc, mealType) => {
-        const mealId =
-          mealType.id || mealType.mealTypeId || mealType.meal_type_id;
-        const mealName =
-          mealType.name ||
-          mealType.mealTypeName ||
-          mealType.meal_type_name ||
-          mealType.type ||
-          `Meal Type ${mealId}`;
-
-        if (mealId) {
-          acc[mealId] = mealName;
-          acc[mealId.toString()] = mealName;
-        }
-        return acc;
-      }, {});
-
-      // Add meal type names to orders
-      const ordersWithMealTypes = filteredOrders.map((order) => ({
-        ...order,
-        mealTypeName:
-          mealTypeMap[order.mealTypeId] ||
-          mealTypeMap[order.mealTypeId?.toString()] ||
-          `Unknown Meal Type ${order.mealTypeId}`,
-      }));
-
-      // Sort by order date and time (newest first)
-      ordersWithMealTypes.sort((a, b) => {
-        const dateA = new Date(
-          a.orderPlacedTime ||
-            a.order_placed_time ||
-            a.orderDate ||
-            a.order_date
-        );
-        const dateB = new Date(
-          b.orderPlacedTime ||
-            b.order_placed_time ||
-            b.orderDate ||
-            b.order_date
-        );
-        return dateB - dateA;
-      });
-
-      console.log("Final processed orders:", ordersWithMealTypes);
-      return ordersWithMealTypes;
-    } catch (error) {
-      console.error("Error fetching individual employee orders:", error);
-      message.error(`Failed to fetch employee orders: ${error.message}`);
-      return [];
-    } finally {
-      setLoading(false);
-    }
-  };
-  // Function to filter orders by time period for individual employee
-  const filterOrdersByTimePeriod = (
-    orders,
-    period,
-    customStartDate = null,
-    customEndDate = null
-  ) => {
-    const now = new Date();
-    let startDate, endDate;
-
-    switch (period) {
-      case "daily":
-        startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-        endDate = new Date(
-          now.getFullYear(),
-          now.getMonth(),
-          now.getDate() + 1
-        );
-        break;
-      case "weekly":
-        startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-        endDate = now;
-        break;
-      case "monthly":
-        startDate = new Date(now.getFullYear(), now.getMonth(), 1);
-        endDate = now;
-        break;
-      case "custom":
-        if (customStartDate && customEndDate) {
-          startDate = new Date(customStartDate);
-          endDate = new Date(customEndDate);
-          endDate.setHours(23, 59, 59, 999);
-        } else {
-          return orders;
-        }
-        break;
-      default:
-        return orders;
-    }
-
-    return orders.filter((order) => {
-      const orderDate = new Date(
-        order.orderDate ||
-          order.order_date ||
-          order.orderPlacedTime ||
-          order.order_placed_time ||
-          order.createdAt ||
-          order.created_at
-      );
-      return orderDate >= startDate && orderDate <= endDate;
-    });
-  };
-  // Function to get employee name from ID
-  const getEmployeeName = (employeeId) => {
-    if (!employees || employees.length === 0) return null;
-
-    const employee = employees.find((emp) => {
-      const empId = emp.id || emp.userId || emp.user_id;
-      return empId && empId.toString() === employeeId.toString();
-    });
-
-    if (employee) {
-      return (
-        employee.name ||
-        employee.userName ||
-        employee.user_name ||
-        employee.fullName ||
-        employee.full_name ||
-        employee.firstName ||
-        employee.first_name ||
-        (employee.firstName && employee.lastName
-          ? `${employee.firstName} ${employee.lastName}`
-          : null) ||
-        (employee.first_name && employee.last_name
-          ? `${employee.first_name} ${employee.last_name}`
-          : null) ||
-        employee.username ||
-        employee.email?.split("@")[0] ||
-        null
-      );
-    }
-
-    return null;
-  };
-
-  // Updated employee report table columns
-  const employeeReportColumns = [
-    {
-      title: "Date",
-      dataIndex: "date",
-      key: "date",
-
-      sorter: (a, b) => new Date(a.date) - new Date(b.date),
-    },
-    {
-      title: "Meal Type",
-      dataIndex: "mealType",
-      key: "mealType",
-      // width: 150,
-      render: (text) => <span className={styles.mealTypeText}>{text}</span>,
-    },
-    {
-      title: "Order Time",
-      dataIndex: "orderTime",
-      key: "orderTime",
-      // width: 120,
-      align: "center",
-    },
-    {
-      title: "Price",
-      dataIndex: "price",
-      key: "price",
-      // width: 100,
-      align: "center",
-      render: (text) => <span className={styles.priceText}>{text}</span>,
-    },
-    {
-      title: "Status",
-      dataIndex: "status",
-      key: "status",
-      // width: 120,
-      align: "center",
-      render: (status) => (
-        <span
-          className={
-            status === "Served"
-              ? styles.statusBadgeServed
-              : styles.statusBadgePending
-          }
-        >
-          {status}
-        </span>
-      ),
-    },
-  ];
-
-  // Calculate employee report summary
-  const calculateEmployeeReportSummary = () => {
-    if (!individualEmployeeData || individualEmployeeData.length === 0) {
-      return {
-        totalOrders: 0,
-        servedOrders: 0,
-        pendingOrders: 0,
-        totalAmount: 0,
-        efficiency: 0,
-      };
-    }
-
-    const totalOrders = individualEmployeeData.length;
-    const servedOrders = individualEmployeeData.filter(
-      (order) => order.serve || order.served
-    ).length;
-    const pendingOrders = totalOrders - servedOrders;
-    const totalAmount = individualEmployeeData.reduce(
-      (sum, order) => sum + (order.price || 0),
-      0
-    );
-    const efficiency =
-      totalOrders > 0 ? Math.round((servedOrders / totalOrders) * 100) : 0;
-
-    return {
-      totalOrders,
-      servedOrders,
-      pendingOrders,
-      totalAmount,
-      efficiency,
-    };
-  };
-
-  // API calls without authentication
+  // API calls to fetch orders
   const fetchOrders = async () => {
     try {
       console.log("Fetching orders...");
@@ -548,188 +72,7 @@ const Report = () => {
       return [];
     }
   };
-
-  const handleDownloadExcel = () => {
-    let exportData = [];
-    let fileName = "";
-    let worksheetName = "";
-
-    switch (activeTab) {
-      case "summary":
-        if (!employeeData || employeeData.length === 0) {
-          message.warning("No summary data to export.");
-          return;
-        }
-
-        // Prepare summary data for export (remove 'key' field and format prices)
-        exportData = employeeData.map(({ key, ...rest }) => {
-          const formattedData = { ...rest };
-
-          // Format price fields to show actual values instead of objects
-          Object.keys(formattedData).forEach((key) => {
-            if (key.endsWith("_price")) {
-              formattedData[key] = `Rs. ${(formattedData[key] || 0).toFixed(
-                2
-              )}`;
-            }
-          });
-
-          // Format total amount
-          if (formattedData.totalAmount) {
-            formattedData.totalAmount = `Rs. ${formattedData.totalAmount.toFixed(
-              2
-            )}`;
-          }
-
-          return formattedData;
-        });
-
-        fileName = `Employee_Meal_Summary_${timePeriod}.xlsx`;
-        worksheetName = "Summary Report";
-        break;
-
-      case "orders":
-        if (!orderDetailsData || orderDetailsData.length === 0) {
-          message.warning("No order details data to export.");
-          return;
-        }
-
-        // Prepare order details data for export
-        exportData = orderDetailsData.map(({ key, ...rest }) => ({
-          ...rest,
-          efficiency: `${rest.efficiency}%`,
-        }));
-
-        fileName = `Order_Details_Report_${orderTimePeriod}.xlsx`;
-        worksheetName = "Order Details";
-        break;
-
-      case "employee":
-        // For employee report, we need to implement the data structure first
-        // This is a placeholder - you'll need to implement employee-specific data
-        const employeeReportData = generateEmployeeReportData();
-
-        if (!employeeReportData || employeeReportData.length === 0) {
-          message.warning("No employee report data to export.");
-          return;
-        }
-
-        exportData = employeeReportData.map(({ key, ...rest }) => rest);
-        fileName = `Employee_Individual_Report_${
-          employeeId || "All"
-        }_${employeeTimePeriod}.xlsx`;
-        worksheetName = "Employee Report";
-        break;
-
-      default:
-        message.warning("Unknown report type.");
-        return;
-    }
-
-    try {
-      // Create worksheet and workbook
-      const worksheet = XLSX.utils.json_to_sheet(exportData);
-      const workbook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(workbook, worksheet, worksheetName);
-
-      // Generate Excel file and trigger download
-      const excelBuffer = XLSX.write(workbook, {
-        bookType: "xlsx",
-        type: "array",
-      });
-      const blob = new Blob([excelBuffer], {
-        type: "application/octet-stream",
-      });
-      saveAs(blob, fileName);
-
-      message.success(`${worksheetName} exported successfully!`);
-    } catch (error) {
-      console.error("Error generating Excel file:", error);
-      message.error("Failed to generate Excel file.");
-    }
-  };
-
-  const processOrderDetailsData = (orders, mealTypes) => {
-    if (!orders || !mealTypes) return [];
-
-    console.log("Processing order details with:", {
-      ordersCount: orders.length,
-      mealTypesCount: mealTypes.length,
-    });
-
-    // Create meal type lookup by ID to get the name
-    const mealTypeMap = mealTypes.reduce((acc, mealType) => {
-      const mealId =
-        mealType.id || mealType.mealTypeId || mealType.meal_type_id;
-      const mealName =
-        mealType.name ||
-        mealType.mealTypeName ||
-        mealType.meal_type_name ||
-        mealType.type ||
-        `Meal Type ${mealId}`;
-
-      if (mealId) {
-        acc[mealId] = mealName;
-        acc[mealId.toString()] = mealName;
-      }
-      return acc;
-    }, {});
-
-    console.log("Meal type mapping:", mealTypeMap);
-
-    // Group orders by meal type name (not ID)
-    const groupedByMealType = {};
-
-    orders.forEach((order) => {
-      const mealTypeId =
-        order.mealTypeId || order.meal_type_id || order.mealType;
-      const mealTypeName =
-        mealTypeMap[mealTypeId] ||
-        mealTypeMap[mealTypeId?.toString()] ||
-        `Unknown Meal Type ${mealTypeId}`;
-
-      if (!groupedByMealType[mealTypeName]) {
-        groupedByMealType[mealTypeName] = {
-          orders: [],
-          totalOrders: 0,
-          servedOrders: 0,
-        };
-      }
-
-      groupedByMealType[mealTypeName].orders.push(order);
-      groupedByMealType[mealTypeName].totalOrders += 1;
-
-      // Check if order was served (you can modify this logic based on your serve status field)
-
-      if (order.serve === true) {
-        groupedByMealType[mealTypeName].servedOrders += 1;
-      }
-    });
-
-    console.log("Grouped by meal type:", groupedByMealType);
-
-    // Convert to array format for the table
-    const details = Object.entries(groupedByMealType).map(
-      ([mealTypeName, data], index) => {
-        const efficiency =
-          data.totalOrders > 0
-            ? Math.round((data.servedOrders / data.totalOrders) * 100)
-            : 0;
-
-        return {
-          key: `${mealTypeName}_${index}`,
-          mealType: mealTypeName,
-          orderCount: data.totalOrders,
-          serveCount: data.servedOrders,
-          efficiency: efficiency,
-        };
-      }
-    );
-
-    console.log("Final order details data:", details);
-    return details.sort((a, b) => b.orderCount - a.orderCount); // Sort by order count descending
-  };
-
+  // fetch employee
   const fetchEmployees = async () => {
     try {
       console.log("Fetching users/employees...");
@@ -748,18 +91,21 @@ const Report = () => {
       return [];
     }
   };
-
+  //fetch mealtypes
   const fetchMealTypes = async () => {
     try {
       console.log("Fetching meal types...");
-      const response = await axios.get(`${urL}/meal-types?includeDeleted=true`, {
-        params: {
-          orgId: authData?.orgId,
-        },
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axios.get(
+        `${urL}/meal-types?includeDeleted=true`,
+        {
+          params: {
+            orgId: authData?.orgId,
+          },
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       return Array.isArray(response.data) ? response.data : [];
     } catch (error) {
       console.error("Error fetching meal types:", error);
@@ -767,14 +113,29 @@ const Report = () => {
       return [];
     }
   };
+  const fetchEmpNoByUserId = async (userId) => {
+    if (!userId || !authData?.orgId) return null;
+    try {
+      const response = await axios.get(`${urL}/user/${userId}/empno`, {
+        params: { orgId: authData?.orgId },
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      return response.data.empNo || userId;
+    } catch (error) {
+      console.error(`Failed to fetch empNo for user ${userId}:`, error);
+      return userId; // fallback to userId if error
+    }
+  };
+  //End of common functions....
 
-  // Enhanced data processing with actual order prices - FIXED VERSION
+  //Summary Report......
+  // Enhanced data processing with actual order prices
   const processEmployeeMealData = (orders, employees, mealTypes) => {
-    console.log("Processing data with:", {
-      ordersCount: orders?.length || 0,
-      employeesCount: employees?.length || 0,
-      mealTypesCount: mealTypes?.length || 0,
-    });
+    // console.log("Processing data with:", {
+    //   ordersCount: orders?.length || 0,
+    //   employeesCount: employees?.length || 0,
+    //   mealTypesCount: mealTypes?.length || 0,
+    // });
 
     if (!orders || !employees || !mealTypes) {
       console.error("Missing required data for processing");
@@ -788,70 +149,38 @@ const Report = () => {
 
     // Create user lookup map where user.id maps to user name
     const employeeMap = employees.reduce((acc, user) => {
-      const userId = user.id || user.userId || user.user_id;
-      const userName =
-        user.name ||
-        user.userName ||
-        user.user_name ||
-        user.fullName ||
-        user.full_name ||
-        user.firstName ||
-        user.first_name ||
-        (user.firstName && user.lastName
-          ? `${user.firstName} ${user.lastName}`
-          : null) ||
-        (user.first_name && user.last_name
-          ? `${user.first_name} ${user.last_name}`
-          : null) ||
-        user.username ||
-        user.email?.split("@")[0] ||
-        `User ${userId}`;
+      const userId = user.id;
+      const userName = user.name;
 
       if (userId) {
         acc[userId] = userName;
-        acc[userId.toString()] = userName;
-        if (!isNaN(userId)) {
-          acc[parseInt(userId)] = userName;
-        }
       }
 
-      console.log(`Mapped user: UserID=${userId}, UserName=${userName}`);
+      // console.log(`Mapped user: UserID=${userId}, UserName=${userName}`);
       return acc;
     }, {});
 
     // Create meal type lookup map
     const mealTypeMap = mealTypes.reduce((acc, mealType) => {
-      const mealId =
-        mealType.id || mealType.mealTypeId || mealType.meal_type_id;
-      const mealName =
-        mealType.name ||
-        mealType.mealTypeName ||
-        mealType.meal_type_name ||
-        mealType.type ||
-        `Meal Type ${mealId}`;
+      const mealId = mealType.id;
+      const mealName = mealType.name;
 
       if (mealId) {
         acc[mealId] = mealName.toLowerCase();
         acc[mealId.toString()] = mealName.toLowerCase();
-        if (!isNaN(mealId)) {
-          acc[parseInt(mealId)] = mealName.toLowerCase();
-        }
+      
       }
       return acc;
     }, {});
 
-    console.log("User lookup map (UserID -> UserName):", employeeMap);
-    console.log("Meal type map:", mealTypeMap);
+    // console.log("User lookup map (UserID -> UserName):", employeeMap);
+    // console.log("Meal type map:", mealTypeMap);
 
     // Get unique employee IDs from orders
     const uniqueEmployeeIds = [
       ...new Set(
         orders.map((order) => {
-          const empId =
-            order.employeeId ||
-            order.employee_id ||
-            order.userId ||
-            order.user_id;
+          const empId = order.employeeId;
           console.log(`Order employee ID: ${empId} (type: ${typeof empId})`);
           return empId;
         })
@@ -862,19 +191,13 @@ const Report = () => {
 
     // Get unique meal types from orders
     const uniqueMealTypeIds = [
-      ...new Set(
-        orders.map(
-          (order) => order.mealTypeId || order.meal_type_id || order.mealType
-        )
-      ),
+      ...new Set(orders.map((order) => order.mealTypeId)),
     ].filter((id) => id !== null && id !== undefined);
 
     const dynamicMealTypes = uniqueMealTypeIds.map((mealTypeId) => {
       const mealTypeName =
-        mealTypeMap[mealTypeId] ||
-        mealTypeMap[mealTypeId.toString()] ||
-        mealTypeMap[parseInt(mealTypeId)] ||
-        `meal_type_${mealTypeId}`;
+        mealTypeMap[mealTypeId];
+;
       return {
         id: mealTypeId,
         name: mealTypeName,
@@ -883,7 +206,7 @@ const Report = () => {
       };
     });
 
-    console.log("Dynamic meal types:", dynamicMealTypes);
+    // console.log("Dynamic meal types:", dynamicMealTypes);
 
     // Initialize employee meal counts and prices
     const employeeMealCounts = {};
@@ -893,8 +216,6 @@ const Report = () => {
       if (empId !== null && empId !== undefined) {
         const userName =
           employeeMap[empId] ||
-          employeeMap[empId.toString()] ||
-          employeeMap[parseInt(empId)] ||
           `Employee ${empId}`;
 
         const employeeRecord = {
@@ -911,40 +232,36 @@ const Report = () => {
         });
 
         employeeMealCounts[empId] = employeeRecord;
-        console.log(
-          `Initialized employee record with user name:`,
-          employeeRecord
-        );
+        // console.log(
+        //   `Initialized employee record with user name:`,
+        //   employeeRecord
+        // );
       }
     });
 
     // Process orders and count meals with actual prices - FIXED SECTION
     orders.forEach((order) => {
-      const employeeId =
-        order.employeeId || order.employee_id || order.userId || order.user_id;
-      const mealTypeId =
-        order.mealTypeId || order.meal_type_id || order.mealType;
+      const employeeId = order.employeeId;
+      const mealTypeId = order.mealTypeId;
 
       // FIXED: Properly parse the price from the order
       const orderPrice = parseFloat(order.price || 0);
 
-      console.log(`Processing order:`, {
-        employeeId,
-        mealTypeId,
-        orderPrice,
-        rawPrice: order.price,
-        orderData: order,
-      });
+      // console.log(`Processing order:`, {
+      //   employeeId,
+      //   mealTypeId,
+      //   orderPrice,
+      //   rawPrice: order.price,
+      //   orderData: order,
+      // });
 
       if (employeeId && mealTypeId && employeeMealCounts[employeeId]) {
         const mealTypeName =
-          mealTypeMap[mealTypeId] ||
-          mealTypeMap[mealTypeId.toString()] ||
-          mealTypeMap[parseInt(mealTypeId)];
+          mealTypeMap[mealTypeId] ;
 
-        console.log(
-          `Processing order: Employee ${employeeId}, Meal Type ID: ${mealTypeId}, Meal Type Name: ${mealTypeName}, Price: ${orderPrice}`
-        );
+        // console.log(
+        //   `Processing order: Employee ${employeeId}, Meal Type ID: ${mealTypeId}, Meal Type Name: ${mealTypeName}, Price: ${orderPrice}`
+        // );
 
         // FIXED: Calculate meal count more accurately
         let mealCount = 1;
@@ -959,9 +276,7 @@ const Report = () => {
             // If parsing fails, try splitting by comma
             mealCount = order.meals.split(",").length;
           }
-        } else if (order.quantity && !isNaN(order.quantity)) {
-          mealCount = parseInt(order.quantity);
-        }
+        } 
 
         // FIXED: Increment meal count and add price based on meal type
         if (
@@ -970,27 +285,27 @@ const Report = () => {
         ) {
           employeeMealCounts[employeeId][mealTypeName] += mealCount;
 
-          // FIXED: Add the actual order price (not multiplied by meal count since price is total)
+          // FIXED: Add the actual order price 
           employeeMealCounts[employeeId][`${mealTypeName}_price`] += orderPrice;
           employeeMealCounts[employeeId].totalMeals += mealCount;
           employeeMealCounts[employeeId].totalAmount += orderPrice;
 
-          console.log(`Updated employee ${employeeId}:`, {
-            mealType: mealTypeName,
-            mealCount: employeeMealCounts[employeeId][mealTypeName],
-            mealPrice: employeeMealCounts[employeeId][`${mealTypeName}_price`],
-            totalAmount: employeeMealCounts[employeeId].totalAmount,
-          });
+          // console.log(`Updated employee ${employeeId}:`, {
+          //   mealType: mealTypeName,
+          //   mealCount: employeeMealCounts[employeeId][mealTypeName],
+          //   mealPrice: employeeMealCounts[employeeId][`${mealTypeName}_price`],
+          //   totalAmount: employeeMealCounts[employeeId].totalAmount,
+          // });
         } else {
           // If meal type name not found, still count total meals and amount
           employeeMealCounts[employeeId].totalMeals += mealCount;
           employeeMealCounts[employeeId].totalAmount += orderPrice;
 
-          console.log(`Unknown meal type for employee ${employeeId}:`, {
-            mealTypeId,
-            mealTypeName,
-            totalAmount: employeeMealCounts[employeeId].totalAmount,
-          });
+          // console.log(`Unknown meal type for employee ${employeeId}:`, {
+          //   mealTypeId,
+          //   mealTypeName,
+          //   totalAmount: employeeMealCounts[employeeId].totalAmount,
+          // });
         }
       } else {
         console.warn(`Skipping order - missing data:`, {
@@ -1010,7 +325,7 @@ const Report = () => {
       })
     );
 
-    console.log("Final processed data with prices:", processedData);
+    // console.log("Final processed data with prices:", processedData);
 
     // FIXED: Add validation to ensure prices are properly calculated
     processedData.forEach((employee) => {
@@ -1071,10 +386,7 @@ const Report = () => {
 
     return orders.filter((order) => {
       const orderDate = new Date(
-        order.orderDate ||
-          order.order_date ||
-          order.createdAt ||
-          order.created_at
+        order.orderDate 
       );
       return orderDate >= startDate && orderDate <= endDate;
     });
@@ -1084,8 +396,6 @@ const Report = () => {
   const loadData = async (customStartDate = null, customEndDate = null) => {
     setLoading(true);
     try {
-      console.log("Starting data load...");
-
       const [ordersData, employeesData, mealTypesData] =
         await Promise.allSettled([
           fetchOrders(),
@@ -1099,11 +409,11 @@ const Report = () => {
       const mealTypes =
         mealTypesData.status === "fulfilled" ? mealTypesData.value : [];
 
-      console.log("Data fetch results:", {
-        orders: { status: ordersData.status, count: orders.length },
-        employees: { status: employeesData.status, count: employees.length },
-        mealTypes: { status: mealTypesData.status, count: mealTypes.length },
-      });
+      // console.log("Data fetch results:", {
+      //   orders: { status: ordersData.status, count: orders.length },
+      //   employees: { status: employeesData.status, count: employees.length },
+      //   mealTypes: { status: mealTypesData.status, count: mealTypes.length },
+      // });
 
       setOrders(orders);
       setEmployees(employees);
@@ -1127,7 +437,7 @@ const Report = () => {
           customStartDate,
           customEndDate
         );
-        console.log("Filtered orders:", filteredOrders.length);
+        // console.log("Filtered orders:", filteredOrders.length);
 
         const result = processEmployeeMealData(
           filteredOrders,
@@ -1138,15 +448,33 @@ const Report = () => {
         if (result && result.processedData) {
           setEmployeeData(result.processedData);
 
-          if (result.processedData.length === 0) {
-            message.info("No data found for the selected time period");
+          const updateEmpNos = async () => {
+            const updated = await Promise.all(
+              result.processedData.map(async (emp) => {
+                const empNo = await fetchEmpNoByUserId(emp.employeeId);
+                return { ...emp, employeeId: empNo };
+              })
+            );
+            setEmployeeData(updated);
+          };
+          updateEmpNos();
+
+          if (result.processedData.length > 0) {
+            message.success(
+              `${
+                timePeriod.charAt(0).toUpperCase() + timePeriod.slice(1)
+              } report generated successfully!`
+            );
+          } else {
+            message.warning("No data available for the selected time period");
           }
         } else {
           setEmployeeData([]);
-          message.warning("Unable to process data.");
+          message.warning("No data available for the selected time period");
         }
       } else {
         setEmployeeData([]);
+        message.warning("No data available for the selected time period");
       }
     } catch (error) {
       console.error("Error loading data:", error);
@@ -1157,13 +485,6 @@ const Report = () => {
     }
   };
 
-  useEffect(() => {
-    // Clear data when time period changes, requiring manual report generation
-    if (timePeriod !== "custom") {
-      setStartDate("");
-      setEndDate("");
-    }
-  }, [timePeriod]);
   // Generate dynamic columns based on available meal types with actual prices
   const generateDynamicColumns = () => {
     if (employeeData.length === 0) return [];
@@ -1238,101 +559,6 @@ const Report = () => {
 
   const totals = calculateTotals();
 
-  // Table columns definition
-  const columns = [
-    {
-      title: "Employee ID",
-      dataIndex: "employeeId",
-      key: "employeeId",
-      width: 120,
-    },
-    {
-      title: "Employee Name",
-      dataIndex: "employeeName",
-      key: "employeeName",
-      width: 180,
-    },
-    ...generateDynamicColumns(),
-    {
-      title: "Total Meals",
-      dataIndex: "totalMeals",
-      key: "totalMeals",
-      width: 140,
-      align: "center",
-      render: (value) => (
-        <div className={styles.totalMealsCell}>
-          <div className={styles.totalCount}>{value || 0}</div>
-          <div className={styles.totalMealsText}>Total Meals</div>
-        </div>
-      ),
-    },
-    {
-      title: "Total Amount",
-      dataIndex: "totalAmount",
-      key: "totalAmount",
-      width: 140,
-      align: "center",
-      render: (value) => (
-        <div className={styles.totalAmountCell}>
-          <div className={styles.totalAmount}>
-            Rs. {(value || 0).toFixed(2)}
-          </div>
-          <div className={styles.totalCostText}>Total Cost</div>
-        </div>
-      ),
-    },
-  ];
-
-  // Calculate meal popularity for analysis
-  const calculateMealPopularity = () => {
-    if (totals.totalMeals === 0) return { highDemand: [], lowDemand: [] };
-
-    const mealStats = (totals.mealTypeKeys || []).map((mealType) => ({
-      name: mealType.charAt(0).toUpperCase() + mealType.slice(1),
-      count: totals[mealType] || 0,
-      percentage: Math.round(
-        ((totals[mealType] || 0) / totals.totalMeals) * 100
-      ),
-    }));
-
-    mealStats.sort((a, b) => b.percentage - a.percentage);
-
-    const highDemand = mealStats.filter((meal) => meal.percentage > 30);
-    const lowDemand = mealStats.filter((meal) => meal.percentage <= 30);
-
-    return { highDemand, lowDemand };
-  };
-
-  const { highDemand, lowDemand } = calculateMealPopularity();
-
-  const handleGenerateReport = () => {
-    console.log(`Generating ${timePeriod} report...`);
-
-    // Validate custom date range if selected
-    if (timePeriod === "custom") {
-      if (!startDate || !endDate) {
-        message.error(
-          "Please select both start date and end date for custom range"
-        );
-        return;
-      }
-      if (new Date(startDate) > new Date(endDate)) {
-        message.error("Start date cannot be later than end date");
-        return;
-      }
-    }
-    const customStartDate = timePeriod === "custom" ? startDate : null;
-    const customEndDate = timePeriod === "custom" ? endDate : null;
-
-    loadData(customStartDate, customEndDate);
-
-    message.success(
-      `${
-        timePeriod.charAt(0).toUpperCase() + timePeriod.slice(1)
-      } report generated successfully!`
-    );
-  };
-
   // Generate summary row for table with actual prices
   const generateSummaryRow = () => {
     const summaryColumns = [
@@ -1387,8 +613,145 @@ const Report = () => {
     return summaryColumns;
   };
 
+  const handleGenerateReport = () => {
+    // console.log(`Generating ${timePeriod} report...`);
+
+    // Validate custom date range if selected
+    if (timePeriod === "custom") {
+      if (!startDate || !endDate) {
+        message.error(
+          "Please select both start date and end date for custom range"
+        );
+        return;
+      }
+      if (new Date(startDate) > new Date(endDate)) {
+        message.error("Start date cannot be later than end date");
+        return;
+      }
+    }
+    const customStartDate = timePeriod === "custom" ? startDate : null;
+    const customEndDate = timePeriod === "custom" ? endDate : null;
+
+    loadData(customStartDate, customEndDate);
+  };
+  // Table columns definition
+  const columns = [
+    {
+      title: "Employee No",
+      dataIndex: "employeeId",
+      key: "employeeId",
+      width: 120,
+    },
+    {
+      title: "Employee Name",
+      dataIndex: "employeeName",
+      key: "employeeName",
+      width: 180,
+    },
+    ...generateDynamicColumns(),
+    {
+      title: "Total Meals",
+      dataIndex: "totalMeals",
+      key: "totalMeals",
+      width: 140,
+      align: "center",
+      render: (value) => (
+        <div className={styles.totalMealsCell}>
+          <div className={styles.totalCount}>{value || 0}</div>
+          <div className={styles.totalMealsText}>Total Meals</div>
+        </div>
+      ),
+    },
+    {
+      title: "Total Amount",
+      dataIndex: "totalAmount",
+      key: "totalAmount",
+      width: 140,
+      align: "center",
+      render: (value) => (
+        <div className={styles.totalAmountCell}>
+          <div className={styles.totalAmount}>
+            Rs. {(value || 0).toFixed(2)}
+          </div>
+          <div className={styles.totalCostText}>Total Cost</div>
+        </div>
+      ),
+    },
+  ];
+  //End summary report.............
+
+  // Order Details Report..........
+  const processOrderDetailsData = (orders, mealTypes) => {
+    if (!orders || !mealTypes) return [];
+
+    console.log("Processing order details with:", {
+      ordersCount: orders.length,
+      mealTypesCount: mealTypes.length,
+    });
+
+    // Create meal type lookup by ID to get the name
+    const mealTypeMap = mealTypes.reduce((acc, mealType) => {
+      const mealId = mealType.id;
+      const mealName = mealType.name;
+
+      if (mealId) {
+        acc[mealId.toString()] = mealName;
+      }
+      return acc;
+    }, {});
+
+    console.log("Meal type mapping:", mealTypeMap);
+
+    // Group orders by meal type name (not ID)
+    const groupedByMealType = {};
+
+    orders.forEach((order) => {
+      const mealTypeId = order.mealTypeId;
+      const mealTypeName =
+        mealTypeMap[mealTypeId?.toString()] ||
+        `Unknown Meal Type ${mealTypeId}`;
+
+      if (!groupedByMealType[mealTypeName]) {
+        groupedByMealType[mealTypeName] = {
+          orders: [],
+          totalOrders: 0,
+          servedOrders: 0,
+        };
+      }
+
+      groupedByMealType[mealTypeName].orders.push(order);
+      groupedByMealType[mealTypeName].totalOrders += 1;
+     if (order.serve === true) {
+        groupedByMealType[mealTypeName].servedOrders += 1;
+      }
+    });
+
+    // console.log("Grouped by meal type:", groupedByMealType);
+
+    // Convert to array format for the table
+    const details = Object.entries(groupedByMealType).map(
+      ([mealTypeName, data], index) => {
+        const efficiency =
+          data.totalOrders > 0
+            ? Math.round((data.servedOrders / data.totalOrders) * 100)
+            : 0;
+
+        return {
+          key: `${mealTypeName}_${index}`,
+          mealType: mealTypeName,
+          orderCount: data.totalOrders,
+          serveCount: data.servedOrders,
+          efficiency: efficiency,
+        };
+      }
+    );
+
+    // console.log("Final order details data:", details);
+    return details.sort((a, b) => b.orderCount - a.orderCount); // Sort by order count descending
+  };
+
   const handleGenerateOrderDetailsReport = async () => {
-    console.log("Generating order details report for period:", orderTimePeriod);
+    // console.log("Generating order details report for period:", orderTimePeriod);
 
     // Validate custom date range if selected
     if (orderTimePeriod === "custom") {
@@ -1411,7 +774,7 @@ const Report = () => {
       let mealTypesData = mealTypes;
 
       if (!ordersData.length || !mealTypesData.length) {
-        console.log("Fetching fresh data...");
+        // console.log("Fetching fresh data...");
         const [ordersResult, mealTypesResult] = await Promise.allSettled([
           fetchOrders(),
           fetchMealTypes(),
@@ -1423,10 +786,10 @@ const Report = () => {
           mealTypesResult.status === "fulfilled" ? mealTypesResult.value : [];
       }
 
-      console.log("Using data:", {
-        orders: ordersData.length,
-        mealTypes: mealTypesData.length,
-      });
+      // console.log("Using data:", {
+      //   orders: ordersData.length,
+      //   mealTypes: mealTypesData.length,
+      // });
 
       // Filter orders by selected time period
       const filteredOrders = filterOrdersByPeriod(
@@ -1456,7 +819,7 @@ const Report = () => {
       setLoading(false);
     }
   };
-
+  //filter oredrs by time range
   const filterOrdersByPeriod = (
     orders,
     period,
@@ -1505,23 +868,350 @@ const Report = () => {
 
     return orders.filter((order) => {
       const orderDate = new Date(
-        order.orderDate ||
-          order.order_date ||
-          order.createdAt ||
-          order.created_at ||
-          order.orderPlacedTime
+        order.orderDate 
       );
 
       const isInRange = orderDate >= startDate && orderDate <= endDate;
       if (!isInRange) {
-        console.log("Order excluded:", {
-          orderDate: orderDate.toISOString(),
-          startDate: startDate.toISOString(),
-          endDate: endDate.toISOString(),
-        });
+        // console.log("Order excluded:", {
+        //   orderDate: orderDate.toISOString(),
+        //   startDate: startDate.toISOString(),
+        //   endDate: endDate.toISOString(),
+        // });
       }
       return isInRange;
     });
+  };
+  //End order details report.....
+
+  // Employee Report.......
+  // Function to fetch individual employee orders
+  const fetchIndividualEmployeeOrders = async (employeeId, timePeriod) => {
+    if (!employeeId || !employeeId.trim()) {
+      message.warning("Please enter an Employee ID");
+      return [];
+    }
+    try {
+      setLoading(true);
+      const response = await axios.get(`${urL}/orders`, {
+        params: {
+          orgId: authData?.orgId,
+      
+        },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const allOrders = Array.isArray(response.data) ? response.data : [];
+      // console.log("All orders fetched:", allOrders.length);
+
+      // Filter orders by employee ID
+      const employeeOrders = allOrders.filter((order) => {
+        const orderEmployeeId = order.employeeId;
+        return (
+          orderEmployeeId &&
+          orderEmployeeId.toString() === employeeId.toString()
+        );
+      });
+
+      // console.log(`Orders for employee ${employeeId}:`, employeeOrders.length);
+
+      if (employeeOrders.length === 0) {
+        message.info(`No orders found for Employee ID: ${employeeId}`);
+        return [];
+      }
+
+      // Filter by time period - pass custom dates if applicable
+      const filteredOrders = filterOrdersByTimePeriod(
+        employeeOrders,
+        timePeriod,
+        employeeTimePeriod === "custom" ? employeeStartDate : null,
+        employeeTimePeriod === "custom" ? employeeEndDate : null
+      );
+      // console.log(`Orders after time filter:`, filteredOrders.length);
+
+      // Get meal types to map meal type IDs to names
+      let mealTypesData = mealTypes;
+
+      if (!mealTypesData || mealTypesData.length === 0) {
+        try {
+          const mealTypesResponse = await axios.get(
+            `${urL}/meal-types?includeDeleted=true`,
+            {
+              params: {
+                orgId: authData?.orgId,
+              },
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+
+          mealTypesData = mealTypesResponse.data;
+        } catch (error) {
+          console.error("Error fetching meal types:", error);
+        }
+      }
+
+      // Create meal type lookup
+      const mealTypeMap = mealTypesData.reduce((acc, mealType) => {
+        const mealId = mealType.id;
+        const mealName = mealType.name || `Meal Type ${mealId}`;
+
+        if (mealId) {
+          acc[mealId] = mealName;
+          acc[mealId.toString()] = mealName;
+        }
+        return acc;
+      }, {});
+
+      // Add meal type names to orders
+      const ordersWithMealTypes = filteredOrders.map((order) => ({
+        ...order,
+        mealTypeName:
+          mealTypeMap[order.mealTypeId?.toString()] ||
+          `Unknown Meal Type ${order.mealTypeId}`,
+      }));
+
+      // Sort by order date and time (newest first)
+      ordersWithMealTypes.sort((a, b) => {
+        const dateA = new Date(
+          a.orderPlacedTime
+          
+        );
+        const dateB = new Date(
+          b.orderPlacedTime 
+        );
+        return dateB - dateA;
+      });
+
+      // console.log("Final processed orders:", ordersWithMealTypes);
+      return ordersWithMealTypes;
+    } catch (error) {
+      console.error("Error fetching individual employee orders:", error);
+      message.error(`Failed to fetch employee orders: ${error.message}`);
+      return [];
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Function to filter orders by time period for individual employee
+  const filterOrdersByTimePeriod = (
+    orders,
+    period,
+    customStartDate = null,
+    customEndDate = null
+  ) => {
+    const now = new Date();
+    let startDate, endDate;
+
+    switch (period) {
+      case "daily":
+        startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        endDate = new Date(
+          now.getFullYear(),
+          now.getMonth(),
+          now.getDate() + 1
+        );
+        break;
+      case "weekly":
+        startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+        endDate = now;
+        break;
+      case "monthly":
+        startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+        endDate = now;
+        break;
+      case "custom":
+        if (customStartDate && customEndDate) {
+          startDate = new Date(customStartDate);
+          endDate = new Date(customEndDate);
+          endDate.setHours(23, 59, 59, 999);
+        } else {
+          return orders;
+        }
+        break;
+      default:
+        return orders;
+    }
+
+    return orders.filter((order) => {
+      const orderDate = new Date(order.orderDate || order.orderPlacedTime);
+      return orderDate >= startDate && orderDate <= endDate;
+    });
+  };
+
+  const generateEmployeeReportData = () => {
+    if (!individualEmployeeData || individualEmployeeData.length === 0) {
+      return [];
+    }
+
+    return individualEmployeeData.map((order, index) => ({
+      key: (index + 1).toString(),
+      date: formatDate(order.orderDate || order.order_date),
+      mealType: order.mealTypeName || `Meal Type ${order.mealTypeId}`,
+      orderTime: formatTime(order.orderPlacedTime || order.order_placed_time),
+      status: determineOrderStatus(order, mealTypes), // Use the new logic
+      price: `Rs. ${(order.price || 0).toFixed(2)}`,
+      orderId: order.id,
+      ...order, // Include all order data for potential future use
+    }));
+  };
+
+  const determineOrderStatus = (order, mealTypes) => {
+    // If order is already served, return 'Served'
+    if (order.serve === true || order.served === true) {
+      return "Served";
+    }
+
+    // Get order date
+    const orderDate = new Date(order.orderDate || order.order_date);
+    const today = new Date();
+
+    // Set time to start of day for comparison
+    const orderDateOnly = new Date(
+      orderDate.getFullYear(),
+      orderDate.getMonth(),
+      orderDate.getDate()
+    );
+    const todayDateOnly = new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      today.getDate()
+    );
+
+    // If order is from previous day, it's 'Not Served'
+    if (orderDateOnly < todayDateOnly) {
+      return "Not Served";
+    }
+
+    // If order is from today, check meal type end time
+    if (orderDateOnly.getTime() === todayDateOnly.getTime()) {
+      // Find the meal type for this order
+      const mealType = mealTypes.find(
+        (mt) =>
+          mt.id === order.mealTypeId ||
+          mt.mealTypeId === order.mealTypeId ||
+          mt.meal_type_id === order.mealTypeId
+      );
+
+      if (
+        mealType &&
+        mealType.time &&
+        Array.isArray(mealType.time) &&
+        mealType.time.length >= 2
+      ) {
+        // Get end time (second element in the time array)
+        const endTime = mealType.time[1]; // e.g., "21:00"
+
+        // Create current time and meal end time for comparison
+        const now = new Date();
+        const currentTime = now.getHours() * 60 + now.getMinutes(); // Convert to minutes
+
+        // Parse meal end time
+        const [endHours, endMinutes] = endTime.split(":").map(Number);
+        const mealEndTime = endHours * 60 + endMinutes; // Convert to minutes
+
+        // If current time has passed meal end time, it's 'Not Served'
+        if (currentTime > mealEndTime) {
+          return "Not Served";
+        }
+      }
+    }
+
+    // Default to 'Pending' for today's orders within time or if we can't determine meal type time
+    return "Pending";
+  };
+
+  // Updated employee report table columns
+  const employeeReportColumns = [
+    {
+      title: "Date",
+      dataIndex: "date",
+      key: "date",
+      sorter: (a, b) => new Date(a.date) - new Date(b.date),
+    },
+    {
+      title: "Meal Type",
+      dataIndex: "mealType",
+      key: "mealType",
+      render: (text) => <span className={styles.mealTypeText}>{text}</span>,
+    },
+    {
+      title: "Order Time",
+      dataIndex: "orderTime",
+      key: "orderTime",
+      align: "center",
+    },
+    {
+      title: "Price",
+      dataIndex: "price",
+      key: "price",
+      align: "center",
+      render: (text) => <span className={styles.priceText}>{text}</span>,
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      align: "center",
+      render: (status) => (
+        <span
+          className={
+            status === "Served"
+              ? styles.statusBadgeServed
+              : status === "Not Served"
+              ? styles.statusBadgeNotServed // You'll need to add this CSS class
+              : styles.statusBadgePending
+          }
+        >
+          {status}
+        </span>
+      ),
+    },
+  ];
+
+  // Calculate employee report summary
+  const calculateEmployeeReportSummary = () => {
+    if (!individualEmployeeData || individualEmployeeData.length === 0) {
+      return {
+        totalOrders: 0,
+        servedOrders: 0,
+        pendingOrders: 0,
+        notServedOrders: 0,
+        totalAmount: 0,
+        efficiency: 0,
+      };
+    }
+
+    const reportData = generateEmployeeReportData();
+    const totalOrders = reportData.length;
+    const servedOrders = reportData.filter(
+      (order) => order.status === "Served"
+    ).length;
+    const pendingOrders = reportData.filter(
+      (order) => order.status === "Pending"
+    ).length;
+    const notServedOrders = reportData.filter(
+      (order) => order.status === "Not Served"
+    ).length;
+
+    const totalAmount = individualEmployeeData.reduce(
+      (sum, order) => sum + (order.price || 0),
+      0
+    );
+    const efficiency =
+      totalOrders > 0 ? Math.round((servedOrders / totalOrders) * 100) : 0;
+
+    return {
+      totalOrders,
+      servedOrders,
+      pendingOrders,
+      notServedOrders,
+      totalAmount,
+      efficiency,
+    };
   };
 
   const handleGenerateEmployeeReport = async () => {
@@ -1531,7 +1221,7 @@ const Report = () => {
 
     // Validate employee ID
     if (!employeeId || !employeeId.trim()) {
-      message.error("Please enter an Employee ID");
+      message.error("Please enter an Employee No");
       return;
     }
 
@@ -1550,9 +1240,21 @@ const Report = () => {
     }
 
     try {
+      // Convert empNo to userid 
+      const res = await axios.get(`${urL}/user/empno/${employeeId}`, {
+        params: { orgId: authData?.orgId },
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const userId = res.data?.id;
+      if (!userId) {
+        message.error("No user found for this Employee No");
+        setIndividualEmployeeData([]);
+        return;
+      }
+
       // Fetch individual employee orders with the selected time period
       const employeeOrders = await fetchIndividualEmployeeOrders(
-        employeeId,
+        userId,
         employeeTimePeriod
       );
       setIndividualEmployeeData(employeeOrders);
@@ -1592,95 +1294,120 @@ const Report = () => {
     }
   }, [activeTab]);
 
+  //End Employee Report..........
+
+  //handle download
+  const handleDownloadExcel = () => {
+    let exportData = [];
+    let fileName = "";
+    let worksheetName = "";
+
+    switch (activeTab) {
+      case "summary":
+        if (!employeeData || employeeData.length === 0) {
+          message.warning("No summary data to export.");
+          return;
+        }
+
+        // Prepare summary data for export (remove 'key' field and format prices)
+        exportData = employeeData.map(({ key, ...rest }) => {
+          const formattedData = { ...rest };
+
+          // Format price fields to show actual values instead of objects
+          Object.keys(formattedData).forEach((key) => {
+            if (key.endsWith("_price")) {
+              formattedData[key] = `Rs. ${(formattedData[key] || 0).toFixed(
+                2
+              )}`;
+            }
+          });
+
+          // Format total amount
+          if (formattedData.totalAmount) {
+            formattedData.totalAmount = `Rs. ${formattedData.totalAmount.toFixed(
+              2
+            )}`;
+          }
+
+          return formattedData;
+        });
+
+        fileName = `Employee_Meal_Summary_${timePeriod}.xlsx`;
+        worksheetName = "Summary Report";
+        break;
+
+      case "orders":
+        if (!orderDetailsData || orderDetailsData.length === 0) {
+          message.warning("No order details data to export.");
+          return;
+        }
+
+        // Prepare order details data for export
+        exportData = orderDetailsData.map(({ key, ...rest }) => ({
+          ...rest,
+          efficiency: `${rest.efficiency}%`,
+        }));
+
+        fileName = `Order_Details_Report_${orderTimePeriod}.xlsx`;
+        worksheetName = "Order Details";
+        break;
+
+      case "employee":
+        // This is a placeholder - you'll need to implement employee-specific data
+        const employeeReportData = generateEmployeeReportData();
+
+        if (!employeeReportData || employeeReportData.length === 0) {
+          message.warning("No employee report data to export.");
+          return;
+        }
+
+        exportData = employeeReportData.map(({ key, ...rest }) => rest);
+        fileName = `Employee_Individual_Report_${
+          employeeId || "All"
+        }_${employeeTimePeriod}.xlsx`;
+        worksheetName = "Employee Report";
+        break;
+
+      default:
+        message.warning("Unknown report type.");
+        return;
+    }
+
+    try {
+      // Create worksheet and workbook
+      const worksheet = XLSX.utils.json_to_sheet(exportData);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, worksheetName);
+
+      // Generate Excel file and trigger download
+      const excelBuffer = XLSX.write(workbook, {
+        bookType: "xlsx",
+        type: "array",
+      });
+      const blob = new Blob([excelBuffer], {
+        type: "application/octet-stream",
+      });
+      saveAs(blob, fileName);
+
+      message.success(`${worksheetName} exported successfully!`);
+    } catch (error) {
+      console.error("Error generating Excel file:", error);
+      message.error("Failed to generate Excel file.");
+    }
+  };
+
+  //End  handle download...
+
+  useEffect(() => {
+    // Clear data when time period changes, requiring manual report generation
+    if (timePeriod !== "custom") {
+      setStartDate("");
+      setEndDate("");
+    }
+  }, [timePeriod]);
+
   return (
     <div className={styles.container}>
-      {/* Analysis Section */}
-
-      <div className={styles.analysisSection}>
-        <div className={styles.sectionHeader}>
-          <TrendingUp className={styles.sectionIcon} />
-          <h2 className={styles.sectionTitle}>Meal Demand Analysis</h2>
-        </div>
-
-        <div className={styles.analysisGrid}>
-          <Card
-            title={
-              <div className={styles.cardTitle}>
-                <TrendingUp className={styles.highDemandIcon} size={18} />
-                Highest Demand Meal
-              </div>
-            }
-            className={styles.card}
-            loading={loading}
-          >
-            {highestDemandMeal ? (
-              <div className={styles.mealItem}>
-                <div className={styles.mealHeader}>
-                  <span className={styles.mealName}>
-                    {highestDemandMeal.name}
-                  </span>
-                  <span className={styles.mealStats}>
-                    {highestDemandMeal.count} orders (
-                    {highestDemandMeal.percentage}%)
-                  </span>
-                </div>
-                <Progress
-                  percent={highestDemandMeal.percentage}
-                  strokeColor="#52c41a"
-                  trailColor="#f0f0f0"
-                  showInfo={false}
-                />
-                <div className={styles.mealDetails}>
-                  <span className={styles.mealId}>
-                    Meal ID: {highestDemandMeal.mealId}
-                  </span>
-                </div>
-              </div>
-            ) : (
-              <div className={styles.noDataMessage}>No meal data available</div>
-            )}
-          </Card>
-
-          <Card
-            title={
-              <div className={styles.cardTitle}>
-                <TrendingDown className={styles.lowDemandIcon} size={18} />
-                Lowest Demand Meal
-              </div>
-            }
-            className={styles.card}
-            loading={loading}
-          >
-            {lowestDemandMeal ? (
-              <div className={styles.mealItem}>
-                <div className={styles.mealHeader}>
-                  <span className={styles.mealName}>
-                    {lowestDemandMeal.name}
-                  </span>
-                  <span className={styles.mealStats}>
-                    {lowestDemandMeal.count} orders (
-                    {lowestDemandMeal.percentage}%)
-                  </span>
-                </div>
-                <Progress
-                  percent={lowestDemandMeal.percentage}
-                  strokeColor="#ff4d4f"
-                  trailColor="#f0f0f0"
-                  showInfo={false}
-                />
-                <div className={styles.mealDetails}>
-                  <span className={styles.mealId}>
-                    Meal ID: {lowestDemandMeal.mealId}
-                  </span>
-                </div>
-              </div>
-            ) : (
-              <div className={styles.noDataMessage}>No meal data available</div>
-            )}
-          </Card>
-        </div>
-      </div>
-
       {/* Reports Section */}
       <div className={styles.reportsSection}>
         <div className={styles.sectionHeader}>
@@ -1783,6 +1510,8 @@ const Report = () => {
                   locale={{
                     emptyText: loading
                       ? "Loading data..."
+                      : employeeData.length === 0 && activeTab === "summary"
+                      ? "Click 'Generate Report' to view summary data"
                       : "No data available for the selected time period",
                   }}
                   summary={
@@ -1910,7 +1639,7 @@ const Report = () => {
                       ),
                     },
                     {
-                      title: "Efficiency",
+                      title: "Served Percentage",
                       dataIndex: "efficiency",
                       key: "efficiency",
                       width: 150,
@@ -1995,7 +1724,7 @@ const Report = () => {
                             >
                               {overallEfficiency}%
                             </strong>
-                            <div>Overall Efficiency</div>
+                            <div>Overall served %</div>
                           </div>
                         </Table.Summary.Cell>
                       </Table.Summary.Row>
@@ -2029,12 +1758,12 @@ const Report = () => {
 
               <div className={styles.controlsContainerWrap}>
                 <div className={styles.controlGroup}>
-                  <label className={styles.controlLabel}>Employee ID</label>
+                  <label className={styles.controlLabel}>Employee No</label>
                   <input
                     type="text"
                     value={employeeId}
                     onChange={(e) => setEmployeeId(e.target.value)}
-                    placeholder="Enter Employee ID"
+                    placeholder="Enter Employee No"
                     className={styles.textInput}
                   />
                 </div>
@@ -2124,7 +1853,8 @@ const Report = () => {
                         <Table.Summary.Cell index={4} align="center">
                           <strong>
                             {summary.servedOrders} Served /{" "}
-                            {summary.pendingOrders} Pending
+                            {summary.pendingOrders} Pending /{" "}
+                            {summary.notServedOrders} Not Served
                           </strong>
                         </Table.Summary.Cell>
                       </Table.Summary.Row>

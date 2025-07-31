@@ -88,7 +88,13 @@ const Payroll = () => {
 
   //Payroll Generation
   const handleGenerate = async () => {
-    await form.validateFields(["payrollMonth", "epf", "etf", "EmpoyerFund"]);
+    await form.validateFields([
+      "payrollMonth",
+      "epf",
+      "etf",
+      "EmpoyerFund",
+      "range",
+    ]);
 
     //Sending ETF EPF data
     try {
@@ -211,11 +217,16 @@ const Payroll = () => {
 
   //Submit Individual Adjustment
   const handleIndiAdjustmentSave = async () => {
-    const allFields = form.getFieldsValue();
-    const fieldNamesToValidate = Object.keys(allFields).filter(
-      (name) => name !== "payrollMonth"
+    const hasValidAdjustment = individualAdjustment.some(
+      (adj) =>
+        adj.id.trim() !== "" && adj.details.trim() !== "" && adj.amount !== ""
     );
-    await form.validateFields(fieldNamesToValidate);
+
+    if (!hasValidAdjustment) {
+      error("Please Add at least one Adjustment");
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -541,10 +552,11 @@ const Payroll = () => {
             <div>
               <label>Payroll Period</label>
               <br />
-              <Form.Item style={{ marginBottom: 0 }} name="range">
+              <Form.Item style={{ marginBottom: 0 }} name="range" rules={[{ required: true, message: "Please Select range!" }]}>
                 <RangePicker
                   style={{ width: "250px" }}
                   onChange={(dates) => handleRangeChange(dates)}
+                  
                 />
               </Form.Item>
             </div>

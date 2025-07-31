@@ -16,6 +16,8 @@ import NotificationPanel from "../../../organisms/Kitchen/NotificationPanel/Noti
 import { useNotifications } from "../../../../contexts/NotificationsContext.jsx";
 import styles from "../../../organisms/Kitchen/NotificationPanel/NotificationPanel.module.css";
 import Section from "../../../organisms/Kitchen/ReportSection/Report.jsx";
+import Analyze from "../../../organisms/Kitchen/AnalyzeSection/Analyze.jsx";
+
 import { useAuth } from "../../../../contexts/AuthContext.jsx"; 
 
 const Report = () => {
@@ -103,7 +105,13 @@ const Report = () => {
   return (
     <>
       <NavBar
-        Comp={Section}
+        Comp={() => (
+          <>
+            <Analyze />
+            <Section />
+          </>
+        )}
+        
         titleLines={["Meal", "Schedule", "Management"]}
         menuItems={filteredMenuItems}
       />
