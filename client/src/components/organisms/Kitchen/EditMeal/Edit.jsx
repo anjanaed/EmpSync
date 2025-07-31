@@ -676,7 +676,7 @@ const EditMealPage = () => {
                   className={styles.cancelButton}
                   disabled={submitting}
                 >
-                  Cancel
+                  Clear
                 </Button>
               </Col>
               <Col span={12} className={styles.confirmButtonCol}>
