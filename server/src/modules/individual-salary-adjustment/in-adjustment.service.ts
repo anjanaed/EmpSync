@@ -11,7 +11,7 @@ export class IndiAdjustmentService {
   constructor(private readonly databaseService: DatabaseService) {}
 
   async create(
-  createIndiAdjustmentDto: Prisma.IndividualSalaryAdjustmentsCreateInput & { empNo?: string }
+  createIndiAdjustmentDto: Prisma.IndividualSalaryAdjustmentsCreateInput & { empNo?: string, orgId?: string }
 ) {
   try {
     // If empNo is provided, look up the user by empNo and orgId
@@ -26,13 +26,19 @@ export class IndiAdjustmentService {
       if (!user) {
         throw new BadRequestException('Employee not found for given empNo and orgId');
       }
-      // Set empId to the found user's id
-      createIndiAdjustmentDto.empId = user.id;
-      // Remove empNo from DTO to avoid Prisma error
+      // Set employee relation
+      createIndiAdjustmentDto.employee = { connect: { id: String(user.id) } };
+      // Set organization relation
+      createIndiAdjustmentDto.organization = { connect: { id: createIndiAdjustmentDto.orgId } };
       delete createIndiAdjustmentDto.empNo;
+      delete createIndiAdjustmentDto.orgId;
     }
+    
+    // Create a copy of createIndiAdjustmentDto without empNo and orgId
+    const { empNo, orgId, ...dataForCreate } = createIndiAdjustmentDto;
+
     return await this.databaseService.individualSalaryAdjustments.create({
-      data: createIndiAdjustmentDto,
+      data: dataForCreate,
     });
   } catch (error) {
     throw new BadRequestException(error.message);

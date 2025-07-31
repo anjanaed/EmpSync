@@ -8,10 +8,15 @@ export class OrdersService {
   constructor(private readonly databaseService: DatabaseService) {}
 
   // Create a new order
-  async create(createOrderDto: Prisma.OrderCreateInput) {
+  async create(
+    createOrderDto: Prisma.OrderCreateInput & {
+      employeeId?: string;
+      orgId?: string;
+    },
+  ) {
     try {
-      // If orgId is not provided, fetch it from the User table using employeeId
-      if (!createOrderDto.orgId && createOrderDto.employeeId) {
+      // If organization is not provided, fetch it from the User table using employeeId
+      if (!createOrderDto.organization && createOrderDto.employeeId) {
         const user = await this.databaseService.user.findUnique({
           where: { id: createOrderDto.employeeId },
           select: { organizationId: true },
@@ -22,11 +27,23 @@ export class OrdersService {
             HttpStatus.BAD_REQUEST,
           );
         }
-        createOrderDto.orgId = user.organizationId;
+        createOrderDto.organization = { connect: { id: user.organizationId } };
       }
 
+      // Prepare the data for Prisma create
+      const orderData: Prisma.OrderCreateInput = {
+        employeeId: createOrderDto.employeeId,
+        mealTypeId: createOrderDto.mealTypeId,
+        meals: createOrderDto.meals,
+        orderDate: createOrderDto.orderDate,
+        orderPlacedTime: createOrderDto.orderPlacedTime,
+        price: createOrderDto.price,
+        serve: createOrderDto.serve,
+        organization: createOrderDto.organization,
+      };
+
       // Attempt to create an order in the database
-      return await this.databaseService.order.create({ data: createOrderDto });
+      return await this.databaseService.order.create({ data: orderData });
     } catch (err) {
       if (err.code === 'P2002') {
         throw new HttpException(
@@ -137,11 +154,16 @@ export class OrdersService {
     }
   }
 
-  async getMealCost(empId: string, orgId: string, startDate: Date, endDate: Date) {
+  async getMealCost(
+    empId: string,
+    orgId: string,
+    startDate: Date,
+    endDate: Date,
+  ) {
     //set time period
     const startOfDay = new Date(startDate);
     startOfDay.setHours(0, 0, 0, 0);
-    
+
     const endOfDay = new Date(endDate);
     endOfDay.setHours(23, 59, 59, 999);
 
@@ -156,7 +178,7 @@ export class OrdersService {
         },
       },
       select: {
-        price: true, 
+        price: true,
       },
     });
 

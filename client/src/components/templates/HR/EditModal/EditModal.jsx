@@ -104,6 +104,8 @@ const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
       fetchEmployee();
       success("User Information Updated Successfully!");
     } catch (err) {
+      console.log(err);
+
       if (err?.errorFields) {
         // Extract all error messages into one string
         const allMessages = err.errorFields
@@ -199,6 +201,7 @@ const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
                         ]}
                       >
                         <Input
+                          disabled
                           maxLength={35}
                           placeholder="Enter Email Address"
                           onChange={(e) =>
@@ -491,7 +494,6 @@ const EditModal = ({ empId, handleCancel, fetchEmployee }) => {
                           placeholder="Enter Weight (Kg)"
                         />
                       </Form.Item>
-                      
                     </div>
                     <div className={styles.subBtn}>
                       <button onClick={handleUpdate} className={styles.saveBtn}>

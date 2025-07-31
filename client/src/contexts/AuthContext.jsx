@@ -46,12 +46,17 @@ export const AuthProvider = ({ children }) => {
       const employeeId = decoded["https://empidReceiver.com"];
 
       const response = await axios.get(
-        `${urL}/user/${employeeId.toUpperCase()}`
+        `${urL}/user/${employeeId.toUpperCase()}`,
+        {
+          headers: {
+            Authorization: `Bearer ${access_token}`,
+          },
+        }
       );
       const currentUser = response.data;
 
       const userRole = currentUser.role;
-      const orgId = currentUser.organizationId || NULL; 
+      const orgId = currentUser.organizationId || NULL;
       let permissions = [];
       try {
         const permRes = await axios.get(
@@ -64,6 +69,7 @@ export const AuthProvider = ({ children }) => {
       } catch (permErr) {
         console.error("Failed to fetch permissions:", permErr);
       }
+      console.log(currentUser)
       const userData = {
         accessToken: access_token,
         idToken: id_token,

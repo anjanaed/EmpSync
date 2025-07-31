@@ -8,11 +8,15 @@ import { FirebaseService } from './firebase.service';
 
 @Injectable()
 export class PayrollService {
-  constructor(private readonly databaseService: DatabaseService,private readonly firebaseService: FirebaseService,private readonly ordersService: OrdersService) {}
+  constructor(
+    private readonly databaseService: DatabaseService,
+    private readonly firebaseService: FirebaseService,
+    private readonly ordersService: OrdersService
+  ) {}
 
   async create(dto: Prisma.PayrollCreateInput) {
     try {
-      return await this.databaseService.payroll.create({ data: dto })
+      return await this.databaseService.payroll.create({ data: dto });
     } catch (err) {
       throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
     }
@@ -57,146 +61,171 @@ export class PayrollService {
     }
   }
 
-async generatePayrollsForAll(dto: Prisma.PayrollCreateInput, orgId: string): Promise<any> {
-  try {
-    const users = await this.databaseService.user.findMany({
-      where: { organizationId: orgId },
-    });
-
-    const payeData = await this.databaseService.payeTaxSlab.findMany({
-      where: { orgId },
-    });
-
-    const allAdjustments = await this.databaseService.salaryAdjustments.findMany({
-      where: { orgId },
-    });
-
-    const allIndividualAdjustments = await this.databaseService.individualSalaryAdjustments.findMany({
-      where: { orgId },
-    });
-
-    const employerFundRate = allAdjustments.find((adj) => adj.label === 'EmployerFund')?.amount || 0;
-    const ETF = allAdjustments.find((adj) => adj.label === 'ETF')?.amount || 0;
-
-    const range = dto.range;
-    const month = dto.month;
-
-    function extractAdjustments(data: any, allowance: boolean, percentage: boolean) {
-      return data
-        .filter((adj: any) => adj.isPercentage === percentage && adj.allowance === allowance)
-        .map((adj: any) => ({ label: adj.label, amount: adj.amount }));
-    }
-
-    function extractIndividualAdjustment(data: any, user: string, allowance: boolean, percentage: boolean) {
-      return data
-        .filter((adj: any) =>
-          adj.empId === user && adj.allowance === allowance && adj.isPercentage === percentage
-        )
-        .map((adj: any) => ({ label: adj.label, amount: adj.amount }));
-    }
-
-    const allAllowanceP = extractAdjustments(allAdjustments, true, true);
-    const allAllowanceV = extractAdjustments(allAdjustments, true, false);
-    const allDeductionV = extractAdjustments(allAdjustments, false, false);
-
-    const allDeductionP = allAdjustments
-      .filter(
-        (adj) =>
-          adj.isPercentage &&
-          !adj.allowance &&
-          !['ETF', 'EmployerFund'].includes(adj.label)
-      )
+  // Helper function to extract adjustments
+  private extractAdjustments(adjustments: any[], allowance: boolean, percentage: boolean) {
+    return adjustments
+      .filter((adj) => adj.allowance === allowance && adj.isPercentage === percentage)
       .map((adj) => ({ label: adj.label, amount: adj.amount }));
-
-    for (const user of users) {
-      const indiAllowanceP = extractIndividualAdjustment(allIndividualAdjustments, user.id, true, true);
-      const indiAllowanceV = extractIndividualAdjustment(allIndividualAdjustments, user.id, true, false);
-      const indiDeductionsP = extractIndividualAdjustment(allIndividualAdjustments, user.id, false, true);
-      const indiDeductionsV = extractIndividualAdjustment(allIndividualAdjustments, user.id, false, false);
-
-     
-      const mealResult = await this.ordersService.getMealCost(user.id, orgId, range[0], range[1]);
-      const mealCost = mealResult.mealCost || 0;
-
-      indiDeductionsV.push({ label: 'Meal Consumption', amount: mealCost });
-
-      const allowanceP = [...indiAllowanceP, ...allAllowanceP];
-      const allowanceV = [...indiAllowanceV, ...allAllowanceV];
-      const deductionsP = [...indiDeductionsP, ...allDeductionP];
-      const deductionsV = [...indiDeductionsV, ...allDeductionV];
-
-      const values = calculateSalary(
-        {
-          basicSalary: user.salary,
-          allowanceP,
-          allowanceV,
-          deductionsP,
-          deductionsV,
-        },
-        payeData,
-      );
-
-      const payroll = await this.create({
-        employee: { connect: { id: user.id } },
-        orgId: orgId,
-        month: month,
-        netPay: values.netSalary,
-        payrollPdf: `payrolls/${user.id}/${user.id}-${month}.pdf`,
-      });
-
-      await generatePayslip({
-        employee: user,
-        values,
-        payroll: {
-          id: payroll.id,
-          createdAt: payroll.createdAt,
-        },
-        employerFundRate,
-        ETF,
-        month,
-        firebaseService: this.firebaseService,
-      });
-    }
-
-    console.log('Payrolls Generated');
-  } catch (err) {
-    console.log(err);
   }
-}
 
+  // Helper function to extract individual adjustments
+  private extractIndividualAdjustment(data: any[], userId: string, allowance: boolean, percentage: boolean) {
+    return data
+      .filter((adj: any) =>
+        adj.empId === userId && adj.allowance === allowance && adj.isPercentage === percentage
+      )
+      .map((adj: any) => ({ label: adj.label, amount: adj.amount }));
+  }
 
-async findAll(search?: string, orgId?: string) {
-  try {
-    const where: any = {};
+  async generatePayrollsForAll(dto: Prisma.PayrollCreateInput, orgId: string): Promise<any> {
+    try {
+      const users = await this.databaseService.user.findMany({
+        where: { organizationId: orgId },
+      });
 
-    if (orgId) {
-      where.orgId = orgId;
+      const payeData = await this.databaseService.payeTaxSlab.findMany({
+        where: { orgId },
+      });
+
+      const allAdjustments = await this.databaseService.salaryAdjustments.findMany({
+        where: { orgId },
+      });
+
+      const allIndividualAdjustments = await this.databaseService.individualSalaryAdjustments.findMany({
+        where: { orgId },
+      });
+
+      const employerFundRate = allAdjustments.find((adj) => adj.label === 'EmployerFund')?.amount || 0;
+      const ETF = allAdjustments.find((adj) => adj.label === 'ETF')?.amount || 0;
+
+      const range = dto.range;
+      const month = dto.month;
+
+      // Extraction of General Adjustments
+      const allAllowanceP = this.extractAdjustments(allAdjustments, true, true);
+      const allAllowanceV = this.extractAdjustments(allAdjustments, true, false);
+      const allDeductionV = this.extractAdjustments(allAdjustments, false, false);
+
+      // Filter Out Company Contributions from Employee deductions
+      const allDeductionP = allAdjustments
+        .filter(
+          (adj) =>
+            adj.isPercentage &&
+            !adj.allowance &&
+            !['ETF', 'EmployerFund'].includes(adj.label)
+        )
+        .map((adj) => ({ label: adj.label, amount: adj.amount }));
+
+      // Process Individual Adjustments for each user
+      for (const user of users) {
+        const indiAllowanceP = this.extractIndividualAdjustment(
+          allIndividualAdjustments,
+          user.id,
+          true,
+          true
+        );
+        const indiAllowanceV = this.extractIndividualAdjustment(
+          allIndividualAdjustments,
+          user.id,
+          true,
+          false
+        );
+        const indiDeductionsP = this.extractIndividualAdjustment(
+          allIndividualAdjustments,
+          user.id,
+          false,
+          true
+        );
+        const indiDeductionsV = this.extractIndividualAdjustment(
+          allIndividualAdjustments,
+          user.id,
+          false,
+          false
+        );
+
+        // Get meal cost for this user
+        const mealResult = await this.ordersService.getMealCost(user.id, orgId, range[0], range[1]);
+        const mealCost = mealResult.mealCost || 0;
+        indiDeductionsV.push({ label: 'Meal Consumption', amount: mealCost });
+
+        // Merging Individual Adjustments and General Adjustments
+        const allowanceP = [...indiAllowanceP, ...allAllowanceP];
+        const allowanceV = [...indiAllowanceV, ...allAllowanceV];
+        const deductionsP = [...indiDeductionsP, ...allDeductionP];
+        const deductionsV = [...indiDeductionsV, ...allDeductionV];
+
+        // Passing Data to receive calculated Data
+        const values = calculateSalary(
+          {
+            basicSalary: user.salary,
+            allowanceP,
+            allowanceV,
+            deductionsP,
+            deductionsV,
+          },
+          payeData
+        );
+
+        // Create Payroll Record
+        const payroll = await this.create({
+          employee: { connect: { id: user.id } },
+          organization: { connect: { id: orgId } },
+          month: month,
+          netPay: values.netSalary,
+          payrollPdf: `payrolls/${user.id}/${user.id}-${month}.pdf`,
+        });
+
+        // Passing Calculated Data & Payroll record Data for PDF generation
+        await generatePayslip({
+          employee: user,
+          values,
+          payroll: {
+            id: payroll.id,
+            createdAt: payroll.createdAt,
+          },
+          employerFundRate,
+          ETF,
+          month,
+          firebaseService: this.firebaseService,
+        });
+      }
+
+      console.log('Payrolls Generated');
+      return { success: true, message: 'Payrolls generated successfully' };
+    } catch (err) {
+      console.log(err);
+      throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+  }
 
-    if (search) {
-      where.OR = [
-        { empId: { contains: search, mode: 'insensitive' } },
-      ];
-    }
+  async findAll(search?: string, orgId?: string) {
+    try {
+      const where: any = {};
 
-    const payrolls = await this.databaseService.payroll.findMany({
-      include: {
-        employee: true,
-      },
-      where,
-    });
+      if (orgId) {
+        where.orgId = orgId;
+      }
 
-    if (payrolls) {
+      if (search) {
+        where.OR = [
+          { empId: { contains: search, mode: 'insensitive' } },
+        ];
+      }
+
+      const payrolls = await this.databaseService.payroll.findMany({
+        include: {
+          employee: true,
+        },
+        where,
+      });
+
       return payrolls;
-    } else {
-      throw new HttpException('No Payrolls', HttpStatus.NOT_FOUND);
+    } catch (err) {
+      throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-  } catch (err) {
-    throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
   }
-}
 
-  async findOne(empId: string,month:string) {
+  async findOne(empId: string, month: string) {
     try {
       const payroll = await this.databaseService.payroll.findFirst({
         where: {
@@ -222,7 +251,7 @@ async findAll(search?: string, orgId?: string) {
         },
       });
       if (payroll) {
-        await this.databaseService.payroll.update({
+        return await this.databaseService.payroll.update({
           where: {
             id,
           },
@@ -244,7 +273,7 @@ async findAll(search?: string, orgId?: string) {
         },
       });
       if (payroll) {
-        await this.databaseService.payroll.delete({
+        return await this.databaseService.payroll.delete({
           where: {
             id,
           },
@@ -257,27 +286,27 @@ async findAll(search?: string, orgId?: string) {
     }
   }
 
-async deleteByMonthAndEmp(empId: string, month: string) {
-  try {
-    return await this.databaseService.payroll.deleteMany({
-      where: { empId, month },
-    });
-  } catch (err) {
-    throw new Error("Failed to delete payroll(s) for employee and month");
+  async deleteByMonthAndEmp(empId: string, month: string) {
+    try {
+      return await this.databaseService.payroll.deleteMany({
+        where: { empId, month },
+      });
+    } catch (err) {
+      throw new HttpException('Failed to delete payroll(s) for employee and month', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
-}
-async deleteByMonth(month: string, orgId: string) {
-  try {
-    const result=await this.databaseService.payroll.deleteMany({
-      where: {
-        month,
-        orgId, 
-      },
-    });
-    return { deletedCount: result.count };
-  } catch (err) {
-    throw new Error(err);
-  }
-}
-}
 
+  async deleteByMonth(month: string, orgId: string) {
+    try {
+      const result = await this.databaseService.payroll.deleteMany({
+        where: {
+          month,
+          orgId,
+        },
+      });
+      return { deletedCount: result.count };
+    } catch (err) {
+      throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+}

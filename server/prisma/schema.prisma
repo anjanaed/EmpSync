@@ -24,22 +24,33 @@ model Organization {
   createdAt               DateTime @default(now())
   updatedAt               DateTime @updatedAt
   users                   User[]
+  fingerprints                Fingerprint[]
+  ingredients                 Ingredient[]
+  payrolls                    Payroll[]
+  meals                       Meal[]
+  salaryAdjustments           SalaryAdjustments[]
+  individualSalaryAdjustments IndividualSalaryAdjustments[]
+  orders                      Order[]
+  payeTaxSlabs                PayeTaxSlab[]
+  mealTypes                   MealType[]
+  ScheduledMeals             ScheduledMeal[]
 }
 
 model Fingerprint {
   thumbid String @id
   orgId   String
   empId   String
+  org      Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
 }
 
 model User {
   id             String        @id
-  empNo          String?
+  empNo          String
   name           String
   role           String
   dob            String?
   telephone      String?
-  gender         String?
+  gender         Gender
   address        String?
   email          String        @unique
   salary         Int?
@@ -52,7 +63,15 @@ model User {
   organizationId String
   organization   Organization? @relation(fields: [organizationId], references: [id])
   permissions    Permission[]
+  userPermissions UserPermission[]
   createdAt      DateTime      @default(now())
+  individualSalaryAdjustments IndividualSalaryAdjustments[] 
+}
+
+enum Gender {
+  Male
+  Female
+  Other
 }
 
 // Permission model
@@ -62,8 +81,20 @@ model Permission {
   action    String
   role      String
   users     User[] // For direct user permissions
+  userPermissions UserPermission[]
   createdAt DateTime @default(now())
 }
+
+model UserPermission {
+  id           Int         @id @default(autoincrement())
+  userId       String
+  permissionId String
+  user         User        @relation(fields: [userId], references: [id])
+  permission   Permission  @relation(fields: [permissionId], references: [id])
+
+  @@unique([userId, permissionId])
+}
+
 
 model Ingredient {
   id             Int              @id @default(autoincrement())
@@ -71,6 +102,7 @@ model Ingredient {
   name           String
   createdAt      DateTime         @default(now())
   usedInMeals    MealIngredient[]
+  organization Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
 }
 
 
@@ -84,6 +116,8 @@ model Payroll {
   netPay     Float
   payrollPdf String
   createdAt  DateTime   @default(now())
+  organization Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  @@unique([id, month])
 }
 
 model Meal {
@@ -100,6 +134,7 @@ model Meal {
   createdAt   DateTime         @default(now())
   ingredients MealIngredient[]
   schedules   ScheduledMeal[]
+  organization Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
 }
 
 model MealIngredient {
@@ -117,6 +152,7 @@ model SalaryAdjustments {
   isPercentage Boolean //Percentage or Value
   allowance    Boolean //Allowance or Deduction
   amount       Float?
+  organization Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
 }
 
 model IndividualSalaryAdjustments {
@@ -127,6 +163,8 @@ model IndividualSalaryAdjustments {
   isPercentage Boolean
   allowance    Boolean
   amount       Float
+  employee User @relation(fields: [empId], references: [id], onDelete: Cascade)
+  organization Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
 }
 
 model Order {
@@ -139,6 +177,7 @@ model Order {
   orderPlacedTime DateTime @default(now()) // Store the exact time the order was placed in Sri Lankan time zone
   price           Float
   serve           Boolean  @default(false)
+  organization Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
 }
 
 model ScheduledMeal {
@@ -148,6 +187,7 @@ model ScheduledMeal {
   mealTypeId Int
   mealType   MealType @relation(fields: [mealTypeId], references: [id], onDelete: Cascade)
   meals      Meal[]
+  organization Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
 
   @@unique([date, mealTypeId])
 }
@@ -159,6 +199,7 @@ model PayeTaxSlab {
   lowerLimit Float
   upperLimit Float?
   taxRate    Float
+  organization Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
 }
 
 model MealType {
@@ -170,4 +211,5 @@ model MealType {
   isDeleted Boolean  @default(false)
   schedules ScheduledMeal[]
   date      DateTime
+  organization Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
 }
