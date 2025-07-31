@@ -170,4 +170,86 @@ export class OrdersService {
     };
   }
 
+  async getMealOrderAnalytics(orgId: string) {
+  try {
+    
+    const orders = await this.databaseService.order.findMany({
+      where: { orgId },
+    });
+
+    if (!orders || orders.length === 0) {
+      return {
+        orgId,
+        totalOrders: 0,
+        mealAnalytics: [],
+      };
+    }
+
+    
+    const mealCounts = new Map<number, number>();
+    let totalMealOrders = 0;
+
+    orders.forEach(order => {
+      if (order.meals && Array.isArray(order.meals)) {
+        order.meals.forEach(mealString => {
+          // Parse "mealId:quantity" format
+          const [mealIdStr, quantityStr] = mealString.split(':');
+          const mealId = parseInt(mealIdStr);
+          const quantity = parseInt(quantityStr) || 1;
+
+          if (!isNaN(mealId)) {
+            const currentCount = mealCounts.get(mealId) || 0;
+            mealCounts.set(mealId, currentCount + quantity);
+            totalMealOrders += quantity;
+          }
+        });
+      }
+    });
+
+    //  Get meal details for all meal IDs
+    const mealIds = Array.from(mealCounts.keys());
+    const meals = await this.databaseService.meal.findMany({
+      where: {
+        id: { in: mealIds },
+        orgId, 
+      },
+      select: {
+        id: true,
+        nameEnglish: true,
+      },
+    });
+
+  
+    const mealAnalytics = meals.map(meal => {
+      const orderCount = mealCounts.get(meal.id) || 0;
+      const percentage = totalMealOrders > 0 
+        ? Math.round((orderCount / totalMealOrders) * 100 * 100) / 100 
+        : 0;
+
+      return {
+        mealId: meal.id,
+        mealName: meal.nameEnglish,
+        orderCount,
+        percentage,
+      };
+    });
+
+    // Sort by order count (descending)
+    mealAnalytics.sort((a, b) => b.orderCount - a.orderCount);
+
+    return {
+      orgId,
+      totalOrders: orders.length,
+      totalMealOrders,
+      mealAnalytics,
+    };
+
+  } catch (err) {
+    throw new HttpException(
+      `Error fetching meal analytics: ${err.message}`,
+      HttpStatus.INTERNAL_SERVER_ERROR
+    );
+  }
+}
+
 }
