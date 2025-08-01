@@ -62,7 +62,7 @@ const Cart = ({
                 "  Tap to Show Details  "
               ) : (
                 <>
-                  Tap to Show Token <QrcodeOutlined />
+                  Tap to Show Token 
                 </>
               )}
             </Text>
@@ -349,67 +349,81 @@ const Meals = () => {
         onChange={setActiveTab}
         centered
         className={styles.tabs}
-        tabBarStyle={{ marginBottom: 24 }}
-      >
-        <TabPane tab="Current Orders" key="current">
-          {currentOrders.length > 0 ? (
-            <div className={styles.orderGrid}>
-              {currentOrders.map((order) => (
-                <Cart
-                  key={order.id}
-                  order={order}
-                  mealDetails={mealDetails}
-                  mealTypes={mealTypes}
-                  onCancelOrder={handleCancelOrder}
-                  isCancelable={isCancelable}
-                />
-              ))}
-            </div>
-          ) : (
-            <Card className={styles.emptyCard}>
-              <Title level={4}>No Current Orders</Title>
-              <Text>You don't have any active orders.</Text>
-            </Card>
-          )}
-        </TabPane>
-        <TabPane tab="Past Orders" key="past">
-          {pastOrders.length > 0 ? (
-            <div>
-              <Calendar
-                fullscreen={false}
-                onSelect={handleDateSelect}
-                className={styles.calendar}
-              />
-              <Modal
-                title="Orders for Selected Date"
-                open={isModalVisible}
-                onCancel={handleModalClose}
-                footer={null}
-                className={styles.modal}
-              >
-                {selectedDateOrders.length > 0 ? (
-                  selectedDateOrders.map((order) => (
+        tabBarStyle={{ 
+          marginBottom: 0,
+          borderBottom: 'none',
+          fontSize: '16px',
+          fontWeight: 600
+        }}
+        items={[
+          {
+            key: "current",
+            label: "Current Orders",
+            children: (
+              currentOrders.length > 0 ? (
+                <div className={styles.orderGrid}>
+                  {currentOrders.map((order) => (
                     <Cart
                       key={order.id}
                       order={order}
                       mealDetails={mealDetails}
                       mealTypes={mealTypes}
-                      isReadOnly={true} // Pass the new prop to disable cancel button and QR code
+                      onCancelOrder={handleCancelOrder}
+                      isCancelable={isCancelable}
                     />
-                  ))
-                ) : (
-                  <Text>No orders found for this date.</Text>
-                )}
-              </Modal>
-            </div>
-          ) : (
-            <Card className={styles.emptyCard}>
-              <Title level={4}>No Past Orders</Title>
-              <Text>You don't have any completed orders.</Text>
-            </Card>
-          )}
-        </TabPane>
-      </Tabs>
+                  ))}
+                </div>
+              ) : (
+                <Card className={styles.emptyCard}>
+                  <Title level={4}>No Current Orders</Title>
+                  <Text>You don't have any active orders.</Text>
+                </Card>
+              )
+            )
+          },
+          {
+            key: "past",
+            label: "Past Orders",
+            children: (
+              pastOrders.length > 0 ? (
+                <div>
+                  <Calendar
+                    fullscreen={false}
+                    onSelect={handleDateSelect}
+                    className={styles.calendar}
+                  />
+                  <Modal
+                    title="Orders for Selected Date"
+                    open={isModalVisible}
+                    onCancel={handleModalClose}
+                    footer={null}
+                    className={styles.modal}
+                  >
+                    {selectedDateOrders.length > 0 ? (
+                      selectedDateOrders.map((order) => (
+                        <Cart
+                          key={order.id}
+                          order={order}
+                          mealDetails={mealDetails}
+                          mealTypes={mealTypes}
+                          isReadOnly={true}
+                        />
+                      ))
+                    ) : (
+                      <Text>No orders found for this date.</Text>
+                    )}
+                  </Modal>
+                </div>
+              ) : (
+                <Card className={styles.emptyCard}>
+                  <Title level={4}>No Past Orders</Title>
+                  <Text>You don't have any completed orders.</Text>
+                </Card>
+              )
+            )
+          }
+        ]}
+      />
     </div>
   );
 };
