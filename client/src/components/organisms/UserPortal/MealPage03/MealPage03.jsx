@@ -477,7 +477,7 @@ const MealPage03 = () => {
               </motion.div>
             ) : (
               <Card
-                bodyStyle={{ padding: "24px" }}
+                styles={{ body: { padding: "24px" } }}
                 title={
                   <div style={{ textAlign: 'left' }}>
                     <Title level={1} className={styles.cardTitle}>
@@ -489,7 +489,7 @@ const MealPage03 = () => {
                   </div>
                 }
                 className={styles.cardContainer}
-                bordered={false}
+                variant="filled"
               >
                 <div className={styles.dateButtonGroup}>
                   <Button
@@ -655,7 +655,7 @@ const MealPage03 = () => {
                               transition={{ delay: meal.id * 0.1 }}
                             >
                               <Card
-                                bodyStyle={{ padding: 16 }}
+                                styles={{ body: { padding: 16 } }}
                                 cover={
                                   <div style={{ position: 'relative' }}>
                                     <img
@@ -697,7 +697,7 @@ const MealPage03 = () => {
                                   !isPastDue && toggleOrderItem(meal.id)
                                 }
                                 hoverable={!isPastDue}
-                                bordered={false}
+                                variant="outlined"
                               >
                                 <div className={styles.mealInfo}>
                                   <Title level={4} className={styles.mealTitle}>
@@ -746,7 +746,7 @@ const MealPage03 = () => {
                   <ShoppingCartOutlined /> Your Cart
                 </div>
               }
-              visible={isCartVisible}
+              open={isCartVisible}
               onCancel={() => setIsCartVisible(false)}
               footer={null}
               className={styles.cartModal}
@@ -903,7 +903,7 @@ const MealPage03 = () => {
                   <RiAiGenerate /> Meal Suggestions
                 </div>
               }
-              visible={showSuggestions}
+              open={showSuggestions}
               onCancel={() => setShowSuggestions(false)}
               footer={null}
               className={styles.suggestionsModal}
@@ -934,7 +934,7 @@ const MealPage03 = () => {
                         return (
                           <Col xs={24} sm={12} md={8} key={suggestion.mealId}>
                             <Card
-                              bodyStyle={{ padding: 12 }}
+                              styles={{ body: { padding: 12 } }}
                               cover={
                                 <img
                                   alt={meal.nameEnglish}
