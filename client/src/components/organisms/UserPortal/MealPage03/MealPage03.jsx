@@ -524,7 +524,6 @@ const MealPage03 = () => {
                         value={selectedMealTime}
                         onChange={(value) => setSelectedMealTime(value)}
                         className={styles.mobileDropdown}
-                        size="large"
                         style={{ width: '100%' }}
                         placeholder="Select meal time"
                       >
@@ -577,7 +576,11 @@ const MealPage03 = () => {
                   <Tabs
                     activeKey={selectedMealTime}
                     onChange={(key) => setSelectedMealTime(Number(key))}
-                    tabBarStyle={{ fontWeight: "bold" }}
+                    tabBarStyle={{ 
+                      fontWeight: "600",
+                      borderBottom: "2px solid #f0f0f0",
+                      marginBottom: "20px"
+                    }}
                     tabBarExtraContent={
                       <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
                         <Button
@@ -879,7 +882,6 @@ const MealPage03 = () => {
                     <Button
                       type="primary"
                       block
-                      size="large"
                       onClick={placeOrder}
                       disabled={orderItems.length === 0}
                       className={`${styles.placeOrderButton} ${
