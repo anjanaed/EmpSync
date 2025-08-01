@@ -1421,6 +1421,376 @@
   .mobileHeader {
     display: none;
   }
+  
+  /* Desktop UberEats-like Layout Improvements */
+  .container {
+    background: #f8f8f8;
+    min-height: 100vh;
+    transition: all 0.3s ease;
+  }
+  
+  .layout {
+    background: #f8f8f8;
+    max-width: 1200px;
+    margin: 0 auto;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+  }
+  
+  .content {
+    padding: 32px 24px;
+    max-width: 100%;
+    margin: 0;
+  }
+  
+  /* Card container for desktop UberEats style */
+  .cardContainer {
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    border: none;
+    overflow: visible;
+    margin: 0;
+    padding: 32px;
+  }
+  
+  /* Header section styling */
+  .cardTitle {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #000000;
+    margin-bottom: 8px;
+    line-height: 1.2;
+  }
+  
+  /* Date buttons for desktop */
+  .dateButtonGroup {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 32px;
+    justify-content: flex-start;
+  }
+  
+  .dateButton {
+    background: #FFFFFF;
+    border: 2px solid #E5E5E5;
+    color: #5C5C5C;
+    border-radius: 500px;
+    padding: 10px 20px;
+    font-weight: 600;
+    font-size: 14px;
+    height: auto;
+    transition: all 0.3s ease;
+    min-width: 160px;
+  }
+  
+  .dateButton:hover {
+    border-color: #06C167;
+    color: #06C167;
+    background: #FFFFFF;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(6, 193, 103, 0.15);
+  }
+  
+  .selectedDateButton {
+    background: #000000;
+    border-color: #000000;
+    color: #FFFFFF;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+  
+  .selectedDateButton:hover {
+    background: #1a1a1a;
+    border-color: #1a1a1a;
+    color: #FFFFFF;
+  }
+  
+  /* Tab styling for desktop */
+  .tabLabel {
+    font-size: 16px;
+    font-weight: 600;
+    color: #000000;
+    padding: 8px 0;
+  }
+  
+  /* Ant Design Tab overrides for UberEats style */
+  :global(.ant-tabs-tab) {
+    padding: 12px 20px !important;
+    font-size: 16px !important;
+    font-weight: 600 !important;
+  }
+  
+  :global(.ant-tabs-tab-active) {
+    color: #06C167 !important;
+  }
+  
+  :global(.ant-tabs-tab:hover) {
+    color: #06C167 !important;
+  }
+  
+  :global(.ant-tabs-ink-bar) {
+    background: #06C167 !important;
+    height: 3px !important;
+  }
+  
+  :global(.ant-tabs-nav) {
+    margin-bottom: 32px !important;
+  }
+  
+  /* Extended meal grid for desktop - LONGER CONTENT AREA */
+  .mealList {
+    padding: 24px 0;
+    min-height: 80vh; /* Increased from 70vh to make content longer */
+    max-height: none; /* Remove height restriction */
+    overflow-y: visible; /* Allow natural scrolling */
+  }
+  
+  .mealCard {
+    border-radius: 16px;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    border: none;
+    background: #FFFFFF;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    cursor: pointer;
+    position: relative;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .mealCard:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+  }
+  
+  .selectedMealCard {
+    border: 3px solid #06C167;
+    background: #FFFFFF;
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(6, 193, 103, 0.2);
+  }
+  
+  .mealImage {
+    height: 200px;
+    object-fit: cover;
+    width: 100%;
+    transition: transform 0.3s ease;
+  }
+  
+  .mealCard:hover .mealImage {
+    transform: scale(1.05);
+  }
+  
+  .mealInfo {
+    padding: 20px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  
+  .mealTitle {
+    font-size: 18px;
+    font-weight: 700;
+    color: #000000;
+    margin-bottom: 8px;
+    line-height: 1.3;
+  }
+  
+  .descriptionText {
+    font-size: 14px;
+    color: #737373;
+    line-height: 1.5;
+    margin-bottom: 16px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    flex: 1;
+  }
+  
+  .priceContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+  }
+  
+  .priceText {
+    font-size: 18px;
+    font-weight: 700;
+    color: #000000;
+  }
+  
+  /* Add button for desktop hover */
+  .desktopAddButton {
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.3s ease;
+    background: #06C167;
+    border: none;
+    border-radius: 6px;
+    color: white;
+    font-weight: 600;
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+  
+  .mealCard:hover .desktopAddButton {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  .desktopAddButton:hover {
+    background: #05a85a;
+    color: white;
+  }
+  
+  /* Filter and cart buttons for desktop */
+  .filterButton {
+    background: #FFFFFF;
+    color: #000000;
+    border: 2px solid #E5E5E5;
+    border-radius: 500px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    transition: all 0.3s ease;
+    font-weight: 600;
+    font-size: 14px;
+    height: 36px;
+  }
+  
+  .filterButton:hover {
+    background: #F5F5F5;
+    border-color: #06C167;
+    color: #06C167;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(6, 193, 103, 0.15);
+  }
+  
+  .cartButton {
+    background: #000000;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 500px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    transition: all 0.3s ease;
+    font-size: 14px;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+    height: 36px;
+  }
+  
+  .cartButton:hover {
+    background: #1a1a1a;
+    color: #FFFFFF;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+  }
+  
+  /* Ensure proper grid layout */
+  .tabContent {
+    height: 100%;
+  }
+  
+  /* Cart modal for desktop */
+  .cartModal {
+    width: 600px;
+    max-width: 90vw;
+    top: 40px;
+  }
+  
+  .cartModal .ant-modal-content {
+    border-radius: 16px;
+    padding: 0;
+  }
+  
+  .cartTitle {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .orderSummary {
+    max-height: 70vh;
+    overflow-y: auto;
+  }
+  
+  .placeOrderButton {
+    height: 44px;
+    font-size: 15px;
+    font-weight: 600;
+    border-radius: 500px;
+    background: #06C167;
+    color: #FFFFFF;
+    border: none;
+    transition: all 0.3s ease;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+    margin-top: 20px;
+  }
+  
+  .placeOrderButton:hover,
+  .placeOrderButton:focus {
+    background: #05a85a;
+    color: #FFFFFF;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(6, 193, 103, 0.3);
+  }
+  
+  /* Suggestions modal for desktop */
+  .suggestionsModal {
+    width: 900px;
+    max-width: 95vw;
+    top: 40px;
+  }
+  
+  .suggestionsModal .ant-modal-content {
+    border-radius: 16px;
+  }
+}
+
+/* Extra large screens (1400px+) - Even longer content */
+@media (min-width: 1400px) {
+  .layout {
+    max-width: 1400px;
+  }
+  
+  .content {
+    padding: 40px 32px;
+  }
+  
+  .cardContainer {
+    padding: 40px;
+  }
+  
+  .cardTitle {
+    font-size: 3rem;
+  }
+  
+  .mealList {
+    min-height: 85vh; /* Even longer on very large screens */
+    padding: 32px 0;
+  }
+  
+  .mealCard {
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  
+  .mealCard:hover {
+    transform: translateY(-12px);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.18);
+  }
 }
 
 /* Add these dark mode styles for the loading screen */
@@ -1434,8 +1804,133 @@
 }
 
 [data-theme="dark"] .loadingWrapper {
-
   background: #1a1a1a;
+}
+
+/* Dark mode desktop improvements */
+@media (min-width: 769px) {
+  [data-theme="dark"] .container {
+    background: #1a1a1a;
+  }
+  
+  [data-theme="dark"] .layout {
+    background: #1a1a1a;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+  }
+  
+  [data-theme="dark"] .cardContainer {
+    background: #2a2a2a;
+    border: 1px solid #404040;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+  
+  [data-theme="dark"] .cardTitle {
+    color: #ffffff;
+  }
+  
+  [data-theme="dark"] .dateButton {
+    background: #404040;
+    color: #ffffff;
+    border: 2px solid #555555;
+  }
+  
+  [data-theme="dark"] .dateButton:hover {
+    background: #555555;
+    color: #ffffff;
+    border-color: #06C167;
+    box-shadow: 0 4px 12px rgba(6, 193, 103, 0.15);
+  }
+  
+  [data-theme="dark"] .selectedDateButton {
+    background: #06C167;
+    color: #ffffff;
+    border-color: #06C167;
+  }
+  
+  [data-theme="dark"] .selectedDateButton:hover {
+    background: #05a85a;
+    color: #ffffff;
+    border-color: #05a85a;
+  }
+  
+  [data-theme="dark"] .filterButton {
+    background: #404040;
+    color: #ffffff;
+    border: 2px solid #555555;
+  }
+  
+  [data-theme="dark"] .filterButton:hover {
+    background: #555555;
+    border-color: #06C167;
+    color: #06C167;
+  }
+  
+  [data-theme="dark"] .cartButton {
+    background: #404040;
+    color: #ffffff;
+    border: 1px solid #555555;
+  }
+  
+  [data-theme="dark"] .cartButton:hover {
+    background: #555555;
+    color: #ffffff;
+  }
+  
+  [data-theme="dark"] .mealList {
+    background: #1a1a1a;
+  }
+  
+  [data-theme="dark"] .mealCard {
+    background: #333333;
+    border: 1px solid #555555;
+  }
+  
+  [data-theme="dark"] .mealCard:hover {
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+  }
+  
+  [data-theme="dark"] .selectedMealCard {
+    border: 3px solid #06C167;
+    background: #1a3d2e;
+  }
+  
+  [data-theme="dark"] .mealTitle {
+    color: #ffffff;
+  }
+  
+  [data-theme="dark"] .descriptionText {
+    color: #cccccc;
+  }
+  
+  [data-theme="dark"] .priceText {
+    color: #ffffff;
+  }
+  
+  [data-theme="dark"] .desktopAddButton {
+    background: #06C167;
+    color: white;
+  }
+  
+  [data-theme="dark"] .desktopAddButton:hover {
+    background: #05a85a;
+    color: white;
+  }
+  
+  [data-theme="dark"] .cartTitle {
+    color: #ffffff;
+  }
+  
+  [data-theme="dark"] .tabLabel {
+    color: #ffffff;
+  }
+  
+  [data-theme="dark"] .unavailableTab {
+    color: #888888;
+  }
+  
+  [data-theme="dark"] .selectedTab {
+    color: #06C167;
+  }
 }
 
 
