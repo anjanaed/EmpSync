@@ -8,6 +8,7 @@ import SearchBar from "../../../molecules/SearchBar/SearchBar.jsx";
 import Loading from "../../../atoms/loading/loading.jsx";
 import { useAuth } from "../../../../contexts/AuthContext.jsx";
 import { IoMdRemoveCircleOutline } from "react-icons/io";
+import { usePopup } from "../../../../contexts/PopupContext.jsx";
 
 const customTheme = {
   components: {
@@ -28,6 +29,8 @@ const Payslip = () => {
   const [search, setSearch] = useState();
   const [payslip, setPayslip] = useState();
   const urL = import.meta.env.VITE_BASE_URL;
+  const { success, error } = usePopup();
+
   const { authData } = useAuth();
   const token = authData?.accessToken;
 
@@ -36,7 +39,7 @@ const Payslip = () => {
       const res = await axios.get(`${urL}/payroll`, {
         params: {
           search: search || undefined,
-          orgId: authData?.orgId, 
+          orgId: authData?.orgId,
         },
         headers: {
           Authorization: `Bearer ${token}`,
@@ -70,9 +73,10 @@ const Payslip = () => {
         }
       );
       fetchSlips(search);
+      success("Payslip Removed ");
     } catch (err) {
       console.log(err);
-    }finally {
+    } finally {
       setLoading(false);
     }
   };

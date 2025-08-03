@@ -43,13 +43,19 @@ describe('MealService', () => {
       nameSinhala: 'බත්',
       nameTamil: 'சோறு',
       price: 500,
-      orgId: 'ORG1',
       isDeleted: false,
+      organization: {
+        connect: { id: 'ORG1' },
+      },
     };
     const ingredients = [{ ingredientId: 1 }];
     mockDatabaseService.meal.create.mockResolvedValue('createdMeal');
 
-    const result = await service.createWithIngredients(mealData, ingredients, 'ORG1');
+    const result = await service.createWithIngredients(
+      mealData,
+      ingredients,
+      'ORG1',
+    );
     expect(result).toBe('createdMeal');
   });
 
@@ -76,7 +82,12 @@ describe('MealService', () => {
       price: { set: 600 },
     };
 
-    const result = await service.updateWithIngredients(1, mealData, [{ ingredientId: 1 }], 'ORG1');
+    const result = await service.updateWithIngredients(
+      1,
+      mealData,
+      [{ ingredientId: 1 }],
+      'ORG1',
+    );
     expect(result).toBe('updatedMeal');
   });
 
@@ -96,6 +107,8 @@ describe('MealService', () => {
 
   it('should throw NotFoundException if meal not found during delete', async () => {
     mockDatabaseService.meal.findFirst.mockResolvedValue(null);
-    await expect(service.softDelete(1, 'ORG1')).rejects.toThrow(NotFoundException);
+    await expect(service.softDelete(1, 'ORG1')).rejects.toThrow(
+      NotFoundException,
+    );
   });
 });

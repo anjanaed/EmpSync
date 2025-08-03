@@ -40,14 +40,18 @@ const PermissionsList = ({
 
   // Update users when organization changes
   useEffect(() => {
-    if (selectedOrganization) {
-      const org = organizations.find(org => org.id === selectedOrganization);
-      setUsers(org?.users || []);
-      setSelectedUser(null);
-      setRolePermissions([]);
-      localStorage.setItem('selectedOrganizationId', selectedOrganization);
-    }
-  }, [selectedOrganization, organizations]);
+      if (selectedOrganization) {
+        const org = organizations.find(org => org.id === selectedOrganization);
+        // Filter users by role
+        const filteredUsers = (org?.users || []).filter(
+          user => user.role === 'KITCHEN_ADMIN' || user.role === 'HR_ADMIN'
+        );
+        setUsers(filteredUsers);
+        setSelectedUser(null);
+        setRolePermissions([]);
+        localStorage.setItem('selectedOrganizationId', selectedOrganization);
+      }
+    }, [selectedOrganization, organizations]);
 
   useEffect(() => {
     if (selectedUser) {

@@ -23,8 +23,8 @@ import Loading from "../../../atoms/loading/loading.jsx";
 import { IoMdRemoveCircleOutline } from "react-icons/io";
 import PayeModal from "../../../templates/HR/PayeModal/PayeModal.jsx";
 import { useAuth } from "../../../../contexts/AuthContext.jsx";
-
 import { usePopup } from "../../../../contexts/PopupContext.jsx";
+
 const { RangePicker } = DatePicker;
 
 const Payroll = () => {
@@ -49,11 +49,12 @@ const Payroll = () => {
   ]);
   const [loading, setLoading] = useState(true);
   const [pdfLoading, setPDFLoading] = useState(false);
+
   const handleAllowanceChange = () => {
     setIsAllowanceChecked(!isAllowanceChecked);
   };
 
-  //Format Month
+  // Format Month
   const handleMonthChange = (value) => {
     if (value) {
       const formattedMonth = value.format("MM~YYYY");
@@ -62,17 +63,16 @@ const Payroll = () => {
     }
   };
 
-  //Format Range
+  // Format Range
   const handleRangeChange = (dates) => {
     console.log(month);
     if (dates) {
       const formattedRange = [dates[0].toISOString(), dates[1].toISOString()];
-
       setRange(formattedRange);
     }
   };
 
-  //Add New Set of Fields
+  // Add New Set of Fields
   const handleNewIndividualAdjustment = () => {
     setIndividualAdjustment([
       ...individualAdjustment,
@@ -86,24 +86,29 @@ const Payroll = () => {
     ]);
   };
 
-  //Payroll Generation
-  const handleGenerate = async () => {
-    await form.validateFields([
-      "payrollMonth",
-      "epf",
-      "etf",
-      "EmpoyerFund",
-      "range",
-    ]);
+  // Prevent default form submission
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
+  };
 
-    //Sending ETF EPF data
+  // Payroll Generation
+  const handleGenerate = async () => {
     try {
+      // Validate all required fields
+      await form.validateFields([
+        "payrollMonth",
+        "epf",
+        "etf",
+        "EmployerFund",
+        "range",
+      ]);
+
       setPDFLoading(true);
 
-      //Update Predefined Adjustments
+      // Update Predefined Adjustments
       await handleEtfEpf();
 
-      //Remove Existing Payrolls with same month
+      // Remove Existing Payrolls with same month
       await axios.delete(`${urL}/payroll/delete-by-month/${month}`, {
         params: { orgId: authData?.orgId },
         headers: {
@@ -111,7 +116,7 @@ const Payroll = () => {
         },
       });
 
-      //Start calculations
+      // Start calculations
       await axios.post(
         `${urL}/payroll/calculate-all?orgId=${authData?.orgId}`,
         {
@@ -125,9 +130,13 @@ const Payroll = () => {
         }
       );
       success("Payrolls Generated Successfully");
-    } catch (err) {
-      console.log(err);
-      error("Payrolls Generation Failed");
+    } catch (validationError) {
+      if (validationError.errorFields) {
+        error("Please fill all required fields");
+      } else {
+        console.log(validationError);
+        error("Payrolls Generation Failed");
+      }
     } finally {
       setPDFLoading(false);
     }
@@ -155,7 +164,7 @@ const Payroll = () => {
     },
   };
 
-  //Remove General Adjustment
+  // Remove General Adjustment
   const handleAdjustmentDelete = async (id) => {
     setLoading(true);
     try {
@@ -169,12 +178,12 @@ const Payroll = () => {
       success("Adjustment Removed Successfully");
     } catch (err) {
       console.log(err);
-      error("Something wen Wrong");
+      error("Something went Wrong");
     }
     setLoading(false);
   };
 
-  //Fetch Data
+  // Fetch Data
   const fetchAdjustments = async () => {
     try {
       const res = await axios.get(`${urL}/adjustment`, {
@@ -183,7 +192,7 @@ const Payroll = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-      //Check Availability of Pre defined Fields & Set their Existing Values
+      // Check Availability of Pre defined Fields & Set their Existing Values
       const epfValue = res.data.find((adj) => adj.label == "EPF (Employee)");
       const etfValue = res.data.find((adj) => adj.label == "ETF");
       const employerFundValue = res.data.find(
@@ -201,7 +210,7 @@ const Payroll = () => {
         setEmployerFund(employerFundValue.amount);
         form.setFieldsValue({ EmployerFund: employerFundValue.amount });
       }
-      //Filter out pre defined fields for display
+      // Filter out pre defined fields for display
       const filteredRes = res.data.filter(
         (adj) =>
           adj.label !== "ETF" &&
@@ -215,21 +224,30 @@ const Payroll = () => {
     setLoading(false);
   };
 
-  //Submit Individual Adjustment
+  // Submit Individual Adjustment
   const handleIndiAdjustmentSave = async () => {
-    const hasValidAdjustment = individualAdjustment.some(
-      (adj) =>
-        adj.id.trim() !== "" && adj.details.trim() !== "" && adj.amount !== ""
-    );
-
-    if (!hasValidAdjustment) {
-      error("Please Add at least one Adjustment");
-      return;
-    }
-
-    setLoading(true);
-
     try {
+      // Validate individual adjustment fields
+      const fieldsToValidate = individualAdjustment.map((_, index) => [
+        [index, "name"],
+        [index, "des"], 
+        [index, "Amount"]
+      ]).flat();
+
+      await form.validateFields(fieldsToValidate);
+
+      const hasValidAdjustment = individualAdjustment.some(
+        (adj) =>
+          adj.id.trim() !== "" && adj.details.trim() !== "" && adj.amount !== ""
+      );
+
+      if (!hasValidAdjustment) {
+        error("Please Add at least one Adjustment");
+        return;
+      }
+
+      setLoading(true);
+
       const userRes = await axios.get(`${urL}/user`, {
         params: {
           orgId: authData?.orgId,
@@ -292,27 +310,34 @@ const Payroll = () => {
           isAllowance: true,
         },
       ]);
+      
       const preservedFields = form.getFieldsValue([
         "payrollMonth",
         "etf",
         "epf",
         "EmployerFund",
+        "range"
       ]);
       form.resetFields();
       form.setFieldsValue(preservedFields);
 
       success("Adjustments Updated Successfully");
-    } catch (err) {
-      console.log(err);
+    } catch (validationError) {
+      if (validationError.errorFields) {
+        error("Please fill all adjustment fields");
+      } else {
+        console.log(validationError);
+        error("Failed to save adjustments");
+      }
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   const handleEtfEpf = async () => {
     setLoading(true);
     try {
-      //Retrieve Pre defined field values
+      // Retrieve Pre defined field values
       const res = await axios.get(`${urL}/adjustment`, {
         params: { orgId: authData?.orgId },
         headers: {
@@ -326,6 +351,33 @@ const Payroll = () => {
         (adj) => adj.label == "EmployerFund"
       );
 
+      // EPF Payload
+      const epfPayload = {
+        label: "EPF (Employee)",
+        orgId: authData?.orgId,
+        isPercentage: true,
+        allowance: false,
+        amount: parseFloat(epf),
+      };
+
+      // ETF Payload
+      const etfPayload = {
+        label: "ETF",
+        isPercentage: true,
+        orgId: authData?.orgId,
+        allowance: false,
+        amount: parseFloat(etf),
+      };
+
+      // Employer Fund Payload
+      const employerPayload = {
+        label: "EmployerFund",
+        orgId: authData?.orgId,
+        isPercentage: true,
+        allowance: false,
+        amount: parseFloat(employerFund),
+      };
+
       // Update the record if changes are detected, or create a new one if it doesn't exist
       if (epfRecord) {
         if (epfRecord.amount != parseFloat(epf)) {
@@ -336,19 +388,13 @@ const Payroll = () => {
           });
         }
       } else {
-        const epfPayload = {
-          label: "EPF (Employee)",
-          orgId: authData?.orgId,
-          isPercentage: true,
-          allowance: false,
-          amount: parseFloat(epf),
-        };
         await axios.post(`${urL}/adjustment`, epfPayload, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
       }
+
       if (employerFundRecord) {
         if (employerFundRecord.amount != parseFloat(employerFund)) {
           await axios.put(
@@ -362,13 +408,6 @@ const Payroll = () => {
           );
         }
       } else {
-        const employerPayload = {
-          label: "EmployerFund",
-          orgId: authData?.orgId,
-          isPercentage: true,
-          allowance: false,
-          amount: parseFloat(employerFund),
-        };
         await axios.post(`${urL}/adjustment`, employerPayload, {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -389,13 +428,6 @@ const Payroll = () => {
           );
         }
       } else {
-        const etfPayload = {
-          label: "ETF",
-          isPercentage: true,
-          orgId: authData?.orgId,
-          allowance: false,
-          amount: parseFloat(etf),
-        };
         await axios.post(`${urL}/adjustment`, etfPayload, {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -422,7 +454,7 @@ const Payroll = () => {
   }
 
   return (
-    <Form form={form}>
+    <Form form={form} onFinish={handleFormSubmit}>
       {/* Modal 1 */}
       <Modal
         open={isModalOpen}
@@ -499,7 +531,6 @@ const Payroll = () => {
             <div className={styles.inputSet}>
               <label>Employer's Provident Fund (EPF) Rate</label>
               <br />
-
               <Form.Item
                 style={{ marginBottom: 10 }}
                 name="EmployerFund"
@@ -537,7 +568,11 @@ const Payroll = () => {
             ))}
 
             <div className={styles.dynamicInputSet}>
-              <button onClick={handleNewFields} className={styles.newFieldBtn}>
+              <button 
+                type="button"
+                onClick={handleNewFields} 
+                className={styles.newFieldBtn}
+              >
                 <BsPlusCircle size={13} /> Add New Field
               </button>
             </div>
@@ -552,11 +587,14 @@ const Payroll = () => {
             <div>
               <label>Payroll Period</label>
               <br />
-              <Form.Item style={{ marginBottom: 0 }} name="range" rules={[{ required: true, message: "Please Select range!" }]}>
+              <Form.Item 
+                style={{ marginBottom: 0 }} 
+                name="range" 
+                rules={[{ required: true, message: "Please Select range!" }]}
+              >
                 <RangePicker
                   style={{ width: "250px" }}
                   onChange={(dates) => handleRangeChange(dates)}
-                  
                 />
               </Form.Item>
             </div>
@@ -702,7 +740,6 @@ const Payroll = () => {
                     checked={adj.isPercentage}
                     onChange={() => {
                       handleAllowanceChange();
-
                       const newList = [...individualAdjustment];
                       newList[index].isPercentage = true;
                       setIndividualAdjustment(newList);
@@ -743,27 +780,32 @@ const Payroll = () => {
             </div>
           ))}
           <div className={styles.btnSet}>
-            <button onClick={handleNewIndividualAdjustment}>
+            <button type="button" onClick={handleNewIndividualAdjustment}>
               <BsPlusCircle size={13} />
               Add Adjustment
             </button>
-            <button onClick={handleIndiAdjustmentSave}>
+            <button type="button" onClick={handleIndiAdjustmentSave}>
               <FaRegSave size={13} /> Save Adjustment
             </button>
-            <button onClick={() => navigate("/adjustment")}>
+            <button type="button" onClick={() => navigate("/adjustment")}>
               <LuEye size={13} />
               View Adjustments
             </button>
           </div>
         </div>
         <div className={styles.genBtn}>
-          <button onClick={handleGenerate} className={styles.generateBtn}>
+          <button 
+            type="button"
+            onClick={handleGenerate} 
+            className={styles.generateBtn}
+          >
             <span className={styles.btnContent}>
               <MdCalculate size={19} />
               <span>Generate Payroll</span>
             </span>
           </button>
           <button
+            type="button"
             onClick={() => navigate("/payslip")}
             className={styles.generateBtn}
           >
