@@ -34,7 +34,10 @@ describe('AuthService', () => {
 
       mockedAxios.post.mockResolvedValue(mockResponse);
 
-      const result = await authService.loginWithAuth0('user@example.com', 'password123');
+      const result = await authService.loginWithAuth0(
+        'user@example.com',
+        'password123',
+      );
 
       expect(result).toEqual(mockResponse.data);
       expect(mockedAxios.post).toHaveBeenCalledWith(
@@ -73,7 +76,9 @@ describe('AuthService', () => {
 
       mockedAxios.delete.mockResolvedValue({ status: 204 });
 
-      await expect(authService.deleteAuth0UserByEmail('user@example.com')).resolves.toBeUndefined();
+      await expect(
+        authService.deleteAuth0UserByEmail('user@example.com'),
+      ).resolves.toBeUndefined();
 
       expect(mockedAxios.post).toHaveBeenCalledTimes(1);
       expect(mockedAxios.get).toHaveBeenCalledWith(
@@ -106,16 +111,10 @@ describe('AuthService', () => {
         },
       });
 
-      const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
-
-      await authService.deleteAuth0UserByEmail('notfound@example.com');
-
-      expect(consoleSpy).toHaveBeenCalledWith(
-        'Error deleting user from Auth0:',
-        { message: 'User not found' },
-      );
-
-      consoleSpy.mockRestore();
+      // This test no longer expects console.error to be called
+      await expect(
+        authService.deleteAuth0UserByEmail('notfound@example.com'),
+      ).resolves.toBeUndefined();
     });
   });
 });

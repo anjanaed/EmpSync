@@ -83,7 +83,7 @@ export class AuthService {
       );
       console.log(`User ${userId} deleted`) 
     } catch (error) {
-      console.error(
+      console.log(
         'Error deleting user from Auth0:',
         error.response?.data || error.message,
       );
