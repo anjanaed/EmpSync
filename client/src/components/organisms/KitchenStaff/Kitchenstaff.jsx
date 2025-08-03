@@ -104,7 +104,7 @@ const cartStyles = {
     borderRadius: "4px",
     fontSize: "12px",
     fontWeight: "500",
-    border: "1px solid #ffeaa7",
+    border: "1px solid #c3a7ffff",
   },
   
   closeButton: {
