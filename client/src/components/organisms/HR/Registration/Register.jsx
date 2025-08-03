@@ -13,7 +13,6 @@ import axios from "axios";
 import { usePopup } from "../../../../contexts/PopupContext.jsx";
 import { FaFileImport } from "react-icons/fa6";
 
-
 const { Option } = Select;
 
 const formItemLayout = {
@@ -53,7 +52,6 @@ const Register = () => {
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [name, setName] = useState(null);
   const [jobRole, setJobRole] = useState("");
-  const [customJobRole, setCustomJobRole] = useState(null);
   const [gender, setGender] = useState("");
   const [lang, setLang] = useState("");
   const [supId, setSupId] = useState(null);
@@ -65,11 +63,6 @@ const Register = () => {
   //Registering Process
   const handleRegister = async () => {
     setLoading(true);
-    let role = jobRole;
-    if (role === "Other") {
-      role = customJobRole;
-    }
-
     try {
       const token = authData?.accessToken;
 
@@ -77,7 +70,7 @@ const Register = () => {
         id,
         empNo,
         name,
-        role,
+        role:jobRole,
         dob,
         telephone: tel,
         gender,
@@ -186,7 +179,7 @@ const Register = () => {
           },
         }}
       >
-        <ImportModal/>
+        <ImportModal />
       </Modal>
       {menu == 1 && (
         <>
@@ -195,9 +188,10 @@ const Register = () => {
             <button
               className={styles.importBtn}
               onClick={() => setIsImportModalOpen(true)}
-            ><><FaFileImport />  Import
-            </>
-               
+            >
+              <>
+                <FaFileImport /> Import
+              </>
             </button>
           </div>
           <Form
@@ -311,63 +305,22 @@ const Register = () => {
                     <Option value="Other">Other</Option>
                   </Select>
                 </Form.Item>
-                <Form.Item label="Job Role" required>
-                  <Space.Compact style={{ display: "flex", width: "100%" }}>
-                    <Form.Item
-                      noStyle
-                      name="selectRole"
-                      style={{ flex: "1" }}
-                      rules={[
-                        {
-                          required: true,
-                          message: "Please select a role!",
-                        },
-                      ]}
-                    >
-                      <Select
-                        onChange={(value) => {
-                          setJobRole(value);
-                        }}
-                        style={{ width: "100%" }}
-                        placeholder="Select Role"
-                      >
-                        <Option value="HR_ADMIN">Human Resource Manager</Option>
-                        <Option value="KITCHEN_ADMIN">
-                          Kitchen Administrator
-                        </Option>
-                        <Option value="KITCHEN_STAFF">Kitchen Staff</Option>
-                        <Option value="Other">Other</Option>
-                      </Select>
-                    </Form.Item>
-
-                    <Form.Item
-                      noStyle
-                      name="customRole"
-                      style={{ flex: "2" }}
-                      rules={[
-                        ({ getFieldValue }) => ({
-                          validator(_, value) {
-                            if (
-                              getFieldValue("selectRole") === "Other" &&
-                              !value
-                            ) {
-                              return Promise.reject(
-                                "Please enter custom role!"
-                              );
-                            }
-                            return Promise.resolve();
-                          },
-                        }),
-                      ]}
-                    >
-                      <Input
-                        style={{ width: "100%" }}
-                        onChange={(e) => setCustomJobRole(e.target.value)}
-                        placeholder="If Other, Enter Job Role"
-                        disabled={jobRole !== "Other"}
-                      />
-                    </Form.Item>
-                  </Space.Compact>
+                <Form.Item
+                  name="jobRole"
+                  label="Job Role"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please enter job role!",
+                      whitespace: true,
+                    },
+                  ]}
+                >
+                  <Input
+                    placeholder="Enter Job Role"
+                    maxLength={50}
+                    onChange={(e) => setJobRole(e.target.value)}
+                  />
                 </Form.Item>
               </div>
               <div className={styles.sideOne}>
