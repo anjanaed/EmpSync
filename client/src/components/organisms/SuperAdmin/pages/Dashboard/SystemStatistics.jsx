@@ -26,7 +26,17 @@ const SystemStatistics = () => {
           Authorization: `Bearer ${token}`,
         }
       });
-      setStats(response.data);
+
+      const sortedData = {
+        ...response.data,
+        usersPerOrganization: response.data.usersPerOrganization.sort((a, b) => {
+          const numA = parseInt(a.orgId.replace(/[^\d]/g, ''), 10);
+          const numB = parseInt(b.orgId.replace(/[^\d]/g, ''), 10);
+          return numA - numB;
+        }),
+      };
+
+      setStats(sortedData);
     } catch (err) {
       message.error('Failed to fetch system statistics');
     } finally {
@@ -43,6 +53,11 @@ const SystemStatistics = () => {
       title: 'Organization ID',
       dataIndex: 'orgId',
       key: 'orgId',
+      sorter: (a, b) => {
+        const numA = parseInt(a.orgId.replace(/[^\d]/g, ''), 10);
+        const numB = parseInt(b.orgId.replace(/[^\d]/g, ''), 10);
+        return numA - numB;
+      },
     },
     {
       title: 'Organization Name',
@@ -100,7 +115,7 @@ const SystemStatistics = () => {
         <Card className={styles.statCard}>
           <Statistic
             title="Other Users"
-            value={stats.totalOtherUser}
+            value={stats.totalOtherUsers}
             prefix={<span className={styles.iconOther}><UserOutlined /></span>}
           />
         </Card>
