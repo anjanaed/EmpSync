@@ -434,6 +434,90 @@
   color: var(--text-secondary);
 }
 
+/* Dark mode styles for cards */
+[data-theme="dark"] .card {
+  background: #262626;
+  border-color: #4a5568;
+  color: #e2e8f0;
+}
+
+[data-theme="dark"] .card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .cardImageWrapper {
+  background: #1a202c;
+}
+
+[data-theme="dark"] .cardTitle {
+  color: #f7fafc;
+}
+
+[data-theme="dark"] .cardOrderCount {
+  color: #f7fafc;
+}
+
+[data-theme="dark"] .cardSubRow {
+  color: #a0aec0;
+}
+
+[data-theme="dark"] .cardMealId {
+  color: #a0aec0;
+}
+
+[data-theme="dark"] .cardOrderLabel {
+  color: #a0aec0;
+}
+
+[data-theme="dark"] .cardDescription {
+  color: #cbd5e0;
+}
+
+[data-theme="dark"] .cardIngredient {
+  background: #ffda48;
+  color: #151515;
+  border-color: #ffe62d;
+}
+
+/* Dark mode for popup */
+[data-theme="dark"] .popupContent {
+  background-color: #2d3748;
+  color: #e2e8f0;
+}
+
+[data-theme="dark"] .popupTitle {
+  color: #f7fafc;
+}
+
+[data-theme="dark"] .popupMealId {
+  color: #a0aec0;
+}
+
+[data-theme="dark"] .popupHeader {
+  border-bottom-color: #4a5568;
+}
+
+[data-theme="dark"] .countRow {
+  background-color: #1a202c;
+  border-color: #4a5568;
+}
+
+[data-theme="dark"] .countLabel {
+  color: #e2e8f0;
+}
+
+[data-theme="dark"] .countValue {
+  color: #fc8181;
+}
+
+[data-theme="dark"] .closeButton {
+  color: #a0aec0;
+}
+
+[data-theme="dark"] .closeButton:hover {
+  background-color: #4a5568;
+}
+
 
 
 
