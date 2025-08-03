@@ -208,6 +208,38 @@
   border-radius: 8px;
   border: 1px solid var(--border-color);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  background: white; /* Explicit white background for light mode */
+  padding: 16px;
+}
+
+/* Dark mode styles - Media Query Approach */
+@media (prefers-color-scheme: dark) {
+  .card {
+    background: #1f1f1f;
+    border: 1px solid #424242;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+
+  .summaryCard {
+    background: #1f1f1f;
+    border: 1px solid #424242;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+}
+
+/* Class-based dark mode approach */
+.container[data-theme="dark"] .card,
+body.dark .card {
+  background: #1f1f1f;
+  border: 1px solid #424242;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.container[data-theme="dark"] .summaryCard,
+body.dark .summaryCard {
+  background: #1f1f1f;
+  border: 1px solid #424242;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .mealName {
@@ -312,6 +344,128 @@ body.dark .greenBg {
 body.dark .orangeBg {
   background-color: #e65100;
   color: #ffb74d;
+}
+
+/* Dark mode styles for analysisGrid */
+@media (prefers-color-scheme: dark) {
+  .analysisGrid {
+    background-color: transparent;
+  }
+
+  .card {
+    background: #1f1f1f;
+    border: 1px solid #424242;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+
+  .card:hover {
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+  }
+
+  .cardTitle {
+    color: #e6e6e6;
+  }
+
+  .mealItem {
+    color: #e6e6e6;
+  }
+
+  .mealName {
+    color: #e6e6e6;
+  }
+
+  .mealStats {
+    color: #a6a6a6;
+  }
+
+  .mealId {
+    color: #737373;
+  }
+
+  .noDataMessage {
+    color: #a6a6a6;
+  }
+
+  .summaryCard {
+    background: #1f1f1f;
+    border: 1px solid #424242;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+
+  .summaryCard:hover {
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+  }
+
+  .cardLabel {
+    color: #a6a6a6;
+  }
+
+  .cardSubtext {
+    color: #737373;
+  }
+
+  .blueBg {
+    background-color: #1a237e;
+    color: #64b5f6;
+  }
+
+  .greenBg {
+    background-color: #1b5e20;
+    color: #81c784;
+  }
+
+  .orangeBg {
+    background-color: #e65100;
+    color: #ffb74d;
+  }
+}
+
+/* Alternative: Class-based dark mode */
+.container[data-theme="dark"] .analysisGrid,
+body.dark .analysisGrid {
+  background-color: transparent;
+}
+
+.container[data-theme="dark"] .card,
+body.dark .card {
+  background: #1f1f1f;
+  border: 1px solid #424242;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.container[data-theme="dark"] .card:hover,
+body.dark .card:hover {
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+}
+
+.container[data-theme="dark"] .cardTitle,
+body.dark .cardTitle {
+  color: #e6e6e6;
+}
+
+.container[data-theme="dark"] .mealItem,
+body.dark .mealItem {
+  color: #e6e6e6;
+}
+
+.container[data-theme="dark"] .mealName,
+body.dark .mealName {
+  color: #e6e6e6;
+}
+
+.container[data-theme="dark"] .mealStats,
+body.dark .mealStats {
+  color: #a6a6a6;
+}
+
+.container[data-theme="dark"] .mealId,
+body.dark .mealId {
+  color: #737373;
+}
+
+.container[data-theme="dark"] .noDataMessage,
+body.dark .noDataMessage {
+  color: #a6a6a6;
 }
 
 /* Responsive design */
