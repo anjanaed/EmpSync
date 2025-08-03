@@ -66,6 +66,7 @@ model User {
   userPermissions UserPermission[]
   createdAt      DateTime      @default(now())
   individualSalaryAdjustments IndividualSalaryAdjustments[] 
+  @@unique([empNo, organizationId])
 }
 
 enum Gender {
@@ -200,6 +201,7 @@ model PayeTaxSlab {
   upperLimit Float?
   taxRate    Float
   organization Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  @@unique([orgId,orderId])
 }
 
 model MealType {
