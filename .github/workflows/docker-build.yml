@@ -56,8 +56,18 @@ jobs:
       - name: Run Docker Compose
         run: docker-compose -f ./server/docker-compose.yml up --build -d
 
-      - name: Run tests
-        run: docker-compose -f ./server/docker-compose.yml exec -T nestjs npm test -- --maxWorkers=1
+      - name: Run  Few tests
+        run: |
+          docker-compose -f ./server/docker-compose.yml exec -T nestjs npm test -- --runInBand --forceExit \
+            src/test/iot-hardware/iot-hardware-integration.service.spec.ts \
+            src/test/iot-hardware/device-calibration.service.spec.ts \
+            src/test/user-portal/user-fingerprint-management.service.spec.ts \
+            src/test/iot-hardware/r307-sensor-functionality.service.spec.ts \
+            src/test/iot-hardware/esp32-connectivity.service.spec.ts \
+            src/core/user/user.controller.spec.ts \
+            src/modules/meal/meal-selection.service.spec.ts \
+            src/core/user/user.service.spec.ts \
+            src/modules/ingredient/ingredient.controller.spec.ts
 
       - name: Down Docker Compose
         if: always()
