@@ -99,7 +99,7 @@
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
-  background: white;
+  background: white; /* Ensure this stays white in light mode */
 }
 
 .summaryCard:hover {
@@ -208,8 +208,7 @@
   border-radius: 8px;
   border: 1px solid var(--border-color);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  background: white; /* Explicit white background for light mode */
-  padding: 16px;
+  background: white; /* Add explicit white background for light mode */
 }
 
 /* Dark mode styles - Media Query Approach */
