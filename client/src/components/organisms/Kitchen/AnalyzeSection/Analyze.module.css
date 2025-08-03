@@ -99,7 +99,7 @@
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
-  background: white; /* Ensure this stays white in light mode */
+  background: white;
 }
 
 .summaryCard:hover {
@@ -206,288 +206,128 @@
 /* Card specific styles */
 .card {
   border-radius: 8px;
-  border: 1px solid var(--border-color);
+  border: 1px solid #f0f0f0;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  background: white; /* Add explicit white background for light mode */
+  background: white;
+  transition: all 0.3s ease;
 }
 
-/* Dark mode styles - Media Query Approach */
-@media (prefers-color-scheme: dark) {
-  .card {
-    background: #1f1f1f;
-    border: 1px solid #424242;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  }
-
-  .summaryCard {
-    background: #1f1f1f;
-    border: 1px solid #424242;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  }
+.card:hover {
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
 }
 
-/* Class-based dark mode approach */
-.container[data-theme="dark"] .card,
-body.dark .card {
-  background: #1f1f1f;
-  border: 1px solid #424242;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+.summaryCard {
+  height: auto;
+  min-height: 60px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-radius: 8px;
+  border: 1px solid #f0f0f0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  background: white;
 }
 
-.container[data-theme="dark"] .summaryCard,
-body.dark .summaryCard {
-  background: #1f1f1f;
-  border: 1px solid #424242;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+.summaryCard:hover {
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
 }
 
-.mealName {
-  font-weight: 600;
-  color: var(--text-primary);
+/* Dark mode styles */
+[data-theme="dark"] .container {
+  background-color: var(--bg-secondary-dark, #1a1a1a);
+  color: var(--text-primary-dark, #ffffff);
 }
 
-.mealStats {
-  font-weight: 500;
-  color: #8c8c8c;
-  font-size: 14px;
+[data-theme="dark"] .sectionHeader {
+  color: var(--text-primary-dark, #ffffff);
 }
 
-.mealDetails {
-  margin-top: 8px;
+[data-theme="dark"] .sectionTitle {
+  color: var(--text-primary-dark, #ffffff);
 }
 
-.mealId {
-  font-size: 12px;
-  color: #bfbfbf;
+[data-theme="dark"] .cardTitle {
+  color: var(--text-primary-dark, #ffffff);
 }
 
-.noDataMessage {
-  text-align: center;
-  color: #8c8c8c;
-  padding: 24px;
-  font-style: italic;
+[data-theme="dark"] .mealItem {
+  color: var(--text-primary-dark, #ffffff);
 }
 
-/* Dark mode styles for summaryGrid */
-@media (prefers-color-scheme: dark) {
-  .summaryCard {
-    background: #1f1f1f;
-    border: 1px solid #424242;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  }
-
-  .summaryCard:hover {
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
-  }
-
-  .cardLabel {
-    color: #a6a6a6;
-  }
-
-  .cardSubtext {
-    color: #737373;
-  }
-
-  .blueBg {
-    background-color: #1a237e;
-    color: #64b5f6;
-  }
-
-  .greenBg {
-    background-color: #1b5e20;
-    color: #81c784;
-  }
-
-  .orangeBg {
-    background-color: #e65100;
-    color: #ffb74d;
-  }
+[data-theme="dark"] .mealHeader {
+  color: var(--text-primary-dark, #ffffff);
 }
 
-/* Alternative: Class-based dark mode (if you're using a dark mode toggle) */
-.container[data-theme="dark"] .summaryCard,
-body.dark .summaryCard {
-  background: #1f1f1f;
-  border: 1px solid #424242;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+[data-theme="dark"] .summaryCard {
+  background: var(--bg-card-dark, #2a2a2a);
+  border: 1px solid var(--border-dark, #404040);
+  color: var(--text-primary-dark, #ffffff);
 }
 
-.container[data-theme="dark"] .summaryCard:hover,
-body.dark .summaryCard:hover {
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+[data-theme="dark"] .summaryCard:hover {
+  box-shadow: 0 6px 16px rgba(255, 255, 255, 0.1);
 }
 
-.container[data-theme="dark"] .cardLabel,
-body.dark .cardLabel {
-  color: #a6a6a6;
+[data-theme="dark"] .card {
+  background: var(--bg-card-dark, #2a2a2a);
+  border: 1px solid var(--border-dark, #404040);
+  color: var(--text-primary-dark, #ffffff);
 }
 
-.container[data-theme="dark"] .cardSubtext,
-body.dark .cardSubtext {
-  color: #737373;
+[data-theme="dark"] .card:hover {
+  box-shadow: 0 6px 16px rgba(255, 255, 255, 0.1);
 }
 
-.container[data-theme="dark"] .blueBg,
-body.dark .blueBg {
-  background-color: #1a237e;
-  color: #64b5f6;
+[data-theme="dark"] .cardLabel {
+  color: var(--text-secondary-dark, #b3b3b3);
 }
 
-.container[data-theme="dark"] .greenBg,
-body.dark .greenBg {
-  background-color: #1b5e20;
-  color: #81c784;
+[data-theme="dark"] .cardSubtext {
+  color: var(--text-tertiary-dark, #808080);
 }
 
-.container[data-theme="dark"] .orangeBg,
-body.dark .orangeBg {
-  background-color: #e65100;
-  color: #ffb74d;
+[data-theme="dark"] .cardValue {
+  color: var(--text-primary-dark, #ffffff);
 }
 
-/* Dark mode styles for analysisGrid */
-@media (prefers-color-scheme: dark) {
-  .analysisGrid {
-    background-color: transparent;
-  }
-
-  .card {
-    background: #1f1f1f;
-    border: 1px solid #424242;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  }
-
-  .card:hover {
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
-  }
-
-  .cardTitle {
-    color: #e6e6e6;
-  }
-
-  .mealItem {
-    color: #e6e6e6;
-  }
-
-  .mealName {
-    color: #e6e6e6;
-  }
-
-  .mealStats {
-    color: #a6a6a6;
-  }
-
-  .mealId {
-    color: #737373;
-  }
-
-  .noDataMessage {
-    color: #a6a6a6;
-  }
-
-  .summaryCard {
-    background: #1f1f1f;
-    border: 1px solid #424242;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  }
-
-  .summaryCard:hover {
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
-  }
-
-  .cardLabel {
-    color: #a6a6a6;
-  }
-
-  .cardSubtext {
-    color: #737373;
-  }
-
-  .blueBg {
-    background-color: #1a237e;
-    color: #64b5f6;
-  }
-
-  .greenBg {
-    background-color: #1b5e20;
-    color: #81c784;
-  }
-
-  .orangeBg {
-    background-color: #e65100;
-    color: #ffb74d;
-  }
+/* Dark mode icon backgrounds */
+[data-theme="dark"] .blueBg {
+  background-color: rgba(47, 84, 235, 0.2);
+  color: #4d7fff;
 }
 
-/* Alternative: Class-based dark mode */
-.container[data-theme="dark"] .analysisGrid,
-body.dark .analysisGrid {
-  background-color: transparent;
+[data-theme="dark"] .greenBg {
+  background-color: rgba(82, 196, 26, 0.2);
+  color: #73d13d;
 }
 
-.container[data-theme="dark"] .card,
-body.dark .card {
-  background: #1f1f1f;
-  border: 1px solid #424242;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+[data-theme="dark"] .orangeBg {
+  background-color: rgba(250, 84, 28, 0.2);
+  color: #ff7a45;
 }
 
-.container[data-theme="dark"] .card:hover,
-body.dark .card:hover {
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+/* Dark mode card border accents */
+[data-theme="dark"] .summaryCard::before {
+  background: var(--border-dark, #404040);
 }
 
-.container[data-theme="dark"] .cardTitle,
-body.dark .cardTitle {
-  color: #e6e6e6;
+[data-theme="dark"] .summaryCard.blueCard::before {
+  background: #4d7fff;
 }
 
-.container[data-theme="dark"] .mealItem,
-body.dark .mealItem {
-  color: #e6e6e6;
+[data-theme="dark"] .summaryCard.greenCard::before {
+  background: #73d13d;
 }
 
-.container[data-theme="dark"] .mealName,
-body.dark .mealName {
-  color: #e6e6e6;
+[data-theme="dark"] .summaryCard.orangeCard::before {
+  background: #ff7a45;
 }
 
-.container[data-theme="dark"] .mealStats,
-body.dark .mealStats {
-  color: #a6a6a6;
+[data-theme="dark"] .summaryValue {
+  color: #4d7fff;
 }
 
-.container[data-theme="dark"] .mealId,
-body.dark .mealId {
-  color: #737373;
-}
-
-.container[data-theme="dark"] .noDataMessage,
-body.dark .noDataMessage {
-  color: #a6a6a6;
-}
-
-/* Responsive design */
-@media (max-width: 768px) {
-  .analysisGrid {
-    grid-template-columns: 1fr;
-  }
-  
-  .cardContent {
-    padding: 16px 20px;
-  }
-  
-  .cardValue {
-    font-size: 28px;
-  }
-  
-  .cardIcon {
-    width: 40px;
-    height: 40px;
-  }
-  
-  .iconSvg {
-    width: 20px;
-    height: 20px;
-  }
-}
