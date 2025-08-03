@@ -237,6 +237,83 @@
   font-style: italic;
 }
 
+/* Dark mode styles for summaryGrid */
+@media (prefers-color-scheme: dark) {
+  .summaryCard {
+    background: #1f1f1f;
+    border: 1px solid #424242;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+
+  .summaryCard:hover {
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+  }
+
+  .cardLabel {
+    color: #a6a6a6;
+  }
+
+  .cardSubtext {
+    color: #737373;
+  }
+
+  .blueBg {
+    background-color: #1a237e;
+    color: #64b5f6;
+  }
+
+  .greenBg {
+    background-color: #1b5e20;
+    color: #81c784;
+  }
+
+  .orangeBg {
+    background-color: #e65100;
+    color: #ffb74d;
+  }
+}
+
+/* Alternative: Class-based dark mode (if you're using a dark mode toggle) */
+.container[data-theme="dark"] .summaryCard,
+body.dark .summaryCard {
+  background: #1f1f1f;
+  border: 1px solid #424242;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.container[data-theme="dark"] .summaryCard:hover,
+body.dark .summaryCard:hover {
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+}
+
+.container[data-theme="dark"] .cardLabel,
+body.dark .cardLabel {
+  color: #a6a6a6;
+}
+
+.container[data-theme="dark"] .cardSubtext,
+body.dark .cardSubtext {
+  color: #737373;
+}
+
+.container[data-theme="dark"] .blueBg,
+body.dark .blueBg {
+  background-color: #1a237e;
+  color: #64b5f6;
+}
+
+.container[data-theme="dark"] .greenBg,
+body.dark .greenBg {
+  background-color: #1b5e20;
+  color: #81c784;
+}
+
+.container[data-theme="dark"] .orangeBg,
+body.dark .orangeBg {
+  background-color: #e65100;
+  color: #ffb74d;
+}
+
 /* Responsive design */
 @media (max-width: 768px) {
   .analysisGrid {
