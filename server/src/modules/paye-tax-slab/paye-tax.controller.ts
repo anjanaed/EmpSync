@@ -23,7 +23,7 @@ export class PayeTaxController {
 
   @Post()
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles('HR_ADMIN','KITCHEN_ADMIN')
+  @Roles('HR_ADMIN', 'KITCHEN_ADMIN')
   async create(@Body() dto: Prisma.PayeTaxSlabCreateManyInput) {
     try {
       return await this.payeTaxService.create(dto);
@@ -39,27 +39,27 @@ export class PayeTaxController {
     }
   }
 
-@Get()
-@UseGuards(AuthGuard('jwt'), RolesGuard)
-@Roles('HR_ADMIN','KITCHEN_ADMIN')
-async findAll(@Query('orgId') orgId?: string) {
-  try {
-    return await this.payeTaxService.findAll(orgId);
-  } catch (error) {
-    throw new HttpException(
-      {
-        status: HttpStatus.INTERNAL_SERVER_ERROR,
-        error: 'Failed to fetch PAYE tax slabs',
-        message: error.message,
-      },
-      HttpStatus.INTERNAL_SERVER_ERROR,
-    );
+  @Get()
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('HR_ADMIN', 'KITCHEN_ADMIN')
+  async findAll(@Query('orgId') orgId?: string) {
+    try {
+      return await this.payeTaxService.findAll(orgId);
+    } catch (error) {
+      throw new HttpException(
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          error: 'Failed to fetch PAYE tax slabs',
+          message: error.message,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
-}
 
   @Get(':id')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles('HR_ADMIN','KITCHEN_ADMIN')
+  @Roles('HR_ADMIN', 'KITCHEN_ADMIN')
   async findOne(@Param('id') id: number) {
     try {
       const tax = await this.payeTaxService.findOne(id);
@@ -81,7 +81,7 @@ async findAll(@Query('orgId') orgId?: string) {
 
   @Put()
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles('HR_ADMIN','KITCHEN_ADMIN')
+  @Roles('HR_ADMIN', 'KITCHEN_ADMIN')
   async update(@Body() dto: Prisma.PayeTaxSlabCreateManyInput[]) {
     try {
       return await this.payeTaxService.update(dto);
@@ -99,7 +99,7 @@ async findAll(@Query('orgId') orgId?: string) {
 
   @Delete(':id')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles('HR_ADMIN','KITCHEN_ADMIN')
+  @Roles('HR_ADMIN', 'KITCHEN_ADMIN')
   async remove(@Param('id') id: string) {
     try {
       return await this.payeTaxService.remove(id);
@@ -113,5 +113,11 @@ async findAll(@Query('orgId') orgId?: string) {
         HttpStatus.BAD_REQUEST,
       );
     }
+  }
+
+  @Delete('org/:orgId')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  async deleteByOrgId(@Param('orgId') orgId: string) {
+    return this.payeTaxService.deleteAllByOrgId(orgId);
   }
 }

@@ -194,7 +194,6 @@ export class ScheduledMealService {
         },
       });
     } catch (error) {
-      console.error('Error in update method:', error);
       if (error instanceof NotFoundException) {
         throw error;
       }

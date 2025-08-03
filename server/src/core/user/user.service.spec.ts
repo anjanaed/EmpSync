@@ -16,7 +16,7 @@ const userDto: Prisma.UserCreateInput = {
     telephone: '1234567890',
     address: '123 Main St, NY',
     email: 'alice@example.com',
-    gender: 'female',
+    gender: 'Female',
     salary: 50000,
     passkey: 123456,
     supId: 'sup123',

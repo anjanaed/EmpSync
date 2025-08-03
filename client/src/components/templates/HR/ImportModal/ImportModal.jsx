@@ -6,8 +6,6 @@ import axios from "axios";
 import Loading from "../../../atoms/loading/loading";
 import { usePopup } from "../../../../contexts/PopupContext.jsx";
 
-
-
 // These columns must match your CSV headers and form fields
 const REQUIRED_COLUMNS = [
   "Full Name",
@@ -55,6 +53,20 @@ const validateRow = (row, idx) => {
   // Job Role: required, not empty
   if (!row["Job Role"] || row["Job Role"].trim() === "") {
     errors.push(`Row ${idx + 2}: Job Role is required.`);
+  } else {
+    const restrictedRoles = [
+      "KITCHEN_ADMIN",
+      "KITCHEN_STAFF",
+      "INVENTORY_ADMIN",
+      "HR_ADMIN",
+    ];
+    if (restrictedRoles.includes(row["Job Role"].toUpperCase())) {
+      errors.push(
+        `Row ${idx + 2}: Job Role "${
+          row["Job Role"]
+        }" is restricted. Please use a different job role.`
+      );
+    }
   }
   // Date of Birth: required, valid date (YYYY-MM-DD)
   if (
@@ -158,7 +170,6 @@ const ImportModal = () => {
     for (let i = 0; i < previewData.length; i++) {
       const row = previewData[i];
 
-
       // Use generated ID
       let id = generatedIds[i];
 
@@ -166,7 +177,7 @@ const ImportModal = () => {
         id,
         empNo: row["Employee No"],
         name: row["Full Name"],
-        role:row["Job Role"],
+        role: row["Job Role"],
         dob: row["Date of Birth"],
         telephone: row["Phone Number"],
         gender: row["Gender"],
@@ -238,7 +249,6 @@ const ImportModal = () => {
       setValidationErrors([]);
       if (fileInputRef.current) fileInputRef.current.value = "";
     }
-    
   };
 
   const handleFileChange = (e) => {
@@ -301,9 +311,7 @@ const ImportModal = () => {
 
   return (
     <div className={styles.importModalContainer}>
-      <h3 className={styles.title}>Import Employee Data (.CSV)
-
-</h3>
+      <h3 className={styles.title}>Import Employee Data (.CSV)</h3>
       <p className={styles.desc}>Select a CSV file to import employee data.</p>
       <div
         style={{

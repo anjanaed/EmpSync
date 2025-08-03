@@ -42,7 +42,7 @@ export class UserController {
   async create(@Body() dto: Prisma.UserCreateInput) {
     try {
       const passkey = await this.userService.create(dto);
-      return 'User Registered Successfully';
+      return {passkey};
     } catch (err) {
       throw new HttpException(
         {

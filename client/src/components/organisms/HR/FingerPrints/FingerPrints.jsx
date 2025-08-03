@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { ReloadOutlined, EyeOutlined, DeleteOutlined } from "@ant-design/icons";
 import Loading from "../../../atoms/loading/loading.jsx";
-import { Pie } from '@ant-design/plots';
+import { Pie } from "@ant-design/plots";
 import { Table, ConfigProvider, Modal, Button, Popconfirm, Space } from "antd";
 import styles from "./FingerPrints.module.css";
 import axios from "axios";
@@ -62,13 +62,13 @@ const FingerPrintsContent = () => {
     if (!authData?.orgId) return;
     axios
       .get(`${import.meta.env.VITE_BASE_URL}/hr-fingerprints`, {
-        params: { orgId: authData.orgId }, 
+        params: { orgId: authData.orgId },
       })
       .then((res) => {
         const fingerprints = res.data || [];
         // Group by unit name (first 6 chars)
         const deviceMap = {};
-        fingerprints.forEach(fp => {
+        fingerprints.forEach((fp) => {
           const unit = fp.thumbid.slice(0, 6);
           if (!deviceMap[unit]) deviceMap[unit] = 0;
           deviceMap[unit]++;
@@ -77,7 +77,7 @@ const FingerPrintsContent = () => {
         const cards = Object.entries(deviceMap).map(([unit, count]) => ({
           unit,
           filled: count,
-          available: 1000 - count
+          available: 1000 - count,
         }));
         setDeviceCards(cards);
       })
@@ -89,9 +89,14 @@ const FingerPrintsContent = () => {
     if (authData?.orgId) {
       setLoading(true);
       axios
-        .get(`${import.meta.env.VITE_BASE_URL}/hr-fingerprints/users/fingerprint-details`, {
-          params: { orgId: authData.orgId },
-        })
+        .get(
+          `${
+            import.meta.env.VITE_BASE_URL
+          }/hr-fingerprints/users/fingerprint-details`,
+          {
+            params: { orgId: authData.orgId },
+          }
+        )
         .then((res) => {
           setUserData(res.data);
           setLoading(false);
@@ -118,7 +123,9 @@ const FingerPrintsContent = () => {
   };
 
   const handleDeleteThumbid = async (thumbid) => {
-    await axios.delete(`${import.meta.env.VITE_BASE_URL}/hr-fingerprints/fingerprint/${thumbid}`);
+    await axios.delete(
+      `${import.meta.env.VITE_BASE_URL}/hr-fingerprints/fingerprint/${thumbid}`
+    );
     setModalThumbids((prev) => prev.filter((id) => id !== thumbid));
     setUserData((prev) =>
       prev.map((user) =>
@@ -127,7 +134,8 @@ const FingerPrintsContent = () => {
               ...user,
               fingerprintCount: user.fingerprintCount - 1,
               thumbids: user.thumbids.filter((id) => id !== thumbid),
-              status: user.fingerprintCount - 1 > 0 ? "Registered" : "Unregistered",
+              status:
+                user.fingerprintCount - 1 > 0 ? "Registered" : "Unregistered",
             }
           : user
       )
@@ -157,7 +165,9 @@ const FingerPrintsContent = () => {
       ellipsis: true,
       render: (passkey, record) => (
         <div className={styles.passkeyCell}>
-          <span>{passkey !== undefined && passkey !== null ? passkey : "-"}</span>
+          <span>
+            {passkey !== undefined && passkey !== null ? passkey : "-"}
+          </span>
           <Button
             icon={<ReloadOutlined style={{ color: "#970000" }} />}
             size="small"
@@ -167,10 +177,18 @@ const FingerPrintsContent = () => {
             onClick={async () => {
               setRegeneratingId(record.id);
               try {
-                const res = await axios.put(`${import.meta.env.VITE_BASE_URL}/user/${record.id}/regenerate-passkey`);
+                const res = await axios.put(
+                  `${import.meta.env.VITE_BASE_URL}/user/${
+                    record.id
+                  }/regenerate-passkey`
+                );
                 const newPasskey = res.data.passkey;
                 setTimeout(() => {
-                  setUserData(prev => prev.map(u => u.id === record.id ? { ...u, passkey: newPasskey } : u));
+                  setUserData((prev) =>
+                    prev.map((u) =>
+                      u.id === record.id ? { ...u, passkey: newPasskey } : u
+                    )
+                  );
                   setRegeneratingId(null);
                 }, 700);
               } catch (err) {
@@ -192,8 +210,12 @@ const FingerPrintsContent = () => {
         <span
           className={
             status === "Registered"
-              ? `${styles.registered} ${theme === "dark" ? styles.registeredDark : ""}`
-              : `${styles.pending} ${theme === "dark" ? styles.pendingDark : ""}`
+              ? `${styles.registered} ${
+                  theme === "dark" ? styles.registeredDark : ""
+                }`
+              : `${styles.pending} ${
+                  theme === "dark" ? styles.pendingDark : ""
+                }`
           }
         >
           {status}
@@ -206,8 +228,7 @@ const FingerPrintsContent = () => {
       key: "fingerprintCount",
       align: "center",
       ellipsis: true,
-      render: (count, record) =>
-        record.status === "Registered" ? count : "-",
+      render: (count, record) => (record.status === "Registered" ? count : "-"),
     },
     {
       title: "Actions",
@@ -236,188 +257,200 @@ const FingerPrintsContent = () => {
     return <Loading text="Regenerating passkey..." />;
   }
 
-    if (loading) {
+  if (loading) {
     return <Loading />;
   }
 
   return (
     <>
       <div className={styles.sectors}>
-      <div className={styles.unitsTitle}>
-        Fingerprint Units 
-      </div>
-      <div className={styles.unitsCards}>
-        {deviceCards.length === 0 ? (
-          <div className={styles.noDeviceData}>No Device Data Found.</div>
-        ) : (
-          deviceCards.map(card => {
-            const pieData = [
-              { type: 'Filled', value: card.filled },
-              { type: 'Available', value: card.available }
-            ];
-            const pieConfig = {
-              data: pieData,
-              angleField: 'value',
-              colorField: 'type',
-              radius: 1,
-              innerRadius: 0.7,
-              startAngle: Math.PI,
-              endAngle: 2 * Math.PI,
-              legend: false,
-              label: {
-                type: 'inner',
-                offset: '-30%',
-                content: '{value}',
-                style: {
-                  fontSize: 14,
-                  textAlign: 'center',
-                },
-              },
-              color: ['#970000', '#e0e0e0'],
-              statistic: null,
-              animation: false,
-            };
-            return (
-              <div key={card.unit} className={styles.unitCard}>
-                <div className={styles.unitName}>Unit Name: <span>{card.unit}</span></div>
-                <div className={styles.pieWrapper}>
-                  <Pie {...pieConfig} />
+        <div className={styles.unitsTitle}>Fingerprint Units</div>
+        <div className={styles.unitsCards}>
+          {deviceCards.length === 0 ? (
+            <div className={styles.noDeviceData}>No Device Data Found.</div>
+          ) : (
+            deviceCards.map((card) => {
+              const pieData = [
+                { type: "Filled", value: card.filled },
+                { type: "Available", value: card.available },
+              ];
+              const pieConfig = {
+                data: pieData,
+                angleField: "value",
+                colorField: "type",
+                radius: 1,
+                innerRadius: 0.7,
+                startAngle: Math.PI,
+                endAngle: 2 * Math.PI,
+                legend: false,
+                label: false,
+                color: ["#970000", "#e0e0e0"],
+                statistic: null,
+                animation: false,
+              };
+              return (
+                <div key={card.unit} className={styles.unitCard}>
+                  <div className={styles.unitName}>
+                    Unit Name: <span>{card.unit}</span>
+                  </div>
+                  <div className={styles.pieWrapper}>
+                    <Pie {...pieConfig} />
+                  </div>
+                  <div className={styles.unitStat}>
+                    Filled : <span>{card.filled}/1000</span>
+                  </div>
+                  <div className={styles.unitStat}>
+                    Available: <span>{card.available}/1000</span>
+                  </div>
                 </div>
-                <div className={styles.unitStat}>Filled : <span>{card.filled}/1000</span></div>
-                <div className={styles.unitStat}>Available: <span>{card.available}/1000</span></div>
-              </div>
-            );
-          })
-        )}
-      </div></div>
+              );
+            })
+          )}
+        </div>
+      </div>
 
       {/* Fingerprint Table Section */}
       <div className={styles.sectors}>
-      <div className={styles.tableSection}>
-        <div className={styles.container}>
-          <h3 className={styles.unitsTitle}>User Fingerprint Details</h3>
-          {/* Search Bar for Employee ID or Name */}
-          <div
-            className={
-              theme === "dark"
-                ? `${styles.searchBarRow} ${styles.searchBarRowDark}`
-                : styles.searchBarRow
-            }
-          >
-            <input
-              type="text"
-              placeholder="Search by Employee ID or Name..."
-              value={searchValue}
-              onChange={e => {
-                setSearchValue(e.target.value);
-                setSearchError("");
-              }}
+        <div className={styles.tableSection}>
+          <div className={styles.container}>
+            <h3 className={styles.unitsTitle}>User Fingerprint Details</h3>
+            {/* Search Bar for Employee ID or Name */}
+            <div
               className={
                 theme === "dark"
-                  ? `${styles.searchInput} ${styles.searchInputDark}`
-                  : styles.searchInput
+                  ? `${styles.searchBarRow} ${styles.searchBarRowDark}`
+                  : styles.searchBarRow
               }
-            />
-            <Button
-              type="default"
-              className={styles.searchBtn}
-              onClick={() => {
-                if (searchValue.trim() === "") {
-                  setSearchError("");
-                  return;
-                }
-                const val = searchValue.trim().toLowerCase();
-                const found = userData.some(user =>
-                  user.id.toLowerCase() === val || user.name.toLowerCase().includes(val)
-                );
-                if (!found) {
-                  setSearchError("No matching Employee ID or Name found.");
-                } else {
-                  setSearchError("");
-                }
-              }}
             >
-              Search
-            </Button>
-            {searchError && <span className={styles.searchError}>{searchError}</span>}
-            {searchValue && !searchError && (
-              <Button type="link" className={styles.clearBtn} onClick={() => setSearchValue("")}>Clear</Button>
-            )}
-          </div>
-          <ConfigProvider theme={theme === "dark" ? getDarkTheme() : getCustomTheme()}>
-            <Table
-              columns={columns}
-              dataSource={
-                searchValue && !searchError
-                  ? userData
-                      .filter(user => {
-                        const val = searchValue.trim().toLowerCase();
-                        return (
-                          user.id.toLowerCase() === val ||
-                          user.name.toLowerCase().includes(val)
-                        );
-                      })
-                      .map(user => ({ ...user, key: user.id }))
-                  : userData.map(user => ({ ...user, key: user.id }))
-              }
-              loading={loading}
-              pagination={{
-                position: ["bottomCenter"],
-                pageSize: 25,
-                showTotal: (total, range) => `${range[0]}–${range[1]} of ${total} items`,
-                showSizeChanger: false,
-              }}
-              rowClassName={(record, index) =>
-                theme === "dark"
-                  ? `${styles.customTableRowDark} ${index % 2 === 0 ? styles.evenRowDark : styles.oddRowDark}`
-                  : `${styles.customTableRow} ${index % 2 === 0 ? styles.evenRow : styles.oddRow}`
-              }
-            />
-          </ConfigProvider>
-          <Modal
-            open={modalVisible}
-            title={deleteMode ? "Delete Fingerprints" : "View Fingerprints"}
-            onCancel={() => setModalVisible(false)}
-            footer={null}
-          >
-            <div>
-              <strong>Employee ID:</strong> {modalEmpId}
-            </div>
-            <br />
-            <ul>
-              {modalThumbids.length === 0 ? (
-                <li>No fingerprints found.</li>
-              ) : (
-                modalThumbids.map((thumbid) => (
-                  <li key={thumbid} style={{ marginBottom: "8px" }}>
-                    {thumbid}
-                    {deleteMode && (
-                      <Popconfirm
-                        title="Delete this fingerprint?"
-                        onConfirm={() => handleDeleteThumbid(thumbid)}
-                        okText="Delete"
-                        cancelText="Cancel"
-                      >
-                        <Button
-                          icon={<DeleteOutlined />}
-                          size="small"
-                          danger
-                          style={{ marginLeft: "12px" }}
-                        >
-                          Delete
-                        </Button>
-                      </Popconfirm>
-                    )}
-                  </li>
-                ))
+              <input
+                type="text"
+                placeholder="Search by Employee ID or Name..."
+                value={searchValue}
+                onChange={(e) => {
+                  setSearchValue(e.target.value);
+                  setSearchError("");
+                }}
+                className={
+                  theme === "dark"
+                    ? `${styles.searchInput} ${styles.searchInputDark}`
+                    : styles.searchInput
+                }
+              />
+              <Button
+                type="default"
+                className={styles.searchBtn}
+                onClick={() => {
+                  if (searchValue.trim() === "") {
+                    setSearchError("");
+                    return;
+                  }
+                  const val = searchValue.trim().toLowerCase();
+                  const found = userData.some(
+                    (user) =>
+                      user.id.toLowerCase() === val ||
+                      user.name.toLowerCase().includes(val)
+                  );
+                  if (!found) {
+                    setSearchError("No matching Employee ID or Name found.");
+                  } else {
+                    setSearchError("");
+                  }
+                }}
+              >
+                Search
+              </Button>
+              {searchError && (
+                <span className={styles.searchError}>{searchError}</span>
               )}
-            </ul>
-          </Modal>
+              {searchValue && !searchError && (
+                <Button
+                  type="link"
+                  className={styles.clearBtn}
+                  onClick={() => setSearchValue("")}
+                >
+                  Clear
+                </Button>
+              )}
+            </div>
+            <ConfigProvider
+              theme={theme === "dark" ? getDarkTheme() : getCustomTheme()}
+            >
+              <Table
+                columns={columns}
+                dataSource={
+                  searchValue && !searchError
+                    ? userData
+                        .filter((user) => {
+                          const val = searchValue.trim().toLowerCase();
+                          return (
+                            user.id.toLowerCase() === val ||
+                            user.name.toLowerCase().includes(val)
+                          );
+                        })
+                        .map((user) => ({ ...user, key: user.id }))
+                    : userData.map((user) => ({ ...user, key: user.id }))
+                }
+                loading={loading}
+                pagination={{
+                  position: ["bottomCenter"],
+                  pageSize: 25,
+                  showTotal: (total, range) =>
+                    `${range[0]}–${range[1]} of ${total} items`,
+                  showSizeChanger: false,
+                }}
+                rowClassName={(record, index) =>
+                  theme === "dark"
+                    ? `${styles.customTableRowDark} ${
+                        index % 2 === 0 ? styles.evenRowDark : styles.oddRowDark
+                      }`
+                    : `${styles.customTableRow} ${
+                        index % 2 === 0 ? styles.evenRow : styles.oddRow
+                      }`
+                }
+              />
+            </ConfigProvider>
+            <Modal
+              open={modalVisible}
+              title={deleteMode ? "Delete Fingerprints" : "View Fingerprints"}
+              onCancel={() => setModalVisible(false)}
+              footer={null}
+            >
+              <div>
+                <strong>Employee ID:</strong> {modalEmpId}
+              </div>
+              <br />
+              <ul>
+                {modalThumbids.length === 0 ? (
+                  <li>No fingerprints found.</li>
+                ) : (
+                  modalThumbids.map((thumbid) => (
+                    <li key={thumbid} style={{ marginBottom: "8px" }}>
+                      {thumbid}
+                      {deleteMode && (
+                        <Popconfirm
+                          title="Delete this fingerprint?"
+                          onConfirm={() => handleDeleteThumbid(thumbid)}
+                          okText="Delete"
+                          cancelText="Cancel"
+                        >
+                          <Button
+                            icon={<DeleteOutlined />}
+                            size="small"
+                            danger
+                            style={{ marginLeft: "12px" }}
+                          >
+                            Delete
+                          </Button>
+                        </Popconfirm>
+                      )}
+                    </li>
+                  ))
+                )}
+              </ul>
+            </Modal>
+          </div>
         </div>
-
       </div>
-      </div>
-
     </>
   );
 };
