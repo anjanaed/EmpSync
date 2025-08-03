@@ -27,7 +27,7 @@ export class AuthService {
           headers: { 'Content-Type': 'application/json' },
         },
       );
-      console.log('Auth0 login successful:', response.data); 
+      console.log(`user ${username} logged in successfully`); 
       return response.data;
       
 

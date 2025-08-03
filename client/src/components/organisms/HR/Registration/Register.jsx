@@ -63,6 +63,7 @@ const Register = () => {
   //Registering Process
   const handleRegister = async () => {
     setLoading(true);
+
     try {
       const token = authData?.accessToken;
 
@@ -81,35 +82,55 @@ const Register = () => {
         organizationId: authData?.orgId,
         salary: parseInt(salary),
       };
+
+      // Step 1: Register in database
       const res = await axios.post(`${urL}/user`, payload, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-      if (res.data && res.data.passkey) {
-        setPasskey(res.data.passkey);
-        setMenu(3); // Show passkey screen
+
+      try {
+        // Step 2: Register in Auth0
+        await signUpUser({ email, password, id });
+
+        // Both registrations successful
+        success("User Registered Successfully");
+
+        // Show passkey screen only after both succeed
+        if (res.data && res.data.passkey) {
+          setPasskey(res.data.passkey);
+          setMenu(3);
+        } 
+      } catch (auth0Error) {
+        // Auth0 registration failed, rollback database registration
+        try {
+          await axios.delete(`${urL}/user/${id}`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          console.log("Database registration rolled back successfully");
+        } catch (rollbackError) {
+          console.log(
+            "Failed to rollback database registration:",
+            rollbackError
+          );
+        }
+        if (auth0Error.response?.data.code === "invalid_signup") {
+          error("Registration Failed: The email or ID may already exist in Auth0.");
+        } else {
+          console.log("Auth0 Error:", auth0Error.response?.data);
+        }
+
       }
-    } catch (err) {
+    } catch (dbError) {
+      // Database registration failed
+      console.error("Database Registration Error:", dbError);
       error(
-        `Registration Failed: ${err.response?.data?.message || "Unknown error"}`
-      );
-      setLoading(false);
-      return;
-    }
-    try {
-      await signUpUser({ email, password, id });
-      success("User Registered Successfully");
-      // navigate("/EmployeePage");
-    } catch (err) {
-      await axios.delete(`${urL}/user/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      console.error("Registration Error:", err);
-      error(
-        `Registration Failed: ${err.response?.data?.message || "Unknown error"}`
+        `Registration Failed: ${
+          dbError.response?.data?.message || "Database registration failed"
+        }`
       );
     } finally {
       setLoading(false);
@@ -124,7 +145,6 @@ const Register = () => {
       const res = await axios.get(`${urL}/user/last-empno/${org}`);
       const lastEmpNo = res.data;
       let newEmpNo;
-      console.log("Last Employee No:", lastEmpNo);
 
       if (lastEmpNo && lastEmpNo.startsWith(org + "E")) {
         // Extract the number after the last 'E'
@@ -134,7 +154,6 @@ const Register = () => {
         newEmpNo = `${org}E001`;
       }
       setId(newEmpNo);
-      console.log(newEmpNo);
     } catch (err) {
       console.error("Failed to generate user ID", err);
     }
@@ -151,7 +170,6 @@ const Register = () => {
       });
     } catch (error) {
       console.error("Auth0 Registration Error:", error);
-      error(`Registration Failed: ${error.response.data.message}`);
       setLoading(false);
       throw error;
     }
