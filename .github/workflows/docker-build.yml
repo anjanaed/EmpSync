@@ -57,7 +57,11 @@ jobs:
         run: docker-compose -f ./server/docker-compose.yml up --build -d
 
       - name: Run tests
-        run: docker-compose -f ./server/docker-compose.yml exec -T nestjs npm test
+        run: docker-compose -f ./server/docker-compose.yml exec -T nestjs npm test -- --maxWorkers=1
+
+      - name: Down Docker Compose
+        if: always()
+        run: docker-compose -f ./server/docker-compose.yml down -v
 
 
 
