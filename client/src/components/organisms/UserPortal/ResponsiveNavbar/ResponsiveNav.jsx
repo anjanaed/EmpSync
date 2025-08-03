@@ -52,8 +52,8 @@ const ResponsiveNav = () => {
   // Dropdown menu items
   const dropdownItems = [
     {
-      key: 'profile',
-      label: 'Profile',
+      key: 'Admin',
+      label: 'Admin',
       icon: <UserOutlined />,
       onClick: () => {
         // Navigate based on user role
