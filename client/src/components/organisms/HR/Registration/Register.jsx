@@ -70,7 +70,7 @@ const Register = () => {
         id,
         empNo,
         name,
-        role:jobRole,
+        role: jobRole,
         dob,
         telephone: tel,
         gender,
@@ -313,6 +313,26 @@ const Register = () => {
                       required: true,
                       message: "Please enter job role!",
                       whitespace: true,
+                    },
+                    {
+                      validator: (_, value) => {
+                        const restrictedRoles = [
+                          "KITCHEN_ADMIN",
+                          "KITCHEN_STAFF",
+                          "HR_ADMIN",
+                        ];
+                        if (
+                          value &&
+                          restrictedRoles.includes(value.toUpperCase())
+                        ) {
+                          return Promise.reject(
+                            new Error(
+                              "This role is restricted. Please enter a different job role."
+                            )
+                          );
+                        }
+                        return Promise.resolve();
+                      },
                     },
                   ]}
                 >
