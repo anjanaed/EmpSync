@@ -442,4 +442,9 @@
   }
 }
 
-/* ...existing code... */
+/* Hide dropdown menu on mobile devices */
+@media (max-width: 768px) {
+  .hideMobile {
+    display: none !important;
+  }
+}

@@ -39,10 +39,14 @@ const ResponsiveNav = () => {
 
   // Role display mapping
   const roleDisplayMap = {
-    admin: 'Administrator',
-    manager: 'Manager',
-    employee: 'Employee',
-    hr: 'HR Representative'
+    // admin: 'Administrator',
+    // manager: 'Manager',
+    // employee: 'Employee',
+    // hr: 'HR Representative',
+    // HR_ADMIN: 'Human Resource Manager',
+    // INVENTORY_ADMIN: 'Inventory Manager',
+    // KITCHEN_STAFF: 'Kitchen Staff',
+    // KITCHEN_ADMIN: 'Kitchen Administrator'
   };
 
   // Dropdown menu items
@@ -51,7 +55,18 @@ const ResponsiveNav = () => {
       key: 'profile',
       label: 'Profile',
       icon: <UserOutlined />,
-      onClick: () => navigate('/ProfilePage')
+      onClick: () => {
+        // Navigate based on user role
+        if (currentUser.role === 'admin' || 
+            currentUser.role === 'HR_ADMIN' || 
+            currentUser.role === 'INVENTORY_ADMIN' || 
+            currentUser.role === 'KITCHEN_STAFF' || 
+            currentUser.role === 'KITCHEN_ADMIN') {
+          navigate('/LoginRole');
+        } else {
+          navigate('/ProfilePage');
+        }
+      }
     },
     {
       key: 'logout',
@@ -169,7 +184,7 @@ const ResponsiveNav = () => {
           )}
         </button>
         {/* User dropdown for desktop */}
-        <div className={styles.desktopUserDropdown}>
+        <div className={`${styles.desktopUserDropdown} ${styles.hideMobile}`}>
           <Dropdown
             menu={{ items: dropdownItems }}
             placement="bottomRight"
