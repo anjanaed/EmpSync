@@ -61,7 +61,7 @@ model User {
   weight         Int?
   payrolls       Payroll[]
   organizationId String
-  organization   Organization? @relation(fields: [organizationId], references: [id])
+  organization   Organization @relation(fields: [organizationId], references: [id],onDelete: Cascade)
   permissions    Permission[]
   userPermissions UserPermission[]
   createdAt      DateTime      @default(now())

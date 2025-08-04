@@ -160,10 +160,10 @@ export class PayrollController {
 @Roles('HR_ADMIN','KITCHEN_ADMIN')
 async deletePayrollsByMonth(
   @Param('month') month: string,
-  @Query('orgId') orgId: string // <-- add this
+  @Query('orgId') orgId: string 
 ) {
   try {
-    return await this.payrollService.deleteByMonth(month, orgId); // <-- pass orgId
+    return await this.payrollService.deleteByMonth(month, orgId); 
   } catch (err) {
     throw new HttpException(
       {
