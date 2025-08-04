@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { ReloadOutlined, EyeOutlined, DeleteOutlined } from "@ant-design/icons";
+import { ReloadOutlined, EyeOutlined, DeleteOutlined, InfoCircleOutlined } from "@ant-design/icons";
 import Loading from "../../../atoms/loading/loading.jsx";
 import { Pie } from "@ant-design/plots";
-import { Table, ConfigProvider, Modal, Button, Popconfirm, Space } from "antd";
+import { Table, ConfigProvider, Modal, Button, Popconfirm, Space, Tooltip } from "antd";
 import styles from "./FingerPrints.module.css";
 import axios from "axios";
 import { useAuth } from "../../../../contexts/AuthContext.jsx";
@@ -54,6 +54,7 @@ const FingerPrintsContent = () => {
   const [deviceCards, setDeviceCards] = useState([]);
   const [searchValue, setSearchValue] = useState("");
   const [searchError, setSearchError] = useState("");
+  const [showRegenInfo, setShowRegenInfo] = useState({});
   const { authData } = useAuth();
   const { theme } = useTheme();
 
@@ -150,6 +151,8 @@ const FingerPrintsContent = () => {
       key: "id",
       align: "center",
       ellipsis: true,
+      sorter: (a, b) => a.id.localeCompare(b.id),
+      defaultSortOrder: 'ascend',
     },
     {
       title: "Name",
@@ -170,7 +173,7 @@ const FingerPrintsContent = () => {
             <span>
               {passkey !== undefined && passkey !== null ? passkey : "-"}
             </span>
-            {record.passkeyRegeneratedBy && record.passkeyRegeneratedAt && (
+            {showRegenInfo[record.id] && record.passkeyRegeneratedBy && record.passkeyRegeneratedAt && (
               <div style={{ 
                 fontSize: '0.75rem', 
                 color: '#666', 
@@ -182,33 +185,50 @@ const FingerPrintsContent = () => {
               </div>
             )}
           </div>
-          <Button
-            icon={<ReloadOutlined style={{ color: "#970000" }} />}
-            size="small"
-            className={styles.reloadBtn}
-            title="Regenerate Passkey"
-            loading={regeneratingId === record.id}
-            onClick={async () => {
-              setRegeneratingId(record.id);
-              try {
-                const res = await axios.put(
-                  `${import.meta.env.VITE_BASE_URL}/user/${
-                    record.id
-                  }/regenerate-passkey`,
-                  { adminId: authData?.user?.id },
-                  { headers: { Authorization: `Bearer ${authData?.accessToken}` } }
-                );
-                const newPasskey = res.data.passkey;
-                
-                // Refresh the entire table data to get updated tracking information
-                await fetchUserData();
-                setRegeneratingId(null);
-              } catch (err) {
-                setRegeneratingId(null);
-                alert("Failed to regenerate passkey.");
-              }
-            }}
-          />
+          <div style={{ display: 'flex', gap: '4px' }}>
+            {record.passkeyRegeneratedBy && record.passkeyRegeneratedAt && (
+              <Tooltip title="Show regeneration info">
+                <Button
+                  icon={<InfoCircleOutlined style={{ color: "#1890ff" }} />}
+                  size="small"
+                  type="text"
+                  onClick={() => {
+                    setShowRegenInfo(prev => ({
+                      ...prev,
+                      [record.id]: !prev[record.id]
+                    }));
+                  }}
+                />
+              </Tooltip>
+            )}
+            <Button
+              icon={<ReloadOutlined style={{ color: "#970000" }} />}
+              size="small"
+              className={styles.reloadBtn}
+              title="Regenerate Passkey"
+              loading={regeneratingId === record.id}
+              onClick={async () => {
+                setRegeneratingId(record.id);
+                try {
+                  const res = await axios.put(
+                    `${import.meta.env.VITE_BASE_URL}/user/${
+                      record.id
+                    }/regenerate-passkey`,
+                    { adminId: authData?.user?.id },
+                    { headers: { Authorization: `Bearer ${authData?.accessToken}` } }
+                  );
+                  const newPasskey = res.data.passkey;
+                  
+                  // Refresh the entire table data to get updated tracking information
+                  await fetchUserData();
+                  setRegeneratingId(null);
+                } catch (err) {
+                  setRegeneratingId(null);
+                  alert("Failed to regenerate passkey.");
+                }
+              }}
+            />
+          </div>
         </div>
       ),
     },
