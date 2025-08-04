@@ -27,7 +27,7 @@ export class AuthService {
           headers: { 'Content-Type': 'application/json' },
         },
       );
-      console.log('Auth0 login successful:', response.data); 
+      console.log(`user ${username} logged in successfully`); 
       return response.data;
       
 
@@ -83,7 +83,7 @@ export class AuthService {
       );
       console.log(`User ${userId} deleted`) 
     } catch (error) {
-      console.error(
+      console.log(
         'Error deleting user from Auth0:',
         error.response?.data || error.message,
       );

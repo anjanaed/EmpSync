@@ -76,23 +76,46 @@ const PayeModal = ({ handleCancel, success, error }) => {
 
     const newRow = {
       orderId: neworderId,
-      lowerLimit: null,
-      upperLimit: null,
-      taxRate: null,
+      lowerLimit: 0,
+      upperLimit: 0,
+      taxRate: 0,
     };
 
     setDataSource((prev) => [...prev, newRow]);
   };
 
   //Remove Line
-  const handleRemoveLastRow = () => {
-    setDataSource((prev) => prev.slice(0, -1));
-  };
+const handleRemoveLastRow = () => {
+  setDataSource((prev) => {
+    if (prev.length === 0) return prev; 
+    
+    const lastRow = prev[prev.length - 1];
+    const newData = prev.slice(0, -1);
+    
+    // Clear form fields for the removed row
+    const currentValues = form.getFieldsValue();
+    if (currentValues.rows && currentValues.rows[lastRow.orderId]) {
+      delete currentValues.rows[lastRow.orderId];
+      form.setFieldsValue(currentValues);
+    }
+    
+    return newData;
+  });
+};
 
 const handleConfirm = async () => {
-  await form.validateFields();
-  setLoading(true);
   try {
+    await form.validateFields();
+    setLoading(true);
+
+    // Step 1: Delete all existing PAYE records for this organization
+    await axios.delete(`${urL}/paye/org/${authData?.orgId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    // Step 2: Add the new PAYE data
     const dataWithOrgId = dataSource.map(row => ({
       ...row,
       orgId: authData?.orgId,
@@ -103,14 +126,19 @@ const handleConfirm = async () => {
         Authorization: `Bearer ${token}`,
       },
     });
+
     handleCancel();
-    success("PAYE Slab Updated");
+    success("PAYE Slab Updated Successfully");
   } catch (err) {
-    handleCancel();
     console.error("Failed to update PAYE records:", err);
-    error("Something Went Wrong");
+    if (err.errorFields) {
+      error("Please fill all required fields");
+    } else {
+      error("Failed to update PAYE records");
+    }
+  } finally {
+    setLoading(false);
   }
-  setLoading(false);
 };
 
   const columns = [

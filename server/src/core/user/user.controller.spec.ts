@@ -17,7 +17,7 @@ describe('UserController', () => {
     telephone: '1234567890',
     address: '123 Main St, NY',
     email: 'alice@example.com',
-    gender: 'female',
+    gender: 'Female',
     salary: 50000,
     passkey: 123456,
     supId: 'sup123',
@@ -65,10 +65,13 @@ describe('UserController', () => {
   });
 
   describe('create', () => {
-    it('should create a user successfully', async () => {
-      mockUserService.create.mockResolvedValue(userDto);
+    it('should create a user successfully and return passkey', async () => {
+      const generatedPasskey = 123456;
+      mockUserService.create.mockResolvedValue(generatedPasskey);
 
-      await expect(userController.create(userDto)).resolves.toEqual('User Registered Successfully');
+      const result = await userController.create(userDto);
+      
+      expect(result).toEqual({ passkey: generatedPasskey });
       expect(mockUserService.create).toHaveBeenCalledWith(userDto);
     });
 
@@ -158,7 +161,7 @@ describe('UserController', () => {
 
   describe('Passkey Generation Test Cases', () => {
     describe('create - Passkey Generation', () => {
-      it('should create user and return success message with generated passkey (Normal Scenario)', async () => {
+      it('should create user and return generated passkey (Normal Scenario)', async () => {
         // Test Case: Normal Scenario
         // Expected: System generates unique random passkey for each user registration
         const generatedPasskey = 123456;
@@ -166,7 +169,9 @@ describe('UserController', () => {
 
         const result = await userController.create(userDto);
 
-        expect(result).toBe('User Registered Successfully');
+        expect(result).toEqual({ passkey: generatedPasskey });
+        expect(result.passkey).toBeGreaterThanOrEqual(100000);
+        expect(result.passkey).toBeLessThanOrEqual(999999);
         expect(mockUserService.create).toHaveBeenCalledWith(userDto);
       });
 
@@ -186,16 +191,24 @@ describe('UserController', () => {
         ];
 
         // Mock different passkeys for each user
+        const passkeys = [123456, 654321, 111111];
         mockUserService.create
-          .mockResolvedValueOnce(123456)
-          .mockResolvedValueOnce(654321)
-          .mockResolvedValueOnce(111111);
+          .mockResolvedValueOnce(passkeys[0])
+          .mockResolvedValueOnce(passkeys[1])
+          .mockResolvedValueOnce(passkeys[2]);
 
-        for (const user of users) {
-          const result = await userController.create(user);
-          expect(result).toBe('User Registered Successfully');
+        const results = [];
+        for (let i = 0; i < users.length; i++) {
+          const result = await userController.create(users[i]);
+          results.push(result);
+          expect(result).toEqual({ passkey: passkeys[i] });
+          expect(result.passkey).toBeGreaterThanOrEqual(100000);
+          expect(result.passkey).toBeLessThanOrEqual(999999);
         }
 
+        // Verify all passkeys are unique
+        const uniquePasskeys = new Set(results.map(r => r.passkey));
+        expect(uniquePasskeys.size).toBe(3);
         expect(mockUserService.create).toHaveBeenCalledTimes(3);
       });
     });
@@ -306,11 +319,13 @@ describe('UserController', () => {
   describe('Passkey System Integration Tests', () => {
     it('should demonstrate complete passkey workflow through controller', async () => {
       // Step 1: Create user with generated passkey
-      const generatedPasskey = 123456;
+      const generatedPasskey = 654321;
       mockUserService.create.mockResolvedValue(generatedPasskey);
       
       const createResult = await userController.create(userDto);
-      expect(createResult).toBe('User Registered Successfully');
+      expect(createResult).toEqual({ passkey: generatedPasskey });
+      expect(createResult.passkey).toBeGreaterThanOrEqual(100000);
+      expect(createResult.passkey).toBeLessThanOrEqual(999999);
       
       // Step 2: Find user by generated passkey
       const expectedUser = {
@@ -379,6 +394,39 @@ describe('UserController', () => {
       
       // This validates that the passkey is accepted and allows the user to proceed
       // with biometric registration (which would happen in the next step)
+    });
+
+    it('should validate randomly generated passkey format and uniqueness', async () => {
+      // Test multiple user creations to ensure passkeys are properly generated
+      const users = Array.from({ length: 5 }, (_, i) => ({
+        ...userDto,
+        id: `user${i + 1}`,
+        email: `user${i + 1}@test.com`,
+        empNo: `EMP00${i + 1}`,
+      }));
+
+      const generatedPasskeys = [123456, 234567, 345678, 456789, 567890];
+      
+      // Mock unique passkeys for each user
+      generatedPasskeys.forEach((passkey, index) => {
+        mockUserService.create.mockResolvedValueOnce(passkey);
+      });
+
+      const results = [];
+      for (let i = 0; i < users.length; i++) {
+        const result = await userController.create(users[i]);
+        results.push(result);
+        
+        // Validate passkey format
+        expect(result.passkey).toBeGreaterThanOrEqual(100000);
+        expect(result.passkey).toBeLessThanOrEqual(999999);
+        expect(typeof result.passkey).toBe('number');
+      }
+
+      // Validate uniqueness
+      const allPasskeys = results.map(r => r.passkey);
+      const uniquePasskeys = new Set(allPasskeys);
+      expect(uniquePasskeys.size).toBe(allPasskeys.length);
     });
   });
 });

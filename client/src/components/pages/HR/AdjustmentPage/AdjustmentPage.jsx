@@ -36,19 +36,20 @@ const AdjustmentPage = () => {
       icon: <FontAwesomeIcon icon={faUserPlus} />,
       link: "/reg",
     },
+
     {
       key: "3",
-      label: "Payrolls",
-      action: "Payroll",
-      icon: <FontAwesomeIcon icon={faDollarSign} />,
-      link: "/payroll",
-    },
-    {
-      key: "4",
       label: "FingerPrints",
       action: "User Management",
       icon: <FontAwesomeIcon icon={faFingerprint} />,
       link: "/FingerPrint",
+    },
+        {
+      key: "4",
+      label: "Payrolls",
+      action: "Payroll",
+      icon: <FontAwesomeIcon icon={faDollarSign} />,
+      link: "/payroll",
     },
     {
       key: "5",

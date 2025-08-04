@@ -206,58 +206,128 @@
 /* Card specific styles */
 .card {
   border-radius: 8px;
-  border: 1px solid var(--border-color);
+  border: 1px solid #f0f0f0;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  background: white;
+  transition: all 0.3s ease;
 }
 
-.mealName {
-  font-weight: 600;
-  color: var(--text-primary);
+.card:hover {
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
 }
 
-.mealStats {
-  font-weight: 500;
-  color: #8c8c8c;
-  font-size: 14px;
+.summaryCard {
+  height: auto;
+  min-height: 60px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-radius: 8px;
+  border: 1px solid #f0f0f0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  background: white;
 }
 
-.mealDetails {
-  margin-top: 8px;
+.summaryCard:hover {
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
 }
 
-.mealId {
-  font-size: 12px;
-  color: #bfbfbf;
+/* Dark mode styles */
+[data-theme="dark"] .container {
+  background-color: var(--bg-secondary-dark, #1a1a1a);
+  color: var(--text-primary-dark, #ffffff);
 }
 
-.noDataMessage {
-  text-align: center;
-  color: #8c8c8c;
-  padding: 24px;
-  font-style: italic;
+[data-theme="dark"] .sectionHeader {
+  color: var(--text-primary-dark, #ffffff);
 }
 
-/* Responsive design */
-@media (max-width: 768px) {
-  .analysisGrid {
-    grid-template-columns: 1fr;
-  }
-  
-  .cardContent {
-    padding: 16px 20px;
-  }
-  
-  .cardValue {
-    font-size: 28px;
-  }
-  
-  .cardIcon {
-    width: 40px;
-    height: 40px;
-  }
-  
-  .iconSvg {
-    width: 20px;
-    height: 20px;
-  }
+[data-theme="dark"] .sectionTitle {
+  color: var(--text-primary-dark, #ffffff);
 }
+
+[data-theme="dark"] .cardTitle {
+  color: var(--text-primary-dark, #ffffff);
+}
+
+[data-theme="dark"] .mealItem {
+  color: var(--text-primary-dark, #ffffff);
+}
+
+[data-theme="dark"] .mealHeader {
+  color: var(--text-primary-dark, #ffffff);
+}
+
+[data-theme="dark"] .summaryCard {
+  background: var(--bg-card-dark, #2a2a2a);
+  border: 1px solid var(--border-dark, #404040);
+  color: var(--text-primary-dark, #ffffff);
+}
+
+[data-theme="dark"] .summaryCard:hover {
+  box-shadow: 0 6px 16px rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .card {
+  background: var(--bg-card-dark, #2a2a2a);
+  border: 1px solid var(--border-dark, #404040);
+  color: var(--text-primary-dark, #ffffff);
+}
+
+[data-theme="dark"] .card:hover {
+  box-shadow: 0 6px 16px rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .cardLabel {
+  color: var(--text-secondary-dark, #b3b3b3);
+}
+
+[data-theme="dark"] .cardSubtext {
+  color: var(--text-tertiary-dark, #808080);
+}
+
+[data-theme="dark"] .cardValue {
+  color: var(--text-primary-dark, #ffffff);
+}
+
+/* Dark mode icon backgrounds */
+[data-theme="dark"] .blueBg {
+  background-color: rgba(47, 84, 235, 0.2);
+  color: #4d7fff;
+}
+
+[data-theme="dark"] .greenBg {
+  background-color: rgba(82, 196, 26, 0.2);
+  color: #73d13d;
+}
+
+[data-theme="dark"] .orangeBg {
+  background-color: rgba(250, 84, 28, 0.2);
+  color: #ff7a45;
+}
+
+/* Dark mode card border accents */
+[data-theme="dark"] .summaryCard::before {
+  background: var(--border-dark, #404040);
+}
+
+[data-theme="dark"] .summaryCard.blueCard::before {
+  background: #4d7fff;
+}
+
+[data-theme="dark"] .summaryCard.greenCard::before {
+  background: #73d13d;
+}
+
+[data-theme="dark"] .summaryCard.orangeCard::before {
+  background: #ff7a45;
+}
+
+[data-theme="dark"] .summaryValue {
+  color: #4d7fff;
+}
+

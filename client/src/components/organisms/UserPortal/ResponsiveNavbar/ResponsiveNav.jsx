@@ -13,6 +13,7 @@ import {
   AppstoreOutlined,
   BellOutlined
 } from '@ant-design/icons';
+import { Dropdown, Avatar } from 'antd';
 import styles from './ResponsiveNav.module.css';
 import logoImg from '../../../../assets/Logo/logo.png';
 import logowImg from '../../../../assets/Logo/logow.png';
@@ -33,17 +34,59 @@ const ResponsiveNav = () => {
 
   const isDark = theme === 'dark';
 
+  // Get current user from auth context
+  const currentUser = authData?.user || { name: 'User', role: 'employee' };
+
+  // Role display mapping
+  const roleDisplayMap = {
+    // admin: 'Administrator',
+    // manager: 'Manager',
+    // employee: 'Employee',
+    // hr: 'HR Representative',
+    // HR_ADMIN: 'Human Resource Manager',
+    // INVENTORY_ADMIN: 'Inventory Manager',
+    // KITCHEN_STAFF: 'Kitchen Staff',
+    // KITCHEN_ADMIN: 'Kitchen Administrator'
+  };
+
+  // Dropdown menu items
+  const dropdownItems = [
+    {
+      key: 'Admin',
+      label: 'Admin',
+      icon: <UserOutlined />,
+      onClick: () => {
+        // Navigate based on user role
+        if (currentUser.role === 'admin' || 
+            currentUser.role === 'HR_ADMIN' || 
+            currentUser.role === 'INVENTORY_ADMIN' || 
+            currentUser.role === 'KITCHEN_STAFF' || 
+            currentUser.role === 'KITCHEN_ADMIN') {
+          navigate('/LoginRole');
+        } else {
+          navigate('/ProfilePage');
+        }
+      }
+    },
+    {
+      key: 'logout',
+      label: 'Logout',
+      icon: <LogoutOutlined />,
+      onClick: handleLogout
+    }
+  ];
+
   // Toggle mobile menu visibility
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
   };
 
   // Handle logout action
-  const handleLogout = () => {
+  function handleLogout() {
     logout(); // Clear user data
     console.log("User logged out");
     navigate('/login'); // Redirect to login page
-  };
+  }
 
   // Handle notification click
   const handleNotificationClick = () => {
@@ -140,6 +183,33 @@ const ResponsiveNav = () => {
             <MoonOutlined style={{ fontSize: '20px' }} />
           )}
         </button>
+        {/* User dropdown for desktop */}
+        <div className={`${styles.desktopUserDropdown} ${styles.hideMobile}`}>
+          <Dropdown
+            menu={{ items: dropdownItems }}
+            placement="bottomRight"
+            trigger={["click"]}
+            overlayClassName={`${styles.userDropdownMenu} ${theme === "dark" ? styles.darkDropdown : ""}`}
+          >
+            <div className={styles.userInfo}>
+              <Avatar
+                style={{
+                  backgroundColor: theme === "dark" ? "#000000ff" : "#d60a0aff",
+                  color: theme === "dark" ? "#ffffff" : "#fff",
+                }}
+                icon={<UserOutlined />}
+              />
+              <div className={styles.userDetails}>
+                <div className={styles.userName}>{currentUser.name}</div>
+                <div className={styles.userPosition}>
+                  {roleDisplayMap[currentUser.role]}
+                </div>
+              </div>
+            </div>
+          </Dropdown>
+        </div>
+
+        
 
         {/* Mobile menu toggle button */}
         <button
@@ -150,10 +220,10 @@ const ResponsiveNav = () => {
           <MenuOutlined style={{ fontSize: '20px' }} />
         </button>
 
-        {/* Logout button for desktop view */}
+        {/* Logout button for desktop view - now hidden since we have dropdown */}
         <button
           onClick={handleLogout}
-          className={`${styles.logoutButton} ${styles.desktopLogout}`}
+          className={`${styles.logoutButton} ${styles.desktopLogout} ${styles.hidden}`}
         >
           <LogoutOutlined style={{ fontSize: '18px', marginRight: '8px' }} />
           Logout

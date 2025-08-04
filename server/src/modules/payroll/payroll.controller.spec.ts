@@ -23,7 +23,9 @@ const mockFirebaseService = {
   deleteFile: jest.fn(),
 };
 const mockDto: Prisma.PayrollCreateInput = {
-  orgId: 'org123',
+    organization: {
+    connect: { id: 'org123' }
+  },
   month: '2025-07',
   netPay: 10000,
   payrollPdf: 'some-url',

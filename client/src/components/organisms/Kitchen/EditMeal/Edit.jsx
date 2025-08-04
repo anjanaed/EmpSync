@@ -49,6 +49,8 @@ const EditMealPage = () => {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [imageFile, setImageFile] = useState(null);
+  const [newIngredientName, setNewIngredientName] = useState("");
+  const [addingIngredient, setAddingIngredient] = useState(false);
   const { authData } = useAuth();
   const token = authData?.accessToken;
   const orgId = authData?.orgId;
@@ -63,10 +65,7 @@ const EditMealPage = () => {
     }
 
     try {
-      const response = await axios.get(`${urL}/ingredients`, {
-        params: {
-          orgId: authData?.orgId, // Make sure you have `authData` accessible in the edit page too
-        },
+      const response = await axios.get(`${urL}/ingredients/org/${authData?.orgId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -159,33 +158,20 @@ const EditMealPage = () => {
     fetchMealData();
   }, [location.state, form, navigate]);
 
+  // Updated fetchIngredients function to match AddMeal component
   const fetchIngredients = async () => {
     setLoadingIngredients(true);
     try {
-      const response = await axios.get(`${urL}/Ingredients/optimized`, {
-        params: {
-          orgId: orgId,
-        },
+      const response = await axios.get(`${urL}/ingredients/org/${authData?.orgId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
 
-      const data = response.data;
-
-      // Extract ingredients from both arrays in the response
-      const priority1Ingredients = Array.isArray(data.priority1Ingredients)
-        ? data.priority1Ingredients
-        : [];
-      const optimizedIngredients = Array.isArray(data.optimizedIngredients)
-        ? data.optimizedIngredients
-        : [];
-
-      // Combine both arrays
-      const allIngredients = [...priority1Ingredients, ...optimizedIngredients];
+      const data = Array.isArray(response.data) ? response.data : [];
 
       // Transform and mark previously selected ingredients
-      const formattedIngredients = allIngredients.map((ingredient) => {
+      const formattedIngredients = data.map((ingredient) => {
         // Check if this ingredient was previously selected
         const existingIngredient = selectedIngredients.find(
           (sel) => String(sel.id) === String(ingredient.id)
@@ -201,14 +187,51 @@ const EditMealPage = () => {
       setIngredients(formattedIngredients);
 
       if (formattedIngredients.length === 0) {
-        message.warning("No ingredients found in the API response");
+        message.warning("No ingredients found");
       }
     } catch (error) {
-      message.error(`Error fetching ingredients: ${error.message}`);
+      const errorMessage = error.response?.data?.message || error.message;
+      message.error(`Error fetching ingredients: ${errorMessage}`);
       console.error("Error fetching ingredients:", error);
       setIngredients([]);
     } finally {
       setLoadingIngredients(false);
+    }
+  };
+
+  // Add new ingredient function (same as AddMeal component)
+  const handleAddNewIngredient = async () => {
+    if (!newIngredientName.trim()) {
+      message.warning("Ingredient name cannot be empty.");
+      return;
+    }
+
+    setAddingIngredient(true);
+
+    try {
+      const response = await axios.post(
+        `${urL}/ingredients`,
+        {
+          name: newIngredientName.trim(),
+          orgId: authData?.orgId,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.status === 201 || response.status === 200) {
+        message.success("Ingredient added successfully!");
+        setNewIngredientName("");
+        fetchIngredients(); // Refresh ingredient list
+      }
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || error.message;
+      message.error(`Failed to add ingredient: ${errorMessage}`);
+    } finally {
+      setAddingIngredient(false);
     }
   };
 
@@ -713,6 +736,25 @@ const EditMealPage = () => {
             className={styles.ingredientsSearchInput}
           />
           <Button className={styles.searchButton}>Search</Button>
+        </div>
+
+        {/* Add New Ingredient Section */}
+        <div className={styles.addNewIngredientSection}>
+          <Input
+            placeholder="New ingredient name"
+            value={newIngredientName}
+            onChange={(e) => setNewIngredientName(e.target.value)}
+            className={styles.newIngredientInput}
+          />
+          <Button
+            type="dashed"
+            onClick={handleAddNewIngredient}
+            loading={addingIngredient}
+            disabled={!newIngredientName.trim()}
+            className={styles.addIngredientButton}
+          >
+            Add Ingredient
+          </Button>
         </div>
 
         <div className={styles.ingredientsListContainer}>

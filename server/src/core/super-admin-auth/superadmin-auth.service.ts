@@ -37,10 +37,6 @@ export class SuperAdminAuthService {
       return response.data; 
     } catch (error) {
       console.log(error)
-      console.error(
-        'Error during Auth0 login:', 
-        error.response?.data || error.message,
-      );
       throw new HttpException(
         error.response?.data?.error_description || 
           'Failed to authenticate with Auth0',

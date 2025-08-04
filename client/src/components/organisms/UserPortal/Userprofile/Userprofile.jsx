@@ -13,7 +13,7 @@ export default function UserProfile({ user }) {
   const [phoneError, setPhoneError] = useState("");
   const [heightError, setHeightError] = useState("");
   const [weightError, setWeightError] = useState("");
-  const { authData } = useAuth();
+  const { authData, logout } = useAuth(); // Add logout here
   const { theme } = useTheme();
   const token = authData?.accessToken;
 
@@ -625,8 +625,14 @@ export default function UserProfile({ user }) {
             {isEditing && (
               <button 
                 style={styles.passwordChangeButton}
-                onClick={() => {
-                  navigate('/forgotpassword');
+                onClick={async () => {
+                  try {
+                    await logout(); // Wait for logout to complete
+                    navigate('/forgotpassword');
+                  } catch (error) {
+                    console.error('Logout failed:', error);
+                    navigate('/forgotpassword'); // Navigate anyway
+                  }
                 }}
                 onMouseEnter={e => e.target.style.backgroundColor = isDark ? '#16a34a' : '#047857'}
                 onMouseLeave={e => e.target.style.backgroundColor = isDark ? 'var(--success)' : '#059669'}
