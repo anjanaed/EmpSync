@@ -55,6 +55,8 @@ model User {
   email          String        @unique
   salary         Int?
   passkey        Int?
+  passkeyRegeneratedBy String?
+  passkeyRegeneratedAt DateTime?
   supId          String?
   language       String?
   height         Int?
