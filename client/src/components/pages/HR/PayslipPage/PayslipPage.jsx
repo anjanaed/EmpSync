@@ -17,10 +17,9 @@ import { useAuth } from "../../../../contexts/AuthContext.jsx";
 const PayslipPage = () => {
   const { authData } = useAuth();
   
-  // Get permission actions safely
+  // Get permission actions 
   const actions = authData?.permissions?.actions || [];
 
-  // Define all possible menu items
   const allMenuItems = [
     {
       key: "1",
