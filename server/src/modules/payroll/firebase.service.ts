@@ -14,7 +14,6 @@ export class FirebaseService implements OnModuleInit {
         credential: admin.credential.cert(
           './src/modules/payroll/firebase-credentials.json',
         ),
-        //Download the firebase-credentials.json file from cloud console
         storageBucket: 'gs://empsync-af358',
       });
       this.bucket = admin.storage();
@@ -109,7 +108,6 @@ export class FirebaseService implements OnModuleInit {
       const filePath = `payrolls/${empId}/${filename}`;
       const file = this.bucket.bucket().file(filePath);
       
-      // Check if file exists
       const [exists] = await file.exists();
       if (!exists) {
         throw new Error(`File ${filePath} does not exist in Firebase Storage`);
@@ -157,17 +155,3 @@ export class FirebaseService implements OnModuleInit {
     }
   }
 }
-// async function main() {
-//   const firebaseService = new FirebaseService();
-//   firebaseService.onModuleInit();
-
-//   try {
-//     const filePath = 'payrolls/E456/E456-02~2025.pdf'; // Adjust path if needed
-//     const url = await firebaseService.getSignedUrlFromParams("E456", '02~2025');
-//     console.log('Signed URL:', url);
-//   } catch (error) {
-//     console.error('Test error:', error);
-//   }
-// }
-
-// main();

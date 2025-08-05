@@ -13,7 +13,6 @@ import { useNavigate } from "react-router-dom";
 import { BsPlusCircle } from "react-icons/bs";
 import { FaRegSave } from "react-icons/fa";
 import { LuEye } from "react-icons/lu";
-import Gbutton from "../../../atoms/button/Button";
 import { MdCalculate } from "react-icons/md";
 import AdjustmentModal from "../../../templates/HR/AdjustmentModal/AdjustmentModal.jsx";
 import { InfoCircleOutlined } from "@ant-design/icons";

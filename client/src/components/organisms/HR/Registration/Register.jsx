@@ -83,7 +83,7 @@ const Register = () => {
         salary: parseInt(salary),
       };
 
-      // Step 1: Register in database
+      // Register in database
       const res = await axios.post(`${urL}/user`, payload, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -91,7 +91,7 @@ const Register = () => {
       });
 
       try {
-        // Step 2: Register in Auth0
+        // Register in Auth0
         await signUpUser({ email, password, id });
 
         // Both registrations successful

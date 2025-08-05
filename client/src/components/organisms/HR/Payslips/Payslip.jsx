@@ -114,7 +114,7 @@ const Payslip = () => {
       if (url) {
         const link = document.createElement("a");
         link.href = url;
-        link.download = `${empid}-${month}.pdf`; // Suggests a filename
+        link.download = `${empid}-${month}.pdf`; 
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
