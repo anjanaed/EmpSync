@@ -167,9 +167,9 @@ const ResponsiveNav = () => {
       {/* Right section with controls */}
       <div className={styles.rightSection}>
         {/* Notification icon only */}
-        <div className={styles.notificationContainer}>
+        {/* <div className={styles.notificationContainer}>
           <BellOutlined style={{ fontSize: '20px' }} />
-        </div>
+        </div> */}
 
         {/* Dark mode toggle */}
         <button
