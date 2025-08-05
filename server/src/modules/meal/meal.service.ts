@@ -10,17 +10,20 @@ import { DatabaseService } from '../../database/database.service';
 export class MealService {
   constructor(private readonly databaseService: DatabaseService) {}
 
-  
   async createWithIngredients(
     mealData: Omit<Prisma.MealCreateInput, 'ingredients'>,
     ingredients: Array<{ ingredientId: number }>,
     orgId?: string,
   ) {
     try {
+      // Explicitly exclude id and other auto-generated fields
+      const { id, createdAt, ...cleanMealData } = mealData as any;
+      
       const data: any = {
-        ...mealData,
+        ...cleanMealData,
         orgId: orgId || undefined,
       };
+
       if (ingredients && ingredients.length > 0) {
         data.ingredients = {
           create: ingredients.map((ing) => ({
@@ -30,6 +33,7 @@ export class MealService {
           })),
         };
       }
+
       const result = await this.databaseService.meal.create({
         data,
         include: {
@@ -40,12 +44,13 @@ export class MealService {
           },
         },
       });
+      
       return result;
     } catch (error) {
+      console.error('Meal creation error:', error);
       throw new BadRequestException(`Failed to create meal: ${error.message}`);
     }
   }
-
 
   async findOneWithIngredients(id: number, orgId?: string) {
     try {
@@ -67,66 +72,13 @@ export class MealService {
     }
   }
 
-
   async findAllWithIngredients(orgId?: string, includeDeleted = false) {
-  try {
-    return await this.databaseService.meal.findMany({
-      where: {
-        orgId: orgId || undefined,
-        ...(includeDeleted ? {} : { isDeleted: false }),
-      },
-      include: {
-        ingredients: {
-          include: {
-            ingredient: true,
-          },
+    try {
+      return await this.databaseService.meal.findMany({
+        where: {
+          orgId: orgId || undefined,
+          ...(includeDeleted ? {} : { isDeleted: false }),
         },
-      },
-    });
-  } catch (error) {
-    throw new BadRequestException('Failed to retrieve meals');
-  }
-}
-
-
-  async updateWithIngredients(
-  id: number,
-  mealData: Omit<Prisma.MealUpdateInput, 'ingredients'>,
-  ingredients?: Array<{ ingredientId: number }>,
-  orgId?: string,
-) {
-  // First check: only throw NotFoundException if meal not found
-  const meal = await this.databaseService.meal.findFirst({
-    where: {
-      id,
-      orgId: orgId || undefined,
-    },
-  });
-
-  if (!meal) {
-    throw new NotFoundException('Meal not found');
-  }
-
-  try {
-    return await this.databaseService.$transaction(async (prisma) => {
-      if (ingredients && ingredients.length > 0) {
-        await prisma.mealIngredient.deleteMany({
-          where: { mealId: id },
-        });
-
-        for (const ing of ingredients) {
-          await prisma.mealIngredient.create({
-            data: {
-              mealId: id,
-              ingredientId: ing.ingredientId,
-            },
-          });
-        }
-      }
-
-      const updatedMeal = await prisma.meal.update({
-        where: { id },
-        data: mealData,
         include: {
           ingredients: {
             include: {
@@ -135,37 +87,82 @@ export class MealService {
           },
         },
       });
-
-      return updatedMeal;
-    });
-  } catch (error) {
-    throw new BadRequestException(`Failed to update meal: ${error.message}`);
+    } catch (error) {
+      throw new BadRequestException('Failed to retrieve meals');
+    }
   }
-}
 
+  async updateWithIngredients(
+    id: number,
+    mealData: Omit<Prisma.MealUpdateInput, 'ingredients'>,
+    ingredients?: Array<{ ingredientId: number }>,
+    orgId?: string,
+  ) {
+    // First check if meal exists
+    const meal = await this.databaseService.meal.findFirst({
+      where: {
+        id,
+        orgId: orgId || undefined,
+      },
+    });
 
-  
+    if (!meal) {
+      throw new NotFoundException('Meal not found');
+    }
+
+    try {
+      return await this.databaseService.$transaction(async (prisma) => {
+        if (ingredients && ingredients.length > 0) {
+          await prisma.mealIngredient.deleteMany({
+            where: { mealId: id },
+          });
+
+          for (const ing of ingredients) {
+            await prisma.mealIngredient.create({
+              data: {
+                mealId: id,
+                ingredientId: ing.ingredientId,
+              },
+            });
+          }
+        }
+
+        const updatedMeal = await prisma.meal.update({
+          where: { id },
+          data: mealData,
+          include: {
+            ingredients: {
+              include: {
+                ingredient: true,
+              },
+            },
+          },
+        });
+
+        return updatedMeal;
+      });
+    } catch (error) {
+      throw new BadRequestException(`Failed to update meal: ${error.message}`);
+    }
+  }
 
   async softDelete(id: number, orgId?: string) {
-  const meal = await this.databaseService.meal.findFirst({
-    where: {
-      id,
-      orgId: orgId || undefined,
-    },
-  });
+    const meal = await this.databaseService.meal.findFirst({
+      where: {
+        id,
+        orgId: orgId || undefined,
+      },
+    });
 
-  if (!meal) {
-    throw new NotFoundException('Meal not found');
+    if (!meal) {
+      throw new NotFoundException('Meal not found');
+    }
+
+    return await this.databaseService.meal.update({
+      where: { id },
+      data: {
+        isDeleted: true,
+      },
+    });
   }
-
-  return await this.databaseService.meal.update({
-    where: { id },
-    data: {
-      isDeleted: true,
-    },
-  });
-}
-
-
-
 }
