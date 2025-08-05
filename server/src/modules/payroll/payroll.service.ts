@@ -61,14 +61,14 @@ export class PayrollService {
     }
   }
 
-  // Helper function to extract adjustments
+  // function to extract adjustments
   private extractAdjustments(adjustments: any[], allowance: boolean, percentage: boolean) {
     return adjustments
       .filter((adj) => adj.allowance === allowance && adj.isPercentage === percentage)
       .map((adj) => ({ label: adj.label, amount: adj.amount }));
   }
 
-  // Helper function to extract individual adjustments
+  // function to extract individual adjustments
   private extractIndividualAdjustment(data: any[], userId: string, allowance: boolean, percentage: boolean) {
     return data
       .filter((adj: any) =>
