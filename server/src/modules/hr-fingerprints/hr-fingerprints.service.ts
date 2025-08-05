@@ -57,10 +57,16 @@ export class HrFingerprintsService {
   }
 
   async getAllUsersWithFingerprintDetails(orgId?: string) {
-  // Get all users (id, name, passkey) filtered by orgId if provided
+  // Get all users (id, name, passkey, passkeyRegeneratedBy, passkeyRegeneratedAt) filtered by orgId if provided
   const users = await this.prisma.user.findMany({
     where: orgId ? { organizationId: orgId } : undefined,
-    select: { id: true, name: true, passkey: true },
+    select: { 
+      id: true, 
+      name: true, 
+      passkey: true,
+      passkeyRegeneratedBy: true,
+      passkeyRegeneratedAt: true
+    },
   });
 
   // Get all fingerprints for users in this org
@@ -84,6 +90,8 @@ export class HrFingerprintsService {
       id: user.id,
       name: user.name,
       passkey: user.passkey,
+      passkeyRegeneratedBy: user.passkeyRegeneratedBy,
+      passkeyRegeneratedAt: user.passkeyRegeneratedAt,
       status: thumbids.length > 0 ? 'Registered' : 'Unregistered',
       fingerprintCount: thumbids.length,
       thumbids,
