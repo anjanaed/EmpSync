@@ -190,7 +190,8 @@ export class SuperAdminService {
       // Only auto-generate employeeNo for admin roles
       if (
         data.role === 'HR_ADMIN' ||
-        data.role === 'KITCHEN_ADMIN'
+        data.role === 'KITCHEN_ADMIN' ||
+        data.role === 'KITCHEN_STAFF'
       ) {
         const lastEmpNo = await this.getLastAdminEmployeeNo(); // e.g., 'A007'
 
