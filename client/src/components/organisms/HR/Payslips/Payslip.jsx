@@ -35,31 +35,40 @@ const Payslip = () => {
   const token = authData?.accessToken;
 
   const fetchSlips = async (search) => {
-    try {
-      const res = await axios.get(`${urL}/payroll`, {
-        params: {
-          search: search || undefined,
-          orgId: authData?.orgId,
-        },
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      console.log(res);
-      const fetchedSlip = res.data.map((slip) => ({
-        key: slip.id,
-        id: slip.empId,
-        name: slip.employee.name,
-        month: slip.month,
-        salary: `LKR ${slip.netPay}`,
-        pdf: slip.payrollPdf,
-      }));
-      setPayslip(fetchedSlip);
-    } catch (err) {
-      console.log(err);
-    }
-    setLoading(false);
-  };
+  try {
+    const usersRes = await axios.get(`${urL}/user`, {
+      params: { orgId: authData?.orgId },
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const userMap = {};
+    usersRes.data.forEach((u) => {
+      userMap[u.id] = u.empNo;
+    });
+
+    const res = await axios.get(`${urL}/payroll`, {
+      params: {
+        search: search || undefined,
+        orgId: authData?.orgId,
+      },
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    const fetchedSlip = res.data.map((slip) => ({
+      key: slip.id,
+      id: slip.empId,
+      no: userMap[slip.empId] || "N/A", 
+      name: slip.employee.name,
+      month: slip.month,
+      salary: `LKR ${slip.netPay}`,
+      pdf: slip.payrollPdf,
+    }));
+    setPayslip(fetchedSlip);
+  } catch (err) {
+    console.log(err);
+  }
+  setLoading(false);
+};
 
   const handleRemove = async (empid, month) => {
     try {
@@ -114,7 +123,7 @@ const Payslip = () => {
       if (url) {
         const link = document.createElement("a");
         link.href = url;
-        link.download = `${empid}-${month}.pdf`; 
+        link.download = `${empid}-${month}.pdf`;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
@@ -126,14 +135,14 @@ const Payslip = () => {
 
   const columns = [
     {
-      title: "Employee ID",
-      dataIndex: "id",
-      key: "id",
+      title: "Employee No",
+      dataIndex: "no",
+      key: "no",
       align: "center",
       defaultSortOrder: "ascend",
       sorter: (a, b) => {
-        const numA = parseInt(a.id.match(/\d+/)?.[0] || "0", 10);
-        const numB = parseInt(b.id.match(/\d+/)?.[0] || "0", 10);
+        const numA = parseInt(a.no.match(/\d+/)?.[0] || "0", 10);
+        const numB = parseInt(b.no.match(/\d+/)?.[0] || "0", 10);
         return numA - numB;
       },
       ellipsis: true,

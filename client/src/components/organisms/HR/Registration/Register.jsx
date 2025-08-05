@@ -101,7 +101,7 @@ const Register = () => {
         if (res.data && res.data.passkey) {
           setPasskey(res.data.passkey);
           setMenu(3);
-        } 
+        }
       } catch (auth0Error) {
         // Auth0 registration failed, rollback database registration
         try {
@@ -118,11 +118,12 @@ const Register = () => {
           );
         }
         if (auth0Error.response?.data.code === "invalid_signup") {
-          error("Registration Failed: The email or ID may already exist in Auth0.");
+          error(
+            "Registration Failed: The email or ID may already exist in Auth0."
+          );
         } else {
           console.log("Auth0 Error:", auth0Error.response?.data);
         }
-
       }
     } catch (dbError) {
       // Database registration failed
@@ -189,6 +190,7 @@ const Register = () => {
       <Modal
         open={isImportModalOpen}
         footer={null}
+        destroyOnClose={true}
         width="70vw"
         onCancel={() => setIsImportModalOpen(false)}
         styles={{
@@ -401,6 +403,15 @@ const Register = () => {
                     }
                     placeholder="Select Birth Date"
                     style={{ width: "100%" }}
+                    disabledDate={(current) => {
+                      // Disable future dates and dates that would make the person under 18
+                      const eighteenYearsAgo = moment().subtract(18, "years");
+                      return (
+                        current &&
+                        (current > moment().endOf("day") ||
+                          current > eighteenYearsAgo.endOf("day"))
+                      );
+                    }}
                   />
                 </Form.Item>
                 <Form.Item name="supId" label="Supervisor's ID">

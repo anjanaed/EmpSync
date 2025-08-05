@@ -23,6 +23,8 @@ import { IoMdRemoveCircleOutline } from "react-icons/io";
 import PayeModal from "../../../templates/HR/PayeModal/PayeModal.jsx";
 import { useAuth } from "../../../../contexts/AuthContext.jsx";
 import { usePopup } from "../../../../contexts/PopupContext.jsx";
+import dayjs from 'dayjs';
+
 
 const { RangePicker } = DatePicker;
 
@@ -42,6 +44,9 @@ const Payroll = () => {
   const { authData } = useAuth();
   const token = authData?.accessToken;
   const { success, error } = usePopup();
+    const disabledDate = (current) => {
+    return current && current > dayjs().endOf('day');
+  };
 
   const [individualAdjustment, setIndividualAdjustment] = useState([
     { id: "", details: "", amount: "", isPercentage: true, isAllowance: true },
@@ -594,6 +599,7 @@ const Payroll = () => {
                 <RangePicker
                   style={{ width: "250px" }}
                   onChange={(dates) => handleRangeChange(dates)}
+                  disabledDate={disabledDate}
                 />
               </Form.Item>
             </div>
@@ -609,6 +615,7 @@ const Payroll = () => {
                   picker="month"
                   style={{ width: "250px" }}
                   onChange={(value) => handleMonthChange(value)}
+                  disabledDate={disabledDate}
                 />
               </Form.Item>
             </div>

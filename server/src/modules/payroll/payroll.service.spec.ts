@@ -49,7 +49,8 @@ describe('PayrollService', () => {
     };
 
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
+      providers:
+      [
         PayrollService,
         { provide: DatabaseService, useValue: db },
         { provide: FirebaseService, useValue: firebase },
@@ -156,8 +157,19 @@ describe('PayrollService', () => {
 
       expect(result).toEqual(mockPayrolls);
       expect(db.payroll.findMany).toHaveBeenCalledWith({
-        include: { employee: true },
+        include: {
+          employee: {
+            select: {
+              id: true,
+              name: true,
+              empNo: true,
+            },
+          },
+        },
         where: { orgId: 'org1' },
+        orderBy: {
+          createdAt: 'desc',
+        },
       });
     });
 
@@ -170,10 +182,60 @@ describe('PayrollService', () => {
 
       expect(result).toEqual(mockPayrolls);
       expect(db.payroll.findMany).toHaveBeenCalledWith({
-        include: { employee: true },
+        include: {
+          employee: {
+            select: {
+              id: true,
+              name: true,
+              empNo: true,
+            },
+          },
+        },
         where: {
           orgId: 'org1',
-          OR: [{ empId: { contains: 'emp1', mode: 'insensitive' } }],
+          OR: [
+            {
+              employee: {
+                name: { contains: 'emp1', mode: 'insensitive' }
+              }
+            },
+            {
+              employee: {
+                empNo: { contains: 'emp1', mode: 'insensitive' }
+              }
+            },
+            {
+              month: { contains: 'emp1', mode: 'insensitive' }
+            },
+          ],
+        },
+        orderBy: {
+          createdAt: 'desc',
+        },
+      });
+    });
+
+    it('should find all payrolls without any filters', async () => {
+      const mockPayrolls = [{ id: 1, employee: {} }, { id: 2, employee: {} }];
+      
+      db.payroll.findMany.mockResolvedValue(mockPayrolls);
+
+      const result = await service.findAll();
+
+      expect(result).toEqual(mockPayrolls);
+      expect(db.payroll.findMany).toHaveBeenCalledWith({
+        include: {
+          employee: {
+            select: {
+              id: true,
+              name: true,
+              empNo: true,
+            },
+          },
+        },
+        where: {},
+        orderBy: {
+          createdAt: 'desc',
         },
       });
     });

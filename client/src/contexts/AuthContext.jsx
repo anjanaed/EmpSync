@@ -56,7 +56,10 @@ export const AuthProvider = ({ children }) => {
       const currentUser = response.data;
 
       const userRole = currentUser.role;
-      const orgId = currentUser.organizationId || NULL;
+      const orgId = currentUser.organizationId || null;
+      const orgName = currentUser.organization?.name || null;
+      
+
       let permissions = [];
       try {
         const permRes = await axios.get(
@@ -69,12 +72,13 @@ export const AuthProvider = ({ children }) => {
       } catch (permErr) {
         console.error("Failed to fetch permissions:", permErr);
       }
-      console.log(currentUser)
+
       const userData = {
         accessToken: access_token,
         idToken: id_token,
         user: currentUser,
         orgId: orgId,
+        orgName: orgName,
         email: decoded.email,
         role: userRole,
         permissions,
@@ -84,7 +88,7 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem("authData", JSON.stringify(userData));
     } catch (error) {
       console.error("Login error:", error);
-      throw new Error("Failed to log in. Please check your credentials.");
+      throw new Error("Failed to log in :"+ error.message);
     }
   };
 
@@ -99,7 +103,7 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem("superAuthData", JSON.stringify(superAdminUserData));
     } catch (error) {
       console.error("Login error:", error);
-      throw new Error("Failed to log in. Please check your credentials.");
+      throw new Error("Failed to log in :"+ error.message);
     }
   };
 

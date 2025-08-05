@@ -214,40 +214,44 @@ describe('UserController', () => {
     });
 
     describe('regeneratePasskey', () => {
-      it('should regenerate passkey for existing user', async () => {
-        const userId = '1';
-        const newPasskey = 789012;
+  it('should regenerate passkey for existing user', async () => {
+    const userId = '1';
+    const newPasskey = 789012;
 
-        mockUserService.regeneratePasskey.mockResolvedValue(newPasskey);
+    mockUserService.regeneratePasskey.mockResolvedValue(newPasskey);
 
-        const result = await userController.regeneratePasskey(userId);
+    const result = await userController.regeneratePasskey(userId);
 
-        expect(result).toEqual({ passkey: newPasskey });
-        expect(mockUserService.regeneratePasskey).toHaveBeenCalledWith(userId);
-      });
+    expect(result).toEqual({ passkey: newPasskey });
+    expect(mockUserService.regeneratePasskey).toHaveBeenCalledWith(userId, undefined);
+  });
 
-      it('should throw error when regenerating passkey for non-existent user', async () => {
-        const userId = 'nonexistent';
+  it('should throw error when regenerating passkey for non-existent user', async () => {
+    const userId = 'nonexistent';
 
-        mockUserService.regeneratePasskey.mockRejectedValue(
-          new HttpException('User Not found', HttpStatus.NOT_FOUND)
-        );
+    mockUserService.regeneratePasskey.mockRejectedValue(
+      new HttpException('User Not found', HttpStatus.NOT_FOUND)
+    );
 
-        await expect(userController.regeneratePasskey(userId)).rejects.toThrow(HttpException);
-      });
+    await expect(userController.regeneratePasskey(userId)).rejects.toThrow(HttpException);
+    expect(mockUserService.regeneratePasskey).toHaveBeenCalledWith(userId, undefined);
+  });
 
-      it('should ensure regenerated passkey is in valid range', async () => {
-        const userId = '1';
-        const newPasskey = 555555;
+  it('should ensure regenerated passkey is in valid range', async () => {
+    const userId = '1';
+    const newPasskey = 555555;
 
-        mockUserService.regeneratePasskey.mockResolvedValue(newPasskey);
+    mockUserService.regeneratePasskey.mockResolvedValue(newPasskey);
 
-        const result = await userController.regeneratePasskey(userId);
+    const result = await userController.regeneratePasskey(userId);
 
-        expect(result.passkey).toBeGreaterThanOrEqual(100000);
-        expect(result.passkey).toBeLessThanOrEqual(999999);
-      });
-    });
+    expect(result.passkey).toBeGreaterThanOrEqual(100000);
+    expect(result.passkey).toBeLessThanOrEqual(999999);
+    expect(mockUserService.regeneratePasskey).toHaveBeenCalledWith(userId, undefined);
+  });
+
+
+});
 
     describe('findByPasskey', () => {
       it('should find user by valid passkey (Passkey Validation)', async () => {
