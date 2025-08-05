@@ -128,7 +128,7 @@ const RolesList = ({ data, onAddNew, onUpdate, onDelete, className, authData}) =
       });
     }
     catch (err) {
-      error(
+      message.error(
         `Registration Failed: ${err.response?.data?.message || "Unknown error"}`
       );
       setLoading(false);
