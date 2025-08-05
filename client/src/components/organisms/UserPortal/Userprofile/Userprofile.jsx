@@ -731,20 +731,14 @@ export default function UserProfile({ user }) {
             {isEditing && (
               <button 
                 style={styles.passwordChangeButton}
-                onClick={async () => {
-                  try {
-                    await logout(); // Wait for logout to complete
-                    navigate('/forgotpassword');
-                  } catch (error) {
-                    console.error('Logout failed:', error);
-                    navigate('/forgotpassword'); // Navigate anyway
-                  }
+                onClick={() => {
+                  navigate('/changePassword');
                 }}
                 onMouseEnter={e => e.target.style.backgroundColor = isDark ? '#16a34a' : '#047857'}
                 onMouseLeave={e => e.target.style.backgroundColor = isDark ? 'var(--success)' : '#059669'}
               >
                 <Edit3 size={16} />
-                Go to Password Change
+                Change Password
               </button>
             )}
           </div>
