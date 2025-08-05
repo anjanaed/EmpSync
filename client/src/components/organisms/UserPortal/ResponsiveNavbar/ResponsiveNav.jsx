@@ -56,13 +56,18 @@ const ResponsiveNav = () => {
       label: 'Admin',
       icon: <UserOutlined />,
       onClick: () => {
-        // Navigate based on user role
-        if (currentUser.role === 'admin' || 
-            currentUser.role === 'HR_ADMIN' || 
-            currentUser.role === 'INVENTORY_ADMIN' || 
-            currentUser.role === 'KITCHEN_STAFF' || 
-            currentUser.role === 'KITCHEN_ADMIN') {
-          navigate('/LoginRole');
+        // Navigate directly to appropriate admin page based on user role
+        const roleRouteMap = {
+          HR_ADMIN: "/EmployeePage",
+          INVENTORY_ADMIN: "/Ingredients",
+          KITCHEN_STAFF: "/KitchenStaff",
+          KITCHEN_ADMIN: "/kitchen-admin",
+          SUPER_ADMIN: "/superadmin/dashboard",
+        };
+        
+        const adminRoute = roleRouteMap[currentUser.role];
+        if (adminRoute) {
+          navigate(adminRoute);
         } else {
           navigate('/ProfilePage');
         }

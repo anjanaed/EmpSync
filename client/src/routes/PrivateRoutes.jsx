@@ -39,6 +39,7 @@ import LoginRouting from "../guards/LoginRouting.jsx";
 //UserAccout
 import ProfilePage from "../components/pages/UserAccount/ProfilePage/ProfilePage.jsx";
 import UserMeals from "../components/pages/UserAccount/MealsPage/MealsPage.jsx";
+import ChangePasswordForm from "../components/pages/ChangePassword/ChangePasswordForm.jsx";
 
 // SuperAdmin
 import SuperAdmin from "../components/pages/SuperAdmin/SuperAdmin.jsx";
@@ -179,6 +180,15 @@ const PrivateRoutes = () => (
       element={
         <ProtectedRoute allowedRoles={["*"]}>
           <UserPayrollPage />
+        </ProtectedRoute>
+      }
+    />
+
+    <Route
+      path="/changePassword"
+      element={
+        <ProtectedRoute allowedRoles={["*"]}>
+          <ChangePasswordForm />
         </ProtectedRoute>
       }
     />
