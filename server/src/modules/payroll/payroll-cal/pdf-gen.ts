@@ -3,7 +3,7 @@ const fs = require('fs');
 const moment = require('moment');
 
 /**
- * @param firebaseService - instance of your FirebaseService
+ * @param firebaseService 
  */
 export async function generatePayslip({
   employee,
