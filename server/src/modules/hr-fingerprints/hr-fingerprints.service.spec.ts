@@ -127,7 +127,13 @@ describe('HrFingerprintsService', () => {
 
         expect(mockPrisma.user.findMany).toHaveBeenCalledWith({
           where: { organizationId: 'O001' },
-          select: { id: true, name: true, passkey: true },
+          select: { 
+            id: true, 
+            name: true, 
+            passkey: true,
+            passkeyRegeneratedAt: true,
+            passkeyRegeneratedBy: true,
+          },
         });
       });
 
@@ -139,7 +145,13 @@ describe('HrFingerprintsService', () => {
 
         expect(mockPrisma.user.findMany).toHaveBeenCalledWith({
           where: undefined,
-          select: { id: true, name: true, passkey: true },
+          select: { 
+            id: true, 
+            name: true, 
+            passkey: true,
+            passkeyRegeneratedAt: true,
+            passkeyRegeneratedBy: true,
+          },
         });
       });
     });

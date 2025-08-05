@@ -151,52 +151,88 @@ const userDto: Prisma.UserCreateInput = {
       });
     });
 
-    describe('regeneratePasskey', () => {
-      it('should regenerate unique passkey for existing user', async () => {
-        const userId = '1';
-        const existingUser = { ...userDto, id: userId };
+  describe('regeneratePasskey', () => {
+  it('should regenerate unique passkey for existing user', async () => {
+    const userId = '1';
+    const existingUser = { ...userDto, id: userId };
 
-        mockDatabaseService.user.findUnique.mockResolvedValue(existingUser);
-        mockDatabaseService.user.findFirst.mockResolvedValue(null); // New passkey is unique
-        mockDatabaseService.user.update.mockResolvedValue({ ...existingUser, passkey: 789012 });
+    mockDatabaseService.user.findUnique.mockResolvedValue(existingUser);
+    mockDatabaseService.user.findFirst.mockResolvedValue(null); // New passkey is unique
+    mockDatabaseService.user.update.mockResolvedValue({ ...existingUser, passkey: 789012 });
 
-        const newPasskey = await userService.regeneratePasskey(userId);
+    const newPasskey = await userService.regeneratePasskey(userId);
 
-        expect(newPasskey).toBeDefined();
-        expect(typeof newPasskey).toBe('number');
-        expect(newPasskey).toBeGreaterThanOrEqual(100000);
-        expect(newPasskey).toBeLessThanOrEqual(999999);
-        expect(mockDatabaseService.user.update).toHaveBeenCalledWith({
-          where: { id: userId },
-          data: { passkey: newPasskey },
-        });
-      });
-
-      it('should ensure regenerated passkey is unique', async () => {
-        const userId = '1';
-        const existingUser = { ...userDto, id: userId };
-
-        mockDatabaseService.user.findUnique.mockResolvedValue(existingUser);
-        // Mock first generated passkey already exists, second one is unique
-        mockDatabaseService.user.findFirst
-          .mockResolvedValueOnce({ id: 'other', passkey: 111111 }) // Duplicate found
-          .mockResolvedValueOnce(null); // Unique passkey found
-        mockDatabaseService.user.update.mockResolvedValue({ ...existingUser, passkey: 222222 });
-
-        const newPasskey = await userService.regeneratePasskey(userId);
-
-        expect(newPasskey).toBeDefined();
-        expect(mockDatabaseService.user.findFirst).toHaveBeenCalledTimes(2);
-      });
-
-      it('should throw error if user not found during regeneration', async () => {
-        const userId = 'nonexistent';
-
-        mockDatabaseService.user.findUnique.mockResolvedValue(null);
-
-        await expect(userService.regeneratePasskey(userId)).rejects.toThrow('User Not found');
-      });
+    expect(newPasskey).toBeDefined();
+    expect(typeof newPasskey).toBe('number');
+    expect(newPasskey).toBeGreaterThanOrEqual(100000);
+    expect(newPasskey).toBeLessThanOrEqual(999999);
+    expect(mockDatabaseService.user.update).toHaveBeenCalledWith({
+      where: { id: userId },
+      data: { 
+        passkey: newPasskey,
+        passkeyRegeneratedBy: null,
+        passkeyRegeneratedAt: expect.any(Date)
+      },
     });
+  });
+
+  it('should ensure regenerated passkey is unique', async () => {
+    const userId = '1';
+    const existingUser = { ...userDto, id: userId };
+
+    mockDatabaseService.user.findUnique.mockResolvedValue(existingUser);
+    mockDatabaseService.user.findFirst
+      .mockResolvedValueOnce({ id: 'other', passkey: 111111 }) // Duplicate found
+      .mockResolvedValueOnce(null); // Unique passkey found
+    mockDatabaseService.user.update.mockResolvedValue({ ...existingUser, passkey: 222222 });
+
+    const newPasskey = await userService.regeneratePasskey(userId);
+
+    expect(newPasskey).toBeDefined();
+    expect(mockDatabaseService.user.findFirst).toHaveBeenCalledTimes(2);
+    expect(mockDatabaseService.user.update).toHaveBeenCalledWith({
+      where: { id: userId },
+      data: { 
+        passkey: newPasskey,
+        passkeyRegeneratedBy: null,
+        passkeyRegeneratedAt: expect.any(Date)
+      },
+    });
+  });
+
+  it('should throw error if user not found during regeneration', async () => {
+    const userId = 'nonexistent';
+
+    mockDatabaseService.user.findUnique.mockResolvedValue(null);
+
+    await expect(userService.regeneratePasskey(userId)).rejects.toThrow('User Not found');
+  });
+
+  it('should regenerate passkey with admin information when adminId provided', async () => {
+    const userId = '1';
+    const adminId = 'admin123';
+    const existingUser = { ...userDto, id: userId };
+    const adminUser = { id: adminId, name: 'Admin User' };
+
+    mockDatabaseService.user.findUnique
+      .mockResolvedValueOnce(existingUser) // For user lookup
+      .mockResolvedValueOnce(adminUser); // For admin lookup
+    mockDatabaseService.user.findFirst.mockResolvedValue(null); // New passkey is unique
+    mockDatabaseService.user.update.mockResolvedValue({ ...existingUser, passkey: 789012 });
+
+    const newPasskey = await userService.regeneratePasskey(userId, adminId);
+
+    expect(newPasskey).toBeDefined();
+    expect(mockDatabaseService.user.update).toHaveBeenCalledWith({
+      where: { id: userId },
+      data: { 
+        passkey: newPasskey,
+        passkeyRegeneratedBy: 'Admin User',
+        passkeyRegeneratedAt: expect.any(Date)
+      },
+    });
+  });
+});
 
     describe('findByPasskey', () => {
       it('should find user by valid passkey (Passkey Validation)', async () => {
