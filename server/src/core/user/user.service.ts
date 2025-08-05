@@ -29,17 +29,17 @@ export class UserService {
       if (adminId) {
         const admin = await this.databaseService.user.findUnique({
           where: { id: adminId },
-          select: { name: true }
+          select: { name: true },
         });
         adminName = admin?.name || 'Unknown Admin';
       }
 
       await this.databaseService.user.update({
         where: { id },
-        data: { 
+        data: {
           passkey,
           passkeyRegeneratedBy: adminName,
-          passkeyRegeneratedAt: new Date()
+          passkeyRegeneratedAt: new Date(),
         },
       });
       return passkey;
@@ -85,12 +85,20 @@ export class UserService {
 
   async findAll(search?: string, role?: string, orgId?: string) {
     try {
+      const where: any = {
+        role: role || undefined,
+        organizationId: orgId || undefined,
+      };
+
+      if (search) {
+        where.OR = [
+          { name: { contains: search, mode: 'insensitive' } },
+          { empNo: { contains: search, mode: 'insensitive' } },
+        ];
+      }
+
       const users = await this.databaseService.user.findMany({
-        where: {
-          name: search ? { contains: search, mode: 'insensitive' } : undefined,
-          role: role || undefined,
-          organizationId: orgId || undefined,
-        },
+        where,
       });
       if (users) {
         return users;
@@ -107,6 +115,14 @@ export class UserService {
       const user = await this.databaseService.user.findUnique({
         where: {
           id,
+        },
+        include: {
+          organization: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
         },
       });
       if (user) {

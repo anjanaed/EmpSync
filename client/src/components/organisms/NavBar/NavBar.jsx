@@ -89,6 +89,7 @@ const NavBar = ({ Comp, titleLines = [], menuItems = [] }) => {
   }, [location.pathname]);
 
   useEffect(() => {
+
     if (authData) {
       setCurrentUser(authData.user);
     }
@@ -180,7 +181,8 @@ const NavBar = ({ Comp, titleLines = [], menuItems = [] }) => {
               <b></b>
             ) : (
               <>
-                Organization ID: <b>{authData?.orgId || "N/A"}</b>
+                Organization ID: <b>{authData?.orgId || "N/A"}</b><br/>
+                ({authData?.orgName || "N/A"})
               </>
             )}
           </div>

@@ -199,31 +199,50 @@ export class PayrollService {
   }
 
   async findAll(search?: string, orgId?: string) {
-    try {
-      const where: any = {};
+  try {
+    const where: any = {};
 
-      if (orgId) {
-        where.orgId = orgId;
-      }
-
-      if (search) {
-        where.OR = [
-          { empId: { contains: search, mode: 'insensitive' } },
-        ];
-      }
-
-      const payrolls = await this.databaseService.payroll.findMany({
-        include: {
-          employee: true,
-        },
-        where,
-      });
-
-      return payrolls;
-    } catch (err) {
-      throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    if (orgId) {
+      where.orgId = orgId;
     }
+
+    if (search) {
+      where.OR = [
+        { 
+          employee: {
+            name: { contains: search, mode: 'insensitive' }
+          }
+        },
+        { 
+          employee: {
+            empNo: { contains: search, mode: 'insensitive' }
+          }
+        },
+        { month: { contains: search, mode: 'insensitive' } },
+      ];
+    }
+
+    const payrolls = await this.databaseService.payroll.findMany({
+      include: {
+        employee: {
+          select: {
+            id: true,
+            name: true,
+            empNo: true,
+          }
+        },
+      },
+      where,
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+
+    return payrolls;
+  } catch (err) {
+    throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
   }
+}
 
   async findOne(empId: string, month: string) {
     try {
