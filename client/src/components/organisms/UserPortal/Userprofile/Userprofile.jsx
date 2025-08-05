@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Edit3, Calendar, User, Mail, Phone, MapPin, Weight, Ruler, IdCard, Briefcase, Fingerprint, UserPlus } from 'lucide-react';
+import { Edit3, Calendar, User, Mail, Phone, MapPin, Weight, Ruler, IdCard, Briefcase, Fingerprint, UserPlus, RefreshCw } from 'lucide-react';
 import axios from "axios";
 import moment from "moment";
 import { useAuth } from "../../../../contexts/AuthContext.jsx";
@@ -13,6 +13,7 @@ export default function UserProfile({ user }) {
   const [phoneError, setPhoneError] = useState("");
   const [heightError, setHeightError] = useState("");
   const [weightError, setWeightError] = useState("");
+  const [regeneratingPasskey, setRegeneratingPasskey] = useState(false);
   const { authData, logout } = useAuth(); // Add logout here
   const { theme } = useTheme();
   const token = authData?.accessToken;
@@ -249,6 +250,47 @@ export default function UserProfile({ user }) {
       color: isDark ? 'var(--error)' : '#dc2626',
       fontSize: '0.75rem',
       marginTop: '0.25rem'
+    },
+    passkeyContainer: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '0.5rem',
+      minWidth: '0'
+    },
+    passkeyRow: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: '0.75rem',
+      flexWrap: 'wrap'
+    },
+    passkeyValue: {
+      fontSize: '1rem',
+      fontWeight: '500',
+      color: isDark ? 'var(--text-primary)' : '#1e293b',
+      wordBreak: 'break-word',
+      lineHeight: '1.4'
+    },
+    regenerateButton: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: '0.25rem',
+      padding: '0.5rem 0.75rem',
+      backgroundColor: isDark ? 'var(--accent)' : '#4f46e5',
+      color: 'white',
+      border: 'none',
+      borderRadius: '0.375rem',
+      cursor: 'pointer',
+      fontSize: '0.75rem',
+      fontWeight: '500',
+      transition: 'all 0.2s ease',
+      boxShadow: isDark ? '0 1px 3px rgba(64, 169, 255, 0.2)' : '0 1px 3px rgba(79, 70, 229, 0.2)',
+      whiteSpace: 'nowrap'
+    },
+    regenerateInfo: {
+      fontSize: '0.75rem',
+      color: isDark ? 'var(--text-secondary)' : '#6b7280',
+      lineHeight: '1.3',
+      marginTop: '0.25rem'
     }
   };
 
@@ -287,6 +329,33 @@ export default function UserProfile({ user }) {
   };
 
   const isSaveDisabled = isEditing && (phoneError || heightError || weightError);
+
+  const handleRegeneratePasskey = async () => {
+    if (!authData?.user?.id) {
+      alert("Admin information not available");
+      return;
+    }
+
+    setRegeneratingPasskey(true);
+    try {
+      const response = await axios.put(
+        `${import.meta.env.VITE_BASE_URL}/user/${userData.id}/regenerate-passkey`,
+        { adminId: authData.user.id },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      
+      if (response.status === 200) {
+        // Refresh user data to get updated passkey and tracking info
+        await fetchUserData();
+        alert("Passkey regenerated successfully!");
+      }
+    } catch (error) {
+      console.error("Error regenerating passkey:", error);
+      alert("Failed to regenerate passkey. Please try again.");
+    } finally {
+      setRegeneratingPasskey(false);
+    }
+  };
 
   const fetchUserData = async () => {
     try {
@@ -343,6 +412,22 @@ export default function UserProfile({ user }) {
 
   const navigate = useNavigate();
 
+  // Add spin animation styles to the document head
+  useEffect(() => {
+    const styleElement = document.createElement('style');
+    styleElement.textContent = `
+      @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+      }
+    `;
+    document.head.appendChild(styleElement);
+    
+    return () => {
+      document.head.removeChild(styleElement);
+    };
+  }, []);
+
   if (!userData) {
     return <div style={{ color: isDark ? 'var(--text-primary)' : '#1a202c' }}>Loading...</div>;
   }
@@ -393,7 +478,28 @@ export default function UserProfile({ user }) {
                   <Fingerprint size={16} style={{ marginRight: '0.5rem' }} />
                   Fingerprint Passkey
                 </span>
-                <span style={styles.infoValue}>{userData.passkey || 'Not set'}</span>
+                <div style={styles.passkeyContainer}>
+                  <div style={styles.passkeyRow}>
+                    <span style={styles.passkeyValue}>{userData.passkey || 'Not set'}</span>
+                    {userData.passkey && (
+                      <button
+                        style={styles.regenerateButton}
+                        onClick={handleRegeneratePasskey}
+                        disabled={regeneratingPasskey}
+                        onMouseEnter={e => e.target.style.backgroundColor = isDark ? '#2563eb' : '#4338ca'}
+                        onMouseLeave={e => e.target.style.backgroundColor = isDark ? 'var(--accent)' : '#4f46e5'}
+                      >
+                        <RefreshCw size={12} style={{ animation: regeneratingPasskey ? 'spin 1s linear infinite' : 'none' }} />
+                        {regeneratingPasskey ? 'Regenerating...' : 'Regenerate'}
+                      </button>
+                    )}
+                  </div>
+                  {userData.passkeyRegeneratedBy && userData.passkeyRegeneratedAt && (
+                    <div style={styles.regenerateInfo}>
+                      Last regenerated by {userData.passkeyRegeneratedBy} on {new Date(userData.passkeyRegeneratedAt).toLocaleString()}
+                    </div>
+                  )}
+                </div>
               </div>
               <div style={styles.infoItem}>
                 <span style={styles.infoLabel}>

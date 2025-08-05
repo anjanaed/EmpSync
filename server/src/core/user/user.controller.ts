@@ -20,9 +20,9 @@ import { Roles } from '../authentication/roles.decorator';
 @Controller('user')
 export class UserController {
   @Put(':id/regenerate-passkey')
-  async regeneratePasskey(@Param('id') id: string) {
+  async regeneratePasskey(@Param('id') id: string, @Body() body?: { adminId?: string }) {
     try {
-      const passkey = await this.userService.regeneratePasskey(id);
+      const passkey = await this.userService.regeneratePasskey(id, body?.adminId);
       return { passkey };
     } catch (err) {
       throw new HttpException(

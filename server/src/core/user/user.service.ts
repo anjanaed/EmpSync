@@ -4,7 +4,7 @@ import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class UserService {
-  async regeneratePasskey(id: string) {
+  async regeneratePasskey(id: string, adminId?: string) {
     try {
       // Generate a unique 6-digit passkey
       let unique = false;
@@ -23,9 +23,24 @@ export class UserService {
       if (!user) {
         throw new HttpException('User Not found', HttpStatus.NOT_FOUND);
       }
+
+      // Get admin name if adminId is provided
+      let adminName = null;
+      if (adminId) {
+        const admin = await this.databaseService.user.findUnique({
+          where: { id: adminId },
+          select: { name: true }
+        });
+        adminName = admin?.name || 'Unknown Admin';
+      }
+
       await this.databaseService.user.update({
         where: { id },
-        data: { passkey },
+        data: { 
+          passkey,
+          passkeyRegeneratedBy: adminName,
+          passkeyRegeneratedAt: new Date()
+        },
       });
       return passkey;
     } catch (err) {
