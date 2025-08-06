@@ -18,10 +18,10 @@ const Analyze = () => {
 
   useEffect(() => {
     fetchMealAnalytics();
-  }, [token, urL, authData.orgId]); // Added dependencies to prevent unnecessary re-renders
+  }, [token, urL, authData.orgId]); 
 
   const fetchMealAnalytics = async () => {
-    if (!token || !authData.orgId) return; // Prevent API call if required data is missing
+    if (!token || !authData.orgId) return;
     
     try {
       setLoading(true);

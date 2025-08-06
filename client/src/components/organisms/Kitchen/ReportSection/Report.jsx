@@ -1055,7 +1055,7 @@ const Report = () => {
       status: determineOrderStatus(order, mealTypes), // Use the new logic
       price: `Rs. ${(order.price || 0).toFixed(2)}`,
       orderId: order.id,
-      ...order, // Include all order data for potential future use
+      ...order, 
     }));
   };
 
@@ -1102,16 +1102,16 @@ const Report = () => {
         Array.isArray(mealType.time) &&
         mealType.time.length >= 2
       ) {
-        // Get end time (second element in the time array)
-        const endTime = mealType.time[1]; // e.g., "21:00"
+        // Get end time 
+        const endTime = mealType.time[1]; 
 
-        // Create current time and meal end time for comparison
+        
         const now = new Date();
-        const currentTime = now.getHours() * 60 + now.getMinutes(); // Convert to minutes
+        const currentTime = now.getHours() * 60 + now.getMinutes(); 
 
         // Parse meal end time
         const [endHours, endMinutes] = endTime.split(":").map(Number);
-        const mealEndTime = endHours * 60 + endMinutes; // Convert to minutes
+        const mealEndTime = endHours * 60 + endMinutes; 
 
         // If current time has passed meal end time, it's 'Not Served'
         if (currentTime > mealEndTime) {
@@ -1120,7 +1120,7 @@ const Report = () => {
       }
     }
 
-    // Default to 'Pending' for today's orders within time or if we can't determine meal type time
+    
     return "Pending";
   };
 
@@ -1648,9 +1648,9 @@ const Report = () => {
                         <div className={styles.efficiencyCell}>
                           <span
                             className={
-                              value >= 98
+                              value >= 90
                                 ? styles.efficiencyBadgeExcellent
-                                : value >= 95
+                                : value >= 80
                                 ? styles.efficiencyBadgeGood
                                 : styles.efficiencyBadgePoor
                             }
