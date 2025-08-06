@@ -325,18 +325,6 @@ const UserPayroll = () => {
               </Option>
             ))}
           </Select>
-          <Select
-            placeholder="Filter by status"
-            value={filterStatus}
-            onChange={setFilterStatus}
-            className={styles.filterSelect}
-            suffixIcon={<FilterOutlined />}
-          >
-            <Option value="all">All Status</Option>
-            <Option value="processed">Processed</Option>
-            <Option value="pending">Pending</Option>
-            <Option value="draft">Draft</Option>
-          </Select>
         </Space>
       </div>
 
