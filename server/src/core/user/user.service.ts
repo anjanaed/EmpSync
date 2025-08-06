@@ -75,7 +75,7 @@ export class UserService {
     } catch (err) {
       if (err.code === 'P2002') {
         throw new HttpException(
-          `Id or Email Already Registered`,
+          `Employee Number or Email Already Registered`,
           HttpStatus.CONFLICT,
         );
       }
@@ -169,6 +169,12 @@ export class UserService {
         throw new HttpException('User Not found', HttpStatus.NOT_FOUND);
       }
     } catch (err) {
+      if (err.code === 'P2002') {
+        throw new HttpException(
+          `Employee Number Already Exists`,
+          HttpStatus.CONFLICT,
+        );
+      }
       throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }

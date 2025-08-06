@@ -58,7 +58,6 @@ const getDarkTheme = () => ({
 const roleMap = {
   KITCHEN_ADMIN: "Kitchen Administrator",
   KITCHEN_STAFF: "Kitchen Staff",
-  INVENTORY_ADMIN: "Inventory Manager",
   HR_ADMIN: "Human Resource Manager",
 };
 
@@ -160,52 +159,52 @@ const Employees = () => {
   }
 
   const columns = [
-{
-    title: "Employee No",
-    dataIndex: "no",
-    key: "no",
-    align: "center",
-    sorter: (a, b) => {
-      // Extract alphabetic and numeric parts
-      const parseEmpNo = (empNo) => {
-        const match = empNo.match(/^([A-Za-z]*)(\d+)$/);
-        if (match) {
+    {
+      title: "Employee No",
+      dataIndex: "no",
+      key: "no",
+      align: "center",
+      sorter: (a, b) => {
+        // Extract alphabetic and numeric parts
+        const parseEmpNo = (empNo) => {
+          const match = empNo.match(/^([A-Za-z]*)(\d+)$/);
+          if (match) {
+            return {
+              alpha: match[1] || "",
+              numeric: parseInt(match[2], 10),
+            };
+          }
+          // Fallback for pure numbers
+          const numMatch = empNo.match(/^\d+$/);
+          if (numMatch) {
+            return {
+              alpha: "",
+              numeric: parseInt(empNo, 10),
+            };
+          }
+          // Fallback for anything else
           return {
-            alpha: match[1] || '',
-            numeric: parseInt(match[2], 10)
+            alpha: empNo,
+            numeric: 0,
           };
-        }
-        // Fallback for pure numbers
-        const numMatch = empNo.match(/^\d+$/);
-        if (numMatch) {
-          return {
-            alpha: '',
-            numeric: parseInt(empNo, 10)
-          };
-        }
-        // Fallback for anything else
-        return {
-          alpha: empNo,
-          numeric: 0
         };
-      };
 
-      const aParsed = parseEmpNo(a.no);
-      const bParsed = parseEmpNo(b.no);
+        const aParsed = parseEmpNo(a.no);
+        const bParsed = parseEmpNo(b.no);
 
-      // First sort by alphabetic part
-      if (aParsed.alpha !== bParsed.alpha) {
-        return aParsed.alpha.localeCompare(bParsed.alpha);
-      }
-      
-      // Then sort by numeric part
-      return aParsed.numeric - bParsed.numeric;
+        // First sort by alphabetic part
+        if (aParsed.alpha !== bParsed.alpha) {
+          return aParsed.alpha.localeCompare(bParsed.alpha);
+        }
+
+        // Then sort by numeric part
+        return aParsed.numeric - bParsed.numeric;
+      },
+      ellipsis: true,
+      onHeaderCell: () => ({
+        className: styles.tableHeaderCell,
+      }),
     },
-    ellipsis: true,
-    onHeaderCell: () => ({
-      className: styles.tableHeaderCell,
-    }),
-  },
     {
       title: "Name",
       dataIndex: "name",
@@ -315,6 +314,7 @@ const Employees = () => {
       <Modal
         open={isModalOpen}
         footer={null}
+        destroyOnClose={true}
         width="66vw"
         onCancel={handleCancel}
         styles={{
