@@ -115,7 +115,7 @@ const NavBar = ({ Comp, titleLines = [], menuItems = [] }) => {
           <UserOutlined className={styles.menuItemIcon} /> &nbsp;Profile
         </div>
       ),
-      onClick: () => navigate("/profile"),
+      onClick: () => navigate("/ProfilePage"),
     },
     {
       key: "2",
