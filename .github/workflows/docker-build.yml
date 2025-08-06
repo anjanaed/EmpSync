@@ -72,10 +72,3 @@ jobs:
       - name: Down Docker Compose
         if: always()
         run: docker-compose -f ./server/docker-compose.yml down -v
-
-
-
-
-
-
-
