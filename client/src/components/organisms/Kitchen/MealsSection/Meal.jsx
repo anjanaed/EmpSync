@@ -26,14 +26,11 @@ import {
   faArrowUpRightFromSquare,
   faUtensils,
 } from "@fortawesome/free-solid-svg-icons";
-
-// Import Firebase storage related functions
 import { getStorage, ref, deleteObject } from "firebase/storage";
 import Loading from "../../../atoms/loading/loading.jsx";
 import styles from "./Meals.module.css";
 import { useAuth } from "../../../../contexts/AuthContext.jsx";
-import axios from "axios"; // Import axios
-
+import axios from "axios"; 
 const { Title } = Typography;
 const { Search } = Input;
 const { confirm } = Modal;
@@ -52,12 +49,12 @@ const AvailableMeals = () => {
   const [ingredientDetails, setIngredientDetails] = useState({});
   const [fetchingIngredients, setFetchingIngredients] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(12); // Number of meals per page
+  const [pageSize, setPageSize] = useState(12); 
   const storage = getStorage();
 
   const navigate = useNavigate();
 
-  // Fetch meal data from the API using axios with orgId
+  
   useEffect(() => {
     fetchMeals();
   }, []);
@@ -153,7 +150,7 @@ const AvailableMeals = () => {
         }
       }
 
-      // Check if the meal has ingredients and delete them first
+      // Check if the meal has ingredients and delete them 
       if (meal.ingredients && meal.ingredients.length > 0) {
         for (const ingredient of meal.ingredients) {
           try {
@@ -174,7 +171,7 @@ const AvailableMeals = () => {
         }
       }
 
-      // Delete the meal from the database using axios
+      // Delete the meal 
       await axios.delete(`${urL}/meal/${meal.id}`, {
         params: {
           orgId: authData?.orgId,
@@ -228,7 +225,7 @@ const AvailableMeals = () => {
     setIngredientDetails({});
   };
 
-  // Filter meals based on search term and selected category
+  // Filter meals based on selected category
   const filteredMeals = meals.filter((meal) => {
     const matchesSearch = meal.nameEnglish
       .toLowerCase()
@@ -239,7 +236,7 @@ const AvailableMeals = () => {
     if (selectedCategory === "All") {
       matchesCategory = true;
     } else {
-      // Handle both string and array category formats
+      
       if (Array.isArray(meal.category)) {
         matchesCategory = meal.category.includes(selectedCategory);
       } else {

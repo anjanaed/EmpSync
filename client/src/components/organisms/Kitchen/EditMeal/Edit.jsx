@@ -58,7 +58,7 @@ const EditMealPage = () => {
   const location = useLocation();
   const urL = import.meta.env.VITE_BASE_URL;
 
-  // Define parseIngredientsFromMealData function first
+  // Define parseIngredientsFromMealData
   const parseIngredientsFromMealData = async (ingredientsArray) => {
     if (!ingredientsArray || ingredientsArray.length === 0) {
       return [];
@@ -96,7 +96,7 @@ const EditMealPage = () => {
       const errorMessage = error.response?.data?.message || error.message;
       console.error("Error fetching ingredients:", errorMessage);
 
-      // Fallback to display only used ingredients
+      // Display only used ingredients
       return ingredientsArray.map((ingredient) => {
         const ingredientId = ingredient.ingredientId || ingredient;
         return {
@@ -108,7 +108,7 @@ const EditMealPage = () => {
     }
   };
 
-  // Now use the function in useEffect
+  
   useEffect(() => {
     const fetchMealData = async () => {
       if (location.state && location.state.meal) {
@@ -117,7 +117,7 @@ const EditMealPage = () => {
         setImageUrl(meal.imageUrl);
         setOriginalImageUrl(meal.imageUrl);
 
-        // Ensure category is treated as an array
+        
         const mealCategories = Array.isArray(meal.category)
           ? meal.category
           : meal.category
@@ -158,7 +158,7 @@ const EditMealPage = () => {
     fetchMealData();
   }, [location.state, form, navigate]);
 
-  // Updated fetchIngredients function to match AddMeal component
+  //fetchIngredients function to match AddMeal component
   const fetchIngredients = async () => {
     setLoadingIngredients(true);
     try {
@@ -170,9 +170,9 @@ const EditMealPage = () => {
 
       const data = Array.isArray(response.data) ? response.data : [];
 
-      // Transform and mark previously selected ingredients
+      //mark previously selected ingredients
       const formattedIngredients = data.map((ingredient) => {
-        // Check if this ingredient was previously selected
+        // Check ingredient was previously selected
         const existingIngredient = selectedIngredients.find(
           (sel) => String(sel.id) === String(ingredient.id)
         );
@@ -199,7 +199,7 @@ const EditMealPage = () => {
     }
   };
 
-  // Add new ingredient function (same as AddMeal component)
+  // Add new ingredient 
   const handleAddNewIngredient = async () => {
     if (!newIngredientName.trim()) {
       message.warning("Ingredient name cannot be empty.");
@@ -225,7 +225,7 @@ const EditMealPage = () => {
       if (response.status === 201 || response.status === 200) {
         message.success("Ingredient added successfully!");
         setNewIngredientName("");
-        fetchIngredients(); // Refresh ingredient list
+        fetchIngredients(); 
       }
     } catch (error) {
       const errorMessage = error.response?.data?.message || error.message;
@@ -243,45 +243,43 @@ const EditMealPage = () => {
     navigate("/kitchen-meal");
   };
 
-  // Function to delete the old image from Firebase
-  const deleteImageFromFirebase = async (imageUrl) => {
-    if (!imageUrl) return true;
+  //Delete the old image from Firebase
+  //Delete the old image from Firebase
+const deleteImageFromFirebase = async (imageUrl) => {
+  if (!imageUrl) return true;
 
-    try {
-      // Check if this is a Firebase Storage URL
-      if (!imageUrl.includes("firebasestorage.googleapis.com")) {
-        console.warn(
-          "Image URL doesn't appear to be from Firebase Storage:",
-          imageUrl
-        );
-        return false;
-      }
-
-      // Extract the file path from the URL
-      let urlPath;
-      if (imageUrl.startsWith("gs://")) {
-        urlPath = imageUrl.replace(/^gs:\/\/[^\/]+\//, "");
-      } else {
-        urlPath = decodeURIComponent(imageUrl.split("/o/")[1]?.split("?")[0]);
-      }
-
-      if (!urlPath) {
-        console.warn("Could not parse image URL for deletion:", imageUrl);
-        return false;
-      }
-
-      // Create a reference to the file to delete
-      const imageRef = ref(storage, urlPath);
-
-      // Delete the file
-      await deleteObject(imageRef);
-      console.log("Old image successfully deleted from Firebase Storage");
-      return true;
-    } catch (error) {
-      console.error("Error deleting old image from Firebase:", error);
+  try {
+    // Check if this is a Firebase Storage URL
+    if (!imageUrl.includes("firebasestorage.googleapis.com")) {
+      console.warn(
+        "Image URL doesn't appear to be from Firebase Storage:",
+        imageUrl
+      );
       return false;
     }
-  };
+
+    // Extract the file path from  download URL
+    const urlPath = decodeURIComponent(imageUrl.split("/o/")[1]?.split("?")[0]);
+
+    if (!urlPath) {
+      console.warn("Could not parse image URL for deletion:", imageUrl);
+      return false;
+    }
+
+    console.log("Extracted file path:", urlPath); // Debug log
+
+    // Create a reference to the file to delete
+    const imageRef = ref(storage, urlPath);
+
+    // Delete the file
+    await deleteObject(imageRef);
+    console.log("Old image successfully deleted from Firebase Storage");
+    return true;
+  } catch (error) {
+    console.error("Error deleting old image from Firebase:", error);
+    return false;
+  }
+};
 
   const uploadImageToFirebase = async (file) => {
     // If no new image was selected, return the existing URL
@@ -298,7 +296,7 @@ const EditMealPage = () => {
       const uploadTask = await uploadBytes(storageRef, file);
       console.log("Image uploaded successfully:", uploadTask);
 
-      // Get the download URL of the uploaded file
+      
       const downloadURL = await getDownloadURL(uploadTask.ref);
       console.log("Download URL:", downloadURL);
 
@@ -441,7 +439,7 @@ const EditMealPage = () => {
     const objectUrl = URL.createObjectURL(file);
     setImageUrl(objectUrl);
 
-    // Clean up the object URL when component unmounts or when URL changes
+    // Clean up the object URL 
     return () => URL.revokeObjectURL(objectUrl);
   };
 

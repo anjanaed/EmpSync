@@ -50,7 +50,7 @@ const AddMealPage = () => {
 
   const navigate = useNavigate();
 
-  // Fetch ingredients from API using axios with orgId
+  // Fetch ingredients 
   const fetchIngredients = async () => {
   setLoadingIngredients(true);
   try {
