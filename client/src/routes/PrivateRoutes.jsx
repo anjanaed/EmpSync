@@ -30,9 +30,9 @@ import MealConform from "../components/pages/ServingStaff/MealConfirm/MealConfor
 import KitchenStaff from "../components/pages/KitchenStaff/kitchenStaff.jsx";
 
 // INVENTORY_ADMIN
-import AnalysisDashboard from "../components/Pages/InventoryAdmin/AnalysisDashboard/AnalysisDashboard.jsx";
-import OrderReportDashboard from "../components/Pages/InventoryAdmin/OrderReportDashboard/OrderReportDashboard.jsx";
-import OrderHistory from "../components/Pages/InventoryAdmin/OrderHistory/OrderHistory.jsx";
+import AnalysisDashboard from "../components/pages/InventoryAdmin/AnalysisDashboard/AnalysisDashboard.jsx";
+import OrderReportDashboard from "../components/pages/InventoryAdmin/OrderReportDashboard/OrderReportDashboard.jsx";
+import OrderHistory from "../components/pages/InventoryAdmin/OrderHistory/OrderHistory.jsx";
 import CostAnalysis from "../components/organisms/Inventory/Analysis/Cost Analysis/CostAnalysis.jsx";
 import LoginRouting from "../guards/LoginRouting.jsx";
 
