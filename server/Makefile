@@ -4,7 +4,7 @@ test:
 	npm test
 
 dev:
-	nest start --watch --preserveWatchOutput
+	npm run dev
 
 migrate:
 	npx prisma generate
