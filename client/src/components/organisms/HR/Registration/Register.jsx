@@ -89,42 +89,6 @@ const Register = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-
-      try {
-        // Register in Auth0
-        await signUpUser({ email, password, id });
-
-        // Both registrations successful
-        success("User Registered Successfully");
-
-        // Show passkey screen only after both succeed
-        if (res.data && res.data.passkey) {
-          setPasskey(res.data.passkey);
-          setMenu(3);
-        }
-      } catch (auth0Error) {
-        // Auth0 registration failed, rollback database registration
-        try {
-          await axios.delete(`${urL}/user/${id}`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-          console.log("Database registration rolled back successfully");
-        } catch (rollbackError) {
-          console.log(
-            "Failed to rollback database registration:",
-            rollbackError
-          );
-        }
-        if (auth0Error.response?.data.code === "invalid_signup") {
-          error(
-            "Registration Failed: The email or ID may already exist in Auth0."
-          );
-        } else {
-          console.log("Auth0 Error:", auth0Error.response?.data);
-        }
-      }
     } catch (dbError) {
       // Database registration failed
       console.error("Database Registration Error:", dbError);
@@ -160,21 +124,6 @@ const Register = () => {
     }
   };
 
-  const signUpUser = async ({ email, password, id }) => {
-    try {
-      const res = await axios.post(`https://${auth0Url}/dbconnections/signup`, {
-        client_id: auth0Id,
-        email,
-        username: id,
-        password,
-        connection: "Username-Password-Authentication",
-      });
-    } catch (error) {
-      console.error("Auth0 Registration Error:", error);
-      setLoading(false);
-      throw error;
-    }
-  };
 
   const handleNext = async () => {
     await form.validateFields();
