@@ -17,8 +17,14 @@ export default defineConfig({
     ],
     proxy: {
       "/user-finger-print-register-backend": {
-        target: "http://localhost:3000",
+        target: "http://127.0.0.1:3000",
         changeOrigin: true,
+      },
+      // Proxy API calls in dev so the frontend can call "/api" instead of hardcoding localhost
+      "/api": {
+        target: "http://127.0.0.1:3000",
+        changeOrigin: true,
+        secure: false,
       },
     },
   },
